@@ -1,10 +1,10 @@
 import { nanoid } from 'nanoid'
 import prisma from '@/lib/prisma'
-import { PropertyAccessLog } from '@prisma/client'
+import type { PropertyAccessLog, Client, Property, ClientPropertyLink } from '@prisma/client'
 
 /**
  * SERVIÇO DE TRACKING - LINKS EXCLUSIVOS POR CLIENTE
- * 
+ *
  * Regra: TODO link de imóvel é SEMPRE exclusivo por cliente.
  * Não existe link genérico para envio comercial.
  */
@@ -17,8 +17,9 @@ export interface CreateTrackingLinkParams {
 
 export interface TrackingLinkData {
     id: string
-    url: string
+    url: string | null
     token: string
+    slug: string
     clientId: string
     propertyId: string
     createdAt: Date
@@ -48,21 +49,29 @@ export async function createTrackingLink(params: CreateTrackingLinkParams): Prom
     const { clientId, propertyId, expiresInDays } = params
 
     // Verifica se já existe um link para este cliente + imóvel
-    const existing = await prisma.clientPropertyLink.findUnique({
+    const existing = await prisma.clientPropertyLink.findFirst({
         where: {
-            clientId_propertyId: {
-                clientId,
-                propertyId
-            }
+            clientId,
+            propertyId
         }
     })
 
     if (existing) {
-        return existing
+        return {
+            id: existing.id,
+            url: existing.url,
+            token: existing.token,
+            slug: existing.slug,
+            clientId: existing.clientId,
+            propertyId: existing.propertyId,
+            createdAt: existing.createdAt,
+            expiresAt: existing.expiresAt
+        }
     }
 
-    // Gera token único
+    // Gera token e slug únicos
     const token = nanoid(16)
+    const slug = nanoid(10)
 
     // Busca dados do imóvel para gerar URL
     const property = await prisma.property.findUnique({
@@ -79,8 +88,9 @@ export async function createTrackingLink(params: CreateTrackingLinkParams): Prom
         : null
 
     // Gera URL completa
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.iulemirandaimoveis.com'
-    const url = `${baseUrl}/imovel/${property.slug}?c=${clientId}&t=${token}`
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.iulemirandaimoveis.com.br'
+    const propertySlug = property.slug || property.internalCode
+    const url = `${baseUrl}/imoveis/${propertySlug}?c=${clientId}&t=${token}`
 
     // Cria o link no banco
     const link = await prisma.clientPropertyLink.create({
@@ -88,12 +98,22 @@ export async function createTrackingLink(params: CreateTrackingLinkParams): Prom
             clientId,
             propertyId,
             token,
+            slug,
             url,
             expiresAt
         }
     })
 
-    return link
+    return {
+        id: link.id,
+        url: link.url,
+        token: link.token,
+        slug: link.slug,
+        clientId: link.clientId,
+        propertyId: link.propertyId,
+        createdAt: link.createdAt,
+        expiresAt: link.expiresAt
+    }
 }
 
 /**
@@ -121,8 +141,20 @@ export async function logPropertyAccess(params: LogAccessParams): Promise<Proper
         data: {
             clientId: link.clientId,
             propertyId: link.propertyId,
+            linkId: link.id,
             linkToken,
-            ...accessData
+            device: accessData.device,
+            browser: accessData.browser,
+            os: accessData.os,
+            ipAddress: accessData.ipAddress,
+            totalTimeSeconds: accessData.totalTimeSeconds,
+            galleryTimeSeconds: accessData.galleryTimeSeconds,
+            descriptionTimeSeconds: accessData.descriptionTimeSeconds,
+            priceTimeSeconds: accessData.priceTimeSeconds,
+            ctaTimeSeconds: accessData.ctaTimeSeconds,
+            scrollDepth: accessData.scrollDepth,
+            clickedCta: accessData.clickedCta || false,
+            clickedWhatsApp: accessData.clickedWhatsApp || false
         }
     })
 
@@ -172,9 +204,11 @@ export async function getPropertyStats(propertyId: string) {
         }
     })
 
-    const uniqueClients = new Set(logs.map(log => log.clientId)).size
+    const uniqueClients = new Set(logs.filter(log => log.clientId).map(log => log.clientId)).size
     const totalAccess = logs.length
-    const avgTimeSeconds = logs.reduce((sum, log) => sum + (log.totalTimeSeconds || 0), 0) / totalAccess || 0
+    const avgTimeSeconds = totalAccess > 0
+        ? logs.reduce((sum, log) => sum + (log.totalTimeSeconds || 0), 0) / totalAccess
+        : 0
     const ctaClicks = logs.filter(log => log.clickedCta).length
     const whatsappClicks = logs.filter(log => log.clickedWhatsApp).length
 
@@ -194,7 +228,10 @@ export async function getPropertyStats(propertyId: string) {
 export async function getTopEngagedClients(propertyId: string, limit: number = 5) {
     const logs = await prisma.propertyAccessLog.groupBy({
         by: ['clientId'],
-        where: { propertyId },
+        where: {
+            propertyId,
+            clientId: { not: null }
+        },
         _count: {
             id: true
         },
@@ -210,7 +247,7 @@ export async function getTopEngagedClients(propertyId: string, limit: number = 5
     })
 
     // Busca dados completos dos clientes
-    const clientIds = logs.map(log => log.clientId)
+    const clientIds = logs.map(log => log.clientId).filter((id): id is string => id !== null)
     const clients = await prisma.client.findMany({
         where: {
             id: {
@@ -250,7 +287,6 @@ async function createAccessNotification(clientId: string, propertyId: string, lo
     })
 
     const isRevisit = previousAccess > 0
-    const type = isRevisit ? 'PROPERTY_REVISIT' : 'PROPERTY_ACCESS'
 
     const message = isRevisit
         ? `${client.name} acessou novamente o imóvel "${property.title}"`
@@ -258,10 +294,10 @@ async function createAccessNotification(clientId: string, propertyId: string, lo
 
     await prisma.notification.create({
         data: {
-            type,
+            type: isRevisit ? 'PROPERTY_VIEW' : 'PROPERTY_VIEW',
             title: isRevisit ? 'Cliente Revisitou Imóvel' : 'Novo Acesso ao Imóvel',
             message,
-            data: {
+            metadata: {
                 clientId,
                 clientName: client.name,
                 propertyId,
