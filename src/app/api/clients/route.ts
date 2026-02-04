@@ -27,8 +27,7 @@ export async function GET(request: NextRequest) {
             include: {
                 _count: {
                     select: {
-                        propertyLinks: true,
-                        accessLogs: true
+                        propertyLinks: true
                     }
                 }
             },
@@ -58,7 +57,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
-        const { name, email, phone, origin, notes } = body
+        const { name, email, phone, notes, tags } = body
 
         if (!name || !email) {
             return NextResponse.json(
@@ -84,18 +83,18 @@ export async function POST(request: NextRequest) {
                 name,
                 email,
                 phone,
-                origin,
-                notes
+                notes,
+                tags: tags || []
             }
         })
 
         // Cria notificação
         await prisma.notification.create({
             data: {
-                type: 'NEW_CLIENT',
+                type: 'LEAD_NEW',
                 title: 'Novo Cliente Cadastrado',
                 message: `${name} foi adicionado ao sistema`,
-                data: {
+                metadata: {
                     clientId: client.id,
                     clientName: name,
                     clientEmail: email

@@ -28,52 +28,66 @@ export async function GET(request: NextRequest) {
                 break
         }
 
+        // Período anterior para comparação
+        const previousStartDate = new Date(startDate.getTime() - (now.getTime() - startDate.getTime()))
+
         // Buscar estatísticas
         const [
             totalLeads,
             previousLeads,
+            totalClients,
+            previousClients,
             totalProperties,
             previousProperties,
             totalViews,
             previousViews,
         ] = await Promise.all([
             // Leads atuais
-            prisma.client.count({
+            prisma.lead.count({
                 where: { createdAt: { gte: startDate } },
             }),
             // Leads período anterior
+            prisma.lead.count({
+                where: {
+                    createdAt: {
+                        gte: previousStartDate,
+                        lt: startDate,
+                    },
+                },
+            }),
+            // Clientes atuais
+            prisma.client.count({
+                where: { createdAt: { gte: startDate } },
+            }),
+            // Clientes período anterior
             prisma.client.count({
                 where: {
                     createdAt: {
-                        gte: new Date(startDate.getTime() - (now.getTime() - startDate.getTime())),
+                        gte: previousStartDate,
                         lt: startDate,
                     },
                 },
             }),
-            // Imóveis atuais
+            // Imóveis disponíveis atuais
             prisma.property.count({
                 where: { status: 'AVAILABLE' },
             }),
-            // Imóveis período anterior
+            // Imóveis disponíveis período anterior (criados antes)
             prisma.property.count({
                 where: {
                     status: 'AVAILABLE',
-                    createdAt: {
-                        lt: startDate,
-                    },
+                    createdAt: { lt: startDate },
                 },
             }),
-            // Visualizações atuais
+            // Visualizações atuais (soma de viewCount)
             prisma.property.aggregate({
                 _sum: { viewCount: true },
-                where: { createdAt: { gte: startDate } },
             }),
-            // Visualizações período anterior
-            prisma.property.aggregate({
-                _sum: { viewCount: true },
+            // Visualizações período anterior (aproximado via accessLogs)
+            prisma.propertyAccessLog.count({
                 where: {
                     createdAt: {
-                        gte: new Date(startDate.getTime() - (now.getTime() - startDate.getTime())),
+                        gte: previousStartDate,
                         lt: startDate,
                     },
                 },
@@ -82,12 +96,12 @@ export async function GET(request: NextRequest) {
 
         // Calcular receita potencial (soma dos preços dos imóveis disponíveis)
         const revenue = await prisma.property.aggregate({
-            _sum: { price: true },
+            _sum: { listPrice: true },
             where: { status: 'AVAILABLE' },
         })
 
         const previousRevenue = await prisma.property.aggregate({
-            _sum: { price: true },
+            _sum: { listPrice: true },
             where: {
                 status: 'AVAILABLE',
                 createdAt: { lt: startDate },
@@ -100,21 +114,21 @@ export async function GET(request: NextRequest) {
             return Math.round(((current - previous) / previous) * 100)
         }
 
+        const currentViews = totalViews._sum?.viewCount || 0
+        const currentRevenue = Number(revenue._sum?.listPrice || 0)
+        const prevRevenue = Number(previousRevenue._sum?.listPrice || 0)
+
         const stats = {
             totalLeads,
+            totalClients,
             totalProperties,
-            totalViews: totalViews._sum.viewCount || 0,
-            totalRevenue: Number(revenue._sum.price || 0),
+            totalViews: currentViews,
+            totalRevenue: currentRevenue,
             leadsGrowth: calculateGrowth(totalLeads, previousLeads),
+            clientsGrowth: calculateGrowth(totalClients, previousClients),
             propertiesGrowth: calculateGrowth(totalProperties, previousProperties),
-            viewsGrowth: calculateGrowth(
-                totalViews._sum.viewCount || 0,
-                previousViews._sum.viewCount || 0
-            ),
-            revenueGrowth: calculateGrowth(
-                Number(revenue._sum.price || 0),
-                Number(previousRevenue._sum.price || 0)
-            ),
+            viewsGrowth: calculateGrowth(currentViews, previousViews),
+            revenueGrowth: calculateGrowth(currentRevenue, prevRevenue),
         }
 
         return NextResponse.json({ stats })

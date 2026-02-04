@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
         const where: any = {}
         if (unreadOnly) {
-            where.isRead = false
+            where.read = false
         }
 
         const [notifications, total, unreadCount] = await Promise.all([
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
                 skip: offset
             }),
             prisma.notification.count({ where }),
-            prisma.notification.count({ where: { isRead: false } })
+            prisma.notification.count({ where: { read: false } })
         ])
 
         return NextResponse.json({
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 /**
  * POST /api/notifications/mark-read
  * Marca notificações como lidas
- * 
+ *
  * Body: { "ids": ["id1", "id2"] } ou { "all": true }
  */
 export async function POST(request: NextRequest) {
@@ -65,8 +65,11 @@ export async function POST(request: NextRequest) {
         if (all) {
             // Marca todas como lidas
             await prisma.notification.updateMany({
-                where: { isRead: false },
-                data: { isRead: true }
+                where: { read: false },
+                data: {
+                    read: true,
+                    readAt: new Date()
+                }
             })
 
             return NextResponse.json({
@@ -87,7 +90,10 @@ export async function POST(request: NextRequest) {
             where: {
                 id: { in: ids }
             },
-            data: { isRead: true }
+            data: {
+                read: true,
+                readAt: new Date()
+            }
         })
 
         return NextResponse.json({

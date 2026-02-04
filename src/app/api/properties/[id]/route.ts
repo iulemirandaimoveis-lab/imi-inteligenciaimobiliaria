@@ -16,9 +16,6 @@ export async function GET(
         const property = await prisma.property.findUnique({
             where: { id: params.id },
             include: {
-                images: {
-                    orderBy: { order: 'asc' }
-                },
                 _count: {
                     select: {
                         accessLogs: true,
@@ -62,22 +59,28 @@ export async function PUT(
         const {
             title,
             description,
-            price,
+            listPrice,
             area,
             bedrooms,
             bathrooms,
-            parkingSpots,
             address,
-            neighborhood,
             city,
             state,
+            country,
             zipCode,
-            latitude,
-            longitude,
+            coordinates,
             status,
-            isFeatured,
-            isExclusive,
-            hasAnalysis
+            featured,
+            propertyType,
+            location,
+            estimatedRent,
+            rentalType,
+            grossYield,
+            netYield,
+            images,
+            virtualTourUrl,
+            documentsUrl,
+            slug
         } = body
 
         // Verifica se imóvel existe
@@ -96,29 +99,30 @@ export async function PUT(
         const property = await prisma.property.update({
             where: { id: params.id },
             data: {
-                title,
-                description,
-                price,
-                area,
-                bedrooms,
-                bathrooms,
-                parkingSpots,
-                address,
-                neighborhood,
-                city,
-                state,
-                zipCode,
-                latitude,
-                longitude,
-                status,
-                isFeatured,
-                isExclusive,
-                hasAnalysis
-            },
-            include: {
-                images: {
-                    orderBy: { order: 'asc' }
-                }
+                ...(title && { title }),
+                ...(description && { description }),
+                ...(listPrice !== undefined && { listPrice }),
+                ...(area !== undefined && { area }),
+                ...(bedrooms !== undefined && { bedrooms }),
+                ...(bathrooms !== undefined && { bathrooms }),
+                ...(address && { address }),
+                ...(city && { city }),
+                ...(state && { state }),
+                ...(country && { country }),
+                ...(zipCode && { zipCode }),
+                ...(coordinates !== undefined && { coordinates }),
+                ...(status && { status }),
+                ...(featured !== undefined && { featured }),
+                ...(propertyType && { propertyType }),
+                ...(location && { location }),
+                ...(estimatedRent !== undefined && { estimatedRent }),
+                ...(rentalType !== undefined && { rentalType }),
+                ...(grossYield !== undefined && { grossYield }),
+                ...(netYield !== undefined && { netYield }),
+                ...(images && { images }),
+                ...(virtualTourUrl !== undefined && { virtualTourUrl }),
+                ...(documentsUrl && { documentsUrl }),
+                ...(slug !== undefined && { slug })
             }
         })
 
@@ -146,10 +150,7 @@ export async function DELETE(
     try {
         // Verifica se imóvel existe
         const property = await prisma.property.findUnique({
-            where: { id: params.id },
-            include: {
-                images: true
-            }
+            where: { id: params.id }
         })
 
         if (!property) {
@@ -159,21 +160,26 @@ export async function DELETE(
             )
         }
 
-        // Deleta imagens do Supabase Storage
-        if (property.images.length > 0) {
-            const imagePaths = property.images.map(img => {
-                const url = new URL(img.url)
-                return url.pathname.split('/').pop() || ''
-            }).filter(Boolean)
+        // Deleta imagens do Supabase Storage se existirem
+        if (property.images && property.images.length > 0) {
+            try {
+                const imagePaths = property.images.map(imgUrl => {
+                    const url = new URL(imgUrl)
+                    return url.pathname.split('/').pop() || ''
+                }).filter(Boolean)
 
-            if (imagePaths.length > 0) {
-                await supabaseAdmin.storage
-                    .from('property-images')
-                    .remove(imagePaths)
+                if (imagePaths.length > 0) {
+                    await supabaseAdmin.storage
+                        .from('property-images')
+                        .remove(imagePaths)
+                }
+            } catch (storageError) {
+                console.error('Error deleting images from storage:', storageError)
+                // Continua mesmo se falhar a deleção das imagens
             }
         }
 
-        // Deleta o imóvel (cascade deleta imagens e logs)
+        // Deleta o imóvel (cascade deleta logs)
         await prisma.property.delete({
             where: { id: params.id }
         })

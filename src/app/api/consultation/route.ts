@@ -18,9 +18,6 @@ export async function POST(request: NextRequest) {
         // TODO: Integrate with email service (SendGrid, Resend, etc.)
         // TODO: Store in database or CRM
 
-        // For now, just log the data
-        console.log('Consultation request received:', data)
-
         // Simulate email sending
         // await sendEmail({
         //   to: 'contato@imi.com.br',

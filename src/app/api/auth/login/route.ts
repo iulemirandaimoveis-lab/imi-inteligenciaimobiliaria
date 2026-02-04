@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
             where: { email },
         })
 
-        if (!user) {
+        if (!user || !user.passwordHash) {
             return NextResponse.json(
                 { error: 'Credenciais inválidas' },
                 { status: 401 }
@@ -39,6 +39,16 @@ export async function POST(request: NextRequest) {
             )
         }
 
+        // Verificar se JWT_SECRET está configurado
+        const jwtSecret = process.env.JWT_SECRET
+        if (!jwtSecret) {
+            console.error('JWT_SECRET não está configurado nas variáveis de ambiente')
+            return NextResponse.json(
+                { error: 'Erro de configuração do servidor' },
+                { status: 500 }
+            )
+        }
+
         // Gerar JWT token
         const token = jwt.sign(
             {
@@ -46,7 +56,7 @@ export async function POST(request: NextRequest) {
                 email: user.email,
                 role: user.role,
             },
-            process.env.JWT_SECRET || 'imi-super-secret-jwt-key-production-2026',
+            jwtSecret,
             { expiresIn: '7d' }
         )
 

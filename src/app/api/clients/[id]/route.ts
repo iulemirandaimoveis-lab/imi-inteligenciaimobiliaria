@@ -18,36 +18,29 @@ export async function GET(
                 propertyLinks: {
                     include: {
                         property: {
-                            include: {
-                                images: {
-                                    where: { isPrimary: true },
-                                    take: 1
-                                }
+                            select: {
+                                id: true,
+                                title: true,
+                                slug: true,
+                                images: true,
+                                listPrice: true,
+                                city: true
                             }
+                        },
+                        accessLogs: {
+                            orderBy: {
+                                createdAt: 'desc'
+                            },
+                            take: 10
                         }
                     },
                     orderBy: {
                         createdAt: 'desc'
                     }
                 },
-                accessLogs: {
-                    include: {
-                        property: {
-                            select: {
-                                title: true,
-                                slug: true
-                            }
-                        }
-                    },
-                    orderBy: {
-                        accessedAt: 'desc'
-                    },
-                    take: 20
-                },
                 _count: {
                     select: {
-                        propertyLinks: true,
-                        accessLogs: true
+                        propertyLinks: true
                     }
                 }
             }
@@ -83,7 +76,7 @@ export async function PUT(
 ) {
     try {
         const body = await request.json()
-        const { name, email, phone, origin, notes } = body
+        const { name, email, phone, notes, tags, status } = body
 
         // Verifica se cliente existe
         const existing = await prisma.client.findUnique({
@@ -114,11 +107,12 @@ export async function PUT(
         const client = await prisma.client.update({
             where: { id: params.id },
             data: {
-                name,
-                email,
-                phone,
-                origin,
-                notes
+                ...(name && { name }),
+                ...(email && { email }),
+                ...(phone !== undefined && { phone }),
+                ...(notes !== undefined && { notes }),
+                ...(tags && { tags }),
+                ...(status && { status })
             }
         })
 

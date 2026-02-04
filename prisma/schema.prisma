@@ -405,11 +405,12 @@ enum WhatsAppMessageStatus {
 
 model Property {
   id                String   @id @default(cuid())
-  
+
   internalCode      String   @unique
+  slug              String?  @unique
   title             String
   description       String   @db.Text
-  
+
   location          Location
   address           String
   city              String
@@ -417,36 +418,43 @@ model Property {
   country           String
   zipCode           String
   coordinates       String?
-  
+
   propertyType      PropertyType
   bedrooms          Int
   bathrooms         Decimal  @db.Decimal(3, 1)
   area              Decimal  @db.Decimal(10, 2)
   areaUnit          String   @default("sqft")
   yearBuilt         Int?
-  
+
   listPrice         Decimal  @db.Decimal(15, 2)
   currency          String   @default("USD")
   estimatedRent     Decimal? @db.Decimal(10, 2)
   rentalType        RentalType?
-  
+
   grossYield        Decimal? @db.Decimal(7, 6)
   netYield          Decimal? @db.Decimal(7, 6)
-  
+
   status            PropertyStatus @default(AVAILABLE)
   featured          Boolean  @default(false)
-  
+
+  viewCount         Int      @default(0)
+
   images            String[] // URLs Supabase Storage
   virtualTourUrl    String?
   documentsUrl      String[]
-  
+
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   publishedAt       DateTime?
-  
+
+  // Relações para tracking
+  clientLinks       ClientPropertyLink[]
+  accessLogs        PropertyAccessLog[]
+
   @@index([location])
   @@index([status])
   @@index([listPrice])
+  @@index([slug])
   @@map("properties")
 }
 
@@ -463,6 +471,150 @@ enum PropertyStatus {
   RESERVED
   SOLD
   OFF_MARKET
+}
+
+// ============================================
+// CLIENTES
+// ============================================
+
+model Client {
+  id            String   @id @default(cuid())
+
+  name          String
+  email         String   @unique
+  phone         String?
+  document      String?  // CPF/CNPJ
+
+  notes         String?  @db.Text
+  tags          String[]
+
+  status        ClientStatus @default(ACTIVE)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  propertyLinks ClientPropertyLink[]
+  accessLogs    PropertyAccessLog[]
+
+  @@index([email])
+  @@index([status])
+  @@map("clients")
+}
+
+enum ClientStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+// ============================================
+// NOTIFICAÇÕES
+// ============================================
+
+model Notification {
+  id          String   @id @default(cuid())
+
+  userId      String?
+  type        NotificationType
+  title       String
+  message     String   @db.Text
+
+  read        Boolean  @default(false)
+  readAt      DateTime?
+
+  metadata    Json?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  LEAD_NEW
+  LEAD_UPDATE
+  PROPERTY_VIEW
+  CONSULTATION_SCHEDULED
+  PAYMENT_RECEIVED
+}
+
+// ============================================
+// TRACKING DE IMÓVEIS
+// ============================================
+
+model ClientPropertyLink {
+  id          String   @id @default(cuid())
+
+  clientId    String
+  propertyId  String
+  slug        String   @unique
+  token       String   @unique @default(cuid())
+  url         String?
+
+  expiresAt   DateTime?
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  accessLogs  PropertyAccessLog[]
+
+  @@unique([clientId, propertyId])
+  @@index([clientId])
+  @@index([propertyId])
+  @@index([slug])
+  @@index([token])
+  @@map("client_property_links")
+}
+
+model PropertyAccessLog {
+  id          String   @id @default(cuid())
+
+  propertyId  String
+  clientId    String?
+  linkId      String?
+  linkToken   String?
+
+  // Device info
+  device      String?
+  browser     String?
+  os          String?
+  ipAddress   String?
+  userAgent   String?
+  referrer    String?
+
+  // Time tracking (em segundos)
+  totalTimeSeconds       Int?
+  galleryTimeSeconds     Int?
+  descriptionTimeSeconds Int?
+  priceTimeSeconds       Int?
+  ctaTimeSeconds         Int?
+  scrollDepth            Int?     // 0-100 percentual
+
+  // Ações
+  clickedCta      Boolean @default(false)
+  clickedWhatsApp Boolean @default(false)
+
+  accessedAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  client      Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  link        ClientPropertyLink? @relation(fields: [linkId], references: [id], onDelete: SetNull)
+
+  @@index([propertyId])
+  @@index([clientId])
+  @@index([linkId])
+  @@index([createdAt])
+  @@index([accessedAt])
+  @@map("property_access_logs")
 }
 
 // ============================================

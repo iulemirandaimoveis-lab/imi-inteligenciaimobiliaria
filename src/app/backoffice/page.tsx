@@ -137,10 +137,10 @@ export default function BackofficeLoginPage() {
                         </button>
                     </form>
 
-                    {/* Credenciais de teste */}
-                    <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                        <p className="text-xs text-yellow-200 text-center">
-                            <strong>Teste:</strong> admin@imi.com.br / senha123
+                    {/* Suporte */}
+                    <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                        <p className="text-xs text-blue-200 text-center">
+                            Problemas de acesso? Entre em contato com o administrador.
                         </p>
                     </div>
                 </div>

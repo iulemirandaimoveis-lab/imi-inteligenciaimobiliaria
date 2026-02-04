@@ -9,18 +9,32 @@ export async function GET(
     { params }: { params: { id: string } }
 ) {
     try {
-        const client = await prisma.client.findUnique({
+        const lead = await prisma.lead.findUnique({
             where: { id: params.id },
+            include: {
+                simulations: {
+                    orderBy: { createdAt: 'desc' },
+                    take: 5
+                },
+                consultations: {
+                    orderBy: { scheduledAt: 'desc' },
+                    take: 5
+                },
+                activities: {
+                    orderBy: { createdAt: 'desc' },
+                    take: 10
+                }
+            }
         })
 
-        if (!client) {
+        if (!lead) {
             return NextResponse.json(
                 { error: 'Lead não encontrado' },
                 { status: 404 }
             )
         }
 
-        return NextResponse.json({ client })
+        return NextResponse.json({ lead })
     } catch (error) {
         console.error('Erro ao buscar lead:', error)
         return NextResponse.json(
@@ -36,20 +50,36 @@ export async function PUT(
     { params }: { params: { id: string } }
 ) {
     try {
-        const { name, email, phone, origin, notes } = await request.json()
+        const body = await request.json()
+        const {
+            name,
+            email,
+            phone,
+            leadStage,
+            qualificationScore,
+            assignedTo,
+            leadSource,
+            leadMedium,
+            leadCampaign
+        } = body
 
-        const client = await prisma.client.update({
+        const lead = await prisma.lead.update({
             where: { id: params.id },
             data: {
-                name,
-                email,
-                phone,
-                origin,
-                notes,
-            },
+                ...(name && { name }),
+                ...(email && { email }),
+                ...(phone !== undefined && { phone }),
+                ...(leadStage && { leadStage }),
+                ...(qualificationScore !== undefined && { qualificationScore }),
+                ...(assignedTo !== undefined && { assignedTo }),
+                ...(leadSource !== undefined && { leadSource }),
+                ...(leadMedium !== undefined && { leadMedium }),
+                ...(leadCampaign !== undefined && { leadCampaign }),
+                ...(assignedTo && { assignedAt: new Date() })
+            }
         })
 
-        return NextResponse.json({ client })
+        return NextResponse.json({ lead })
     } catch (error: any) {
         console.error('Erro ao atualizar lead:', error)
 
@@ -80,8 +110,8 @@ export async function DELETE(
     { params }: { params: { id: string } }
 ) {
     try {
-        await prisma.client.delete({
-            where: { id: params.id },
+        await prisma.lead.delete({
+            where: { id: params.id }
         })
 
         return NextResponse.json({ success: true })
