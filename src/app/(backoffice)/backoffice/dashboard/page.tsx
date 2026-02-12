@@ -12,7 +12,7 @@ export default function Dashboard() {
                     <p className="text-sm text-gray-500 dark:text-gray-400">Bem-vindo de volta,</p>
                     <h2 className="text-2xl font-display font-bold text-text-header-light dark:text-white flex items-center gap-2">
                         Iule Miranda
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full border border-primary/20">v2.1 Mobile</span>
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full border border-green-200">v2.2 (13:42)</span>
                     </h2>
                 </div>
             </div>
