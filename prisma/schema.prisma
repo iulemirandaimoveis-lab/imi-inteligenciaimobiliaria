@@ -12,11 +12,11 @@ model User {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email         String   @unique
   name          String
-  passwordHash  String
+  passwordHash  String?
   role          UserRole @default(ADMIN)
   
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now()) @updatedAt
+  created_at     DateTime @default(now()) @map("createdAt")
+  updated_at     DateTime @default(now()) @updatedAt @map("updatedAt")
   
   @@map("users")
 }
@@ -25,4 +25,87 @@ enum UserRole {
   ADMIN
   EDITOR
   VIEWER
+}
+
+model Development {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title           String   // Maps to 'name' in form
+  slug            String   @unique
+  description     String?
+  type            String   // apartment, house, etc.
+  status_commercial String // draft, published, etc.
+  
+  price_from      Decimal?
+  price_to        Decimal?
+  area_from       Decimal?
+  area_to         Decimal?
+  
+  bedrooms        Int?
+  bathrooms       Int?
+  parking_spaces  Int?
+  floor_count     Int?
+  units_count     Int?
+  
+  city            String?
+  neighborhood    String?
+  address         String?
+  country         String?  @default("Brasil")
+  
+  selling_points  String[] // Array of strings
+  
+  // Media
+  image           String? // Capa
+  gallery_images  String[]
+  floor_plans     String[]
+  videos          String[]
+  virtual_tour_url String?
+  brochure_url    String?
+  
+  // Relations
+  developer       Developer? @relation(fields: [developer_id], references: [id])
+  developer_id    String?    @db.Uuid
+  
+  units           Unit[]
+  
+  created_at      DateTime @default(now()) @map("createdAt")
+  updated_at      DateTime @updatedAt @map("updatedAt")
+  updated_by      String?
+  
+  @@map("developments")
+}
+
+model Unit {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  development_id  String   @db.Uuid
+  development     Development @relation(fields: [development_id], references: [id], onDelete: Cascade)
+  
+  unit_number     String
+  floor           Int?
+  block           String?
+  type            String? // T2, T3
+  
+  price           Decimal?
+  area            Decimal?
+  bedrooms        Int?
+  bathrooms       Int?
+  
+  status          String   @default("available") // available, reserved, sold
+  
+  created_at      DateTime @default(now()) @map("createdAt")
+  updated_at      DateTime @updatedAt @map("updatedAt")
+  
+  @@map("units")
+}
+
+model Developer {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  logo        String?
+  website     String?
+  
+  developments Development[]
+  
+  created_at  DateTime @default(now()) @map("createdAt")
+  
+  @@map("developers")
 }

@@ -10,9 +10,14 @@ import Input from '@/components/ui/Input'
 import Textarea from '@/components/ui/Textarea'
 import { Loader2, Save, Building2, MapPin, DollarSign, LayoutDashboard, Image as ImageIcon } from 'lucide-react'
 import MediaUploader from '@/components/backoffice/imoveis/MediaUploader'
+import { useDevelopers } from '@/hooks/use-developers'
 
+const { developers } = useDevelopers()
+
+// Add developer_id to schema
 const schema = z.object({
     title: z.string().min(5, 'Título deve ter pelo menos 5 caracteres'),
+    developer_id: z.string().optional(),
     type: z.enum(['apartment', 'house', 'commercial', 'land', 'resort', 'penthouse', 'studio']),
     status_commercial: z.enum(['draft', 'published', 'campaign', 'sold', 'private']),
     price_from: z.coerce.number().min(0, 'Valor inválido'),
@@ -25,7 +30,7 @@ const schema = z.object({
     neighborhood: z.string().min(2, 'Bairro obrigatório'),
     address: z.string().optional(),
     description: z.string().optional(),
-    selling_points: z.string().optional(), // We'll handle as comma-separated or similar in UI
+    selling_points: z.string().optional(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -43,6 +48,7 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
         resolver: zodResolver(schema),
         defaultValues: {
             title: initialData?.title || '',
+            developer_id: initialData?.developer_id || '',
             type: initialData?.type || 'apartment',
             status_commercial: initialData?.status_commercial || 'draft',
             price_from: initialData?.price_from || 0,
@@ -59,6 +65,11 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
     })
 
     const handleFormSubmit = async (data: FormData) => {
+        // Convert selling_points string to array if needed on submit
+        if (typeof data.selling_points === 'string') {
+            // @ts-ignore
+            data.selling_points = data.selling_points.split(',').map(s => s.trim()).filter(Boolean)
+        }
         await onSubmit(data)
     }
 
@@ -109,6 +120,17 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                                     <option value="resort">Resort</option>
                                 </select>
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Construtora / Developer</label>
+                            <select {...register('developer_id')} className="w-full h-14 px-4 rounded-xl border border-imi-100 bg-white font-medium text-imi-700 focus:outline-none focus:ring-2 focus:ring-accent-500">
+                                <option value="">Selecione uma construtora...</option>
+                                <option value="imi">IMI - Inteligência Imobiliária (Padrão)</option>
+                                {developers.map(dev => (
+                                    <option key={dev.id} value={dev.id}>{dev.name}</option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
