@@ -1,27 +1,45 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import Sidebar from '@/components/backoffice/Sidebar';
 import MobileHeader from '@/components/backoffice/MobileHeader';
 import MobileBottomNav from '@/components/backoffice/MobileBottomNav';
 import { Toaster } from 'sonner';
-import Script from 'next/script';
 
 export default function BackofficeLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const pathname = usePathname();
-    const isLoginPage = pathname === '/backoffice';
+    const router = useRouter();
+    const supabase = createClient();
+    const [mounted, setMounted] = useState(false);
 
-    if (isLoginPage) {
-        return (
-            <div className="min-h-screen bg-imi-50 antialiased">
-                {children}
-                <Toaster position="top-right" richColors theme="light" />
-            </div>
-        );
+    useEffect(() => {
+        setMounted(true);
+        // Verificar autenticação
+        const checkAuth = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                router.push('/login');
+            }
+        };
+        checkAuth();
+
+        // Listener para mudanças de auth
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_OUT' || !session) {
+                router.push('/login');
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, [router, supabase]);
+
+    if (!mounted) {
+        return null; // or a loading skeleton
     }
 
     return (
@@ -31,25 +49,31 @@ export default function BackofficeLayout({
                 rel="stylesheet"
                 href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
             />
-            
-            <div className="min-h-screen bg-background-light dark:bg-background-dark font-sans text-gray-900 dark:text-gray-100 transition-colors duration-300">
-                {/* Desktop Sidebar */}
+
+            <div className="min-h-screen bg-background-light dark:bg-background-dark font-sans text-text-body-light dark:text-text-body-dark transition-colors duration-500 selection:bg-primary/20 selection:text-primary-dark">
+                {/* Desktop Sidebar & Background Pattern */}
+                <div className="fixed inset-0 z-0 bg-[url('/grid.svg')] opacity-[0.03] dark:opacity-[0.05] pointer-events-none"></div>
+
                 <Sidebar />
 
-                <div className="lg:pl-72 flex flex-col min-h-screen transition-all duration-300">
-                    {/* Mobile Header */}
-                    <MobileHeader />
+                <div className="lg:pl-72 flex flex-col min-h-screen transition-all duration-300 relative z-10">
+                    {/* Mobile Header (Hidden on LG) */}
+                    <div className="lg:hidden">
+                        <MobileHeader />
+                    </div>
 
                     {/* Main Content */}
-                    <main className="flex-1 px-4 pt-4 pb-24 overflow-y-auto">
+                    <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 pb-32 lg:pb-12 max-w-8xl mx-auto w-full animate-fade-in">
                         {children}
                     </main>
 
-                    {/* Mobile Bottom Navigation */}
-                    <MobileBottomNav />
+                    {/* Mobile Bottom Navigation (Hidden on LG) */}
+                    <div className="lg:hidden">
+                        <MobileBottomNav />
+                    </div>
                 </div>
 
-                <Toaster position="top-right" richColors theme="light" />
+                <Toaster position="top-right" richColors theme="system" closeButton />
             </div>
         </>
     );

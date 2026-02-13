@@ -1,416 +1,176 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
+import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
-import {
-    Plus, Edit, Trash2, Phone, Mail, MessageCircle,
-    Star, Search, Filter, X, Check, Loader2, Sparkles,
-    Calendar, ArrowUpRight, User, Hash, Zap, ChevronRight, Users, Layers
-} from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
+import { Plus, Search, Inbox, Star, Columns, Mail, Phone, ArrowLeft } from 'lucide-react'
 import Button from '@/components/ui/Button'
-import Input from '@/components/ui/Input'
-import Textarea from '@/components/ui/Textarea'
-import Toast, { useToast } from '@/components/ui/Toast'
+import Card from '@/components/ui/Card'
+import Badge from '@/components/ui/Badge'
+import Link from 'next/link'
+import { format } from 'date-fns'
+import PageHeader from '@/components/backoffice/PageHeader'
 
-interface Lead {
-    id: string
-    name: string
-    email: string | null
-    phone: string | null
-    status: string
-    source: string | null
-    interest: string | null
-    notes: string | null
-    ai_score: number | null
-    ai_priority: 'low' | 'medium' | 'high' | 'critical'
-    development_id: string | null
-    last_contacted_at: string | null
-    created_at: string
-}
+const supabase = createClient()
 
 export default function LeadsPage() {
-    const supabase = createClient()
-    const { toasts, showToast, removeToast } = useToast()
-    const [leads, setLeads] = useState<Lead[]>([])
-    const [isLoading, setIsLoading] = useState(true)
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [editingLead, setEditingLead] = useState<Lead | null>(null)
-    const [searchTerm, setSearchTerm] = useState('')
+    const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null)
     const [statusFilter, setStatusFilter] = useState('all')
-    const [isSaving, setIsSaving] = useState(false)
-    const [isQualifying, setIsQualifying] = useState<string | null>(null)
 
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        status: 'new',
-        source: 'site',
-        interest: '',
-        notes: '',
-        ai_priority: 'medium',
-        development_id: ''
+    const { data: leads = [], isLoading } = useSWR('leads_inbox', async () => {
+        const { data, error } = await supabase
+            .from('leads')
+            .select('*')
+            .order('created_at', { ascending: false })
+        if (error) throw error
+        return data || []
     })
 
-    const fetchLeads = useCallback(async () => {
-        setIsLoading(true)
-        try {
-            const { data, error } = await supabase
-                .from('leads')
-                .select('*')
-                .order('created_at', { ascending: false })
+    const filteredLeads = leads.filter((lead: any) =>
+        statusFilter === 'all' || lead.status === statusFilter
+    )
 
-            if (error) throw error
-            setLeads(data || [])
-        } catch (err: any) {
-            showToast(err.message || 'Erro ao carregar leads', 'error')
-        } finally {
-            setIsLoading(false)
-        }
-    }, [supabase, showToast])
-
-    useEffect(() => {
-        fetchLeads()
-    }, [fetchLeads])
-
-    const filteredLeads = leads.filter(lead => {
-        const matchesSearch =
-            lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lead.phone?.includes(searchTerm)
-
-        const matchesStatus = statusFilter === 'all' || lead.status === statusFilter
-
-        return matchesSearch && matchesStatus
-    })
-
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault()
-        if (!formData.name) { showToast('Nome é obrigatório', 'error'); return }
-        setIsSaving(true)
-        try {
-            if (editingLead) {
-                const { error } = await supabase.from('leads').update(formData).eq('id', editingLead.id)
-                if (error) throw error
-                showToast('Lead atualizado', 'success')
-            } else {
-                const { error } = await supabase.from('leads').insert([formData])
-                if (error) throw error
-                showToast('Lead criado', 'success')
-            }
-            setIsModalOpen(false)
-            resetForm()
-            fetchLeads()
-        } catch (err: any) {
-            showToast(err.message || 'Erro ao salvar lead', 'error')
-        } finally {
-            setIsSaving(false)
-        }
-    }
-
-    async function handleDelete(id: string) {
-        if (!confirm('Excluir permanentemente?')) return
-        try {
-            const { error } = await supabase.from('leads').delete().eq('id', id)
-            if (error) throw error
-            showToast('Excluído', 'success')
-            fetchLeads()
-        } catch (err: any) {
-            showToast('Erro ao excluir', 'error')
-        }
-    }
-
-    async function handleStatusChange(id: string, newStatus: string) {
-        try {
-            const { error } = await supabase.from('leads').update({ status: newStatus }).eq('id', id)
-            if (error) throw error
-            showToast('Status atualizado', 'success')
-            setLeads(prev => prev.map(l => l.id === id ? { ...l, status: newStatus } : l))
-        } catch (err: any) {
-            showToast('Erro ao atualizar status', 'error')
-        }
-    }
-
-    async function handleQualifyLead(id: string) {
-        setIsQualifying(id);
-        try {
-            const response = await fetch('/api/ai/qualify-lead', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lead_id: id })
-            });
-            if (!response.ok) throw new Error('Falha na IA');
-            showToast('Inteligência Artificial processou o lead!', 'success');
-            fetchLeads();
-        } catch (error: any) {
-            showToast('Erro na IA: Verifique as credenciais Anthropic', 'error');
-        } finally {
-            setIsQualifying(null);
-        }
-    }
-
-    function resetForm() {
-        setFormData({ name: '', email: '', phone: '', status: 'new', source: 'site', interest: '', notes: '', ai_priority: 'medium', development_id: '' })
-        setEditingLead(null)
-    }
-
-    function openEditModal(lead: Lead) {
-        setEditingLead(lead)
-        setFormData({
-            name: lead.name,
-            email: lead.email || '',
-            phone: lead.phone || '',
-            status: lead.status,
-            source: lead.source || 'manual',
-            interest: lead.interest || '',
-            notes: lead.notes || '',
-            ai_priority: lead.ai_priority || 'medium',
-            development_id: lead.development_id || ''
-        })
-        setIsModalOpen(true)
-    }
-
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        show: { opacity: 1, transition: { staggerChildren: 0.05 } }
-    }
-
-    const itemVariants = {
-        hidden: { y: 15, opacity: 0 },
-        show: { y: 0, opacity: 1 }
-    }
-
-    if (isLoading) {
-        return (
-            <div className="flex flex-col gap-6 p-8 h-[60vh] justify-center items-center">
-                <div className="w-10 h-10 border-4 border-imi-100 border-t-accent-500 rounded-full animate-spin" />
-                <p className="text-imi-300 font-bold uppercase tracking-widest text-xs">Mapeando CRM...</p>
-            </div>
-        )
-    }
+    const selectedLead = leads.find((l: any) => l.id === selectedLeadId)
 
     return (
-        <div className="space-y-8 pb-20">
-            {toasts.map(toast => (
-                <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => removeToast(toast.id)} />
-            ))}
-
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-accent-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]" />
-                        <span className="text-[10px] font-black text-imi-400 uppercase tracking-[0.3em]">Módulo de Conversão</span>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-bold text-imi-900 font-display tracking-tight">
-                        Leads & <span className="text-accent-500">Gestão CRM</span>
-                    </h1>
-                </div>
-
-                <div className="flex gap-3">
-                    <Link href="/backoffice/leads/kanban">
-                        <Button variant="outline" className="h-14 px-8 border-imi-100 bg-white/50 backdrop-blur-md rounded-2xl transition-all">
-                            <Layers className="w-5 h-5 mr-3 text-imi-400" />
-                            Visualizar Kanban
-                        </Button>
-                    </Link>
-                    <Button onClick={() => setIsModalOpen(true)} className="h-14 px-8 bg-imi-900 text-white rounded-2xl shadow-elevated group active:scale-95 transition-all">
-                        <Plus className="w-5 h-5 mr-3 group-hover:rotate-90 transition-transform" />
-                        Adicionar Lead
-                    </Button>
-                </div>
+        <div className="flex flex-col h-[calc(100vh-theme(spacing.24))]">
+            <div className="flex-none mb-6">
+                <PageHeader
+                    title="Gestão de Leads"
+                    description="Central unificada de oportunidades."
+                    breadcrumbs={[{ label: 'Leads' }]}
+                    action={
+                        <div className="flex items-center gap-2">
+                            <Link href="/backoffice/leads/kanban">
+                                <Button variant="outline" icon={<Columns size={18} />}>Kanban View</Button>
+                            </Link>
+                            <Button icon={<Plus size={18} />}>Novo Lead</Button>
+                        </div>
+                    }
+                />
             </div>
 
-            {/* Filters */}
-            <div className="bg-white/50 backdrop-blur-xl rounded-[2.5rem] border border-imi-100 p-3 shadow-soft flex flex-col lg:flex-row gap-2">
-                <div className="flex-1 relative group">
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-imi-300 group-focus-within:text-accent-500 transition-colors w-5 h-5" />
-                    <input
-                        type="text"
-                        placeholder="Buscar investidor ou lead..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-14 pr-6 h-14 bg-white border border-transparent rounded-[2rem] text-imi-900 placeholder:text-imi-300 focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 transition-all font-medium"
-                    />
-                </div>
-                <div className="flex gap-2 p-1">
-                    {['all', 'new', 'contacted', 'qualified', 'won'].map((st) => (
-                        <button
-                            key={st}
-                            onClick={() => setStatusFilter(st)}
-                            className={`px-6 h-12 rounded-[1.5rem] text-xs font-black uppercase tracking-widest transition-all ${statusFilter === st
-                                ? 'bg-imi-900 text-white shadow-card'
-                                : 'bg-transparent text-imi-400 hover:bg-imi-50'}`}
-                        >
-                            {st === 'all' ? 'Todos' : st === 'new' ? 'Novos' : st === 'contacted' ? 'Contatos' : st === 'qualified' ? 'Qualificados' : 'Ganhos'}
+            <div className="flex-1 flex overflow-hidden bg-white dark:bg-card-dark rounded-[2.5rem] border border-gray-100 dark:border-white/5 shadow-soft">
+                {/* Sidebar Filters */}
+                <aside className="w-64 border-r border-gray-100 dark:border-white/5 hidden lg:flex flex-col bg-gray-50/50 dark:bg-card-darker/50 p-4">
+                    <nav className="space-y-1">
+                        <button onClick={() => setStatusFilter('all')} className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-bold transition-all ${statusFilter === 'all' ? 'bg-white dark:bg-white/5 text-primary shadow-sm' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5'}`}>
+                            <span className="flex items-center gap-3"><Inbox size={18} /> Todos</span>
+                            <Badge size="sm" variant="ghost">{leads.length}</Badge>
                         </button>
-                    ))}
+                        <button onClick={() => setStatusFilter('new')} className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-bold transition-all ${statusFilter === 'new' ? 'bg-white dark:bg-white/5 text-primary shadow-sm' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5'}`}>
+                            <span className="flex items-center gap-3"><Star size={18} /> Novos</span>
+                            <Badge size="sm" variant="ghost">{leads.filter((l: any) => l.status === 'new').length}</Badge>
+                        </button>
+                    </nav>
+                </aside>
+
+                {/* List View */}
+                <div className={`${selectedLeadId ? 'hidden md:flex' : 'flex'} flex-1 flex-col border-r border-gray-100 dark:border-white/5 min-w-0`}>
+                    <div className="p-4 border-b border-gray-100 dark:border-white/5 sticky top-0 bg-white/80 dark:bg-card-dark/80 backdrop-blur-sm z-10">
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                            <input
+                                type="text"
+                                placeholder="Buscar nos leads..."
+                                className="w-full pl-10 pr-4 h-10 bg-gray-50 dark:bg-white/5 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 placeholder-gray-400 dark:text-white transition-all"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
+                        {isLoading ? (
+                            <div className="flex justify-center p-8"><span className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></span></div>
+                        ) : (
+                            filteredLeads.map((lead: any) => (
+                                <div
+                                    key={lead.id}
+                                    onClick={() => setSelectedLeadId(lead.id)}
+                                    className={`p-4 rounded-2xl cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5 transition-all border border-transparent ${selectedLeadId === lead.id ? 'bg-primary/5 dark:bg-primary/10 border-primary/20 shadow-sm' : ''}`}
+                                >
+                                    <div className="flex justify-between items-start mb-1">
+                                        <h4 className={`text-sm font-bold ${selectedLeadId === lead.id ? 'text-primary' : 'text-gray-900 dark:text-white'}`}>{lead.name}</h4>
+                                        <span className="text-[10px] text-gray-400 font-medium">{format(new Date(lead.created_at), 'dd MMM')}</span>
+                                    </div>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mb-2">{lead.interest || 'Sem interesse definido'}</p>
+                                    <div className="flex gap-2">
+                                        <Badge size="sm" variant={lead.status === 'new' ? 'primary' : 'outline'}>
+                                            {lead.status === 'new' ? 'Novo' : lead.status}
+                                        </Badge>
+                                        {lead.ai_score && <Badge size="sm" variant="warning">Score {lead.ai_score}</Badge>}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                {/* Detail View (Preview) */}
+                <div className={`${selectedLeadId ? 'flex' : 'hidden'} lg:flex flex-[1.5] flex-col bg-gray-50/50 dark:bg-card-darker/50 overflow-y-auto custom-scrollbar`}>
+                    {selectedLead ? (
+                        <div className="p-6 md:p-8 space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+                            {/* Detail Header */}
+                            <div>
+                                <div className="flex justify-between items-start mb-4">
+                                    <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-white">{selectedLead.name}</h2>
+                                    <div className="flex gap-2">
+                                        <Button variant="outline" size="sm" onClick={() => setSelectedLeadId(null)} className="md:hidden">Voltar</Button>
+                                        <Button variant="primary" size="sm">Editar</Button>
+                                    </div>
+                                </div>
+                                <div className="flex flex-wrap gap-4 text-sm">
+                                    <span className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-white/5 rounded-lg border border-gray-100 dark:border-white/5 text-gray-600 dark:text-gray-300">
+                                        <Mail size={14} className="text-primary" /> {selectedLead.email}
+                                    </span>
+                                    <span className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-white/5 rounded-lg border border-gray-100 dark:border-white/5 text-gray-600 dark:text-gray-300">
+                                        <Phone size={14} className="text-primary" /> {selectedLead.phone}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <Card padding="md" className="bg-white dark:bg-card-dark shadow-sm border-gray-100 dark:border-white/5">
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-widest font-black mb-1">Status</p>
+                                    <Badge variant="primary" size="lg">{selectedLead.status}</Badge>
+                                </Card>
+                                <Card padding="md" className="bg-white dark:bg-card-dark shadow-sm border-gray-100 dark:border-white/5">
+                                    <p className="text-[10px] text-gray-400 uppercase tracking-widest font-black mb-1">Score IA</p>
+                                    <div className="text-2xl font-bold text-primary">{selectedLead.ai_score || '-'}</div>
+                                </Card>
+                            </div>
+
+                            {/* Timeline / Notes */}
+                            <div className="space-y-4">
+                                <h3 className="font-display font-bold text-gray-900 dark:text-white text-lg">Histórico & Notas</h3>
+                                {selectedLead.notes ? (
+                                    <div className="bg-yellow-50 dark:bg-yellow-900/10 p-6 rounded-2xl border border-yellow-100 dark:border-yellow-900/20 text-sm text-yellow-800 dark:text-yellow-200 shadow-sm">
+                                        {selectedLead.notes}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-gray-400 italic">Nenhuma nota registrada.</p>
+                                )}
+
+                                {/* Fake Timeline Items */}
+                                <div className="relative pl-6 border-l-2 border-gray-100 dark:border-white/5 space-y-8 pt-2">
+                                    <div className="relative">
+                                        <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-primary ring-4 ring-white dark:ring-card-darker shadow-glow"></div>
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{format(new Date(selectedLead.created_at), 'dd MMM yyyy, HH:mm')}</p>
+                                        <p className="text-sm font-medium text-gray-900 dark:text-white">Lead capturado via {selectedLead.source || 'Website'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center h-full text-gray-400 p-8 text-center">
+                            <div className="w-20 h-20 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6">
+                                <Inbox size={32} strokeWidth={1.5} className="opacity-50" />
+                            </div>
+                            <h3 className="font-display font-bold text-xl mb-2 text-gray-900 dark:text-white">Selecione um Lead</h3>
+                            <p className="text-sm text-gray-500 max-w-xs leading-relaxed">Clique em um lead da lista ao lado para visualizar os detalhes completos.</p>
+                        </div>
+                    )}
                 </div>
             </div>
-
-            {/* Main List */}
-            <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-                className="grid gap-4"
-            >
-                {filteredLeads.length === 0 ? (
-                    <div className="text-center py-20 bg-white rounded-[3rem] border border-dashed border-imi-100">
-                        <div className="w-16 h-16 bg-imi-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Users className="text-imi-200" size={32} />
-                        </div>
-                        <p className="text-imi-400 font-medium">Nenhum rastro encontrado na base no momento.</p>
-                    </div>
-                ) : (
-                    filteredLeads.map((lead) => (
-                        <motion.div
-                            key={lead.id}
-                            variants={itemVariants}
-                            className="bg-white rounded-[2rem] p-6 lg:p-8 border border-imi-100 shadow-soft hover:shadow-card-hover transition-all duration-500 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 group"
-                        >
-                            <div className="flex-1 flex flex-col sm:flex-row gap-6">
-                                <div className="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-imi-100 to-imi-50 flex items-center justify-center font-bold text-imi-400 border border-white text-xl shadow-soft">
-                                    {lead.name.charAt(0)}
-                                </div>
-                                <div className="space-y-3">
-                                    <div className="flex flex-wrap items-center gap-3">
-                                        <Link href={`/backoffice/leads/${lead.id}`}>
-                                            <h3 className="text-xl font-bold text-imi-900 group-hover:text-accent-600 transition-colors uppercase tracking-tight cursor-pointer">{lead.name}</h3>
-                                        </Link>
-                                        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${lead.ai_priority === 'critical' ? 'bg-red-50 text-red-600 border-red-100' :
-                                            lead.ai_priority === 'high' ? 'bg-orange-50 text-orange-600 border-orange-100' :
-                                                'bg-imi-50 text-imi-400 border-imi-100'
-                                            }`}>
-                                            {lead.ai_priority || 'medium'}
-                                        </div>
-                                        {lead.ai_score && (
-                                            <div className="flex items-center gap-1 bg-accent-50 text-accent-700 px-3 py-1 rounded-full text-[10px] font-black border border-accent-100">
-                                                <Zap size={10} className="fill-accent-500" />
-                                                SCORE {lead.ai_score}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-imi-500 font-medium">
-                                        <span className="flex items-center gap-2"><Mail size={14} className="text-imi-300" /> {lead.email || 'Private'}</span>
-                                        <span className="flex items-center gap-2"><Phone size={14} className="text-imi-300" /> {lead.phone || 'No Phone'}</span>
-                                        <span className="flex items-center gap-2"><ArrowUpRight size={14} className="text-imi-300" /> {lead.interest || 'General'}</span>
-                                    </div>
-
-                                    {lead.notes && (
-                                        <p className="text-xs text-imi-400 italic bg-imi-50/50 p-3 rounded-xl border-l-4 border-accent-200 line-clamp-1 group-hover:line-clamp-none transition-all">
-                                            "{lead.notes}"
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-6 w-full md:w-auto">
-                                <div className="space-y-2 w-full sm:w-auto">
-                                    <span className="text-[10px] font-black text-imi-300 uppercase tracking-widest block text-right">Mudar Fluxo</span>
-                                    <select
-                                        value={lead.status}
-                                        onChange={(e) => handleStatusChange(lead.id, e.target.value)}
-                                        className="h-10 px-4 rounded-xl border border-imi-100 bg-white text-xs font-bold text-imi-600 focus:outline-none focus:ring-2 focus:ring-accent-500 w-full sm:w-40"
-                                    >
-                                        <option value="new">Novo Lead</option>
-                                        <option value="contacted">Em Contato</option>
-                                        <option value="qualified">Qualificado</option>
-                                        <option value="won">Investimento Feito</option>
-                                        <option value="lost">Status Perdido</option>
-                                    </select>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => handleQualifyLead(lead.id)}
-                                        disabled={!!isQualifying}
-                                        className={`flex items-center gap-2 h-12 px-5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${isQualifying === lead.id
-                                            ? 'bg-accent-50 text-accent-600'
-                                            : 'bg-accent-500 text-white shadow-elevated hover:bg-accent-600 active:scale-95'
-                                            }`}
-                                    >
-                                        {isQualifying === lead.id ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                                        Qualificar IA
-                                    </button>
-                                    <button onClick={() => openEditModal(lead)} className="w-12 h-12 rounded-2xl border border-imi-100 flex items-center justify-center text-imi-400 hover:text-imi-900 hover:bg-imi-50 transition-all active:scale-95">
-                                        <Edit size={20} />
-                                    </button>
-                                    <button onClick={() => handleDelete(lead.id)} className="w-12 h-12 rounded-2xl border border-red-50 flex items-center justify-center text-red-200 hover:text-red-600 hover:bg-red-50 transition-all active:scale-95">
-                                        <Trash2 size={20} />
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ))
-                )}
-            </motion.div>
-
-            {/* Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-imi-900/40 backdrop-blur-md z-50 flex items-center justify-end p-0 sm:p-4 overflow-hidden">
-                    <motion.div
-                        initial={{ x: '100%' }}
-                        animate={{ x: 0 }}
-                        className="bg-white w-full max-w-xl h-full sm:h-auto sm:rounded-[3rem] shadow-2xl overflow-y-auto"
-                    >
-                        <div className="p-10 space-y-10">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-3xl font-bold text-imi-900 font-display">{editingLead ? 'Editar' : 'Registrar'} Investidor</h2>
-                                <button onClick={() => setIsModalOpen(false)} className="w-12 h-12 rounded-2xl bg-imi-50 flex items-center justify-center text-imi-400">
-                                    <X size={24} />
-                                </button>
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-imi-400 uppercase tracking-widest block mb-1">Identificação</label>
-                                    <Input value={formData.name} onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))} placeholder="Nome Completo" className="h-14 rounded-2xl border-imi-100" />
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input value={formData.email} onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))} placeholder="E-mail" className="h-14 rounded-2xl border-imi-100" />
-                                        <Input value={formData.phone} onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))} placeholder="Telefone/WhatsApp" className="h-14 rounded-2xl border-imi-100" />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4 pt-4 border-t border-imi-50">
-                                    <label className="text-[10px] font-black text-imi-400 uppercase tracking-widest block mb-1">Status do Pipeline</label>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {['new', 'contacted', 'qualified', 'won', 'lost'].map(s => (
-                                            <button
-                                                key={s} type="button"
-                                                onClick={() => setFormData(prev => ({ ...prev, status: s }))}
-                                                className={`h-12 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all ${formData.status === s ? 'bg-imi-900 text-white border-imi-900' : 'bg-white text-imi-400 border-imi-100'}`}
-                                            >
-                                                {s}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4 pt-4 border-t border-imi-50">
-                                    <label className="text-[10px] font-black text-imi-400 uppercase tracking-widest block mb-1">Interesse e Contexto</label>
-                                    <Input value={formData.interest} onChange={(e) => setFormData(prev => ({ ...prev, interest: e.target.value }))} placeholder="Imóvel ou Região de Interesse" className="h-14 rounded-2xl border-imi-100" />
-                                    <Textarea value={formData.notes} onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))} placeholder="Observações estratégicas..." rows={4} className="rounded-2xl border-imi-100" />
-                                </div>
-
-                                <div className="pt-10 flex gap-4">
-                                    <Button type="submit" disabled={isSaving} className="flex-1 h-14 bg-imi-900 text-white rounded-2xl shadow-elevated font-black text-xs uppercase tracking-widest">
-                                        {isSaving ? 'Processando...' : (editingLead ? 'Salvar Mudanças' : 'Confirmar Registro')}
-                                    </Button>
-                                    <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)} className="flex-1 h-14 border-imi-100 rounded-2xl font-black text-xs uppercase tracking-widest">
-                                        Cancelar
-                                    </Button>
-                                </div>
-                            </form>
-                        </div>
-                    </motion.div>
-                </div>
-            )}
         </div>
     )
 }
-

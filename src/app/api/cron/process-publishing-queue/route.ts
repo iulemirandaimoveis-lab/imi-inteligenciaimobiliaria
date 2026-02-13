@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server'
+
+export const dynamic = 'force-dynamic';
 import { processPublishingQueue } from '@/lib/social/publisher';
 
 // Cron job: processar fila de publicações

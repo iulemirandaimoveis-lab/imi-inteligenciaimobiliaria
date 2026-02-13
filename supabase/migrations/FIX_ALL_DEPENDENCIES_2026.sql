@@ -184,6 +184,16 @@ ALTER TABLE executive_reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tracked_links ENABLE ROW LEVEL SECURITY;
 ALTER TABLE development_events ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Backoffice Full Access Developers" ON developers;
+DROP POLICY IF EXISTS "Backoffice Full Access Developments" ON developments;
+DROP POLICY IF EXISTS "Backoffice Full Access Leads" ON leads;
+DROP POLICY IF EXISTS "Backoffice Full Access Content" ON content;
+DROP POLICY IF EXISTS "Backoffice Full Access Consultations" ON consultations;
+DROP POLICY IF EXISTS "Backoffice Full Access Appraisals" ON appraisal_requests;
+DROP POLICY IF EXISTS "Backoffice Full Access Reports" ON executive_reports;
+DROP POLICY IF EXISTS "Backoffice Full Access Tracked Links" ON tracked_links;
+DROP POLICY IF EXISTS "Backoffice Full Access Dev Events" ON development_events;
+
 CREATE POLICY "Backoffice Full Access Developers" ON developers FOR ALL TO authenticated USING (true) WITH CHECK (true);
 CREATE POLICY "Backoffice Full Access Developments" ON developments FOR ALL TO authenticated USING (true) WITH CHECK (true);
 CREATE POLICY "Backoffice Full Access Leads" ON leads FOR ALL TO authenticated USING (true) WITH CHECK (true);

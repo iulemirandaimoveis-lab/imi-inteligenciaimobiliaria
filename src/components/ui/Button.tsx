@@ -1,55 +1,52 @@
-'use client'
+import { ButtonHTMLAttributes, forwardRef } from 'react'
+import { twMerge } from 'tailwind-merge'
+import { Loader2 } from 'lucide-react'
 
-import { ComponentPropsWithoutRef, forwardRef, ReactElement } from 'react'
-import { cn } from '@/lib/utils'
-import React from 'react'
-
-export interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
-    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger'
     size?: 'sm' | 'md' | 'lg'
+    isLoading?: boolean
+    block?: boolean
     fullWidth?: boolean
-    asChild?: boolean
+    icon?: React.ReactNode
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant = 'primary', size = 'md', fullWidth = false,
-        asChild = false, children, ...props }, ref) => {
-
-        const base = [
-            'inline-flex items-center justify-center font-semibold',
-            'tracking-wide transition-all duration-300 ease-out',
-            'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2',
-            'disabled:opacity-50 disabled:cursor-not-allowed',
-            'active:scale-[0.98]',
-            'rounded-xl',
-        ].join(' ')
-
+    ({ className, variant = 'primary', size = 'md', isLoading = false, block, fullWidth, icon, children, ...props }, ref) => {
         const variants = {
-            primary: 'bg-primary text-white hover:bg-primary-dark shadow-glow hover:shadow-lg',
-            secondary: 'bg-white dark:bg-card-dark text-text-header-light dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800',
-            outline: 'bg-transparent text-text-header-light dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:border-primary hover:bg-primary/5',
-            ghost: 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800',
-            danger: 'bg-red-500 text-white hover:bg-red-600 shadow-sm',
+            primary: 'bg-primary hover:bg-primary-dark text-background-dark shadow-glow',
+            secondary: 'bg-background-dark text-white border border-white/10 hover:bg-white/5',
+            ghost: 'text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-white',
+            outline: 'border border-gray-200 dark:border-white/10 bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5',
+            danger: 'bg-red-500/10 text-red-500 hover:bg-red-500/20 shadow-none border border-red-500/20'
         }
 
         const sizes = {
-            sm: 'h-9 px-3 text-xs gap-1.5',
-            md: 'h-10 px-4 text-sm gap-2',
-            lg: 'h-12 px-6 text-base gap-2',
+            sm: 'px-3 py-1.5 text-xs font-bold rounded-lg',
+            md: 'px-6 py-3 text-sm font-bold rounded-xl',
+            lg: 'px-8 py-4 text-base font-bold rounded-2xl'
         }
 
-        const classes = cn(base, variants[variant], sizes[size],
-            fullWidth && 'w-full', className)
-
-        if (asChild && React.isValidElement(children)) {
-            return React.cloneElement(children as ReactElement<any>, {
-                className: cn((children as ReactElement<any>).props.className, classes),
-            })
-        }
-
-        return <button ref={ref} className={classes} {...props}>{children}</button>
+        return (
+            <button
+                ref={ref}
+                disabled={isLoading || props.disabled}
+                className={twMerge(
+                    "inline-flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
+                    variants[variant],
+                    sizes[size],
+                    (block || fullWidth) && "w-full",
+                    className
+                )}
+                {...props}
+            >
+                {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {!isLoading && icon}
+                {children}
+            </button>
+        )
     }
 )
-
 Button.displayName = 'Button'
+
 export default Button

@@ -1,6 +1,5 @@
-'use client'
-import { forwardRef, TextareaHTMLAttributes } from 'react'
-import { cn } from '@/lib/utils'
+import { TextareaHTMLAttributes, forwardRef } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
     label?: string
@@ -8,33 +7,32 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-    ({ className, label, error, id, ...props }, ref) => {
+    ({ className, label, error, ...props }, ref) => {
         return (
-            <div>
+            <div className="w-full">
                 {label && (
-                    <label htmlFor={id} className='block text-xs font-semibold
-            text-imi-500 uppercase tracking-widest mb-2'>
+                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                         {label}
                     </label>
                 )}
                 <textarea
                     ref={ref}
-                    id={id}
-                    className={cn(
-                        "w-full min-h-[120px] px-4 py-3 rounded-lg border text-base sm:text-sm",
-                        "bg-white text-imi-900 shadow-soft",
-                        "border-imi-100 focus:border-imi-900 focus:ring-2 focus:ring-imi-900/10",
-                        "hover:border-imi-200 transition-all duration-200 resize-none",
-                        "placeholder:text-imi-400",
-                        error && 'border-red-500 focus:ring-red-500/10',
+                    className={twMerge(
+                        "w-full bg-white dark:bg-card-dark border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-sm resize-y min-h-[100px]",
+                        error && "border-red-500 focus:border-red-500 focus:ring-red-500/20",
                         className
                     )}
                     {...props}
                 />
-                {error && <p className='mt-1 text-xs text-red-600'>{error}</p>}
+                {error && (
+                    <p className="mt-1 text-xs text-red-500 font-medium animate-slide-up">
+                        {error}
+                    </p>
+                )}
             </div>
         )
     }
 )
 Textarea.displayName = 'Textarea'
+
 export default Textarea

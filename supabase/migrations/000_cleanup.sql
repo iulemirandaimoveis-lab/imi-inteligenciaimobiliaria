@@ -1,53 +1,78 @@
--- ============================================================================
--- Migration 000: Base Normalization
--- Descrição: Normaliza tabelas existentes para suportar o Sistema Comercial IA
--- ============================================================================
+-- ====================================================================
+-- MIGRATION 000: CLEANUP - Preparação do banco
+-- Executar ANTES de qualquer outra migration
+-- ====================================================================
 
-DO $$ 
+-- 1. Drop tabelas duplicadas/conflitantes se existirem
+DROP TABLE IF EXISTS property_units CASCADE;
+DROP TABLE IF EXISTS tracked_links CASCADE;
+DROP TABLE IF EXISTS property_valuations CASCADE;
+DROP TABLE IF EXISTS campaigns CASCADE;
+DROP TABLE IF EXISTS lead_interactions CASCADE;
+DROP TABLE IF EXISTS property_events CASCADE;
+
+-- 2. Drop functions conflitantes
+DROP FUNCTION IF EXISTS update_property_units_updated_at() CASCADE;
+DROP FUNCTION IF EXISTS generate_short_code() CASCADE;
+DROP FUNCTION IF EXISTS generate_valuation_reference() CASCADE;
+
+-- 3. Verificar tabelas existentes que estão ok
+-- (developments, development_units, leads, consultations, credit_requests, appraisal_requests)
+
+-- 4. Garantir que as tabelas base tenham updated_at trigger
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
 BEGIN
-    -- 1. Normalizar LEADS (converter ID para UUID e colunas para snake_case)
-    BEGIN
-        ALTER TABLE leads ALTER COLUMN id SET DATA TYPE UUID USING (id::uuid);
-    EXCEPTION WHEN OTHERS THEN NULL;
-    END;
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-    -- Renomear colunas camelCase para snake_case (Prisma standard -> Supabase standard)
-    BEGIN
-        ALTER TABLE leads RENAME COLUMN "userId" TO user_id;
-    EXCEPTION WHEN OTHERS THEN NULL;
-    END;
+-- Aplicar trigger nas tabelas existentes
+DROP TRIGGER IF EXISTS update_developments_updated_at ON developments;
+CREATE TRIGGER update_developments_updated_at
+    BEFORE UPDATE ON developments
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
-    BEGIN
-        ALTER TABLE leads RENAME COLUMN "createdAt" TO created_at;
-    EXCEPTION WHEN OTHERS THEN NULL;
-    END;
+DROP TRIGGER IF EXISTS update_leads_updated_at ON leads;
+CREATE TRIGGER update_leads_updated_at
+    BEFORE UPDATE ON leads
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
-    BEGIN
-        ALTER TABLE leads RENAME COLUMN "updatedAt" TO updated_at;
-    EXCEPTION WHEN OTHERS THEN NULL;
-    END;
+DROP TRIGGER IF EXISTS update_consultations_updated_at ON consultations;
+CREATE TRIGGER update_consultations_updated_at
+    BEFORE UPDATE ON consultations
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
-    BEGIN
-        ALTER TABLE leads RENAME COLUMN "leadSource" TO source;
-    EXCEPTION WHEN OTHERS THEN NULL;
-    END;
+DROP TRIGGER IF EXISTS update_credit_requests_updated_at ON credit_requests;
+CREATE TRIGGER update_credit_requests_updated_at
+    BEFORE UPDATE ON credit_requests
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_appraisal_requests_updated_at ON appraisal_requests;
+CREATE TRIGGER update_appraisal_requests_updated_at
+    BEFORE UPDATE ON appraisal_requests
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
 
-    -- 2. Corrigir erro de digitação da migration 001 (caso exista)
-    BEGIN
-        ALTER TABLE leads ALTER COLUMN updated_at SET DATA TYPE TIMESTAMPTZ;
-    EXCEPTION WHEN OTHERS THEN NULL;
-    END;
+-- 5. Confirmar estrutura atual
+SELECT 
+    'developments' as table_name, 
+    COUNT(*) as record_count 
+FROM developments
+UNION ALL
+SELECT 'development_units', COUNT(*) FROM development_units
+UNION ALL
+SELECT 'leads', COUNT(*) FROM leads
+UNION ALL
+SELECT 'consultations', COUNT(*) FROM consultations
+UNION ALL
+SELECT 'credit_requests', COUNT(*) FROM credit_requests
+UNION ALL
+SELECT 'appraisal_requests', COUNT(*) FROM appraisal_requests;
 
-    -- 3. Limpar políticas redundantes da 001 para evitar erros
-    DROP POLICY IF EXISTS "auth_all_leads" ON leads;
-    DROP POLICY IF EXISTS "anon_insert_leads" ON leads;
-    DROP POLICY IF EXISTS "auth_all_developments" ON developments;
-    DROP POLICY IF EXISTS "auth_all_units" ON development_units;
-    DROP POLICY IF EXISTS "auth_all_consultations" ON consultations;
-    DROP POLICY IF EXISTS "auth_all_credit" ON credit_requests;
-    DROP POLICY IF EXISTS "auth_all_appraisals" ON appraisal_requests;
-    DROP POLICY IF EXISTS "anon_insert_consultations" ON consultations;
-    DROP POLICY IF EXISTS "anon_insert_credit" ON credit_requests;
-    DROP POLICY IF EXISTS "anon_insert_appraisals" ON appraisal_requests;
-END $$;
+-- Fim da limpeza

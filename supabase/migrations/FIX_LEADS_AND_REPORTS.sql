@@ -71,6 +71,7 @@ CREATE POLICY "Enable read/write for authenticated users" ON executive_reports
     FOR ALL USING (auth.role() = 'authenticated');
 
 -- 4. VIEW CONSOLIDADA (Opcional, mas útil para debug)
+DROP VIEW IF EXISTS analytics_consolidated;
 CREATE OR REPLACE VIEW analytics_consolidated AS
 SELECT
     t.id AS tenant_id,

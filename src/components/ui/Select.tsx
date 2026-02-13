@@ -1,54 +1,59 @@
-'use client'
 import { forwardRef, SelectHTMLAttributes } from 'react'
-import { cn } from '@/lib/utils'
+import { twMerge } from 'tailwind-merge'
+import { ChevronDown } from 'lucide-react'
 
-export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
     label?: string
     error?: string
-    options: { value: string; label: string }[]
+    placeholder?: string
+    fullWidth?: boolean
+    icon?: React.ReactNode
+    options?: { label: string, value: string }[]
 }
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
-    ({ className, label, error, options, id, ...props }, ref) => {
+    ({ className, label, error, placeholder = "Selecione...", fullWidth = true, icon, options, children, ...props }, ref) => {
         return (
-            <div className="relative">
+            <div className={twMerge(fullWidth && "w-full")}>
                 {label && (
-                    <label htmlFor={id} className='block text-xs font-semibold
-            text-imi-500 uppercase tracking-widest mb-2'>
+                    <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                         {label}
                     </label>
                 )}
                 <div className="relative">
+                    {icon && (
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                            {icon}
+                        </div>
+                    )}
                     <select
                         ref={ref}
-                        id={id}
-                        className={cn(
-                            'w-full h-12 px-4 bg-white border border-imi-100 rounded-lg',
-                            'text-imi-900 text-sm placeholder:text-imi-400 shadow-soft',
-                            'transition-all duration-200 appearance-none cursor-pointer',
-                            'focus:outline-none focus:ring-2 focus:ring-imi-900/10 focus:border-imi-900',
-                            'hover:border-imi-200',
-                            error && 'border-red-500 focus:ring-red-500/10',
+                        className={twMerge(
+                            "w-full bg-white dark:bg-card-dark border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-sm pr-10 cursor-pointer",
+                            icon && "pl-11",
+                            error && "border-red-500 focus:border-red-500 focus:ring-red-500/20",
                             className
                         )}
                         {...props}
                     >
-                        {options.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
+                        <option value="" disabled className="text-gray-400 dark:text-gray-500">{placeholder}</option>
+                        {options ? options.map(opt => (
+                            <option key={opt.value} value={opt.value} className="text-gray-900 dark:text-white bg-white dark:bg-card-dark">
+                                {opt.label}
                             </option>
-                        ))}
+                        )) : children}
                     </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                        <svg className="w-4 h-4 text-imi-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 pointer-events-none" size={16} />
                 </div>
-                {error && <p className='mt-1 text-xs text-red-600'>{error}</p>}
+                {error && (
+                    <p className="mt-1 text-xs text-red-500 font-medium animate-slide-up">
+                        {error}
+                    </p>
+                )}
             </div>
         )
     }
 )
 Select.displayName = 'Select'
+
 export default Select

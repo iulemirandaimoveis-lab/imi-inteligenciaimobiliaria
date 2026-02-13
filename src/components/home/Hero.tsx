@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Button from '@/components/ui/Button'
 import { slideUp, staggerContainer } from '@/lib/animations'
 import { useState } from 'react'
-import { AnimatePresence } from 'framer-motion'
+import { useParams } from 'next/navigation'
 import LeadCaptureModal from '@/app/[lang]/(website)/imoveis/components/LeadCaptureModal'
 
 interface HeroProps {
@@ -19,6 +19,8 @@ interface HeroProps {
 
 export default function Hero({ dict }: HeroProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const params = useParams()
+    const lang = (params?.lang as string) || 'pt'
 
     const handleSuccess = () => {
         window.open("https://wa.me/5581997230455", "_blank")
@@ -34,9 +36,12 @@ export default function Hero({ dict }: HeroProps) {
                     <motion.h1 variants={slideUp} className="text-white font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.15] mb-6 drop-shadow-lg whitespace-pre-line">{dict.hero_title}</motion.h1>
                     <motion.p variants={slideUp} className="text-base sm:text-lg text-imi-300 mb-10 max-w-md font-light leading-relaxed drop-shadow-md whitespace-pre-line">{dict.hero_subtitle}</motion.p>
                     <motion.div variants={slideUp} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                        <Button asChild size="lg" className="w-full sm:w-auto bg-white text-imi-900 hover:bg-imi-50 border-none shadow-xl h-14">
-                            <Link href="/avaliacoes#form">{dict.cta_appraisal}</Link>
-                        </Button>
+                        <Link
+                            href={`/${lang}/avaliacoes#form`}
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-bold rounded-2xl bg-white text-imi-900 hover:bg-imi-50 border-none shadow-xl h-14 transition-all duration-300 active:scale-95"
+                        >
+                            {dict.cta_appraisal}
+                        </Link>
                         <Button
                             variant="outline"
                             size="lg"

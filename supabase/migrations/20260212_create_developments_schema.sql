@@ -99,8 +99,28 @@ on units for select
 to public
 using (status = 'available');
 
-create policy "Allow all actions for logged in users"
-on developers for all
-to authenticated
-using (true)
-with check (true);
+-- Storage Policies
+-- Create bucket if not exists (Note: Buckets are usually created via API/Dashboard, but we can set policies)
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('developments', 'developments', true) ON CONFLICT DO NOTHING;
+
+-- Policy for Public Read Access to 'developments' bucket
+create policy "Public Access"
+  on storage.objects for select
+  using ( bucket_id = 'developments' );
+
+-- Policy for Authenticated Upload Access to 'developments' bucket
+create policy "Authenticated Upload"
+  on storage.objects for insert
+  to authenticated
+  with check ( bucket_id = 'developments' );
+
+-- Policy for Authenticated Update/Delete Access
+create policy "Authenticated Update/Delete"
+  on storage.objects for update
+  to authenticated
+  using ( bucket_id = 'developments' );
+
+create policy "Authenticated Delete"
+  on storage.objects for delete
+  to authenticated
+  using ( bucket_id = 'developments' );

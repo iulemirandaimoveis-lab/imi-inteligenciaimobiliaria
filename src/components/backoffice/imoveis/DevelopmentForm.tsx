@@ -12,65 +12,90 @@ import { Loader2, Save, Building2, MapPin, DollarSign, LayoutDashboard, Image as
 import MediaUploader from '@/components/backoffice/imoveis/MediaUploader'
 import { useDevelopers } from '@/hooks/use-developers'
 
-const { developers } = useDevelopers()
-
-// Add developer_id to schema
 const schema = z.object({
-    title: z.string().min(5, 'Título deve ter pelo menos 5 caracteres'),
+    name: z.string().min(5, 'Nome deve ter pelo menos 5 caracteres'),
     developer_id: z.string().optional(),
-    type: z.enum(['apartment', 'house', 'commercial', 'land', 'resort', 'penthouse', 'studio']),
-    status_commercial: z.enum(['draft', 'published', 'campaign', 'sold', 'private']),
-    price_from: z.coerce.number().min(0, 'Valor inválido'),
-    area_from: z.coerce.number().min(1, 'Área obrigatória'),
-    area_to: z.coerce.number().optional(),
+    property_type: z.enum(['apartment', 'house', 'commercial', 'land', 'mixed']).optional(),
+    status: z.enum(['launch', 'ready', 'under_construction']),
+    price_min: z.coerce.number().min(0, 'Valor inválido'),
+
+    // Specs maps to specs JSONB
+    area_min: z.coerce.number().min(1, 'Área obrigatória'),
+    area_max: z.coerce.number().optional(),
     bedrooms: z.coerce.number().int().min(0),
     bathrooms: z.coerce.number().int().min(0),
-    parking_spaces: z.coerce.number().int().min(0),
+    parking_spots: z.coerce.number().int().min(0),
+
     city: z.string().min(2, 'Cidade obrigatória'),
     neighborhood: z.string().min(2, 'Bairro obrigatório'),
     address: z.string().optional(),
     description: z.string().optional(),
-    selling_points: z.string().optional(),
+    selling_points: z.string().optional(), // Maps to features JSONB
 })
 
 type FormData = z.infer<typeof schema>
 
 interface DevelopmentFormProps {
     initialData?: Development
-    onSubmit: (data: FormData) => Promise<void>
+    onSubmit: (data: any) => Promise<void>
     isSubmitting: boolean
 }
 
 export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }: DevelopmentFormProps) {
+    const { developers } = useDevelopers()
     const [activeTab, setActiveTab] = useState<'info' | 'location' | 'specs' | 'media'>('info')
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
-            title: initialData?.title || '',
+            name: initialData?.name || '',
             developer_id: initialData?.developer_id || '',
-            type: initialData?.type || 'apartment',
-            status_commercial: initialData?.status_commercial || 'draft',
-            price_from: initialData?.price_from || 0,
-            area_from: initialData?.area_from || 0,
-            area_to: initialData?.area_to || 0,
-            bedrooms: initialData?.bedrooms || 0,
-            bathrooms: initialData?.bathrooms || 0,
-            parking_spaces: initialData?.parking_spaces || 0,
+            property_type: initialData?.property_type || 'apartment',
+            status: initialData?.status || 'launch',
+            price_min: initialData?.price_min || 0,
+
+            // Map from specs
+            area_min: initialData?.specs?.area || initialData?.specs?.area_min || 0,
+            area_max: initialData?.specs?.area_max || 0,
+            bedrooms: initialData?.specs?.bedrooms || 0,
+            bathrooms: initialData?.specs?.bathrooms || 0,
+            parking_spots: initialData?.specs?.parking_spots || 0,
+
             city: initialData?.city || 'João Pessoa',
             neighborhood: initialData?.neighborhood || '',
+            address: initialData?.address || '',
             description: initialData?.description || '',
-            selling_points: initialData?.selling_points?.join(', ') || '',
+            selling_points: initialData?.features?.join(', ') || '',
         }
     })
 
     const handleFormSubmit = async (data: FormData) => {
-        // Convert selling_points string to array if needed on submit
-        if (typeof data.selling_points === 'string') {
-            // @ts-ignore
-            data.selling_points = data.selling_points.split(',').map(s => s.trim()).filter(Boolean)
+        // Transform for API
+        const features = typeof data.selling_points === 'string'
+            ? data.selling_points.split(',').map(s => s.trim()).filter(Boolean)
+            : []
+
+        const apiData = {
+            name: data.name,
+            developer_id: data.developer_id,
+            property_type: data.property_type,
+            status: data.status,
+            price_min: data.price_min,
+            city: data.city,
+            neighborhood: data.neighborhood,
+            address: data.address,
+            description: data.description,
+            features: features,
+            specs: {
+                area: data.area_min,
+                area_max: data.area_max,
+                bedrooms: data.bedrooms,
+                bathrooms: data.bathrooms,
+                parking_spots: data.parking_spots
+            }
         }
-        await onSubmit(data)
+
+        await onSubmit(apiData)
     }
 
     const tabs = [
@@ -83,13 +108,13 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
     return (
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8">
             {/* Tabs Navigation */}
-            <div className="flex border-b border-imi-100">
+            <div className="flex border-b border-imi-100 overflow-x-auto">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
                         type="button"
                         onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex items-center gap-2 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all border-b-2 ${activeTab === tab.id
+                        className={`flex items-center gap-2 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap ${activeTab === tab.id
                             ? 'border-imi-900 text-imi-900'
                             : 'border-transparent text-imi-400 hover:text-imi-900'
                             }`}
@@ -107,17 +132,16 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Nome do Empreendimento</label>
-                                <Input {...register('title')} placeholder="Ex: Residencial Atlantis" error={errors.title?.message} className="h-14 rounded-xl" />
+                                <Input {...register('name')} placeholder="Ex: Residencial Atlantis" error={errors.name?.message} className="h-14 rounded-xl" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Tipo</label>
-                                <select {...register('type')} className="w-full h-14 px-4 rounded-xl border border-imi-100 bg-white font-medium text-imi-700 focus:outline-none focus:ring-2 focus:ring-accent-500">
+                                <select {...register('property_type')} className="w-full h-14 px-4 rounded-xl border border-imi-100 bg-white font-medium text-imi-700 focus:outline-none focus:ring-2 focus:ring-accent-500">
                                     <option value="apartment">Apartamento</option>
                                     <option value="house">Casa</option>
-                                    <option value="penthouse">Cobertura</option>
                                     <option value="commercial">Comercial</option>
                                     <option value="land">Terreno</option>
-                                    <option value="resort">Resort</option>
+                                    <option value="mixed">Misto</option>
                                 </select>
                             </div>
                         </div>
@@ -126,8 +150,7 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                             <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Construtora / Developer</label>
                             <select {...register('developer_id')} className="w-full h-14 px-4 rounded-xl border border-imi-100 bg-white font-medium text-imi-700 focus:outline-none focus:ring-2 focus:ring-accent-500">
                                 <option value="">Selecione uma construtora...</option>
-                                <option value="imi">IMI - Inteligência Imobiliária (Padrão)</option>
-                                {developers.map(dev => (
+                                {developers?.map(dev => (
                                     <option key={dev.id} value={dev.id}>{dev.name}</option>
                                 ))}
                             </select>
@@ -136,17 +159,15 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Status Comercial</label>
-                                <select {...register('status_commercial')} className="w-full h-14 px-4 rounded-xl border border-imi-100 bg-white font-medium text-imi-700 focus:outline-none focus:ring-2 focus:ring-accent-500">
-                                    <option value="draft">Rascunho (Oculto)</option>
-                                    <option value="published">Publicado</option>
-                                    <option value="campaign">Em Campanha (Destaque)</option>
-                                    <option value="sold">100% Vendido</option>
-                                    <option value="private">Privado (Off-market)</option>
+                                <select {...register('status')} className="w-full h-14 px-4 rounded-xl border border-imi-100 bg-white font-medium text-imi-700 focus:outline-none focus:ring-2 focus:ring-accent-500">
+                                    <option value="launch">Lançamento</option>
+                                    <option value="under_construction">Em Obras</option>
+                                    <option value="ready">Pronto</option>
                                 </select>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Preço Base (R$)</label>
-                                <Input type="number" {...register('price_from')} prefix="R$" placeholder="0,00" className="h-14 rounded-xl" />
+                                <Input type="number" {...register('price_min')} prefix="R$" placeholder="0,00" className="h-14 rounded-xl" />
                             </div>
                         </div>
 
@@ -182,8 +203,8 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                     <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             <div className="space-y-2">
-                                <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Área (m²)</label>
-                                <Input type="number" {...register('area_from')} placeholder="0" error={errors.area_from?.message} className="h-14 rounded-xl" />
+                                <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Área Mín (m²)</label>
+                                <Input type="number" {...register('area_min')} placeholder="0" error={errors.area_min?.message} className="h-14 rounded-xl" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Quartos</label>
@@ -195,13 +216,13 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Vagas</label>
-                                <Input type="number" {...register('parking_spaces')} placeholder="0" className="h-14 rounded-xl" />
+                                <Input type="number" {...register('parking_spots')} placeholder="0" className="h-14 rounded-xl" />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Diferenciais (Separados por vírgula)</label>
-                            <Textarea {...register('selling_points')} rows={3} placeholder="Vista mar, Área de lazer completa, Automação..." className="rounded-xl" />
+                            <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Diferenciais / Features</label>
+                            <Textarea {...register('selling_points')} rows={3} placeholder="Vista mar, Área de lazer completa..." className="rounded-xl" />
                         </div>
                     </div>
                 )}
@@ -212,13 +233,12 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                         {initialData?.id ? (
                             <MediaUploader
                                 propertyId={initialData.id}
-                                images={initialData.gallery_images || []}
-                                floorPlans={initialData.floor_plans || []}
-                                videos={initialData.videos || []}
+                                images={initialData.images?.gallery || []}
+                                floorPlans={initialData.images?.floorPlans || []}
+                                videos={initialData.images?.videos || []}
                                 virtualTourUrl={initialData.virtual_tour_url}
-                                brochureUrl={initialData.brochure_url}
+                                brochureUrl={''}
                                 onUpdate={async (data) => {
-                                    // Normally we would update via API here, but for this form we might need parent handler
                                     console.log('Media update:', data)
                                 }}
                             />

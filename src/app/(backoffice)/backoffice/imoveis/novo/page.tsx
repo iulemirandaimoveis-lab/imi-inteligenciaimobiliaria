@@ -1,69 +1,53 @@
 'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
-import DevelopmentForm from '@/components/backoffice/imoveis/DevelopmentForm'
-import { ArrowLeft } from 'lucide-react'
+import PageHeader from '@/components/backoffice/PageHeader'
+import { Building2 } from 'lucide-react'
 import Link from 'next/link'
+import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
+import Input from '@/components/ui/Input'
 
-export default function NewPropertyPage() {
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const router = useRouter()
-    const supabase = createClient()
-
-    const handleSubmit = async (data: any) => {
-        setIsSubmitting(true)
-        try {
-            // Generate slug
-            const slug = data.title
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '')
-                + '-' + Date.now().toString().slice(-4)
-
-            const { data: newDev, error } = await supabase
-                .from('developments')
-                .insert([{
-                    ...data,
-                    slug,
-                    updated_at: new Date().toISOString()
-                }])
-                .select()
-                .single()
-
-            if (error) throw error
-
-            toast.success('Empreendimento criado com sucesso!')
-            // Redirect to edit page to add units/media
-            router.push(`/backoffice/imoveis/${newDev.id}`)
-        } catch (err: any) {
-            console.error('Submission error:', err)
-            toast.error('Erro ao salvar: ' + (err.message || 'Erro desconhecido'))
-        } finally {
-            setIsSubmitting(false)
-        }
-    }
-
-    return (
-        <div className="max-w-5xl mx-auto pb-24 animate-fade-in">
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/backoffice/imoveis" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                    <ArrowLeft size={20} className="text-gray-500" />
-                </Link>
-                <div>
-                    <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-gray-100">Novo Empreendimento</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Preencha os dados básicos para iniciar o cadastro.</p>
+export default function NovoImovelPage() {
+  return (
+    <div className="space-y-8 animate-fade-in pb-20">
+      <PageHeader
+        title="Novo Empreendimento"
+        description="Cadastre um novo empreendimento imobiliário."
+        breadcrumbs={[
+          { label: 'Imóveis', href: '/backoffice/imoveis' },
+          { label: 'Novo' }
+        ]}
+      />
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Card title="Informações Básicas" icon={<Building2 size={20} />}>
+            <div className="grid grid-cols-1 gap-6 p-6">
+                <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Nome do Empreendimento</label>
+                    <Input placeholder="Ex: Residencial Atlantis" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Cidade</label>
+                    <Input />
+                    </div>
+                    <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Estado</label>
+                    <select className="w-full h-11 px-4 border border-gray-200 dark:border-white/10 rounded-xl bg-white dark:bg-card-dark focus:ring-2 focus:ring-primary/20 outline-none">
+                        <option>PE</option>
+                        <option>PB</option>
+                        <option>SP</option>
+                    </select>
+                    </div>
                 </div>
             </div>
-
-            <DevelopmentForm
-                onSubmit={handleSubmit}
-                isSubmitting={isSubmitting}
-            />
+        </Card>
+        
+        <div className="flex justify-end gap-4 pt-4">
+            <Link href="/backoffice/imoveis">
+                <Button variant="outline">Cancelar</Button>
+            </Link>
+            <Button>Salvar Empreendimento</Button>
         </div>
-    )
+      </div>
+    </div>
+  )
 }

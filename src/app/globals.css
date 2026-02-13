@@ -10,45 +10,78 @@
   }
 
   body {
-    @apply text-text-body-light dark:text-text-body-dark bg-background-light dark:bg-background-dark;
+    @apply text-text-body-light dark:text-text-body-dark bg-background-light dark:bg-background-dark selection:bg-primary/20 selection:text-primary-dark font-sans;
   }
 
-  ::selection {
-    @apply bg-imi-900/10 text-imi-900;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display tracking-tight text-text-header-light dark:text-text-header-dark;
   }
 }
 
 @layer components {
+
+  /* Luxury Containers */
   .container-custom {
     @apply mx-auto w-full max-w-7xl px-6 sm:px-8 md:px-12 lg:px-16;
   }
 
+  /* Glassmorphism Evolution */
+  .glass-panel {
+    @apply backdrop-blur-xl bg-white/70 dark:bg-card-dark/60 border border-white/40 dark:border-white/5 shadow-soft supports-[backdrop-filter]:bg-white/40;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-2xl bg-gradient-to-br from-white/90 to-white/50 dark:from-card-dark/90 dark:to-card-dark/50 border border-white/60 dark:border-white/5 shadow-card hover:shadow-elevated transition-all duration-500 hover:-translate-y-1 relative overflow-hidden;
+  }
+
+  .glass-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 transition-opacity duration-500 pointer-events-none;
+  }
+
+  .glass-card:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Premium Gradients */
+  .gold-gradient {
+    @apply bg-gradient-to-r from-[#D4AF37] via-[#E5C158] to-[#B8952F];
+  }
+
+  .gold-text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#E5C158] to-[#B8952F];
+  }
+
+  .blue-gradient {
+    @apply bg-gradient-to-br from-[#0F1E28] to-[#1E3A5F];
+  }
+
+  /* Section Spacing */
   .section-padding {
-    @apply py-16 sm:py-20 md:py-24 lg:py-32;
+    @apply py-16 sm:py-20 md:py-24 lg:py-28;
   }
 
-  .prose-custom {
-    @apply max-w-none text-base leading-relaxed text-imi-500;
-  }
-
-  .prose-custom p {
-    @apply mb-4;
-  }
-
-  .prose-custom strong {
-    @apply font-semibold text-imi-900;
+  /* Typography Utilities */
+  .text-balance {
+    text-wrap: balance;
   }
 }
 
-* {
-  -webkit-tap-highlight-color: transparent;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-[dir="rtl"] .container-custom {
-  direction: rtl;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-[dir="rtl"] .font-display {
-  /* Playfair Display has poor Arabic support - use fallback */
-  font-family: var(--font-inter), system-ui, sans-serif;
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-white/10 rounded-full transition-colors hover:bg-primary/50;
 }

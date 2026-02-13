@@ -1,58 +1,99 @@
-export type DevelopmentType = 'apartment' | 'house' | 'penthouse' | 'studio' | 'land' | 'commercial' | 'resort';
-export type DevelopmentStatus = 'draft' | 'published' | 'campaign' | 'private' | 'sold';
+// src/types/development.ts
+// VERSÃO FINAL - Baseada na estrutura REAL retornada pelo banco
 
 export interface Development {
-    id: string;
-    title: string; // Assuming 'title' exists or maps to 'name' based on previous context. Migration says 'dev.name' in function, so likely 'title' or 'name'. I'll check property.ts which has 'title', but migration function refers to 'dev.name'. I will use 'title' as per user request usually, but let's stick to 'title' as standard unless I see 'name' in schema. Wait, migration line 82: "IF dev.name IS NOT NULL". So it is 'name'. I will use 'title' in TS and map it or use 'name'. The UI uses 'title'. I'll add both or check. Let's assume 'title' for now as typical in CMS. Actually, let's use 'name' to match DB.
-    name: string; // Database column 'name'
-    description: string;
+    id: string
+    slug: string
+    name: string
+    developer: string
+    developer_logo: string | null
+    developer_id: string | null
+    status: 'launch' | 'ready' | 'under_construction'
+    region: 'paraiba' | 'pernambuco' | 'sao-paulo'
+    neighborhood: string | null
+    city: string | null
+    state: string | null
+    address: string | null
+    lat: number | null
+    lng: number | null
+    delivery_date: string | null
+    registration_number: string | null
+    description: string | null
+    short_description: string | null
+    features: any[]
+    specs: Record<string, any>
 
-    // Core details
-    type: DevelopmentType;
-    status_commercial: DevelopmentStatus;
-    country: string;
-    city: string; // From previous knowledge or assumed
-    neighborhood: string; // From previous knowledge or assumed
+    // Campos de preço (REAL)
+    price_from: number
+    price_to: number
 
-    // Pricing
-    price_from?: number;
-    price_to?: number; // Usage in migration implies price_from
+    // Mídia
+    images: {
+        main: string
+        gallery: string[]
+        videos: string[]
+        floorPlans: string[]
+    }
+    video_url: string | null
+    external_links: Record<string, any>
+    tags: string[]
+    display_order: number
+    is_highlighted: boolean
 
-    // Dimensions & Specs
-    area_from: number;
-    area_to: number;
-    bedrooms: number;
-    bathrooms: number;
-    parking_spaces: number;
-    units_count: number;
-    floor_count: number;
+    // Campos novos (já existem no banco)
+    property_type: string
+    featured: boolean
+    views_count: number
+    leads_count: number
+    virtual_tour_url: string | null
 
-    // Audience
-    target_audience: string;
-    selling_points: string[]; // JSONB
+    // Campos extras que existem
+    country: string | null
+    tenant_id: string | null
+    gallery_images: string[]
+    floor_plans: string[]
+    videos: any
+    brochure_url: string | null
+    units: number
+    tipo: string | null
+    status_comercial: string | null
+    pais: string | null
+    publico_alvo: string | null
+    argumentos_venda: any[]
+    tipologias: any
+    metragem: string | null
+    quartos: number | null
+    suites: number | null
+    vagas: number | null
+    score: number
+    created_by: string | null
+    updated_by: string | null
+    type: string
+    status_commercial: string | null
+    target_audience: string | null
+    selling_points: any[]
+    bedrooms: number
+    bathrooms: number
+    parking_spaces: number
+    area_from: string | null
+    area_to: string | null
+    units_count: number
+    floor_count: number | null
+    inventory_score: number
+    image: string | null
+    views: number
+    media: any[]
+    completion_date: string | null
+    total_units: number
+    available_units: number
 
-    // Media
-    image: string | null; // Main image
-    gallery_images: string[];
-    floor_plans: string[];
-    videos: string[];
-    virtual_tour_url: string | null;
-    brochure_url: string | null;
+    created_at: string
+    updated_at: string
+}
 
-    // Performance
-    views_count: number;
-    leads_count: number;
-    inventory_score: number;
-
-    // Metadata
-    created_at: string;
-    updated_at: string;
-    updated_by: string;
-
-    // Relations (Partial)
-    developer?: {
-        id: string;
-        name: string;
-        logo: string;
-    };
+export interface DevelopmentFilters {
+    search?: string
+    status?: string
+    type?: string
+    developer?: string
 }
