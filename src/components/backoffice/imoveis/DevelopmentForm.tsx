@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -20,7 +20,7 @@ const schema = z.object({
     price_min: z.coerce.number().min(0, 'Valor inválido'),
 
     // Specs maps to specs JSONB
-    area_min: z.coerce.number().min(1, 'Área obrigatória'),
+    area_min: z.coerce.number().min(0, 'Área obrigatória'),
     area_max: z.coerce.number().optional(),
     bedrooms: z.coerce.number().int().min(0),
     bathrooms: z.coerce.number().int().min(0),
@@ -45,14 +45,28 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
     const { developers } = useDevelopers()
     const [activeTab, setActiveTab] = useState<'info' | 'location' | 'specs' | 'media'>('info')
 
+    // Media States
+    const [gallery, setGallery] = useState<string[]>(initialData?.images?.gallery || [])
+    const [videos, setVideos] = useState<string[]>(initialData?.images?.videos || [])
+    const [floorPlans, setFloorPlans] = useState<string[]>(initialData?.images?.floorPlans || [])
+
+    // Update internal state if initialData changes (e.g. after save)
+    useEffect(() => {
+        if (initialData?.images) {
+            setGallery(initialData.images.gallery || [])
+            setVideos(initialData.images.videos || [])
+            setFloorPlans(initialData.images.floorPlans || [])
+        }
+    }, [initialData])
+
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
             name: initialData?.name || '',
             developer_id: initialData?.developer_id || '',
-            property_type: initialData?.property_type || 'apartment',
+            property_type: (initialData?.property_type as any) || 'apartment',
             status: initialData?.status || 'launch',
-            price_min: initialData?.price_min || 0,
+            price_min: initialData?.price_from || 0, // Mapped from price_from
 
             // Map from specs
             area_min: initialData?.specs?.area || initialData?.specs?.area_min || 0,
@@ -75,31 +89,48 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
             ? data.selling_points.split(',').map(s => s.trim()).filter(Boolean)
             : []
 
+        // Construct images object
+        const images = {
+            main: gallery.length > 0 ? gallery[0] : '', // Default main image to first gallery image
+            gallery,
+            videos,
+            floorPlans
+        }
+
         const apiData = {
             name: data.name,
-            developer_id: data.developer_id,
+            developer_id: data.developer_id || null,
             property_type: data.property_type,
             status: data.status,
-            price_min: data.price_min,
+            price_from: data.price_min, // Map back to price_from
+            // price_to: ... (not in form yet)
             city: data.city,
             neighborhood: data.neighborhood,
             address: data.address,
             description: data.description,
             features: features,
             specs: {
-                area: data.area_min,
+                area: data.area_min, // legacy
+                area_min: data.area_min,
                 area_max: data.area_max,
                 bedrooms: data.bedrooms,
                 bathrooms: data.bathrooms,
                 parking_spots: data.parking_spots
-            }
+            },
+            bedrooms: data.bedrooms,
+            bathrooms: data.bathrooms,
+            parking_spaces: data.parking_spots,
+            images: images, // Include images
+            video_url: videos.length > 0 ? videos[0] : null, // Fallback for video_url column
+            region: 'paraiba', // Default or add field
+            state: 'PB' // Default or add field
         }
 
         await onSubmit(apiData)
     }
 
     const tabs = [
-        { id: 'info', label: 'Informações Básicas', icon: Building2 },
+        { id: 'info', label: 'Informações', icon: Building2 },
         { id: 'location', label: 'Localização', icon: MapPin },
         { id: 'specs', label: 'Características', icon: LayoutDashboard },
         { id: 'media', label: 'Visual & Mídia', icon: ImageIcon },
@@ -229,22 +260,55 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
 
                 {/* Media Tab */}
                 {activeTab === 'media' && (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300">
+                    <div className="space-y-10 animate-in fade-in slide-in-from-left-4 duration-300">
                         {initialData?.id ? (
-                            <MediaUploader
-                                propertyId={initialData.id}
-                                images={initialData.images?.gallery || []}
-                                floorPlans={initialData.images?.floorPlans || []}
-                                videos={initialData.images?.videos || []}
-                                virtualTourUrl={initialData.virtual_tour_url}
-                                brochureUrl={''}
-                                onUpdate={async (data) => {
-                                    console.log('Media update:', data)
-                                }}
-                            />
+                            <>
+                                <div className="space-y-4">
+                                    <MediaUploader
+                                        type="gallery"
+                                        label="Galeria de Imagens"
+                                        description="Fotos de alta resolução do empreendimento. A primeira imagem será a capa."
+                                        value={gallery}
+                                        onChange={setGallery}
+                                        developmentId={initialData.id}
+                                        maxFiles={20}
+                                    />
+                                    {gallery.length > 0 && (
+                                        <div className="flex items-center gap-2 p-3 bg-blue-50 text-blue-700 text-xs rounded-lg border border-blue-100">
+                                            <span className="font-bold">Nota:</span> A imagem #1 será usada como capa nos Cards do site.
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="border-t border-imi-100 my-6"></div>
+
+                                <MediaUploader
+                                    type="floorplans"
+                                    label="Plantas Baixas"
+                                    description="Imagens das plantas das unidades."
+                                    value={floorPlans}
+                                    onChange={setFloorPlans}
+                                    developmentId={initialData.id}
+                                    maxFiles={10}
+                                />
+
+                                <div className="border-t border-imi-100 my-6"></div>
+
+                                <MediaUploader
+                                    type="videos"
+                                    label="Vídeos"
+                                    description="Vídeos promocionais ou tour virtual (MP4)."
+                                    value={videos}
+                                    onChange={setVideos}
+                                    developmentId={initialData.id}
+                                    maxFiles={3}
+                                />
+                            </>
                         ) : (
                             <div className="text-center py-20 bg-imi-50 rounded-xl border border-dashed border-imi-100">
-                                <p className="text-imi-400 font-bold">Salve o empreendimento primeiro para gerenciar a mídia.</p>
+                                <ImageIcon className="w-12 h-12 mx-auto text-imi-300 mb-4" />
+                                <p className="text-imi-600 font-bold mb-2">Salve o empreendimento primeiro</p>
+                                <p className="text-xs text-imi-400">O upload de mídia requer um registro salvo para criar as pastas.</p>
                             </div>
                         )}
                     </div>

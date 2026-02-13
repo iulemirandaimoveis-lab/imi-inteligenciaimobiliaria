@@ -1,38 +1,42 @@
 'use client'
+
+import React from 'react'
 import PageHeader from '@/components/backoffice/PageHeader'
-import { LayoutDashboard, TrendingUp, Users, Building2 } from 'lucide-react'
+import DashboardKPIs from '@/components/backoffice/dashboard/DashboardKPIs'
+import SalesChart from '@/components/backoffice/dashboard/SalesChart'
+import LeadsChart from '@/components/backoffice/dashboard/LeadsChart'
+import RecentActivityFeed from '@/components/backoffice/dashboard/RecentActivityFeed'
 
 export default function DashboardPage() {
-  const stats = [
-    { label: 'Empreendimentos', value: '24', icon: Building2 },
-    { label: 'Leads Ativos', value: '156', icon: Users },
-    { label: 'Taxa Conversão', value: '12.5%', icon: TrendingUp },
-    { label: 'Ticket Médio', value: 'R$ 485k', icon: LayoutDashboard },
-  ]
-
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-in fade-in duration-500">
       <PageHeader
-        title="Dashboard"
-        description="Visão geral de métricas e indicadores de performance."
-        breadcrumbs={[{ label: 'Dashboard' }]}
+        title="Dashboard Geral"
+        description="Visão consolidada do desempenho comercial e pipeline."
       />
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {stats.map((stat) => (
-          <div key={stat.label} className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 p-6 shadow-soft">
-            <div className="flex items-center justify-between mb-4">
-              <stat.icon size={24} className="text-gray-400" />
-            </div>
-            <div className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-1">{stat.value}</div>
-            <div className="text-sm text-gray-500 uppercase tracking-widest font-bold">{stat.label}</div>
-          </div>
-        ))}
+
+      <DashboardKPIs />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <SalesChart />
+        </div>
+        <div>
+          <LeadsChart />
+        </div>
       </div>
 
-      <div className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 p-8 shadow-soft">
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Atividade Recente</h2>
-        <p className="text-gray-500">Dashboard completo será implementado na próxima fase.</p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1">
+          <RecentActivityFeed />
+        </div>
+        {/* Placeholder para futuras seções (ex: Top Corretores, Próximas Tarefas) */}
+        <div className="lg:col-span-2 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl border border-primary/10 p-8 flex flex-col items-center justify-center text-center min-h-[300px]">
+          <h3 className="text-xl font-bold text-primary mb-2">Próximos Passos</h3>
+          <p className="text-gray-500 max-w-md">
+            Continue evoluindo seu CRM. Próximas funcionalidades sugeridas: Automação de E-mails, Integração Whatsapp e Relatórios Personalizados.
+          </p>
+        </div>
       </div>
     </div>
   )

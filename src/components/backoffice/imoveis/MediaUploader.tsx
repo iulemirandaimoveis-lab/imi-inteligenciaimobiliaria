@@ -1,318 +1,435 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { Upload, X, Image as ImageIcon, FileText, Video, Link as LinkIcon, Loader2 } from 'lucide-react'
-import Button from '@/components/ui/Button'
-import Input from '@/components/ui/Input'
-import { uploadMedia } from '@/lib/supabase/storage'
-import { useToast } from '@/components/ui/Toast'
+import React, { useState } from 'react'
+import {
+    Image as ImageIcon,
+    Video,
+    FileImage,
+    X,
+    Trash2,
+    Eye,
+    MoveUp,
+    Building2
+} from 'lucide-react'
+import { uploadImage, uploadFile, deleteFile } from '@/lib/supabase-storage'
+import { toast } from 'sonner'
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent
+} from '@dnd-kit/core'
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    rectSortingStrategy,
+    useSortable
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
+// Interfaces
 interface MediaUploaderProps {
-    propertyId: string
-    images: string[]
-    floorPlans: string[]
-    videos: string[]
-    virtualTourUrl: string | null
-    brochureUrl: string | null
-    onUpdate: (data: {
-        gallery_images?: string[]
-        floor_plans?: string[]
-        videos?: string[]
-        virtual_tour_url?: string | null
-        brochure_url?: string | null
-    }) => Promise<void>
+    type: 'gallery' | 'videos' | 'floorplans' | 'logo'
+    label: string
+    description?: string
+    value: string[]
+    onChange: (urls: string[]) => void
+    maxFiles?: number
+    entityId?: string // Renamed from developmentId to be generic
+    entityType?: 'development' | 'developer' // New prop
 }
 
-export default function MediaUploader({
-    propertyId,
-    images,
-    floorPlans,
-    videos,
-    virtualTourUrl,
-    brochureUrl,
-    onUpdate,
-}: MediaUploaderProps) {
-    const { showToast } = useToast()
-    const [isUploading, setIsUploading] = useState(false)
-    const [uploadProgress, setUploadProgress] = useState<string>('')
-    const [tourUrl, setTourUrl] = useState(virtualTourUrl || '')
-    const [activeTab, setActiveTab] = useState<'images' | 'plans' | 'videos' | 'tour'>('images')
+interface SortableImageProps {
+    id: string
+    url: string
+    onDelete: (id: string) => void
+    onView: (url: string) => void
+}
 
-    const imageInputRef = useRef<HTMLInputElement>(null)
-    const planInputRef = useRef<HTMLInputElement>(null)
+// Subcomponente SortableImage
+function SortableImage({ id, url, onDelete, onView }: SortableImageProps) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id })
 
-    async function handleUpload(e: React.ChangeEvent<HTMLInputElement>, type: 'images' | 'plans') {
-        const files = Array.from(e.target.files || [])
-        if (files.length === 0) return
-
-        setIsUploading(true)
-        setUploadProgress(`Enviando ${files.length} arquivo(s)...`)
-
-        try {
-            const uploadedUrls: string[] = []
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i]
-                setUploadProgress(`Enviando ${i + 1}/${files.length}...`)
-
-                // Use 'developments' bucket and organize by type
-                const url = await uploadMedia(file, `${propertyId}/${type}`, 'developments')
-                if (url) uploadedUrls.push(url)
-            }
-
-            const currentList = type === 'images' ? images : floorPlans
-            const newList = [...currentList, ...uploadedUrls]
-
-            await onUpdate(
-                type === 'images'
-                    ? { gallery_images: newList }
-                    : { floor_plans: newList }
-            )
-
-            setUploadProgress('Upload concluído!')
-            showToast('Arquivos enviados com sucesso', 'success')
-            setTimeout(() => setUploadProgress(''), 2000)
-        } catch (err: any) {
-            showToast('Erro ao fazer upload: ' + err.message, 'error')
-        } finally {
-            setIsUploading(false)
-            if (imageInputRef.current) imageInputRef.current.value = ''
-            if (planInputRef.current) planInputRef.current.value = ''
-        }
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 10 : 1
     }
-
-    async function handleRemove(url: string, type: 'images' | 'plans') {
-        if (!confirm('Tem certeza que deseja remover este arquivo?')) return
-
-        try {
-            // Note: Currently direct delete via client might be restricted or require specific RLS. 
-            // For now we just remove from the array in DB.
-            // Ideally we should also delete from storage.
-
-            const currentList = type === 'images' ? images : floorPlans
-            const newList = currentList.filter(img => img !== url)
-
-            await onUpdate(
-                type === 'images'
-                    ? { gallery_images: newList }
-                    : { floor_plans: newList }
-            )
-            showToast('Arquivo removido da galeria', 'success')
-        } catch (err: any) {
-            showToast('Erro ao remover arquivo: ' + err.message, 'error')
-        }
-    }
-
-    async function handleSaveTourUrl() {
-        try {
-            await onUpdate({ virtual_tour_url: tourUrl || null })
-            showToast('Link do tour virtual atualizado', 'success')
-        } catch (err: any) {
-            showToast('Erro ao salvar URL: ' + err.message, 'error')
-        }
-    }
-
-    const tabs = [
-        { id: 'images', label: 'Galeria', icon: ImageIcon, count: images.length },
-        { id: 'plans', label: 'Plantas', icon: FileText, count: floorPlans.length },
-        { id: 'videos', label: 'Vídeos', icon: Video, count: videos.length },
-        { id: 'tour', label: 'Tour Virtual', icon: LinkIcon, count: virtualTourUrl ? 1 : 0 },
-    ]
 
     return (
-        <div className="bg-white rounded-2xl border border-imi-100 shadow-soft overflow-hidden">
-            {/* Tabs */}
-            <div className="flex border-b border-imi-50 bg-imi-50/30">
-                {tabs.map(tab => (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={`group relative aspect-video bg-gray-50 dark:bg-card-dark rounded-xl overflow-hidden border-2 transition-all ${isDragging ? 'border-primary shadow-lg scale-105' : 'border-gray-100 dark:border-white/5 hover:border-primary/50'}`}
+            {...attributes}
+            {...listeners}
+        >
+            <img
+                src={url}
+                alt="Media"
+                className="w-full h-full object-cover"
+            />
+
+            {/* Overlay com ações */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                <div className="flex items-center justify-end gap-2">
                     <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-4 text-xs font-bold uppercase tracking-wider transition-all ${activeTab === tab.id
-                            ? 'bg-white text-imi-900 border-b-2 border-imi-900 shadow-sm'
-                            : 'text-imi-400 hover:text-imi-600 hover:bg-imi-50'
-                            }`}
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            onView(url)
+                        }}
+                        className="p-2 rounded-lg bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors"
+                        title="Visualizar"
                     >
-                        <tab.icon className="w-4 h-4" />
-                        <span className="hidden sm:inline">{tab.label}</span>
-                        {tab.count > 0 && (
-                            <span className="ml-1 px-1.5 py-0.5 bg-imi-100 text-imi-600 rounded-full text-[9px] font-black">
-                                {tab.count}
-                            </span>
-                        )}
+                        <Eye size={16} />
                     </button>
-                ))}
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            onDelete(id)
+                        }}
+                        className="p-2 rounded-lg bg-red-500/80 backdrop-blur-sm text-white hover:bg-red-600 transition-colors"
+                        title="Excluir"
+                    >
+                        <Trash2 size={16} />
+                    </button>
+                </div>
             </div>
 
-            {/* Conteúdo */}
-            <div className="p-8">
-                {/* Galeria de Imagens */}
-                {activeTab === 'images' && (
-                    <div className="space-y-8 animate-in fade-in duration-300">
-                        <div>
-                            <input
-                                ref={imageInputRef}
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                onChange={(e) => handleUpload(e, 'images')}
-                                className="hidden"
-                            />
-                            <Button
-                                variant="outline"
-                                onClick={() => imageInputRef.current?.click()}
-                                disabled={isUploading}
-                                className="w-full h-14 border-dashed border-2 border-imi-200 hover:border-imi-400 hover:bg-imi-50 text-imi-500 font-bold uppercase tracking-widest"
-                            >
-                                <Upload className="w-5 h-5 mr-3" />
-                                {isUploading ? (
-                                    <span className="flex items-center gap-2">
-                                        <Loader2 className="animate-spin" /> {uploadProgress}
-                                    </span>
-                                ) : 'Adicionar Fotos à Galeria'}
-                            </Button>
-                            <p className="text-center text-[10px] uppercase tracking-widest text-imi-300 mt-2 font-bold">
-                                Formatos: JPG, PNG, WEBP. Max: 5MB.
-                            </p>
-                        </div>
-
-                        {images.length === 0 ? (
-                            <div className="text-center py-12 bg-imi-50 rounded-2xl border border-dashed border-imi-100">
-                                <ImageIcon className="w-12 h-12 mx-auto mb-3 text-imi-200" />
-                                <p className="text-sm font-bold text-imi-400">Nenhuma foto enviada</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                {images.map((img, index) => (
-                                    <div key={index} className="relative group aspect-square rounded-xl overflow-hidden border border-imi-100 bg-imi-50">
-                                        <img
-                                            src={img}
-                                            alt={`Imagem ${index + 1}`}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                        />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                            <button
-                                                onClick={() => handleRemove(img, 'images')}
-                                                className="w-10 h-10 bg-white text-red-500 rounded-xl flex items-center justify-center hover:bg-red-50 transition-colors shadow-lg active:scale-95"
-                                            >
-                                                <X className="w-5 h-5" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* Plantas */}
-                {activeTab === 'plans' && (
-                    <div className="space-y-8 animate-in fade-in duration-300">
-                        <div>
-                            <input
-                                ref={planInputRef}
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                onChange={(e) => handleUpload(e, 'plans')}
-                                className="hidden"
-                            />
-                            <Button
-                                variant="outline"
-                                onClick={() => planInputRef.current?.click()}
-                                disabled={isUploading}
-                                className="w-full h-14 border-dashed border-2 border-imi-200 hover:border-imi-400 hover:bg-imi-50 text-imi-500 font-bold uppercase tracking-widest"
-                            >
-                                <FileText className="w-5 h-5 mr-3" />
-                                {isUploading ? uploadProgress : 'Adicionar Plantas Humanizadas'}
-                            </Button>
-                        </div>
-
-                        {floorPlans.length === 0 ? (
-                            <div className="text-center py-12 bg-imi-50 rounded-2xl border border-dashed border-imi-100">
-                                <FileText className="w-12 h-12 mx-auto mb-3 text-imi-200" />
-                                <p className="text-sm font-bold text-imi-400">Nenhuma planta cadastrada</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-                                {floorPlans.map((plan, index) => (
-                                    <div key={index} className="relative group aspect-[3/4] rounded-xl overflow-hidden border border-imi-100 bg-white p-2">
-                                        <img
-                                            src={plan}
-                                            alt={`Planta ${index + 1}`}
-                                            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                                        />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
-                                            <button
-                                                onClick={() => handleRemove(plan, 'plans')}
-                                                className="w-10 h-10 bg-white text-red-500 rounded-xl flex items-center justify-center hover:bg-red-50 transition-colors shadow-lg active:scale-95"
-                                            >
-                                                <X className="w-5 h-5" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* Vídeos */}
-                {activeTab === 'videos' && (
-                    <div className="text-center py-20 bg-imi-50 rounded-2xl border border-imi-100 animate-in fade-in duration-300">
-                        <Video className="w-12 h-12 mx-auto mb-4 text-imi-200" />
-                        <h4 className="text-imi-900 font-bold mb-1 uppercase tracking-widest">Upload de Vídeos</h4>
-                        <p className="text-xs text-imi-400 font-medium">Integração nativa com YouTube e Vimeo em breve.</p>
-                    </div>
-                )}
-
-                {/* Tour Virtual */}
-                {activeTab === 'tour' && (
-                    <div className="space-y-8 animate-in fade-in duration-300">
-                        <div className="bg-imi-50 p-6 rounded-2xl border border-imi-100">
-                            <h4 className="text-xs font-black text-imi-400 uppercase tracking-widest mb-4">Link Tour 360°</h4>
-                            <div className="flex gap-4">
-                                <div className="flex-1">
-                                    <Input
-                                        value={tourUrl}
-                                        onChange={(e) => setTourUrl(e.target.value)}
-                                        placeholder="https://my.matterport.com/show/?m=..."
-                                        className="bg-white"
-                                    />
-                                </div>
-                                <div className="flex items-end mb-1">
-                                    <Button onClick={handleSaveTourUrl} className="h-11 bg-imi-900 text-white hover:bg-black rounded-xl uppercase tracking-widest font-bold text-xs px-6">
-                                        Vincular
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {virtualTourUrl ? (
-                            <div className="relative aspect-video rounded-2xl overflow-hidden border border-imi-200 shadow-sm bg-black group cursor-pointer">
-                                <div className="absolute inset-0 flex items-center justify-center text-white flex-col gap-4 group-hover:scale-105 transition-transform duration-700">
-                                    <LinkIcon className="w-12 h-12 text-imi-400" />
-                                    <div className="text-center">
-                                        <p className="font-bold uppercase tracking-widest text-sm">Tour Virtual Ativo</p>
-                                        <a
-                                            href={virtualTourUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-xs text-imi-300 hover:text-white underline mt-1 block"
-                                        >
-                                            Clique para testar a experiência
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-imi-100">
-                                <LinkIcon className="w-12 h-12 mx-auto mb-3 text-imi-100" />
-                                <p className="text-sm font-bold text-imi-400">Nenhum tour vinculado</p>
-                            </div>
-                        )}
-                    </div>
-                )}
+            {/* Badge de índice */}
+            <div className="absolute top-2 left-2 pointer-events-none">
+                <div className="w-6 h-6 rounded bg-black/50 backdrop-blur-sm flex items-center justify-center text-xs font-bold text-white border border-white/10">
+                    {parseInt(id) + 1}
+                </div>
             </div>
+        </div>
+    )
+}
+
+// Componente Principal
+export default function MediaUploader({
+    type,
+    label,
+    description,
+    value = [],
+    onChange,
+    maxFiles = 20,
+    entityId,
+    entityType = 'development',
+    // Backward compatibility props (if any code still uses developmentId)
+    ...props
+}: MediaUploaderProps & { developmentId?: string }) {
+    const [uploading, setUploading] = useState(false)
+    const [progress, setProgress] = useState(0)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+    // Handle backward compatibility
+    const actualEntityId = entityId || props.developmentId
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates
+        })
+    )
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event
+
+        if (over && active.id !== over.id) {
+            const oldIndex = parseInt(active.id as string)
+            const newIndex = parseInt(over.id as string)
+            const reordered = arrayMove(value, oldIndex, newIndex)
+            onChange(reordered)
+            toast.success('Ordem atualizada!')
+        }
+    }
+
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || [])
+
+        if (files.length === 0) return
+
+        if (value.length + files.length > maxFiles) {
+            toast.error(`Máximo de ${maxFiles} arquivos permitidos`)
+            return
+        }
+
+        setUploading(true)
+        const uploadedUrls: string[] = []
+
+        // Calcula progresso total baseado no número de arquivos
+        const totalFiles = files.length
+
+        for (let i = 0; i < totalFiles; i++) {
+            const file = files[i]
+
+            // Atualiza progresso geral (simplificado)
+            setProgress(Math.round(((i) / totalFiles) * 100))
+
+            try {
+                let result
+
+                // Define a pasta base (pluraliza o entityType para o nome do bucket/pasta)
+                const folderName = entityType === 'developer' ? 'developers' : 'developments'
+                const folderPath = `${folderName}/${actualEntityId || 'temp'}/${type}`
+
+                if (type === 'videos') {
+                    // Upload de vídeo
+                    result = await uploadFile(
+                        file,
+                        'media',
+                        folderPath
+                    )
+                } else {
+                    // Upload de imagem (com otimização)
+                    result = await uploadImage(file, {
+                        folder: folderPath,
+                        maxWidth: type === 'floorplans' ? 2000 : 1920,
+                        maxHeight: type === 'floorplans' ? 2000 : 1080,
+                        quality: 0.85
+                    })
+                }
+
+                if (result.error) {
+                    toast.error(`Erro no arquivo ${file.name}: ${result.error}`)
+                } else {
+                    uploadedUrls.push(result.url)
+                }
+            } catch (error) {
+                console.error('Erro no upload:', error)
+                toast.error(`Erro ao enviar ${file.name}`)
+            }
+        }
+
+        if (uploadedUrls.length > 0) {
+            // Adiciona novos URLs à lista existente
+            onChange([...value, ...uploadedUrls])
+            toast.success(`${uploadedUrls.length} arquivo(s) enviado(s)!`)
+        }
+
+        setUploading(false)
+        setProgress(0)
+
+        // Limpar input para permitir selecionar o mesmo arquivo novamente se necessário
+        e.target.value = ''
+    }
+
+    const handleDelete = async (id: string) => {
+        const index = parseInt(id)
+        if (confirm('Tem certeza que deseja remover este arquivo?')) {
+            const urlToDelete = value[index]
+
+            // Tentar extrair path do URL para deletar do storage
+            try {
+                const urlObj = new URL(urlToDelete)
+                const pathParts = urlObj.pathname.split('/media/')
+                if (pathParts.length > 1) {
+                    const path = pathParts[1]
+                    await deleteFile(path, 'media')
+                }
+            } catch (err) {
+                console.warn('Não foi possível extrair o caminho do arquivo para deleção física (ignorando)', err)
+            }
+
+            const newUrls = value.filter((_, i) => i !== index)
+            onChange(newUrls)
+            toast.success('Arquivo removido!')
+        }
+    }
+
+    const handleView = (url: string) => {
+        setPreviewUrl(url)
+    }
+
+    // Determina ícone e tipos aceitos
+    let Icon = ImageIcon
+    let accept = 'image/*'
+    let hint = 'JPG, PNG ou WEBP (máx 10MB)'
+
+    if (type === 'videos') {
+        Icon = Video
+        accept = 'video/mp4,video/quicktime'
+        hint = 'MP4 ou MOV (máx 50MB)'
+    } else if (type === 'floorplans') {
+        Icon = FileImage
+        accept = 'image/*'
+        hint = 'Plantas em alta resolução'
+    } else if (type === 'logo') {
+        Icon = Building2
+        accept = 'image/*'
+        hint = 'Logo em PNG ou SVG preferencialmente'
+    }
+
+    // IDs para DnD (índices como string)
+    const items = value.map((_, i) => i.toString())
+
+    return (
+        <div className="space-y-4">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                        {label}
+                    </label>
+                    {description && (
+                        <p className="text-xs text-gray-500 mt-1">{description}</p>
+                    )}
+                </div>
+                <div className="text-xs font-medium px-2 py-1 rounded bg-gray-100 dark:bg-white/5 text-gray-500 border border-gray-200 dark:border-white/10">
+                    {value.length} / {maxFiles}
+                </div>
+            </div>
+
+            {/* Upload Area */}
+            {value.length < maxFiles && (
+                <label className="block group">
+                    <input
+                        type="file"
+                        multiple
+                        accept={accept}
+                        onChange={handleFileSelect}
+                        disabled={uploading}
+                        className="hidden"
+                    />
+                    <div className={`relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all overflow-hidden ${uploading
+                        ? 'border-primary/50 bg-primary/5 cursor-wait'
+                        : 'border-gray-200 dark:border-white/10 hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-white/5'
+                        }`}>
+                        {uploading ? (
+                            <div className="flex flex-col items-center justify-center py-2">
+                                {/* Spinner circular com progresso */}
+                                <div className="relative w-16 h-16 mb-4">
+                                    <svg className="w-full h-full transform -rotate-90">
+                                        <circle
+                                            cx="32"
+                                            cy="32"
+                                            r="28"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                            fill="none"
+                                            className="text-gray-200 dark:text-gray-700"
+                                        />
+                                        <circle
+                                            cx="32"
+                                            cy="32"
+                                            r="28"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                            fill="none"
+                                            strokeDasharray={`${2 * Math.PI * 28}`}
+                                            strokeDashoffset={`${2 * Math.PI * 28 * (1 - progress / 100)}`}
+                                            className="text-primary transition-all duration-300"
+                                            strokeLinecap="round"
+                                        />
+                                    </svg>
+                                    <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-primary">
+                                        {progress}%
+                                    </div>
+                                </div>
+                                <p className="text-sm font-medium text-primary animate-pulse">Otimizando e enviando...</p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="w-16 h-16 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                                    <Icon size={32} className="text-gray-400 dark:text-gray-500 group-hover:text-primary transition-colors" />
+                                </div>
+                                <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+                                    Clique ou arraste arquivos
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    {hint}
+                                </p>
+                            </>
+                        )}
+                    </div>
+                </label>
+            )}
+
+            {/* Gallery Grid (Sortable) */}
+            {value.length > 0 && (
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                >
+                    <SortableContext
+                        items={items}
+                        strategy={rectSortingStrategy}
+                    >
+                        <div className={`grid gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 ${type === 'logo' ? 'grid-cols-1 w-full max-w-[300px]' : 'grid-cols-2 lg:grid-cols-4'
+                            }`}>
+                            {value.map((url, index) => (
+                                <SortableImage
+                                    key={index} // Usando index como chave estável para o map, mas o ID do sortable é string do index
+                                    id={index.toString()}
+                                    url={url}
+                                    onDelete={handleDelete}
+                                    onView={handleView}
+                                />
+                            ))}
+                        </div>
+                    </SortableContext>
+                </DndContext>
+            )}
+
+            {/* Hint de reordenação */}
+            {value.length > 1 && (
+                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 px-1">
+                    <MoveUp size={12} />
+                    <span>Arraste para reordenar</span>
+                </div>
+            )}
+
+            {/* Preview Modal */}
+            {previewUrl && (
+                <div
+                    className="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200"
+                    onClick={() => setPreviewUrl(null)}
+                >
+                    <div className="relative max-w-7xl w-full max-h-[90vh] flex flex-col items-center">
+                        <button
+                            onClick={() => setPreviewUrl(null)}
+                            className="absolute -top-12 right-0 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                        >
+                            <X size={24} />
+                        </button>
+
+                        {type === 'videos' ? (
+                            <video
+                                src={previewUrl}
+                                controls
+                                autoPlay
+                                className="max-w-full max-h-[85vh] rounded-lg shadow-2xl"
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        ) : (
+                            <img
+                                src={previewUrl}
+                                alt="Preview"
+                                className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

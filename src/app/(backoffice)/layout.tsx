@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/client';
 import Sidebar from '@/components/backoffice/Sidebar';
 import MobileHeader from '@/components/backoffice/MobileHeader';
 import MobileBottomNav from '@/components/backoffice/MobileBottomNav';
+import DesktopHeader from '@/components/backoffice/DesktopHeader';
+import { CommandPalette } from '@/components/backoffice/CommandPalette';
 import { Toaster } from 'sonner';
 
 export default function BackofficeLayout({
@@ -56,14 +58,17 @@ export default function BackofficeLayout({
 
                 <Sidebar />
 
-                <div className="lg:pl-72 flex flex-col min-h-screen transition-all duration-300 relative z-10">
+                <div className="lg:pl-72 flex flex-col min-h-screen transition-all duration-300 relative z-10 w-full">
                     {/* Mobile Header (Hidden on LG) */}
                     <div className="lg:hidden">
                         <MobileHeader />
                     </div>
 
+                    {/* Desktop Header */}
+                    <DesktopHeader />
+
                     {/* Main Content */}
-                    <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 pb-32 lg:pb-12 max-w-8xl mx-auto w-full animate-fade-in">
+                    <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 md:py-12 pb-32 max-w-8xl mx-auto w-full animate-fade-in">
                         {children}
                     </main>
 
@@ -73,6 +78,7 @@ export default function BackofficeLayout({
                     </div>
                 </div>
 
+                <CommandPalette />
                 <Toaster position="top-right" richColors theme="system" closeButton />
             </div>
         </>

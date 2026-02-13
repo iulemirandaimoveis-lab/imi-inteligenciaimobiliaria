@@ -1,25 +1,55 @@
 'use client'
+
+import { useRouter } from 'next/navigation'
 import PageHeader from '@/components/backoffice/PageHeader'
-import { Building2 } from 'lucide-react'
+import DeveloperForm from '@/components/backoffice/construtoras/DeveloperForm'
+import { useDeveloper, useDeveloperActions } from '@/hooks/use-developers'
+import { toast } from 'sonner'
+import { useState } from 'react'
 
 export default function ConstruturaPage({ params }: { params: { id: string } }) {
+  const router = useRouter()
+  const { developer, isLoading } = useDeveloper(params.id)
+  const { updateDeveloper } = useDeveloperActions()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (data: any) => {
+    setIsSubmitting(true)
+    try {
+      await updateDeveloper(params.id, data)
+      toast.success('Construtora atualizada com sucesso!')
+      router.refresh()
+    } catch (error) {
+      console.error('Error updating developer:', error)
+      toast.error('Erro ao salvar alterações.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (isLoading) {
+    return <div>Carregando...</div>
+  }
+
+  if (!developer) {
+    return <div>Construtora não encontrada.</div>
+  }
+
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <PageHeader
-        title="Detalhes da Construtora"
+        title={developer.name}
+        description={`Gerenciamento da construtora #${developer.id.split('-')[0]}`}
         breadcrumbs={[
           { label: 'Construtoras', href: '/backoffice/construtoras' },
           { label: 'Detalhes' }
         ]}
       />
-      <div className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 p-8 flex flex-col items-center justify-center text-center">
-        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-            <Building2 size={32} className="text-primary" />
-        </div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Detalhes da Construtora</h2>
-        <p className="text-gray-500">Visualização do ID: {params.id}</p>
-        <span className="mt-6 px-4 py-1.5 bg-gray-100 dark:bg-white/5 rounded-full text-xs font-bold text-gray-500 uppercase tracking-widest border border-gray-200 dark:border-white/10">Breve</span>
-      </div>
+      <DeveloperForm
+        initialData={developer}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+      />
     </div>
   )
 }

@@ -1,126 +1,291 @@
-import { createClient } from '@supabase/supabase-js';
+// lib/supabase-storage.ts
+// Sistema completo de upload de imagens para Supabase Storage
+'use client'
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createClient } from '@/lib/supabase/client'
+import React from 'react'
 
-export class StorageService {
+const supabase = createClient()
 
-    /**
-     * Upload de imagem de imóvel
-     */
-    async uploadPropertyImage(
-        file: File,
-        propertyId: string
-    ): Promise<string> {
-        try {
-            // Gerar nome único
-            const timestamp = Date.now();
-            const extension = file.name.split('.').pop();
-            const filename = `${propertyId}/${timestamp}.${extension}`;
+export interface UploadResult {
+    url: string
+    path: string
+    error?: string
+}
 
-            // Upload para Supabase Storage
-            const { data, error } = await supabase.storage
-                .from('property-images')
-                .upload(filename, file, {
-                    cacheControl: '3600',
-                    upsert: false
-                });
+export interface UploadProgress {
+    loaded: number
+    total: number
+    percentage: number
+}
 
-            if (error) {
-                throw new Error(`Upload failed: ${error.message}`);
-            }
-
-            // Obter URL pública
-            const { data: urlData } = supabase.storage
-                .from('property-images')
-                .getPublicUrl(filename);
-
-            return urlData.publicUrl;
-
-        } catch (error) {
-            console.error('Upload error:', error);
-            throw error;
+/**
+ * Upload de arquivo único para Supabase Storage
+ */
+export async function uploadFile(
+    file: File,
+    bucket: string = 'media',
+    folder: string = 'uploads',
+    onProgress?: (progress: UploadProgress) => void
+): Promise<UploadResult> {
+    try {
+        // Validar arquivo
+        if (!file) {
+            throw new Error('Nenhum arquivo fornecido')
         }
-    }
 
-    /**
-     * Upload múltiplo de imagens
-     */
-    async uploadPropertyImages(
-        files: File[],
-        propertyId: string
-    ): Promise<string[]> {
-        const uploadPromises = files.map(file =>
-            this.uploadPropertyImage(file, propertyId)
-        );
-
-        return await Promise.all(uploadPromises);
-    }
-
-    /**
-     * Deletar imagem
-     */
-    async deletePropertyImage(url: string): Promise<void> {
-        try {
-            // Extrair path da URL
-            const urlObj = new URL(url);
-            const path = urlObj.pathname.split('/property-images/')[1];
-
-            const { error } = await supabase.storage
-                .from('property-images')
-                .remove([path]);
-
-            if (error) {
-                throw new Error(`Delete failed: ${error.message}`);
-            }
-
-        } catch (error) {
-            console.error('Delete error:', error);
-            throw error;
+        // Validar tipo
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'application/pdf']
+        if (!allowedTypes.includes(file.type)) {
+            throw new Error('Tipo de arquivo não permitido')
         }
-    }
 
-    /**
-     * Upload de documento
-     */
-    async uploadPropertyDocument(
-        file: File,
-        propertyId: string
-    ): Promise<string> {
-        try {
-            const timestamp = Date.now();
-            const extension = file.name.split('.').pop();
-            const filename = `${propertyId}/docs/${timestamp}.${extension}`;
+        // Validar tamanho (50MB max)
+        const maxSize = 50 * 1024 * 1024 // 50MB
+        if (file.size > maxSize) {
+            throw new Error('Arquivo muito grande. Máximo: 50MB')
+        }
 
-            const { data, error } = await supabase.storage
-                .from('property-documents')
-                .upload(filename, file, {
-                    cacheControl: '3600',
-                    upsert: false
-                });
+        // Gerar nome único
+        const timestamp = Date.now()
+        const randomString = Math.random().toString(36).substring(2, 15)
+        // Extrair extensão segura
+        const originalName = file.name
+        const extension = originalName.substring(originalName.lastIndexOf('.') + 1)
+        const fileName = `${timestamp}-${randomString}.${extension}`
+        const filePath = `${folder}/${fileName}`
 
-            if (error) {
-                throw new Error(`Upload failed: ${error.message}`);
-            }
+        // Upload
+        const { data, error } = await supabase.storage
+            .from(bucket)
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            })
 
-            // Para documentos privados, gerar signed URL (válida por 1 ano)
-            const { data: signedUrlData, error: signedError } = await supabase.storage
-                .from('property-documents')
-                .createSignedUrl(filename, 31536000); // 1 ano
+        if (error) {
+            throw error
+        }
 
-            if (signedError) {
-                throw new Error(`Signed URL failed: ${signedError.message}`);
-            }
+        // Obter URL pública
+        const { data: urlData } = supabase.storage
+            .from(bucket)
+            .getPublicUrl(filePath)
 
-            return signedUrlData.signedUrl;
+        if (onProgress) {
+            onProgress({
+                loaded: file.size,
+                total: file.size,
+                percentage: 100
+            })
+        }
 
-        } catch (error) {
-            console.error('Document upload error:', error);
-            throw error;
+        return {
+            url: urlData.publicUrl,
+            path: filePath
+        }
+    } catch (error: any) {
+        console.error('Erro no upload:', error)
+        return {
+            url: '',
+            path: '',
+            error: error.message || 'Erro ao fazer upload'
         }
     }
 }
 
-export const storageService = new StorageService();
+/**
+ * Upload múltiplo de arquivos
+ */
+export async function uploadMultipleFiles(
+    files: File[],
+    bucket: string = 'media',
+    folder: string = 'uploads',
+    onProgress?: (fileIndex: number, progress: UploadProgress) => void
+): Promise<UploadResult[]> {
+    const results: UploadResult[] = []
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        // Wrapper para passar o progresso com index
+        const progressCallback = onProgress
+            ? (progress: UploadProgress) => onProgress(i, progress)
+            : undefined
+
+        const result = await uploadFile(
+            file,
+            bucket,
+            folder,
+            progressCallback
+        )
+        results.push(result)
+    }
+
+    return results
+}
+
+/**
+ * Upload de imagem com redimensionamento automático
+ */
+export async function uploadImage(
+    file: File,
+    options: {
+        bucket?: string
+        folder?: string
+        maxWidth?: number
+        maxHeight?: number
+        quality?: number
+    } = {}
+): Promise<UploadResult> {
+    const {
+        bucket = 'media',
+        folder = 'images',
+        maxWidth = 1920,
+        maxHeight = 1080,
+        quality = 0.85
+    } = options
+
+    try {
+        // Criar bitmap da imagem
+        const imgBitmap = await createImageBitmap(file)
+
+        // Calcular novas dimensões mantendo aspect ratio
+        let width = imgBitmap.width
+        let height = imgBitmap.height
+
+        if (width > maxWidth) {
+            height = (height * maxWidth) / width
+            width = maxWidth
+        }
+
+        if (height > maxHeight) {
+            width = (width * maxHeight) / height
+            height = maxHeight
+        }
+
+        // Usar OffscreenCanvas se disponível (melhor performance em Web Workers)
+        // Fallback para elemento canvas do DOM
+        let blob: Blob | null = null
+
+        if (typeof OffscreenCanvas !== 'undefined') {
+            const canvas = new OffscreenCanvas(width, height)
+            const ctx = canvas.getContext('2d')
+            if (ctx) {
+                ctx.drawImage(imgBitmap, 0, 0, width, height)
+                blob = await canvas.convertToBlob({ type: 'image/jpeg', quality })
+            }
+        } else {
+            const canvas = document.createElement('canvas')
+            canvas.width = width
+            canvas.height = height
+            const ctx = canvas.getContext('2d')
+            if (ctx) {
+                ctx.drawImage(imgBitmap, 0, 0, width, height)
+                blob = await new Promise<Blob | null>((resolve) =>
+                    canvas.toBlob(resolve, 'image/jpeg', quality)
+                )
+            }
+        }
+
+        if (!blob) throw new Error('Falha ao processar imagem')
+
+        // Criar novo File otimizado
+        const optimizedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+            type: 'image/jpeg',
+            lastModified: Date.now()
+        })
+
+        // Upload
+        return await uploadFile(optimizedFile, bucket, folder)
+    } catch (error: any) {
+        console.warn('Falha na otimização de imagem, fazendo upload do original:', error)
+        // Fallback: upload sem otimização
+        return await uploadFile(file, bucket, folder)
+    }
+}
+
+/**
+ * Deletar arquivo do Storage
+ */
+export async function deleteFile(
+    path: string,
+    bucket: string = 'media'
+): Promise<{ success: boolean; error?: string }> {
+    try {
+        const { error } = await supabase.storage
+            .from(bucket)
+            .remove([path])
+
+        if (error) {
+            throw error
+        }
+
+        return { success: true }
+    } catch (error: any) {
+        console.error('Erro ao deletar arquivo:', error)
+        return {
+            success: false,
+            error: error.message || 'Erro ao deletar arquivo'
+        }
+    }
+}
+
+/**
+ * Hook React para upload de arquivos
+ */
+export function useFileUpload() {
+    const [uploading, setUploading] = React.useState(false)
+    const [progress, setProgress] = React.useState(0)
+    const [error, setError] = React.useState<string | null>(null)
+
+    const upload = async (
+        file: File,
+        options?: {
+            bucket?: string
+            folder?: string
+            optimize?: boolean
+        }
+    ): Promise<UploadResult | null> => {
+        setUploading(true)
+        setError(null)
+        setProgress(0)
+
+        try {
+            let result: UploadResult
+
+            if (options?.optimize && file.type.startsWith('image/')) {
+                result = await uploadImage(file, {
+                    bucket: options.bucket,
+                    folder: options.folder
+                })
+            } else {
+                result = await uploadFile(
+                    file,
+                    options?.bucket,
+                    options?.folder,
+                    (prog) => setProgress(prog.percentage)
+                )
+            }
+
+            if (result.error) {
+                throw new Error(result.error)
+            }
+
+            return result
+        } catch (err: any) {
+            const msg = err.message || 'Erro no upload'
+            setError(msg)
+            return { url: '', path: '', error: msg }
+        } finally {
+            setUploading(false)
+            setProgress(100) // Ensure complete state
+        }
+    }
+
+    return {
+        upload,
+        uploading,
+        progress,
+        error
+    }
+}
