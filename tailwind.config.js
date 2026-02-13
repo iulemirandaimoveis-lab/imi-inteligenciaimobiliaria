@@ -99,12 +99,6 @@ const config = {
                 'glow': '0 0 15px rgba(212, 175, 55, 0.3)', // Gold glow
                 'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
             },
-            animation: {
-                'fade-in': 'fadeIn 0.5s ease-out',
-                'slide-up': 'slideUp 0.5s ease-out',
-                'slide-down': 'slideDown 0.5s ease-out',
-                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            },
             keyframes: {
                 fadeIn: {
                     '0%': { opacity: '0' },
@@ -118,6 +112,16 @@ const config = {
                     '0%': { transform: 'translateY(-10px)', opacity: '0' },
                     '100%': { transform: 'translateY(0)', opacity: '1' },
                 },
+                shimmer: {
+                    '100%': { transform: 'translateX(100%)' },
+                },
+            },
+            animation: {
+                'fade-in': 'fadeIn 0.5s ease-out',
+                'slide-up': 'slideUp 0.5s ease-out',
+                'slide-down': 'slideDown 0.5s ease-out',
+                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'shimmer': 'shimmer 2s linear infinite',
             },
         },
     },

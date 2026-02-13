@@ -34,7 +34,7 @@ const sidebarItems = [
     { label: 'Campanhas', href: '/backoffice/campanhas', icon: BarChart3 },
     { label: 'Conteúdo & IA', href: '/backoffice/conteudo', icon: Sparkles, badge: 'IA' },
     { label: 'Tracking', href: '/backoffice/tracking', icon: MousePointerClick, badge: 'AUTO' },
-    { label: 'Avaliações', href: '/backoffice/avaliacoes', icon: FileText, badge: 'BREVE' },
+    { label: 'Avaliações', href: '/backoffice/avaliacoes', icon: FileText },
     { label: 'Crédito', href: '/backoffice/credito', icon: CreditCard, badge: 'BREVE' },
     { label: 'Agenda', href: '/backoffice/agenda', icon: Calendar, badge: 'BREVE' },
     { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare, badge: 'BREVE' },
