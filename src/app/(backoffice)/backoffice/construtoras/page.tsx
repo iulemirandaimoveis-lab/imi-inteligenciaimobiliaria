@@ -1,5 +1,5 @@
 'use client'
-import PageHeader from '@/components/backoffice/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import EmptyState from '@/components/backoffice/EmptyState'
 import Button from '@/components/ui/Button'
 import { Building2, Plus } from 'lucide-react'
@@ -10,11 +10,11 @@ export default function ConstrutarasPage() {
     <div className="space-y-8 animate-fade-in">
       <PageHeader
         title="Construtoras"
-        description="Gestão de construtoras e incorporadoras parceiras."
-        breadcrumbs={[{ label: 'Construtoras' }]}
+        subtitle="Gestão de construtoras e incorporadoras parceiras."
+        breadcrumbs={[{ name: 'Construtoras' }]}
         action={
           <Link href="/backoffice/construtoras/nova">
-             <Button icon={<Plus size={18} />}>Nova Construtora</Button>
+            <Button icon={<Plus size={18} />}>Nova Construtora</Button>
           </Link>
         }
       />
@@ -25,7 +25,7 @@ export default function ConstrutarasPage() {
           description="Cadastre construtoras para vincular aos empreendimentos."
           action={
             <Link href="/backoffice/construtoras/nova">
-                <Button variant="outline" size="sm" icon={<Plus size={16} />}>Cadastrar Agora</Button>
+              <Button variant="outline" size="sm" icon={<Plus size={16} />}>Cadastrar Agora</Button>
             </Link>
           }
         />

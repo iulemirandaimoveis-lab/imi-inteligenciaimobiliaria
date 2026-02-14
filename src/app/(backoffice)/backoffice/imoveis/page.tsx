@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import PageHeader from '@/components/backoffice/PageHeader';
+import PageHeader from '../../components/PageHeader';
 import DevelopmentFilters from '@/components/backoffice/imoveis/DevelopmentFilters';
 import DevelopmentList from '@/components/backoffice/imoveis/DevelopmentList';
 import PropertyKPIs from '@/components/backoffice/imoveis/PropertyKPIs';
@@ -61,9 +61,9 @@ export default function ImoveisPage() {
         <div className="animate-fade-in space-y-8 pb-40">
             <PageHeader
                 title="Gestão de Imóveis"
-                description="Controle estratégico de empreendimentos e unidades."
+                subtitle="Controle estratégico de empreendimentos e unidades."
                 breadcrumbs={[
-                    { label: 'Imóveis' }
+                    { name: 'Imóveis' }
                 ]}
                 action={<Button onClick={handleNew} icon={<Plus size={18} />}>Novo Imóvel</Button>}
             />

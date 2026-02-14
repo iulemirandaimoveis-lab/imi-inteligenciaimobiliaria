@@ -9,7 +9,7 @@ import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import PageHeader from '@/components/backoffice/PageHeader'
+import PageHeader from '../../components/PageHeader'
 
 const supabase = createClient()
 
@@ -37,8 +37,8 @@ export default function LeadsPage() {
             <div className="flex-none">
                 <PageHeader
                     title="Central de Oportunidades"
-                    description="Gestão integrada de leads e inteligência de capital."
-                    breadcrumbs={[{ label: 'Leads' }]}
+                    subtitle="Gestão integrada de leads e inteligência de capital."
+                    breadcrumbs={[{ name: 'Leads' }]}
                     action={
                         <div className="flex items-center gap-4">
                             <Link href="/backoffice/leads/kanban">
@@ -118,7 +118,7 @@ export default function LeadsPage() {
                                     </div>
                                     <p className="text-xs text-imi-500 dark:text-gray-400 truncate mb-4 font-medium">{lead.interest || 'Sem interesse definido'}</p>
                                     <div className="flex items-center gap-3">
-                                        <Badge size="sm" variant={lead.status === 'new' ? 'primary' : 'outline'}>
+                                        <Badge size="sm" variant={lead.status === 'new' ? 'primary' : 'default'}>
                                             {lead.status === 'new' ? 'Novo' : lead.status}
                                         </Badge>
                                         {lead.ai_score && (

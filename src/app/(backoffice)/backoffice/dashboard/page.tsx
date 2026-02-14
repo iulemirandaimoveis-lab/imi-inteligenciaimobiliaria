@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import PageHeader from '@/components/backoffice/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import DashboardKPIs from '@/components/backoffice/dashboard/DashboardKPIs'
 import DashboardCharts from '@/components/backoffice/dashboard/DashboardCharts'
 import DashboardRecentActivity from '@/components/backoffice/dashboard/DashboardRecentActivity'
@@ -12,10 +12,10 @@ export default function DashboardPage() {
     <div className="space-y-10 animate-fade-in">
       <PageHeader
         title="Dashboard"
-        description="Centro de comando estratégico de inteligência patrimonial e institucional."
+        subtitle="Centro de comando estratégico de inteligência patrimonial e institucional."
         breadcrumbs={[
-          { label: 'Backoffice', href: '/backoffice' },
-          { label: 'Dashboard' }
+          { name: 'Backoffice', href: '/backoffice' },
+          { name: 'Dashboard' }
         ]}
       />
 

@@ -16,6 +16,8 @@ import Toast, { useToast } from '@/components/ui/Toast'
 import { uploadMultipleFiles, deleteFile } from '@/lib/supabase/storage'
 import Image from 'next/image'
 
+import PageHeader from '../../components/PageHeader'
+
 interface Content {
   id: string
   title: string
@@ -170,29 +172,23 @@ export default function ContentPage() {
         <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => removeToast(toast.id)} />
       ))}
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
-            <span className="text-[10px] font-black text-imi-400 uppercase tracking-[0.3em]">Laboratório Criativo IA</span>
+      <PageHeader
+        title="Blog & Mídia IA"
+        subtitle="Laboratório Criativo IA: Gestão de conteúdos e inteligência gerativa."
+        breadcrumbs={[{ name: 'Conteúdos' }]}
+        action={
+          <div className="flex gap-3">
+            <Button onClick={() => setIsAIModalOpen(true)} variant="outline" className="h-12 px-6 border-purple-100 bg-purple-50 text-purple-700 rounded-2xl group active:scale-95 transition-all">
+              <Sparkles className="w-5 h-5 mr-2 text-purple-600 animate-pulse" />
+              Gerar com IA
+            </Button>
+            <Button onClick={() => { resetForm(); setIsModalOpen(true); }} className="h-12 px-6 bg-imi-900 text-white rounded-2xl shadow-elevated group active:scale-95 transition-all">
+              <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform" />
+              Novo Post
+            </Button>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-imi-900 font-display tracking-tight">
-            Blog & <span className="text-accent-500">Mídia IA</span>
-          </h1>
-        </div>
-
-        <div className="flex gap-3">
-          <Button onClick={() => setIsAIModalOpen(true)} variant="outline" className="h-14 px-8 border-purple-100 bg-purple-50 text-purple-700 rounded-2xl group active:scale-95 transition-all">
-            <Sparkles className="w-5 h-5 mr-3 text-purple-600 animate-pulse" />
-            Gerar com IA
-          </Button>
-          <Button onClick={() => { resetForm(); setIsModalOpen(true); }} className="h-14 px-8 bg-imi-900 text-white rounded-2xl shadow-elevated group active:scale-95 transition-all">
-            <Plus className="w-5 h-5 mr-3 group-hover:rotate-90 transition-transform" />
-            Novo Post
-          </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Grid de Conteúdos */}
       <motion.div

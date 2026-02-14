@@ -1,5 +1,5 @@
 'use client'
-import PageHeader from '@/components/backoffice/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import { PieChart } from 'lucide-react'
 
 export default function RelatoriosPage() {
@@ -7,12 +7,12 @@ export default function RelatoriosPage() {
     <div className="space-y-8 animate-fade-in">
       <PageHeader
         title="Relatórios Gerenciais"
-        description="Análise de dados e inteligência de mercado."
-        breadcrumbs={[{ label: 'Relatórios' }]}
+        subtitle="Análise de dados e inteligência de mercado."
+        breadcrumbs={[{ name: 'Relatórios' }]}
       />
       <div className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 p-8 flex flex-col items-center justify-center text-center">
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-            <PieChart size={32} className="text-primary" />
+          <PieChart size={32} className="text-primary" />
         </div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Central de Relatórios</h2>
         <p className="text-gray-500">Exportação de dados e dashboards customizáveis.</p>

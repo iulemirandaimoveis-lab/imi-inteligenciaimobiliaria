@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import PageHeader from '@/components/backoffice/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import { createClient } from '@/lib/supabase/client'
 import {
   FileText,
@@ -74,20 +74,21 @@ export default function AvaliacoesPage() {
     <div className="space-y-8 max-w-7xl mx-auto">
       <PageHeader
         title="Gestão de Avaliações"
-        description="Laudos técnicos NBR 14653 gerados por inteligência artificial."
+        subtitle="Laudos técnicos NBR 14653 gerados por inteligência artificial."
         breadcrumbs={[
-          { label: 'Backoffice', href: '/backoffice' },
-          { label: 'Avaliações' }
+          { name: 'Backoffice', href: '/backoffice' },
+          { name: 'Avaliações' }
         ]}
-      >
-        <Link
-          href="/backoffice/avaliacoes/nova"
-          className="h-12 px-6 bg-accent-500 text-white rounded-2xl font-bold flex items-center gap-2 shadow-glow hover:shadow-glow-lg transition-all"
-        >
-          <Plus size={20} />
-          Nova Avaliação
-        </Link>
-      </PageHeader>
+        action={
+          <Link
+            href="/backoffice/avaliacoes/nova"
+            className="h-12 px-6 bg-accent-500 text-white rounded-2xl font-bold flex items-center gap-2 shadow-glow hover:shadow-glow-lg transition-all"
+          >
+            <Plus size={20} />
+            Nova Avaliação
+          </Link>
+        }
+      />
 
       {/* Filters & Stats */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center">

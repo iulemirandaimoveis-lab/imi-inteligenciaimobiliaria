@@ -1,5 +1,5 @@
 'use client'
-import PageHeader from '@/components/backoffice/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import { Calendar } from 'lucide-react'
 
 export default function AgendaPage() {
@@ -7,12 +7,12 @@ export default function AgendaPage() {
     <div className="space-y-8 animate-fade-in">
       <PageHeader
         title="Agenda Corporativa"
-        description="Gestão de visitas e compromissos."
-        breadcrumbs={[{ label: 'Agenda' }]}
+        subtitle="Gestão de visitas e compromissos."
+        breadcrumbs={[{ name: 'Agenda' }]}
       />
       <div className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 p-8 flex flex-col items-center justify-center text-center">
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-            <Calendar size={32} className="text-primary" />
+          <Calendar size={32} className="text-primary" />
         </div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Agenda Inteligente</h2>
         <p className="text-gray-500">Sincronização com Google Calendar e Outlook.</p>

@@ -1,5 +1,5 @@
 'use client'
-import PageHeader from '@/components/backoffice/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import { Settings } from 'lucide-react'
 
 export default function SettingsPage() {
@@ -7,12 +7,12 @@ export default function SettingsPage() {
     <div className="space-y-8 animate-fade-in">
       <PageHeader
         title="Configurações Gerais"
-        description="Preferências do sistema e personalização."
-        breadcrumbs={[{ label: 'Configurações' }]}
+        subtitle="Preferências do sistema e personalização."
+        breadcrumbs={[{ name: 'Configurações' }]}
       />
       <div className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 p-8 flex flex-col items-center justify-center text-center">
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-            <Settings size={32} className="text-primary" />
+          <Settings size={32} className="text-primary" />
         </div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Painel de Controle</h2>
         <p className="text-gray-500">Ajustes finos do sistema IMI Atlantis.</p>

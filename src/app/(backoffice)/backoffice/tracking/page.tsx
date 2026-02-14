@@ -1,5 +1,5 @@
 'use client'
-import PageHeader from '@/components/backoffice/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import { MousePointerClick } from 'lucide-react'
 
 export default function TrackingPage() {
@@ -7,12 +7,12 @@ export default function TrackingPage() {
     <div className="space-y-8 animate-fade-in">
       <PageHeader
         title="Tracking"
-        description="Monitoramento de links rastreáveis e conversão."
-        breadcrumbs={[{ label: 'Tracking' }]}
+        subtitle="Monitoramento de links rastreáveis e conversão."
+        breadcrumbs={[{ name: 'Tracking' }]}
       />
       <div className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 p-8 flex flex-col items-center justify-center text-center">
         <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-            <MousePointerClick size={32} className="text-primary" />
+          <MousePointerClick size={32} className="text-primary" />
         </div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Sistema de Tracking</h2>
         <p className="text-gray-500">Analytics avançado de origem e comportamento.</p>
