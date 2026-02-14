@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import Sidebar from '@/components/backoffice/Sidebar';
+import DesktopSidebar from './components/DesktopSidebar';
 import MobileHeader from '@/components/backoffice/MobileHeader';
 import MobileBottomNav from '@/components/backoffice/MobileBottomNav';
 import DesktopHeader from '@/components/backoffice/DesktopHeader';
@@ -56,9 +56,9 @@ export default function BackofficeLayout({
                 {/* Desktop Sidebar & Background Pattern */}
                 <div className="fixed inset-0 z-0 bg-[url('/grid.svg')] opacity-[0.03] dark:opacity-[0.05] pointer-events-none"></div>
 
-                <Sidebar />
+                <DesktopSidebar />
 
-                <div className="lg:pl-72 flex flex-col min-h-screen transition-all duration-300 relative z-10 w-full">
+                <div className="lg:pl-64 flex flex-col min-h-screen transition-all duration-300 relative z-10 w-full">
                     {/* Mobile Header (Hidden on LG) */}
                     <div className="lg:hidden">
                         <MobileHeader />
