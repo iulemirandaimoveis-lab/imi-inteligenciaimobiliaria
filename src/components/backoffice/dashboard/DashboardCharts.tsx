@@ -19,6 +19,7 @@ import {
     AreaChart
 } from 'recharts'
 import { createClient } from '@/lib/supabase/client'
+import Badge from '@/components/ui/Badge'
 
 const supabase = createClient()
 
@@ -210,39 +211,63 @@ export default function DashboardCharts() {
 
     if (loading) {
         return (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-white rounded-2xl border border-imi-100 p-6 h-96 animate-pulse">
-                        <div className="h-6 bg-imi-100 rounded w-48 mb-4" />
-                        <div className="h-full bg-imi-50 rounded" />
+                    <div key={i} className="bg-white dark:bg-[#0A0B0D] rounded-[32px] border border-imi-100 dark:border-white/5 p-10 h-96 animate-pulse">
+                        <div className="h-6 bg-imi-50 dark:bg-white/5 rounded-full w-48 mb-6" />
+                        <div className="h-full bg-imi-50/50 dark:bg-white/5 rounded-2xl" />
                     </div>
                 ))}
             </div>
         )
     }
 
+    const CustomTooltip = ({ active, payload, label }: any) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="bg-[#0A0B0D] border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
+                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-2 font-display">{label}</p>
+                    {payload.map((p: any, i: number) => (
+                        <p key={i} className="text-sm font-bold text-white flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color || p.fill }} />
+                            {p.name}: {p.value}
+                        </p>
+                    ))}
+                </div>
+            )
+        }
+        return null
+    }
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             {/* Row 1: Funil + Origem */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Funil de Conversão */}
-                <div className="bg-white rounded-2xl border border-imi-100 p-6">
-                    <h3 className="text-lg font-bold text-imi-900 mb-6">Funil de Conversão</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={funnelData} layout="vertical">
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                            <XAxis type="number" />
-                            <YAxis dataKey="name" type="category" width={100} />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: '#fff',
-                                    border: '1px solid #e5e7eb',
-                                    borderRadius: '8px'
-                                }}
+                <div className="bg-white dark:bg-[#0A0B0D] rounded-[32px] border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+                    <div className="flex items-center justify-between mb-10">
+                        <div>
+                            <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Métricas de Ativos</p>
+                            <h3 className="text-2xl font-display font-bold text-imi-950 dark:text-white tracking-tight">Fluxo de Conversão</h3>
+                        </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={320}>
+                        <BarChart data={funnelData} layout="vertical" margin={{ left: -20, right: 20 }}>
+                            <CartesianGrid strokeDasharray="0" vertical={false} stroke="#F8FAFC" />
+                            <XAxis type="number" hide />
+                            <YAxis
+                                dataKey="name"
+                                type="category"
+                                width={120}
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 10, fontWeight: 700, fill: '#64748b', textAnchor: 'start' }}
+                                dx={0}
                             />
-                            <Bar dataKey="count" radius={[0, 8, 8, 0]}>
+                            <Tooltip content={<CustomTooltip />} cursor={{ fill: '#F1F5F9' }} />
+                            <Bar dataKey="count" radius={[0, 12, 12, 0]} barSize={24}>
                                 {funnelData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                    <Cell key={`cell-${index}`} fill={entry.color} fillOpacity={0.9} />
                                 ))}
                             </Bar>
                         </BarChart>
@@ -250,89 +275,121 @@ export default function DashboardCharts() {
                 </div>
 
                 {/* Origem dos Leads */}
-                <div className="bg-white rounded-2xl border border-imi-100 p-6">
-                    <h3 className="text-lg font-bold text-imi-900 mb-6">Origem dos Leads</h3>
-                    <ResponsiveContainer width="100%" height={300}>
+                <div className="bg-white dark:bg-[#0A0B0D] rounded-[32px] border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+                    <div className="flex items-center justify-between mb-10">
+                        <div>
+                            <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Canais de Aquisição</p>
+                            <h3 className="text-2xl font-display font-bold text-imi-950 dark:text-white tracking-tight">Origem de Capital</h3>
+                        </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={320}>
                         <PieChart>
                             <Pie
                                 data={sourceData}
                                 cx="50%"
                                 cy="50%"
-                                labelLine={false}
-                                label={(props: any) => `${props.name} (${(props.percent * 100).toFixed(0)}%)`}
-                                outerRadius={100}
-                                fill="#8884d8"
+                                innerRadius={80}
+                                outerRadius={110}
+                                paddingAngle={8}
                                 dataKey="value"
                             >
                                 {sourceData.map((entry, index) => (
                                     <Cell
                                         key={`cell-${index}`}
                                         fill={Object.values(COLORS)[index % Object.values(COLORS).length]}
+                                        stroke="transparent"
                                     />
                                 ))}
                             </Pie>
-                            <Tooltip />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Legend
+                                verticalAlign="bottom"
+                                height={36}
+                                iconType="circle"
+                                formatter={(value) => <span className="text-[10px] font-bold text-imi-400 uppercase tracking-widest ml-1">{value}</span>}
+                            />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
             </div>
 
             {/* Row 2: Performance por País */}
-            <div className="bg-white rounded-2xl border border-imi-100 p-6">
-                <h3 className="text-lg font-bold text-imi-900 mb-6">Performance por Jurisdição</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={countryData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                        <XAxis dataKey="name" />
-                        <YAxis yAxisId="left" orientation="left" stroke={COLORS.blue} />
-                        <YAxis yAxisId="right" orientation="right" stroke={COLORS.green} />
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: '#fff',
-                                border: '1px solid #e5e7eb',
-                                borderRadius: '8px'
-                            }}
+            <div className="bg-white dark:bg-[#0A0B0D] rounded-[32px] border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+                <div className="flex items-center justify-between mb-10">
+                    <div>
+                        <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Visão Continental</p>
+                        <h3 className="text-2xl font-display font-bold text-imi-950 dark:text-white tracking-tight">Performance por Jurisdição</h3>
+                    </div>
+                </div>
+                <ResponsiveContainer width="100%" height={350}>
+                    <BarChart data={countryData} margin={{ top: 20 }}>
+                        <CartesianGrid strokeDasharray="0" vertical={false} stroke="#F8FAFC" />
+                        <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fontSize: 11, fontWeight: 700, fill: '#64748b' }}
+                            dy={10}
                         />
-                        <Legend />
-                        <Bar yAxisId="left" dataKey="leads" fill={COLORS.blue} name="Leads" radius={[8, 8, 0, 0]} />
-                        <Bar yAxisId="left" dataKey="developments" fill={COLORS.purple} name="Empreendimentos" radius={[8, 8, 0, 0]} />
-                        <Bar yAxisId="right" dataKey="value" fill={COLORS.green} name="Valor (Mi)" radius={[8, 8, 0, 0]} />
+                        <YAxis yAxisId="left" orientation="left" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#cbd5e1' }} />
+                        <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#cbd5e1' }} />
+                        <Tooltip content={<CustomTooltip />} cursor={{ fill: '#F8FAFC' }} />
+                        <Legend
+                            verticalAlign="top"
+                            align="right"
+                            iconType="circle"
+                            formatter={(value) => <span className="text-[10px] font-bold text-imi-400 uppercase tracking-widest ml-2">{value}</span>}
+                        />
+                        <Bar yAxisId="left" dataKey="leads" fill={COLORS.blue} name="Leads" radius={[6, 6, 0, 0]} barSize={20} />
+                        <Bar yAxisId="left" dataKey="developments" fill={COLORS.purple} name="Empreendimentos" radius={[6, 6, 0, 0]} barSize={20} />
+                        <Bar yAxisId="right" dataKey="value" fill={COLORS.primary} name="Valor (Mi)" radius={[6, 6, 0, 0]} barSize={20} />
                     </BarChart>
                 </ResponsiveContainer>
             </div>
 
             {/* Row 3: Timeline + Score */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Timeline de Performance */}
-                <div className="bg-white rounded-2xl border border-imi-100 p-6">
-                    <h3 className="text-lg font-bold text-imi-900 mb-6">Evolução (6 meses)</h3>
-                    <ResponsiveContainer width="100%" height={300}>
+                <div className="bg-white dark:bg-[#0A0B0D] rounded-[32px] border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+                    <div className="flex items-center justify-between mb-10">
+                        <div>
+                            <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Série Histórica</p>
+                            <h3 className="text-2xl font-display font-bold text-imi-950 dark:text-white tracking-tight">Evolução Estratégica</h3>
+                        </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={320}>
                         <AreaChart data={timelineData}>
                             <defs>
                                 <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={COLORS.blue} stopOpacity={0.8} />
+                                    <stop offset="5%" stopColor={COLORS.blue} stopOpacity={0.15} />
                                     <stop offset="95%" stopColor={COLORS.blue} stopOpacity={0} />
                                 </linearGradient>
                                 <linearGradient id="colorConversoes" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={COLORS.green} stopOpacity={0.8} />
+                                    <stop offset="5%" stopColor={COLORS.green} stopOpacity={0.15} />
                                     <stop offset="95%" stopColor={COLORS.green} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                            <XAxis dataKey="month" />
-                            <YAxis />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: '#fff',
-                                    border: '1px solid #e5e7eb',
-                                    borderRadius: '8px'
-                                }}
+                            <CartesianGrid strokeDasharray="0" vertical={false} stroke="#F8FAFC" />
+                            <XAxis
+                                dataKey="month"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 10, fontWeight: 700, fill: '#64748b' }}
+                                dy={10}
                             />
-                            <Legend />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#cbd5e1' }} />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Legend
+                                verticalAlign="top"
+                                align="right"
+                                iconType="circle"
+                                formatter={(value) => <span className="text-[10px] font-bold text-imi-400 uppercase tracking-widest ml-2">{value}</span>}
+                            />
                             <Area
                                 type="monotone"
                                 dataKey="leads"
                                 stroke={COLORS.blue}
+                                strokeWidth={3}
                                 fillOpacity={1}
                                 fill="url(#colorLeads)"
                                 name="Total Leads"
@@ -341,6 +398,7 @@ export default function DashboardCharts() {
                                 type="monotone"
                                 dataKey="conversoes"
                                 stroke={COLORS.green}
+                                strokeWidth={3}
                                 fillOpacity={1}
                                 fill="url(#colorConversoes)"
                                 name="Conversões"
@@ -350,26 +408,31 @@ export default function DashboardCharts() {
                 </div>
 
                 {/* Distribuição de Score */}
-                <div className="bg-white rounded-2xl border border-imi-100 p-6">
-                    <h3 className="text-lg font-bold text-imi-900 mb-6">Qualificação de Leads (Score)</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={scoreData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: '#fff',
-                                    border: '1px solid #e5e7eb',
-                                    borderRadius: '8px'
-                                }}
+                <div className="bg-white dark:bg-[#0A0B0D] rounded-[32px] border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+                    <div className="flex items-center justify-between mb-10">
+                        <div>
+                            <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Poder de Fechamento</p>
+                            <h3 className="text-2xl font-display font-bold text-imi-950 dark:text-white tracking-tight">Qualificação (Score)</h3>
+                        </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={320}>
+                        <BarChart data={scoreData} margin={{ top: 20 }}>
+                            <CartesianGrid strokeDasharray="0" vertical={false} stroke="#F8FAFC" />
+                            <XAxis
+                                dataKey="name"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fontSize: 10, fontWeight: 700, fill: '#64748b' }}
+                                dy={10}
                             />
-                            <Bar dataKey="value" fill={COLORS.primary} name="Quantidade" radius={[8, 8, 0, 0]}>
+                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#cbd5e1' }} />
+                            <Tooltip content={<CustomTooltip />} cursor={{ fill: '#F8FAFC' }} />
+                            <Bar dataKey="value" name="Volume" radius={[12, 12, 0, 0]} barSize={32}>
                                 {scoreData.map((entry, index) => {
                                     let color = COLORS.red
                                     if (entry.name.startsWith('61')) color = COLORS.yellow
                                     if (entry.name.startsWith('81')) color = COLORS.green
-                                    return <Cell key={`cell-${index}`} fill={color} />
+                                    return <Cell key={`cell-${index}`} fill={color} fillOpacity={0.8} />
                                 })}
                             </Bar>
                         </BarChart>

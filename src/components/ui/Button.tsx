@@ -1,52 +1,119 @@
-import { ButtonHTMLAttributes, forwardRef } from 'react'
-import { twMerge } from 'tailwind-merge'
-import { Loader2 } from 'lucide-react'
+// components/ui/Button.tsx
+// Button Component - Padrão Institucional Premium
+// Altura mínima 48px (touch-friendly)
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger'
+'use client'
+
+import { forwardRef, ButtonHTMLAttributes } from 'react'
+import { Loader } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
     size?: 'sm' | 'md' | 'lg'
-    isLoading?: boolean
-    block?: boolean
-    fullWidth?: boolean
+    loading?: boolean
     icon?: React.ReactNode
+    iconPosition?: 'left' | 'right'
+    fullWidth?: boolean
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant = 'primary', size = 'md', isLoading = false, block, fullWidth, icon, children, ...props }, ref) => {
+    ({
+        className,
+        variant = 'primary',
+        size = 'md',
+        loading = false,
+        icon,
+        iconPosition = 'left',
+        fullWidth = false,
+        disabled,
+        children,
+        ...props
+    }, ref) => {
+
+        // Base: Focus, transitions, disabled
+        const baseStyles = `
+      inline-flex items-center justify-center gap-[8px]
+      font-medium text-sm
+      transition-all duration-200 ease-smooth
+      focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2
+      disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+      active:scale-[0.98]
+    `
+
+        // Variants
         const variants = {
-            primary: 'bg-primary hover:bg-primary-dark text-background-dark shadow-glow',
-            secondary: 'bg-background-dark text-white border border-white/10 hover:bg-white/5',
-            ghost: 'text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-white',
-            outline: 'border border-gray-200 dark:border-white/10 bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5',
-            danger: 'bg-red-500/10 text-red-500 hover:bg-red-500/20 shadow-none border border-red-500/20'
+            primary: `
+        bg-accent-500 text-white
+        hover:bg-accent-600
+        shadow-sm hover:shadow-md
+      `,
+            secondary: `
+        bg-imi-100 text-imi-900
+        border border-imi-200
+        hover:bg-imi-200 hover:border-imi-300
+      `,
+            outline: `
+        bg-transparent text-imi-700 
+        border-2 border-imi-200
+        hover:bg-imi-50 hover:border-imi-300
+      `,
+            ghost: `
+        bg-transparent text-imi-700
+        hover:bg-imi-100
+      `,
+            danger: `
+        bg-red-500 text-white
+        hover:bg-red-600
+        shadow-sm hover:shadow-md
+      `,
         }
 
+        // Sizes - Mínimo 48px para touch
         const sizes = {
-            sm: 'px-3 py-1.5 text-xs font-bold rounded-lg',
-            md: 'px-6 py-3 text-sm font-bold rounded-xl',
-            lg: 'px-8 py-4 text-base font-bold rounded-2xl'
+            sm: 'h-[40px] px-[16px] rounded-[8px]',
+            md: 'h-[48px] px-[24px] rounded-[12px]', // Padrão touch-friendly
+            lg: 'h-[56px] px-[32px] rounded-[12px] text-base',
+        }
+
+        const iconSizes = {
+            sm: 'w-[16px] h-[16px]',
+            md: 'w-[20px] h-[20px]',
+            lg: 'w-[24px] h-[24px]',
         }
 
         return (
             <button
                 ref={ref}
-                disabled={isLoading || props.disabled}
-                className={twMerge(
-                    "inline-flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
+                className={cn(
+                    baseStyles,
                     variants[variant],
                     sizes[size],
-                    (block || fullWidth) && "w-full",
+                    fullWidth && 'w-full',
                     className
                 )}
+                disabled={disabled || loading}
                 {...props}
             >
-                {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-                {!isLoading && icon}
+                {loading && (
+                    <Loader className={cn(iconSizes[size], 'animate-spin')} />
+                )}
+
+                {!loading && icon && iconPosition === 'left' && (
+                    <span className={iconSizes[size]}>{icon}</span>
+                )}
+
                 {children}
+
+                {!loading && icon && iconPosition === 'right' && (
+                    <span className={iconSizes[size]}>{icon}</span>
+                )}
             </button>
         )
     }
 )
+
 Button.displayName = 'Button'
 
+export { Button }
 export default Button

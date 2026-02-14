@@ -25,6 +25,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Badge from '@/components/ui/Badge';
 
 const sidebarItems = [
     { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
@@ -60,37 +61,37 @@ export default function Sidebar() {
     };
 
     return (
-        <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:border-r lg:border-white/5 lg:bg-background-dark/95 fixed inset-y-0 left-0 z-30 transition-all duration-300 shadow-[20px_0_40px_-10px_rgba(0,0,0,0.3)] backdrop-blur-3xl">
-            {/* Branding - Elegant Header */}
-            <div className="p-8 pb-6 flex flex-col relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-
-                <div className="flex items-center gap-4 mb-8 relative z-10 group cursor-default">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary via-primary-light to-primary-dark rounded-2xl flex items-center justify-center text-background-dark font-display font-bold text-2xl shadow-glow transition-transform duration-500 group-hover:rotate-[10deg]">
+        <aside className="hidden lg:flex lg:flex-col lg:w-80 lg:border-r lg:border-white/5 lg:bg-imi-900 fixed inset-y-0 left-0 z-50 shadow-xl">
+            {/* Branding - Minimal & Powerful */}
+            <div className="p-4 pb-4 flex flex-col relative">
+                <div className="flex items-center gap-3 mb-6 relative z-10">
+                    <div className="w-10 h-10 bg-white/5 border border-white/10 rounded-md flex items-center justify-center text-accent-500 font-display font-bold text-2xl shadow-xl ring-1 ring-white/5">
                         I
                     </div>
-                    <div>
-                        <h2 className="text-2xl font-bold text-white font-display tracking-tight leading-none group-hover:text-primary-light transition-colors">IMI Admin</h2>
-                        <div className="h-px w-8 bg-primary/50 my-1 rounded-full group-hover:w-full transition-all duration-500" />
-                        <p className="text-[10px] text-primary-light font-bold uppercase tracking-[0.3em] opacity-80">Inteligência Imob.</p>
+                    <div className="flex flex-col">
+                        <h2 className="text-xl font-display font-bold text-white tracking-tighter leading-none">IMI ATLANTIS</h2>
+                        <div className="flex items-center gap-1 mt-1">
+                            <span className="w-1 h-1 rounded-full bg-accent-500 animate-pulse" />
+                            <p className="text-xs text-accent-500 font-bold uppercase tracking-widest opacity-80">Operational Hub</p>
+                        </div>
                     </div>
                 </div>
 
-                {/* Micro-Search */}
-                <div className="relative mb-2">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+                {/* Search - Refined & Subtle Hub */}
+                <div className="relative group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-accent-500 transition-colors w-4 h-4" strokeWidth={1.5} />
                     <input
                         type="text"
-                        placeholder="Buscar menu..."
+                        placeholder="Comando de Sistema..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-white/5 border border-white/5 rounded-xl py-2 pl-9 pr-3 text-xs text-gray-300 placeholder-gray-500 focus:outline-none focus:border-primary/30 focus:bg-white/10 transition-all"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-md h-input pl-10 pr-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent-500 transition-all font-medium"
                     />
                 </div>
             </div>
 
-            {/* Navigation - Scrollable Area */}
-            <nav className="flex-1 overflow-y-auto px-4 space-y-1.5 custom-scrollbar pb-6">
+            {/* Navigation - Strategic Discipline */}
+            <nav className="flex-1 overflow-y-auto px-3 space-y-1 custom-scrollbar pb-5">
                 {filteredItems.map((item) => {
                     const isActive = item.href === '/backoffice/dashboard'
                         ? pathname === item.href
@@ -100,72 +101,66 @@ export default function Sidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`group flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-500 relative overflow-hidden ${isActive
-                                ? 'bg-gradient-to-r from-primary/20 to-transparent text-primary font-medium shadow-[inset_0_0_20px_rgba(212,175,55,0.05)] border-l-4 border-primary'
-                                : 'text-gray-400 hover:bg-white/5 hover:text-white border-l-4 border-transparent hover:pl-5'
+                            className={`group flex items-center justify-between px-4 h-btn rounded-md transition-all duration-200 relative ${isActive
+                                ? 'bg-white/5 text-white shadow-md border border-white/5'
+                                : 'text-imi-400 hover:text-white hover:bg-white/[0.02]'
                                 }`}
                         >
-                            {/* Active Glow Effect */}
-                            {isActive && (
-                                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent opacity-50" />
+                            <div className="flex items-center gap-3">
+                                <item.icon
+                                    size={18}
+                                    strokeWidth={isActive ? 2 : 1.5}
+                                    className={`transition-colors duration-200 ${isActive ? 'text-accent-500' : 'text-imi-400 group-hover:text-imi-200'}`}
+                                />
+                                <span className={`text-sm font-bold uppercase tracking-wide ${isActive ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'}`}>
+                                    {item.label}
+                                </span>
+                            </div>
+
+                            {item.badge && (
+                                <Badge
+                                    size="sm"
+                                    variant={isActive ? 'primary' : 'default'}
+                                >
+                                    {item.badge}
+                                </Badge>
                             )}
 
-                            <item.icon
-                                size={20}
-                                className={`relative z-10 transition-all duration-300 ${isActive ? 'text-primary scale-110 drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]' : 'group-hover:text-white group-hover:scale-105'}`}
-                                strokeWidth={isActive ? 2.5 : 1.5}
-                            />
-
-                            <span className="relative z-10 text-sm tracking-wide font-medium">{item.label}</span>
-
-                            {/* Chevron for depth */}
-                            {isActive && <ChevronRight size={14} className="ml-auto text-primary animate-pulse-slow" />}
-
-                            {/* Badge */}
-                            {item.badge && !isActive && (
-                                <span className={`ml-auto px-2 py-0.5 text-[9px] font-bold rounded-full uppercase tracking-wider border relative z-10 
-                                    ${item.badge === 'IA' ? 'bg-primary/20 text-primary border-primary/30 shadow-[0_0_10px_rgba(212,175,55,0.2)]' : ''}
-                                    ${item.badge === 'AUTO' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' : ''}
-                                    ${item.badge === 'BREVE' ? 'bg-white/10 text-gray-400 border-white/10' : ''}
-                                `}>
-                                    {item.badge}
-                                </span>
+                            {isActive && (
+                                <div className="absolute left-[-12px] w-1 h-4 bg-accent-500 rounded-r-full" />
                             )}
                         </Link>
                     );
                 })}
             </nav>
 
-            {/* Footer Actions - Glassmorphism */}
-            <div className="p-4 pt-2">
-                <div className="p-1 border border-white/5 bg-gradient-to-b from-white/5 to-black/40 rounded-3xl backdrop-blur-md shadow-lg">
-                    <Link
-                        href="/backoffice/settings"
-                        className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 mb-1 ${pathname === '/backoffice/settings'
-                            ? 'bg-primary/10 text-primary font-medium border border-primary/20'
-                            : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                            }`}
-                    >
-                        <Settings size={18} />
-                        <span className="text-sm">Configurações</span>
-                    </Link>
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 group mt-1"
-                    >
-                        <span className="flex items-center gap-3">
-                            <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
-                            <span className="text-sm font-medium">Sair</span>
-                        </span>
-                    </button>
-                </div>
+            {/* Footer - Institutional Stability */}
+            <div className="p-4 border-t border-white/5 bg-white/[0.01]">
+                <Link
+                    href="/backoffice/settings"
+                    className={`flex items-center gap-3 px-4 h-btn rounded-md transition-all duration-200 mb-1 ${pathname.startsWith('/backoffice/settings')
+                        ? 'bg-white/5 text-white shadow-md border border-white/5'
+                        : 'text-imi-400 hover:text-white hover:bg-white/[0.02]'
+                        }`}
+                >
+                    <Settings size={18} strokeWidth={1.5} className={pathname.startsWith('/backoffice/settings') ? 'text-accent-500' : ''} />
+                    <span className="text-sm font-bold uppercase tracking-wide">Configurações</span>
+                </Link>
 
-                {/* User Profile Mini */}
-                <div className="mt-4 px-2 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-white/10" />
-                    <div className="flex flex-col">
-                        <span className="text-xs font-bold text-white">Administrador</span>
-                        <span className="text-[10px] text-gray-500">online</span>
+                <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 h-btn rounded-md text-imi-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 group"
+                >
+                    <LogOut size={18} strokeWidth={1.5} />
+                    <span className="text-sm font-bold uppercase tracking-wide">Encerrar Sessão</span>
+                </button>
+
+                {/* Context Info */}
+                <div className="mt-4 px-4 py-3 bg-white/[0.02] rounded-lg border border-white/5 flex items-center gap-3">
+                    <UserCircle size={24} strokeWidth={1.5} className="text-accent-500" />
+                    <div className="flex flex-col leading-tight">
+                        <span className="text-sm font-bold text-white tracking-tight">Gestor IMI</span>
+                        <span className="text-[10px] text-accent-500 font-bold uppercase tracking-widest opacity-60">Acesso Total</span>
                     </div>
                 </div>
             </div>

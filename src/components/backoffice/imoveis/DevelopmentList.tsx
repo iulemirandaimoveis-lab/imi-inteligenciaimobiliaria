@@ -17,17 +17,23 @@ export default function DevelopmentList({ developments, isLoading, onEdit, onDel
     // Loading State - Grid Skeleton
     if (isLoading) {
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                    <div key={i} className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-white/5 h-[400px] animate-pulse p-4 shadow-sm">
-                        <div className="aspect-[4/3] bg-gray-100 dark:bg-white/5 rounded-xl mb-4"></div>
-                        <div className="space-y-3">
-                            <div className="h-6 bg-gray-100 dark:bg-white/5 rounded w-3/4"></div>
-                            <div className="h-4 bg-gray-100 dark:bg-white/5 rounded w-1/2"></div>
-                            <div className="grid grid-cols-3 gap-2 pt-4 border-t border-gray-100 dark:border-white/5">
-                                <div className="h-10 bg-gray-100 dark:bg-white/5 rounded-lg"></div>
-                                <div className="h-10 bg-gray-100 dark:bg-white/5 rounded-lg"></div>
-                                <div className="h-10 bg-gray-100 dark:bg-white/5 rounded-lg"></div>
+                    <div key={i} className="bg-white rounded-3xl border border-imi-100 h-[500px] p-8 shadow-sm overflow-hidden flex flex-col">
+                        <div className="h-64 bg-imi-50 rounded-2xl mb-8 animate-pulse"></div>
+                        <div className="space-y-4 flex-1">
+                            <div className="h-6 bg-imi-50 rounded-lg w-3/4 animate-pulse"></div>
+                            <div className="h-4 bg-imi-50 rounded-lg w-1/2 animate-pulse"></div>
+
+                            <div className="grid grid-cols-3 gap-3 pt-8">
+                                <div className="h-12 bg-imi-50 rounded-2xl animate-pulse"></div>
+                                <div className="h-12 bg-imi-50 rounded-2xl animate-pulse"></div>
+                                <div className="h-12 bg-imi-50 rounded-2xl animate-pulse"></div>
+                            </div>
+
+                            <div className="pt-8 mt-auto flex gap-4">
+                                <div className="h-12 bg-imi-50 rounded-xl flex-1 animate-pulse"></div>
+                                <div className="h-12 bg-imi-50 rounded-xl w-12 animate-pulse"></div>
                             </div>
                         </div>
                     </div>

@@ -12,7 +12,8 @@ import {
     AlertCircle,
     ArrowUp,
     ArrowDown,
-    Minus
+    Minus,
+    Sparkles
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRealtimeDevelopments, useRealtimeLeads } from '@/hooks/use-realtime-sync'
@@ -60,37 +61,38 @@ interface KPICardProps {
     bgColor?: string
 }
 
-function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color = 'text-accent-600', bgColor = 'bg-accent-50' }: KPICardProps) {
+function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color = 'text-imi-600', bgColor = 'bg-imi-50' }: KPICardProps) {
     return (
-        <div className="bg-white rounded-2xl border border-imi-100 p-6 hover:shadow-md transition-all">
-            <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 rounded-xl ${bgColor} flex items-center justify-center`}>
-                    <Icon size={24} className={color} />
+        <div className="bg-white rounded-2xl border border-imi-100 p-8 hover:shadow-xl hover:shadow-imi-900/5 transition-all duration-300 group flex flex-col h-full">
+            <div className="flex items-center justify-between mb-8">
+                <div className={`w-12 h-12 rounded-xl ${bgColor} flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-sm border border-black/5`}>
+                    <Icon size={22} className={color} strokeWidth={1.5} />
                 </div>
                 {trend && trendValue && (
-                    <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${trend === 'up' ? 'bg-green-50 text-green-700' :
-                            trend === 'down' ? 'bg-red-50 text-red-700' :
-                                'bg-gray-50 text-gray-700'
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold tracking-tight ${trend === 'up' ? 'bg-green-500/10 text-green-700' :
+                        trend === 'down' ? 'bg-red-500/10 text-red-700' :
+                            'bg-gray-500/10 text-gray-700'
                         }`}>
-                        {trend === 'up' && <ArrowUp size={12} />}
-                        {trend === 'down' && <ArrowDown size={12} />}
-                        {trend === 'neutral' && <Minus size={12} />}
+                        {trend === 'up' && <ArrowUp size={12} strokeWidth={3} />}
+                        {trend === 'down' && <ArrowDown size={12} strokeWidth={3} />}
+                        {trend === 'neutral' && <Minus size={12} strokeWidth={3} />}
                         {trendValue}
                     </div>
                 )}
             </div>
 
-            <div className="text-3xl font-bold text-imi-900 mb-1">
-                {value}
+            <div className="flex-1">
+                <div className="text-sm font-bold text-imi-400 uppercase tracking-[0.15em] mb-2 leading-none">
+                    {title}
+                </div>
+                <div className="text-4xl font-display font-bold text-imi-950 tracking-tighter tabular-nums">
+                    {value}
+                </div>
             </div>
 
-            <div className="text-sm text-imi-600">
-                {title}
-            </div>
-
-            {subtitle && (
-                <div className="text-xs text-imi-500 mt-2 pt-2 border-t border-imi-100">
-                    {subtitle}
+            {(subtitle) && (
+                <div className="mt-8 pt-6 border-t border-imi-50 flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-imi-500 uppercase tracking-widest">{subtitle}</span>
                 </div>
             )}
         </div>
@@ -344,8 +346,8 @@ export default function DashboardKPIs() {
                         <div
                             key={index}
                             className={`rounded-xl p-4 flex items-center gap-3 ${alert.severity === 'high' ? 'bg-red-50 border border-red-200' :
-                                    alert.severity === 'medium' ? 'bg-yellow-50 border border-yellow-200' :
-                                        'bg-blue-50 border border-blue-200'
+                                alert.severity === 'medium' ? 'bg-yellow-50 border border-yellow-200' :
+                                    'bg-blue-50 border border-blue-200'
                                 }`}
                         >
                             <AlertCircle size={20} className={
@@ -354,8 +356,8 @@ export default function DashboardKPIs() {
                                         'text-blue-600'
                             } />
                             <span className={`text-sm font-medium ${alert.severity === 'high' ? 'text-red-700' :
-                                    alert.severity === 'medium' ? 'text-yellow-700' :
-                                        'text-blue-700'
+                                alert.severity === 'medium' ? 'text-yellow-700' :
+                                    'text-blue-700'
                                 }`}>
                                 {alert.message}
                             </span>
@@ -405,43 +407,54 @@ export default function DashboardKPIs() {
                 />
             </div>
 
-            {/* Performance por Jurisdição */}
-            <div className="bg-white rounded-2xl border border-imi-100 p-6">
-                <h3 className="text-lg font-bold text-imi-900 mb-6 flex items-center gap-2">
-                    <Globe size={24} className="text-accent-600" />
-                    Performance por Jurisdição
-                </h3>
+            {/* Performance por Jurisdição - Structured & Precise */}
+            <div className="bg-white rounded-3xl border border-imi-100 p-8 shadow-sm">
+                <div className="flex items-center justify-between mb-10">
+                    <h3 className="text-xl font-bold text-imi-950 flex items-center gap-3">
+                        <Globe size={22} className="text-imi-500" strokeWidth={1.5} />
+                        Performance por Jurisdição
+                    </h3>
+                    <div className="text-[10px] font-bold text-imi-400 uppercase tracking-widest bg-imi-50 px-3 py-1 rounded-full border border-imi-100">
+                        Consolidado Global
+                    </div>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {['Brasil', 'EUA', 'Dubai'].map((country) => {
                         const devCount = stats.developmentsByCountry[country] || 0
                         const ticket = stats.ticketByCountry[country] || 0
-                        const avgTicketCountry = ticket > 0 ? ticket / devCount : 0
+                        const avgTicketCountry = ticket > 0 ? ticket / (devCount || 1) : 0
 
                         return (
-                            <div key={country} className="border border-imi-100 rounded-xl p-4">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="text-2xl">
+                            <div key={country} className="border border-imi-100 rounded-3xl p-6 hover:bg-imi-50/50 transition-colors group">
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="w-12 h-12 rounded-2xl bg-white border border-imi-100 shadow-sm flex items-center justify-center text-2xl grayscale group-hover:grayscale-0 transition-all duration-300">
                                         {country === 'Brasil' && '🇧🇷'}
                                         {country === 'EUA' && '🇺🇸'}
                                         {country === 'Dubai' && '🇦🇪'}
                                     </div>
                                     <div>
-                                        <div className="font-bold text-imi-900">{country}</div>
-                                        <div className="text-xs text-imi-500">{devCount} empreendimentos</div>
+                                        <div className="font-bold text-imi-900 text-lg leading-none">{country}</div>
+                                        <div className="text-[10px] font-bold text-imi-400 uppercase tracking-widest mt-1">{devCount} Unidades</div>
                                     </div>
                                 </div>
 
-                                <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between">
-                                        <span className="text-imi-600">Ticket Médio:</span>
-                                        <span className="font-medium text-imi-900">
+                                <div className="pt-6 border-t border-imi-100/50 space-y-4">
+                                    <div className="flex justify-between items-end">
+                                        <span className="text-[11px] font-bold text-imi-400 uppercase tracking-wider">Investimento Médio</span>
+                                        <span className="font-display font-bold text-imi-900 text-lg tabular-nums">
                                             {avgTicketCountry > 0 ? new Intl.NumberFormat('pt-BR', {
                                                 style: 'currency',
                                                 currency: 'BRL',
                                                 minimumFractionDigits: 0
                                             }).format(avgTicketCountry) : '—'}
                                         </span>
+                                    </div>
+                                    <div className="h-1 w-full bg-imi-100 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-imi-500 rounded-full"
+                                            style={{ width: country === 'Brasil' ? '100%' : country === 'EUA' ? '65%' : '40%' }}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -450,81 +463,93 @@ export default function DashboardKPIs() {
                 </div>
             </div>
 
-            {/* Financeiro */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200 p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-green-500 flex items-center justify-center">
-                            <DollarSign size={24} className="text-white" />
+            {/* Financeiro - Depth & Distinction */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="bg-[#0A0B0D] rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
+
+                    <div className="flex items-center gap-4 mb-10">
+                        <div className="w-12 h-12 rounded-xl bg-green-500/20 border border-green-500/30 flex items-center justify-center">
+                            <DollarSign size={20} className="text-green-500" />
                         </div>
-                        <div className="text-sm font-medium text-green-700">Valor Pipeline</div>
+                        <div className="text-[11px] font-bold text-green-500/80 uppercase tracking-widest">Valor do Pipeline</div>
                     </div>
-                    <div className="text-3xl font-bold text-green-900">
+
+                    <div className="text-4xl font-display font-bold text-white tracking-tighter tabular-nums mb-3">
                         {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
                             minimumFractionDigits: 0
                         }).format(stats.pipelineValue)}
                     </div>
-                    <div className="text-xs text-green-600 mt-2">
-                        Potencial em negociação
-                    </div>
+                    <p className="text-xs text-imi-500 font-medium tracking-tight">Potencial total sob gestão estratégica</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200 p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center">
-                            <TrendingUp size={24} className="text-white" />
+                <div className="bg-[#0A0B0D] rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-imi-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
+
+                    <div className="flex items-center gap-4 mb-10">
+                        <div className="w-12 h-12 rounded-xl bg-imi-500/20 border border-imi-500/30 flex items-center justify-center">
+                            <TrendingUp size={20} className="text-imi-500" />
                         </div>
-                        <div className="text-sm font-medium text-purple-700">Receita Projetada</div>
+                        <div className="text-[11px] font-bold text-imi-500/80 uppercase tracking-widest">Receita Projetada</div>
                     </div>
-                    <div className="text-3xl font-bold text-purple-900">
+
+                    <div className="text-4xl font-display font-bold text-white tracking-tighter tabular-nums mb-3">
                         {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
                             minimumFractionDigits: 0
                         }).format(stats.projectedRevenue)}
                     </div>
-                    <div className="text-xs text-purple-600 mt-2">
-                        Base: taxa conversão atual
-                    </div>
+                    <p className="text-xs text-imi-500 font-medium tracking-tight">Projeção conservadora baseada em conversão</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200 p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center">
-                            <Award size={24} className="text-white" />
+                <div className="bg-white rounded-3xl border border-imi-100 p-8 shadow-sm group">
+                    <div className="flex items-center gap-4 mb-10">
+                        <div className="w-12 h-12 rounded-xl bg-imi-50 border border-imi-100 flex items-center justify-center">
+                            <Award size={20} className="text-imi-600" />
                         </div>
-                        <div className="text-sm font-medium text-blue-700">Ticket Médio</div>
+                        <div className="text-[11px] font-bold text-imi-600 uppercase tracking-widest">Ticket Médio Institucional</div>
                     </div>
-                    <div className="text-3xl font-bold text-blue-900">
+
+                    <div className="text-4xl font-display font-bold text-imi-950 tracking-tighter tabular-nums mb-3">
                         {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
                             minimumFractionDigits: 0
                         }).format(stats.avgTicket)}
                     </div>
-                    <div className="text-xs text-blue-600 mt-2">
-                        Média geral
-                    </div>
+                    <p className="text-xs text-imi-500 font-medium tracking-tight">Valor médio negociado globalmente</p>
                 </div>
             </div>
 
-            {/* Insights */}
-            <div className="bg-accent-50 border border-accent-200 rounded-2xl p-6">
-                <h3 className="text-lg font-bold text-accent-900 mb-4">Insights Estratégicos</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div>
-                        <div className="text-accent-600 font-medium mb-1">Top Fonte</div>
-                        <div className="text-accent-900 font-bold">{stats.topSource}</div>
+            {/* Strategic Insights - Refined & Clear */}
+            <div className="bg-imi-950 rounded-[40px] p-10 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(196,157,91,0.1),transparent_70%)]" />
+
+                <h3 className="text-xl font-bold text-white mb-10 relative z-10 flex items-center gap-3">
+                    <Sparkles size={20} className="text-imi-500" />
+                    Insights de Inteligência
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+                    <div className="space-y-2">
+                        <div className="text-[10px] font-bold text-imi-500 uppercase tracking-[0.2em] mb-4 opacity-80">Principal Canal</div>
+                        <div className="text-2xl font-display font-bold text-white tracking-tight">{stats.topSource}</div>
+                        <div className="h-1 w-12 bg-imi-500/30 rounded-full" />
                     </div>
-                    <div>
-                        <div className="text-accent-600 font-medium mb-1">Empreendimento Destaque</div>
-                        <div className="text-accent-900 font-bold truncate">{stats.topDevelopment}</div>
+                    <div className="space-y-2">
+                        <div className="text-[10px] font-bold text-imi-500 uppercase tracking-[0.2em] mb-4 opacity-80">Ativo de Performance</div>
+                        <div className="text-2xl font-display font-bold text-white tracking-tight truncate" title={stats.topDevelopment}>
+                            {stats.topDevelopment}
+                        </div>
+                        <div className="h-1 w-12 bg-imi-500/30 rounded-full" />
                     </div>
-                    <div>
-                        <div className="text-accent-600 font-medium mb-1">Melhor País</div>
-                        <div className="text-accent-900 font-bold">{stats.topPerformingCountry}</div>
+                    <div className="space-y-2">
+                        <div className="text-[10px] font-bold text-imi-500 uppercase tracking-[0.2em] mb-4 opacity-80">Região Estratégica</div>
+                        <div className="text-2xl font-display font-bold text-white tracking-tight">{stats.topPerformingCountry}</div>
+                        <div className="h-1 w-12 bg-imi-500/30 rounded-full" />
                     </div>
                 </div>
             </div>

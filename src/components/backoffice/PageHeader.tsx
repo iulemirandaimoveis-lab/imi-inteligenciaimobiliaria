@@ -18,26 +18,26 @@ interface PageHeaderProps {
 
 export default function PageHeader({ title, description, breadcrumbs, action }: PageHeaderProps) {
     return (
-        <div className="mb-10 animate-fade-in">
-            {/* Breadcrumbs */}
+        <div className="mb-12 animate-fade-in">
+            {/* Breadcrumbs - Subtle & Precise */}
             {breadcrumbs && breadcrumbs.length > 0 && (
-                <nav className="flex items-center gap-2 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4">
-                    <Link href="/backoffice/dashboard" className="hover:text-primary transition-colors flex items-center gap-1.5 group">
-                        <Home size={12} className="group-hover:scale-110 transition-transform" />
+                <nav className="flex items-center gap-2 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-6">
+                    <Link href="/backoffice/dashboard" className="hover:text-imi-500 transition-colors flex items-center gap-1.5 group">
+                        <Home size={11} />
                         <span className="sr-only">Home</span>
                     </Link>
                     {breadcrumbs.map((crumb, index) => (
                         <div key={index} className="flex items-center gap-2">
-                            <ChevronRight size={10} strokeWidth={3} className="opacity-50" />
+                            <ChevronRight size={10} strokeWidth={3} className="opacity-30" />
                             {crumb.href ? (
                                 <Link
                                     href={crumb.href}
-                                    className="hover:text-primary transition-colors hover:underline decoration-2 underline-offset-4"
+                                    className="hover:text-imi-500 transition-colors uppercase"
                                 >
                                     {crumb.label}
                                 </Link>
                             ) : (
-                                <span className="text-gray-900 dark:text-gray-200">{crumb.label}</span>
+                                <span className="text-gray-900 dark:text-imi-400">{crumb.label}</span>
                             )}
                         </div>
                     ))}
@@ -45,27 +45,27 @@ export default function PageHeader({ title, description, breadcrumbs, action }: 
             )}
 
             {/* Title & Action Area */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-900 dark:text-white tracking-tight leading-none">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                <div className="space-y-3">
+                    <h1 className="text-3xl md:text-5xl font-display font-bold text-gray-900 dark:text-white tracking-tight leading-tight">
                         {title}
                     </h1>
                     {description && (
-                        <p className="text-gray-500 dark:text-gray-400 max-w-2xl font-medium leading-relaxed">
+                        <p className="text-gray-500 dark:text-gray-400 max-w-2xl text-sm md:text-base font-medium leading-relaxed">
                             {description}
                         </p>
                     )}
                 </div>
 
                 {action && (
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-4 shrink-0 pb-1">
                         {action}
                     </div>
                 )}
             </div>
 
-            {/* Premium Divider */}
-            <div className="mt-8 h-px w-full bg-gradient-to-r from-gray-100 via-gray-100 to-transparent dark:from-white/10 dark:via-white/5 dark:to-transparent" />
+            {/* Institutional Hairline Divider */}
+            <div className="mt-10 h-[1px] w-full bg-gray-100 dark:bg-white/5" />
         </div>
     )
 }

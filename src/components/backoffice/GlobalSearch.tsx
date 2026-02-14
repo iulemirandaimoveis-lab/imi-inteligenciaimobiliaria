@@ -207,56 +207,55 @@ export default function GlobalSearch() {
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 bg-imi-900/50 backdrop-blur-sm z-[9999] flex items-start justify-center p-4 pt-[10vh]">
+        <div className="fixed inset-0 bg-[#0A0B0D]/80 backdrop-blur-xl z-[9999] flex items-start justify-center p-4 pt-[15vh]">
             <div
-                className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden animate-in fade-in slide-in-from-top-4 duration-200 border border-imi-200"
+                className="bg-white rounded-[32px] shadow-[0_32px_128px_-16px_rgba(0,0,0,0.5)] max-w-3xl w-full overflow-hidden animate-in fade-in slide-in-from-top-8 duration-500 border border-imi-100"
                 role="dialog"
                 aria-modal="true"
             >
-                {/* Search Input */}
-                <div className="flex items-center gap-4 p-6 border-b border-imi-100 relative">
-                    <Search size={24} className="text-imi-400 flex-shrink-0" />
+                {/* Search Input - Powerful & Minimal */}
+                <div className="flex items-center gap-8 px-10 py-10 border-b border-imi-50 relative bg-white">
+                    <Search size={28} className="text-imi-600 flex-shrink-0" strokeWidth={1.5} />
                     <input
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Buscar empreendimentos, leads, avaliações..."
-                        className="flex-1 text-lg focus:outline-none placeholder:text-imi-300 bg-transparent"
+                        placeholder="Pesquisar inteligência imobiliária..."
+                        className="flex-1 text-2xl font-display font-medium focus:outline-none placeholder:text-imi-200 bg-transparent text-imi-950 tracking-tight"
                         autoFocus
                     />
-                    {loading && <Loader size={20} className="text-accent-500 animate-spin absolute right-6" />}
-                    {!loading && (
+                    <div className="flex items-center gap-4">
+                        {loading && <Loader size={20} className="text-imi-500 animate-spin" />}
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="hidden md:inline-block px-2 py-1 text-xs font-semibold text-imi-600 bg-imi-100 rounded border border-imi-200 hover:bg-imi-200 transition-colors"
-                            aria-label="Close"
+                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-imi-50 text-[10px] font-bold text-imi-500 border border-imi-100 uppercase tracking-widest hover:bg-imi-100 transition-colors"
                         >
-                            ESC
+                            Esc
                         </button>
-                    )}
+                    </div>
                 </div>
 
-                {/* Results */}
-                <div className="max-h-[60vh] overflow-y-auto custom-scrollbar">
+                {/* Content - Structured & Elegant */}
+                <div className="max-h-[50vh] overflow-y-auto custom-scrollbar bg-white">
                     {query && results.length === 0 && !loading && (
-                        <div className="p-12 text-center animate-in fade-in duration-300">
-                            <div className="text-imi-300 mb-3 flex justify-center">
-                                <Search size={48} />
+                        <div className="py-24 text-center animate-in fade-in duration-300 px-10">
+                            <div className="w-20 h-20 bg-imi-50 rounded-3xl flex items-center justify-center mx-auto mb-8 text-imi-200">
+                                <Search size={32} />
                             </div>
-                            <p className="text-imi-600 font-medium">Nenhum resultado encontrado</p>
-                            <p className="text-sm text-imi-500 mt-1">Tente outros termos de busca</p>
+                            <h3 className="text-xl font-bold text-imi-950 mb-2">Sem correspondências estratégicas</h3>
+                            <p className="text-base text-imi-500 font-medium">Refine seus termos de busca institucional.</p>
                         </div>
                     )}
 
                     {!query && !loading && (
-                        <div className="p-8">
-                            <p className="text-xs font-bold text-imi-400 uppercase tracking-wider mb-4">Atalhos Rápidos</p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="p-10 border-b border-imi-50">
+                            <p className="text-[10px] font-bold text-imi-400 uppercase tracking-[0.2em] mb-8">Fluxos Estratégicos</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {[
-                                    { label: 'Todos Imóveis', url: '/backoffice/imoveis', icon: Building2 },
-                                    { label: 'Pipeline Leads', url: '/backoffice/leads/pipeline', icon: TrendingUp },
-                                    { label: 'Avaliações', url: '/backoffice/avaliacoes', icon: FileText },
-                                    { label: 'Consultorias', url: '/backoffice/consultorias', icon: MessageSquare }
+                                    { label: 'Gestão de Inventário', url: '/backoffice/imoveis', icon: Building2 },
+                                    { label: 'Pipeline de Capital', url: '/backoffice/leads/pipeline', icon: TrendingUp },
+                                    { label: 'Auditoria de Avaliações', url: '/backoffice/avaliacoes', icon: FileText },
+                                    { label: 'Estruturação Patrimonial', url: '/backoffice/consultorias', icon: MessageSquare }
                                 ].map((shortcut) => {
                                     const Icon = shortcut.icon
                                     return (
@@ -266,12 +265,12 @@ export default function GlobalSearch() {
                                                 router.push(shortcut.url)
                                                 setIsOpen(false)
                                             }}
-                                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-imi-50 transition-colors text-left group border border-transparent hover:border-imi-100"
+                                            className="flex items-center gap-5 p-5 rounded-2xl hover:bg-imi-50 transition-all text-left group border border-transparent hover:border-imi-100 shadow-sm hover:shadow-md"
                                         >
-                                            <div className="p-2 bg-imi-50 rounded-lg group-hover:bg-white group-hover:shadow-sm transition-all">
-                                                <Icon size={20} className="text-imi-500 group-hover:text-accent-500" />
+                                            <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-imi-100 flex items-center justify-center text-imi-500 group-hover:text-imi-600 transition-all">
+                                                <Icon size={20} strokeWidth={1.5} />
                                             </div>
-                                            <span className="text-sm font-medium text-imi-700 group-hover:text-imi-900">{shortcut.label}</span>
+                                            <span className="text-sm font-bold text-imi-700 group-hover:text-imi-950">{shortcut.label}</span>
                                         </button>
                                     )
                                 })}
@@ -280,8 +279,8 @@ export default function GlobalSearch() {
                     )}
 
                     {results.length > 0 && (
-                        <div className="py-2">
-                            <p className="px-6 py-2 text-xs font-bold text-imi-400 uppercase tracking-wider">Resultados</p>
+                        <div className="py-6">
+                            <p className="px-10 py-4 text-[10px] font-bold text-imi-400 uppercase tracking-[0.2em]">Resultados da Auditoria</p>
                             {results.map((result, index) => {
                                 const Icon = result.icon
                                 const isSelected = index === selectedIndex
@@ -291,34 +290,36 @@ export default function GlobalSearch() {
                                         key={`${result.type}-${result.id}`}
                                         onClick={() => handleSelect(result)}
                                         onMouseEnter={() => setSelectedIndex(index)}
-                                        className={`w-full flex items-center gap-4 px-6 py-4 transition-all border-l-4 ${isSelected ? 'bg-accent-50/50 border-accent-500' : 'border-transparent hover:bg-imi-50'
-                                            }`}
+                                        className={`w-full flex items-center gap-6 px-10 py-6 transition-all relative ${isSelected ? 'bg-imi-50/50' : 'hover:bg-imi-50/30'}`}
                                     >
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${isSelected ? 'bg-white shadow-sm' : 'bg-imi-50'
-                                            }`}>
-                                            <Icon size={20} className={result.color} />
+                                        {isSelected && (
+                                            <div className="absolute left-0 w-1.5 h-12 bg-imi-500 rounded-full ml-2" />
+                                        )}
+
+                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all border duration-300 ${isSelected ? 'bg-white shadow-md border-imi-100' : 'bg-imi-50 border-transparent shadow-inner'}`}>
+                                            <Icon size={20} className="text-imi-600" strokeWidth={1.5} />
                                         </div>
 
                                         <div className="flex-1 min-w-0 text-left">
-                                            <div className="flex items-center gap-2 mb-0.5">
-                                                <span className="text-[10px] font-bold text-imi-400 uppercase tracking-wider px-1.5 py-0.5 bg-imi-100 rounded">
+                                            <div className="flex items-center gap-3 mb-1.5">
+                                                <span className="text-[9px] font-bold text-imi-500 uppercase tracking-[0.1em] px-2 py-0.5 bg-white border border-imi-100 rounded-md shadow-sm">
                                                     {getTypeLabel(result.type)}
                                                 </span>
                                             </div>
-                                            <div className="font-medium text-imi-900 truncate">
+                                            <div className="text-lg font-bold text-imi-900 tracking-tight truncate leading-none mb-1">
                                                 {result.title}
                                             </div>
                                             {result.subtitle && (
-                                                <div className="text-sm text-imi-500 truncate mt-0.5">
+                                                <div className="text-sm text-imi-400 truncate tracking-tight font-medium">
                                                     {result.subtitle}
                                                 </div>
                                             )}
                                         </div>
 
                                         {isSelected && (
-                                            <div className="flex items-center gap-2 text-accent-600 animate-in fade-in slide-in-from-left-2 duration-200">
-                                                <span className="text-xs font-bold">ABRIR</span>
-                                                <ArrowRight size={16} />
+                                            <div className="flex items-center gap-3 text-imi-600 px-4 py-2 bg-white rounded-xl border border-imi-100 shadow-sm animate-in fade-in slide-in-from-right-4 duration-300">
+                                                <span className="text-[10px] font-bold tracking-widest uppercase">Consultar</span>
+                                                <ArrowRight size={14} />
                                             </div>
                                         )}
                                     </button>
@@ -328,22 +329,20 @@ export default function GlobalSearch() {
                     )}
                 </div>
 
-                {/* Footer */}
-                <div className="px-6 py-3 border-t border-imi-100 bg-imi-50/50 flex items-center justify-between text-xs text-imi-500">
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1">
-                            <kbd className="px-1.5 py-0.5 bg-white rounded border border-imi-200 shadow-sm font-sans">↑</kbd>
-                            <kbd className="px-1.5 py-0.5 bg-white rounded border border-imi-200 shadow-sm font-sans">↓</kbd>
-                            <span className="ml-1">navegar</span>
+                {/* Footer - Institutional Stability */}
+                <div className="px-10 py-6 border-t border-imi-50 bg-imi-50/30 flex items-center justify-between text-[11px] font-bold text-imi-400 uppercase tracking-widest">
+                    <div className="flex items-center gap-10">
+                        <div className="flex items-center gap-3">
+                            <div className="flex gap-1">
+                                <kbd className="w-6 h-6 flex items-center justify-center bg-white rounded-lg border border-imi-100 shadow-sm font-sans">↑</kbd>
+                                <kbd className="w-6 h-6 flex items-center justify-center bg-white rounded-lg border border-imi-100 shadow-sm font-sans">↓</kbd>
+                            </div>
+                            <span>Navegar</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                            <kbd className="px-1.5 py-0.5 bg-white rounded border border-imi-200 shadow-sm font-sans">↵</kbd>
-                            <span className="ml-1">selecionar</span>
+                        <div className="flex items-center gap-3">
+                            <kbd className="w-8 h-6 flex items-center justify-center bg-white rounded-lg border border-imi-100 shadow-sm font-sans text-[10px]">↵</kbd>
+                            <span>Selecionar Ativo</span>
                         </div>
-                    </div>
-                    <div className="hidden md:flex items-center gap-1">
-                        <kbd className="px-1.5 py-0.5 bg-white rounded border border-imi-200 shadow-sm font-sans">⌘ K</kbd>
-                        <span className="ml-1">para abrir</span>
                     </div>
                 </div>
             </div>
