@@ -168,7 +168,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full h-16 bg-primary dark:bg-primary text-background-dark rounded-[2rem] font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 shadow-glow disabled:shadow-none flex items-center justify-center gap-3 mt-4"
+                            className="w-full h-16 bg-primary dark:bg-primary text-background-dark rounded-3xl font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 shadow-glow disabled:shadow-none flex items-center justify-center gap-3 mt-4"
                         >
                             {loading ? (
                                 <Loader2 className="animate-spin" size={24} />

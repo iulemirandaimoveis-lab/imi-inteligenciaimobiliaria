@@ -57,7 +57,7 @@ export default function TrackedLinksList({ propertyId, property }: TrackedLinksL
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 bg-imi-50 rounded-[2rem] border border-dashed border-imi-100 animate-pulse">
+            <div className="flex flex-col items-center justify-center py-20 bg-imi-50 rounded-3xl border border-dashed border-imi-100 animate-pulse">
                 <Loader2 className="w-8 h-8 text-imi-400 animate-spin mb-4" />
                 <p className="text-imi-400 font-bold text-xs uppercase tracking-widest">Sincronizando Links...</p>
             </div>
@@ -80,7 +80,7 @@ export default function TrackedLinksList({ propertyId, property }: TrackedLinksL
             </div>
 
             {links.length === 0 ? (
-                <div className="text-center py-20 bg-white rounded-[2rem] border border-dashed border-imi-100">
+                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-imi-100">
                     <LinkIcon className="w-12 h-12 mx-auto mb-4 text-imi-100" />
                     <h3 className="text-imi-900 font-bold mb-1">Nenhum link ativo</h3>
                     <p className="text-xs text-imi-400 font-medium">Gere links parametrizados para rastrear seus anúncios.</p>

@@ -16,7 +16,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     const primaryImage = property.images.find(img => img.isPrimary) || property.images[0]
 
     return (
-        <Card hover className="overflow-hidden group flex flex-col h-full bg-white border-imi-200/60 shadow-soft hover:shadow-card-hover transition-all duration-300 rounded-[2rem]">
+        <Card hover className="overflow-hidden group flex flex-col h-full bg-white border-imi-200/60 shadow-soft hover:shadow-card-hover transition-all duration-300 rounded-3xl">
             <Link href={`/imoveis/${property.slug}`} className="relative block overflow-hidden aspect-[4/3] sm:aspect-video lg:aspect-[4/3]">
                 {primaryImage ? (
                     <Image

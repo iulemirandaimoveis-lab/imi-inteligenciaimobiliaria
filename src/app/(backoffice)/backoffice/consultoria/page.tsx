@@ -192,7 +192,7 @@ export default function ConsultationPage() {
                             className="bg-white rounded-[2.5rem] p-10 border border-imi-100 shadow-soft hover:shadow-card-hover transition-all duration-500 group flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8"
                         >
                             <div className="flex items-center gap-6 flex-1">
-                                <div className="w-20 h-20 bg-imi-50 rounded-[2rem] flex items-center justify-center text-imi-900 group-hover:bg-imi-900 group-hover:text-white transition-all duration-500">
+                                <div className="w-20 h-20 bg-imi-50 rounded-3xl flex items-center justify-center text-imi-900 group-hover:bg-imi-900 group-hover:text-white transition-all duration-500">
                                     <User size={32} />
                                 </div>
                                 <div className="space-y-1">
@@ -267,7 +267,7 @@ export default function ConsultationPage() {
                                             </select>
                                         </div>
 
-                                        <Textarea label="Descrição do Interesse" value={formData.description} onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))} rows={6} className="rounded-[2rem] border-imi-100 p-8 text-lg" placeholder="Detalhes da consultoria ou serviço desejado..." />
+                                        <Textarea label="Descrição do Interesse" value={formData.description} onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))} rows={6} className="rounded-3xl border-imi-100 p-8 text-lg" placeholder="Detalhes da consultoria ou serviço desejado..." />
                                     </div>
 
                                     <div className="pt-10">

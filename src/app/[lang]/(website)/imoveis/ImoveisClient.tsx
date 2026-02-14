@@ -121,7 +121,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-imi-50 rounded-[2rem] p-12 border border-imi-100 shadow-soft"
+                        className="bg-imi-50 rounded-3xl p-12 border border-imi-100 shadow-soft"
                     >
                         <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
                             <span className="text-4xl">🏗️</span>
@@ -232,7 +232,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-center py-24 bg-imi-50 rounded-[2rem] border border-dashed border-imi-200"
+                            className="text-center py-24 bg-imi-50 rounded-3xl border border-dashed border-imi-200"
                         >
                             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-soft">
                                 <Search className="w-8 h-8 text-imi-300" strokeWidth={1.5} />

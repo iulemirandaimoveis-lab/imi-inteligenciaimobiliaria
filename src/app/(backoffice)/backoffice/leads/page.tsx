@@ -151,7 +151,7 @@ export default function LeadsPage() {
                             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                                 <div>
                                     <div className="flex items-center gap-4 mb-4">
-                                        <div className="w-16 h-16 rounded-[2rem] bg-imi-950 text-white flex items-center justify-center text-xl font-display font-bold shadow-xl shadow-imi-950/20">
+                                        <div className="w-16 h-16 rounded-3xl bg-imi-950 text-white flex items-center justify-center text-xl font-display font-bold shadow-xl shadow-imi-950/20">
                                             {selectedLead.name.charAt(0)}
                                         </div>
                                         <div>

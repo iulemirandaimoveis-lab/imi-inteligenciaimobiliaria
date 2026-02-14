@@ -156,7 +156,7 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                 ))}
             </div>
 
-            <div className="bg-white p-8 rounded-[2rem] border border-imi-50 shadow-soft">
+            <div className="bg-white p-8 rounded-3xl border border-imi-50 shadow-soft">
                 {/* Info Tab */}
                 {activeTab === 'info' && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300">

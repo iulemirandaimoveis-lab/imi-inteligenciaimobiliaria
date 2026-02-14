@@ -151,7 +151,7 @@ export default function ContactPage() {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            className="bg-white rounded-[2rem] border border-imi-100 p-8 sm:p-12 lg:p-16 shadow-elevated"
+                            className="bg-white rounded-3xl border border-imi-100 p-8 sm:p-12 lg:p-16 shadow-elevated"
                         >
                             <div className="text-center mb-12">
                                 <h2 className="font-display text-3xl sm:text-4xl font-bold text-imi-900 mb-4">

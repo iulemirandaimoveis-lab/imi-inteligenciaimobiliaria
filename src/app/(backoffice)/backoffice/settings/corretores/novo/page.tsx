@@ -206,7 +206,7 @@ export default function NovoCorretorPage() {
 
                     {/* Right Column: Permissions */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white dark:bg-card-dark rounded-[2rem] border border-gray-100 dark:border-white/5 shadow-soft overflow-hidden sticky top-6">
+                        <div className="bg-white dark:bg-card-dark rounded-3xl border border-gray-100 dark:border-white/5 shadow-soft overflow-hidden sticky top-6">
                             <div className="p-6 border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-card-darker/50">
                                 <h3 className="font-display font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2">
                                     <Shield size={20} className="text-primary" /> Permissões

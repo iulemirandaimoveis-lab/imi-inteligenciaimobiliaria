@@ -327,7 +327,7 @@ export default function ContentPage() {
 
               <div className="relative z-10 space-y-8">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-purple-100 rounded-[2rem] flex items-center justify-center">
+                  <div className="w-16 h-16 bg-purple-100 rounded-3xl flex items-center justify-center">
                     <Zap className="text-purple-600" size={32} />
                   </div>
                   <div>
@@ -342,7 +342,7 @@ export default function ContentPage() {
                     value={aiPrompt}
                     onChange={(e) => setAiPrompt(e.target.value)}
                     placeholder="Ex: Apartamentos de luxo sustentáveis no Bessa..."
-                    className="rounded-[2rem] border-imi-100 h-32 text-lg focus:ring-purple-500/20"
+                    className="rounded-3xl border-imi-100 h-32 text-lg focus:ring-purple-500/20"
                   />
                 </div>
 

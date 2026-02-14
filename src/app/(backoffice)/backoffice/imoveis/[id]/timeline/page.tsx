@@ -110,7 +110,7 @@ export default function PropertyTimelinePage() {
                                     <Icon size={20} className={event.event_type === 'campaign_start' ? 'text-purple-500' : 'text-imi-900'} />
                                 </div>
 
-                                <div className={`ml-20 md:ml-0 md:w-[45%] bg-white p-8 rounded-[2rem] border border-imi-100 shadow-soft hover:shadow-card-hover transition-all group`}>
+                                <div className={`ml-20 md:ml-0 md:w-[45%] bg-white p-8 rounded-3xl border border-imi-100 shadow-soft hover:shadow-card-hover transition-all group`}>
                                     <div className="flex items-center justify-between mb-4">
                                         <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border bg-imi-50 text-imi-500 border-imi-100`}>
                                             {event.event_type || 'Geral'}

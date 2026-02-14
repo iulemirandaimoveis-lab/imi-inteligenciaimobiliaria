@@ -60,7 +60,7 @@ export default function DeveloperForm({ initialData, onSubmit, isSubmitting }: D
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Info */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white p-8 rounded-[2rem] border border-imi-50 shadow-soft space-y-6">
+                    <div className="bg-white p-8 rounded-3xl border border-imi-50 shadow-soft space-y-6">
                         <h3 className="flex items-center gap-2 text-lg font-bold text-imi-900 mb-4">
                             <Building2 className="text-imi-400" />
                             Informações da Construtora
@@ -101,7 +101,7 @@ export default function DeveloperForm({ initialData, onSubmit, isSubmitting }: D
 
                 {/* Right Column: Logo */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-white p-8 rounded-[2rem] border border-imi-50 shadow-soft space-y-6">
+                    <div className="bg-white p-8 rounded-3xl border border-imi-50 shadow-soft space-y-6">
                         <h3 className="flex items-center gap-2 text-lg font-bold text-imi-900 mb-4">
                             <ImageIcon className="text-imi-400" />
                             Identidade Visual

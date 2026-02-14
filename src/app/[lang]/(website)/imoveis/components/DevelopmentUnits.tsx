@@ -72,7 +72,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
             </div>
 
             {/* Tabela Desktop */}
-            <div className="hidden md:block overflow-hidden rounded-[2rem] border border-imi-100 shadow-soft">
+            <div className="hidden md:block overflow-hidden rounded-3xl border border-imi-100 shadow-soft">
                 <table className="w-full border-collapse">
                     <thead>
                         <tr className="bg-slate-50/50 border-b border-imi-100">

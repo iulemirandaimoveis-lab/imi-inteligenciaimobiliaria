@@ -1,0 +1,1007 @@
+
+Rebuilding...
+CssSyntaxError: tailwindcss: /Users/lailamiranda/dev-imi/src/app/globals.css:4:1: The `font-display` class does not exist. If `font-display` is a custom class, make sure it is defined within a `@layer` directive.
+    at Input.error (/Users/lailamiranda/dev-imi/node_modules/postcss/lib/input.js:135:16)
+    at AtRule.error (/Users/lailamiranda/dev-imi/node_modules/postcss/lib/node.js:146:32)
+    at processApply (/Users/lailamiranda/dev-imi/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+    at /Users/lailamiranda/dev-imi/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+    at /Users/lailamiranda/dev-imi/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+    at async Object.Once (/Users/lailamiranda/dev-imi/node_modules/tailwindcss/lib/cli/build/plugin.js:248:17)
+    at async LazyResult.runAsync (/Users/lailamiranda/dev-imi/node_modules/postcss/lib/lazy-result.js:293:11)
+    at async build (/Users/lailamiranda/dev-imi/node_modules/tailwindcss/lib/cli/build/index.js:49:9) {
+  reason: 'The `font-display` class does not exist. If `font-display` is a custom class, make sure it is defined within a `@layer` directive.',
+  file: '/Users/lailamiranda/dev-imi/src/app/globals.css',
+  source: '/* app/globals.css */\n' +
+    '/* Classes Utilitárias Institucionais IMI */\n' +
+    '\n' +
+    '@tailwind base;\n' +
+    '@tailwind components;\n' +
+    '@tailwind utilities;\n' +
+    '\n' +
+    '@layer base {\n' +
+    '  :root {\n' +
+    '    /* Accent Palette - Luxury Gold */\n' +
+    '    --accent-50: #FFF9E5;\n' +
+    '    --accent-100: #FFEEB3;\n' +
+    '    --accent-200: #FFE280;\n' +
+    '    --accent-300: #E5C158;\n' +
+    '    --accent-400: #D4AF37;\n' +
+    '    --accent-500: #D4AF37;\n' +
+    '    --accent-600: #B8952F;\n' +
+    '    --accent-700: #8C7224;\n' +
+    '    --accent-800: #614F19;\n' +
+    '    --accent-900: #362C0E;\n' +
+    '\n' +
+    '    /* IMI Palette - Institutional Slate/Blue */\n' +
+    '    --imi-50: #F7F8FA;\n' +
+    '    --imi-100: #ECEEF2;\n' +
+    '    --imi-200: #D0D5DE;\n' +
+    '    --imi-300: #A0AABB;\n' +
+    '    --imi-400: #6B83A0;\n' +
+    '    --imi-500: #59718C;\n' +
+    '    --imi-600: #3C495D;\n' +
+    '    --imi-700: #2E2E3A;\n' +
+    '    --imi-800: #1F2937;\n' +
+    '    --imi-900: #0F1E28;\n' +
+    '  }\n' +
+    '\n' +
+    '  html {\n' +
+    '    scroll-behavior: smooth;\n' +
+    '    -webkit-font-smoothing: antialiased;\n' +
+    '    -moz-osx-font-smoothing: grayscale;\n' +
+    '  }\n' +
+    '\n' +
+    '  body {\n' +
+    '    @apply text-imi-800 dark:text-imi-200 bg-imi-50 dark:bg-imi-900 selection:bg-accent-200 selection:text-accent-900 font-sans;\n' +
+    '  }\n' +
+    '\n' +
+    '  h1,\n' +
+    '  h2,\n' +
+    '  h3,\n' +
+    '  h4,\n' +
+    '  h5,\n' +
+    '  h6 {\n' +
+    '    @apply font-display tracking-tight text-imi-900 dark:text-white;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* TIPOGRAFIA INSTITUCIONAL */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer utilities {\n' +
+    '\n' +
+    '  /* Display */\n' +
+    '  .text-display {\n' +
+    '    @apply text-4xl font-bold tracking-tight leading-tight;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Headings */\n' +
+    '  .text-heading-1 {\n' +
+    '    @apply text-3xl font-bold tracking-tight leading-tight;\n' +
+    '  }\n' +
+    '\n' +
+    '  .text-heading-2 {\n' +
+    '    @apply text-2xl font-bold tracking-tight leading-normal;\n' +
+    '  }\n' +
+    '\n' +
+    '  .text-heading-3 {\n' +
+    '    @apply text-xl font-semibold tracking-tight leading-normal;\n' +
+    '  }\n' +
+    '\n' +
+    '  .text-heading-4 {\n' +
+    '    @apply text-base font-semibold leading-normal;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Body */\n' +
+    '  .text-body-large {\n' +
+    '    @apply text-base font-normal leading-relaxed;\n' +
+    '  }\n' +
+    '\n' +
+    '  .text-body {\n' +
+    '    @apply text-sm font-normal leading-normal;\n' +
+    '  }\n' +
+    '\n' +
+    '  .text-body-small {\n' +
+    '    @apply text-sm font-normal leading-snug;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Labels */\n' +
+    '  .text-label {\n' +
+    '    @apply text-sm font-medium leading-normal;\n' +
+    '  }\n' +
+    '\n' +
+    '  .text-label-small {\n' +
+    '    @apply text-xs font-medium leading-tight tracking-wide;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Caption */\n' +
+    '  .text-caption {\n' +
+    '    @apply text-xs font-normal leading-tight text-imi-600;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Mono/Numbers */\n' +
+    '  .text-mono {\n' +
+    '    @apply text-sm font-medium font-mono leading-normal;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* CONTAINERS E LAYOUTS */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .container-institutional {\n' +
+    '    @apply max-w-container mx-auto px-1;\n' +
+    '  }\n' +
+    '\n' +
+    '  .page-wrapper {\n' +
+    '    @apply min-h-screen bg-imi-50;\n' +
+    '  }\n' +
+    '\n' +
+    '  .content-area {\n' +
+    '    @apply py-3 space-y-3;\n' +
+    '  }\n' +
+    '\n' +
+    '  .section {\n' +
+    '    @apply space-y-2;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* CARDS INSTITUCIONAIS */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .card-base {\n' +
+    '    @apply bg-white rounded-lg border border-imi-100 shadow-sm;\n' +
+    '    @apply transition-all duration-200;\n' +
+    '  }\n' +
+    '\n' +
+    '  .card-interactive {\n' +
+    '    @apply card-base hover:shadow-md hover:border-imi-200 hover:-translate-y-px cursor-pointer;\n' +
+    '  }\n' +
+    '\n' +
+    '  .card-elevated {\n' +
+    '    @apply card-base shadow-md;\n' +
+    '  }\n' +
+    '\n' +
+    '  .card-padding-sm {\n' +
+    '    @apply p-1;\n' +
+    '  }\n' +
+    '\n' +
+    '  .card-padding {\n' +
+    '    @apply p-2;\n' +
+    '  }\n' +
+    '\n' +
+    '  .card-padding-lg {\n' +
+    '    @apply p-3;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* BOTÕES INSTITUCIONAIS */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '\n' +
+    '  /* Base Button */\n' +
+    '  .btn-base {\n' +
+    '    @apply inline-flex items-center justify-center gap-1;\n' +
+    '    @apply h-btn px-2 rounded-md;\n' +
+    '    @apply text-sm font-medium;\n' +
+    '    @apply transition-all duration-200;\n' +
+    '    @apply focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;\n' +
+    '    @apply disabled:opacity-50 disabled:cursor-not-allowed;\n' +
+    '    @apply active:scale-[0.98];\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Primary */\n' +
+    '  .btn-primary {\n' +
+    '    @apply btn-base;\n' +
+    '    @apply bg-accent-500 text-white;\n' +
+    '    @apply hover:bg-accent-600;\n' +
+    '    @apply shadow-sm hover:shadow-md;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Secondary */\n' +
+    '  .btn-secondary {\n' +
+    '    @apply btn-base;\n' +
+    '    @apply bg-imi-100 text-imi-900;\n' +
+    '    @apply border border-imi-200;\n' +
+    '    @apply hover:bg-imi-200;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Outline */\n' +
+    '  .btn-outline {\n' +
+    '    @apply btn-base;\n' +
+    '    @apply bg-transparent text-imi-700;\n' +
+    '    @apply border-2 border-imi-200;\n' +
+    '    @apply hover:bg-imi-50 hover:border-imi-300;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Ghost */\n' +
+    '  .btn-ghost {\n' +
+    '    @apply btn-base;\n' +
+    '    @apply bg-transparent text-imi-700;\n' +
+    '    @apply hover:bg-imi-100;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Danger */\n' +
+    '  .btn-danger {\n' +
+    '    @apply btn-base;\n' +
+    '    @apply bg-red-500 text-white;\n' +
+    '    @apply hover:bg-red-600;\n' +
+    '    @apply shadow-sm hover:shadow-md;\n' +
+    '  }\n' +
+    '\n' +
+    '  /* Sizes */\n' +
+    '  .btn-sm {\n' +
+    '    @apply h-btn-sm px-1 text-sm;\n' +
+    '  }\n' +
+    '\n' +
+    '  .btn-lg {\n' +
+    '    @apply h-btn-lg px-3 text-base;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* INPUTS E FORMS */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .input-base {\n' +
+    '    @apply w-full h-input px-1;\n' +
+    '    @apply bg-white border border-imi-200 rounded-md;\n' +
+    '    @apply text-sm text-imi-900;\n' +
+    '    @apply placeholder:text-imi-400;\n' +
+    '    @apply transition-all duration-200;\n' +
+    '    @apply focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent;\n' +
+    '    @apply hover:border-imi-300;\n' +
+    '    @apply disabled:bg-imi-50 disabled:cursor-not-allowed disabled:opacity-60;\n' +
+    '  }\n' +
+    '\n' +
+    '  .input-error {\n' +
+    '    @apply border-red-300 focus:ring-red-500;\n' +
+    '  }\n' +
+    '\n' +
+    '  .form-label {\n' +
+    '    @apply block text-sm font-medium text-imi-700 mb-0.5;\n' +
+    '  }\n' +
+    '\n' +
+    '  .form-hint {\n' +
+    '    @apply text-xs text-imi-500 mt-0.5;\n' +
+    '  }\n' +
+    '\n' +
+    '  .form-error {\n' +
+    '    @apply text-xs text-red-600 mt-0.5;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* BADGES E TAGS */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .badge-base {\n' +
+    '    @apply inline-flex items-center gap-0.5;\n' +
+    '    @apply px-1 py-0.5 rounded-md;\n' +
+    '    @apply text-xs font-medium;\n' +
+    '  }\n' +
+    '\n' +
+    '  .badge-primary {\n' +
+    '    @apply badge-base bg-accent-100 text-accent-700;\n' +
+    '  }\n' +
+    '\n' +
+    '  .badge-success {\n' +
+    '    @apply badge-base bg-green-100 text-green-700;\n' +
+    '  }\n' +
+    '\n' +
+    '  .badge-warning {\n' +
+    '    @apply badge-base bg-yellow-100 text-yellow-700;\n' +
+    '  }\n' +
+    '\n' +
+    '  .badge-danger {\n' +
+    '    @apply badge-base bg-red-100 text-red-700;\n' +
+    '  }\n' +
+    '\n' +
+    '  .badge-neutral {\n' +
+    '    @apply badge-base bg-imi-100 text-imi-700;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* TABELAS */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .table-container {\n' +
+    '    @apply w-full overflow-x-auto;\n' +
+    '    @apply border border-imi-100 rounded-lg;\n' +
+    '  }\n' +
+    '\n' +
+    '  .table-base {\n' +
+    '    @apply w-full;\n' +
+    '  }\n' +
+    '\n' +
+    '  .table-header {\n' +
+    '    @apply bg-imi-50 border-b border-imi-100;\n' +
+    '  }\n' +
+    '\n' +
+    '  .table-header-cell {\n' +
+    '    @apply px-1 py-1;\n' +
+    '    @apply text-xs font-medium text-imi-600 uppercase tracking-wide;\n' +
+    '    @apply text-left;\n' +
+    '  }\n' +
+    '\n' +
+    '  .table-row {\n' +
+    '    @apply border-b border-imi-50;\n' +
+    '    @apply transition-colors duration-150;\n' +
+    '    @apply hover:bg-imi-50;\n' +
+    '  }\n' +
+    '\n' +
+    '  .table-cell {\n' +
+    '    @apply px-1 py-1;\n' +
+    '    @apply text-sm text-imi-900;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* KPI CARDS */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .kpi-card {\n' +
+    '    @apply card-base p-2;\n' +
+    '  }\n' +
+    '\n' +
+    '  .kpi-label {\n' +
+    '    @apply text-xs font-medium text-imi-600 uppercase tracking-wide mb-0.5;\n' +
+    '  }\n' +
+    '\n' +
+    '  .kpi-value {\n' +
+    '    @apply text-3xl font-bold text-imi-900 tracking-tight;\n' +
+    '  }\n' +
+    '\n' +
+    '  .kpi-change {\n' +
+    '    @apply text-sm font-medium mt-0.5;\n' +
+    '  }\n' +
+    '\n' +
+    '  .kpi-change-positive {\n' +
+    '    @apply kpi-change text-green-600;\n' +
+    '  }\n' +
+    '\n' +
+    '  .kpi-change-negative {\n' +
+    '    @apply kpi-change text-red-600;\n' +
+    '  }\n' +
+    '\n' +
+    '  .kpi-change-neutral {\n' +
+    '    @apply kpi-change text-imi-600;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* SIDEBAR */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .sidebar-item {\n' +
+    '    @apply flex items-center gap-1 px-1 py-1 rounded-md;\n' +
+    '    @apply text-sm font-medium text-imi-700;\n' +
+    '    @apply transition-all duration-200;\n' +
+    '    @apply hover:bg-imi-100 hover:text-imi-900;\n' +
+    '  }\n' +
+    '\n' +
+    '  .sidebar-item-active {\n' +
+    '    @apply sidebar-item;\n' +
+    '    @apply bg-accent-50 text-accent-700;\n' +
+    '    @apply border-l-2 border-accent-500;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* MODAIS */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .modal-backdrop {\n' +
+    '    @apply fixed inset-0 z-40;\n' +
+    '    @apply bg-imi-900 backdrop-blur-sm;\n' +
+    '  }\n' +
+    '\n' +
+    '  .modal-container {\n' +
+    '    @apply fixed inset-0 z-50;\n' +
+    '    @apply flex items-center justify-center p-2;\n' +
+    '  }\n' +
+    '\n' +
+    '  .modal-content {\n' +
+    '    @apply bg-white rounded-lg shadow-xl;\n' +
+    '    @apply max-w-lg w-full p-2;\n' +
+    '  }\n' +
+    '\n' +
+    '  .modal-header {\n' +
+    '    @apply flex items-start justify-between mb-2;\n' +
+    '  }\n' +
+    '\n' +
+    '  .modal-title {\n' +
+    '    @apply text-heading-2;\n' +
+    '  }\n' +
+    '\n' +
+    '  .modal-body {\n' +
+    '    @apply space-y-2;\n' +
+    '  }\n' +
+    '\n' +
+    '  .modal-footer {\n' +
+    '    @apply flex items-center justify-end gap-1 mt-3 pt-2 border-t border-imi-100;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* EMPTY STATES */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .empty-state {\n' +
+    '    @apply flex flex-col items-center justify-center;\n' +
+    '    @apply py-5 px-2 text-center;\n' +
+    '  }\n' +
+    '\n' +
+    '  .empty-state-icon {\n' +
+    '    @apply w-5 h-5 rounded-full bg-imi-100;\n' +
+    '    @apply flex items-center justify-center mb-2;\n' +
+    '    @apply text-imi-400;\n' +
+    '  }\n' +
+    '\n' +
+    '  .empty-state-title {\n' +
+    '    @apply text-heading-3 mb-0.5;\n' +
+    '  }\n' +
+    '\n' +
+    '  .empty-state-description {\n' +
+    '    @apply text-body text-imi-600 mb-2;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* ============================================ */\n' +
+    '/* SKELETON LOADERS */\n' +
+    '/* ============================================ */\n' +
+    '\n' +
+    '@layer components {\n' +
+    '  .skeleton {\n' +
+    '    @apply bg-imi-200 animate-pulse rounded-md;\n' +
+    '  }\n' +
+    '\n' +
+    '  .skeleton-text {\n' +
+    '    @apply skeleton h-1;\n' +
+    '  }\n' +
+    '\n' +
+    '  .skeleton-title {\n' +
+    '    @apply skeleton h-1.5;\n' +
+    '  }\n' +
+    '\n' +
+    '  .skeleton-card {\n' +
+    '    @apply skeleton h-3;\n' +
+    '  }\n' +
+    '\n' +
+    '  .skeleton-circle {\n' +
+    '    @apply skeleton rounded-full;\n' +
+    '  }\n' +
+    '}\n' +
+    '\n' +
+    '/* Custom Scrollbar */\n' +
+    '::-webkit-scrollbar {\n' +
+    '  width: 6px;\n' +
+    '  height: 6px;\n' +
+    '}\n' +
+    '\n' +
+    '::-webkit-scrollbar-track {\n' +
+    '  background: transparent;\n' +
+    '}\n' +
+    '\n' +
+    '::-webkit-scrollbar-thumb {\n' +
+    '  @apply bg-imi-200 dark:bg-white/10 rounded-full transition-colors hover:bg-accent-400;\n' +
+    '}',
+  line: 4,
+  column: 1,
+  endLine: 4,
+  endColumn: 16,
+  input: {
+    column: 1,
+    endColumn: 16,
+    endLine: 4,
+    endOffset: 83,
+    line: 4,
+    offset: 68,
+    source: '/* app/globals.css */\n' +
+      '/* Classes Utilitárias Institucionais IMI */\n' +
+      '\n' +
+      '@tailwind base;\n' +
+      '@tailwind components;\n' +
+      '@tailwind utilities;\n' +
+      '\n' +
+      '@layer base {\n' +
+      '  :root {\n' +
+      '    /* Accent Palette - Luxury Gold */\n' +
+      '    --accent-50: #FFF9E5;\n' +
+      '    --accent-100: #FFEEB3;\n' +
+      '    --accent-200: #FFE280;\n' +
+      '    --accent-300: #E5C158;\n' +
+      '    --accent-400: #D4AF37;\n' +
+      '    --accent-500: #D4AF37;\n' +
+      '    --accent-600: #B8952F;\n' +
+      '    --accent-700: #8C7224;\n' +
+      '    --accent-800: #614F19;\n' +
+      '    --accent-900: #362C0E;\n' +
+      '\n' +
+      '    /* IMI Palette - Institutional Slate/Blue */\n' +
+      '    --imi-50: #F7F8FA;\n' +
+      '    --imi-100: #ECEEF2;\n' +
+      '    --imi-200: #D0D5DE;\n' +
+      '    --imi-300: #A0AABB;\n' +
+      '    --imi-400: #6B83A0;\n' +
+      '    --imi-500: #59718C;\n' +
+      '    --imi-600: #3C495D;\n' +
+      '    --imi-700: #2E2E3A;\n' +
+      '    --imi-800: #1F2937;\n' +
+      '    --imi-900: #0F1E28;\n' +
+      '  }\n' +
+      '\n' +
+      '  html {\n' +
+      '    scroll-behavior: smooth;\n' +
+      '    -webkit-font-smoothing: antialiased;\n' +
+      '    -moz-osx-font-smoothing: grayscale;\n' +
+      '  }\n' +
+      '\n' +
+      '  body {\n' +
+      '    @apply text-imi-800 dark:text-imi-200 bg-imi-50 dark:bg-imi-900 selection:bg-accent-200 selection:text-accent-900 font-sans;\n' +
+      '  }\n' +
+      '\n' +
+      '  h1,\n' +
+      '  h2,\n' +
+      '  h3,\n' +
+      '  h4,\n' +
+      '  h5,\n' +
+      '  h6 {\n' +
+      '    @apply font-display tracking-tight text-imi-900 dark:text-white;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* TIPOGRAFIA INSTITUCIONAL */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer utilities {\n' +
+      '\n' +
+      '  /* Display */\n' +
+      '  .text-display {\n' +
+      '    @apply text-4xl font-bold tracking-tight leading-tight;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Headings */\n' +
+      '  .text-heading-1 {\n' +
+      '    @apply text-3xl font-bold tracking-tight leading-tight;\n' +
+      '  }\n' +
+      '\n' +
+      '  .text-heading-2 {\n' +
+      '    @apply text-2xl font-bold tracking-tight leading-normal;\n' +
+      '  }\n' +
+      '\n' +
+      '  .text-heading-3 {\n' +
+      '    @apply text-xl font-semibold tracking-tight leading-normal;\n' +
+      '  }\n' +
+      '\n' +
+      '  .text-heading-4 {\n' +
+      '    @apply text-base font-semibold leading-normal;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Body */\n' +
+      '  .text-body-large {\n' +
+      '    @apply text-base font-normal leading-relaxed;\n' +
+      '  }\n' +
+      '\n' +
+      '  .text-body {\n' +
+      '    @apply text-sm font-normal leading-normal;\n' +
+      '  }\n' +
+      '\n' +
+      '  .text-body-small {\n' +
+      '    @apply text-sm font-normal leading-snug;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Labels */\n' +
+      '  .text-label {\n' +
+      '    @apply text-sm font-medium leading-normal;\n' +
+      '  }\n' +
+      '\n' +
+      '  .text-label-small {\n' +
+      '    @apply text-xs font-medium leading-tight tracking-wide;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Caption */\n' +
+      '  .text-caption {\n' +
+      '    @apply text-xs font-normal leading-tight text-imi-600;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Mono/Numbers */\n' +
+      '  .text-mono {\n' +
+      '    @apply text-sm font-medium font-mono leading-normal;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* CONTAINERS E LAYOUTS */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .container-institutional {\n' +
+      '    @apply max-w-container mx-auto px-1;\n' +
+      '  }\n' +
+      '\n' +
+      '  .page-wrapper {\n' +
+      '    @apply min-h-screen bg-imi-50;\n' +
+      '  }\n' +
+      '\n' +
+      '  .content-area {\n' +
+      '    @apply py-3 space-y-3;\n' +
+      '  }\n' +
+      '\n' +
+      '  .section {\n' +
+      '    @apply space-y-2;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* CARDS INSTITUCIONAIS */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .card-base {\n' +
+      '    @apply bg-white rounded-lg border border-imi-100 shadow-sm;\n' +
+      '    @apply transition-all duration-200;\n' +
+      '  }\n' +
+      '\n' +
+      '  .card-interactive {\n' +
+      '    @apply card-base hover:shadow-md hover:border-imi-200 hover:-translate-y-px cursor-pointer;\n' +
+      '  }\n' +
+      '\n' +
+      '  .card-elevated {\n' +
+      '    @apply card-base shadow-md;\n' +
+      '  }\n' +
+      '\n' +
+      '  .card-padding-sm {\n' +
+      '    @apply p-1;\n' +
+      '  }\n' +
+      '\n' +
+      '  .card-padding {\n' +
+      '    @apply p-2;\n' +
+      '  }\n' +
+      '\n' +
+      '  .card-padding-lg {\n' +
+      '    @apply p-3;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* BOTÕES INSTITUCIONAIS */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '\n' +
+      '  /* Base Button */\n' +
+      '  .btn-base {\n' +
+      '    @apply inline-flex items-center justify-center gap-1;\n' +
+      '    @apply h-btn px-2 rounded-md;\n' +
+      '    @apply text-sm font-medium;\n' +
+      '    @apply transition-all duration-200;\n' +
+      '    @apply focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;\n' +
+      '    @apply disabled:opacity-50 disabled:cursor-not-allowed;\n' +
+      '    @apply active:scale-[0.98];\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Primary */\n' +
+      '  .btn-primary {\n' +
+      '    @apply btn-base;\n' +
+      '    @apply bg-accent-500 text-white;\n' +
+      '    @apply hover:bg-accent-600;\n' +
+      '    @apply shadow-sm hover:shadow-md;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Secondary */\n' +
+      '  .btn-secondary {\n' +
+      '    @apply btn-base;\n' +
+      '    @apply bg-imi-100 text-imi-900;\n' +
+      '    @apply border border-imi-200;\n' +
+      '    @apply hover:bg-imi-200;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Outline */\n' +
+      '  .btn-outline {\n' +
+      '    @apply btn-base;\n' +
+      '    @apply bg-transparent text-imi-700;\n' +
+      '    @apply border-2 border-imi-200;\n' +
+      '    @apply hover:bg-imi-50 hover:border-imi-300;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Ghost */\n' +
+      '  .btn-ghost {\n' +
+      '    @apply btn-base;\n' +
+      '    @apply bg-transparent text-imi-700;\n' +
+      '    @apply hover:bg-imi-100;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Danger */\n' +
+      '  .btn-danger {\n' +
+      '    @apply btn-base;\n' +
+      '    @apply bg-red-500 text-white;\n' +
+      '    @apply hover:bg-red-600;\n' +
+      '    @apply shadow-sm hover:shadow-md;\n' +
+      '  }\n' +
+      '\n' +
+      '  /* Sizes */\n' +
+      '  .btn-sm {\n' +
+      '    @apply h-btn-sm px-1 text-sm;\n' +
+      '  }\n' +
+      '\n' +
+      '  .btn-lg {\n' +
+      '    @apply h-btn-lg px-3 text-base;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* INPUTS E FORMS */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .input-base {\n' +
+      '    @apply w-full h-input px-1;\n' +
+      '    @apply bg-white border border-imi-200 rounded-md;\n' +
+      '    @apply text-sm text-imi-900;\n' +
+      '    @apply placeholder:text-imi-400;\n' +
+      '    @apply transition-all duration-200;\n' +
+      '    @apply focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent;\n' +
+      '    @apply hover:border-imi-300;\n' +
+      '    @apply disabled:bg-imi-50 disabled:cursor-not-allowed disabled:opacity-60;\n' +
+      '  }\n' +
+      '\n' +
+      '  .input-error {\n' +
+      '    @apply border-red-300 focus:ring-red-500;\n' +
+      '  }\n' +
+      '\n' +
+      '  .form-label {\n' +
+      '    @apply block text-sm font-medium text-imi-700 mb-0.5;\n' +
+      '  }\n' +
+      '\n' +
+      '  .form-hint {\n' +
+      '    @apply text-xs text-imi-500 mt-0.5;\n' +
+      '  }\n' +
+      '\n' +
+      '  .form-error {\n' +
+      '    @apply text-xs text-red-600 mt-0.5;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* BADGES E TAGS */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .badge-base {\n' +
+      '    @apply inline-flex items-center gap-0.5;\n' +
+      '    @apply px-1 py-0.5 rounded-md;\n' +
+      '    @apply text-xs font-medium;\n' +
+      '  }\n' +
+      '\n' +
+      '  .badge-primary {\n' +
+      '    @apply badge-base bg-accent-100 text-accent-700;\n' +
+      '  }\n' +
+      '\n' +
+      '  .badge-success {\n' +
+      '    @apply badge-base bg-green-100 text-green-700;\n' +
+      '  }\n' +
+      '\n' +
+      '  .badge-warning {\n' +
+      '    @apply badge-base bg-yellow-100 text-yellow-700;\n' +
+      '  }\n' +
+      '\n' +
+      '  .badge-danger {\n' +
+      '    @apply badge-base bg-red-100 text-red-700;\n' +
+      '  }\n' +
+      '\n' +
+      '  .badge-neutral {\n' +
+      '    @apply badge-base bg-imi-100 text-imi-700;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* TABELAS */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .table-container {\n' +
+      '    @apply w-full overflow-x-auto;\n' +
+      '    @apply border border-imi-100 rounded-lg;\n' +
+      '  }\n' +
+      '\n' +
+      '  .table-base {\n' +
+      '    @apply w-full;\n' +
+      '  }\n' +
+      '\n' +
+      '  .table-header {\n' +
+      '    @apply bg-imi-50 border-b border-imi-100;\n' +
+      '  }\n' +
+      '\n' +
+      '  .table-header-cell {\n' +
+      '    @apply px-1 py-1;\n' +
+      '    @apply text-xs font-medium text-imi-600 uppercase tracking-wide;\n' +
+      '    @apply text-left;\n' +
+      '  }\n' +
+      '\n' +
+      '  .table-row {\n' +
+      '    @apply border-b border-imi-50;\n' +
+      '    @apply transition-colors duration-150;\n' +
+      '    @apply hover:bg-imi-50;\n' +
+      '  }\n' +
+      '\n' +
+      '  .table-cell {\n' +
+      '    @apply px-1 py-1;\n' +
+      '    @apply text-sm text-imi-900;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* KPI CARDS */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .kpi-card {\n' +
+      '    @apply card-base p-2;\n' +
+      '  }\n' +
+      '\n' +
+      '  .kpi-label {\n' +
+      '    @apply text-xs font-medium text-imi-600 uppercase tracking-wide mb-0.5;\n' +
+      '  }\n' +
+      '\n' +
+      '  .kpi-value {\n' +
+      '    @apply text-3xl font-bold text-imi-900 tracking-tight;\n' +
+      '  }\n' +
+      '\n' +
+      '  .kpi-change {\n' +
+      '    @apply text-sm font-medium mt-0.5;\n' +
+      '  }\n' +
+      '\n' +
+      '  .kpi-change-positive {\n' +
+      '    @apply kpi-change text-green-600;\n' +
+      '  }\n' +
+      '\n' +
+      '  .kpi-change-negative {\n' +
+      '    @apply kpi-change text-red-600;\n' +
+      '  }\n' +
+      '\n' +
+      '  .kpi-change-neutral {\n' +
+      '    @apply kpi-change text-imi-600;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* SIDEBAR */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .sidebar-item {\n' +
+      '    @apply flex items-center gap-1 px-1 py-1 rounded-md;\n' +
+      '    @apply text-sm font-medium text-imi-700;\n' +
+      '    @apply transition-all duration-200;\n' +
+      '    @apply hover:bg-imi-100 hover:text-imi-900;\n' +
+      '  }\n' +
+      '\n' +
+      '  .sidebar-item-active {\n' +
+      '    @apply sidebar-item;\n' +
+      '    @apply bg-accent-50 text-accent-700;\n' +
+      '    @apply border-l-2 border-accent-500;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* MODAIS */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .modal-backdrop {\n' +
+      '    @apply fixed inset-0 z-40;\n' +
+      '    @apply bg-imi-900 backdrop-blur-sm;\n' +
+      '  }\n' +
+      '\n' +
+      '  .modal-container {\n' +
+      '    @apply fixed inset-0 z-50;\n' +
+      '    @apply flex items-center justify-center p-2;\n' +
+      '  }\n' +
+      '\n' +
+      '  .modal-content {\n' +
+      '    @apply bg-white rounded-lg shadow-xl;\n' +
+      '    @apply max-w-lg w-full p-2;\n' +
+      '  }\n' +
+      '\n' +
+      '  .modal-header {\n' +
+      '    @apply flex items-start justify-between mb-2;\n' +
+      '  }\n' +
+      '\n' +
+      '  .modal-title {\n' +
+      '    @apply text-heading-2;\n' +
+      '  }\n' +
+      '\n' +
+      '  .modal-body {\n' +
+      '    @apply space-y-2;\n' +
+      '  }\n' +
+      '\n' +
+      '  .modal-footer {\n' +
+      '    @apply flex items-center justify-end gap-1 mt-3 pt-2 border-t border-imi-100;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* EMPTY STATES */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .empty-state {\n' +
+      '    @apply flex flex-col items-center justify-center;\n' +
+      '    @apply py-5 px-2 text-center;\n' +
+      '  }\n' +
+      '\n' +
+      '  .empty-state-icon {\n' +
+      '    @apply w-5 h-5 rounded-full bg-imi-100;\n' +
+      '    @apply flex items-center justify-center mb-2;\n' +
+      '    @apply text-imi-400;\n' +
+      '  }\n' +
+      '\n' +
+      '  .empty-state-title {\n' +
+      '    @apply text-heading-3 mb-0.5;\n' +
+      '  }\n' +
+      '\n' +
+      '  .empty-state-description {\n' +
+      '    @apply text-body text-imi-600 mb-2;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* ============================================ */\n' +
+      '/* SKELETON LOADERS */\n' +
+      '/* ============================================ */\n' +
+      '\n' +
+      '@layer components {\n' +
+      '  .skeleton {\n' +
+      '    @apply bg-imi-200 animate-pulse rounded-md;\n' +
+      '  }\n' +
+      '\n' +
+      '  .skeleton-text {\n' +
+      '    @apply skeleton h-1;\n' +
+      '  }\n' +
+      '\n' +
+      '  .skeleton-title {\n' +
+      '    @apply skeleton h-1.5;\n' +
+      '  }\n' +
+      '\n' +
+      '  .skeleton-card {\n' +
+      '    @apply skeleton h-3;\n' +
+      '  }\n' +
+      '\n' +
+      '  .skeleton-circle {\n' +
+      '    @apply skeleton rounded-full;\n' +
+      '  }\n' +
+      '}\n' +
+      '\n' +
+      '/* Custom Scrollbar */\n' +
+      '::-webkit-scrollbar {\n' +
+      '  width: 6px;\n' +
+      '  height: 6px;\n' +
+      '}\n' +
+      '\n' +
+      '::-webkit-scrollbar-track {\n' +
+      '  background: transparent;\n' +
+      '}\n' +
+      '\n' +
+      '::-webkit-scrollbar-thumb {\n' +
+      '  @apply bg-imi-200 dark:bg-white/10 rounded-full transition-colors hover:bg-accent-400;\n' +
+      '}',
+    url: 'file:///Users/lailamiranda/dev-imi/src/app/globals.css',
+    file: '/Users/lailamiranda/dev-imi/src/app/globals.css'
+  },
+  plugin: 'tailwindcss'
+}
