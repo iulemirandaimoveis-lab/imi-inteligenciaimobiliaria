@@ -87,6 +87,10 @@ const config: Config = {
             // ============================================
             // TIPOGRAFIA (mantém estrutura institucional)
             // ============================================
+            fontFamily: {
+                display: ['var(--font-playfair)', 'serif'],
+                sans: ['var(--font-inter)', 'sans-serif'],
+            },
             fontSize: {
                 xs: ['12px', { lineHeight: '16px', letterSpacing: '0' }],
                 sm: ['14px', { lineHeight: '20px', letterSpacing: '0' }],
