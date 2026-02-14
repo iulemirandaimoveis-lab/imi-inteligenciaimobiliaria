@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import DesktopSidebar from './components/DesktopSidebar';
 import MobileHeader from '@/components/backoffice/MobileHeader';
 import MobileBottomNav from '@/components/backoffice/MobileBottomNav';
-import DesktopHeader from '@/components/backoffice/DesktopHeader';
+import DesktopHeader from './components/DesktopHeader';
 import { CommandPalette } from '@/components/backoffice/CommandPalette';
 import { Toaster } from 'sonner';
 
