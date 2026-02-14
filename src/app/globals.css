@@ -1,105 +1,86 @@
-/* app/globals.css */
-/* Classes Utilitárias Institucionais IMI */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    /* Accent Palette - Luxury Gold */
-    --accent-50: #FFF9E5;
-    --accent-100: #FFEEB3;
-    --accent-200: #FFE280;
-    --accent-300: #E5C158;
-    --accent-400: #D4AF37;
-    --accent-500: #D4AF37;
-    --accent-600: #B8952F;
-    --accent-700: #8C7224;
-    --accent-800: #614F19;
-    --accent-900: #362C0E;
+/* ============================================ */
+/* CSS VARIABLES - NÃO ALTERAR                 */
+/* ============================================ */
 
-    /* IMI Palette - Institutional Slate/Blue */
-    --imi-50: #F7F8FA;
-    --imi-100: #ECEEF2;
-    --imi-200: #D0D5DE;
-    --imi-300: #A0AABB;
-    --imi-400: #6B83A0;
-    --imi-500: #59718C;
-    --imi-600: #3C495D;
-    --imi-700: #2E2E3A;
-    --imi-800: #1F2937;
-    --imi-900: #0F1E28;
-  }
+:root {
+  /* Accent - Dourado Institucional */
+  --accent-50: #FFF9E6;
+  --accent-100: #FFF0C2;
+  --accent-200: #FFE699;
+  --accent-300: #FFD966;
+  --accent-400: #E6C24D;
+  --accent-500: #C49D5B;
+  /* Primary */
+  --accent-600: #A67C3D;
+  --accent-700: #8B5E1F;
+  --accent-800: #6B4510;
+  --accent-900: #4A2F08;
 
-  html {
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  body {
-    @apply text-imi-800 dark:text-imi-200 bg-imi-50 dark:bg-imi-900 selection:bg-accent-200 selection:text-accent-900 font-sans;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-display tracking-tight text-imi-900 dark:text-white;
-  }
+  /* IMI - Neutros Institucionais */
+  --imi-50: #F8F9FA;
+  --imi-100: #E9ECEF;
+  --imi-200: #DEE2E6;
+  --imi-300: #CED4DA;
+  --imi-400: #ADB5BD;
+  --imi-500: #6C757D;
+  --imi-600: #495057;
+  --imi-700: #343A40;
+  --imi-800: #212529;
+  --imi-900: #1A1A1A;
 }
 
 /* ============================================ */
-/* TIPOGRAFIA INSTITUCIONAL */
+/* TIPOGRAFIA INSTITUCIONAL                    */
 /* ============================================ */
 
 @layer utilities {
 
   /* Display */
   .text-display {
-    @apply text-4xl font-bold tracking-tight leading-tight;
+    @apply text-4xl font-bold tracking-tight leading-tight text-imi-900;
   }
 
   /* Headings */
   .text-heading-1 {
-    @apply text-3xl font-bold tracking-tight leading-tight;
+    @apply text-3xl font-bold tracking-tight leading-tight text-imi-900;
   }
 
   .text-heading-2 {
-    @apply text-2xl font-bold tracking-tight leading-normal;
+    @apply text-2xl font-bold tracking-tight leading-normal text-imi-900;
   }
 
   .text-heading-3 {
-    @apply text-xl font-semibold tracking-tight leading-normal;
+    @apply text-xl font-semibold tracking-tight leading-normal text-imi-900;
   }
 
   .text-heading-4 {
-    @apply text-base font-semibold leading-normal;
+    @apply text-base font-semibold leading-normal text-imi-900;
   }
 
   /* Body */
   .text-body-large {
-    @apply text-base font-normal leading-relaxed;
+    @apply text-base font-normal leading-relaxed text-imi-700;
   }
 
   .text-body {
-    @apply text-sm font-normal leading-normal;
+    @apply text-sm font-normal leading-normal text-imi-700;
   }
 
   .text-body-small {
-    @apply text-sm font-normal leading-snug;
+    @apply text-sm font-normal leading-snug text-imi-600;
   }
 
   /* Labels */
   .text-label {
-    @apply text-sm font-medium leading-normal;
+    @apply text-sm font-medium leading-normal text-imi-700;
   }
 
   .text-label-small {
-    @apply text-xs font-medium leading-tight tracking-wide;
+    @apply text-xs font-medium leading-tight tracking-wide uppercase text-imi-600;
   }
 
   /* Caption */
@@ -107,19 +88,19 @@
     @apply text-xs font-normal leading-tight text-imi-600;
   }
 
-  /* Mono/Numbers */
+  /* Mono */
   .text-mono {
-    @apply text-sm font-medium font-mono leading-normal;
+    @apply text-sm font-medium font-mono leading-normal text-imi-800;
   }
 }
 
 /* ============================================ */
-/* CONTAINERS E LAYOUTS */
+/* CONTAINERS E LAYOUTS                        */
 /* ============================================ */
 
 @layer components {
   .container-institutional {
-    @apply max-w-container mx-auto px-1;
+    @apply max-w-container mx-auto px-3;
   }
 
   .page-wrapper {
@@ -127,16 +108,20 @@
   }
 
   .content-area {
-    @apply py-3 space-y-3;
+    @apply py-6 space-y-6;
   }
 
   .section {
-    @apply space-y-2;
+    @apply space-y-4;
+  }
+
+  .container-custom {
+    @apply max-w-[1440px] mx-auto px-6 lg:px-8;
   }
 }
 
 /* ============================================ */
-/* CARDS INSTITUCIONAIS */
+/* CARDS INSTITUCIONAIS                        */
 /* ============================================ */
 
 @layer components {
@@ -154,28 +139,26 @@
   }
 
   .card-padding-sm {
-    @apply p-1;
-  }
-
-  .card-padding {
     @apply p-2;
   }
 
-  .card-padding-lg {
+  .card-padding {
     @apply p-3;
+  }
+
+  .card-padding-lg {
+    @apply p-4;
   }
 }
 
 /* ============================================ */
-/* BOTÕES INSTITUCIONAIS */
+/* BOTÕES INSTITUCIONAIS                       */
 /* ============================================ */
 
 @layer components {
-
-  /* Base Button */
   .btn-base {
-    @apply inline-flex items-center justify-center gap-1;
-    @apply h-btn px-2 rounded-md;
+    @apply inline-flex items-center justify-center gap-2;
+    @apply h-btn px-3 rounded-md;
     @apply text-sm font-medium;
     @apply transition-all duration-200;
     @apply focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;
@@ -183,65 +166,47 @@
     @apply active:scale-[0.98];
   }
 
-  /* Primary */
   .btn-primary {
-    @apply btn-base;
-    @apply bg-accent-500 text-white;
-    @apply hover:bg-accent-600;
-    @apply shadow-sm hover:shadow-md;
+    @apply btn-base bg-accent-500 text-white;
+    @apply hover:bg-accent-600 shadow-sm hover:shadow-md;
   }
 
-  /* Secondary */
   .btn-secondary {
-    @apply btn-base;
-    @apply bg-imi-100 text-imi-900;
-    @apply border border-imi-200;
-    @apply hover:bg-imi-200;
+    @apply btn-base bg-imi-100 text-imi-900;
+    @apply border border-imi-200 hover:bg-imi-200;
   }
 
-  /* Outline */
   .btn-outline {
-    @apply btn-base;
-    @apply bg-transparent text-imi-700;
-    @apply border-2 border-imi-200;
-    @apply hover:bg-imi-50 hover:border-imi-300;
+    @apply btn-base bg-transparent text-imi-700;
+    @apply border-2 border-imi-200 hover:bg-imi-50 hover:border-imi-300;
   }
 
-  /* Ghost */
   .btn-ghost {
-    @apply btn-base;
-    @apply bg-transparent text-imi-700;
-    @apply hover:bg-imi-100;
+    @apply btn-base bg-transparent text-imi-700 hover:bg-imi-100;
   }
 
-  /* Danger */
   .btn-danger {
-    @apply btn-base;
-    @apply bg-red-500 text-white;
-    @apply hover:bg-red-600;
-    @apply shadow-sm hover:shadow-md;
+    @apply btn-base bg-red-500 text-white;
+    @apply hover:bg-red-600 shadow-sm hover:shadow-md;
   }
 
-  /* Sizes */
   .btn-sm {
-    @apply h-btn-sm px-1 text-sm;
+    @apply h-btn-sm px-2 text-sm;
   }
 
   .btn-lg {
-    @apply h-btn-lg px-3 text-base;
+    @apply h-btn-lg px-4 text-base;
   }
 }
 
 /* ============================================ */
-/* INPUTS E FORMS */
+/* INPUTS E FORMS                              */
 /* ============================================ */
 
 @layer components {
   .input-base {
-    @apply w-full h-input px-1;
-    @apply bg-white border border-imi-200 rounded-md;
-    @apply text-sm text-imi-900;
-    @apply placeholder:text-imi-400;
+    @apply w-full h-input px-2 bg-white border border-imi-200 rounded-md;
+    @apply text-sm text-imi-900 placeholder:text-imi-400;
     @apply transition-all duration-200;
     @apply focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent;
     @apply hover:border-imi-300;
@@ -253,27 +218,25 @@
   }
 
   .form-label {
-    @apply block text-sm font-medium text-imi-700 mb-0.5;
+    @apply block text-sm font-medium text-imi-700 mb-1;
   }
 
   .form-hint {
-    @apply text-xs text-imi-500 mt-0.5;
+    @apply text-xs text-imi-500 mt-1;
   }
 
   .form-error {
-    @apply text-xs text-red-600 mt-0.5;
+    @apply text-xs text-red-600 mt-1;
   }
 }
 
 /* ============================================ */
-/* BADGES E TAGS */
+/* BADGES E TAGS                               */
 /* ============================================ */
 
 @layer components {
   .badge-base {
-    @apply inline-flex items-center gap-0.5;
-    @apply px-1 py-0.5 rounded-md;
-    @apply text-xs font-medium;
+    @apply inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium;
   }
 
   .badge-primary {
@@ -298,13 +261,12 @@
 }
 
 /* ============================================ */
-/* TABELAS */
+/* TABELAS                                     */
 /* ============================================ */
 
 @layer components {
   .table-container {
-    @apply w-full overflow-x-auto;
-    @apply border border-imi-100 rounded-lg;
+    @apply w-full overflow-x-auto border border-imi-100 rounded-lg;
   }
 
   .table-base {
@@ -316,34 +278,51 @@
   }
 
   .table-header-cell {
-    @apply px-1 py-1;
-    @apply text-xs font-medium text-imi-600 uppercase tracking-wide;
-    @apply text-left;
+    @apply px-3 py-2 text-xs font-medium text-imi-600 uppercase tracking-wide text-left;
   }
 
   .table-row {
-    @apply border-b border-imi-50;
-    @apply transition-colors duration-150;
-    @apply hover:bg-imi-50;
+    @apply border-b border-imi-50 transition-colors duration-150 hover:bg-imi-50;
   }
 
   .table-cell {
-    @apply px-1 py-1;
-    @apply text-sm text-imi-900;
+    @apply px-3 py-2 text-sm text-imi-900;
   }
 }
 
 /* ============================================ */
-/* KPI CARDS */
+/* ESTADOS                                     */
+/* ============================================ */
+
+@layer utilities {
+  .state-hover {
+    @apply hover:bg-imi-50 transition-colors duration-150 cursor-pointer;
+  }
+
+  .state-focus {
+    @apply focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;
+  }
+
+  .state-active {
+    @apply active:scale-[0.98] transition-transform duration-150;
+  }
+
+  .state-disabled {
+    @apply opacity-50 cursor-not-allowed pointer-events-none;
+  }
+}
+
+/* ============================================ */
+/* KPI CARDS                                   */
 /* ============================================ */
 
 @layer components {
   .kpi-card {
-    @apply card-base p-2;
+    @apply card-base p-3;
   }
 
   .kpi-label {
-    @apply text-xs font-medium text-imi-600 uppercase tracking-wide mb-0.5;
+    @apply text-xs font-medium text-imi-600 uppercase tracking-wide mb-1;
   }
 
   .kpi-value {
@@ -351,7 +330,7 @@
   }
 
   .kpi-change {
-    @apply text-sm font-medium mt-0.5;
+    @apply text-sm font-medium mt-1;
   }
 
   .kpi-change-positive {
@@ -368,46 +347,41 @@
 }
 
 /* ============================================ */
-/* SIDEBAR */
+/* SIDEBAR (BACKOFFICE)                        */
 /* ============================================ */
 
 @layer components {
   .sidebar-item {
-    @apply flex items-center gap-1 px-1 py-1 rounded-md;
+    @apply flex items-center gap-2 px-2 py-2 rounded-md;
     @apply text-sm font-medium text-imi-700;
     @apply transition-all duration-200;
     @apply hover:bg-imi-100 hover:text-imi-900;
   }
 
   .sidebar-item-active {
-    @apply sidebar-item;
-    @apply bg-accent-50 text-accent-700;
-    @apply border-l-2 border-accent-500;
+    @apply sidebar-item bg-accent-50 text-accent-700 border-l-2 border-accent-500;
   }
 }
 
 /* ============================================ */
-/* MODAIS */
+/* MODAIS                                      */
 /* ============================================ */
 
 @layer components {
   .modal-backdrop {
-    @apply fixed inset-0 z-40;
-    @apply bg-imi-900 backdrop-blur-sm;
+    @apply fixed inset-0 z-40 bg-imi-900/50 backdrop-blur-sm;
   }
 
   .modal-container {
-    @apply fixed inset-0 z-50;
-    @apply flex items-center justify-center p-2;
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4;
   }
 
   .modal-content {
-    @apply bg-white rounded-lg shadow-xl;
-    @apply max-w-lg w-full p-2;
+    @apply bg-white rounded-lg shadow-xl max-w-lg w-full p-4;
   }
 
   .modal-header {
-    @apply flex items-start justify-between mb-2;
+    @apply flex items-start justify-between mb-4;
   }
 
   .modal-title {
@@ -415,41 +389,38 @@
   }
 
   .modal-body {
-    @apply space-y-2;
+    @apply space-y-4;
   }
 
   .modal-footer {
-    @apply flex items-center justify-end gap-1 mt-3 pt-2 border-t border-imi-100;
+    @apply flex items-center justify-end gap-2 mt-6 pt-4 border-t border-imi-100;
   }
 }
 
 /* ============================================ */
-/* EMPTY STATES */
+/* EMPTY STATES                                */
 /* ============================================ */
 
 @layer components {
   .empty-state {
-    @apply flex flex-col items-center justify-center;
-    @apply py-5 px-2 text-center;
+    @apply flex flex-col items-center justify-center py-10 px-4 text-center;
   }
 
   .empty-state-icon {
-    @apply w-5 h-5 rounded-full bg-imi-100;
-    @apply flex items-center justify-center mb-2;
-    @apply text-imi-400;
+    @apply w-10 h-10 rounded-full bg-imi-100 flex items-center justify-center mb-4 text-imi-400;
   }
 
   .empty-state-title {
-    @apply text-heading-3 mb-0.5;
+    @apply text-heading-3 mb-1;
   }
 
   .empty-state-description {
-    @apply text-body text-imi-600 mb-2;
+    @apply text-body text-imi-600 mb-4;
   }
 }
 
 /* ============================================ */
-/* SKELETON LOADERS */
+/* SKELETON LOADERS                            */
 /* ============================================ */
 
 @layer components {
@@ -458,15 +429,15 @@
   }
 
   .skeleton-text {
-    @apply skeleton h-1;
+    @apply skeleton h-2;
   }
 
   .skeleton-title {
-    @apply skeleton h-1.5;
+    @apply skeleton h-3;
   }
 
   .skeleton-card {
-    @apply skeleton h-3;
+    @apply skeleton h-6;
   }
 
   .skeleton-circle {
@@ -474,16 +445,45 @@
   }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ============================================ */
+/* SCROLLBAR CUSTOMIZADA                       */
+/* ============================================ */
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--imi-300) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--imi-300);
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: var(--imi-400);
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* ============================================ */
+/* UTILITIES EXTRAS                            */
+/* ============================================ */
 
-::-webkit-scrollbar-thumb {
-  @apply bg-imi-200 dark:bg-white/10 rounded-full transition-colors hover:bg-accent-400;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
 }
