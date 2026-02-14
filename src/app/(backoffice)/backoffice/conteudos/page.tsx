@@ -1,370 +1,441 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import {
-  Plus, Edit, Trash2, Calendar, Image as ImageIcon,
-  Video, FileText, CheckCircle, Clock, X, Sparkles,
-  Zap, Ghost, MoreHorizontal, ChevronRight, Wand2,
-  Layout, MessageSquare, Share2, Loader2
-} from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Button from '@/components/ui/Button'
-import Input from '@/components/ui/Input'
-import Textarea from '@/components/ui/Textarea'
-import Toast, { useToast } from '@/components/ui/Toast'
-import { uploadMultipleFiles, deleteFile } from '@/lib/supabase/storage'
-import Image from 'next/image'
-
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import PageHeader from '../../components/PageHeader'
+import { Button } from '@/components/ui/Button'
+import { Badge, KPICard } from '@/components/ui/Badge'
+import { Card, CardHeader, CardBody } from '@/components/ui/Card'
+import { Input } from '@/components/ui/Input'
+import { Select } from '@/components/ui/Select'
+import {
+  TableContainer,
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/Table'
+import { EmptyState } from '@/components/ui/EmptyState'
+import {
+  Plus,
+  FileText,
+  Calendar,
+  Instagram,
+  Facebook,
+  Linkedin,
+  Mail,
+  Sparkles,
+  Eye,
+  Edit,
+  CheckCircle,
+  Clock,
+  XCircle,
+  TrendingUp,
+  BarChart3,
+  Zap
+} from 'lucide-react'
 
-interface Content {
-  id: string
-  title: string
-  type: string
-  content: string | { text: string; cta: string }
-  cover_image: string | null
-  status: string
-  tags: string[] | null
-  created_at: string
-}
-
-export default function ContentPage() {
-  const supabase = createClient()
-  const { toasts, showToast, removeToast } = useToast()
-  const [contents, setContents] = useState<Content[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isAIModalOpen, setIsAIModalOpen] = useState(false)
-  const [editingContent, setEditingContent] = useState<Content | null>(null)
-  const [isSaving, setIsSaving] = useState(false)
-  const [isGenerating, setIsGenerating] = useState(false)
-
-  const [formData, setFormData] = useState({
-    title: '',
-    type: 'article',
-    content: '',
-    cover_image: '',
+// Mock data
+const mockContent = [
+  {
+    id: '1',
+    title: 'Guia Completo: Investir em Imóveis na Boa Viagem',
+    type: 'blog',
+    platform: 'website',
+    status: 'published',
+    scheduled_date: '2024-02-10',
+    author: 'IA + Ana Paula',
+    engagement: { views: 1247, likes: 89, shares: 23 },
+  },
+  {
+    id: '2',
+    title: 'Tour Virtual: Reserva Atlantis',
+    type: 'video',
+    platform: 'instagram',
+    status: 'scheduled',
+    scheduled_date: '2024-02-15',
+    author: 'IA + Carlos Silva',
+    engagement: { views: 0, likes: 0, shares: 0 },
+  },
+  {
+    id: '3',
+    title: 'Newsletter Fevereiro: Mercado Imobiliário PE',
+    type: 'email',
+    platform: 'email',
     status: 'draft',
-    tags: [] as string[]
+    scheduled_date: '2024-02-20',
+    author: 'IA',
+    engagement: { views: 0, likes: 0, shares: 0 },
+  },
+  {
+    id: '4',
+    title: 'Post LinkedIn: Family Office Internacional',
+    type: 'social',
+    platform: 'linkedin',
+    status: 'published',
+    scheduled_date: '2024-02-08',
+    author: 'IA + Marina Costa',
+    engagement: { views: 3420, likes: 156, shares: 34 },
+  },
+]
+
+// Calendar view data
+const mockCalendar = [
+  { date: '2024-02-15', count: 3, items: ['Instagram Post', 'Blog Article', 'Email'] },
+  { date: '2024-02-16', count: 1, items: ['Facebook Ad'] },
+  { date: '2024-02-18', count: 2, items: ['LinkedIn Post', 'Newsletter'] },
+  { date: '2024-02-20', count: 4, items: ['Blog', 'Instagram', 'Twitter', 'Email'] },
+  { date: '2024-02-22', count: 1, items: ['YouTube Video'] },
+]
+
+export default function ConteudosPage() {
+  const router = useRouter()
+  const [content, setContent] = useState(mockContent)
+  const [view, setView] = useState<'list' | 'calendar'>('list')
+  const [statusFilter, setStatusFilter] = useState('all')
+
+  const stats = {
+    total: content.length,
+    published: content.filter((c) => c.status === 'published').length,
+    scheduled: content.filter((c) => c.status === 'scheduled').length,
+    draft: content.filter((c) => c.status === 'draft').length,
+    totalViews: content.reduce((acc, c) => acc + c.engagement.views, 0),
+    totalEngagement: content.reduce(
+      (acc, c) => acc + c.engagement.likes + c.engagement.shares,
+      0
+    ),
+  }
+
+  const filteredContent = content.filter((item) => {
+    if (statusFilter === 'all') return true
+    return item.status === statusFilter
   })
 
-  const [aiPrompt, setAiPrompt] = useState('')
-
-  const fetchContents = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const { data, error } = await supabase
-        .from('content')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setContents(data || [])
-    } catch (err: any) {
-      showToast('Erro ao carregar conteúdos', 'error')
-    } finally {
-      setIsLoading(false)
+  const getStatusConfig = (status: string) => {
+    const configs: Record<string, { variant: any; label: string; icon: any }> = {
+      draft: { variant: 'neutral', label: 'Rascunho', icon: Edit },
+      scheduled: { variant: 'warning', label: 'Agendado', icon: Clock },
+      published: { variant: 'success', label: 'Publicado', icon: CheckCircle },
+      archived: { variant: 'neutral', label: 'Arquivado', icon: XCircle },
     }
-  }, [supabase, showToast])
+    return configs[status] || configs.draft
+  }
 
-  useEffect(() => {
-    fetchContents()
-  }, [fetchContents])
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!formData.title.trim()) { showToast('Título é obrigatório', 'error'); return }
-
-    setIsSaving(true)
-    try {
-      const slug = formData.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
-      const payload = { ...formData, slug }
-
-      if (editingContent) {
-        const { error } = await supabase.from('content').update(payload).eq('id', editingContent.id)
-        if (error) throw error
-        showToast('Conteúdo atualizado', 'success')
-      } else {
-        const { error } = await supabase.from('content').insert([payload])
-        if (error) throw error
-        showToast('Conteúdo criado', 'success')
-      }
-
-      setIsModalOpen(false)
-      resetForm()
-      fetchContents()
-    } catch (err: any) {
-      showToast(err.message || 'Erro ao salvar', 'error')
-    } finally {
-      setIsSaving(false)
+  const getPlatformIcon = (platform: string) => {
+    const icons: Record<string, any> = {
+      instagram: Instagram,
+      facebook: Facebook,
+      linkedin: Linkedin,
+      email: Mail,
+      website: FileText,
     }
-  }
-
-  async function handleAIGenerate() {
-    if (!aiPrompt) { showToast('Diga sobre o que quer escrever', 'error'); return }
-    setIsGenerating(true)
-    try {
-      // Simulando chamada para /api/ai/generate-content
-      // Em prod: const res = await fetch('/api/ai/generate-content', { ... })
-      const mockResponse = {
-        title: `Explorando ${aiPrompt}`,
-        content: `A Inteligência Artificial transformou o mercado imobiliário em ${aiPrompt}... Este artigo explora as tendências de luxo e tecnologia para 2026.`,
-        tags: ['Luxury', 'IA', 'RealEstate']
-      }
-
-      setFormData(prev => ({
-        ...prev,
-        title: mockResponse.title,
-        content: mockResponse.content,
-        tags: mockResponse.tags,
-        status: 'draft'
-      }))
-      showToast('IA gerou um rascunho de alta conversão!', 'success')
-      setIsAIModalOpen(false)
-      setIsModalOpen(true)
-    } catch (err) {
-      showToast('Erro na geração IA', 'error')
-    } finally {
-      setIsGenerating(false)
-    }
-  }
-
-  async function handleDelete(id: string) {
-    if (!confirm('Excluir permanentemente?')) return
-    try {
-      const { error } = await supabase.from('content').delete().eq('id', id)
-      if (error) throw error
-      showToast('Conteúdo removido', 'success')
-      fetchContents()
-    } catch (err: any) {
-      showToast('Erro ao excluir', 'error')
-    }
-  }
-
-  function resetForm() {
-    setFormData({ title: '', type: 'article', content: '', cover_image: '', status: 'draft', tags: [] })
-    setEditingContent(null)
-  }
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  }
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 }
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col gap-6 p-8 h-[60vh] justify-center items-center">
-        <div className="w-10 h-10 border-4 border-imi-100 border-t-accent-500 rounded-full animate-spin" />
-        <p className="text-imi-300 font-bold uppercase tracking-widest text-xs">Sincronizando Conteúdos...</p>
-      </div>
-    )
+    return icons[platform] || FileText
   }
 
   return (
-    <div className="space-y-10 pb-20">
-      {toasts.map(toast => (
-        <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => removeToast(toast.id)} />
-      ))}
-
+    <div className="space-y-8">
       <PageHeader
-        title="Blog & Mídia IA"
-        subtitle="Laboratório Criativo IA: Gestão de conteúdos e inteligência gerativa."
-        breadcrumbs={[{ name: 'Conteúdos' }]}
+        title="Marketing Intelligence & Conteúdo"
+        subtitle="Editorial & Omnichannel Engine | Powered by IA"
+        breadcrumbs={[
+          { name: 'Dashboard', href: '/backoffice/backoffice/dashboard' },
+          { name: 'Estratégia de Conteúdo' },
+        ]}
         action={
-          <div className="flex gap-3">
-            <Button onClick={() => setIsAIModalOpen(true)} variant="outline" className="h-12 px-6 border-purple-100 bg-purple-50 text-purple-700 rounded-2xl group active:scale-95 transition-all">
-              <Sparkles className="w-5 h-5 mr-2 text-purple-600 animate-pulse" />
-              Gerar com IA
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              icon={<Sparkles size={18} />}
+              onClick={() => router.push('/backoffice/backoffice/conteudos/ia')}
+            >
+              Consultar IA
             </Button>
-            <Button onClick={() => { resetForm(); setIsModalOpen(true); }} className="h-12 px-6 bg-imi-900 text-white rounded-2xl shadow-elevated group active:scale-95 transition-all">
-              <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform" />
-              Novo Post
+            <Button
+              icon={<Plus size={18} />}
+              onClick={() => router.push('/backoffice/backoffice/conteudos/novo')}
+              className="shadow-glow"
+            >
+              Novo Artigo
             </Button>
           </div>
         }
       />
 
-      {/* Grid de Conteúdos */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 lg:grid-cols-2 gap-8"
-      >
-        {contents.length === 0 ? (
-          <div className="lg:col-span-2 text-center py-32 bg-white rounded-[3rem] border border-dashed border-imi-100">
-            <Ghost className="mx-auto text-imi-100 mb-6" size={64} />
-            <p className="text-imi-400 font-medium">Sua linha do tempo está aguardando conteúdos.</p>
+      {/* KPI Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <KPICard
+          label="Total Editorial"
+          value={stats.total}
+          icon={<FileText />}
+          variant="primary"
+        />
+        <KPICard
+          label="Reach (Alcance)"
+          value={`${(stats.totalViews / 1000).toFixed(1)}k`}
+          change={{ value: 12.5, label: 'impressões orgânicas', trend: 'up' }}
+          icon={<TrendingUp />}
+          variant="success"
+        />
+        <KPICard
+          label="Pipeline Agendado"
+          value={stats.scheduled}
+          icon={<Clock />}
+          variant="warning"
+        />
+        <KPICard
+          label="Interações Omnichannel"
+          value={stats.totalEngagement}
+          icon={<BarChart3 />}
+          variant="primary"
+          className="bg-imi-950 text-white border-imi-800"
+        />
+      </div>
+
+      {/* View Selector */}
+      <Card className="shadow-elevated border-imi-50">
+        <CardBody className="p-4 flex items-center justify-between">
+          <div className="flex gap-2">
+            <Button
+              variant={view === 'list' ? 'primary' : 'ghost'}
+              onClick={() => setView('list')}
+              icon={<FileText size={16} />}
+            >
+              Visão Lista
+            </Button>
+            <Button
+              variant={view === 'calendar' ? 'primary' : 'ghost'}
+              onClick={() => setView('calendar')}
+              icon={<Calendar size={16} />}
+            >
+              Editorial Calendar
+            </Button>
           </div>
-        ) : (
-          contents.map((content) => (
-            <motion.div
-              key={content.id}
-              variants={itemVariants}
-              className="bg-white rounded-[2.5rem] overflow-hidden border border-imi-100 shadow-soft hover:shadow-card-hover transition-all duration-500 group"
-            >
-              <div className="relative h-64 bg-imi-50 overflow-hidden">
-                {content.cover_image ? (
-                  <Image src={content.cover_image} alt={content.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-imi-100 italic font-display text-4xl">IMI</div>
-                )}
-                <div className="absolute top-6 left-6 flex gap-2">
-                  <span className="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest text-imi-900 shadow-sm flex items-center gap-2 border border-imi-100">
-                    {content.type === 'video' ? <Video size={12} className="text-purple-500" /> : <ImageIcon size={12} className="text-blue-500" />}
-                    {content.type}
-                  </span>
-                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${content.status === 'published' ? 'bg-green-500 text-white' : 'bg-imi-900 text-white'}`}>
-                    {content.status}
-                  </span>
+          <Select
+            className="w-48"
+            options={[
+              { value: 'all', label: 'Todos os Status' },
+              { value: 'draft', label: 'Rascunhos' },
+              { value: 'scheduled', label: 'Agendados' },
+              { value: 'published', label: 'Publicados' },
+            ]}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          />
+        </CardBody>
+      </Card>
+
+      {/* Main Content Area */}
+      {view === 'list' ? (
+        <>
+          {filteredContent.length === 0 ? (
+            <EmptyState
+              icon={FileText}
+              title="Sem conteúdo disponível"
+              description="Utilize a IA para gerar novos insights agora."
+              action={{
+                label: 'Gerar com IA',
+                onClick: () => router.push('/backoffice/backoffice/conteudos/ia'),
+                icon: <Sparkles />,
+              }}
+            />
+          ) : (
+            <Card className="shadow-elevated border-imi-50 overflow-hidden">
+              <TableContainer className="border-none shadow-none">
+                <Table>
+                  <TableHeader className="bg-imi-50/50">
+                    <TableRow>
+                      <TableHead className="py-6 text-[10px] font-black uppercase tracking-widest">Ativo Editorial</TableHead>
+                      <TableHead className="py-6 text-[10px] font-black uppercase tracking-widest">Tipologia</TableHead>
+                      <TableHead className="py-6 text-[10px] font-black uppercase tracking-widest">Plataforma</TableHead>
+                      <TableHead className="py-6 text-[10px] font-black uppercase tracking-widest">Status</TableHead>
+                      <TableHead className="py-6 text-[10px] font-black uppercase tracking-widest text-center">Data</TableHead>
+                      <TableHead className="py-6 text-[10px] font-black uppercase tracking-widest text-center">Analytics</TableHead>
+                      <TableHead className="py-6 text-[10px] font-black uppercase tracking-widest text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredContent.map((item) => {
+                      const statusConfig = getStatusConfig(item.status)
+                      const StatusIcon = statusConfig.icon
+                      const PlatformIcon = getPlatformIcon(item.platform)
+
+                      return (
+                        <TableRow key={item.id} className="hover:bg-imi-50/30 transition-colors">
+                          <TableCell className="py-6">
+                            <div className="flex items-center gap-4 group">
+                              <div className="p-2 rounded-lg bg-imi-50 group-hover:bg-accent-500 group-hover:text-white transition-colors">
+                                {item.author.startsWith('IA') ? <Sparkles size={16} /> : <FileText size={16} />}
+                              </div>
+                              <span className="font-black text-imi-950 uppercase tracking-tighter max-w-[300px] truncate block">
+                                {item.title}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-6">
+                            <Badge variant="neutral" size="sm" className="bg-imi-50 px-2 font-black uppercase text-[9px]">{item.type}</Badge>
+                          </TableCell>
+                          <TableCell className="py-6">
+                            <div className="flex items-center gap-2">
+                              <PlatformIcon size={14} className="text-accent-600" />
+                              <span className="text-[10px] font-black uppercase tracking-widest text-imi-500">{item.platform}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-6">
+                            <Badge
+                              variant={statusConfig.variant}
+                              icon={<StatusIcon size={12} />}
+                              className="bg-white"
+                            >
+                              <span className="font-black text-[9px] uppercase tracking-widest">{statusConfig.label}</span>
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="py-6 text-center">
+                            <span className="text-[10px] font-black text-imi-400">
+                              {new Date(item.scheduled_date).toLocaleDateString('pt-BR')}
+                            </span>
+                          </TableCell>
+                          <TableCell className="py-6 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <span className="text-xs font-black text-imi-950 leading-none">{item.engagement.views} <span className="text-[9px] font-bold text-imi-400 uppercase">Views</span></span>
+                              <span className="text-[9px] font-bold text-accent-600 uppercase tracking-widest">
+                                {item.engagement.likes + item.engagement.shares} Engagem.
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-6 text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              icon={<Eye size={18} />}
+                              onClick={() =>
+                                router.push(`/backoffice/backoffice/conteudos/${item.id}`)
+                              }
+                            >
+                              Dashboard
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Card>
+          )}
+        </>
+      ) : (
+        <Card className="shadow-elevated border-imi-50 overflow-hidden">
+          <CardHeader
+            title="Editorial Planner"
+            subtitle="Mapeamento cronológico de publicações"
+            className="bg-imi-50/50"
+          />
+          <CardBody className="p-8">
+            <div className="grid grid-cols-7 gap-4">
+              {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map((day) => (
+                <div
+                  key={day}
+                  className="text-center text-[10px] font-black text-imi-400 pt-2 tracking-[0.3em] mb-4"
+                >
+                  {day}
                 </div>
-              </div>
+              ))}
 
-              <div className="p-8 space-y-4">
-                <div className="flex justify-between items-start gap-4">
-                  <h3 className="text-2xl font-bold text-imi-900 leading-tight group-hover:text-accent-600 transition-colors">{content.title}</h3>
-                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => { setEditingContent(content); setFormData({ ...content, content: typeof content.content === 'string' ? content.content : content.content.text, tags: content.tags || [], cover_image: content.cover_image || '' }); setIsModalOpen(true); }} className="w-10 h-10 rounded-xl bg-imi-50 flex items-center justify-center text-imi-400 hover:text-imi-900 transition-all">
-                      <Edit size={18} />
-                    </button>
-                    <button onClick={() => handleDelete(content.id)} className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-300 hover:text-red-600 transition-all">
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
+              {Array.from({ length: 35 }).map((_, index) => {
+                const dayData = mockCalendar.find((d) => {
+                  const date = new Date(d.date)
+                  return date.getDate() === index + 1
+                })
 
-                <p className="text-imi-500 text-sm line-clamp-2 leading-relaxed">
-                  {typeof content.content === 'string' ? content.content : content.content?.text}
-                </p>
-
-                <div className="flex items-center justify-between pt-4 border-t border-imi-50">
-                  <div className="flex gap-2">
-                    {content.tags?.slice(0, 3).map(tag => (
-                      <span key={tag} className="text-[10px] text-imi-400 font-bold uppercase tracking-wider">#{tag}</span>
-                    ))}
-                  </div>
-                  <span className="text-[10px] text-imi-300 font-black uppercase tracking-[0.2em]">{new Date(content.created_at).toLocaleDateString('pt-BR')}</span>
-                </div>
-              </div>
-            </motion.div>
-          ))
-        )}
-      </motion.div>
-
-      {/* Modal Criativo */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-imi-900/40 backdrop-blur-md z-50 flex items-center justify-end p-0 sm:p-4 overflow-hidden">
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              className="bg-white w-full max-w-2xl h-full shadow-2xl overflow-y-auto"
-            >
-              <div className="p-10 space-y-10">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-3xl font-bold text-imi-900 font-display">{editingContent ? 'Refinar' : 'Compor'} Conteúdo</h2>
-                  <button onClick={() => setIsModalOpen(false)} className="w-12 h-12 rounded-2xl bg-imi-50 flex items-center justify-center text-imi-400">
-                    <X size={24} />
-                  </button>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  <div className="space-y-6">
-                    <Input label="Título Estratégico" value={formData.title} onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))} placeholder="Ex: O Futuro do Morar em 2026" className="h-14 rounded-2xl border-imi-100" />
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-imi-400 uppercase tracking-widest block">Canal</label>
-                        <select value={formData.type} onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))} className="w-full h-14 bg-white border border-imi-100 rounded-2xl px-6 outline-none focus:ring-2 focus:ring-accent-500/20 transition-all font-bold text-sm">
-                          <option value="article">Artigo / Blog</option>
-                          <option value="post">Post Social</option>
-                          <option value="video">Vídeo Script</option>
-                        </select>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-black text-imi-400 uppercase tracking-widest block">Status</label>
-                        <select value={formData.status} onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))} className="w-full h-14 bg-white border border-imi-100 rounded-2xl px-6 outline-none focus:ring-2 focus:ring-accent-500/20 transition-all font-bold text-sm">
-                          <option value="draft">Rascunho</option>
-                          <option value="published">Publicado</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <Textarea label="Corpo do Conteúdo" value={formData.content} onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))} rows={10} className="rounded-[2.5rem] border-imi-100 p-8 text-lg leading-relaxed" />
-                  </div>
-
-                  <div className="pt-10 flex gap-4">
-                    <Button type="submit" disabled={isSaving} className="flex-1 h-16 bg-imi-900 text-white rounded-3xl shadow-elevated font-black text-xs uppercase tracking-widest">
-                      {isSaving ? 'Gravando...' : 'Efetivar Conteúdo'}
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            </motion.div>
-          </div>
-        )}
-
-        {/* AI Generator Modal */}
-        {isAIModalOpen && (
-          <div className="fixed inset-0 bg-imi-900/60 backdrop-blur-xl z-[60] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="bg-white w-full max-w-xl rounded-[3rem] p-12 shadow-2xl relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 blur-[80px] -mr-32 -mt-32 rounded-full" />
-
-              <div className="relative z-10 space-y-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-purple-100 rounded-3xl flex items-center justify-center">
-                    <Zap className="text-purple-600" size={32} />
-                  </div>
-                  <div>
-                    <h3 className="text-3xl font-bold text-imi-900 font-display">Creative AI</h3>
-                    <p className="text-imi-400 text-sm font-medium italic">O que vamos criar para sua audiência hoje?</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="text-[10px] font-black text-imi-400 uppercase tracking-widest block">Tópico ou Ideia Base</label>
-                  <Textarea
-                    value={aiPrompt}
-                    onChange={(e) => setAiPrompt(e.target.value)}
-                    placeholder="Ex: Apartamentos de luxo sustentáveis no Bessa..."
-                    className="rounded-3xl border-imi-100 h-32 text-lg focus:ring-purple-500/20"
-                  />
-                </div>
-
-                <div className="pt-4 flex gap-3">
-                  <Button
-                    onClick={handleAIGenerate}
-                    disabled={isGenerating}
-                    className="flex-1 h-16 bg-gradient-to-r from-purple-600 to-imi-900 text-white rounded-3xl shadow-elevated font-black text-xs uppercase tracking-widest group"
+                return (
+                  <div
+                    key={index}
+                    className={`
+                      min-h-[140px] p-4 border rounded-[2rem] transition-all duration-500
+                      ${dayData
+                        ? 'border-accent-200 bg-accent-50/30 cursor-pointer hover:bg-accent-100/50 scale-[1.02] shadow-sm'
+                        : 'border-imi-100 bg-white hover:border-imi-200'
+                      }
+                    `}
                   >
-                    {isGenerating ? <Loader2 className="animate-spin" /> : (
-                      <>
-                        <Wand2 className="mr-3 group-hover:rotate-12 transition-transform" />
-                        Gerar Estratégia
-                      </>
+                    <div className="flex justify-between items-start mb-4">
+                      <span className={`text-sm font-black ${dayData ? 'text-accent-600' : 'text-imi-900'}`}>
+                        {index + 1}
+                      </span>
+                      {dayData && <Zap size={14} className="text-accent-500 animate-pulse" />}
+                    </div>
+                    {dayData && (
+                      <div className="space-y-3">
+                        <Badge variant="primary" size="sm" className="bg-accent-500 text-white font-black text-[8px] uppercase tracking-tighter">
+                          {dayData.count} Operações
+                        </Badge>
+                        <div className="space-y-1">
+                          {dayData.items.slice(0, 2).map((item, i) => (
+                            <div
+                              key={i}
+                              className="text-[9px] font-black text-imi-600 uppercase tracking-tight truncate pl-1 border-l-2 border-accent-300"
+                            >
+                              {item}
+                            </div>
+                          ))}
+                        </div>
+                        {dayData.count > 2 && (
+                          <div className="text-[8px] font-black text-accent-700 bg-accent-100/50 px-2 py-0.5 rounded-full inline-block">
+                            + {dayData.count - 2} Items
+                          </div>
+                        )}
+                      </div>
                     )}
-                  </Button>
-                  <Button variant="outline" onClick={() => setIsAIModalOpen(false)} className="px-8 border-imi-100 rounded-3xl font-black text-xs uppercase tracking-widest">
-                    Fechar
-                  </Button>
-                </div>
+                  </div>
+                )
+              })}
+            </div>
+          </CardBody>
+        </Card>
+      )}
+
+      {/* Footer Strategist */}
+      <Card className="bg-imi-950 border-imi-800 shadow-glow">
+        <CardBody className="p-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Sparkles size={20} className="text-accent-500" />
+                <h3 className="text-xl font-black text-white uppercase tracking-tighter">Content AI Strategist</h3>
               </div>
-            </motion.div>
+              <p className="text-sm font-medium text-imi-400">Gere conteúdo de alta conversão otimizado para Real Estate & Family Office.</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full md:w-auto">
+              <Button
+                variant="outline"
+                icon={<Instagram size={18} />}
+                onClick={() => router.push('/backoffice/backoffice/conteudos/ia?type=instagram')}
+                className="border-white/10 text-white hover:bg-white/10 uppercase font-black text-[10px] tracking-widest h-12"
+              >
+                Post Social
+              </Button>
+              <Button
+                variant="outline"
+                icon={<Mail size={18} />}
+                onClick={() => router.push('/backoffice/backoffice/conteudos/ia?type=email')}
+                className="border-white/10 text-white hover:bg-white/10 uppercase font-black text-[10px] tracking-widest h-12"
+              >
+                Newsletter
+              </Button>
+              <Button
+                variant="outline"
+                icon={<FileText size={18} />}
+                onClick={() => router.push('/backoffice/backoffice/conteudos/ia?type=blog')}
+                className="border-white/10 text-white hover:bg-white/10 uppercase font-black text-[10px] tracking-widest h-12"
+              >
+                Artigo SEO
+              </Button>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+        </CardBody>
+      </Card>
     </div>
   )
 }
-
