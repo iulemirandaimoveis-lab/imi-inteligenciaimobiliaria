@@ -1,41 +1,39 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
-    darkMode: 'class',
     content: [
-        './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-        './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-        './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+        './pages/**/*.{js,ts,jsx,tsx,mdx}',
+        './components/**/*.{js,ts,jsx,tsx,mdx}',
+        './app/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/**/*.{js,ts,jsx,tsx,mdx}',
     ],
+    darkMode: 'class',
     theme: {
         extend: {
-            // ESPAÇAMENTO - Múltiplos de 8px (Regra Apple)
-            spacing: {
-                '0': '0px',
-                '1': '8px',
-                '2': '16px',
-                '3': '24px',
-                '4': '32px',
-                '5': '40px',
-                '6': '48px',
-                '8': '64px',
-                '10': '80px',
-            },
-
-            // CORES INSTITUCIONAIS (Mapeadas para variáveis CSS)
+            // ============================================
+            // CORES - COM PRIMARY DEFINIDO (FIX CRÍTICO)
+            // ============================================
             colors: {
+                // PRIMARY (RESOLVE 111 REFERÊNCIAS)
+                primary: 'var(--accent-500)',
+                'primary-dark': 'var(--accent-700)',
+                'primary-light': 'var(--accent-300)',
+
+                // ACCENT (mantém)
                 accent: {
                     50: 'var(--accent-50)',
                     100: 'var(--accent-100)',
                     200: 'var(--accent-200)',
                     300: 'var(--accent-300)',
                     400: 'var(--accent-400)',
-                    500: 'var(--accent-500)', // Primary Gold
+                    500: 'var(--accent-500)',
                     600: 'var(--accent-600)',
                     700: 'var(--accent-700)',
                     800: 'var(--accent-800)',
                     900: 'var(--accent-900)',
                 },
+
+                // IMI (mantém)
                 imi: {
                     50: 'var(--imi-50)',
                     100: 'var(--imi-100)',
@@ -48,23 +46,53 @@ const config: Config = {
                     800: 'var(--imi-800)',
                     900: 'var(--imi-900)',
                 },
-                // Mapeamento semântico adicional
+
+                // BACKGROUNDS (mantém)
                 'background-light': '#F8F9FA',
                 'background-dark': '#0F1E28',
             },
 
-            fontFamily: {
-                sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-                display: ['var(--font-playfair)', 'Georgia', 'serif'],
+            // ============================================
+            // BORDER RADIUS - COM 3XL ADICIONADO (FIX)
+            // ============================================
+            borderRadius: {
+                none: '0',
+                sm: '8px',
+                md: '12px',
+                lg: '16px',
+                xl: '20px',
+                '2xl': '24px',
+                '3xl': '32px', // NOVO - resolve rounded-[32px]
+                full: '9999px',
             },
 
-            // TIPOGRAFIA
+            // ============================================
+            // SPACING - GRID 8PT COM INTERMEDIÁRIOS (FIX)
+            // ============================================
+            spacing: {
+                '0': '0px',
+                '0.5': '4px',   // NOVO - granularidade 4px
+                '1': '8px',
+                '1.5': '12px',  // NOVO - granularidade 12px
+                '2': '16px',
+                '3': '24px',
+                '4': '32px',
+                '5': '40px',
+                '6': '48px',
+                '7': '56px',    // NOVO - valor intermediário
+                '8': '64px',
+                '10': '80px',
+            },
+
+            // ============================================
+            // TIPOGRAFIA (mantém estrutura institucional)
+            // ============================================
             fontSize: {
-                'xs': ['12px', { lineHeight: '16px', letterSpacing: '0' }],
-                'sm': ['14px', { lineHeight: '20px', letterSpacing: '0' }],
-                'base': ['16px', { lineHeight: '24px', letterSpacing: '0' }],
-                'lg': ['18px', { lineHeight: '28px', letterSpacing: '-0.01em' }],
-                'xl': ['20px', { lineHeight: '28px', letterSpacing: '-0.01em' }],
+                xs: ['12px', { lineHeight: '16px', letterSpacing: '0' }],
+                sm: ['14px', { lineHeight: '20px', letterSpacing: '0' }],
+                base: ['16px', { lineHeight: '24px', letterSpacing: '0' }],
+                lg: ['18px', { lineHeight: '28px', letterSpacing: '-0.01em' }],
+                xl: ['20px', { lineHeight: '28px', letterSpacing: '-0.01em' }],
                 '2xl': ['24px', { lineHeight: '32px', letterSpacing: '-0.01em' }],
                 '3xl': ['28px', { lineHeight: '36px', letterSpacing: '-0.01em' }],
                 '4xl': ['32px', { lineHeight: '40px', letterSpacing: '-0.02em' }],
@@ -77,29 +105,23 @@ const config: Config = {
                 bold: '700',
             },
 
-            // BORDER RADIUS
-            borderRadius: {
-                'none': '0',
-                'sm': '8px',
-                'md': '12px',
-                'lg': '16px',
-                'xl': '20px',
-                '2xl': '24px',
-                'full': '9999px',
-            },
-
-            // BOX SHADOW - Profundidade Sutil
+            // ============================================
+            // BOX SHADOW - PROFUNDIDADE SUTIL (mantém)
+            // ============================================
             boxShadow: {
-                'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
-                'sm': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)',
-                'md': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
-                'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
-                'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02)',
-                'none': 'none',
-                'glow': '0 0 15px rgba(212, 175, 55, 0.3)',
+                xs: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+                sm: '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03)',
+                md: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                lg: '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
+                xl: '0 20px 25px -5px rgba(0, 0, 0, 0.04), 0 10px 10px -5px rgba(0, 0, 0, 0.02)',
+                none: 'none',
+                'glow-sm': '0 0 20px rgba(196, 157, 91, 0.15)',
+                'glow-md': '0 0 30px rgba(196, 157, 91, 0.25)',
             },
 
-            // TRANSIÇÕES
+            // ============================================
+            // TRANSIÇÕES (mantém)
+            // ============================================
             transitionDuration: {
                 '150': '150ms',
                 '200': '200ms',
@@ -108,10 +130,12 @@ const config: Config = {
             },
 
             transitionTimingFunction: {
-                'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+                smooth: 'cubic-bezier(0.4, 0, 0.2, 1)',
             },
 
-            // ANIMATIONS
+            // ============================================
+            // ANIMATIONS (mantém + adiciona)
+            // ============================================
             keyframes: {
                 'fade-in': {
                     '0%': { opacity: '0' },
@@ -129,6 +153,9 @@ const config: Config = {
                     '0%': { transform: 'scale(0.96)', opacity: '0' },
                     '100%': { transform: 'scale(1)', opacity: '1' },
                 },
+                shimmer: {
+                    '100%': { transform: 'translateX(100%)' },
+                },
             },
 
             animation: {
@@ -136,9 +163,12 @@ const config: Config = {
                 'slide-up': 'slide-up 300ms cubic-bezier(0.4, 0, 0.2, 1)',
                 'slide-down': 'slide-down 300ms cubic-bezier(0.4, 0, 0.2, 1)',
                 'scale-in': 'scale-in 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                shimmer: 'shimmer 2s infinite',
             },
 
-            // Z-INDEX
+            // ============================================
+            // Z-INDEX HIERARQUIA (mantém)
+            // ============================================
             zIndex: {
                 '0': '0',
                 '10': '10',
@@ -151,26 +181,40 @@ const config: Config = {
                 '80': '80',
             },
 
-            // HEIGHTS PADRONIZADOS
+            // ============================================
+            // HEIGHTS PADRONIZADOS (mantém)
+            // ============================================
             height: {
                 'btn-sm': '40px',
-                'btn': '48px',     // Padrão touch-friendly
+                'btn': '48px',
                 'btn-lg': '56px',
                 'input-sm': '40px',
-                'input': '48px',   // Padrão touch-friendly
+                'input': '48px',
                 'input-lg': '56px',
             },
 
-            // MAX WIDTH
+            // ============================================
+            // MAX WIDTH (mantém)
+            // ============================================
             maxWidth: {
                 'screen-2xl': '1536px',
-                'container': '1440px',
+                container: '1440px',
+            },
+
+            // ============================================
+            // CONTAINER (mantém)
+            // ============================================
+            container: {
+                center: true,
+                padding: {
+                    DEFAULT: '1rem',
+                    sm: '1.5rem',
+                    lg: '2rem',
+                },
             },
         },
     },
-    plugins: [
-        require('@tailwindcss/typography'),
-    ],
+    plugins: [],
 }
 
 export default config
