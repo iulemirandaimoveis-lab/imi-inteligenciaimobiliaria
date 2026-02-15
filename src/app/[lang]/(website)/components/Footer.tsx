@@ -138,24 +138,27 @@ export default function Footer({ lang = 'pt' }: { lang?: string }) {
                         </ul>
                     </div>
 
-                    {/* Languages & Social */}
+                    {/* Languages */}
                     <div>
                         <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-6">
                             Idiomas
                         </h3>
-                        <div className="flex flex-wrap gap-2 mb-8">
-                            {languages.map((language) => (
-                                <Link
-                                    key={language.code}
-                                    href={`/${language.code}`}
-                                    className={`flex items-center gap-1 px-3 py-2 text-xs font-medium rounded-lg transition-all ${lang === language.code
-                                        ? 'bg-accent-500 text-white'
-                                        : 'bg-white/5 text-imi-300 hover:bg-white/10'
-                                        }`}
-                                >
-                                    <span>{language.flag}</span>
-                                    <span>{language.label}</span>
-                                </Link>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                            {languages.map((language, index) => (
+                                <div key={language.code} className="flex items-center">
+                                    <Link
+                                        href={`/${language.code}`}
+                                        className={`text-xs font-bold transition-all ${lang === language.code
+                                            ? 'text-accent-400'
+                                            : 'text-imi-400 hover:text-white'
+                                            }`}
+                                    >
+                                        {language.label}
+                                    </Link>
+                                    {index < languages.length - 1 && (
+                                        <span className="ml-4 text-imi-600 text-xs">|</span>
+                                    )}
+                                </div>
                             ))}
                         </div>
 
