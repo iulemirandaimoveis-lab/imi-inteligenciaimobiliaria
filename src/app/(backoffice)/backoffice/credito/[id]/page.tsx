@@ -1,447 +1,486 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import PageHeader from '../../../components/PageHeader'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { Card, CardHeader, CardBody } from '@/components/ui/Card'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal'
-import { Select } from '@/components/ui/Select'
-import { Textarea } from '@/components/ui/Input'
-import { CardSkeleton } from '@/components/ui/EmptyState'
+import { useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import {
-    Edit,
-    CheckCircle,
-    XCircle,
-    Clock,
-    TrendingUp,
-    User,
-    Home,
+    ArrowLeft,
     DollarSign,
-    FileText,
+    Home,
     Calendar,
-    Phone,
+    TrendingUp,
+    FileText,
+    Download,
     Mail,
-    MapPin,
+    Phone,
+    User,
+    Building2,
+    CheckCircle,
+    Clock,
+    XCircle,
+    AlertCircle,
+    ChevronDown,
+    ChevronUp,
+    Calculator,
+    Percent,
+    CreditCard,
 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
 
-const supabase = createClient()
+// Mock data (seria carregado do Supabase)
+const mockCreditData = {
+    id: 'CRD-2026-001',
+    protocol: 'CRD-2026-001',
+    status: 'approved',
+    createdAt: '2026-02-01',
+
+    // Cliente
+    client: {
+        name: 'Carlos Eduardo Silva',
+        email: 'carlos.silva@email.com',
+        phone: '(81) 99876-5432',
+        cpf: '123.456.789-00',
+        income: 15000,
+        occupation: 'Engenheiro Civil',
+    },
+
+    // Imóvel
+    property: {
+        address: 'Av. Boa Viagem, 3500 - Apto 802',
+        type: 'Apartamento',
+        saleValue: 680000,
+        area: 95,
+        bedrooms: 3,
+        bathrooms: 2,
+    },
+
+    // Financiamento
+    financing: {
+        bank: 'Caixa Econômica Federal',
+        financedAmount: 544000,
+        downPayment: 136000,
+        term: 360,
+        interestRate: 9.5,
+        monthlyPayment: 4589.20,
+        system: 'SAC',
+        ltv: 80,
+        dti: 30.6,
+    },
+
+    // Documentos
+    documents: [
+        { name: 'RG e CPF', status: 'approved', uploadedAt: '2026-02-01' },
+        { name: 'Comprovante de Renda', status: 'approved', uploadedAt: '2026-02-01' },
+        { name: 'Comprovante de Residência', status: 'approved', uploadedAt: '2026-02-02' },
+        { name: 'Certidão de Casamento', status: 'approved', uploadedAt: '2026-02-02' },
+        { name: 'FGTS', status: 'pending', uploadedAt: '2026-02-03' },
+    ],
+
+    // Timeline
+    timeline: [
+        { date: '2026-02-01', event: 'Solicitação criada', status: 'completed' },
+        { date: '2026-02-02', event: 'Documentos enviados', status: 'completed' },
+        { date: '2026-02-05', event: 'Análise de crédito iniciada', status: 'completed' },
+        { date: '2026-02-08', event: 'Aprovado pela Caixa', status: 'completed' },
+        { date: '2026-02-15', event: 'Aguardando assinatura', status: 'current' },
+        { date: '2026-02-20', event: 'Liberação dos recursos', status: 'pending' },
+    ],
+}
 
 export default function CreditoDetalhesPage() {
-    const params = useParams()
     const router = useRouter()
-    const [request, setRequest] = useState<any>(null)
-    const [isLoading, setIsLoading] = useState(true)
-    const [showStatusModal, setShowStatusModal] = useState(false)
-    const [newStatus, setNewStatus] = useState('')
-    const [statusNotes, setStatusNotes] = useState('')
-    const [isUpdating, setIsUpdating] = useState(false)
+    const params = useParams()
+    const [showAmortization, setShowAmortization] = useState(false)
 
-    useEffect(() => {
-        async function fetchRequest() {
-            try {
-                const { data, error } = await supabase
-                    .from('credit_requests')
-                    .select('*')
-                    .eq('id', params.id)
-                    .single()
+    const credit = mockCreditData
 
-                if (error) throw error
-                setRequest(data)
-                setNewStatus(data.status)
-            } catch (error) {
-                console.error('Erro ao buscar solicitação:', error)
-                toast.error('Não foi possível carregar os detalhes da solicitação.')
-            } finally {
-                setIsLoading(false)
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+        }).format(value)
+    }
+
+    const getStatusBadge = (status: string) => {
+        const badges = {
+            approved: { label: 'Aprovado', color: 'bg-green-100 text-green-700', icon: CheckCircle },
+            pending: { label: 'Pendente', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
+            rejected: { label: 'Rejeitado', color: 'bg-red-100 text-red-700', icon: XCircle },
+            analysis: { label: 'Em Análise', color: 'bg-blue-100 text-blue-700', icon: AlertCircle },
+        }
+        const badge = badges[status as keyof typeof badges] || badges.pending
+        const Icon = badge.icon
+
+        return (
+            <span className={`px-3 py-1.5 ${badge.color} rounded-lg text-sm font-medium flex items-center gap-2 w-fit`}>
+                <Icon size={16} />
+                {badge.label}
+            </span>
+        )
+    }
+
+    // Gerar tabela de amortização (primeiros 12 meses)
+    const generateAmortization = () => {
+        const { financedAmount, interestRate, term } = credit.financing
+        const monthlyRate = interestRate / 100 / 12
+        const amortization = financedAmount / term
+
+        return Array.from({ length: 12 }, (_, i) => {
+            const month = i + 1
+            const balance = financedAmount - (amortization * i)
+            const interest = balance * monthlyRate
+            const payment = amortization + interest
+            const newBalance = balance - amortization
+
+            return {
+                month,
+                payment,
+                amortization,
+                interest,
+                balance: newBalance,
             }
-        }
-
-        if (params.id) {
-            fetchRequest()
-        }
-    }, [params.id])
-
-    const getStatusConfig = (status: string) => {
-        const configs: Record<string, { variant: any; label: string; icon: any }> = {
-            pending: { variant: 'warning', label: 'Pendente', icon: Clock },
-            analyzing: { variant: 'info', label: 'Em Análise', icon: TrendingUp },
-            approved: { variant: 'success', label: 'Aprovado', icon: CheckCircle },
-            rejected: { variant: 'danger', label: 'Rejeitado', icon: XCircle },
-        }
-        return configs[status] || configs.pending
+        })
     }
 
-    const handleUpdateStatus = async () => {
-        setIsUpdating(true)
-
-        try {
-            const { error } = await supabase
-                .from('credit_requests')
-                .update({
-                    status: newStatus,
-                    notes: statusNotes ? `${request.notes || ''}\n\n[Update ${new Date().toLocaleDateString()}]: ${statusNotes}` : request.notes,
-                    updated_at: new Date().toISOString(),
-                })
-                .eq('id', params.id)
-
-            if (error) throw error
-
-            setRequest((prev: any) => ({ ...prev, status: newStatus }))
-            setShowStatusModal(false)
-            toast.success('Status da solicitação atualizado com sucesso!')
-        } catch (error) {
-            console.error('Erro ao atualizar:', error)
-            toast.error('Erro ao atualizar status da solicitação.')
-        } finally {
-            setIsUpdating(false)
-        }
-    }
-
-    if (isLoading) {
-        return (
-            <div className="space-y-6">
-                <CardSkeleton />
-            </div>
-        )
-    }
-
-    if (!request) {
-        return (
-            <div className="space-y-6">
-                <PageHeader title="Solicitação não encontrada" />
-                <Card>
-                    <CardBody>
-                        <p className="text-center text-imi-600 py-12">
-                            O registro de crédito solicitado não foi localizado em nossa base de dados.
-                        </p>
-                    </CardBody>
-                </Card>
-            </div>
-        )
-    }
-
-    const statusConfig = getStatusConfig(request.status)
-    const StatusIcon = statusConfig.icon
-
-    // Cálculos de Engenharia de Crédito
-    const ltv = ((request.requested_amount / request.property_value) * 100).toFixed(1)
-    const monthlyIncome = request.income
-    const maxInstallment = monthlyIncome * 0.3 // 30% da renda
-    const estimatedRate = 10.5 // % ao ano (simulação IMI)
-    const estimatedMonths = 360 // 30 anos
-    const monthlyRate = estimatedRate / 12 / 100
-    const estimatedInstallment =
-        (request.requested_amount * monthlyRate * Math.pow(1 + monthlyRate, estimatedMonths)) /
-        (Math.pow(1 + monthlyRate, estimatedMonths) - 1)
-
-    const canApprove = estimatedInstallment <= maxInstallment && Number(ltv) <= 80
+    const amortizationTable = generateAmortization()
 
     return (
         <div className="space-y-6">
-            <PageHeader
-                title={`Dossiê de Crédito #${request.id.slice(0, 8).toUpperCase()}`}
-                subtitle={`Proponente: ${request.client_name}`}
-                breadcrumbs={[
-                    { name: 'Dashboard', href: '/backoffice/backoffice/dashboard' },
-                    { name: 'Crédito', href: '/backoffice/backoffice/credito' },
-                    { name: 'Detalhes da Operação' },
-                ]}
-                action={
-                    <div className="flex items-center gap-4">
-                        <Badge variant={statusConfig.variant} size="lg" icon={<StatusIcon size={16} />} dot>
-                            {statusConfig.label}
-                        </Badge>
-                        <Button
-                            variant="primary"
-                            icon={<Edit size={20} />}
-                            onClick={() => setShowStatusModal(true)}
-                            className="shadow-glow"
-                        >
-                            Gestão de Status
-                        </Button>
-                    </div>
-                }
-            />
-
-            {/* Credit Intelligence Panel */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="border-accent-100 bg-accent-50/10">
-                    <CardBody className="flex flex-col items-center">
-                        <p className="text-[10px] font-black text-accent-600 uppercase tracking-widest mb-1">Loan-to-Value (LTV)</p>
-                        <p className="text-3xl font-black text-imi-950">{ltv}%</p>
-                        <Badge variant={Number(ltv) <= 80 ? 'success' : 'danger'} size="sm" className="mt-2">
-                            {Number(ltv) <= 80 ? 'Exposição Segura' : 'Alavancagem Crítica'}
-                        </Badge>
-                    </CardBody>
-                </Card>
-
-                <Card>
-                    <CardBody className="flex flex-col items-center">
-                        <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">Parcela Estimada</p>
-                        <p className="text-2xl font-black text-imi-900">
-                            R$ {estimatedInstallment.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
-                        </p>
-                        <p className="text-[10px] text-imi-500 mt-2 font-medium">Tx. Simulação: {estimatedRate}% a.a.</p>
-                    </CardBody>
-                </Card>
-
-                <Card className={estimatedInstallment <= maxInstallment ? 'bg-white' : 'border-red-100 bg-red-50/10'}>
-                    <CardBody className="flex flex-col items-center">
-                        <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">Comprometimento</p>
-                        <p className="text-3xl font-black text-imi-950">
-                            {((estimatedInstallment / monthlyIncome) * 100).toFixed(1)}%
-                        </p>
-                        <p className="text-[10px] text-imi-500 mt-2 font-medium">Limite Bancário: 30%</p>
-                    </CardBody>
-                </Card>
-
-                <Card className={canApprove ? 'bg-imi-950 border-imi-900' : 'bg-red-950 border-red-900'}>
-                    <CardBody className="flex flex-col items-center">
-                        <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Rating IMI</p>
-                        <p className={`text-2xl font-black ${canApprove ? 'text-accent-400' : 'text-red-400'}`}>
-                            {canApprove ? 'Aprovável' : 'Restrito'}
-                        </p>
-                        <div className={`mt-2 flex items-center gap-1 text-[10px] font-bold ${canApprove ? 'text-green-400' : 'text-red-400'}`}>
-                            {canApprove ? <CheckCircle size={10} /> : <XCircle size={10} />}
-                            {canApprove ? 'Score de Saúde OK' : 'Risco de Rejeição'}
+            {/* Header */}
+            <div className="flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => router.back()}
+                        className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center"
+                    >
+                        <ArrowLeft size={20} />
+                    </button>
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">Crédito Imobiliário</h1>
+                        <div className="flex items-center gap-3 mt-2">
+                            <span className="text-sm font-medium text-gray-600">Protocolo: {credit.protocol}</span>
+                            <span className="text-gray-300">•</span>
+                            {getStatusBadge(credit.status)}
                         </div>
-                    </CardBody>
-                </Card>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button className="h-10 px-4 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 flex items-center gap-2">
+                        <Download size={18} />
+                        Exportar
+                    </button>
+                    <button className="h-10 px-4 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 flex items-center gap-2">
+                        <Mail size={18} />
+                        Enviar Email
+                    </button>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-8">
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Valor do Imóvel */}
+                <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                            <Home size={20} className="text-blue-600" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-600">Valor do Imóvel</p>
+                    </div>
+                    <p className="text-2xl font-bold text-gray-900">
+                        {formatCurrency(credit.property.saleValue)}
+                    </p>
+                </div>
+
+                {/* Financiado */}
+                <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+                            <DollarSign size={20} className="text-green-600" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-600">Valor Financiado</p>
+                    </div>
+                    <p className="text-2xl font-bold text-gray-900">
+                        {formatCurrency(credit.financing.financedAmount)}
+                    </p>
+                    <p className="text-xs text-gray-600 mt-1">
+                        LTV: {credit.financing.ltv}%
+                    </p>
+                </div>
+
+                {/* Parcela */}
+                <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+                            <CreditCard size={20} className="text-purple-600" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-600">Parcela Mensal</p>
+                    </div>
+                    <p className="text-2xl font-bold text-gray-900">
+                        {formatCurrency(credit.financing.monthlyPayment)}
+                    </p>
+                    <p className="text-xs text-gray-600 mt-1">
+                        {credit.financing.term} meses
+                    </p>
+                </div>
+
+                {/* Taxa */}
+                <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+                            <Percent size={20} className="text-orange-600" />
+                        </div>
+                        <p className="text-sm font-medium text-gray-600">Taxa de Juros</p>
+                    </div>
+                    <p className="text-2xl font-bold text-gray-900">
+                        {credit.financing.interestRate}% a.a.
+                    </p>
+                    <p className="text-xs text-gray-600 mt-1">
+                        Sistema {credit.financing.system}
+                    </p>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Left Column */}
+                <div className="lg:col-span-2 space-y-6">
                     {/* Dados do Cliente */}
-                    <Card>
-                        <CardHeader title="Perfil do Proponente" icon={<User size={18} className="text-accent-500" />} />
-                        <CardBody className="p-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
-                                <div>
-                                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-2">Nome Civil</p>
-                                    <p className="text-base font-bold text-imi-900">{request.client_name}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-2">CPF / Documento</p>
-                                    <p className="text-base font-bold text-imi-900">{request.client_cpf}</p>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-imi-50 flex items-center justify-center text-imi-400">
-                                        <Mail size={18} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black text-imi-300 uppercase tracking-widest">E-mail</p>
-                                        <p className="text-sm font-bold text-imi-900">{request.client_email}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-imi-50 flex items-center justify-center text-imi-400">
-                                        <Phone size={18} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black text-imi-300 uppercase tracking-widest">WhatsApp</p>
-                                        <p className="text-sm font-bold text-imi-900">{request.client_phone}</p>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-2">Data de Nascimento</p>
-                                    <p className="text-sm font-bold text-imi-900">
-                                        {request.client_birthdate ? new Date(request.client_birthdate).toLocaleDateString('pt-BR') : 'Não informada'}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-2">Estado Civil</p>
-                                    <p className="text-sm font-bold text-imi-900 capitalize">
-                                        {request.client_marital_status || 'Não informado'}
-                                    </p>
-                                </div>
+                    <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <User size={20} className="text-blue-600" />
+                            Dados do Cliente
+                        </h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">Nome Completo</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.client.name}</p>
                             </div>
-                        </CardBody>
-                    </Card>
-
-                    {/* Dados do Financiamento */}
-                    <Card className="bg-white border-imi-100">
-                        <CardHeader title="Engenharia Financeira" icon={<DollarSign size={18} className="text-green-500" />} />
-                        <CardBody className="p-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
-                                <div className="p-4 bg-accent-50/50 rounded-2xl border border-accent-100">
-                                    <p className="text-[10px] font-black text-accent-600 uppercase tracking-widest mb-2">Valor Solicitado (Lending)</p>
-                                    <p className="text-2xl font-black text-accent-700">
-                                        R$ {request.requested_amount.toLocaleString('pt-BR')}
-                                    </p>
-                                </div>
-                                <div className="p-4 bg-imi-50/50 rounded-2xl border border-imi-100">
-                                    <p className="text-[10px] font-black text-imi-500 uppercase tracking-widest mb-2">Renda Mensal Comprovada</p>
-                                    <p className="text-2xl font-black text-imi-900">
-                                        R$ {request.income.toLocaleString('pt-BR')}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-2">Regime de Trabalho</p>
-                                    <Badge variant="neutral" size="lg">{request.employment_type}</Badge>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-2">Tempo de Ocupação</p>
-                                    <p className="text-sm font-bold text-imi-900">{request.employment_time || 'Não informado'}</p>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${request.has_fgts ? 'bg-green-100 text-green-600' : 'bg-imi-100 text-imi-400'}`}>
-                                        <CheckCircle size={24} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest">Utilização de FGTS</p>
-                                        <p className="text-sm font-bold text-imi-900">{request.has_fgts ? 'Vinculado à proposta' : 'Não habilitado'}</p>
-                                    </div>
-                                </div>
-                                {request.has_fgts && (
-                                    <div>
-                                        <p className="text-[10px] font-black text-green-600 uppercase tracking-widest mb-2">Saldo FGTS Declarado</p>
-                                        <p className="text-lg font-black text-green-700">
-                                            R$ {request.fgts_value?.toLocaleString('pt-BR')}
-                                        </p>
-                                    </div>
-                                )}
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">CPF</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.client.cpf}</p>
                             </div>
-                        </CardBody>
-                    </Card>
-
-                    {/* Observações */}
-                    {request.notes && (
-                        <Card>
-                            <CardHeader title="Notas do Analista / Contexto" icon={<FileText size={18} className="text-imi-400" />} />
-                            <CardBody className="p-8">
-                                <div className="p-6 bg-imi-50 border border-imi-100 rounded-2xl">
-                                    <p className="text-sm text-imi-700 leading-relaxed whitespace-pre-wrap italic">
-                                        "{request.notes}"
-                                    </p>
-                                </div>
-                            </CardBody>
-                        </Card>
-                    )}
-                </div>
-
-                <div className="space-y-8">
-                    {/* Cololateral / Imóvel */}
-                    <Card className="shadow-none border-imi-100">
-                        <CardHeader title="Ativo de Garantia" icon={<Home size={18} className="text-imi-900" />} />
-                        <CardBody className="p-6">
-                            <div className="space-y-6">
-                                <div className="aspect-video bg-imi-50 rounded-2xl flex items-center justify-center border border-imi-100 overflow-hidden relative">
-                                    <Home size={48} className="text-imi-200" />
-                                    <div className="absolute top-4 right-4 group">
-                                        <Badge variant="primary" size="sm">{request.property_type}</Badge>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <div>
-                                        <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1 text-center">Valor de Avaliação</p>
-                                        <p className="text-2xl font-black text-imi-950 text-center">
-                                            R$ {request.property_value.toLocaleString('pt-BR')}
-                                        </p>
-                                    </div>
-
-                                    <div className="pt-4 border-t border-imi-50 space-y-3">
-                                        <div className="flex gap-3">
-                                            <MapPin size={16} className="text-imi-400 shrink-0 mt-1" />
-                                            <p className="text-xs font-bold text-imi-700 leading-relaxed">
-                                                {request.property_address || 'Endereço não especificado'}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-3 ml-7">
-                                            <Badge variant="neutral" size="sm">{request.property_city}</Badge>
-                                            <span className="text-xs font-black text-imi-300">/</span>
-                                            <Badge variant="neutral" size="sm">{request.property_state}</Badge>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">Email</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.client.email}</p>
                             </div>
-                        </CardBody>
-                    </Card>
-
-                    {/* Timeline do Processo */}
-                    <Card>
-                        <CardHeader title="Ciclo da Operação" icon={<Calendar size={18} className="text-imi-400" />} />
-                        <CardBody className="p-6">
-                            <div className="relative pl-6 space-y-8 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-imi-100">
-                                <div className="relative flex flex-col items-start">
-                                    <div className="absolute -left-[22px] w-4 h-4 rounded-full bg-accent-500 border-4 border-white shadow-sm ring-1 ring-accent-500/20" />
-                                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">
-                                        {new Date(request.created_at).toLocaleString('pt-BR')}
-                                    </p>
-                                    <p className="text-sm font-bold text-imi-900">Protocolo de Entrada</p>
-                                    <p className="text-xs text-imi-500">Solicitação inicial enviada pelo consultor.</p>
-                                </div>
-
-                                {request.updated_at !== request.created_at && (
-                                    <div className="relative flex flex-col items-start">
-                                        <div className="absolute -left-[22px] w-4 h-4 rounded-full bg-imi-400 border-4 border-white shadow-sm" />
-                                        <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">
-                                            {new Date(request.updated_at).toLocaleString('pt-BR')}
-                                        </p>
-                                        <p className="text-sm font-bold text-imi-900">Última Atualização</p>
-                                        <p className="text-xs text-imi-500">Mudança de status ou notas técnicas.</p>
-                                    </div>
-                                )}
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">Telefone</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.client.phone}</p>
                             </div>
-                        </CardBody>
-                    </Card>
-                </div>
-            </div>
-
-            {/* Modal: Gestão Estratégica de Status */}
-            <Modal
-                open={showStatusModal}
-                onClose={() => setShowStatusModal(false)}
-                size="md"
-            >
-                <ModalHeader title="Efetivar Mudança de Status" subtitle="Analise os critérios de crédito antes de confirmar" />
-                <ModalBody className="p-8">
-                    <div className="space-y-8">
-                        <Select
-                            label="Novo Posicionamento no Pipeline"
-                            value={newStatus}
-                            onChange={(e) => setNewStatus(e.target.value)}
-                            className="h-14 font-bold"
-                            options={[
-                                { value: 'pending', label: 'Pendente - Aguardando Documentos' },
-                                { value: 'analyzing', label: 'Em Análise Técnico-Bancária' },
-                                { value: 'approved', label: 'Aprovado - Carta Emitida' },
-                                { value: 'rejected', label: 'Rejeitado / Restrição Detectada' },
-                            ]}
-                        />
-
-                        <Textarea
-                            label="Observações do Analista (Registro Auditável)"
-                            value={statusNotes}
-                            onChange={(e) => setStatusNotes(e.target.value)}
-                            rows={4}
-                            placeholder="Descreva o motivo da aprovação ou os pontos de atenção detectados na análise de crédito..."
-                            className="bg-imi-50/30"
-                        />
-
-                        <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-xl">
-                            <p className="text-xs font-bold text-yellow-700 flex items-center gap-2">
-                                <Clock size={14} /> Confirmação de Governança
-                            </p>
-                            <p className="text-xs text-yellow-600 mt-2">
-                                A mudança de status para **Aprovado** ou **Rejeitado** enviará automaticamente um protocolo de atualização para o e-mail do cliente proponente.
-                            </p>
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">Profissão</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.client.occupation}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">Renda Mensal</p>
+                                <p className="text-sm font-medium text-gray-900">{formatCurrency(credit.client.income)}</p>
+                            </div>
                         </div>
                     </div>
-                </ModalBody>
-                <ModalFooter className="bg-imi-50/50 p-8">
-                    <Button variant="outline" onClick={() => setShowStatusModal(false)} className="h-14 px-8 border-imi-200">
-                        Cancelar Operação
-                    </Button>
-                    <Button onClick={handleUpdateStatus} loading={isUpdating} className="h-14 px-12 shadow-glow">
-                        Confirmar e Notificar
-                    </Button>
-                </ModalFooter>
-            </Modal>
+
+                    {/* Dados do Imóvel */}
+                    <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <Building2 size={20} className="text-green-600" />
+                            Dados do Imóvel
+                        </h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="col-span-2">
+                                <p className="text-xs font-medium text-gray-600 mb-1">Endereço</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.property.address}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">Tipo</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.property.type}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">Área</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.property.area}m²</p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">Quartos</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.property.bedrooms}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-gray-600 mb-1">Banheiros</p>
+                                <p className="text-sm font-medium text-gray-900">{credit.property.bathrooms}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Tabela de Amortização */}
+                    <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <Calculator size={20} className="text-purple-600" />
+                                Tabela de Amortização
+                            </h3>
+                            <button
+                                onClick={() => setShowAmortization(!showAmortization)}
+                                className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
+                            >
+                                {showAmortization ? 'Ocultar' : 'Mostrar'} tabela
+                                {showAmortization ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            </button>
+                        </div>
+
+                        {showAmortization && (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-gray-200">
+                                            <th className="text-left py-3 px-2 font-medium text-gray-600">Mês</th>
+                                            <th className="text-right py-3 px-2 font-medium text-gray-600">Parcela</th>
+                                            <th className="text-right py-3 px-2 font-medium text-gray-600">Amortização</th>
+                                            <th className="text-right py-3 px-2 font-medium text-gray-600">Juros</th>
+                                            <th className="text-right py-3 px-2 font-medium text-gray-600">Saldo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {amortizationTable.map((row) => (
+                                            <tr key={row.month} className="border-b border-gray-100 hover:bg-gray-50">
+                                                <td className="py-3 px-2 font-medium text-gray-900">{row.month}</td>
+                                                <td className="text-right py-3 px-2 text-gray-900">{formatCurrency(row.payment)}</td>
+                                                <td className="text-right py-3 px-2 text-gray-700">{formatCurrency(row.amortization)}</td>
+                                                <td className="text-right py-3 px-2 text-gray-700">{formatCurrency(row.interest)}</td>
+                                                <td className="text-right py-3 px-2 font-medium text-gray-900">{formatCurrency(row.balance)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <p className="text-xs text-gray-600 mt-4">
+                                    Mostrando primeiros 12 meses de {credit.financing.term} meses totais
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-6">
+                    {/* Análise de Risco */}
+                    <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <TrendingUp size={20} className="text-orange-600" />
+                            Análise de Risco
+                        </h3>
+
+                        <div className="space-y-4">
+                            {/* LTV */}
+                            <div>
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-sm font-medium text-gray-700">LTV (Loan to Value)</p>
+                                    <p className="text-sm font-bold text-gray-900">{credit.financing.ltv}%</p>
+                                </div>
+                                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full ${credit.financing.ltv <= 80 ? 'bg-green-500' : 'bg-orange-500'}`}
+                                        style={{ width: `${credit.financing.ltv}%` }}
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-600 mt-1">
+                                    {credit.financing.ltv <= 80 ? 'Dentro do limite recomendado' : 'Acima do limite'}
+                                </p>
+                            </div>
+
+                            {/* DTI */}
+                            <div>
+                                <div className="flex items-center justify-between mb-2">
+                                    <p className="text-sm font-medium text-gray-700">DTI (Debt to Income)</p>
+                                    <p className="text-sm font-bold text-gray-900">{credit.financing.dti}%</p>
+                                </div>
+                                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full ${credit.financing.dti <= 30 ? 'bg-green-500' : 'bg-orange-500'}`}
+                                        style={{ width: `${credit.financing.dti}%` }}
+                                    />
+                                </div>
+                                <p className="text-xs text-gray-600 mt-1">
+                                    {credit.financing.dti <= 30 ? 'Comprometimento saudável' : 'Comprometimento elevado'}
+                                </p>
+                            </div>
+
+                            {/* Entrada */}
+                            <div className="pt-4 border-t border-gray-100">
+                                <div className="flex items-center justify-between">
+                                    <p className="text-sm font-medium text-gray-700">Entrada</p>
+                                    <p className="text-sm font-bold text-gray-900">{formatCurrency(credit.financing.downPayment)}</p>
+                                </div>
+                                <p className="text-xs text-gray-600 mt-1">
+                                    {((credit.financing.downPayment / credit.property.saleValue) * 100).toFixed(0)}% do valor total
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Documentos */}
+                    <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <FileText size={20} className="text-blue-600" />
+                            Documentos
+                        </h3>
+
+                        <div className="space-y-3">
+                            {credit.documents.map((doc, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                    <div className="flex items-center gap-3">
+                                        <FileText size={18} className="text-gray-400" />
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-900">{doc.name}</p>
+                                            <p className="text-xs text-gray-600">{doc.uploadedAt}</p>
+                                        </div>
+                                    </div>
+                                    {doc.status === 'approved' ? (
+                                        <CheckCircle size={18} className="text-green-600" />
+                                    ) : (
+                                        <Clock size={18} className="text-yellow-600" />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Timeline */}
+                    <div className="bg-white rounded-2xl p-6 border border-gray-100">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <Calendar size={20} className="text-purple-600" />
+                            Timeline
+                        </h3>
+
+                        <div className="space-y-4">
+                            {credit.timeline.map((item, index) => (
+                                <div key={index} className="flex gap-3">
+                                    <div className="flex flex-col items-center">
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.status === 'completed' ? 'bg-green-100' :
+                                                item.status === 'current' ? 'bg-blue-100' :
+                                                    'bg-gray-100'
+                                            }`}>
+                                            {item.status === 'completed' ? (
+                                                <CheckCircle size={16} className="text-green-600" />
+                                            ) : item.status === 'current' ? (
+                                                <Clock size={16} className="text-blue-600" />
+                                            ) : (
+                                                <div className="w-2 h-2 rounded-full bg-gray-400" />
+                                            )}
+                                        </div>
+                                        {index < credit.timeline.length - 1 && (
+                                            <div className={`w-0.5 h-8 ${item.status === 'completed' ? 'bg-green-200' : 'bg-gray-200'
+                                                }`} />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 pb-4">
+                                        <p className={`text-sm font-medium ${item.status === 'current' ? 'text-blue-700' : 'text-gray-900'
+                                            }`}>
+                                            {item.event}
+                                        </p>
+                                        <p className="text-xs text-gray-600 mt-1">{item.date}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
