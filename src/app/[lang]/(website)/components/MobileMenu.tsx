@@ -82,8 +82,8 @@ export default function MobileMenu({
                                         href={item.href}
                                         onClick={onClose}
                                         className={`block px-4 py-3 text-base font-medium rounded-xl transition-colors ${isActive
-                                                ? 'bg-accent-50 text-accent-700 border-l-4 border-accent-500'
-                                                : 'text-imi-700 hover:bg-imi-50'
+                                            ? 'bg-accent-50 text-accent-700 border-l-4 border-accent-500'
+                                            : 'text-imi-700 hover:bg-imi-50'
                                             }`}
                                     >
                                         {item.name}
@@ -104,8 +104,8 @@ export default function MobileMenu({
                                         href={pathname.replace(`/${lang}`, `/${language.code}`)}
                                         onClick={onClose}
                                         className={`flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl border-2 transition-all ${lang === language.code
-                                                ? 'border-accent-500 bg-accent-50 text-accent-700'
-                                                : 'border-imi-200 text-imi-700 hover:border-accent-300 hover:bg-accent-50/50'
+                                            ? 'border-accent-500 bg-accent-50 text-accent-700'
+                                            : 'border-imi-200 text-imi-700 hover:border-accent-300 hover:bg-accent-50/50'
                                             }`}
                                     >
                                         <span className="text-xl">{language.flag}</span>
