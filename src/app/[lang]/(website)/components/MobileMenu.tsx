@@ -51,15 +51,16 @@ export default function MobileMenu({
                 <div className="flex flex-col h-full">
                     {/* Header */}
                     <div className="flex items-center justify-between px-6 py-5 border-b border-imi-100">
-                        <div className="flex items-center gap-3">
-                            <div className="text-xl font-bold text-imi-900">IMI</div>
-                            <div>
-                                <div className="text-xs font-medium text-imi-600 uppercase tracking-wider">
+                        <div className="flex items-center gap-4">
+                            <span className="font-playfair text-3xl font-bold text-imi-900 tracking-tight">IMI</span>
+                            <div className="h-8 w-[1px] bg-imi-200"></div>
+                            <div className="flex flex-col justify-center">
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none mb-1">
                                     Inteligência
-                                </div>
-                                <div className="text-xs font-medium text-imi-600 uppercase tracking-wider -mt-0.5">
+                                </span>
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none">
                                     Imobiliária
-                                </div>
+                                </span>
                             </div>
                         </div>
                         <button
@@ -82,7 +83,7 @@ export default function MobileMenu({
                                         href={item.href}
                                         onClick={onClose}
                                         className={`block px-4 py-3 text-base font-medium rounded-xl transition-colors ${isActive
-                                            ? 'bg-accent-50 text-accent-700 border-l-4 border-accent-500'
+                                            ? 'bg-accent-50 text-accent-700 border-l-4 border-accent-400'
                                             : 'text-imi-700 hover:bg-imi-50'
                                             }`}
                                     >

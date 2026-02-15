@@ -46,17 +46,16 @@ export default function Header({ lang = 'pt' }: { lang?: string }) {
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
                     <div className="flex items-center justify-between h-20">
                         {/* Logo */}
-                        <Link href={`/${lang}`} className="flex items-center gap-3">
-                            <div className="text-2xl font-bold">
-                                <span className="text-imi-900">IMI</span>
-                            </div>
-                            <div className="hidden md:block">
-                                <div className="text-xs font-medium text-imi-600 uppercase tracking-wider">
+                        <Link href={`/${lang}`} className="flex items-center gap-4">
+                            <span className="font-playfair text-3xl font-bold text-imi-900 tracking-tight">IMI</span>
+                            <div className="hidden md:block h-8 w-[1px] bg-imi-200"></div>
+                            <div className="hidden md:flex flex-col justify-center">
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none mb-1">
                                     Inteligência
-                                </div>
-                                <div className="text-xs font-medium text-imi-600 uppercase tracking-wider -mt-1">
+                                </span>
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none">
                                     Imobiliária
-                                </div>
+                                </span>
                             </div>
                         </Link>
 
