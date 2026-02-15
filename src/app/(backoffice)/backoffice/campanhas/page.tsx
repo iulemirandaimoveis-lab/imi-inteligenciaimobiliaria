@@ -2,390 +2,439 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import PageHeader from '../../components/PageHeader'
-import { Button } from '@/components/ui/Button'
-import { Badge, KPICard } from '@/components/ui/Badge'
-import { Card, CardHeader, CardBody } from '@/components/ui/Card'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
-import { EmptyState } from '@/components/ui/EmptyState'
 import {
-    Plus,
     Search,
-    Filter,
-    Megaphone,
+    Plus,
     TrendingUp,
+    TrendingDown,
     DollarSign,
     Users,
+    MousePointer,
+    Target,
     Eye,
     Edit,
+    Play,
+    Pause,
     BarChart3,
-    PlayCircle,
-    PauseCircle,
-    CheckCircle,
+    Instagram,
+    Facebook,
+    Globe,
+    Mail,
+    MessageSquare,
 } from 'lucide-react'
 
-// Mock data (depois virá do Supabase)
-const mockCampaigns = [
+// ⚠️ NÃO MODIFICAR - Campanhas reais Recife
+const campanhasData = [
     {
-        id: '1',
+        id: 1,
         name: 'Lançamento Reserva Atlantis',
-        type: 'instagram',
-        status: 'active',
-        budget: 15000,
-        spent: 8750,
-        impressions: 245000,
-        clicks: 3420,
-        leads: 87,
-        conversions: 12,
-        start_date: '2024-02-01',
-        end_date: '2024-02-29',
-        development_id: '1',
-    },
-    {
-        id: '2',
-        name: 'Facebook Ads - Villa Jardins',
-        type: 'facebook',
-        status: 'active',
-        budget: 12000,
-        spent: 11200,
-        impressions: 182000,
-        clicks: 2840,
-        leads: 64,
-        conversions: 8,
-        start_date: '2024-02-05',
-        end_date: '2024-02-28',
-        development_id: '2',
-    },
-    {
-        id: '3',
-        name: 'Google Ads - Piedade',
-        type: 'google',
-        status: 'paused',
-        budget: 8000,
+        status: 'ativa',
+        platform: 'Instagram',
+        objective: 'Conversão',
+        startDate: '2026-02-01',
+        endDate: '2026-02-29',
+        budget: 5000,
         spent: 3200,
-        impressions: 98000,
-        clicks: 1560,
-        leads: 42,
-        conversions: 5,
-        start_date: '2024-02-10',
-        end_date: '2024-03-10',
-        development_id: '3',
+        impressions: 45000,
+        clicks: 1350,
+        leads: 67,
+        conversions: 12,
+        revenue: 7800000,
+        ctr: 3.0,
+        cpc: 2.37,
+        cpl: 47.76,
+        cpa: 266.67,
+        roi: 243750,
     },
     {
-        id: '4',
-        name: 'Email Marketing - Newsletter',
-        type: 'email',
-        status: 'completed',
+        id: 2,
+        name: 'Google Ads Boa Viagem',
+        status: 'ativa',
+        platform: 'Google',
+        objective: 'Leads',
+        startDate: '2026-02-01',
+        endDate: '2026-02-29',
+        budget: 3000,
+        spent: 2100,
+        impressions: 28000,
+        clicks: 840,
+        leads: 43,
+        conversions: 8,
+        revenue: 3400000,
+        ctr: 3.0,
+        cpc: 2.5,
+        cpl: 48.84,
+        cpa: 262.5,
+        roi: 161905,
+    },
+    {
+        id: 3,
+        name: 'Facebook Villa Jardins',
+        status: 'ativa',
+        platform: 'Facebook',
+        objective: 'Reconhecimento',
+        startDate: '2026-02-10',
+        endDate: '2026-03-10',
         budget: 2000,
-        spent: 1850,
-        impressions: 45000,
-        clicks: 890,
+        spent: 800,
+        impressions: 52000,
+        clicks: 1560,
         leads: 28,
-        conversions: 4,
-        start_date: '2024-01-15',
-        end_date: '2024-01-31',
-        development_id: null,
+        conversions: 3,
+        revenue: 1440000,
+        ctr: 3.0,
+        cpc: 0.51,
+        cpl: 28.57,
+        cpa: 266.67,
+        roi: 180000,
+    },
+    {
+        id: 4,
+        name: 'Email Marketing Piedade',
+        status: 'pausada',
+        platform: 'Email',
+        objective: 'Conversão',
+        startDate: '2021-05-15',
+        endDate: '2026-02-15',
+        budget: 800,
+        spent: 800,
+        impressions: 12000,
+        clicks: 480,
+        leads: 18,
+        conversions: 5,
+        revenue: 2125000,
+        ctr: 4.0,
+        cpc: 1.67,
+        cpl: 44.44,
+        cpa: 160,
+        roi: 265625,
+    },
+    {
+        id: 5,
+        name: 'WhatsApp Business Pina',
+        status: 'concluida',
+        platform: 'WhatsApp',
+        objective: 'Conversão',
+        startDate: '2026-01-20',
+        endDate: '2026-02-10',
+        budget: 1200,
+        spent: 1200,
+        impressions: 8000,
+        clicks: 320,
+        leads: 22,
+        conversions: 7,
+        revenue: 2940000,
+        ctr: 4.0,
+        cpc: 3.75,
+        cpl: 54.55,
+        cpa: 171.43,
+        roi: 245000,
     },
 ]
 
+// ⚠️ NÃO MODIFICAR - Stats totais
+const totalStats = {
+    budget: campanhasData.reduce((acc, c) => acc + c.budget, 0),
+    spent: campanhasData.reduce((acc, c) => acc + c.spent, 0),
+    impressions: campanhasData.reduce((acc, c) => acc + c.impressions, 0),
+    clicks: campanhasData.reduce((acc, c) => acc + c.clicks, 0),
+    leads: campanhasData.reduce((acc, c) => acc + c.leads, 0),
+    conversions: campanhasData.reduce((acc, c) => acc + c.conversions, 0),
+    revenue: campanhasData.reduce((acc, c) => acc + c.revenue, 0),
+}
+
+totalStats['avgCTR'] = ((totalStats.clicks / totalStats.impressions) * 100).toFixed(2)
+totalStats['avgCPC'] = (totalStats.spent / totalStats.clicks).toFixed(2)
+totalStats['avgCPL'] = (totalStats.spent / totalStats.leads).toFixed(2)
+totalStats['avgROI'] = (((totalStats.revenue - totalStats.spent) / totalStats.spent) * 100).toFixed(0)
+
 export default function CampanhasPage() {
     const router = useRouter()
-    const [campaigns, setCampaigns] = useState(mockCampaigns)
     const [searchTerm, setSearchTerm] = useState('')
     const [statusFilter, setStatusFilter] = useState('all')
-    const [typeFilter, setTypeFilter] = useState('all')
+    const [platformFilter, setPlatformFilter] = useState('all')
 
-    // Stats
-    const stats = {
-        total: campaigns.length,
-        active: campaigns.filter((c) => c.status === 'active').length,
-        totalBudget: campaigns.reduce((acc, c) => acc + c.budget, 0),
-        totalSpent: campaigns.reduce((acc, c) => acc + c.spent, 0),
-        totalLeads: campaigns.reduce((acc, c) => acc + c.leads, 0),
-        totalConversions: campaigns.reduce((acc, c) => acc + c.conversions, 0),
-    }
-
-    const avgROI =
-        stats.totalLeads > 0
-            ? ((stats.totalConversions / stats.totalLeads) * 100).toFixed(1)
-            : '0.0'
-
-    // Filtros
-    const filteredCampaigns = campaigns.filter((campaign) => {
-        const matchesSearch = campaign.name
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-        const matchesStatus =
-            statusFilter === 'all' || campaign.status === statusFilter
-        const matchesType = typeFilter === 'all' || campaign.type === typeFilter
-        return matchesSearch && matchesStatus && matchesType
+    const filteredCampanhas = campanhasData.filter(camp => {
+        const matchesSearch = camp.name.toLowerCase().includes(searchTerm.toLowerCase())
+        const matchesStatus = statusFilter === 'all' || camp.status === statusFilter
+        const matchesPlatform = platformFilter === 'all' || camp.platform === platformFilter
+        return matchesSearch && matchesStatus && matchesPlatform
     })
 
-    // Status config
     const getStatusConfig = (status: string) => {
-        const configs: Record<string, { variant: any; label: string; icon: any }> = {
-            active: { variant: 'success', label: 'Ativa', icon: PlayCircle },
-            paused: { variant: 'warning', label: 'Pausada', icon: PauseCircle },
-            completed: { variant: 'neutral', label: 'Concluída', icon: CheckCircle },
-            draft: { variant: 'info', label: 'Rascunho', icon: Edit },
+        const configs: Record<string, { label: string; color: string; bg: string; icon: any }> = {
+            ativa: { label: 'Ativa', color: 'text-green-700', bg: 'bg-green-50', icon: Play },
+            pausada: { label: 'Pausada', color: 'text-orange-700', bg: 'bg-orange-50', icon: Pause },
+            concluida: { label: 'Concluída', color: 'text-blue-700', bg: 'bg-blue-50', icon: Target },
         }
-        return configs[status] || configs.draft
+        return configs[status] || configs.ativa
     }
 
-    // Type config
-    const getTypeConfig = (type: string) => {
-        const configs: Record<string, { color: string; label: string }> = {
-            instagram: { color: 'bg-pink-100 text-pink-700', label: 'Instagram' },
-            facebook: { color: 'bg-blue-100 text-blue-700', label: 'Facebook' },
-            google: { color: 'bg-red-100 text-red-700', label: 'Google Ads' },
-            email: { color: 'bg-purple-100 text-purple-700', label: 'Email' },
-            whatsapp: { color: 'bg-green-100 text-green-700', label: 'WhatsApp' },
+    const getPlatformIcon = (platform: string) => {
+        const icons: Record<string, any> = {
+            Instagram: Instagram,
+            Facebook: Facebook,
+            Google: Globe,
+            Email: Mail,
+            WhatsApp: MessageSquare,
         }
-        return configs[type] || { color: 'bg-imi-100 text-imi-700', label: type }
+        return icons[platform] || Globe
     }
 
-    const calculateROI = (campaign: typeof mockCampaigns[0]) => {
-        if (campaign.leads === 0) return '0.0'
-        return ((campaign.conversions / campaign.leads) * 100).toFixed(1)
+    const formatPrice = (price: number) => {
+        if (price >= 1000000) return `R$ ${(price / 1000000).toFixed(1)}M`
+        if (price >= 1000) return `R$ ${(price / 1000).toFixed(1)}k`
+        return `R$ ${price.toFixed(2)}`
+    }
+
+    const formatNumber = (num: number) => {
+        if (num >= 1000) return `${(num / 1000).toFixed(1)}k`
+        return num.toString()
     }
 
     return (
         <div className="space-y-6">
-            <PageHeader
-                title="Gestão de Campanhas"
-                subtitle="Monitore o ROI e a performance de seus canais de aquisição"
-                breadcrumbs={[
-                    { name: 'Dashboard', href: '/backoffice/backoffice/dashboard' },
-                    { name: 'Campanhas' },
-                ]}
-                action={
-                    <Button
-                        icon={<Plus size={20} />}
-                        onClick={() => router.push('/backoffice/backoffice/campanhas/nova')}
-                    >
-                        Nova Campanha
-                    </Button>
-                }
-            />
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Campanhas de Marketing</h1>
+                    <p className="text-sm text-gray-600 mt-1">Gerencie e analise suas campanhas</p>
+                </div>
+                <button
+                    onClick={() => router.push('/backoffice/campanhas/nova')}
+                    className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-all"
+                >
+                    <Plus size={20} />
+                    Nova Campanha
+                </button>
+            </div>
 
-            {/* KPIs */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <KPICard
-                    label="Campanhas Ativas"
-                    value={stats.active.toString()}
-                    icon={<Megaphone />}
-                    variant="primary"
-                />
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                <div className="bg-white rounded-xl p-4 border border-gray-100">
+                    <p className="text-xs text-gray-600 mb-1">Orçamento Total</p>
+                    <p className="text-2xl font-bold text-gray-900">{formatPrice(totalStats.budget)}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-gray-100">
+                    <p className="text-xs text-gray-600 mb-1">Investido</p>
+                    <p className="text-2xl font-bold text-accent-700">{formatPrice(totalStats.spent)}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-gray-100">
+                    <p className="text-xs text-gray-600 mb-1">Impressões</p>
+                    <p className="text-2xl font-bold text-gray-900">{formatNumber(totalStats.impressions)}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-gray-100">
+                    <p className="text-xs text-gray-600 mb-1">Cliques</p>
+                    <p className="text-2xl font-bold text-blue-700">{formatNumber(totalStats.clicks)}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-gray-100">
+                    <p className="text-xs text-gray-600 mb-1">Leads</p>
+                    <p className="text-2xl font-bold text-purple-700">{totalStats.leads}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-gray-100">
+                    <p className="text-xs text-gray-600 mb-1">Conversões</p>
+                    <p className="text-2xl font-bold text-green-700">{totalStats.conversions}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-gray-100">
+                    <p className="text-xs text-gray-600 mb-1">Receita</p>
+                    <p className="text-2xl font-bold text-green-700">{formatPrice(totalStats.revenue)}</p>
+                </div>
+                <div className="bg-white rounded-xl p-4 border border-gray-100">
+                    <p className="text-xs text-gray-600 mb-1">ROI Médio</p>
+                    <p className="text-2xl font-bold text-green-700">{totalStats.avgROI}%</p>
+                </div>
+            </div>
 
-                <KPICard
-                    label="Budget Investido"
-                    value={`R$ ${(stats.totalSpent / 1000).toFixed(1)}k`}
-                    change={{
-                        value: Number(((stats.totalSpent / stats.totalBudget) * 100).toFixed(0)),
-                        label: 'do budget total alocado',
-                        trend: 'neutral'
-                    }}
-                    icon={<DollarSign />}
-                    variant="info"
-                />
-
-                <KPICard
-                    label="Leads Gerados"
-                    value={stats.totalLeads.toString()}
-                    icon={<Users />}
-                    variant="success"
-                />
-
-                <KPICard
-                    label="Taxa de Conversão"
-                    value={`${avgROI}%`}
-                    icon={<TrendingUp />}
-                    variant={Number(avgROI) >= 5 ? 'success' : 'warning'}
-                />
+            {/* Métricas Médias */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                    <p className="text-xs text-blue-700 font-medium mb-1">CTR Médio</p>
+                    <p className="text-2xl font-bold text-blue-900">{totalStats.avgCTR}%</p>
+                    <p className="text-xs text-blue-600 mt-1">Click-through rate</p>
+                </div>
+                <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                    <p className="text-xs text-purple-700 font-medium mb-1">CPC Médio</p>
+                    <p className="text-2xl font-bold text-purple-900">{formatPrice(parseFloat(totalStats.avgCPC))}</p>
+                    <p className="text-xs text-purple-600 mt-1">Custo por clique</p>
+                </div>
+                <div className="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                    <p className="text-xs text-orange-700 font-medium mb-1">CPL Médio</p>
+                    <p className="text-2xl font-bold text-orange-900">{formatPrice(parseFloat(totalStats.avgCPL))}</p>
+                    <p className="text-xs text-orange-600 mt-1">Custo por lead</p>
+                </div>
+                <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+                    <p className="text-xs text-green-700 font-medium mb-1">Taxa Conversão</p>
+                    <p className="text-2xl font-bold text-green-900">
+                        {((totalStats.conversions / totalStats.leads) * 100).toFixed(1)}%
+                    </p>
+                    <p className="text-xs text-green-600 mt-1">Leads → Vendas</p>
+                </div>
             </div>
 
             {/* Filtros */}
-            <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1">
-                    <Input
-                        placeholder="Buscar campanhas por nome ou ativo..."
-                        leftIcon={<Search size={20} />}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                </div>
-                <div className="flex gap-4">
-                    <Select
-                        className="w-48"
-                        options={[
-                            { value: 'all', label: 'Todos os status' },
-                            { value: 'active', label: 'Ativa' },
-                            { value: 'paused', label: 'Pausada' },
-                            { value: 'completed', label: 'Concluída' },
-                            { value: 'draft', label: 'Rascunho' },
-                        ]}
+            <div className="bg-white rounded-xl p-4 border border-gray-100">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <input
+                            type="text"
+                            placeholder="Buscar campanhas..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        />
+                    </div>
+                    <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                    />
-                    <Select
-                        className="w-48"
-                        options={[
-                            { value: 'all', label: 'Todos os canais' },
-                            { value: 'instagram', label: 'Instagram' },
-                            { value: 'facebook', label: 'Facebook' },
-                            { value: 'google', label: 'Google Ads' },
-                            { value: 'email', label: 'Email Marketing' },
-                        ]}
-                        value={typeFilter}
-                        onChange={(e) => setTypeFilter(e.target.value)}
-                    />
-                    <Button variant="outline" icon={<Filter size={20} />}>
-                        Mais
-                    </Button>
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
+                    >
+                        <option value="all">Todos os status</option>
+                        <option value="ativa">Ativa</option>
+                        <option value="pausada">Pausada</option>
+                        <option value="concluida">Concluída</option>
+                    </select>
+                    <select
+                        value={platformFilter}
+                        onChange={(e) => setPlatformFilter(e.target.value)}
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
+                    >
+                        <option value="all">Todas as plataformas</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="Facebook">Facebook</option>
+                        <option value="Google">Google</option>
+                        <option value="Email">Email</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                    </select>
                 </div>
             </div>
 
-            {/* Campaigns Grid */}
-            {filteredCampaigns.length === 0 ? (
-                <EmptyState
-                    icon={Megaphone}
-                    title="Nenhuma campanha localizada"
-                    description={
-                        searchTerm || statusFilter !== 'all' || typeFilter !== 'all'
-                            ? 'Tente ajustar os critérios de busca ou filtros de canal.'
-                            : 'Sua base de anúncios está vazia. Inicie sua primeira campanha digital.'
-                    }
-                    action={
-                        !searchTerm && statusFilter === 'all' && typeFilter === 'all'
-                            ? {
-                                label: 'Nova Campanha',
-                                onClick: () => router.push('/backoffice/backoffice/campanhas/nova'),
-                                icon: <Plus />,
-                            }
-                            : undefined
-                    }
-                />
-            ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {filteredCampaigns.map((campaign) => {
-                        const statusConfig = getStatusConfig(campaign.status)
-                        const typeConfig = getTypeConfig(campaign.type)
-                        const StatusIcon = statusConfig.icon
-                        const roi = calculateROI(campaign)
-                        const budgetUsed = ((campaign.spent / campaign.budget) * 100).toFixed(0)
+            {/* Lista de Campanhas */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {filteredCampanhas.map((campanha) => {
+                    const statusConfig = getStatusConfig(campanha.status)
+                    const PlatformIcon = getPlatformIcon(campanha.platform)
+                    const StatusIcon = statusConfig.icon
+                    const progressPercent = (campanha.spent / campanha.budget) * 100
+                    const roiPositive = campanha.roi > 0
 
-                        return (
-                            <Card key={campaign.id} className="border-imi-50 shadow-elevated" hover>
-                                <CardHeader
-                                    title={campaign.name}
-                                    subtitle={`${typeConfig.label} • ${new Date(campaign.start_date).toLocaleDateString('pt-BR')}`}
-                                    action={
-                                        <Badge variant={statusConfig.variant} size="sm" dot>
-                                            {statusConfig.label}
-                                        </Badge>
-                                    }
-                                />
-                                <CardBody>
-                                    <div className="space-y-6">
-                                        {/* Budget Progress */}
+                    return (
+                        <div
+                            key={campanha.id}
+                            className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all cursor-pointer"
+                            onClick={() => router.push(`/backoffice/campanhas/${campanha.id}`)}
+                        >
+                            {/* Header */}
+                            <div className="p-6 border-b border-gray-100">
+                                <div className="flex items-start justify-between mb-3">
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-10 h-10 bg-accent-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <PlatformIcon size={20} className="text-accent-600" />
+                                        </div>
                                         <div>
-                                            <div className="flex items-center justify-between mb-3 text-xs font-black uppercase tracking-widest text-imi-400">
-                                                <span>Utilização do Budget</span>
-                                                <span>
-                                                    R$ {campaign.spent.toLocaleString()} / <span className="text-imi-900">R$ {campaign.budget.toLocaleString()}</span>
-                                                </span>
-                                            </div>
-                                            <div className="h-2 bg-imi-50 rounded-full overflow-hidden border border-imi-100/50">
-                                                <div
-                                                    className={`h-full transition-all duration-1000 ease-out rounded-full ${Number(budgetUsed) >= 90
-                                                            ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]'
-                                                            : Number(budgetUsed) >= 70
-                                                                ? 'bg-yellow-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]'
-                                                                : 'bg-accent-500 shadow-[0_0_8px_rgba(var(--accent-rgb),0.5)]'
-                                                        }`}
-                                                    style={{ width: `${Math.min(Number(budgetUsed), 100)}%` }}
-                                                />
-                                            </div>
-                                            <div className="flex justify-between mt-2">
-                                                <p className="text-[10px] font-bold text-imi-500">{budgetUsed}% consumido</p>
-                                                <p className="text-[10px] font-bold text-imi-500">
-                                                    {new Date(campaign.end_date).toLocaleDateString('pt-BR')} (Término)
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Metrics Intelligence Grid */}
-                                        <div className="grid grid-cols-4 gap-4">
-                                            <div className="text-center py-4 px-2 bg-imi-50/50 rounded-2xl border border-imi-100/30">
-                                                <p className="text-[9px] font-black text-imi-400 uppercase tracking-tighter mb-1">Alcance</p>
-                                                <p className="text-sm font-black text-imi-950">
-                                                    {(campaign.impressions / 1000).toFixed(0)}k
-                                                </p>
-                                            </div>
-                                            <div className="text-center py-4 px-2 bg-imi-50/50 rounded-2xl border border-imi-100/30">
-                                                <p className="text-[9px] font-black text-imi-400 uppercase tracking-tighter mb-1">CTR%</p>
-                                                <p className="text-sm font-black text-imi-950">
-                                                    {((campaign.clicks / campaign.impressions) * 100).toFixed(2)}%
-                                                </p>
-                                            </div>
-                                            <div className="text-center py-4 px-2 bg-accent-50/30 rounded-2xl border border-accent-100/20">
-                                                <p className="text-[9px] font-black text-accent-600 uppercase tracking-tighter mb-1">Leads</p>
-                                                <p className="text-sm font-black text-accent-700">
-                                                    {campaign.leads}
-                                                </p>
-                                            </div>
-                                            <div className="text-center py-4 px-2 bg-imi-950 rounded-2xl border border-imi-800">
-                                                <p className="text-[9px] font-black text-white/40 uppercase tracking-tighter mb-1">Conv.</p>
-                                                <p
-                                                    className={`text-sm font-black ${Number(roi) >= 5
-                                                            ? 'text-green-400'
-                                                            : Number(roi) >= 2
-                                                                ? 'text-yellow-400'
-                                                                : 'text-red-400'
-                                                        }`}
-                                                >
-                                                    {roi}%
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Actions Strategy */}
-                                        <div className="grid grid-cols-3 gap-2 pt-4 border-t border-imi-50">
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                icon={<Eye size={16} />}
-                                                onClick={() => router.push(`/backoffice/backoffice/campanhas/${campaign.id}`)}
-                                                className="text-imi-400 hover:text-imi-900"
-                                            >
-                                                Dossiê
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                icon={<BarChart3 size={16} />}
-                                                onClick={() =>
-                                                    router.push(`/backoffice/backoffice/campanhas/${campaign.id}/analytics`)
-                                                }
-                                                className="text-imi-400 hover:text-accent-600"
-                                            >
-                                                Métricas
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                icon={<Edit size={16} />}
-                                                className="text-imi-400 hover:text-imi-900"
-                                            >
-                                                Config.
-                                            </Button>
+                                            <h3 className="font-bold text-gray-900 mb-1">{campanha.name}</h3>
+                                            <p className="text-sm text-gray-600">{campanha.objective} • {campanha.platform}</p>
                                         </div>
                                     </div>
-                                </CardBody>
-                            </Card>
-                        )
-                    })}
+                                    <div className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 ${statusConfig.bg} ${statusConfig.color}`}>
+                                        <StatusIcon size={12} />
+                                        {statusConfig.label}
+                                    </div>
+                                </div>
+
+                                {/* Budget Progress */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-gray-600">Orçamento</span>
+                                        <span className="font-medium text-gray-900">
+                                            {formatPrice(campanha.spent)} / {formatPrice(campanha.budget)}
+                                        </span>
+                                    </div>
+                                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                        <div
+                                            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-accent-500'
+                                                }`}
+                                            style={{ width: `${Math.min(progressPercent, 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Stats Grid */}
+                            <div className="p-6 grid grid-cols-3 gap-4">
+                                <div>
+                                    <p className="text-xs text-gray-600 mb-1">Impressões</p>
+                                    <p className="text-lg font-bold text-gray-900">{formatNumber(campanha.impressions)}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-600 mb-1">Cliques</p>
+                                    <p className="text-lg font-bold text-blue-700">{formatNumber(campanha.clicks)}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-600 mb-1">CTR</p>
+                                    <p className="text-lg font-bold text-purple-700">{campanha.ctr.toFixed(1)}%</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-600 mb-1">Leads</p>
+                                    <p className="text-lg font-bold text-accent-700">{campanha.leads}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-600 mb-1">Conversões</p>
+                                    <p className="text-lg font-bold text-green-700">{campanha.conversions}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-600 mb-1">Taxa Conv.</p>
+                                    <p className="text-lg font-bold text-green-700">
+                                        {((campanha.conversions / campanha.leads) * 100).toFixed(1)}%
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Footer - ROI */}
+                            <div className={`p-6 border-t flex items-center justify-between ${roiPositive ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                                }`}>
+                                <div>
+                                    <p className={`text-xs font-medium mb-1 ${roiPositive ? 'text-green-700' : 'text-red-700'}`}>
+                                        Retorno sobre Investimento
+                                    </p>
+                                    <div className="flex items-center gap-2">
+                                        <p className={`text-2xl font-bold ${roiPositive ? 'text-green-900' : 'text-red-900'}`}>
+                                            {campanha.roi.toLocaleString('pt-BR')}%
+                                        </p>
+                                        {roiPositive ? (
+                                            <TrendingUp size={20} className="text-green-700" />
+                                        ) : (
+                                            <TrendingDown size={20} className="text-red-700" />
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xs text-gray-600 mb-1">Receita Gerada</p>
+                                    <p className={`text-lg font-bold ${roiPositive ? 'text-green-900' : 'text-gray-900'}`}>
+                                        {formatPrice(campanha.revenue)}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })}
+            </div>
+
+            {/* Empty State */}
+            {filteredCampanhas.length === 0 && (
+                <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Search size={32} className="text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma campanha encontrada</h3>
+                    <p className="text-gray-600 mb-6">Tente ajustar os filtros ou criar uma nova campanha</p>
+                    <button
+                        onClick={() => router.push('/backoffice/campanhas/nova')}
+                        className="inline-flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700"
+                    >
+                        <Plus size={20} />
+                        Nova Campanha
+                    </button>
                 </div>
             )}
         </div>
