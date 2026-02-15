@@ -1,543 +1,444 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import PageHeader from '../../../components/PageHeader'
-import { Button } from '@/components/ui/Button'
-import { Badge, KPICard } from '@/components/ui/Badge'
-import { Card, CardHeader, CardBody } from '@/components/ui/Card'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal'
-import { Input, Textarea } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
-import { CardSkeleton } from '@/components/ui/EmptyState'
+import { useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import {
-  User,
+  ArrowLeft,
   Mail,
   Phone,
   MapPin,
   Building2,
   DollarSign,
   Calendar,
-  MessageSquare,
+  Star,
   Edit,
   Trash2,
   Send,
+  MessageSquare,
+  FileText,
+  Video,
+  Check,
   Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Zap,
   TrendingUp,
-  History,
-  Info
+  User,
+  Briefcase,
 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
 
-const supabase = createClient()
+// Dados do lead (mesmo do arquivo anterior)
+const leadData = {
+  id: 1,
+  name: 'Maria Santos Silva',
+  email: 'maria.santos@gmail.com',
+  phone: '(81) 99845-3421',
+  score: 92,
+  status: 'hot',
+  source: 'Instagram',
+  interest: 'Apartamento 3Q',
+  location: 'Boa Viagem',
+  budget: '450k-600k',
+  created: '2026-02-14T10:30:00',
+  lastContact: '2026-02-14T15:20:00',
+  notes: 'Interessada em empreendimentos próximos ao mar. Preferência por acabamento premium. Trabalha como médica no Hospital Português. Mora atualmente em Setúbal mas quer se mudar para Boa Viagem. Tem 2 filhos (8 e 11 anos) que estudarão no Colégio Damas.',
 
-// Mock logic for interactions - normally would fetch from lead_interactions table
-const mockInteractions = [
-  {
-    id: '1',
-    type: 'email',
-    subject: 'Portfólio Premium Enviado',
-    description: 'Enviado catálogo digital de ativos internacionais (DAMAC/Kempinski).',
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    created_by: 'IA Agent',
-  },
-  {
-    id: '2',
-    type: 'call',
-    subject: 'Qualificação Ativa',
-    description: 'Lead demonstrou forte interesse em investimentos em Dubai. Perfil High-Net-Worth.',
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    created_by: 'Equipe IMI',
-  },
-  {
-    id: '3',
-    type: 'whatsapp',
-    subject: 'Tabela de Preços - Reserva Atlantis',
-    description: 'Documentação enviada via WhatsApp. Cliente visualizou.',
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-    created_by: 'Sales Desk',
-  },
-  {
-    id: '4',
-    type: 'note',
-    subject: 'Entrada no Pipeline',
-    description: 'Lead capturado via Landing Page "Inteligência Imobiliária".',
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(),
-    created_by: 'Sistema Web',
-  },
-]
+  // Dados adicionais
+  occupation: 'Médica Cardiologista',
+  company: 'Hospital Português',
+  maritalStatus: 'Casada',
+  children: 2,
+  preferredContact: 'WhatsApp',
+  bestTime: 'Tarde (14h-17h)',
+
+  // Requisitos específicos
+  requirements: [
+    'Vista para o mar',
+    'Varanda gourmet',
+    'Suite master com closet',
+    'Vaga dupla coberta',
+    'Piscina no condomínio',
+    'Academia completa',
+    'Salão de festas',
+  ],
+
+  // Timeline de interações
+  timeline: [
+    {
+      id: 1,
+      type: 'note',
+      title: 'Nota adicionada',
+      description: 'Cliente confirmou interesse em visitar Villa Jardins no sábado às 10h',
+      user: 'Iule Miranda',
+      date: '2026-02-14T15:20:00',
+      icon: FileText,
+    },
+    {
+      id: 2,
+      type: 'call',
+      title: 'Ligação realizada',
+      description: 'Conversa de 18 minutos. Cliente muito interessada, pediu plantas do Villa Jardins.',
+      user: 'Iule Miranda',
+      date: '2026-02-14T14:30:00',
+      icon: Phone,
+    },
+    {
+      id: 3,
+      type: 'whatsapp',
+      title: 'Mensagem WhatsApp',
+      description: 'Enviado catálogo completo Reserva Atlantis + tabela de preços',
+      user: 'Sistema',
+      date: '2026-02-14T11:15:00',
+      icon: MessageSquare,
+    },
+    {
+      id: 4,
+      type: 'email',
+      title: 'E-mail enviado',
+      description: 'E-mail de boas-vindas com apresentação da IMI e portfólio',
+      user: 'Sistema',
+      date: '2026-02-14T10:35:00',
+      icon: Mail,
+    },
+    {
+      id: 5,
+      type: 'lead',
+      title: 'Lead capturado',
+      description: 'Origem: Instagram - Campanha Boa Viagem Premium',
+      user: 'Sistema',
+      date: '2026-02-14T10:30:00',
+      icon: Star,
+    },
+  ],
+}
 
 export default function LeadDetalhesPage() {
-  const params = useParams()
   const router = useRouter()
-  const [lead, setLead] = useState<any>(null)
-  const [interactions, setInteractions] = useState(mockInteractions)
-  const [loading, setLoading] = useState(true)
-  const [showStatusModal, setShowStatusModal] = useState(false)
-  const [showInteractionModal, setShowInteractionModal] = useState(false)
-  const [newStatus, setNewStatus] = useState('')
-  const [isUpdating, setIsUpdating] = useState(false)
+  const params = useParams()
+  const [lead] = useState(leadData)
+  const [newNote, setNewNote] = useState('')
+  const [isAddingNote, setIsAddingNote] = useState(false)
 
-  const [interactionForm, setInteractionForm] = useState({
-    type: 'note',
-    subject: '',
-    description: '',
-  })
-
-  useEffect(() => {
-    async function fetchLead() {
-      try {
-        const { data, error } = await supabase
-          .from('leads')
-          .select(`
-            *,
-            developments (
-              id,
-              name,
-              neighborhood,
-              city
-            )
-          `)
-          .eq('id', params.id)
-          .single()
-
-        if (error) throw error
-        setLead(data)
-        setNewStatus(data.status)
-      } catch (err: any) {
-        toast.error('Erro ao carregar dossiê do lead.')
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    if (params.id) fetchLead()
-  }, [params.id])
-
-  if (loading) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-32 bg-imi-50 rounded-2xl" />
-        <div className="grid grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map(i => <div key={i} className="h-24 bg-imi-50 rounded-2xl" />)}
-        </div>
-        <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-1 h-96 bg-imi-50 rounded-2xl" />
-          <div className="col-span-2 h-96 bg-imi-50 rounded-2xl" />
-        </div>
-      </div>
-    )
-  }
-
-  if (!lead) return <div className="p-12 text-center text-imi-500">Lead não encontrado.</div>
-
-  // Status config
   const getStatusConfig = (status: string) => {
-    const configs: Record<string, { variant: any; label: string; icon: any }> = {
-      new: { variant: 'info', label: 'Prospecção', icon: AlertCircle },
-      contacted: { variant: 'warning', label: 'Em Contato', icon: MessageSquare },
-      qualified: { variant: 'primary', label: 'Qualificado', icon: CheckCircle },
-      proposal: { variant: 'success', label: 'Proposta', icon: DollarSign },
-      won: { variant: 'success', label: 'Ativado (Venda)', icon: CheckCircle },
-      lost: { variant: 'danger', label: 'Descartado', icon: XCircle },
+    const configs: Record<string, { label: string; color: string; bg: string }> = {
+      hot: { label: 'Quente 🔥', color: 'text-red-700', bg: 'bg-red-50' },
+      warm: { label: 'Morno', color: 'text-orange-700', bg: 'bg-orange-50' },
+      cold: { label: 'Frio', color: 'text-blue-700', bg: 'bg-blue-50' },
     }
-    return configs[status] || configs.new
+    return configs[status] || configs.cold
   }
 
   const statusConfig = getStatusConfig(lead.status)
-  const StatusIcon = statusConfig.icon
 
-  const handleUpdateStatus = async () => {
-    setIsUpdating(true)
-    try {
-      const { error } = await supabase
-        .from('leads')
-        .update({
-          status: newStatus,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', params.id)
+  const handleAddNote = () => {
+    if (!newNote.trim()) return
 
-      if (error) throw error
-
-      setLead((prev: any) => ({ ...prev, status: newStatus }))
-      toast.success('Fase do lead atualizada para ' + newStatus)
-      setShowStatusModal(false)
-    } catch (error) {
-      toast.error('Falha ao atualizar status.')
-    } finally {
-      setIsUpdating(false)
-    }
+    // Aqui salvaria no Supabase
+    console.log('Nova nota:', newNote)
+    setNewNote('')
+    setIsAddingNote(false)
   }
 
-  const handleAddInteraction = () => {
-    if (!interactionForm.subject.trim()) return
+  const getTimeAgo = (date: string) => {
+    const now = new Date()
+    const past = new Date(date)
+    const diffMs = now.getTime() - past.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
 
-    const newInteraction = {
-      id: Date.now().toString(),
-      type: interactionForm.type,
-      subject: interactionForm.subject,
-      description: interactionForm.description,
-      created_at: new Date().toISOString(),
-      created_by: 'Backoffice User',
-    }
-
-    setInteractions([newInteraction, ...interactions])
-    setInteractionForm({ type: 'note', subject: '', description: '' })
-    toast.success('Interação registrada na timeline.')
-    setShowInteractionModal(false)
+    if (diffMins < 60) return `${diffMins} minutos atrás`
+    if (diffHours < 24) return `${diffHours} horas atrás`
+    return new Date(date).toLocaleString('pt-BR')
   }
-
-  const getInteractionIcon = (type: string) => {
-    const icons: Record<string, any> = {
-      email: Mail,
-      call: Phone,
-      whatsapp: MessageSquare,
-      meeting: Calendar,
-      note: Edit,
-    }
-    return icons[type] || Edit
-  }
-
-  const budgetText = (lead.budget_min || lead.budget_max)
-    ? `R$ ${(lead.budget_min / 1000 || 0).toFixed(0)}k - ${(lead.budget_max / 1000 || 0).toFixed(0)}k`
-    : 'Não informado'
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={lead.name}
-        subtitle={`ID da Operação: ${lead.id.slice(0, 8).toUpperCase()}`}
-        breadcrumbs={[
-          { name: 'Dashboard', href: '/backoffice/backoffice/dashboard' },
-          { name: 'Leads', href: '/backoffice/backoffice/leads' },
-          { name: 'Dossiê do Cliente' },
-        ]}
-        action={
-          <div className="flex items-center gap-4">
-            <Badge variant={statusConfig.variant} size="lg" dot className="bg-white px-4 py-2 border shadow-sm">
-              <span className="font-black uppercase tracking-widest text-[10px]">{statusConfig.label}</span>
-            </Badge>
-            <Button
-              variant="outline"
-              icon={<Edit size={18} />}
-              onClick={() => setShowStatusModal(true)}
-              className="bg-white h-12"
-            >
-              Mudar Fase
-            </Button>
-            <Button
-              icon={<Zap size={18} />}
-              onClick={() => setShowInteractionModal(true)}
-              className="h-12 shadow-glow"
-            >
-              Logar Atividade
-            </Button>
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-4">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition-colors flex-shrink-0"
+          >
+            <ArrowLeft size={20} />
+          </button>
+
+          <div className="flex items-start gap-4">
+            {/* Avatar */}
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-400 to-accent-600 flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+              {lead.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+            </div>
+
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                {lead.name}
+              </h1>
+              <div className="flex items-center gap-3 text-sm text-gray-600">
+                <span className="flex items-center gap-1">
+                  <Briefcase size={14} />
+                  {lead.occupation}
+                </span>
+                <span>•</span>
+                <span>{lead.company}</span>
+              </div>
+            </div>
           </div>
-        }
-      />
-
-      {/* Analytics Scorecard */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <KPICard
-          label="Health Score"
-          value={lead.score || 70}
-          icon={<TrendingUp />}
-          variant={(lead.score || 70) >= 80 ? 'success' : (lead.score || 70) >= 50 ? 'warning' : 'danger'}
-          className="shadow-elevated"
-        />
-
-        <KPICard
-          label="Canais de Atribuição"
-          value={lead.source || 'Tráfego Orgânico'}
-          icon={<Zap />}
-          variant="primary"
-          className="shadow-elevated"
-        />
-
-        <KPICard
-          label="Janela de Ticket"
-          value={budgetText}
-          icon={<DollarSign />}
-          variant="info"
-          className="shadow-elevated"
-        />
-
-        <KPICard
-          label="Interesse High-End"
-          value={lead.interest_type || 'Sob Consulta'}
-          icon={<Building2 />}
-          variant="primary"
-          className="bg-imi-950 text-white border-imi-800 shadow-glow"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Data Intelligence */}
-        <div className="lg:col-span-1 space-y-8">
-          <Card className="shadow-elevated border-imi-50 overflow-hidden">
-            <CardHeader title="Perfis & Contatos" className="bg-imi-50/50" />
-            <CardBody className="p-8">
-              <div className="space-y-8">
-                <div className="flex items-center gap-5 group">
-                  <div className="w-12 h-12 rounded-2xl bg-imi-50 flex items-center justify-center text-imi-400 group-hover:bg-accent-500 group-hover:text-white transition-all duration-500">
-                    <User size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">Titular do Lead</p>
-                    <p className="text-sm font-black text-imi-900 group-hover:translate-x-1 transition-transform">{lead.name}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-5 group">
-                  <div className="w-12 h-12 rounded-2xl bg-imi-50 flex items-center justify-center text-imi-400 group-hover:bg-accent-500 group-hover:text-white transition-all duration-500">
-                    <Mail size={20} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">Canal de E-mail</p>
-                    <a
-                      href={`mailto:${lead.email}`}
-                      className="text-sm font-black text-accent-600 hover:text-accent-700 break-all"
-                    >
-                      {lead.email}
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-5 group">
-                  <div className="w-12 h-12 rounded-2xl bg-imi-50 flex items-center justify-center text-imi-400 group-hover:bg-accent-500 group-hover:text-white transition-all duration-500">
-                    <Phone size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">Terminal Móvel</p>
-                    <a
-                      href={`tel:${lead.phone}`}
-                      className="text-sm font-black text-accent-600 hover:text-accent-700"
-                    >
-                      {lead.phone}
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-5 group">
-                  <div className="w-12 h-12 rounded-2xl bg-imi-50 flex items-center justify-center text-imi-400 group-hover:bg-accent-500 group-hover:text-white transition-all duration-500">
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">Geoloc de Interesse</p>
-                    <p className="text-sm font-black text-imi-900 leading-tight">
-                      {lead.preferred_location || 'Região Metropolitana'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          {/* Asset Strategy */}
-          {lead.developments && (
-            <Card className="shadow-elevated border-accent-100 bg-accent-50/10">
-              <CardHeader title="Ativo de Interesse" className="bg-accent-50/50" />
-              <CardBody className="p-8">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-3xl bg-accent-500 flex items-center justify-center text-white shadow-glow">
-                    <Building2 size={24} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-[10px] font-black text-accent-600 uppercase tracking-widest mb-1">Empreendimento</p>
-                    <p className="text-lg font-black text-imi-950 uppercase tracking-tighter leading-none">
-                      {lead.developments.name}
-                    </p>
-                    <p className="text-xs font-bold text-imi-500 mt-1">
-                      {lead.developments.neighborhood}, {lead.developments.city}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  fullWidth
-                  onClick={() => router.push(`/backoffice/backoffice/imoveis/${lead.development_id}`)}
-                  className="mt-6 border-t border-accent-100 rounded-none pt-4 text-accent-700 font-black uppercase tracking-widest text-[10px]"
-                >
-                  Acessar Dossiê do Ativo
-                </Button>
-              </CardBody>
-            </Card>
-          )}
-
-          {/* Qualitative Data */}
-          <Card className="shadow-elevated border-imi-50">
-            <CardHeader title="Briefing Inicial" icon={<Info size={16} />} />
-            <CardBody className="p-8">
-              <div className="p-6 bg-imi-50/50 rounded-2xl border border-imi-100/50 italic">
-                <p className="text-sm font-medium text-imi-700 leading-relaxed">
-                  "{lead.message || 'Sem observações iniciais registradas.'}"
-                </p>
-              </div>
-            </CardBody>
-          </Card>
         </div>
 
-        {/* Right Column: Interaction Pulse */}
+        <div className="flex items-center gap-2">
+          <button className="h-10 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
+            <Edit size={16} />
+            <span className="hidden sm:inline">Editar</span>
+          </button>
+          <button className="h-10 px-4 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-2">
+            <Trash2 size={16} />
+            <span className="hidden sm:inline">Excluir</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Score + Status */}
+      <div className="flex items-center gap-3">
+        <div className="px-4 py-2 rounded-xl bg-green-50 border border-green-200">
+          <span className="text-sm font-medium text-green-700">Score: </span>
+          <span className="text-lg font-bold text-green-700">{lead.score}</span>
+        </div>
+        <div className={`px-4 py-2 rounded-xl border ${statusConfig.bg} border-current`}>
+          <span className={`text-sm font-medium ${statusConfig.color}`}>
+            {statusConfig.label}
+          </span>
+        </div>
+        <div className="px-4 py-2 rounded-xl bg-blue-50 border border-blue-200">
+          <span className="text-sm font-medium text-blue-700">{lead.source}</span>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <button
+          onClick={() => window.location.href = `mailto:${lead.email}`}
+          className="h-12 px-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-medium"
+        >
+          <Mail size={18} />
+          E-mail
+        </button>
+        <button
+          onClick={() => window.location.href = `https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
+          className="h-12 px-4 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors flex items-center justify-center gap-2 font-medium"
+        >
+          <MessageSquare size={18} />
+          WhatsApp
+        </button>
+        <button
+          onClick={() => window.location.href = `tel:${lead.phone}`}
+          className="h-12 px-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-medium"
+        >
+          <Phone size={18} />
+          Ligar
+        </button>
+        <button className="h-12 px-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-medium">
+          <Calendar size={18} />
+          Agendar
+        </button>
+      </div>
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Info */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Contato */}
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
+              Informações de Contato
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Mail size={18} className="text-gray-400 mt-0.5" />
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">E-mail</p>
+                  <a href={`mailto:${lead.email}`} className="text-sm font-medium text-accent-600 hover:underline">
+                    {lead.email}
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Phone size={18} className="text-gray-400 mt-0.5" />
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Telefone</p>
+                  <a href={`tel:${lead.phone}`} className="text-sm font-medium text-accent-600 hover:underline">
+                    {lead.phone}
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <MessageSquare size={18} className="text-gray-400 mt-0.5" />
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Preferência</p>
+                  <p className="text-sm font-medium text-gray-900">{lead.preferredContact}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Clock size={18} className="text-gray-400 mt-0.5" />
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Melhor horário</p>
+                  <p className="text-sm font-medium text-gray-900">{lead.bestTime}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Interesse */}
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
+              Interesse
+            </h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm">
+                <Building2 size={16} className="text-gray-400" />
+                <span className="font-medium">{lead.interest}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <MapPin size={16} className="text-gray-400" />
+                <span className="font-medium">{lead.location}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <DollarSign size={16} className="text-gray-400" />
+                <span className="font-medium">R$ {lead.budget}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Dados Pessoais */}
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
+              Dados Pessoais
+            </h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Estado civil</span>
+                <span className="font-medium">{lead.maritalStatus}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Filhos</span>
+                <span className="font-medium">{lead.children}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Profissão</span>
+                <span className="font-medium">{lead.occupation}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Requisitos */}
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
+              Requisitos
+            </h3>
+            <div className="space-y-2">
+              {lead.requirements.map((req, index) => (
+                <div key={index} className="flex items-center gap-2 text-sm">
+                  <Check size={14} className="text-green-600" />
+                  <span className="text-gray-700">{req}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Timeline */}
         <div className="lg:col-span-2">
-          <Card className="shadow-elevated border-imi-50 min-h-[600px]">
-            <CardHeader
-              title="Pulse de Atividades & CRM"
-              subtitle={`Histórico de ${interactions.length} eventos documentados`}
-              className="bg-imi-50/50"
-              icon={<History size={18} className="text-imi-400" />}
-            />
-            <CardBody className="p-8">
-              <div className="relative space-y-12 before:absolute before:inset-y-0 before:left-[23px] before:w-[2px] before:bg-imi-100">
-                {interactions.map((interaction, index) => {
-                  const Icon = getInteractionIcon(interaction.type)
-                  return (
-                    <div key={interaction.id} className="relative flex items-start gap-8 group">
-                      <div className={`
-                        w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 z-10 transition-all duration-500 border-4 border-white
-                        ${index === 0 ? 'bg-accent-500 text-white shadow-glow animate-bounce-subtle' : 'bg-imi-50 text-imi-400 group-hover:bg-imi-950 group-hover:text-white'}
-                      `}>
-                        <Icon size={20} strokeWidth={index === 0 ? 3 : 2} />
-                      </div>
-                      <div className="flex-1 min-w-0 bg-white group-hover:bg-imi-50/50 p-6 rounded-3xl border border-transparent group-hover:border-imi-100 transition-all duration-300">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                          <div>
-                            <p className="text-base font-black text-imi-900 group-hover:text-accent-600 transition-colors uppercase tracking-tight">
-                              {interaction.subject}
-                            </p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="neutral" size="sm" className="bg-imi-100 text-[9px] font-black">{interaction.type}</Badge>
-                              <span className="text-[10px] font-bold text-imi-400 uppercase tracking-widest flex items-center gap-1">
-                                <Clock size={10} />
-                                {new Date(interaction.created_at).toLocaleString('pt-BR')}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3 bg-imi-50 px-3 py-1 rounded-full border border-imi-100/50">
-                            <div className="w-5 h-5 rounded-full bg-imi-200 flex items-center justify-center text-[9px] font-black">
-                              {interaction.created_by.charAt(0)}
-                            </div>
-                            <span className="text-[10px] font-black text-imi-600 uppercase tracking-tighter">{interaction.created_by}</span>
-                          </div>
-                        </div>
-                        <p className="text-sm font-medium text-imi-600 leading-relaxed">
-                          {interaction.description}
-                        </p>
-                      </div>
-                    </div>
-                  )
-                })}
+          {/* Notes Section */}
+          <div className="bg-white rounded-xl p-6 border border-gray-100 mb-6">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
+              Observações
+            </h3>
+            <p className="text-sm text-gray-700 leading-relaxed mb-4">
+              {lead.notes}
+            </p>
+
+            {!isAddingNote ? (
+              <button
+                onClick={() => setIsAddingNote(true)}
+                className="text-sm font-medium text-accent-600 hover:text-accent-700"
+              >
+                + Adicionar nota
+              </button>
+            ) : (
+              <div className="space-y-3">
+                <textarea
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  placeholder="Digite sua nota..."
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none text-sm"
+                />
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleAddNote}
+                    className="h-9 px-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors text-sm font-medium"
+                  >
+                    Salvar
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsAddingNote(false)
+                      setNewNote('')
+                    }}
+                    className="h-9 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                  >
+                    Cancelar
+                  </button>
+                </div>
               </div>
-            </CardBody>
-          </Card>
+            )}
+          </div>
+
+          {/* Timeline */}
+          <div className="bg-white rounded-xl p-6 border border-gray-100">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-6">
+              Timeline de Interações
+            </h3>
+
+            <div className="space-y-6">
+              {lead.timeline.map((item, index) => {
+                const Icon = item.icon
+                const isLast = index === lead.timeline.length - 1
+
+                return (
+                  <div key={item.id} className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-accent-50 flex items-center justify-center flex-shrink-0">
+                        <Icon size={18} className="text-accent-600" />
+                      </div>
+                      {!isLast && (
+                        <div className="w-0.5 flex-1 bg-gray-200 mt-2" />
+                      )}
+                    </div>
+
+                    <div className="flex-1 pb-6">
+                      <div className="flex items-start justify-between gap-4 mb-1">
+                        <h4 className="text-sm font-semibold text-gray-900">
+                          {item.title}
+                        </h4>
+                        <span className="text-xs text-gray-500 whitespace-nowrap">
+                          {getTimeAgo(item.date)}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        {item.description}
+                      </p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <User size={12} />
+                        {item.user}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Modal: Status Engine */}
-      <Modal
-        open={showStatusModal}
-        onClose={() => setShowStatusModal(false)}
-        size="sm"
-      >
-        <ModalHeader title="Workflow de Status" />
-        <ModalBody className="p-8">
-          <Select
-            label="Novo Estágio do Pipeline"
-            value={newStatus}
-            onChange={(e) => setNewStatus(e.target.value)}
-            className="h-14 font-black uppercase text-xs tracking-widest"
-            options={[
-              { value: 'new', label: 'Prospecção / Novo' },
-              { value: 'contacted', label: 'Em Contato / Tentativa' },
-              { value: 'qualified', label: 'Lead Qualificado (MQL)' },
-              { value: 'proposal', label: 'Proposta Elaborada' },
-              { value: 'won', label: 'Convertido / Venda' },
-              { value: 'lost', label: 'Lead Perdido / Arquivo' },
-            ]}
-          />
-        </ModalBody>
-        <ModalFooter className="p-8 bg-imi-50/50">
-          <Button variant="outline" onClick={() => setShowStatusModal(false)} className="h-12 px-8">
-            Cancelar
-          </Button>
-          <Button onClick={handleUpdateStatus} loading={isUpdating} className="h-12 px-12 shadow-glow">
-            Efetivar Fase
-          </Button>
-        </ModalFooter>
-      </Modal>
-
-      {/* Modal: Activity Logger */}
-      <Modal
-        open={showInteractionModal}
-        onClose={() => setShowInteractionModal(false)}
-      >
-        <ModalHeader title="Logar Nova Operação / CRM" />
-        <ModalBody className="p-8 space-y-8">
-          <Select
-            label="Arquitetura de Contato"
-            value={interactionForm.type}
-            onChange={(e) =>
-              setInteractionForm((prev) => ({ ...prev, type: e.target.value }))
-            }
-            className="h-14 font-black uppercase text-xs tracking-widest"
-            options={[
-              { value: 'note', label: 'Internal Note / Registro' },
-              { value: 'call', label: 'Ligação / Telefone' },
-              { value: 'email', label: 'Email Outreach' },
-              { value: 'whatsapp', label: 'WhatsApp Messenger' },
-              { value: 'meeting', label: 'Reunião Presencial / Tour' },
-            ]}
-          />
-
-          <Input
-            label="Título da Atividade *"
-            value={interactionForm.subject}
-            onChange={(e) =>
-              setInteractionForm((prev) => ({ ...prev, subject: e.target.value }))
-            }
-            placeholder="Ex: Proposta apresentada no showroom"
-            className="h-14 italic"
-          />
-
-          <Textarea
-            label="Evidências / Detalhes Estratégicos"
-            value={interactionForm.description}
-            onChange={(e) =>
-              setInteractionForm((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
-            rows={5}
-            placeholder="Descreva o desfecho desta interação..."
-            className="bg-imi-50/20"
-          />
-        </ModalBody>
-        <ModalFooter className="p-8 bg-imi-50/50">
-          <Button
-            variant="outline"
-            onClick={() => setShowInteractionModal(false)}
-            className="h-12 px-8"
-          >
-            Descartar
-          </Button>
-          <Button
-            onClick={handleAddInteraction}
-            disabled={!interactionForm.subject.trim()}
-            icon={<Send size={18} />}
-            className="h-12 px-12 shadow-glow"
-          >
-            Registrar Pulse
-          </Button>
-        </ModalFooter>
-      </Modal>
     </div>
   )
 }
