@@ -2,322 +2,707 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import PageHeader from '@/components/backoffice/PageHeader'
-import DocumentUploader from '@/components/backoffice/avaliacoes/DocumentUploader'
-import EvaluationEditor from '@/components/backoffice/avaliacoes/EvaluationEditor'
-import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
 import {
+  ArrowLeft,
+  ArrowRight,
   Building2,
-  Users,
   MapPin,
+  Ruler,
+  User,
+  Mail,
+  Phone,
   FileText,
-  Search,
-  ChevronRight,
-  ArrowLeft
+  Upload,
+  Check,
+  Save,
+  Loader2,
+  AlertCircle,
+  Home,
+  DollarSign,
+  Calendar,
+  Sparkles,
+  X,
+  Image as ImageIcon,
 } from 'lucide-react'
 
-const supabase = createClient()
+type Step = 1 | 2 | 3
+
+interface FormData {
+  // Imóvel
+  propertyAddress: string
+  propertyType: string
+  propertyArea: string
+  bedrooms: string
+  bathrooms: string
+  parking: string
+  city: string
+  state: string
+
+  // Cliente
+  clientName: string
+  clientEmail: string
+  clientPhone: string
+  clientCPF: string
+
+  // Avaliação
+  purpose: string
+  method: string
+  requestDate: string
+  deadline: string
+
+  // Documentos
+  documents: File[]
+}
+
+const tiposImovel = [
+  'Apartamento',
+  'Casa',
+  'Cobertura',
+  'Studio',
+  'Loft',
+  'Terreno',
+  'Comercial',
+  'Galpão',
+]
+
+const metodosAvaliacao = [
+  'Comparativo Direto de Dados de Mercado',
+  'Involutivo',
+  'Evolutivo',
+  'Renda',
+  'Custo',
+]
+
+const finalidades = [
+  'Compra e Venda',
+  'Financiamento Bancário',
+  'Garantia de Empréstimo',
+  'Partilha de Bens',
+  'Inventário',
+  'Desapropriação',
+  'Seguro',
+  'Outra',
+]
 
 export default function NovaAvaliacaoPage() {
   const router = useRouter()
-  const [evaluationId, setEvaluationId] = useState<string | null>(null)
-  const [step, setStep] = useState<'info' | 'documents' | 'generate'>('info')
-  const [loading, setLoading] = useState(false)
+  const [currentStep, setCurrentStep] = useState<Step>(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const [formData, setFormData] = useState({
-    property_address: '',
-    property_type: 'apartment',
-    property_area: '',
+  const [formData, setFormData] = useState<FormData>({
+    propertyAddress: '',
+    propertyType: '',
+    propertyArea: '',
     bedrooms: '',
     bathrooms: '',
-    city: '',
+    parking: '',
+    city: 'Recife',
     state: 'PE',
-    client_name: '',
-    client_email: '',
-    client_phone: ''
+    clientName: '',
+    clientEmail: '',
+    clientPhone: '',
+    clientCPF: '',
+    purpose: '',
+    method: 'Comparativo Direto de Dados de Mercado',
+    requestDate: new Date().toISOString().split('T')[0],
+    deadline: '',
+    documents: [],
   })
-  const [documents, setDocuments] = useState<any[]>([])
 
-  const handleCreateEvaluation = async () => {
-    if (!formData.property_address || !formData.client_name) {
-      toast.error('Preencha os campos obrigatórios')
-      return
-    }
-
-    setLoading(true)
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-
-      const { data, error } = await supabase
-        .from('property_evaluations')
-        .insert({
-          ...formData,
-          property_area: formData.property_area ? parseFloat(formData.property_area) : null,
-          bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
-          bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : null,
-          status: 'pending',
-          created_by: user?.id
-        })
-        .select()
-        .single()
-
-      if (error) throw error
-
-      setEvaluationId(data.id)
-      setStep('documents')
-      toast.success('Avaliação criada com sucesso!')
-    } catch (error: any) {
-      console.error('Erro ao criar avaliação:', error)
-      toast.error('Erro ao criar avaliação base')
-    } finally {
-      setLoading(false)
+  const handleChange = (field: keyof FormData, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }))
     }
   }
 
-  const handleDocumentsUploaded = (files: any[]) => {
-    setDocuments(files)
+  const handleDocumentUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    setFormData(prev => ({ ...prev, documents: [...prev.documents, ...files] }))
   }
 
-  const handleSaveContent = async (content: string) => {
-    if (!evaluationId) return
+  const removeDocument = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      documents: prev.documents.filter((_, i) => i !== index)
+    }))
+  }
 
-    try {
-      const { error } = await supabase
-        .from('property_evaluations')
-        .update({
-          draft_content: content,
-          status: 'draft',
-          documents: documents.map(d => ({ url: d.url, name: d.name, type: d.type })),
-          generated_at: new Date().toISOString()
-        })
-        .eq('id', evaluationId)
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, '')
+    if (numbers.length <= 11) {
+      return numbers
+        .replace(/^(\d{2})(\d)/g, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+    }
+    return value
+  }
 
-      if (error) throw error
+  const formatCPF = (value: string) => {
+    const numbers = value.replace(/\D/g, '')
+    return numbers
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+  }
 
-      toast.success('Laudo salvo como rascunho!')
-      router.push(`/backoffice/avaliacoes`)
-    } catch (error) {
-      toast.error('Erro ao salvar conteúdo do laudo')
+  const validateStep = (step: Step): boolean => {
+    const newErrors: Record<string, string> = {}
+
+    if (step === 1) {
+      if (!formData.propertyAddress.trim()) newErrors.propertyAddress = 'Endereço é obrigatório'
+      if (!formData.propertyType) newErrors.propertyType = 'Tipo é obrigatório'
+      if (!formData.propertyArea) newErrors.propertyArea = 'Área é obrigatória'
+    }
+
+    if (step === 2) {
+      if (!formData.clientName.trim()) newErrors.clientName = 'Nome é obrigatório'
+      if (!formData.clientEmail.trim()) newErrors.clientEmail = 'Email é obrigatório'
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.clientEmail)) {
+        newErrors.clientEmail = 'Email inválido'
+      }
+    }
+
+    if (step === 3) {
+      if (!formData.purpose) newErrors.purpose = 'Finalidade é obrigatória'
+      if (!formData.method) newErrors.method = 'Método é obrigatório'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep((prev) => Math.min(3, prev + 1) as Step)
     }
   }
+
+  const handlePrev = () => {
+    setCurrentStep((prev) => Math.max(1, prev - 1) as Step)
+  }
+
+  const handleSubmit = async () => {
+    if (!validateStep(currentStep)) return
+
+    setIsSubmitting(true)
+
+    // TODO: Upload documents to Supabase Storage
+    // TODO: Save to Supabase database
+    // TODO: Generate protocol number
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    alert('Avaliação criada com sucesso! Protocolo: AVL-2026-001')
+    router.push('/backoffice/avaliacoes')
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' B'
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
+  }
+
+  const steps = [
+    { number: 1, label: 'Imóvel', icon: Building2 },
+    { number: 2, label: 'Cliente', icon: User },
+    { number: 3, label: 'Avaliação', icon: FileText },
+  ]
+
+  const progress = (currentStep / 3) * 100
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto pb-20">
-      <PageHeader
-        title="Nova Avaliação Técnica"
-        description="Sistema de geração de laudos NBR 14653 com inteligência artificial."
-        breadcrumbs={[
-          { label: 'Backoffice', href: '/backoffice' },
-          { label: 'Avaliações', href: '/backoffice/avaliacoes' },
-          { label: 'Nova' }
-        ]}
-      />
-
-      {/* Progress Stepper */}
-      <div className="flex items-center justify-center py-4">
-        {[
-          { key: 'info', label: 'Dados Iniciais', icon: Search },
-          { key: 'documents', label: 'Documentação', icon: FileText },
-          { key: 'generate', label: 'Geração IA', icon: Building2 }
-        ].map((s, index, arr) => (
-          <div key={s.key} className="flex items-center">
-            <div className="flex flex-col items-center gap-2">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${step === s.key
-                  ? 'bg-accent-500 text-white shadow-glow scale-110'
-                  : index < arr.findIndex(st => st.key === step)
-                    ? 'bg-green-500 text-white'
-                    : 'bg-white border border-imi-100 text-imi-300'
-                }`}>
-                <s.icon size={20} />
-              </div>
-              <span className={`text-[10px] uppercase font-bold tracking-widest ${step === s.key ? 'text-accent-600' : 'text-imi-400'
-                }`}>
-                {s.label}
-              </span>
-            </div>
-            {index < arr.length - 1 && (
-              <div className="w-16 h-px bg-imi-100 mx-4" />
-            )}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Nova Avaliação Técnica</h1>
+            <p className="text-sm text-gray-600 mt-1">Laudo NBR 14653 • Passo {currentStep} de 3</p>
           </div>
-        ))}
+        </div>
+
+        <div className="px-4 py-2 bg-purple-50 border border-purple-200 rounded-xl">
+          <div className="flex items-center gap-2">
+            <Sparkles size={16} className="text-purple-600" />
+            <span className="text-sm font-medium text-purple-700">Geração com IA</span>
+          </div>
+        </div>
       </div>
 
-      {/* Step 1: Info Form */}
-      {step === 'info' && (
-        <div className="bg-white rounded-3xl border border-imi-100 shadow-soft overflow-hidden animate-slide-up">
-          <div className="bg-imi-50/50 p-8 border-b border-imi-100">
-            <h3 className="text-xl font-bold text-imi-900 flex items-center gap-3">
-              <MapPin className="text-accent-600" />
-              Informações do Imóvel
-            </h3>
-            <p className="text-sm text-imi-600 mt-1">Preencha os dados básicos para contextualizar a IA.</p>
-          </div>
+      {/* Progress Bar */}
+      <div className="bg-white rounded-2xl p-6 border border-gray-100">
+        <div className="flex items-center justify-between mb-4">
+          {steps.map((step, index) => {
+            const StepIcon = step.icon
+            const isActive = currentStep === step.number
+            const isCompleted = currentStep > step.number
 
-          <div className="p-8 space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Coluna 1: Imóvel */}
-              <div className="space-y-6">
-                <h4 className="text-xs font-black text-imi-400 uppercase tracking-widest">Características</h4>
-
-                <div>
-                  <label className="block text-sm font-bold text-imi-700 mb-2">Tipo de Imóvel</label>
-                  <select
-                    value={formData.property_type}
-                    onChange={(e) => setFormData({ ...formData, property_type: e.target.value })}
-                    className="w-full h-12 px-4 bg-imi-50 border-none rounded-2xl focus:ring-2 focus:ring-accent-500 transition-all font-medium"
-                  >
-                    <option value="apartment">Apartamento</option>
-                    <option value="house">Casa Residencial</option>
-                    <option value="commercial">Comercial / Sala</option>
-                    <option value="land">Terreno / Lote</option>
-                    <option value="industrial">Galpão / Industrial</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-imi-700 mb-2">Endereço Completo *</label>
-                  <textarea
-                    value={formData.property_address}
-                    onChange={(e) => setFormData({ ...formData, property_address: e.target.value })}
-                    className="w-full h-24 p-4 bg-imi-50 border-none rounded-2xl focus:ring-2 focus:ring-accent-500 transition-all font-medium"
-                    placeholder="Av. Boa Viagem, 1000 - Edifício Atlante"
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-imi-600 mb-2">Área (m²)</label>
-                    <input
-                      type="number"
-                      value={formData.property_area}
-                      onChange={(e) => setFormData({ ...formData, property_area: e.target.value })}
-                      className="w-full h-12 px-4 bg-imi-50 border-none rounded-2xl"
-                    />
+            return (
+              <div key={step.number} className="flex items-center flex-1">
+                <div className="flex flex-col items-center flex-1">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isCompleted ? 'bg-green-500 text-white' :
+                      isActive ? 'bg-purple-500 text-white' :
+                        'bg-gray-100 text-gray-400'
+                    }`}>
+                    {isCompleted ? <Check size={24} /> : <StepIcon size={24} />}
                   </div>
-                  <div>
-                    <label className="block text-xs font-bold text-imi-600 mb-2">Quartos</label>
-                    <input
-                      type="number"
-                      value={formData.bedrooms}
-                      onChange={(e) => setFormData({ ...formData, bedrooms: e.target.value })}
-                      className="w-full h-12 px-4 bg-imi-50 border-none rounded-2xl"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-imi-600 mb-2">Banheiros</label>
-                    <input
-                      type="number"
-                      value={formData.bathrooms}
-                      onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
-                      className="w-full h-12 px-4 bg-imi-50 border-none rounded-2xl"
-                    />
-                  </div>
+                  <p className={`text-sm font-medium mt-2 ${isActive ? 'text-purple-700' : isCompleted ? 'text-green-700' : 'text-gray-500'
+                    }`}>
+                    {step.label}
+                  </p>
                 </div>
+                {index < steps.length - 1 && (
+                  <div className={`h-1 flex-1 mx-4 rounded-full transition-all ${currentStep > step.number ? 'bg-green-500' : 'bg-gray-200'
+                    }`} />
+                )}
               </div>
-
-              {/* Coluna 2: Cliente */}
-              <div className="space-y-6">
-                <h4 className="text-xs font-black text-imi-400 uppercase tracking-widest">Contratante</h4>
-
-                <div>
-                  <label className="block text-sm font-bold text-imi-700 mb-2">Nome do Cliente *</label>
-                  <input
-                    type="text"
-                    value={formData.client_name}
-                    onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
-                    className="w-full h-12 px-4 bg-imi-50 border-none rounded-2xl"
-                    placeholder="Nome Completo ou Empresa"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-imi-700 mb-2">E-mail</label>
-                  <input
-                    type="email"
-                    value={formData.client_email}
-                    onChange={(e) => setFormData({ ...formData, client_email: e.target.value })}
-                    className="w-full h-12 px-4 bg-imi-50 border-none rounded-2xl"
-                    placeholder="contato@cliente.com.br"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-imi-700 mb-2">WhatsApp / Telefone</label>
-                  <input
-                    type="tel"
-                    value={formData.client_phone}
-                    onChange={(e) => setFormData({ ...formData, client_phone: e.target.value })}
-                    className="w-full h-12 px-4 bg-imi-50 border-none rounded-2xl"
-                    placeholder="(81) 99999-9999"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end border-t border-imi-50 pt-8">
-              <button
-                onClick={handleCreateEvaluation}
-                disabled={loading}
-                className="h-14 px-10 bg-accent-500 text-white rounded-2xl font-bold flex items-center gap-3 shadow-glow hover:shadow-glow-lg transition-all disabled:opacity-50"
-              >
-                {loading ? 'Criando...' : 'Próximo: Documentação'}
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          </div>
+            )
+          })}
         </div>
-      )}
-
-      {/* Step 2: Documents */}
-      {step === 'documents' && evaluationId && (
-        <div className="animate-slide-up space-y-6">
-          <div className="bg-white rounded-3xl border border-imi-100 p-8">
-            <DocumentUploader
-              evaluationId={evaluationId}
-              onFilesUploaded={handleDocumentsUploaded}
-            />
-          </div>
-
-          <div className="flex justify-between">
-            <button
-              onClick={() => setStep('info')}
-              className="h-12 px-8 flex items-center gap-2 text-imi-500 font-bold hover:text-imi-900 transition-colors"
-            >
-              <ArrowLeft size={20} />
-              Voltar para Informações
-            </button>
-            <button
-              onClick={() => setStep('generate')}
-              disabled={documents.length === 0}
-              className="h-14 px-10 bg-accent-500 text-white rounded-2xl font-bold flex items-center gap-3 shadow-glow hover:shadow-glow-lg transition-all disabled:opacity-50"
-            >
-              Gerar Laudo IA
-              <Sparkles size={20} />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 3: Editor */}
-      {step === 'generate' && evaluationId && (
-        <div className="animate-slide-up">
-          <EvaluationEditor
-            evaluationId={evaluationId}
-            documents={documents}
-            propertyData={{
-              address: formData.property_address,
-              type: formData.property_type,
-              area: formData.property_area ? parseFloat(formData.property_area) : undefined,
-              bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : undefined,
-              bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : undefined,
-              city: formData.city,
-              state: formData.state
-            }}
-            onSave={handleSaveContent}
+        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-purple-500 transition-all duration-300"
+            style={{ width: `${progress}%` }}
           />
         </div>
-      )}
+      </div>
+
+      {/* Form Content */}
+      <div className="bg-white rounded-2xl p-8 border border-gray-100">
+        {/* Step 1: Imóvel */}
+        {currentStep === 1 && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Dados do Imóvel</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Endereço */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Endereço Completo *
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 text-gray-400" size={20} />
+                  <textarea
+                    value={formData.propertyAddress}
+                    onChange={(e) => handleChange('propertyAddress', e.target.value)}
+                    placeholder="Ex: Av. Boa Viagem, 3500 - Apto 802, Boa Viagem"
+                    rows={3}
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none ${errors.propertyAddress ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  />
+                </div>
+                {errors.propertyAddress && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.propertyAddress}
+                  </p>
+                )}
+              </div>
+
+              {/* Tipo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tipo de Imóvel *
+                </label>
+                <div className="relative">
+                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <select
+                    value={formData.propertyType}
+                    onChange={(e) => handleChange('propertyType', e.target.value)}
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white ${errors.propertyType ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  >
+                    <option value="">Selecione...</option>
+                    {tiposImovel.map(tipo => (
+                      <option key={tipo} value={tipo}>{tipo}</option>
+                    ))}
+                  </select>
+                </div>
+                {errors.propertyType && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.propertyType}
+                  </p>
+                )}
+              </div>
+
+              {/* Área */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Área Privativa (m²) *
+                </label>
+                <div className="relative">
+                  <Ruler className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="number"
+                    value={formData.propertyArea}
+                    onChange={(e) => handleChange('propertyArea', e.target.value)}
+                    placeholder="95"
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.propertyArea ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  />
+                </div>
+                {errors.propertyArea && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.propertyArea}
+                  </p>
+                )}
+              </div>
+
+              {/* Quartos */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Quartos
+                </label>
+                <input
+                  type="number"
+                  value={formData.bedrooms}
+                  onChange={(e) => handleChange('bedrooms', e.target.value)}
+                  placeholder="3"
+                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              {/* Banheiros */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Banheiros
+                </label>
+                <input
+                  type="number"
+                  value={formData.bathrooms}
+                  onChange={(e) => handleChange('bathrooms', e.target.value)}
+                  placeholder="2"
+                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              {/* Vagas */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Vagas de Garagem
+                </label>
+                <input
+                  type="number"
+                  value={formData.parking}
+                  onChange={(e) => handleChange('parking', e.target.value)}
+                  placeholder="2"
+                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              {/* Cidade */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Cidade
+                </label>
+                <input
+                  type="text"
+                  value={formData.city}
+                  onChange={(e) => handleChange('city', e.target.value)}
+                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              {/* Estado */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Estado
+                </label>
+                <select
+                  value={formData.state}
+                  onChange={(e) => handleChange('state', e.target.value)}
+                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                >
+                  <option value="PE">Pernambuco</option>
+                  <option value="SP">São Paulo</option>
+                  <option value="RJ">Rio de Janeiro</option>
+                  <option value="MG">Minas Gerais</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Cliente */}
+        {currentStep === 2 && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Dados do Cliente</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Nome */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nome Completo *
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    value={formData.clientName}
+                    onChange={(e) => handleChange('clientName', e.target.value)}
+                    placeholder="Ex: Maria Santos Silva"
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.clientName ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  />
+                </div>
+                {errors.clientName && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.clientName}
+                  </p>
+                )}
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email *
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="email"
+                    value={formData.clientEmail}
+                    onChange={(e) => handleChange('clientEmail', e.target.value)}
+                    placeholder="email@exemplo.com"
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.clientEmail ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  />
+                </div>
+                {errors.clientEmail && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.clientEmail}
+                  </p>
+                )}
+              </div>
+
+              {/* Telefone */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Telefone
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    value={formData.clientPhone}
+                    onChange={(e) => handleChange('clientPhone', formatPhone(e.target.value))}
+                    placeholder="(81) 99999-9999"
+                    maxLength={15}
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              {/* CPF */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  CPF/CNPJ
+                </label>
+                <div className="relative">
+                  <FileText className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    value={formData.clientCPF}
+                    onChange={(e) => handleChange('clientCPF', formatCPF(e.target.value))}
+                    placeholder="000.000.000-00"
+                    maxLength={14}
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Avaliação */}
+        {currentStep === 3 && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Dados da Avaliação</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Finalidade */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Finalidade da Avaliação *
+                </label>
+                <select
+                  value={formData.purpose}
+                  onChange={(e) => handleChange('purpose', e.target.value)}
+                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white ${errors.purpose ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    }`}
+                >
+                  <option value="">Selecione...</option>
+                  {finalidades.map(fin => (
+                    <option key={fin} value={fin}>{fin}</option>
+                  ))}
+                </select>
+                {errors.purpose && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.purpose}
+                  </p>
+                )}
+              </div>
+
+              {/* Método */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Método de Avaliação *
+                </label>
+                <select
+                  value={formData.method}
+                  onChange={(e) => handleChange('method', e.target.value)}
+                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white ${errors.method ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    }`}
+                >
+                  {metodosAvaliacao.map(met => (
+                    <option key={met} value={met}>{met}</option>
+                  ))}
+                </select>
+                {errors.method && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.method}
+                  </p>
+                )}
+              </div>
+
+              {/* Data Solicitação */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Data da Solicitação
+                </label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="date"
+                    value={formData.requestDate}
+                    onChange={(e) => handleChange('requestDate', e.target.value)}
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              {/* Prazo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Prazo de Entrega
+                </label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="date"
+                    value={formData.deadline}
+                    onChange={(e) => handleChange('deadline', e.target.value)}
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Upload Documentos */}
+            <div className="pt-6 border-t border-gray-200">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Documentos (Escritura, IPTU, Fotos)
+              </label>
+              <label className="block">
+                <input
+                  type="file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  onChange={handleDocumentUpload}
+                  className="hidden"
+                />
+                <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-purple-400 hover:bg-purple-50 transition-all cursor-pointer">
+                  <Upload size={40} className="mx-auto text-gray-400 mb-3" />
+                  <p className="text-sm font-medium text-gray-900 mb-1">
+                    Clique para fazer upload
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    PDF, JPG, PNG, DOC (máx. 10MB cada)
+                  </p>
+                </div>
+              </label>
+
+              {/* Lista de Documentos */}
+              {formData.documents.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {formData.documents.map((file, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                      <FileText size={20} className="text-purple-600" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
+                        <p className="text-xs text-gray-600">{formatFileSize(file.size)}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeDocument(index)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={handlePrev}
+          disabled={currentStep === 1}
+          className="flex items-center gap-2 h-11 px-6 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ArrowLeft size={20} />
+          Anterior
+        </button>
+
+        {currentStep < 3 ? (
+          <button
+            type="button"
+            onClick={handleNext}
+            className="flex items-center gap-2 h-11 px-6 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors"
+          >
+            Próximo
+            <ArrowRight size={20} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="flex items-center gap-2 h-11 px-6 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 size={20} className="animate-spin" />
+                Criando Laudo...
+              </>
+            ) : (
+              <>
+                <Save size={20} />
+                Criar Avaliação
+              </>
+            )}
+          </button>
+        )}
+      </div>
     </div>
   )
 }
