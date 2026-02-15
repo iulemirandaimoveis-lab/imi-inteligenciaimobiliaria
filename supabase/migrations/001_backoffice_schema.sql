@@ -82,6 +82,14 @@ CREATE TABLE IF NOT EXISTS developments (
 
 -- Mágica: Adiciona colunas se faltarem na tabela existente
 DO $$ BEGIN
+    -- Remove obrigatoriedade de coluna legada 'developer' se existir (causa do erro 23502)
+    BEGIN
+        ALTER TABLE developments ALTER COLUMN developer DROP NOT NULL;
+    EXCEPTION
+        WHEN undefined_column THEN null;
+    END;
+
+    -- Adiciona colunas novas
     ALTER TABLE developments ADD COLUMN IF NOT EXISTS total_area DECIMAL(10, 2);
     ALTER TABLE developments ADD COLUMN IF NOT EXISTS private_area DECIMAL(10, 2);
     ALTER TABLE developments ADD COLUMN IF NOT EXISTS suites INTEGER;
