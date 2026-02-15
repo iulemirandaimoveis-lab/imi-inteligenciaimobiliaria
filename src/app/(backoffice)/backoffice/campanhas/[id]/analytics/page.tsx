@@ -1,395 +1,476 @@
 'use client'
 
 import { useState } from 'react'
-import { useParams } from 'next/navigation'
-import PageHeader from '../../../../components/PageHeader'
-import { Card, CardHeader, CardBody } from '@/components/ui/Card'
-import { KPICard, Badge } from '@/components/ui/Badge'
-import { Select } from '@/components/ui/Select'
-import { CardSkeleton } from '@/components/ui/EmptyState'
+import { useRouter, useParams } from 'next/navigation'
 import {
+  ArrowLeft,
   TrendingUp,
-  Eye,
-  MousePointer,
-  Users,
+  TrendingDown,
   DollarSign,
+  Users,
+  MousePointerClick,
+  Eye,
   Target,
-  Clock,
-  CheckCircle,
+  Calendar,
+  Download,
+  Share2,
+  Play,
+  Pause,
+  Edit,
+  BarChart3,
+  PieChart,
+  Activity,
+  Zap,
 } from 'lucide-react'
 
-// Mock data (depois virá do Supabase)
-const mockCampaign = {
-  id: '1',
-  name: 'Lançamento Reserva Atlantis',
-  type: 'instagram',
+// Mock data (seria carregado do Supabase)
+const mockCampaignData = {
+  id: 1,
+  name: 'Lançamento Reserva Atlantis - Instagram',
   status: 'active',
-  budget: 15000,
-  spent: 8750,
-  start_date: '2024-02-01',
-  end_date: '2024-02-29',
-}
+  channel: 'Instagram Ads',
+  startDate: '2026-02-01',
+  endDate: '2026-02-28',
+  budget: 5000,
+  spent: 3250,
 
-const mockAnalytics = {
-  impressions: 245000,
-  clicks: 3420,
-  ctr: 1.4, // %
-  leads: 87,
-  conversions: 12,
-  conversion_rate: 13.79, // %
-  cpl: 100.57, // custo por lead
-  cpc: 2.56, // custo por click
-  cpm: 35.71, // custo por mil impressões
-  roi: 340, // %
-  revenue: 38500, // receita estimada
+  // Métricas
+  impressions: 125000,
+  clicks: 3750,
+  leads: 52,
+  conversions: 8,
 
-  // By device
-  deviceBreakdown: [
-    { device: 'Mobile', impressions: 171500, clicks: 2394, leads: 61, percentage: 70 },
-    { device: 'Desktop', impressions: 58800, clicks: 854, leads: 22, percentage: 24 },
-    { device: 'Tablet', impressions: 14700, clicks: 172, leads: 4, percentage: 6 },
+  // Calculados
+  ctr: 3.0, // (clicks / impressions) * 100
+  cpl: 62.5, // spent / leads
+  cpc: 0.87, // spent / clicks
+  conversionRate: 15.4, // (conversions / leads) * 100
+  roi: 160, // ((revenue - spent) / spent) * 100
+
+  // Performance diária (últimos 7 dias)
+  dailyStats: [
+    { date: '09/02', impressions: 5200, clicks: 156, leads: 3, spent: 180 },
+    { date: '10/02', impressions: 6100, clicks: 183, leads: 4, spent: 210 },
+    { date: '11/02', impressions: 5800, clicks: 174, leads: 2, spent: 195 },
+    { date: '12/02', impressions: 6500, clicks: 195, leads: 5, spent: 225 },
+    { date: '13/02', impressions: 7200, clicks: 216, leads: 6, spent: 250 },
+    { date: '14/02', impressions: 6800, clicks: 204, leads: 4, spent: 230 },
+    { date: '15/02', impressions: 7100, clicks: 213, leads: 5, spent: 240 },
   ],
 
-  // By day
-  dailyMetrics: [
-    { date: '2024-02-08', impressions: 18200, clicks: 254, leads: 7, spent: 650 },
-    { date: '2024-02-09', impressions: 21500, clicks: 301, leads: 8, spent: 770 },
-    { date: '2024-02-10', impressions: 19800, clicks: 277, leads: 6, spent: 710 },
-    { date: '2024-02-11', impressions: 23400, clicks: 327, leads: 9, spent: 840 },
-    { date: '2024-02-12', impressions: 20100, clicks: 281, leads: 7, spent: 720 },
-    { date: '2024-02-13', impressions: 22600, clicks: 316, leads: 8, spent: 810 },
-    { date: '2024-02-14', impressions: 19900, clicks: 278, leads: 7, spent: 710 },
+  // Distribuição por dispositivo
+  deviceStats: [
+    { device: 'Mobile', percentage: 68, leads: 35 },
+    { device: 'Desktop', percentage: 28, leads: 15 },
+    { device: 'Tablet', percentage: 4, leads: 2 },
   ],
 
-  // Top performing ads
-  topAds: [
-    { id: '1', name: 'Carrossel Fachada', impressions: 48000, clicks: 890, ctr: 1.85 },
-    { id: '2', name: 'Video Tour Virtual', impressions: 42000, clicks: 756, ctr: 1.8 },
-    { id: '3', name: 'Stories Plantas', impressions: 38000, clicks: 608, ctr: 1.6 },
-  ],
-
-  // Demographics
-  ageBreakdown: [
-    { range: '18-24', percentage: 12, leads: 10 },
-    { range: '25-34', percentage: 38, leads: 33 },
-    { range: '35-44', percentage: 31, leads: 27 },
-    { range: '45-54', percentage: 14, leads: 12 },
-    { range: '55+', percentage: 5, leads: 5 },
+  // Top criativos
+  topCreatives: [
+    { id: 1, name: 'Fachada Noturna', impressions: 45000, clicks: 1350, ctr: 3.0 },
+    { id: 2, name: 'Área de Lazer', impressions: 38000, clicks: 1140, ctr: 3.0 },
+    { id: 3, name: 'Planta 3 Quartos', impressions: 42000, clicks: 1260, ctr: 3.0 },
   ],
 }
 
-export default function CampanhasAnalyticsPage() {
+export default function CampanhaAnalyticsPage() {
+  const router = useRouter()
   const params = useParams()
   const [timeRange, setTimeRange] = useState('7d')
 
-  const campaign = mockCampaign
-  const analytics = mockAnalytics
+  const campaign = mockCampaignData
+  const budgetUsed = (campaign.spent / campaign.budget) * 100
+  const daysRemaining = 13 // Calculado da endDate
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 0,
+    }).format(value)
+  }
+
+  const formatNumber = (value: number) => {
+    return new Intl.NumberFormat('pt-BR').format(value)
+  }
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Intelligence & Analytics"
-        subtitle={campaign.name}
-        breadcrumbs={[
-          { name: 'Dashboard', href: '/backoffice/backoffice/dashboard' },
-          { name: 'Campanhas', href: '/backoffice/backoffice/campanhas' },
-          { name: campaign.name },
-          { name: 'Analytics' },
-        ]}
-        action={
-          <div className="flex items-center gap-4">
-            <Select
-              className="w-48 bg-white"
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-              options={[
-                { value: '7d', label: 'Janela: 7 dias' },
-                { value: '30d', label: 'Janela: 30 dias' },
-                { value: 'all', label: 'Todo o Período' },
-              ]}
-            />
-            <Button variant="outline" icon={<TrendingUp size={18} />} className="bg-white">Relatório Full</Button>
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{campaign.name}</h1>
+            <div className="flex items-center gap-3 mt-2">
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium">
+                ● Ativa
+              </span>
+              <span className="text-sm text-gray-600">
+                {campaign.channel}
+              </span>
+              <span className="text-sm text-gray-600">
+                {campaign.startDate} - {campaign.endDate}
+              </span>
+            </div>
           </div>
-        }
-      />
+        </div>
 
-      {/* High-Level KPIs Architecture */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard
-          label="Impressões"
-          value={analytics.impressions.toLocaleString('pt-BR')}
-          icon={<Eye />}
-          variant="primary"
-          className="shadow-elevated"
-        />
-
-        <KPICard
-          label="Interação (Clicks)"
-          value={analytics.clicks.toLocaleString('pt-BR')}
-          change={{ value: analytics.ctr, label: `CTR: ${analytics.ctr}%`, trend: 'up' }}
-          icon={<MousePointer />}
-          variant="info"
-          className="shadow-elevated"
-        />
-
-        <KPICard
-          label="Leads Retidos"
-          value={analytics.leads.toString()}
-          change={{ value: analytics.conversion_rate, label: `Conv: ${analytics.conversion_rate}%`, trend: 'up' }}
-          icon={<Users />}
-          variant="success"
-          className="shadow-elevated"
-        />
-
-        <KPICard
-          label="ROI Realizado"
-          value={`${analytics.roi}%`}
-          change={{ value: 12, label: 'vs. previstos', trend: 'up' }}
-          icon={<TrendingUp />}
-          variant="success"
-          className="bg-imi-950 border-imi-800 text-white shadow-glow"
-        />
+        <div className="flex items-center gap-3">
+          <button className="h-10 px-4 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 flex items-center gap-2">
+            <Download size={18} />
+            Exportar
+          </button>
+          <button className="h-10 px-4 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 flex items-center gap-2">
+            <Share2 size={18} />
+            Compartilhar
+          </button>
+          <button
+            onClick={() => router.push(`/backoffice/campanhas/${params.id}/editar`)}
+            className="h-10 px-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 flex items-center gap-2"
+          >
+            <Edit size={18} />
+            Editar
+          </button>
+        </div>
       </div>
 
-      {/* Financial Unit Economics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-imi-50 bg-imi-50/20">
-          <CardBody className="flex flex-col items-center py-6">
-            <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">CPL (Custo/Lead)</p>
-            <p className="text-2xl font-black text-imi-900 border-b-2 border-accent-500 pb-1">
-              R$ {analytics.cpl.toFixed(2)}
-            </p>
-          </CardBody>
-        </Card>
-
-        <Card className="border-imi-50 bg-imi-50/20">
-          <CardBody className="flex flex-col items-center py-6">
-            <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">CPC (Custo/Click)</p>
-            <p className="text-2xl font-black text-imi-900">
-              R$ {analytics.cpc.toFixed(2)}
-            </p>
-          </CardBody>
-        </Card>
-
-        <Card className="border-imi-50 bg-imi-50/20">
-          <CardBody className="flex flex-col items-center py-6">
-            <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-1">CPM (Mil Impr.)</p>
-            <p className="text-2xl font-black text-imi-900">
-              R$ {analytics.cpm.toFixed(2)}
-            </p>
-          </CardBody>
-        </Card>
-
-        <Card className="bg-accent-500 border-accent-600 shadow-glow">
-          <CardBody className="flex flex-col items-center py-6 text-white">
-            <p className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1">Receita Estimada</p>
-            <p className="text-2xl font-black">
-              R$ {(analytics.revenue / 1000).toFixed(0)}k
-            </p>
-          </CardBody>
-        </Card>
-      </div>
-
-      {/* Strategic Insights Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Device Distribution Strategy */}
-        <Card className="shadow-elevated border-imi-50">
-          <CardHeader title="Segmentação por Dispositivo" subtitle="Otimização de criativos baseada em hardware" />
-          <CardBody className="p-8">
-            <div className="space-y-8">
-              {analytics.deviceBreakdown.map((item) => (
-                <div key={item.device} className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-imi-50 flex items-center justify-center text-imi-400">
-                        {item.device === 'Mobile' ? <CheckCircle size={18} /> : <Eye size={18} />}
-                      </div>
-                      <span className="text-sm font-black text-imi-900 uppercase tracking-wider">
-                        {item.device}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-xs font-black text-accent-600">{item.percentage}%</span>
-                      <Badge variant="primary" size="sm" dot>{item.leads} leads</Badge>
-                    </div>
-                  </div>
-                  <div className="h-3 bg-imi-50 rounded-full overflow-hidden border border-imi-100">
-                    <div
-                      className="h-full bg-accent-500 transition-all duration-1000 ease-smooth rounded-full shadow-glow"
-                      style={{ width: `${item.percentage}%` }}
-                    />
-                  </div>
-                  <div className="flex items-center gap-6 text-[10px] font-bold text-imi-400 uppercase tracking-widest ml-14">
-                    <span>{item.impressions.toLocaleString()} Impr.</span>
-                    <span className="w-1 h-1 bg-imi-200 rounded-full"></span>
-                    <span>{item.clicks} Clicks</span>
-                  </div>
-                </div>
-              ))}
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Investimento */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+              <DollarSign size={20} className="text-blue-600" />
             </div>
-          </CardBody>
-        </Card>
-
-        {/* Audience Age Profiling */}
-        <Card className="shadow-elevated border-imi-50">
-          <CardHeader title="Profiling por Faixa Etária" subtitle="Distribuição demográfica das conversões" />
-          <CardBody className="p-8">
-            <div className="space-y-6">
-              {analytics.ageBreakdown.map((item) => (
-                <div key={item.range} className="flex items-center gap-6">
-                  <div className="w-16 text-xs font-black text-imi-400 uppercase tracking-tighter">
-                    {item.range} anos
-                  </div>
-                  <div className="flex-1">
-                    <div className="h-10 bg-imi-50 rounded-2xl overflow-hidden relative border border-imi-100">
-                      <div
-                        className="h-full bg-imi-950 transition-all duration-1000 ease-smooth flex items-center justify-end pr-4"
-                        style={{ width: `${item.percentage}%` }}
-                      >
-                        <span className="text-[10px] font-black text-accent-400">
-                          {item.percentage}%
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-20 text-right">
-                    <Badge variant="neutral" size="sm">{item.leads} leads</Badge>
-                  </div>
-                </div>
-              ))}
+            <div className="text-right">
+              <p className="text-xs text-gray-600">Orçamento</p>
+              <p className="text-sm font-medium text-gray-500">{formatCurrency(campaign.budget)}</p>
             </div>
-          </CardBody>
-        </Card>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 mb-1">
+            {formatCurrency(campaign.spent)}
+          </p>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-blue-500 transition-all"
+                style={{ width: `${budgetUsed}%` }}
+              />
+            </div>
+            <span className="text-xs font-medium text-gray-600">{budgetUsed.toFixed(0)}%</span>
+          </div>
+        </div>
+
+        {/* Leads */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+              <Users size={20} className="text-green-600" />
+            </div>
+            <div className="flex items-center gap-1 text-green-600">
+              <TrendingUp size={16} />
+              <span className="text-sm font-medium">+12%</span>
+            </div>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 mb-1">
+            {campaign.leads}
+          </p>
+          <p className="text-sm text-gray-600">
+            Leads Gerados • CPL {formatCurrency(campaign.cpl)}
+          </p>
+        </div>
+
+        {/* CTR */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+              <MousePointerClick size={20} className="text-purple-600" />
+            </div>
+            <div className="flex items-center gap-1 text-green-600">
+              <TrendingUp size={16} />
+              <span className="text-sm font-medium">+8%</span>
+            </div>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 mb-1">
+            {campaign.ctr.toFixed(1)}%
+          </p>
+          <p className="text-sm text-gray-600">
+            CTR • {formatNumber(campaign.clicks)} cliques
+          </p>
+        </div>
+
+        {/* ROI */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+              <TrendingUp size={20} className="text-orange-600" />
+            </div>
+            <div className="flex items-center gap-1 text-green-600">
+              <TrendingUp size={16} />
+              <span className="text-sm font-medium">+24%</span>
+            </div>
+          </div>
+          <p className="text-2xl font-bold text-gray-900 mb-1">
+            {campaign.roi}%
+          </p>
+          <p className="text-sm text-gray-600">
+            ROI • {campaign.conversions} conversões
+          </p>
+        </div>
       </div>
 
-      {/* Daily Performance Timeline */}
-      <Card className="shadow-elevated border-imi-50">
-        <CardHeader title="Timeline de Performance Diária" subtitle="Monitoramento granular da última semana" />
-        <CardBody className="p-8">
-          <div className="space-y-6">
-            {analytics.dailyMetrics.map((day) => {
-              const maxImpressions = Math.max(
-                ...analytics.dailyMetrics.map((d) => d.impressions)
-              )
-              const percentage = (day.impressions / maxImpressions) * 100
-              const date = new Date(day.date)
-              const dayName = date.toLocaleDateString('pt-BR', { weekday: 'short' })
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Performance Diária */}
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Performance Diária</h3>
+              <p className="text-sm text-gray-600 mt-1">Últimos 7 dias</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setTimeRange('7d')}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === '7d' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+              >
+                7 dias
+              </button>
+              <button
+                onClick={() => setTimeRange('30d')}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === '30d' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+              >
+                30 dias
+              </button>
+            </div>
+          </div>
+
+          {/* Simple Bar Chart */}
+          <div className="space-y-3">
+            {campaign.dailyStats.map((stat, index) => {
+              const maxLeads = Math.max(...campaign.dailyStats.map(s => s.leads))
+              const width = (stat.leads / maxLeads) * 100
 
               return (
-                <div key={day.date} className="group">
-                  <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="w-24 text-center md:text-left shrink-0">
-                      <div className="text-xs font-black uppercase text-imi-900 group-hover:text-accent-600 transition-colors">{dayName}</div>
-                      <div className="text-[10px] font-bold text-imi-400">
-                        {date.toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                        })}
-                      </div>
-                    </div>
-                    <div className="flex-1 w-full">
-                      <div className="h-12 bg-imi-50 rounded-2xl overflow-hidden relative border border-imi-100/50">
+                <div key={index} className="flex items-center gap-4">
+                  <span className="text-xs font-medium text-gray-600 w-12">{stat.date}</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-8 bg-gray-100 rounded-lg overflow-hidden">
                         <div
-                          className="h-full bg-accent-500/10 border-r-4 border-accent-500 transition-all duration-1000 ease-smooth"
-                          style={{ width: `${percentage}%` }}
-                        />
-                        <div className="absolute inset-y-0 left-4 flex items-center">
-                          <span className="text-[10px] font-black text-imi-400 uppercase tracking-widest">
-                            {(day.impressions / 1000).toFixed(1)}k Impr.
-                          </span>
+                          className="h-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-end pr-2"
+                          style={{ width: `${width}%` }}
+                        >
+                          {width > 20 && (
+                            <span className="text-xs font-bold text-white">{stat.leads}</span>
+                          )}
                         </div>
                       </div>
+                      {width <= 20 && (
+                        <span className="text-xs font-bold text-gray-900 w-6">{stat.leads}</span>
+                      )}
                     </div>
-                    <div className="grid grid-cols-2 gap-8 text-right w-full md:w-64">
-                      <div>
-                        <p className="text-[9px] font-black text-imi-300 uppercase tracking-widest mb-1">Leads</p>
-                        <p className="text-lg font-black text-accent-700">{day.leads}</p>
-                      </div>
-                      <div>
-                        <p className="text-[9px] font-black text-imi-300 uppercase tracking-widest mb-1">Investido</p>
-                        <p className="text-lg font-black text-imi-900 border-b-2 border-imi-100">R$ {day.spent}</p>
-                      </div>
-                    </div>
+                  </div>
+                  <div className="text-right w-24">
+                    <p className="text-xs font-medium text-gray-900">{formatCurrency(stat.spent)}</p>
+                    <p className="text-xs text-gray-500">{formatNumber(stat.clicks)} cliques</p>
                   </div>
                 </div>
               )
             })}
           </div>
-        </CardBody>
-      </Card>
 
-      {/* Top Assets Intelligence */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="shadow-elevated border-imi-50 h-full">
-            <CardHeader title="Ranking de Criativos" icon={<Target size={18} className="text-accent-500" />} />
-            <CardBody className="p-8">
-              <div className="space-y-4">
-                {analytics.topAds.map((ad, index) => (
-                  <div
-                    key={ad.id}
-                    className="flex items-center gap-6 p-6 bg-imi-50/50 rounded-3xl border border-imi-100/30 hover:bg-white hover:border-accent-200 transition-all group"
-                  >
-                    <div className="w-12 h-12 rounded-2xl bg-imi-950 text-accent-500 flex items-center justify-center text-lg font-black flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-base font-black text-imi-900">{ad.name}</p>
-                      <div className="flex items-center gap-4 mt-2">
-                        <span className="text-[10px] font-bold text-imi-400 uppercase tracking-widest">{ad.impressions.toLocaleString()} Impr.</span>
-                        <span className="w-1 h-1 bg-imi-200 rounded-full"></span>
-                        <span className="text-[10px] font-bold text-imi-400 uppercase tracking-widest">{ad.clicks} Clicks</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xl font-black text-green-600">{ad.ctr}%</p>
-                      <p className="text-[9px] font-black text-imi-400 uppercase tracking-widest">CTR Estratégico</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardBody>
-          </Card>
+          {/* Legend */}
+          <div className="flex items-center gap-6 mt-6 pt-6 border-t border-gray-100">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500" />
+              <span className="text-xs text-gray-600">Leads por dia</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-gray-300" />
+              <span className="text-xs text-gray-600">Investimento diário</span>
+            </div>
+          </div>
         </div>
 
-        {/* Financial Unit Summary */}
-        <Card className="bg-imi-950 border-imi-800 text-white shadow-glow h-full">
-          <CardHeader title="Unit Economics" />
-          <CardBody className="p-8">
-            <div className="space-y-10">
-              <div className="text-center p-8 bg-white/5 rounded-3xl border border-white/10">
-                <p className="text-[10px] font-bold text-imi-400 uppercase tracking-[0.2em] mb-3">Capital Alocado</p>
-                <p className="text-4xl font-black text-white mb-2">
-                  R$ {campaign.spent.toLocaleString('pt-BR')}
-                </p>
-                <Badge variant="primary" size="sm" className="bg-white/10 text-white border-white/20">
-                  {((campaign.spent / campaign.budget) * 100).toFixed(0)}% do Budget
-                </Badge>
-              </div>
+        {/* Device Distribution */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-gray-900">Por Dispositivo</h3>
+            <p className="text-sm text-gray-600 mt-1">Distribuição de leads</p>
+          </div>
 
-              <div className="space-y-6">
-                <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-imi-400">Ticket Médio Estimado</span>
-                  <span className="text-sm font-black text-green-400">R$ 450k</span>
+          {/* Donut Chart Simulation */}
+          <div className="flex items-center justify-center mb-6">
+            <div className="relative w-40 h-40">
+              <svg viewBox="0 0 100 100" className="transform -rotate-90">
+                {/* Mobile - 68% */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="none"
+                  stroke="#3b82f6"
+                  strokeWidth="20"
+                  strokeDasharray="251.2"
+                  strokeDashoffset="0"
+                />
+                {/* Desktop - 28% */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="none"
+                  stroke="#8b5cf6"
+                  strokeWidth="20"
+                  strokeDasharray="70.3 180.9"
+                  strokeDashoffset="-170.8"
+                />
+                {/* Tablet - 4% */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="none"
+                  stroke="#ec4899"
+                  strokeWidth="20"
+                  strokeDasharray="10 241.2"
+                  strokeDashoffset="-241.1"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-gray-900">{campaign.leads}</p>
+                  <p className="text-xs text-gray-600">Total</p>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-imi-400">ROAS Identificado</span>
-                  <span className="text-sm font-black text-accent-400">{((analytics.revenue / campaign.spent)).toFixed(2)}x</span>
-                </div>
-              </div>
-
-              <div className="pt-6 border-t border-white/10">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-[10px] font-bold text-imi-400 uppercase tracking-widest">Profit Líquido (Simulação)</p>
-                  <p className="text-xs font-bold text-green-400">+{((analytics.revenue - campaign.spent) / analytics.revenue * 100).toFixed(1)}% mrg.</p>
-                </div>
-                <p className="text-3xl font-black text-accent-500">
-                  R$ {((analytics.revenue - campaign.spent) / 1000).toFixed(1)}k
-                </p>
               </div>
             </div>
-          </CardBody>
-        </Card>
+          </div>
+
+          {/* Stats */}
+          <div className="space-y-3">
+            {campaign.deviceStats.map((device, index) => {
+              const colors = ['bg-blue-500', 'bg-purple-500', 'bg-pink-500']
+              return (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${colors[index]}`} />
+                    <span className="text-sm font-medium text-gray-900">{device.device}</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">{device.percentage}%</p>
+                    <p className="text-xs text-gray-600">{device.leads} leads</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Top Criativos */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Top Criativos</h3>
+              <p className="text-sm text-gray-600 mt-1">Melhor performance</p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+              <BarChart3 size={20} className="text-purple-600" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {campaign.topCreatives.map((creative, index) => (
+              <div key={creative.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-sm font-bold text-gray-900">
+                  {index + 1}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900">{creative.name}</p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {formatNumber(creative.impressions)} impressões • {formatNumber(creative.clicks)} cliques
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-gray-900">{creative.ctr.toFixed(1)}%</p>
+                  <p className="text-xs text-gray-600">CTR</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Métricas Adicionais */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-gray-900">Métricas Adicionais</h3>
+              <p className="text-sm text-gray-600 mt-1">Performance geral</p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+              <Activity size={20} className="text-green-600" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {/* Impressões */}
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <Eye size={16} className="text-gray-600" />
+                <p className="text-xs font-medium text-gray-600">Impressões</p>
+              </div>
+              <p className="text-xl font-bold text-gray-900">{formatNumber(campaign.impressions)}</p>
+            </div>
+
+            {/* CPC */}
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <MousePointerClick size={16} className="text-gray-600" />
+                <p className="text-xs font-medium text-gray-600">CPC Médio</p>
+              </div>
+              <p className="text-xl font-bold text-gray-900">{formatCurrency(campaign.cpc)}</p>
+            </div>
+
+            {/* Taxa de Conversão */}
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <Target size={16} className="text-gray-600" />
+                <p className="text-xs font-medium text-gray-600">Conversão</p>
+              </div>
+              <p className="text-xl font-bold text-gray-900">{campaign.conversionRate.toFixed(1)}%</p>
+            </div>
+
+            {/* Dias Restantes */}
+            <div className="p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <Calendar size={16} className="text-gray-600" />
+                <p className="text-xs font-medium text-gray-600">Dias Restantes</p>
+              </div>
+              <p className="text-xl font-bold text-gray-900">{daysRemaining}</p>
+            </div>
+          </div>
+
+          {/* Projeção */}
+          <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
+            <div className="flex items-center gap-2 mb-2">
+              <Zap size={16} className="text-blue-600" />
+              <p className="text-xs font-bold text-blue-900">Projeção Final</p>
+            </div>
+            <p className="text-sm text-gray-700">
+              Com o ritmo atual, você deve atingir <span className="font-bold text-blue-700">~85 leads</span> até o fim da campanha.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )
