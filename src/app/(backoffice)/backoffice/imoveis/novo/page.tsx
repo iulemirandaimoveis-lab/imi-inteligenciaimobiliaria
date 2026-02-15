@@ -273,8 +273,8 @@ export default function NovoImovelPage() {
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isCompleted ? 'bg-green-500 text-white' :
-                      isActive ? 'bg-accent-500 text-white' :
-                        'bg-gray-100 text-gray-400'
+                    isActive ? 'bg-accent-500 text-white' :
+                      'bg-gray-100 text-gray-400'
                     }`}>
                     {isCompleted ? <Check size={24} /> : <StepIcon size={24} />}
                   </div>
@@ -417,437 +417,437 @@ export default function NovoImovelPage() {
                       }`}
                   >
                     <option value="">Selecione...</option>
-                    {construtoras.map(const => (
-                    <option key={const} value={const}>{const}</option>
+                    {construtoras.map(construtora => (
+                      <option key={construtora} value={construtora}>{construtora}</option>
                     ))}
-                </select>
-              </div>
-              {errors.developer && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle size={14} />
-                  {errors.developer}
-                </p>
-              )}
-            </div>
-          </div>
-          </div>
-        )}
-
-      {/* Step 2: Características */}
-      {currentStep === 2 && (
-        <div className="space-y-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Características do Imóvel</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Área */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Área Privativa (m²) *
-              </label>
-              <div className="relative">
-                <Ruler className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="number"
-                  value={formData.area}
-                  onChange={(e) => handleChange('area', e.target.value)}
-                  placeholder="95"
-                  className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.area ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
-                />
-              </div>
-              {errors.area && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle size={14} />
-                  {errors.area}
-                </p>
-              )}
-            </div>
-
-            {/* Quartos */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Quartos *
-              </label>
-              <div className="relative">
-                <BedDouble className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="number"
-                  value={formData.bedrooms}
-                  onChange={(e) => handleChange('bedrooms', e.target.value)}
-                  placeholder="3"
-                  className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.bedrooms ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
-                />
-              </div>
-              {errors.bedrooms && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle size={14} />
-                  {errors.bedrooms}
-                </p>
-              )}
-            </div>
-
-            {/* Banheiros */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Banheiros *
-              </label>
-              <div className="relative">
-                <Bath className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="number"
-                  value={formData.bathrooms}
-                  onChange={(e) => handleChange('bathrooms', e.target.value)}
-                  placeholder="2"
-                  className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.bathrooms ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
-                />
-              </div>
-              {errors.bathrooms && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle size={14} />
-                  {errors.bathrooms}
-                </p>
-              )}
-            </div>
-
-            {/* Vagas */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Vagas de Garagem
-              </label>
-              <div className="relative">
-                <Car className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="number"
-                  value={formData.parking}
-                  onChange={(e) => handleChange('parking', e.target.value)}
-                  placeholder="2"
-                  className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
-                />
-              </div>
-            </div>
-
-            {/* Andar */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Andar
-              </label>
-              <div className="relative">
-                <Maximize className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  value={formData.floor}
-                  onChange={(e) => handleChange('floor', e.target.value)}
-                  placeholder="8º ao 24º"
-                  className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Features */}
-          <div className="pt-6 border-t border-gray-200">
-            <label className="block text-sm font-medium text-gray-700 mb-4">
-              Características do Condomínio
-            </label>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {featuresOptions.map(feature => (
-                <button
-                  key={feature}
-                  type="button"
-                  onClick={() => toggleFeature(feature)}
-                  className={`h-10 px-4 rounded-lg text-sm font-medium transition-all ${formData.features.includes(feature)
-                      ? 'bg-accent-500 text-white'
-                      : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
-                    }`}
-                >
-                  {feature}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 mt-3">
-              {formData.features.length} característica(s) selecionada(s)
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Step 3: Valores */}
-      {currentStep === 3 && (
-        <div className="space-y-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Valores e Disponibilidade</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Preço Mínimo */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Preço Mínimo *
-              </label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="number"
-                  value={formData.priceMin}
-                  onChange={(e) => handleChange('priceMin', e.target.value)}
-                  placeholder="450000"
-                  className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.priceMin ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
-                />
-              </div>
-              {formData.priceMin && (
-                <p className="text-xs text-gray-600 mt-1">
-                  {formatCurrency(formData.priceMin)}
-                </p>
-              )}
-              {errors.priceMin && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle size={14} />
-                  {errors.priceMin}
-                </p>
-              )}
-            </div>
-
-            {/* Preço Máximo */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Preço Máximo *
-              </label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="number"
-                  value={formData.priceMax}
-                  onChange={(e) => handleChange('priceMax', e.target.value)}
-                  placeholder="680000"
-                  className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.priceMax ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
-                />
-              </div>
-              {formData.priceMax && (
-                <p className="text-xs text-gray-600 mt-1">
-                  {formatCurrency(formData.priceMax)}
-                </p>
-              )}
-              {errors.priceMax && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle size={14} />
-                  {errors.priceMax}
-                </p>
-              )}
-            </div>
-
-            {/* Preço/m² */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Preço por m²
-              </label>
-              <input
-                type="number"
-                value={formData.pricePerSqm}
-                onChange={(e) => handleChange('pricePerSqm', e.target.value)}
-                placeholder="7200"
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
-              />
-              {formData.pricePerSqm && (
-                <p className="text-xs text-gray-600 mt-1">
-                  {formatCurrency(formData.pricePerSqm)}/m²
-                </p>
-              )}
-            </div>
-
-            {/* Data de Entrega */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Previsão de Entrega
-              </label>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="month"
-                  value={formData.deliveryDate}
-                  onChange={(e) => handleChange('deliveryDate', e.target.value)}
-                  className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
-                />
-              </div>
-            </div>
-
-            {/* Total de Unidades */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Total de Unidades *
-              </label>
-              <input
-                type="number"
-                value={formData.totalUnits}
-                onChange={(e) => handleChange('totalUnits', e.target.value)}
-                placeholder="120"
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.totalUnits ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                  }`}
-              />
-              {errors.totalUnits && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle size={14} />
-                  {errors.totalUnits}
-                </p>
-              )}
-            </div>
-
-            {/* Unidades Disponíveis */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Unidades Disponíveis
-              </label>
-              <input
-                type="number"
-                value={formData.availableUnits}
-                onChange={(e) => handleChange('availableUnits', e.target.value)}
-                placeholder="45"
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Step 4: Mídia */}
-      {currentStep === 4 && (
-        <div className="space-y-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Imagens e Logo</h2>
-
-          {/* Upload Imagens */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Fotos do Empreendimento
-            </label>
-            <label className="block">
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-              <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-accent-400 hover:bg-accent-50 transition-all cursor-pointer">
-                <Upload size={40} className="mx-auto text-gray-400 mb-3" />
-                <p className="text-sm font-medium text-gray-900 mb-1">
-                  Clique para fazer upload
-                </p>
-                <p className="text-xs text-gray-600">
-                  PNG, JPG até 10MB (mínimo 5 fotos recomendado)
-                </p>
-              </div>
-            </label>
-
-            {/* Preview Imagens */}
-            {formData.images.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                {formData.images.map((file, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={URL.createObjectURL(file)}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-xl"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Upload Logo */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Logo da Construtora
-            </label>
-            <label className="block">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleLogoUpload}
-                className="hidden"
-              />
-              <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-accent-400 hover:bg-accent-50 transition-all cursor-pointer">
-                {formData.logo ? (
-                  <div className="flex items-center justify-center gap-4">
-                    <img
-                      src={URL.createObjectURL(formData.logo)}
-                      alt="Logo preview"
-                      className="h-16 object-contain"
-                    />
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        handleChange('logo', null)
-                      }}
-                      className="text-sm text-red-600 hover:text-red-700"
-                    >
-                      Remover
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <ImageIcon size={32} className="mx-auto text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600">Clique para fazer upload do logo</p>
-                  </>
+                  </select>
+                </div>
+                {errors.developer && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.developer}
+                  </p>
                 )}
               </div>
-            </label>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-
-      {/* Navigation */ }
-  <div className="flex items-center justify-between">
-    <button
-      type="button"
-      onClick={handlePrev}
-      disabled={currentStep === 1}
-      className="flex items-center gap-2 h-11 px-6 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      <ArrowLeft size={20} />
-      Anterior
-    </button>
-
-    {currentStep < 4 ? (
-      <button
-        type="button"
-        onClick={handleNext}
-        className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
-      >
-        Próximo
-        <ArrowRight size={20} />
-      </button>
-    ) : (
-      <button
-        type="button"
-        onClick={handleSubmit}
-        disabled={isSubmitting}
-        className="flex items-center gap-2 h-11 px-6 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? (
-          <>
-            <Loader2 size={20} className="animate-spin" />
-            Publicando...
-          </>
-        ) : (
-          <>
-            <Save size={20} />
-            Publicar Empreendimento
-          </>
         )}
-      </button>
-    )}
-  </div>
+
+        {/* Step 2: Características */}
+        {currentStep === 2 && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Características do Imóvel</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Área */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Área Privativa (m²) *
+                </label>
+                <div className="relative">
+                  <Ruler className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="number"
+                    value={formData.area}
+                    onChange={(e) => handleChange('area', e.target.value)}
+                    placeholder="95"
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.area ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  />
+                </div>
+                {errors.area && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.area}
+                  </p>
+                )}
+              </div>
+
+              {/* Quartos */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Quartos *
+                </label>
+                <div className="relative">
+                  <BedDouble className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="number"
+                    value={formData.bedrooms}
+                    onChange={(e) => handleChange('bedrooms', e.target.value)}
+                    placeholder="3"
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.bedrooms ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  />
+                </div>
+                {errors.bedrooms && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.bedrooms}
+                  </p>
+                )}
+              </div>
+
+              {/* Banheiros */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Banheiros *
+                </label>
+                <div className="relative">
+                  <Bath className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="number"
+                    value={formData.bathrooms}
+                    onChange={(e) => handleChange('bathrooms', e.target.value)}
+                    placeholder="2"
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.bathrooms ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  />
+                </div>
+                {errors.bathrooms && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.bathrooms}
+                  </p>
+                )}
+              </div>
+
+              {/* Vagas */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Vagas de Garagem
+                </label>
+                <div className="relative">
+                  <Car className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="number"
+                    value={formData.parking}
+                    onChange={(e) => handleChange('parking', e.target.value)}
+                    placeholder="2"
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  />
+                </div>
+              </div>
+
+              {/* Andar */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Andar
+                </label>
+                <div className="relative">
+                  <Maximize className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    value={formData.floor}
+                    onChange={(e) => handleChange('floor', e.target.value)}
+                    placeholder="8º ao 24º"
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="pt-6 border-t border-gray-200">
+              <label className="block text-sm font-medium text-gray-700 mb-4">
+                Características do Condomínio
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {featuresOptions.map(feature => (
+                  <button
+                    key={feature}
+                    type="button"
+                    onClick={() => toggleFeature(feature)}
+                    className={`h-10 px-4 rounded-lg text-sm font-medium transition-all ${formData.features.includes(feature)
+                      ? 'bg-accent-500 text-white'
+                      : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+                      }`}
+                  >
+                    {feature}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-3">
+                {formData.features.length} característica(s) selecionada(s)
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Valores */}
+        {currentStep === 3 && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Valores e Disponibilidade</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Preço Mínimo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Preço Mínimo *
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="number"
+                    value={formData.priceMin}
+                    onChange={(e) => handleChange('priceMin', e.target.value)}
+                    placeholder="450000"
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.priceMin ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  />
+                </div>
+                {formData.priceMin && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    {formatCurrency(formData.priceMin)}
+                  </p>
+                )}
+                {errors.priceMin && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.priceMin}
+                  </p>
+                )}
+              </div>
+
+              {/* Preço Máximo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Preço Máximo *
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="number"
+                    value={formData.priceMax}
+                    onChange={(e) => handleChange('priceMax', e.target.value)}
+                    placeholder="680000"
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.priceMax ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                      }`}
+                  />
+                </div>
+                {formData.priceMax && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    {formatCurrency(formData.priceMax)}
+                  </p>
+                )}
+                {errors.priceMax && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.priceMax}
+                  </p>
+                )}
+              </div>
+
+              {/* Preço/m² */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Preço por m²
+                </label>
+                <input
+                  type="number"
+                  value={formData.pricePerSqm}
+                  onChange={(e) => handleChange('pricePerSqm', e.target.value)}
+                  placeholder="7200"
+                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                />
+                {formData.pricePerSqm && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    {formatCurrency(formData.pricePerSqm)}/m²
+                  </p>
+                )}
+              </div>
+
+              {/* Data de Entrega */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Previsão de Entrega
+                </label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="month"
+                    value={formData.deliveryDate}
+                    onChange={(e) => handleChange('deliveryDate', e.target.value)}
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  />
+                </div>
+              </div>
+
+              {/* Total de Unidades */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Total de Unidades *
+                </label>
+                <input
+                  type="number"
+                  value={formData.totalUnits}
+                  onChange={(e) => handleChange('totalUnits', e.target.value)}
+                  placeholder="120"
+                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.totalUnits ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    }`}
+                />
+                {errors.totalUnits && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                    <AlertCircle size={14} />
+                    {errors.totalUnits}
+                  </p>
+                )}
+              </div>
+
+              {/* Unidades Disponíveis */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Unidades Disponíveis
+                </label>
+                <input
+                  type="number"
+                  value={formData.availableUnits}
+                  onChange={(e) => handleChange('availableUnits', e.target.value)}
+                  placeholder="45"
+                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Mídia */}
+        {currentStep === 4 && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Imagens e Logo</h2>
+
+            {/* Upload Imagens */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Fotos do Empreendimento
+              </label>
+              <label className="block">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-accent-400 hover:bg-accent-50 transition-all cursor-pointer">
+                  <Upload size={40} className="mx-auto text-gray-400 mb-3" />
+                  <p className="text-sm font-medium text-gray-900 mb-1">
+                    Clique para fazer upload
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    PNG, JPG até 10MB (mínimo 5 fotos recomendado)
+                  </p>
+                </div>
+              </label>
+
+              {/* Preview Imagens */}
+              {formData.images.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                  {formData.images.map((file, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-xl"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Upload Logo */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Logo da Construtora
+              </label>
+              <label className="block">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                />
+                <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-accent-400 hover:bg-accent-50 transition-all cursor-pointer">
+                  {formData.logo ? (
+                    <div className="flex items-center justify-center gap-4">
+                      <img
+                        src={URL.createObjectURL(formData.logo)}
+                        alt="Logo preview"
+                        className="h-16 object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          handleChange('logo', null)
+                        }}
+                        className="text-sm text-red-600 hover:text-red-700"
+                      >
+                        Remover
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <ImageIcon size={32} className="mx-auto text-gray-400 mb-2" />
+                      <p className="text-sm text-gray-600">Clique para fazer upload do logo</p>
+                    </>
+                  )}
+                </div>
+              </label>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={handlePrev}
+          disabled={currentStep === 1}
+          className="flex items-center gap-2 h-11 px-6 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ArrowLeft size={20} />
+          Anterior
+        </button>
+
+        {currentStep < 4 ? (
+          <button
+            type="button"
+            onClick={handleNext}
+            className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
+          >
+            Próximo
+            <ArrowRight size={20} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="flex items-center gap-2 h-11 px-6 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 size={20} className="animate-spin" />
+                Publicando...
+              </>
+            ) : (
+              <>
+                <Save size={20} />
+                Publicar Empreendimento
+              </>
+            )}
+          </button>
+        )}
+      </div>
     </div >
   )
 }
