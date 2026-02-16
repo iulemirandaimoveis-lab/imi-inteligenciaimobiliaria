@@ -1,165 +1,171 @@
 'use client'
 
 import Link from 'next/link'
-import { Linkedin } from 'lucide-react'
+import { Mail, Phone, Linkedin } from 'lucide-react'
 
-interface FooterProps {
-    lang?: string
-    dict?: any
-}
-
-export default function Footer({ lang = 'pt', dict }: FooterProps) {
-    const labels = dict || {
-        tagline: 'Inteligência Imobiliária',
-        description: 'Decisões baseadas em dados, método e segurança.',
-        services_title: 'Serviços',
-        company_title: 'Empresa',
-        contact_title: 'Contato',
-        location: 'João Pessoa, PB',
-        rights: '© 2026 IMI Inteligência Imobiliária. Todos os direitos reservados.',
-        privacy: 'Privacidade',
-        terms: 'Termos',
-        nav_appraisals: 'Avaliações',
-        nav_properties: 'Imóveis',
-        nav_credit: 'Crédito',
-        nav_consulting: 'Consultoria',
-        nav_intelligence: 'Inteligência',
-        nav_about: 'Sobre',
-        nav_contact: 'Contato'
-    }
-
+export default function Footer({ lang = 'pt' }: { lang?: string }) {
     return (
-        <footer className="bg-imi-900 text-white">
-            <div className="container-custom py-12 md:py-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-                    <div>
-                        <h3 className="font-display text-2xl font-bold mb-4">IMI</h3>
-                        <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                            {labels.tagline}
-                        </p>
-                        <p className="text-slate-400 text-sm leading-relaxed">
-                            {labels.description}
-                        </p>
-                    </div>
+        <footer className="bg-[#1A1A1A] text-white">
+            <div className="max-w-7xl mx-auto px-6 py-16">
+                {/* Top Section */}
+                <div className="mb-12">
+                    <h2 className="text-2xl font-bold mb-4">
+                        IMI – Inteligência Imobiliária
+                    </h2>
+                    <p className="text-gray-400 max-w-2xl">
+                        Decisões imobiliárias baseadas em inteligência, método e segurança.
+                    </p>
+                </div>
 
+                {/* Contact Card */}
+                <div className="mb-12 border-l-4 border-yellow-600 pl-6">
+                    <p className="font-bold text-lg mb-2">Iule Miranda</p>
+                    <p className="text-yellow-600 font-medium mb-6">
+                        CRECI 17933 | CNAI 53290
+                    </p>
+
+                    <div className="space-y-4">
+                        <a
+                            href="mailto:iulemirandaimoveis@gmail.com"
+                            className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
+                        >
+                            <Mail size={20} />
+                            <span>iulemirandaimoveis@gmail.com</span>
+                        </a>
+
+                        <a
+                            href="tel:+5581997230455"
+                            className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
+                        >
+                            <Phone size={20} />
+                            <span>+55 81 99723-0455</span>
+                        </a>
+
+                        <a
+                            href="https://linkedin.com/in/iule-miranda"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors"
+                        >
+                            <Linkedin size={20} />
+                            <span>LinkedIn</span>
+                        </a>
+                    </div>
+                </div>
+
+                {/* Navigation Sections */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                    {/* Avaliações Section */}
                     <div>
-                        <h4 className="font-semibold text-white mb-4">{labels.services_title}</h4>
+                        <h3 className="font-bold text-lg mb-4">Avaliações</h3>
                         <ul className="space-y-3">
                             <li>
                                 <Link
                                     href={`/${lang}/avaliacoes`}
-                                    className="text-slate-400 hover:text-white transition-colors text-sm block py-1"
+                                    className="text-gray-400 hover:text-white transition-colors"
                                 >
-                                    {labels.nav_appraisals}
+                                    Avaliações
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     href={`/${lang}/imoveis`}
-                                    className="text-slate-400 hover:text-white transition-colors text-sm block py-1"
+                                    className="text-gray-400 hover:text-white transition-colors"
                                 >
-                                    {labels.nav_properties}
+                                    Imóveis
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     href={`/${lang}/credito`}
-                                    className="text-slate-400 hover:text-white transition-colors text-sm block py-1"
+                                    className="text-gray-400 hover:text-white transition-colors"
                                 >
-                                    {labels.nav_credit}
+                                    Crédito
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     href={`/${lang}/consultoria`}
-                                    className="text-slate-400 hover:text-white transition-colors text-sm block py-1"
+                                    className="text-gray-400 hover:text-white transition-colors"
                                 >
-                                    {labels.nav_consulting}
+                                    Consultoria
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     href={`/${lang}/inteligencia`}
-                                    className="text-slate-400 hover:text-white transition-colors text-sm block py-1"
+                                    className="text-gray-400 hover:text-white transition-colors"
                                 >
-                                    {labels.nav_intelligence}
+                                    Inteligência
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href={`/${lang}/projetos`}
+                                    className="text-gray-400 hover:text-white transition-colors"
+                                >
+                                    Projetos
                                 </Link>
                             </li>
                         </ul>
                     </div>
 
+                    {/* Empresa Section */}
                     <div>
-                        <h4 className="font-semibold text-white mb-4">{labels.company_title}</h4>
+                        <h3 className="font-bold text-lg mb-4">Empresa</h3>
                         <ul className="space-y-3">
                             <li>
                                 <Link
                                     href={`/${lang}/sobre`}
-                                    className="text-slate-400 hover:text-white transition-colors text-sm block py-1"
+                                    className="text-gray-400 hover:text-white transition-colors"
                                 >
-                                    {labels.nav_about}
+                                    Sobre
                                 </Link>
                             </li>
                             <li>
                                 <Link
                                     href={`/${lang}/contato`}
-                                    className="text-slate-400 hover:text-white transition-colors text-sm block py-1"
+                                    className="text-gray-400 hover:text-white transition-colors"
                                 >
-                                    {labels.nav_contact}
+                                    Contato
                                 </Link>
                             </li>
                         </ul>
                     </div>
-
-                    <div>
-                        <h4 className="font-semibold text-white mb-4">{labels.contact_title}</h4>
-                        <ul className="space-y-3 text-sm">
-                            <li>
-                                <a
-                                    href="mailto:contato@iulemirandaimoveis.com.br"
-                                    className="text-slate-400 hover:text-white transition-colors block py-1"
-                                >
-                                    contato@iulemirandaimoveis.com.br
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="tel:+5581997230455"
-                                    className="text-slate-400 hover:text-white transition-colors block py-1"
-                                >
-                                    +55 (81) 99723-0455
-                                </a>
-                            </li>
-                            <li className="text-slate-400 py-1">
-                                {labels.location}
-                            </li>
-                            <li className="pt-2">
-                                <a
-                                    href="https://www.linkedin.com/in/iule-miranda"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
-                                >
-                                    <Linkedin className="w-4 h-4" />
-                                    LinkedIn
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
-            </div>
 
-            <div className="border-t border-white/10">
-                <div className="container-custom py-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400">
-                        <p>{labels.rights}</p>
-                        <div className="flex gap-6">
-                            <Link href={`/${lang}/privacidade`} className="hover:text-white transition-colors">
-                                {labels.privacy}
-                            </Link>
-                            <Link href={`/${lang}/termos`} className="hover:text-white transition-colors">
-                                {labels.terms}
-                            </Link>
+                {/* Bottom Section */}
+                <div className="pt-8 border-t border-gray-800">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <p className="text-sm text-gray-500">
+                            © 2026 IMI – Inteligência Imobiliária. Todos os direitos
+                            reservados.
+                        </p>
+
+                        {/* Language Switcher */}
+                        <div className="flex items-center gap-4">
+                            <Link href="/pt" className={`text-sm font-bold ${lang === 'pt' ? 'text-yellow-600' : 'text-gray-500 hover:text-gray-300'}`}>PT</Link>
+                            <Link href="/en" className={`text-sm font-bold ${lang === 'en' ? 'text-yellow-600' : 'text-gray-500 hover:text-gray-300'}`}>EN</Link>
+                            <Link href="/ja" className={`text-sm font-bold ${lang === 'ja' ? 'text-yellow-600' : 'text-gray-500 hover:text-gray-300'}`}>JP</Link>
+                            <Link href="/ar" className={`text-sm font-bold ${lang === 'ar' ? 'text-yellow-600' : 'text-gray-500 hover:text-gray-300'}`}>AR</Link>
+                            <Link href="/es" className={`text-sm font-bold ${lang === 'es' ? 'text-yellow-600' : 'text-gray-500 hover:text-gray-300'}`}>ES</Link>
                         </div>
+                    </div>
+
+                    {/* Legal Links */}
+                    <div className="flex flex-wrap justify-center md:justify-start gap-6 mt-4">
+                        <Link
+                            href={`/${lang}/politica-privacidade`}
+                            className="text-sm text-gray-500 hover:text-gray-300"
+                        >
+                            Política de Privacidade
+                        </Link>
+                        <Link
+                            href={`/${lang}/termos-uso`}
+                            className="text-sm text-gray-500 hover:text-gray-300"
+                        >
+                            Termos de Uso
+                        </Link>
                     </div>
                 </div>
             </div>
