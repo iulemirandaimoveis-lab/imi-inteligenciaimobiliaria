@@ -28,7 +28,7 @@ export default async function WebsiteLayout({
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
             />
             <Header lang={lang} />
-            <main className="flex-grow pt-16 lg:pt-20">{children}</main>
+            <main className="flex-grow">{children}</main>
             <Footer lang={lang} />
         </div>
     )

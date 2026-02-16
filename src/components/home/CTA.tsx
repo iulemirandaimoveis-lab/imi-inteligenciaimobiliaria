@@ -31,7 +31,7 @@ export default function CTA({ dict }: CTAProps) {
                 </p>
                 <Button
                     size="lg"
-                    className="h-14 px-10 text-lg"
+                    className="h-14 px-10 text-lg bg-[#25D366] hover:bg-[#128C7E] text-white shadow-lg"
                     onClick={() => setIsModalOpen(true)}
                 >
                     {dict.final_cta_btn}
