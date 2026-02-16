@@ -1,4 +1,5 @@
 @tailwind base;
+/* CACHE_BUST: v1.6.1 */
 /* DEPLOY VERSION: 1.5 - FORCE UPDATE */
 @tailwind components;
 @tailwind utilities;
