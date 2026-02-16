@@ -38,21 +38,25 @@ export default function Header({ lang = 'pt' }: { lang?: string }) {
     return (
         <>
             <header
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white shadow-sm border-b border-imi-100`}
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+                        ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-imi-100'
+                        : 'bg-transparent'
+                    }`}
             >
                 <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
                     <div className="flex items-center justify-between h-20">
                         {/* Logo */}
-                        <Link href={`/${lang}`} className="flex items-center gap-4">
-                            <span className="font-playfair text-3xl font-bold text-imi-900 tracking-tight">IMI</span>
-                            <div className="hidden md:block h-8 w-[1px] bg-imi-200"></div>
-                            <div className="hidden md:flex flex-col justify-center">
-                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none mb-1">
+                        <Link href={`/${lang}`} className="flex items-center gap-3">
+                            <div className="text-2xl font-bold">
+                                <span className="text-imi-900">IMI</span>
+                            </div>
+                            <div className="hidden md:block">
+                                <div className="text-xs font-medium text-imi-600 uppercase tracking-wider">
                                     Inteligência
-                                </span>
-                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none">
+                                </div>
+                                <div className="text-xs font-medium text-imi-600 uppercase tracking-wider -mt-1">
                                     Imobiliária
-                                </span>
+                                </div>
                             </div>
                         </Link>
 
@@ -65,8 +69,10 @@ export default function Header({ lang = 'pt' }: { lang?: string }) {
                                         key={item.name}
                                         href={item.href}
                                         className={`px-4 py-2 text-sm font-medium transition-colors rounded-lg ${isActive
-                                            ? 'text-accent-600 bg-accent-50'
-                                            : 'text-imi-700 hover:text-accent-600 hover:bg-imi-50'
+                                                ? 'text-accent-600 bg-accent-50'
+                                                : isScrolled
+                                                    ? 'text-imi-700 hover:text-accent-600 hover:bg-imi-50'
+                                                    : 'text-white hover:text-accent-400 hover:bg-white/10'
                                             }`}
                                     >
                                         {item.name}
@@ -84,8 +90,8 @@ export default function Header({ lang = 'pt' }: { lang?: string }) {
                                         key={language.code}
                                         href={pathname.replace(`/${lang}`, `/${language.code}`)}
                                         className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded transition-colors ${lang === language.code
-                                            ? 'bg-accent-100 text-accent-700'
-                                            : 'text-imi-600 hover:bg-imi-50'
+                                                ? 'bg-accent-100 text-accent-700'
+                                                : 'text-imi-600 hover:bg-imi-50'
                                             }`}
                                     >
                                         <span>{language.flag}</span>
@@ -105,7 +111,10 @@ export default function Header({ lang = 'pt' }: { lang?: string }) {
                             {/* Mobile Menu Button */}
                             <button
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                className={`lg:hidden p-2 rounded-lg transition-colors text-imi-700 hover:bg-imi-100`}
+                                className={`lg:hidden p-2 rounded-lg transition-colors ${isScrolled
+                                        ? 'text-imi-700 hover:bg-imi-100'
+                                        : 'text-white hover:bg-white/10'
+                                    }`}
                                 aria-label="Menu"
                             >
                                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

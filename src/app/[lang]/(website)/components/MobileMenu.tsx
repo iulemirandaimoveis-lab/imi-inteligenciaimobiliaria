@@ -51,16 +51,15 @@ export default function MobileMenu({
                 <div className="flex flex-col h-full">
                     {/* Header */}
                     <div className="flex items-center justify-between px-6 py-5 border-b border-imi-100">
-                        <div className="flex items-center gap-4">
-                            <span className="font-playfair text-3xl font-bold text-imi-900 tracking-tight">IMI</span>
-                            <div className="h-8 w-[1px] bg-imi-200"></div>
-                            <div className="flex flex-col justify-center">
-                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none mb-1">
+                        <div className="flex items-center gap-3">
+                            <div className="text-xl font-bold text-imi-900">IMI</div>
+                            <div>
+                                <div className="text-xs font-medium text-imi-600 uppercase tracking-wider">
                                     Inteligência
-                                </span>
-                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none">
+                                </div>
+                                <div className="text-xs font-medium text-imi-600 uppercase tracking-wider -mt-0.5">
                                     Imobiliária
-                                </span>
+                                </div>
                             </div>
                         </div>
                         <button
@@ -83,8 +82,8 @@ export default function MobileMenu({
                                         href={item.href}
                                         onClick={onClose}
                                         className={`block px-4 py-3 text-base font-medium rounded-xl transition-colors ${isActive
-                                            ? 'bg-accent-50 text-accent-700 border-l-4 border-accent-400'
-                                            : 'text-imi-700 hover:bg-imi-50'
+                                                ? 'bg-accent-50 text-accent-700 border-l-4 border-accent-500'
+                                                : 'text-imi-700 hover:bg-imi-50'
                                             }`}
                                     >
                                         {item.name}
@@ -105,8 +104,8 @@ export default function MobileMenu({
                                         href={pathname.replace(`/${lang}`, `/${language.code}`)}
                                         onClick={onClose}
                                         className={`flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl border-2 transition-all ${lang === language.code
-                                            ? 'border-accent-500 bg-accent-50 text-accent-700'
-                                            : 'border-imi-200 text-imi-700 hover:border-accent-300 hover:bg-accent-50/50'
+                                                ? 'border-accent-500 bg-accent-50 text-accent-700'
+                                                : 'border-imi-200 text-imi-700 hover:border-accent-300 hover:bg-accent-50/50'
                                             }`}
                                     >
                                         <span className="text-xl">{language.flag}</span>
@@ -122,15 +121,16 @@ export default function MobileMenu({
                         <Link
                             href={`/${lang}/contato`}
                             onClick={onClose}
-                            className="flex items-center justify-center gap-2 w-full h-12 bg-[#0F1E28] text-white rounded-xl font-medium hover:bg-black transition-all shadow-sm"
+                            className="flex items-center justify-center gap-2 w-full h-12 bg-accent-500 text-white rounded-xl font-medium hover:bg-accent-600 transition-all shadow-sm"
                         >
                             Falar pelo WhatsApp
                         </Link>
 
-                        <div className="mt-6 bg-imi-50 rounded-xl p-4 text-center">
-                            <p className="font-bold text-sm text-imi-900 mb-1">Iule Miranda</p>
-                            <p className="text-xs text-imi-600 font-medium uppercase tracking-wide">CRECI 17933 | CNAI 53290</p>
-                        </div>
+                        <p className="text-center text-xs text-imi-500 mt-4">
+                            Iule Miranda
+                            <br />
+                            <span className="text-accent-600">CRECI 17933 | CNAI 53290</span>
+                        </p>
                     </div>
                 </div>
             </div>
