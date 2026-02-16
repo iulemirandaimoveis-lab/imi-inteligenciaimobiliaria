@@ -122,16 +122,15 @@ export default function MobileMenu({
                         <Link
                             href={`/${lang}/contato`}
                             onClick={onClose}
-                            className="flex items-center justify-center gap-2 w-full h-12 bg-accent-500 text-white rounded-xl font-medium hover:bg-accent-600 transition-all shadow-sm"
+                            className="flex items-center justify-center gap-2 w-full h-12 bg-[#0F1E28] text-white rounded-xl font-medium hover:bg-black transition-all shadow-sm"
                         >
                             Falar pelo WhatsApp
                         </Link>
 
-                        <p className="text-center text-xs text-imi-500 mt-4">
-                            Iule Miranda
-                            <br />
-                            <span className="text-accent-600">CRECI 17933 | CNAI 53290</span>
-                        </p>
+                        <div className="mt-6 bg-imi-50 rounded-xl p-4 text-center">
+                            <p className="font-bold text-sm text-imi-900 mb-1">Iule Miranda</p>
+                            <p className="text-xs text-imi-600 font-medium uppercase tracking-wide">CRECI 17933 | CNAI 53290</p>
+                        </div>
                     </div>
                 </div>
             </div>
