@@ -47,24 +47,25 @@ export default function MobileMenu({
             />
 
             {/* Menu Panel */}
-            <div className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-imi-900 z-50 lg:hidden shadow-2xl border-l border-white/10">
+            <div className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white z-50 lg:hidden shadow-2xl">
                 <div className="flex flex-col h-full">
-                    <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-6 py-5 border-b border-imi-100">
                         <div className="flex items-center gap-4">
-                            <span className="font-playfair text-3xl font-bold text-white tracking-tight">IMI</span>
+                            <span className="font-playfair text-3xl font-bold text-imi-900 tracking-tight">IMI</span>
                             <div className="h-8 w-[1px] bg-imi-200"></div>
                             <div className="flex flex-col justify-center">
-                                <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-medium leading-none mb-1">
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none mb-1">
                                     Inteligência
                                 </span>
-                                <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 font-medium leading-none">
+                                <span className="text-[10px] uppercase tracking-[0.2em] text-imi-600 font-medium leading-none">
                                     Imobiliária
                                 </span>
                             </div>
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 rounded-lg text-white/80 hover:bg-white/10 transition-colors"
+                            className="p-2 rounded-lg text-imi-700 hover:bg-imi-100 transition-colors"
                             aria-label="Fechar menu"
                         >
                             <X size={24} />
@@ -82,8 +83,8 @@ export default function MobileMenu({
                                         href={item.href}
                                         onClick={onClose}
                                         className={`block px-4 py-3 text-base font-medium rounded-xl transition-colors ${isActive
-                                            ? 'bg-[#C5A572]/10 text-[#C5A572] border-l-4 border-[#C5A572]'
-                                            : 'text-white/80 hover:bg-white/5'
+                                            ? 'bg-imi-50 text-imi-900 border-l-4 border-accent-400 font-bold'
+                                            : 'text-imi-600 hover:bg-imi-50'
                                             }`}
                                     >
                                         {item.name}
@@ -117,20 +118,19 @@ export default function MobileMenu({
                     </nav>
 
                     {/* Footer CTA */}
-                    <div className="p-6 border-t border-white/10">
+                    <div className="p-6 border-t border-imi-100">
                         <Link
                             href={`/${lang}/contato`}
                             onClick={onClose}
-                            className="flex items-center justify-center gap-2 w-full h-12 bg-[#25D366] text-white rounded-xl font-medium hover:bg-[#128C7E] transition-all shadow-sm"
+                            className="flex items-center justify-center gap-2 w-full h-12 bg-imi-900 text-white rounded-lg font-medium hover:bg-black transition-all shadow-lg"
                         >
                             Falar pelo WhatsApp
                         </Link>
 
-                        <p className="text-center text-xs text-white/40 mt-4">
-                            Iule Miranda
-                            <br />
-                            <span className="text-[#C5A572]">CRECI 17933 | CNAI 53290</span>
-                        </p>
+                        <div className="mt-6 bg-imi-50 rounded-xl p-4">
+                            <p className="text-sm font-bold text-imi-900">Iule Miranda</p>
+                            <p className="text-xs text-imi-500 mt-1 uppercase tracking-wide">CRECI 17933 | CNAI 53290</p>
+                        </div>
                     </div>
                 </div>
             </div>

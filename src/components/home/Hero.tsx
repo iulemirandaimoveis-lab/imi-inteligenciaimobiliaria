@@ -38,14 +38,14 @@ export default function Hero({ dict }: HeroProps) {
                     <motion.div variants={slideUp} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                         <Link
                             href={`/${lang}/avaliacoes#form`}
-                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-bold rounded-2xl bg-accent-500 text-white hover:bg-accent-600 shadow-xl h-14 transition-all duration-300 active:scale-95"
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-bold rounded-2xl bg-white text-imi-900 hover:bg-imi-50 shadow-xl h-14 transition-all duration-300 active:scale-95"
                         >
                             {dict.cta_appraisal}
                         </Link>
                         <Button
                             variant="outline"
                             size="lg"
-                            className="w-full sm:w-auto border-white/30 text-white hover:bg-[#25D366] hover:border-[#25D366] hover:text-white h-14"
+                            className="w-full sm:w-auto border-white text-white hover:bg-white/10 h-14 font-medium"
                             onClick={() => setIsModalOpen(true)}
                         >
                             {dict.cta_whatsapp}
