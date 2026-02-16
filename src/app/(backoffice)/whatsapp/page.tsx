@@ -1,5 +1,5 @@
 'use client'
-import PageHeader from '../../components/PageHeader'
+import PageHeader from '../components/PageHeader'
 import { MessageSquare } from 'lucide-react'
 
 export default function WhatsAppPage() {

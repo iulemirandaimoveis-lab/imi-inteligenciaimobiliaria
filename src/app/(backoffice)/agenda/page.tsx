@@ -1,5 +1,5 @@
 'use client'
-import PageHeader from '../../components/PageHeader'
+import PageHeader from '../components/PageHeader'
 import { Calendar } from 'lucide-react'
 
 export default function AgendaPage() {

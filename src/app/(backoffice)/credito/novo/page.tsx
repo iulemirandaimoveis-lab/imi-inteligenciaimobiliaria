@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import PageHeader from '../../../components/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader, CardBody, CardFooter } from '@/components/ui/Card'
 import { Input, Textarea } from '@/components/ui/Input'

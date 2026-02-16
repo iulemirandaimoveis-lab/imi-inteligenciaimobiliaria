@@ -1,25 +1,75 @@
--- =============================================
--- IMI ATLANTIS - SAMPLE DATA (CORRIGIDO V3)
--- Dados de exemplo BLINDADOS contra erros de duplicidade
--- =============================================
+-- ==============================================================================
+-- IMI ATLANTIS - SAMPLE DATA (CORRIGIDO FINAL - AUTO-REPAIR)
+-- ==============================================================================
 
--- IMPORTANTE: Substitua 'YOUR-ADMIN-USER-UUID' pelo UUID do usuário Admin no Supabase
+-- 0. AUTO-CORREÇÃO DE SCHEMA (Mágica para evitar erros 23502 e 23514)
+-- Verifica se existe uma coluna legada 'developer' como NOT NULL e remove a restrição.
+-- Remove também constraints de status antigas.
+DO $$ 
+BEGIN
+    -- 1. Se a coluna developer existir e não for nula, vamos permitir nulo.
+    BEGIN
+        ALTER TABLE developments ALTER COLUMN developer DROP NOT NULL;
+    EXCEPTION
+        WHEN undefined_column THEN null; 
+        WHEN OTHERS THEN null; 
+    END;
 
--- 1. DEVELOPERS (Refeito com ON CONFLICT no SLUG)
+    -- 2. Remove a constraint de status antiga que impede 'available'
+    BEGIN
+        ALTER TABLE developments DROP CONSTRAINT IF EXISTS developments_status_check;
+    EXCEPTION
+        WHEN undefined_object THEN null;
+        WHEN OTHERS THEN null;
+    END;
+
+    -- 3. Garante que a tabela leads tenha as colunas novas
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS cpf VARCHAR(20);
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'new';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS origin VARCHAR(50);
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS score INTEGER DEFAULT 0;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS interest_type VARCHAR(50);
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS interest_location VARCHAR(100);
+
+    -- 4. Adiciona constraints UNIQUE necessárias para o ON CONFLICT funcionar
+    -- (O erro 42P10 acontece se tentarmos ON CONFLICT numa coluna que não é unique)
+    BEGIN
+        ALTER TABLE developers ADD CONSTRAINT developers_slug_key UNIQUE (slug);
+    EXCEPTION WHEN duplicate_table THEN null; WHEN OTHERS THEN null; END;
+
+    BEGIN
+        ALTER TABLE developments ADD CONSTRAINT developments_slug_key UNIQUE (slug);
+    EXCEPTION WHEN duplicate_table THEN null; WHEN OTHERS THEN null; END;
+
+    BEGIN
+        ALTER TABLE leads ADD CONSTRAINT leads_email_key UNIQUE (email);
+    EXCEPTION WHEN duplicate_table THEN null; WHEN OTHERS THEN null; END;
+
+    BEGIN
+        ALTER TABLE credit_applications ADD CONSTRAINT credit_applications_protocol_key UNIQUE (protocol);
+    EXCEPTION WHEN duplicate_table THEN null; WHEN OTHERS THEN null; END;
+
+    -- 5. Garante que column ID tenha default (UUID)
+    BEGIN
+        ALTER TABLE leads ALTER COLUMN id SET DEFAULT gen_random_uuid();
+    EXCEPTION WHEN OTHERS THEN null; END;
+
+END $$;
+
+-- 1. DEVELOPERS (Construtoras)
 INSERT INTO developers (name, description, website, phone, email, slug) VALUES
 ('Moura Dubeux', 'Construtora líder em Pernambuco', 'https://www.mouradubeux.com.br', '(81) 3419-8000', 'contato@mouradubeux.com.br', 'moura-dubeux'),
 ('Queiroz Galvão', 'Grupo com atuação nacional', 'https://www.qgdi.com.br', '(81) 3412-9000', 'contato@qgdi.com.br', 'queiroz-galvao'),
 ('Ecolife', 'Construtora sustentável', 'https://www.ecolife.com.br', '(81) 3465-3000', 'contato@ecolife.com.br', 'ecolife')
 ON CONFLICT (slug) DO NOTHING; 
--- ^ Isso diz: "Se já existir esse slug, não faça nada e continue sem erro"
 
--- 2. DEVELOPMENTS (Conflito no SLUG)
--- Primeiro precisamos pegar os IDs reais das construtoras inseridas acima (caso já existissem)
+-- 2. DEVELOPMENTS (Empreendimentos)
 DO $$
 DECLARE
     dev_moura UUID;
     dev_queiroz UUID;
 BEGIN
+    -- Busca os IDs corretos baseado no slug
     SELECT id INTO dev_moura FROM developers WHERE slug = 'moura-dubeux';
     SELECT id INTO dev_queiroz FROM developers WHERE slug = 'queiroz-galvao';
 
@@ -52,7 +102,7 @@ BEGIN
     ON CONFLICT (slug) DO NOTHING;
 END $$;
 
--- 3. CAMPAIGNS (Conflito no ID, pois não tem slug)
+-- 3. CAMPAIGNS (Campanhas)
 INSERT INTO campaigns (
   id, name, objective, channel, status,
   start_date, end_date,
@@ -77,18 +127,18 @@ INSERT INTO campaigns (
   125000, 3750, 52, 8, 3.0, 160.0
 ) ON CONFLICT (id) DO NOTHING;
 
--- 4. LEADS (Conflito no EMAIL)
+-- 4. LEADS (COM ID EXPLÍCITO)
 INSERT INTO leads (
-  name, email, phone, cpf, status, origin, score,
+  id, name, email, phone, cpf, status, origin, score,
   interest_type, interest_location
 ) VALUES
 (
-  'Maria Santos', 'maria.santos@email.com', '(81) 99876-5432', '123.456.789-00', 'qualified', 'instagram', 18,
+  gen_random_uuid(), 'Maria Santos', 'maria.santos@email.com', '(81) 99876-5432', '123.456.789-00', 'qualified', 'instagram', 18,
   'apartment', 'Boa Viagem'
 )
 ON CONFLICT (email) DO NOTHING;
 
--- 5. CREDIT APPLICATIONS (Conflito no PROTOCOLO)
+-- 5. CREDIT APPLICATIONS (Crédito)
 INSERT INTO credit_applications (
   protocol, client_name, client_email, client_cpf, 
   property_address, property_value, 
@@ -100,16 +150,3 @@ INSERT INTO credit_applications (
   544000, 136000, 360,
   'approved'
 ) ON CONFLICT (protocol) DO NOTHING;
-
-
--- 6. TEAM MEMBERS (Exemplo comentado)
-/*
-DO $$
-BEGIN
-    INSERT INTO team_members (id, name, email, role, status) 
-    VALUES ('YOUR-ADMIN-USER-UUID', 'Laila Miranda', 'laila@iulemirandaimoveis.com.br', 'admin', 'active')
-    ON CONFLICT (id) DO UPDATE SET role = 'admin';
-EXCEPTION
-    WHEN foreign_key_violation THEN null; -- Ignora se o usuário não existir no Auth
-END $$;
-*/

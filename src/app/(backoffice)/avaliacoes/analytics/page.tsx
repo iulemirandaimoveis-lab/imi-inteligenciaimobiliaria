@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import PageHeader from '../../../components/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { KPICard, Badge } from '@/components/ui/Badge'
 import { Select } from '@/components/ui/Select'

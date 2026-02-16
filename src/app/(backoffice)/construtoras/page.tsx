@@ -1,5 +1,5 @@
 'use client'
-import PageHeader from '../../components/PageHeader'
+import PageHeader from '../components/PageHeader'
 import EmptyState from '@/components/backoffice/EmptyState'
 import Button from '@/components/ui/Button'
 import { Building2, Plus } from 'lucide-react'

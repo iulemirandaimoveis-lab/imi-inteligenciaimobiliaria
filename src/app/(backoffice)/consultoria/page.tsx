@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import PageHeader from '../../components/PageHeader'
+import PageHeader from '../components/PageHeader'
 import { Button } from '@/components/ui/Button'
 import { Badge, KPICard } from '@/components/ui/Badge'
 import { Input } from '@/components/ui/Input'
