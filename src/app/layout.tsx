@@ -1,5 +1,5 @@
 import { Playfair_Display, Inter } from 'next/font/google';
-// DEPLOY_VERSION: v1.6.1 - FORCED_UPDATE
+// DEPLOY_VERSION: v1.6.4 - RESTORE APPROVED STATE
 import './globals.css';
 
 const playfair = Playfair_Display({

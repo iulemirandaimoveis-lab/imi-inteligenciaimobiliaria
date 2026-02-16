@@ -37,7 +37,6 @@ export default function Footer({ lang = 'pt' }: { lang?: string }) {
 
     return (
         <footer className="bg-[#111116] text-white pt-16 pb-8">
-            {/* Deploy Force: v1.5 */}
             <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
                 {/* Top Section: Brand & Contact Card */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-16">

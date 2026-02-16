@@ -83,8 +83,8 @@ export default function MobileMenu({
                                         href={item.href}
                                         onClick={onClose}
                                         className={`block px-4 py-3 text-base font-medium rounded-xl transition-colors ${isActive
-                                            ? 'bg-imi-50 text-imi-900 border-l-4 border-accent-400 font-bold'
-                                            : 'text-imi-600 hover:bg-imi-50'
+                                            ? 'bg-accent-50 text-accent-700 border-l-4 border-accent-400'
+                                            : 'text-imi-700 hover:bg-imi-50'
                                             }`}
                                     >
                                         {item.name}
@@ -122,15 +122,16 @@ export default function MobileMenu({
                         <Link
                             href={`/${lang}/contato`}
                             onClick={onClose}
-                            className="flex items-center justify-center gap-2 w-full h-12 bg-imi-900 text-white rounded-lg font-medium hover:bg-black transition-all shadow-lg"
+                            className="flex items-center justify-center gap-2 w-full h-12 bg-accent-500 text-white rounded-xl font-medium hover:bg-accent-600 transition-all shadow-sm"
                         >
                             Falar pelo WhatsApp
                         </Link>
 
-                        <div className="mt-6 bg-imi-50 rounded-xl p-4">
-                            <p className="text-sm font-bold text-imi-900">Iule Miranda</p>
-                            <p className="text-xs text-imi-500 mt-1 uppercase tracking-wide">CRECI 17933 | CNAI 53290</p>
-                        </div>
+                        <p className="text-center text-xs text-imi-500 mt-4">
+                            Iule Miranda
+                            <br />
+                            <span className="text-accent-600">CRECI 17933 | CNAI 53290</span>
+                        </p>
                     </div>
                 </div>
             </div>
