@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import PageHeader from '../../components/PageHeader'
+import PageHeader from '../../../components/PageHeader'
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
 import { KPICard, Badge } from '@/components/ui/Badge'
 import { Select } from '@/components/ui/Select'
@@ -79,8 +79,8 @@ export default function AvaliacoesAnalyticsPage() {
                 title="Intelligence: Laudos & Avaliações"
                 subtitle="Performance analítica do motor de avaliação imobiliária"
                 breadcrumbs={[
-                    { name: 'Dashboard', href: '/backoffice/backoffice/dashboard' },
-                    { name: 'Avaliações', href: '/backoffice/backoffice/avaliacoes' },
+                    { name: 'Dashboard', href: '/backoffice/dashboard' },
+                    { name: 'Avaliações', href: '/backoffice/avaliacoes' },
                     { name: 'Analytics Strategist' },
                 ]}
                 action={

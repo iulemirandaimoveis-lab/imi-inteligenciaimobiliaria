@@ -1,144 +1,201 @@
 'use client'
 
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 import {
     LayoutDashboard,
     Building2,
     Users,
     FileText,
-    CreditCard,
-    MessageSquare,
-    Megaphone,
+    DollarSign,
+    Briefcase,
+    Target,
+    FileEdit,
+    Activity,
     BarChart3,
+    Lightbulb,
     Settings,
-    Link2,
-    Calendar,
-    FolderKanban,
-    Sparkles,
+    Layers,
+    MessageSquare,
+    Bell,
 } from 'lucide-react'
 
 const navigation = [
     {
-        category: 'Principal',
-        items: [
-            { name: 'Dashboard', href: '/backoffice/backoffice/dashboard', icon: LayoutDashboard },
-        ],
+        name: 'Dashboard',
+        href: '/backoffice/dashboard',
+        icon: LayoutDashboard,
+        group: 'principal',
     },
     {
-        category: 'Operações',
-        items: [
-            { name: 'Imóveis', href: '/backoffice/backoffice/imoveis', icon: Building2 },
-            { name: 'Leads', href: '/backoffice/backoffice/leads', icon: Users },
-            { name: 'Avaliações', href: '/backoffice/backoffice/avaliacoes', icon: FileText },
-            { name: 'Crédito', href: '/backoffice/backoffice/credito', icon: CreditCard },
-        ],
+        name: 'Imóveis',
+        href: '/backoffice/imoveis',
+        icon: Building2,
+        group: 'operacoes',
     },
     {
-        category: 'Serviços',
-        items: [
-            { name: 'Consultorias', href: '/backoffice/backoffice/consultoria', icon: MessageSquare },
-        ],
+        name: 'Leads',
+        href: '/backoffice/leads',
+        icon: Users,
+        group: 'operacoes',
     },
     {
-        category: 'Marketing',
-        items: [
-            { name: 'Campanhas', href: '/backoffice/backoffice/campanhas', icon: Megaphone },
-            { name: 'Conteúdo', href: '/backoffice/backoffice/conteudos', icon: Calendar },
-            { name: 'Tracking', href: '/backoffice/backoffice/tracking', icon: Link2 },
-        ],
+        name: 'Avaliações',
+        href: '/backoffice/avaliacoes',
+        icon: FileText,
+        group: 'operacoes',
     },
     {
-        category: 'Gestão',
-        items: [
-            { name: 'Relatórios', href: '/backoffice/backoffice/relatorios', icon: BarChart3 },
-            { name: 'Projetos', href: '/backoffice/backoffice/playbooks', icon: FolderKanban },
-        ],
+        name: 'Crédito',
+        href: '/backoffice/credito',
+        icon: DollarSign,
+        group: 'operacoes',
     },
     {
-        category: 'Sistema',
-        items: [
-            { name: 'IA & Automação', href: '/backoffice/backoffice/automacoes', icon: Sparkles },
-            { name: 'Configurações', href: '/backoffice/backoffice/settings', icon: Settings },
-        ],
+        name: 'Consultoria',
+        href: '/backoffice/consultoria',
+        icon: Briefcase,
+        group: 'operacoes',
+    },
+    {
+        name: 'Construtoras',
+        href: '/backoffice/construtoras',
+        icon: Building2,
+        group: 'operacoes',
+    },
+    {
+        name: 'Equipe',
+        href: '/backoffice/equipe',
+        icon: Users,
+        group: 'operacoes',
+    },
+    {
+        name: 'Campanhas',
+        href: '/backoffice/campanhas',
+        icon: Target,
+        group: 'marketing',
+    },
+    {
+        name: 'Conteúdo',
+        href: '/backoffice/conteudos',
+        icon: FileEdit,
+        group: 'marketing',
+    },
+    {
+        name: 'Tracking',
+        href: '/backoffice/tracking',
+        icon: Activity,
+        group: 'marketing',
+    },
+    {
+        name: 'Relatórios',
+        href: '/backoffice/relatorios',
+        icon: BarChart3,
+        group: 'gestao',
+    },
+    {
+        name: 'Playbooks',
+        href: '/backoffice/playbooks',
+        icon: Lightbulb,
+        group: 'gestao',
+    },
+    {
+        name: 'IA & Automação',
+        href: '/backoffice/automacoes',
+        icon: Lightbulb,
+        group: 'sistema',
+    },
+    {
+        name: 'Integrações',
+        href: '/backoffice/integracoes',
+        icon: Layers,
+        group: 'sistema',
+    },
+    {
+        name: 'WhatsApp',
+        href: '/backoffice/whatsapp',
+        icon: MessageSquare,
+        group: 'sistema',
+    },
+    {
+        name: 'Notificações',
+        href: '/backoffice/notificacoes',
+        icon: Bell,
+        group: 'sistema',
+    },
+    {
+        name: 'Configurações',
+        href: '/backoffice/settings',
+        icon: Settings,
+        group: 'sistema',
     },
 ]
 
-export default function DesktopSidebar() {
+const groups = {
+    principal: 'Principal',
+    operacoes: 'Operações',
+    marketing: 'Marketing',
+    gestao: 'Gestão',
+    sistema: 'Sistema',
+}
+
+export function DesktopSidebar() {
     const pathname = usePathname()
 
     return (
-        <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col bg-white border-r border-gray-200">
-            {/* Logo Header - Fixed */}
-            <div className="flex h-16 shrink-0 items-center px-6 border-b border-gray-200">
-                <div className="flex items-center gap-3">
-                    <span className="text-2xl font-bold text-gray-900">IMI</span>
-                    <div className="border-l border-gray-300 pl-3">
-                        <div className="text-[10px] font-medium text-gray-600 uppercase tracking-wider leading-tight">
-                            Inteligência
+        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
+            <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
+                {/* Logo */}
+                <div className="flex h-16 shrink-0 items-center">
+                    <Link href="/backoffice/dashboard" className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-500">
+                            <span className="text-sm font-bold text-white">IMI</span>
                         </div>
-                        <div className="text-[10px] font-medium text-gray-600 uppercase tracking-wider leading-tight">
-                            Imobiliária
-                        </div>
-                    </div>
+                        <span className="text-lg font-bold text-gray-900">Atlantis</span>
+                    </Link>
                 </div>
+
+                {/* Navigation */}
+                <nav className="flex flex-1 flex-col">
+                    <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                        {Object.entries(groups).map(([key, label]) => (
+                            <li key={key}>
+                                <div className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+                                    {label}
+                                </div>
+                                <ul role="list" className="-mx-2 space-y-1">
+                                    {navigation
+                                        .filter((item) => item.group === key)
+                                        .map((item) => {
+                                            const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+                                            return (
+                                                <li key={item.name}>
+                                                    <Link
+                                                        href={item.href}
+                                                        className={`
+                              group flex gap-x-3 rounded-lg p-2 text-sm font-medium leading-6 transition-colors
+                              ${isActive
+                                                                ? 'bg-accent-50 text-accent-600'
+                                                                : 'text-gray-700 hover:text-accent-600 hover:bg-gray-50'
+                                                            }
+                            `}
+                                                    >
+                                                        <item.icon
+                                                            className={`h-5 w-5 shrink-0 ${isActive ? 'text-accent-600' : 'text-gray-400 group-hover:text-accent-600'
+                                                                }`}
+                                                            aria-hidden="true"
+                                                        />
+                                                        {item.name}
+                                                    </Link>
+                                                </li>
+                                            )
+                                        })}
+                                </ul>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
             </div>
-
-            {/* Navigation - Scrollable */}
-            <nav className="flex-1 overflow-y-auto px-4 py-6">
-                <div className="space-y-8">
-                    {navigation.map((section) => (
-                        <div key={section.category}>
-                            <h3 className="mb-3 px-3 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                {section.category}
-                            </h3>
-                            <ul className="space-y-1">
-                                {section.items.map((item) => {
-                                    const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
-                                    const Icon = item.icon
-
-                                    return (
-                                        <li key={item.name}>
-                                            <Link
-                                                href={item.href}
-                                                className={`
-                          group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
-                          transition-all duration-200
-                          ${isActive
-                                                        ? 'bg-accent-50 text-accent-700 border-l-4 border-accent-500 pl-2.5'
-                                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                                                    }
-                        `}
-                                            >
-                                                <Icon
-                                                    size={20}
-                                                    className={`
-                            flex-shrink-0
-                            ${isActive ? 'text-accent-600' : 'text-gray-400 group-hover:text-gray-600'}
-                          `}
-                                                />
-                                                <span>{item.name}</span>
-                                            </Link>
-                                        </li>
-                                    )
-                                })}
-                            </ul>
-                        </div>
-                    ))}
-                </div>
-            </nav>
-
-            {/* Footer Credentials - Fixed */}
-            <div className="shrink-0 border-t border-gray-200 p-4">
-                <div className="text-center">
-                    <p className="text-xs font-medium text-gray-900">Iule Miranda</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                        <span className="text-accent-600 font-medium">CRECI 17933</span>
-                        {' | '}
-                        <span className="text-accent-600 font-medium">CNAI 53290</span>
-                    </p>
-                </div>
-            </div>
-        </aside>
+        </div>
     )
 }

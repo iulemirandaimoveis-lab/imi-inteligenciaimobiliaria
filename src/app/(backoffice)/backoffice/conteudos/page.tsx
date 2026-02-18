@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import PageHeader from '../components/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import { Button } from '@/components/ui/Button'
 import { Badge, KPICard } from '@/components/ui/Badge'
 import { Card, CardHeader, CardBody } from '@/components/ui/Card'
@@ -140,7 +140,7 @@ export default function ConteudosPage() {
         title="Marketing Intelligence & Conteúdo"
         subtitle="Editorial & Omnichannel Engine | Powered by IA"
         breadcrumbs={[
-          { name: 'Dashboard', href: '/backoffice/backoffice/dashboard' },
+          { name: 'Dashboard', href: '/backoffice/dashboard' },
           { name: 'Estratégia de Conteúdo' },
         ]}
         action={
@@ -148,13 +148,13 @@ export default function ConteudosPage() {
             <Button
               variant="outline"
               icon={<Sparkles size={18} />}
-              onClick={() => router.push('/backoffice/backoffice/conteudos/ia')}
+              onClick={() => router.push('/backoffice/conteudos/ia')}
             >
               Consultar IA
             </Button>
             <Button
               icon={<Plus size={18} />}
-              onClick={() => router.push('/backoffice/backoffice/conteudos/novo')}
+              onClick={() => router.push('/backoffice/conteudos/novo')}
               className="shadow-glow"
             >
               Novo Artigo
@@ -236,7 +236,7 @@ export default function ConteudosPage() {
               description="Utilize a IA para gerar novos insights agora."
               action={{
                 label: 'Gerar com IA',
-                onClick: () => router.push('/backoffice/backoffice/conteudos/ia'),
+                onClick: () => router.push('/backoffice/conteudos/ia'),
                 icon: <Sparkles />,
               }}
             />
@@ -310,7 +310,7 @@ export default function ConteudosPage() {
                               size="sm"
                               icon={<Eye size={18} />}
                               onClick={() =>
-                                router.push(`/backoffice/backoffice/conteudos/${item.id}`)
+                                router.push(`/backoffice/conteudos/${item.id}`)
                               }
                             >
                               Dashboard
@@ -411,7 +411,7 @@ export default function ConteudosPage() {
               <Button
                 variant="outline"
                 icon={<Instagram size={18} />}
-                onClick={() => router.push('/backoffice/backoffice/conteudos/ia?type=instagram')}
+                onClick={() => router.push('/backoffice/conteudos/ia?type=instagram')}
                 className="border-white/10 text-white hover:bg-white/10 uppercase font-black text-[10px] tracking-widest h-12"
               >
                 Post Social
@@ -419,7 +419,7 @@ export default function ConteudosPage() {
               <Button
                 variant="outline"
                 icon={<Mail size={18} />}
-                onClick={() => router.push('/backoffice/backoffice/conteudos/ia?type=email')}
+                onClick={() => router.push('/backoffice/conteudos/ia?type=email')}
                 className="border-white/10 text-white hover:bg-white/10 uppercase font-black text-[10px] tracking-widest h-12"
               >
                 Newsletter
@@ -427,7 +427,7 @@ export default function ConteudosPage() {
               <Button
                 variant="outline"
                 icon={<FileText size={18} />}
-                onClick={() => router.push('/backoffice/backoffice/conteudos/ia?type=blog')}
+                onClick={() => router.push('/backoffice/conteudos/ia?type=blog')}
                 className="border-white/10 text-white hover:bg-white/10 uppercase font-black text-[10px] tracking-widest h-12"
               >
                 Artigo SEO

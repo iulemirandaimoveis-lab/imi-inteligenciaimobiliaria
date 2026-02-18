@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import PageHeader from '../../components/PageHeader'
+import PageHeader from '../../../components/PageHeader'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader, CardBody, CardFooter } from '@/components/ui/Card'
 import { Input, Textarea } from '@/components/ui/Input'
@@ -137,7 +137,7 @@ export default function CreditoNovoPage() {
             if (error) throw error
 
             toast.success('Solicitação de crédito enviada para análise com sucesso!')
-            router.push('/backoffice/backoffice/credito')
+            router.push('/backoffice/credito')
         } catch (error: any) {
             console.error('Erro ao salvar:', error)
             toast.error(`Falha ao processar solicitação: ${error.message || 'Erro de conexão'}`)
@@ -152,8 +152,8 @@ export default function CreditoNovoPage() {
                 title="Protocolar Solicitação de Crédito"
                 subtitle="Inicie um novo fluxo de análise bancária para seu cliente"
                 breadcrumbs={[
-                    { name: 'Dashboard', href: '/backoffice/backoffice/dashboard' },
-                    { name: 'Crédito', href: '/backoffice/backoffice/credito' },
+                    { name: 'Dashboard', href: '/backoffice/dashboard' },
+                    { name: 'Crédito', href: '/backoffice/credito' },
                     { name: 'Nova Operação' },
                 ]}
             />

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import PageHeader from '../components/PageHeader'
+import PageHeader from '../../components/PageHeader'
 import { Button } from '@/components/ui/Button'
 import { Badge, KPICard } from '@/components/ui/Badge'
 import { Input } from '@/components/ui/Input'
@@ -142,13 +142,13 @@ export default function ConsultoriasPage() {
                 title="Consultorias Estratégicas"
                 subtitle="Gestão de Family Office e Ativos Internacionais"
                 breadcrumbs={[
-                    { name: 'Dashboard', href: '/backoffice/backoffice/dashboard' },
+                    { name: 'Dashboard', href: '/backoffice/dashboard' },
                     { name: 'Consultorias High-End' },
                 ]}
                 action={
                     <Button
                         icon={<Plus size={20} />}
-                        onClick={() => router.push('/backoffice/backoffice/consultoria/nova')}
+                        onClick={() => router.push('/backoffice/consultoria/nova')}
                         className="shadow-glow"
                     >
                         Nova Consultoria
@@ -233,7 +233,7 @@ export default function ConsultoriasPage() {
                         !searchTerm && statusFilter === 'all'
                             ? {
                                 label: 'Iniciar Primeira Consultoria',
-                                onClick: () => router.push('/backoffice/backoffice/consultoria/nova'),
+                                onClick: () => router.push('/backoffice/consultoria/nova'),
                                 icon: <Plus />,
                             }
                             : undefined
@@ -309,7 +309,7 @@ export default function ConsultoriasPage() {
                                                     size="sm"
                                                     icon={<Eye size={18} />}
                                                     onClick={() =>
-                                                        router.push(`/backoffice/backoffice/consultoria/${consultation.id}`)
+                                                        router.push(`/backoffice/consultoria/${consultation.id}`)
                                                     }
                                                     className="hover:bg-imi-100"
                                                 >

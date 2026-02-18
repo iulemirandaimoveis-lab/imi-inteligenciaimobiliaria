@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import PageHeader from '../../components/PageHeader'
+import PageHeader from '../../../components/PageHeader'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader, CardBody, CardFooter } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
