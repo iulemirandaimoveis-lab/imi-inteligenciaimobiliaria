@@ -1,4 +1,5 @@
 'use client'
+// NAVIGATION_VERSION: v2.0.1 - ADDED FINANCEIRO & PROJETOS
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -153,11 +154,11 @@ const navigation = [
 
 const groups = {
     principal: 'Principal',
-    operacoes: 'Operações',
-    marketing: 'Marketing',
-    financeiro: 'Financeiro',
-    gestao: 'Gestão',
-    sistema: 'Sistema',
+    operacoes: 'Operações Hub',
+    marketing: 'Marketing & IA',
+    financeiro: 'Financeiro & Projetos',
+    gestao: 'Gestão & Dashboards',
+    sistema: 'Configuração Geral',
 }
 
 export function DesktopSidebar() {

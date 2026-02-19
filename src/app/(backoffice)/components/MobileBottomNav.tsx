@@ -1,4 +1,5 @@
 'use client'
+// NAVIGATION_VERSION: v2.0.1 - ADDED FINANCEIRO & PROJETOS
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -40,7 +41,7 @@ const allItems = [
         ],
     },
     {
-        group: 'Operações',
+        group: 'Operações Hub',
         items: [
             { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
             { name: 'Leads', href: '/backoffice/leads', icon: Users },
@@ -52,7 +53,7 @@ const allItems = [
         ],
     },
     {
-        group: 'Marketing',
+        group: 'Marketing & IA',
         items: [
             { name: 'Campanhas', href: '/backoffice/campanhas', icon: Target },
             { name: 'Conteúdo', href: '/backoffice/conteudos', icon: FileEdit },
@@ -60,21 +61,21 @@ const allItems = [
         ],
     },
     {
-        group: 'Financeiro',
+        group: 'Financeiro & Projetos',
         items: [
             { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
             { name: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
         ],
     },
     {
-        group: 'Gestão',
+        group: 'Gestão & Dashboards',
         items: [
             { name: 'Relatórios', href: '/backoffice/relatorios', icon: BarChart3 },
             { name: 'Playbooks', href: '/backoffice/playbooks', icon: Lightbulb },
         ],
     },
     {
-        group: 'Sistema',
+        group: 'Configuração Geral',
         items: [
             { name: 'IA & Automação', href: '/backoffice/automacoes', icon: Lightbulb },
             { name: 'Integrações', href: '/backoffice/integracoes', icon: Layers },
