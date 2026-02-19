@@ -1,350 +1,327 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
-    DollarSign,
     TrendingUp,
     TrendingDown,
+    DollarSign,
     Calendar,
-    CreditCard,
-    FileText,
-    AlertCircle,
-    CheckCircle,
-    Clock,
-    ArrowUpRight,
-    ArrowDownRight,
+    Download,
+    ArrowUpCircle,
+    ArrowDownCircle,
+    BarChart3,
+    Filter,
 } from 'lucide-react'
 
-// ⚠️ NÃO MODIFICAR - Dados financeiros mockados Recife
-const financeiroData = {
-    // KPIs Principais
-    kpis: {
-        saldoTotal: 2847500,
-        receitaMes: 1950000,
-        despesaMes: 485000,
-        lucroMes: 1465000,
-        margemLucro: 75.1,
-        crescimento: 23.5,
+// ⚠️ NÃO MODIFICAR - Dados mockados
+const fluxoMensal = [
+    { mes: 'Set/25', entradas: 380000, saidas: 220000, saldo: 160000 },
+    { mes: 'Out/25', entradas: 420000, saidas: 195000, saldo: 225000 },
+    { mes: 'Nov/25', entradas: 310000, saidas: 240000, saldo: 70000 },
+    { mes: 'Dez/25', entradas: 580000, saidas: 260000, saldo: 320000 },
+    { mes: 'Jan/26', entradas: 490000, saidas: 210000, saldo: 280000 },
+    { mes: 'Fev/26', entradas: 345000, saidas: 185000, saldo: 160000 },
+]
+
+const lancamentos = [
+    {
+        id: 1,
+        data: '2026-02-18',
+        descricao: 'Comissão Venda - Reserva Atlantis Apto 905',
+        categoria: 'Comissão',
+        tipo: 'entrada',
+        valor: 48000,
+        status: 'confirmado',
     },
+    {
+        id: 2,
+        data: '2026-02-17',
+        descricao: 'Honorário Avaliação - Villa Jardins Unidade 304',
+        categoria: 'Honorário',
+        tipo: 'entrada',
+        valor: 12500,
+        status: 'confirmado',
+    },
+    {
+        id: 3,
+        data: '2026-02-16',
+        descricao: 'Folha de Pagamento - Fevereiro 2026',
+        categoria: 'Pessoal',
+        tipo: 'saida',
+        valor: 45000,
+        status: 'confirmado',
+    },
+    {
+        id: 4,
+        data: '2026-02-15',
+        descricao: 'Comissão Venda - Ocean Blue Cobertura',
+        categoria: 'Comissão',
+        tipo: 'entrada',
+        valor: 72000,
+        status: 'confirmado',
+    },
+    {
+        id: 5,
+        data: '2026-02-14',
+        descricao: 'Meta Ads - Campanha Reserva Atlantis',
+        categoria: 'Marketing',
+        tipo: 'saida',
+        valor: 8500,
+        status: 'confirmado',
+    },
+    {
+        id: 6,
+        data: '2026-02-13',
+        descricao: 'Aluguel Escritório - Boa Viagem',
+        categoria: 'Infraestrutura',
+        tipo: 'saida',
+        valor: 7200,
+        status: 'confirmado',
+    },
+    {
+        id: 7,
+        data: '2026-02-12',
+        descricao: 'Honorário Consultoria - Fundo Soberano Qatar',
+        categoria: 'Consultoria',
+        tipo: 'entrada',
+        valor: 95000,
+        status: 'pendente',
+    },
+    {
+        id: 8,
+        data: '2026-02-10',
+        descricao: 'Ferramentas SaaS (Supabase, Vercel, Claude API)',
+        categoria: 'Tecnologia',
+        tipo: 'saida',
+        valor: 3200,
+        status: 'confirmado',
+    },
+    {
+        id: 9,
+        data: '2026-02-08',
+        descricao: 'Comissão Venda - Smart Pina Unidade 12B',
+        categoria: 'Comissão',
+        tipo: 'entrada',
+        valor: 31500,
+        status: 'confirmado',
+    },
+    {
+        id: 10,
+        data: '2026-02-06',
+        descricao: 'Assessoria Jurídica - Contratos Fevereiro',
+        categoria: 'Jurídico',
+        tipo: 'saida',
+        valor: 6800,
+        status: 'confirmado',
+    },
+]
 
-    // Contas Bancárias
-    contas: [
-        { banco: 'Banco do Brasil', agencia: '3456-7', conta: '12345-6', saldo: 1850000, tipo: 'Corrente' },
-        { banco: 'Caixa Econômica', agencia: '0123', conta: '98765-4', saldo: 650000, tipo: 'Poupança' },
-        { banco: 'Santander', agencia: '4567', conta: '11111-2', saldo: 347500, tipo: 'Corrente' },
-    ],
+const maxBarValue = Math.max(...fluxoMensal.map(m => Math.max(m.entradas, m.saidas)))
 
-    // Fluxo de Caixa (últimos 6 meses)
-    fluxoCaixa: [
-        { mes: 'Set/25', receita: 1650000, despesa: 420000, saldo: 1230000 },
-        { mes: 'Out/25', receita: 1800000, despesa: 445000, saldo: 1355000 },
-        { mes: 'Nov/25', receita: 1720000, despesa: 460000, saldo: 1260000 },
-        { mes: 'Dez/25', receita: 2100000, despesa: 520000, saldo: 1580000 },
-        { mes: 'Jan/26', receita: 1890000, despesa: 475000, saldo: 1415000 },
-        { mes: 'Fev/26', receita: 1950000, despesa: 485000, saldo: 1465000 },
-    ],
+export default function FluxoCaixaPage() {
+    const [tipoFilter, setTipoFilter] = useState<'todos' | 'entrada' | 'saida'>('todos')
+    const [periodoFilter, setPeriodoFilter] = useState('fev26')
 
-    // Contas a Receber (próximos 30 dias)
-    contasReceber: [
-        { id: 1, cliente: 'Maria Santos Silva', imovel: 'Reserva Atlantis Apto 802', valor: 58000, vencimento: '2026-02-20', status: 'pendente' },
-        { id: 2, cliente: 'João Pedro Almeida', imovel: 'Villa Jardins Casa 12', valor: 85000, vencimento: '2026-02-22', status: 'pendente' },
-        { id: 3, cliente: 'Ana Carolina Ferreira', imovel: 'Smart Pina Apto 304', valor: 42000, vencimento: '2026-02-25', status: 'pendente' },
-        { id: 4, cliente: 'Roberto Carlos Mendes', imovel: 'Ocean Blue Cobertura', valor: 185000, vencimento: '2026-02-28', status: 'pendente' },
-    ],
+    const filtered = lancamentos.filter(l => tipoFilter === 'todos' || l.tipo === tipoFilter)
 
-    // Contas a Pagar (próximos 30 dias)
-    contasPagar: [
-        { id: 1, fornecedor: 'Construtora Central', descricao: 'Pagamento obra Villa Jardins', valor: 145000, vencimento: '2026-02-18', status: 'pendente' },
-        { id: 2, fornecedor: 'Meta Ads', descricao: 'Campanha Instagram Fevereiro', valor: 5000, vencimento: '2026-02-20', status: 'pendente' },
-        { id: 3, fornecedor: 'Google Ads', descricao: 'Anúncios Boa Viagem', valor: 3000, vencimento: '2026-02-22', status: 'pago' },
-        { id: 4, fornecedor: 'Supabase', descricao: 'Plano Pro - Fevereiro', valor: 125, vencimento: '2026-02-15', status: 'pago' },
-    ],
+    const totalEntradas = lancamentos.filter(l => l.tipo === 'entrada').reduce((s, l) => s + l.valor, 0)
+    const totalSaidas = lancamentos.filter(l => l.tipo === 'saida').reduce((s, l) => s + l.valor, 0)
+    const saldoLiquido = totalEntradas - totalSaidas
+    const saldoAnterior = 280000 // Janeiro
 
-    // Despesas por Categoria
-    despesasPorCategoria: [
-        { categoria: 'Marketing', valor: 85000, percentual: 17.5 },
-        { categoria: 'Operacional', valor: 145000, percentual: 29.9 },
-        { categoria: 'Pessoal', valor: 180000, percentual: 37.1 },
-        { categoria: 'Infraestrutura', valor: 45000, percentual: 9.3 },
-        { categoria: 'Outras', valor: 30000, percentual: 6.2 },
-    ],
-}
-
-export default function FinanceiroPage() {
-    const router = useRouter()
-    const [periodoFilter, setPeriodoFilter] = useState('mes')
-
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-            minimumFractionDigits: 0,
-        }).format(price)
-    }
-
-    const getDaysUntil = (dateStr: string) => {
-        const today = new Date()
-        const target = new Date(dateStr)
-        const diffTime = target.getTime() - today.getTime()
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-
-        if (diffDays < 0) return 'Vencido'
-        if (diffDays === 0) return 'Hoje'
-        if (diffDays === 1) return 'Amanhã'
-        return `${diffDays} dias`
-    }
+    const formatCurrency = (v: number) =>
+        v >= 1000000
+            ? `R$ ${(v / 1000000).toFixed(2)}M`
+            : `R$ ${v.toLocaleString('pt-BR')}`
 
     return (
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Financeiro</h1>
-                    <p className="text-sm text-gray-600 mt-1">
-                        Gestão completa de finanças e fluxo de caixa
-                    </p>
+                    <h1 className="text-2xl font-bold text-gray-900">Fluxo de Caixa</h1>
+                    <p className="text-sm text-gray-600 mt-1">Entradas, saídas e saldo operacional</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex items-center gap-3">
                     <select
                         value={periodoFilter}
-                        onChange={(e) => setPeriodoFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
+                        onChange={e => setPeriodoFilter(e.target.value)}
+                        className="h-11 px-4 border border-gray-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                     >
-                        <option value="hoje">Hoje</option>
-                        <option value="semana">Esta Semana</option>
-                        <option value="mes">Este Mês</option>
-                        <option value="trimestre">Trimestre</option>
-                        <option value="ano">Ano</option>
+                        <option value="jan26">Janeiro 2026</option>
+                        <option value="fev26">Fevereiro 2026</option>
+                        <option value="mar26">Março 2026</option>
                     </select>
+                    <button className="flex items-center gap-2 h-11 px-5 border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
+                        <Download size={16} />
+                        Exportar
+                    </button>
                 </div>
             </div>
 
-            {/* KPIs Principais */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white col-span-2">
-                    <div className="flex items-center justify-between mb-4">
-                        <DollarSign size={32} />
-                        <div className="px-3 py-1 rounded-full text-xs font-medium bg-white/20">
-                            +{financeiroData.kpis.crescimento}%
-                        </div>
+            {/* KPI Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white rounded-xl p-5 border">
+                    <div className="flex items-center justify-between mb-3">
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Saldo Anterior</p>
+                        <DollarSign size={18} className="text-gray-400" />
                     </div>
-                    <p className="text-3xl font-bold mb-1">{formatPrice(financeiroData.kpis.saldoTotal)}</p>
-                    <p className="text-sm text-green-100">Saldo Total em Contas</p>
+                    <p className="text-2xl font-bold text-gray-900">{formatCurrency(saldoAnterior)}</p>
+                    <p className="text-xs text-gray-500 mt-1">Jan/26</p>
                 </div>
-
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <div className="flex items-center gap-2 mb-3">
-                        <TrendingUp size={16} className="text-green-600" />
-                        <p className="text-xs text-gray-600">Receita Mês</p>
+                <div className="bg-white rounded-xl p-5 border">
+                    <div className="flex items-center justify-between mb-3">
+                        <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Entradas</p>
+                        <ArrowUpCircle size={18} className="text-green-500" />
                     </div>
-                    <p className="text-xl font-bold text-gray-900">{formatPrice(financeiroData.kpis.receitaMes)}</p>
+                    <p className="text-2xl font-bold text-green-700">{formatCurrency(totalEntradas)}</p>
+                    <p className="text-xs text-gray-500 mt-1">{lancamentos.filter(l => l.tipo === 'entrada').length} lançamentos</p>
                 </div>
-
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <div className="flex items-center gap-2 mb-3">
-                        <TrendingDown size={16} className="text-red-600" />
-                        <p className="text-xs text-gray-600">Despesa Mês</p>
+                <div className="bg-white rounded-xl p-5 border">
+                    <div className="flex items-center justify-between mb-3">
+                        <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Saídas</p>
+                        <ArrowDownCircle size={18} className="text-red-500" />
                     </div>
-                    <p className="text-xl font-bold text-gray-900">{formatPrice(financeiroData.kpis.despesaMes)}</p>
+                    <p className="text-2xl font-bold text-red-700">{formatCurrency(totalSaidas)}</p>
+                    <p className="text-xs text-gray-500 mt-1">{lancamentos.filter(l => l.tipo === 'saida').length} lançamentos</p>
                 </div>
-
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <div className="flex items-center gap-2 mb-3">
-                        <CheckCircle size={16} className="text-accent-600" />
-                        <p className="text-xs text-gray-600">Lucro Líquido</p>
+                <div className={`rounded-xl p-5 border ${saldoLiquido >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                    <div className="flex items-center justify-between mb-3">
+                        <p className={`text-xs font-medium uppercase tracking-wider ${saldoLiquido >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            Saldo Período
+                        </p>
+                        {saldoLiquido >= 0 ? <TrendingUp size={18} className="text-green-500" /> : <TrendingDown size={18} className="text-red-500" />}
                     </div>
-                    <p className="text-xl font-bold text-green-700">{formatPrice(financeiroData.kpis.lucroMes)}</p>
-                </div>
-
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <div className="flex items-center gap-2 mb-3">
-                        <FileText size={16} className="text-purple-600" />
-                        <p className="text-xs text-gray-600">Margem</p>
-                    </div>
-                    <p className="text-xl font-bold text-purple-700">{financeiroData.kpis.margemLucro}%</p>
+                    <p className={`text-2xl font-bold ${saldoLiquido >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                        {formatCurrency(saldoLiquido)}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                        Saldo final: {formatCurrency(saldoAnterior + saldoLiquido)}
+                    </p>
                 </div>
             </div>
 
-            {/* Contas Bancárias */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                <h2 className="text-lg font-bold text-gray-900 mb-6">Contas Bancárias</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {financeiroData.contas.map((conta, index) => (
-                        <div key={index} className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                            <div className="flex items-center justify-between mb-3">
-                                <span className="text-sm font-semibold text-gray-900">{conta.banco}</span>
-                                <span className="px-2 py-1 bg-white text-xs font-medium text-gray-700 rounded">
-                                    {conta.tipo}
-                                </span>
+            {/* Gráfico de Barras (CSS puro) */}
+            <div className="bg-white rounded-2xl p-6 border">
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-lg font-bold text-gray-900">Evolução 6 Meses</h2>
+                    <div className="flex items-center gap-4 text-xs">
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded bg-green-500 inline-block" />
+                            Entradas
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded bg-red-400 inline-block" />
+                            Saídas
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded bg-accent-500 inline-block" />
+                            Saldo
+                        </span>
+                    </div>
+                </div>
+                <div className="flex items-end gap-4 h-48">
+                    {fluxoMensal.map((m) => (
+                        <div key={m.mes} className="flex-1 flex flex-col items-center gap-1">
+                            <div className="w-full flex items-end gap-1 h-40">
+                                {/* Entradas */}
+                                <div className="flex-1 flex flex-col justify-end">
+                                    <div
+                                        className="bg-green-500 rounded-t-sm transition-all"
+                                        style={{ height: `${(m.entradas / maxBarValue) * 100}%` }}
+                                    />
+                                </div>
+                                {/* Saídas */}
+                                <div className="flex-1 flex flex-col justify-end">
+                                    <div
+                                        className="bg-red-400 rounded-t-sm transition-all"
+                                        style={{ height: `${(m.saidas / maxBarValue) * 100}%` }}
+                                    />
+                                </div>
+                                {/* Saldo */}
+                                <div className="flex-1 flex flex-col justify-end">
+                                    <div
+                                        className={`rounded-t-sm transition-all ${m.saldo >= 0 ? 'bg-accent-500' : 'bg-red-600'}`}
+                                        style={{ height: `${(Math.abs(m.saldo) / maxBarValue) * 100}%` }}
+                                    />
+                                </div>
                             </div>
-                            <p className="text-xs text-gray-600 mb-3">
-                                Ag {conta.agencia} • CC {conta.conta}
-                            </p>
-                            <p className="text-2xl font-bold text-gray-900">{formatPrice(conta.saldo)}</p>
+                            <span className="text-xs text-gray-500 font-medium">{m.mes}</span>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Fluxo de Caixa e Despesas por Categoria */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Fluxo de Caixa */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                    <h2 className="text-lg font-bold text-gray-900 mb-6">Fluxo de Caixa (6 meses)</h2>
-                    <div className="space-y-4">
-                        {financeiroData.fluxoCaixa.map((item, index) => {
-                            const maxSaldo = Math.max(...financeiroData.fluxoCaixa.map(f => f.saldo))
-                            const barWidth = (item.saldo / maxSaldo) * 100
-
-                            return (
-                                <div key={index}>
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="text-sm font-medium text-gray-900">{item.mes}</span>
-                                        <div className="flex items-center gap-4 text-xs">
-                                            <span className="flex items-center gap-1 text-green-600">
-                                                <ArrowUpRight size={12} />
-                                                {formatPrice(item.receita)}
-                                            </span>
-                                            <span className="flex items-center gap-1 text-red-600">
-                                                <ArrowDownRight size={12} />
-                                                {formatPrice(item.despesa)}
-                                            </span>
-                                            <span className="font-bold text-gray-900">
-                                                {formatPrice(item.saldo)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-accent-500 rounded-full transition-all duration-500"
-                                            style={{ width: `${barWidth}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                </div>
-
-                {/* Despesas por Categoria */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                    <h2 className="text-lg font-bold text-gray-900 mb-6">Despesas por Categoria</h2>
-                    <div className="space-y-4">
-                        {financeiroData.despesasPorCategoria.map((item, index) => (
-                            <div key={index}>
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-sm font-medium text-gray-900">{item.categoria}</span>
-                                    <div className="text-right">
-                                        <p className="text-sm font-bold text-gray-900">{formatPrice(item.valor)}</p>
-                                        <p className="text-xs text-gray-500">{item.percentual}%</p>
-                                    </div>
-                                </div>
-                                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full rounded-full transition-all duration-500 ${index === 0 ? 'bg-blue-500' :
-                                                index === 1 ? 'bg-purple-500' :
-                                                    index === 2 ? 'bg-orange-500' :
-                                                        index === 3 ? 'bg-green-500' :
-                                                            'bg-gray-500'
-                                            }`}
-                                        style={{ width: `${item.percentual}%` }}
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* Contas a Receber e Pagar */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Contas a Receber */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-bold text-gray-900">Contas a Receber</h2>
+            {/* Lançamentos */}
+            <div className="bg-white rounded-2xl border overflow-hidden">
+                <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                    <h2 className="text-lg font-bold text-gray-900">Lançamentos</h2>
+                    <div className="flex items-center gap-2">
                         <button
-                            onClick={() => router.push('/backoffice/financeiro/receber')}
-                            className="text-sm font-medium text-accent-600 hover:text-accent-700"
+                            onClick={() => setTipoFilter('todos')}
+                            className={`px-4 h-9 rounded-lg text-sm font-medium transition-colors ${tipoFilter === 'todos' ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
                         >
-                            Ver todas
+                            Todos
+                        </button>
+                        <button
+                            onClick={() => setTipoFilter('entrada')}
+                            className={`px-4 h-9 rounded-lg text-sm font-medium transition-colors ${tipoFilter === 'entrada' ? 'bg-green-600 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                        >
+                            Entradas
+                        </button>
+                        <button
+                            onClick={() => setTipoFilter('saida')}
+                            className={`px-4 h-9 rounded-lg text-sm font-medium transition-colors ${tipoFilter === 'saida' ? 'bg-red-600 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                        >
+                            Saídas
                         </button>
                     </div>
-                    <div className="space-y-3">
-                        {financeiroData.contasReceber.map((conta) => (
-                            <div key={conta.id} className="p-4 bg-green-50 border border-green-200 rounded-xl">
-                                <div className="flex items-start justify-between mb-2">
-                                    <div>
-                                        <p className="font-semibold text-gray-900 text-sm">{conta.cliente}</p>
-                                        <p className="text-xs text-gray-600">{conta.imovel}</p>
+                </div>
+                <table className="w-full">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Data</th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Descrição</th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Categoria</th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                        {filtered.map((l) => (
+                            <tr key={l.id} className="hover:bg-gray-50 transition-colors">
+                                <td className="px-6 py-4 text-sm text-gray-600">
+                                    {new Date(l.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center gap-3">
+                                        {l.tipo === 'entrada'
+                                            ? <ArrowUpCircle size={16} className="text-green-500 flex-shrink-0" />
+                                            : <ArrowDownCircle size={16} className="text-red-500 flex-shrink-0" />
+                                        }
+                                        <span className="text-sm text-gray-900">{l.descricao}</span>
                                     </div>
-                                    <p className="text-lg font-bold text-green-700">{formatPrice(conta.valor)}</p>
-                                </div>
-                                <div className="flex items-center justify-between text-xs">
-                                    <span className="text-gray-600">
-                                        Vence: {new Date(conta.vencimento).toLocaleDateString('pt-BR')}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">
+                                        {l.categoria}
                                     </span>
-                                    <span className="font-medium text-green-700">
-                                        {getDaysUntil(conta.vencimento)}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className={`px-2 py-1 rounded text-xs font-medium ${l.status === 'confirmado'
+                                            ? 'bg-green-50 text-green-700'
+                                            : 'bg-orange-50 text-orange-700'
+                                        }`}>
+                                        {l.status === 'confirmado' ? 'Confirmado' : 'Pendente'}
                                     </span>
-                                </div>
-                            </div>
+                                </td>
+                                <td className={`px-6 py-4 text-right text-sm font-bold ${l.tipo === 'entrada' ? 'text-green-700' : 'text-red-700'}`}>
+                                    {l.tipo === 'saida' ? '-' : '+'}{formatCurrency(l.valor)}
+                                </td>
+                            </tr>
                         ))}
-                    </div>
-                </div>
-
-                {/* Contas a Pagar */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-bold text-gray-900">Contas a Pagar</h2>
-                        <button
-                            onClick={() => router.push('/backoffice/financeiro/pagar')}
-                            className="text-sm font-medium text-accent-600 hover:text-accent-700"
-                        >
-                            Ver todas
-                        </button>
-                    </div>
-                    <div className="space-y-3">
-                        {financeiroData.contasPagar.map((conta) => {
-                            const isPago = conta.status === 'pago'
-
-                            return (
-                                <div
-                                    key={conta.id}
-                                    className={`p-4 rounded-xl border ${isPago
-                                            ? 'bg-gray-50 border-gray-200'
-                                            : 'bg-orange-50 border-orange-200'
-                                        }`}
-                                >
-                                    <div className="flex items-start justify-between mb-2">
-                                        <div>
-                                            <p className="font-semibold text-gray-900 text-sm">{conta.fornecedor}</p>
-                                            <p className="text-xs text-gray-600">{conta.descricao}</p>
-                                        </div>
-                                        <p className={`text-lg font-bold ${isPago ? 'text-gray-500' : 'text-orange-700'}`}>
-                                            {formatPrice(conta.valor)}
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center justify-between text-xs">
-                                        <span className="text-gray-600">
-                                            {new Date(conta.vencimento).toLocaleDateString('pt-BR')}
-                                        </span>
-                                        {isPago ? (
-                                            <span className="flex items-center gap-1 text-green-600 font-medium">
-                                                <CheckCircle size={12} />
-                                                Pago
-                                            </span>
-                                        ) : (
-                                            <span className="font-medium text-orange-700">
-                                                {getDaysUntil(conta.vencimento)}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                </div>
+                    </tbody>
+                </table>
             </div>
         </div>
     )
