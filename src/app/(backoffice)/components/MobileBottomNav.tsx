@@ -21,6 +21,8 @@ import {
     Layers,
     MessageSquare,
     Bell,
+    Banknote,
+    FolderOpen,
 } from 'lucide-react'
 
 const mainItems = [
@@ -32,9 +34,14 @@ const mainItems = [
 
 const allItems = [
     {
-        group: 'Operações',
+        group: 'Principal',
         items: [
             { name: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
+        ],
+    },
+    {
+        group: 'Operações',
+        items: [
             { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
             { name: 'Leads', href: '/backoffice/leads', icon: Users },
             { name: 'Avaliações', href: '/backoffice/avaliacoes', icon: FileText },
@@ -50,6 +57,13 @@ const allItems = [
             { name: 'Campanhas', href: '/backoffice/campanhas', icon: Target },
             { name: 'Conteúdo', href: '/backoffice/conteudos', icon: FileEdit },
             { name: 'Tracking', href: '/backoffice/tracking', icon: Activity },
+        ],
+    },
+    {
+        group: 'Financeiro',
+        items: [
+            { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
+            { name: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
         ],
     },
     {
@@ -70,6 +84,7 @@ const allItems = [
         ],
     },
 ]
+
 
 export function MobileBottomNav() {
     const pathname = usePathname()
@@ -143,8 +158,8 @@ export function MobileBottomNav() {
                                                     href={item.href}
                                                     onClick={() => setMenuOpen(false)}
                                                     className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-                                                            ? 'bg-accent-50 text-accent-600'
-                                                            : 'text-gray-700 hover:bg-gray-50'
+                                                        ? 'bg-accent-50 text-accent-600'
+                                                        : 'text-gray-700 hover:bg-gray-50'
                                                         }`}
                                                 >
                                                     <item.icon className="h-5 w-5" />
