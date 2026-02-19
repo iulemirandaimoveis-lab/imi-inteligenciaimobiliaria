@@ -1,71 +1,96 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { motion } from 'framer-motion'
 import { ChevronRight, Home } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 interface Breadcrumb {
     label: string
-    href?: string
+    href: string
 }
 
 interface PageHeaderProps {
     title: string
-    description?: string
+    subtitle?: string
     breadcrumbs?: Breadcrumb[]
-    action?: ReactNode
+    actions?: React.ReactNode
 }
 
-export default function PageHeader({ title, description, breadcrumbs, action }: PageHeaderProps) {
-    return (
-        <div className="mb-12 animate-fade-in">
-            {/* Breadcrumbs - Subtle & Precise */}
-            {breadcrumbs && breadcrumbs.length > 0 && (
-                <nav className="flex items-center gap-2 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] mb-6">
-                    <Link href="/backoffice/dashboard" className="hover:text-imi-500 transition-colors flex items-center gap-1.5 group">
-                        <Home size={11} />
-                        <span className="sr-only">Home</span>
-                    </Link>
-                    {breadcrumbs.map((crumb, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                            <ChevronRight size={10} strokeWidth={3} className="opacity-30" />
-                            {crumb.href ? (
-                                <Link
-                                    href={crumb.href}
-                                    className="hover:text-imi-500 transition-colors uppercase"
-                                >
-                                    {crumb.label}
-                                </Link>
-                            ) : (
-                                <span className="text-gray-900 dark:text-imi-400">{crumb.label}</span>
-                            )}
-                        </div>
-                    ))}
-                </nav>
-            )}
+export default function PageHeader({ title, subtitle, breadcrumbs, actions }: PageHeaderProps) {
+    const pathname = usePathname()
 
-            {/* Title & Action Area */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-                <div className="space-y-3">
-                    <h1 className="text-3xl md:text-5xl font-display font-bold text-gray-900 dark:text-white tracking-tight leading-tight">
+    // Generate default breadcrumbs if none provided
+    const defaultBreadcrumbs = breadcrumbs || pathname?.split('/')
+        .filter(Boolean)
+        .map((part, i, arr) => ({
+            label: part.charAt(0).toUpperCase() + part.slice(1),
+            href: '/' + arr.slice(0, i + 1).join('/')
+        }))
+        .slice(1) // Remove 'backoffice' from list as it's the root
+
+    return (
+        <div className="mb-8">
+            {/* Breadcrumbs */}
+            <nav className="flex items-center gap-2 mb-3">
+                <Link
+                    href="/backoffice/dashboard"
+                    className="text-imi-400 hover:text-accent-600 transition-colors"
+                >
+                    <Home size={14} />
+                </Link>
+
+                {defaultBreadcrumbs?.map((bc, i) => (
+                    <div key={bc.href} className="flex items-center gap-2">
+                        <ChevronRight size={12} className="text-imi-300" />
+                        <Link
+                            href={bc.href}
+                            className={`text-xs font-medium transition-colors ${i === defaultBreadcrumbs.length - 1
+                                    ? 'text-imi-900 pointer-events-none'
+                                    : 'text-imi-400 hover:text-accent-600'
+                                }`}
+                        >
+                            {bc.label}
+                        </Link>
+                    </div>
+                ))}
+            </nav>
+
+            {/* Main Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <motion.div
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                >
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-imi-900 mb-1"
+                        style={{ letterSpacing: '-0.02em' }}>
                         {title}
                     </h1>
-                    {description && (
-                        <p className="text-gray-500 dark:text-gray-400 max-w-2xl text-sm md:text-base font-medium leading-relaxed">
-                            {description}
-                        </p>
+                    {subtitle && (
+                        <p className="text-sm text-imi-500 font-medium">{subtitle}</p>
                     )}
-                </div>
 
-                {action && (
-                    <div className="flex items-center gap-4 shrink-0 pb-1">
-                        {action}
-                    </div>
+                    {/* Animated underline */}
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: 48 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
+                        className="h-0.5 bg-gradient-to-r from-accent-500 to-transparent rounded-full mt-3"
+                    />
+                </motion.div>
+
+                {actions && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.1, duration: 0.4 }}
+                        className="flex items-center gap-3"
+                    >
+                        {actions}
+                    </motion.div>
                 )}
             </div>
-
-            {/* Institutional Hairline Divider */}
-            <div className="mt-10 h-[1px] w-full bg-gray-100 dark:bg-white/5" />
         </div>
     )
 }
