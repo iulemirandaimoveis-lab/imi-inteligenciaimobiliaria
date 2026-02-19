@@ -1,10 +1,7 @@
-
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
-import Header from './components/Header'
-import Footer from './components/Footer'
+import Header from '@/components/website/Header'
+import Footer from '@/components/website/Footer'
 import { generateOrganizationSchema } from '@/lib/seo'
-import { getDictionary } from '@/lib/dictionaries'
 
 export const metadata: Metadata = {
     title: 'IMI – Inteligência Imobiliária',
@@ -13,12 +10,12 @@ export const metadata: Metadata = {
 
 export default async function WebsiteLayout({
     children,
-    params: { lang }
+    params: { lang },
 }: {
     children: React.ReactNode
     params: { lang: 'pt' | 'en' | 'ja' | 'ar' | 'es' }
 }) {
-    const isRTL = lang === 'ar';
+    const isRTL = lang === 'ar'
     const organizationSchema = generateOrganizationSchema()
 
     return (
@@ -28,7 +25,7 @@ export default async function WebsiteLayout({
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
             />
             <Header lang={lang} />
-            <main className="flex-grow pt-16 lg:pt-20">{children}</main>
+            <main className="flex-grow pt-[68px] lg:pt-[76px]">{children}</main>
             <Footer lang={lang} />
         </div>
     )

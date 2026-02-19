@@ -24,15 +24,19 @@ export default function AppraisalForm() {
         const attribution = getAttribution()
 
         try {
-            const response = await fetch('/api/leads/capture', {
+            const response = await fetch('/api/appraisal', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: data.name,
                     email: data.email,
                     phone: data.phone,
-                    interest: `Solicitação de Avaliação: ${data.appraisalType}`,
-                    message: `Tipo Imóvel: ${data.propertyType} | Cidade: ${data.city} | Endereço: ${data.address} | Prazo: ${data.timeline} | Info: ${data.message}`,
+                    appraisalType: data.appraisalType,
+                    propertyType: data.propertyType,
+                    city: data.city,
+                    address: data.address,
+                    timeline: data.timeline,
+                    additionalInfo: data.message,
                     attribution
                 }),
             })

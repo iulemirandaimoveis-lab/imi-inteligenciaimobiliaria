@@ -6,45 +6,59 @@ export async function POST(request: NextRequest) {
         const data = await request.json()
         const supabase = await createClient()
 
-        // Validate required fields
-        const requiredFields = ['name', 'phone', 'appraisalType']
-        for (const field of requiredFields) {
-            if (!data[field]) {
-                return NextResponse.json(
-                    { error: `Campo obrigatório ausente: ${field}` },
-                    { status: 400 }
-                )
-            }
+        if (!data.name || !data.phone) {
+            return NextResponse.json({ error: 'Nome e telefone são obrigatórios' }, { status: 400 })
         }
 
-        // Store in Supabase 'appraisal_requests' table
-        const { error } = await supabase.from('appraisal_requests').insert({
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            appraisal_type: data.appraisalType,
-            property_type: data.propertyType,
-            city: data.city,
-            address: data.address,
-            timeline: data.timeline,
-            additional_info: data.additionalInfo || '',
-            status: 'pending'
-        })
+        // 1. Save to valuation_requests
+        const { error: valError } = await supabase
+            .from('valuation_requests')
+            .insert({
+                name: data.name,
+                email: data.email || null,
+                phone: data.phone,
+                property_type: data.propertyType || null,
+                address: data.address || null,
+                city: data.city || null,
+                appraisal_purpose: data.appraisalType || null,
+                urgency: data.timeline === 'urgente' ? 'urgent' : 'normal',
+                notes: data.additionalInfo || null,
+                status: 'pending',
+            })
 
-        if (error) {
-            console.error('Supabase insert error:', error)
-            return NextResponse.json({ error: error.message }, { status: 500 })
+        if (valError) {
+            console.warn('valuation_requests insert failed:', valError.message)
         }
 
-        return NextResponse.json(
-            { success: true, message: 'Solicitação recebida com sucesso' },
-            { status: 200 }
-        )
+        // 2. Always capture lead
+        if (data.email || data.phone) {
+            await supabase.from('leads').upsert(
+                {
+                    name: data.name,
+                    email: data.email || null,
+                    phone: data.phone,
+                    source: data.attribution?.source || 'site_direto',
+                    status: 'new',
+                    interest_type: 'appraisal',
+                    interest_location: data.city || null,
+                    message: [
+                        data.appraisalType && `Tipo: ${data.appraisalType}`,
+                        data.propertyType && `Imóvel: ${data.propertyType}`,
+                        data.address && `End: ${data.address}`,
+                        data.timeline && `Prazo: ${data.timeline}`,
+                        data.additionalInfo,
+                    ].filter(Boolean).join(' | '),
+                    utm_source: data.attribution?.source || null,
+                    utm_medium: data.attribution?.medium || null,
+                    utm_campaign: data.attribution?.campaign || null,
+                },
+                { onConflict: 'email', ignoreDuplicates: false }
+            )
+        }
+
+        return NextResponse.json({ success: true, message: 'Solicitação recebida com sucesso' }, { status: 200 })
     } catch (error) {
-        console.error('Error processing appraisal request:', error)
-        return NextResponse.json(
-            { error: 'Erro ao processar solicitação' },
-            { status: 500 }
-        )
+        console.error('Appraisal API error:', error)
+        return NextResponse.json({ error: 'Erro ao processar solicitação' }, { status: 500 })
     }
 }
