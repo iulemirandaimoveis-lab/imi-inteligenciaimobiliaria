@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import {
   ArrowLeft,
   ArrowRight,
@@ -25,6 +26,7 @@ import {
   Bath,
   Car,
   Maximize,
+  FileText,
 } from 'lucide-react'
 
 type Step = 1 | 2 | 3 | 4
@@ -139,6 +141,36 @@ export default function NovoImovelPage() {
     images: [],
     logo: null,
   })
+
+  const [isParsingPdf, setIsParsingPdf] = useState(false)
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsParsingPdf(true)
+
+    // Simulate AI parsing delay
+    await new Promise(resolve => setTimeout(resolve, 3000))
+
+    // Mock response from AI parser
+    setFormData(prev => ({
+      ...prev,
+      name: 'Reserva Atlantis',
+      type: 'Apartamento',
+      location: 'Boa Viagem',
+      address: 'Av. Boa Viagem, Recife - PE',
+      developer: 'Grupo IMI',
+      area: '120',
+      bedrooms: '3',
+      bathrooms: '3',
+      parking: '2',
+      features: ['Piscina', 'Academia', 'Salão de festas', 'Elevador', 'Segurança'],
+    }))
+
+    setIsParsingPdf(false)
+    toast.success('PDF processado com sucesso! Os campos foram preenchidos automaticamente.')
+  }
 
   const handleChange = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -304,7 +336,35 @@ export default function NovoImovelPage() {
         {/* Step 1: Básico */}
         {currentStep === 1 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Informações Básicas</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Informações Básicas</h2>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handlePdfUpload}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  disabled={isParsingPdf}
+                />
+                <button
+                  type="button"
+                  disabled={isParsingPdf}
+                  className="flex items-center gap-2 px-4 py-2 bg-accent-50 text-accent-700 hover:bg-accent-100 border border-accent-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                >
+                  {isParsingPdf ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Extraindo dados do PDF...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={16} />
+                      Preencher via PDF / Ebook
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Nome */}

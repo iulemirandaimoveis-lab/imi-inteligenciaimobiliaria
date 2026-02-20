@@ -92,6 +92,7 @@ const NAV: NavItem[] = [
       { label: 'Visão Geral', href: '/backoffice/financeiro', icon: BarChart },
       { label: 'A Receber', href: '/backoffice/financeiro/receber', icon: TrendingUp },
       { label: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: TrendingUp },
+      { label: 'Metas & Performance', href: '/backoffice/financeiro/metas', icon: Target },
     ]
   },
   {
