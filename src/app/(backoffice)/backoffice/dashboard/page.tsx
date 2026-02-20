@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   // Atividade recente: últimos 5 leads
   const { data: recentLeads } = await supabase
     .from('leads')
-    .select('id, name, email, source, created_at, interest, status')
+    .select('id, name, email, source, created_at, interest:interest_type, status')
     .order('created_at', { ascending: false })
     .limit(5)
 

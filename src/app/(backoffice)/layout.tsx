@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { DesktopSidebar } from './components/DesktopSidebar'
+import DesktopSidebar from './components/DesktopSidebar'
 import DesktopHeader from './components/DesktopHeader'
 import { MobileBottomNav } from './components/MobileBottomNav'
 import { CommandPalette } from '@/components/backoffice/CommandPalette'
