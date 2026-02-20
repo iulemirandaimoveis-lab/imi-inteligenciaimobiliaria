@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'next/navigation'
-import { Shield, Award, TrendingUp, Building2 } from 'lucide-react'
+import { BadgeCheck, Scale, FileText, TrendingUp } from 'lucide-react'
 
 interface HeroProps {
   dict: {
@@ -47,9 +47,9 @@ const STATS = [
 ]
 
 const TRUST = [
-  { icon: Shield, text: 'CRECI-PE 25.xxx' },
-  { icon: Award, text: 'CNAI 35.xxx' },
-  { icon: Building2, text: 'NBR 14653' },
+  { icon: BadgeCheck, text: 'CRECI 17933' },
+  { icon: Scale, text: 'CNAI 53290' },
+  { icon: FileText, text: 'NBR 14653' },
 ]
 
 export default function Hero({ dict }: HeroProps) {
