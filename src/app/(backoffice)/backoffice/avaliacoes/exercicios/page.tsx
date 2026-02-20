@@ -321,7 +321,20 @@ export default function ExerciciosPage() {
   const generateIAExercise = async () => {
     setIsGenerating(true)
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      // Chama rota de servidor — ANTHROPIC_API_KEY nunca exposta ao cliente
+      const response = await fetch('/api/avaliacoes/gerar-exercicio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ categoria: filtroCategoria, nivel: filtroNivel, quantidade: 1 })
+      })
+      const _data = await response.json()
+      if (_data.success && _data.exercicios?.length > 0) {
+        setIaExercicio(JSON.stringify(_data.exercicios[0]))
+      } else {
+        throw new Error(_data.error || 'Falha na geração')
+      }
+      if (false) { // dead code block — replaced by server route above
+      const _r2 = await fetch('https://api.anthropic.com/v1/messages_DISABLED', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -345,6 +358,7 @@ export default function ExerciciosPage() {
       const text = data.content?.[0]?.text || '{}'
       const clean = text.replace(/```json|```/g, '').trim()
       setIaExercicio(clean)
+      } // end if(false)
     } catch {
       setIaExercicio(JSON.stringify({
         pergunta: 'Qual o principal objetivo da NBR 14653-1?',
