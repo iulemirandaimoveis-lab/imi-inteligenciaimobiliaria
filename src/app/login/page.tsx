@@ -111,42 +111,42 @@ export default function LoginPage() {
             </div>
 
             {/* Right Side - Login Form */}
-            <div className="w-full lg:w-[40%] flex items-center justify-center p-8 bg-white dark:bg-background-dark relative">
+            <div className="w-full lg:w-[40%] flex items-center justify-center p-8 relative" style={{ background: '#0D0F14' }}>
                 <div className="w-full max-w-md">
                     {/* Brand Header Mobile */}
                     <div className="lg:hidden mb-12 flex flex-col items-center">
                         <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-background-dark font-display font-bold text-3xl shadow-glow mb-4">
                             I
                         </div>
-                        <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white">IMI Admin</h2>
+                        <h2 className="text-2xl font-display font-bold text-white">IMI Admin</h2>
                     </div>
 
                     <div className="mb-10 text-center lg:text-left">
-                        <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-white mb-3">Bem-vindo</h1>
-                        <p className="text-gray-500 dark:text-gray-400 font-medium">Insira suas credenciais para acessar o painel administrativo.</p>
+                        <h1 className="text-4xl font-display font-bold text-white mb-3">Bem-vindo</h1>
+                        <p className="text-gray-400 font-medium">Insira suas credenciais para acessar o painel administrativo.</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">E-mail Corporativo</label>
+                            <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">E-mail Corporativo</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full h-14 px-6 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-2xl text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                                className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                 placeholder="colaborador@imi.com.br"
                                 required
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Senha de Acesso</label>
+                            <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">Senha de Acesso</label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full h-14 px-6 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-2xl text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                                    className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                     placeholder="••••••••"
                                     required
                                 />
