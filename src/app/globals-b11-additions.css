@@ -1,0 +1,113 @@
+/* ============================================================
+   B11 — BACKOFFICE DARK THEME ADDITIONS
+   Add this block at the END of src/app/globals.css
+   ============================================================ */
+
+/* ── BACKOFFICE ROOT CONTEXT ───────────────────────────────── */
+/* Applied to the layout wrapper div.backoffice-root */
+.backoffice-root {
+  /* Override surface to dark */
+  --surface-0: #13161E;
+  --surface-1: #1A1E2A;
+  --surface-2: #21263A;
+
+  /* Backoffice-specific tokens */
+  --bo-bg:          #0D0F14;
+  --bo-surface:     #13161E;
+  --bo-elevated:    #1A1E2A;
+  --bo-border:      rgba(255,255,255,0.07);
+  --bo-border-gold: rgba(196,157,91,0.22);
+  --bo-text:        #F0F2F5;
+  --bo-text-sub:    #8B93A7;
+  --bo-text-dim:    #4E5669;
+
+  /* Glass card system */
+  --glass-bg:       rgba(26,30,42,0.70);
+  --glass-border:   rgba(196,157,91,0.18);
+  --glass-blur:     blur(16px);
+  --glass-shadow:   0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
+
+  /* Status — unified palette (replaces Tailwind colors) */
+  --s-hot:    #E8A87C;  --s-hot-bg:    rgba(232,168,124,0.12);
+  --s-warm:   #C49D5B;  --s-warm-bg:   rgba(196,157,91,0.12);
+  --s-cold:   #7B9EC4;  --s-cold-bg:   rgba(123,158,196,0.12);
+  --s-done:   #6BB87B;  --s-done-bg:   rgba(107,184,123,0.12);
+  --s-pend:   #A89EC4;  --s-pend-bg:   rgba(168,158,196,0.12);
+  --s-cancel: #E57373;  --s-cancel-bg: rgba(229,115,115,0.12);
+}
+
+/* ── BACKOFFICE INPUT DARK ─────────────────────────────────── */
+.backoffice-root input,
+.backoffice-root textarea,
+.backoffice-root select {
+  background: var(--bo-elevated);
+  border-color: var(--bo-border);
+  color: var(--bo-text);
+}
+
+.backoffice-root input::placeholder,
+.backoffice-root textarea::placeholder {
+  color: var(--bo-text-dim);
+}
+
+/* ── ACCENT-600 BUTTON (used in many pages) ──────────────────── */
+/* Fix: accent-600 was rendering as brownish #A67C3D in Tailwind
+   This ensures the gradient gold CTA is consistent everywhere  */
+.backoffice-root .bg-accent-600,
+.backoffice-root [class*="bg-accent-"] {
+  background: linear-gradient(135deg, #C49D5B, #A67C3D);
+}
+
+/* ── GLASS CARD UTILITY ─────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  border-radius: 16px;
+}
+
+.glass-card:hover {
+  border-color: rgba(196,157,91,0.35);
+  box-shadow: 0 0 0 1px rgba(196,157,91,0.18), 0 8px 32px rgba(196,157,91,0.08), 0 4px 24px rgba(0,0,0,0.32);
+}
+
+/* ── STATUS BADGE UTILITY ─────────────────────────────────── */
+.badge-hot     { color: var(--s-hot);    background: var(--s-hot-bg);    }
+.badge-warm    { color: var(--s-warm);   background: var(--s-warm-bg);   }
+.badge-cold    { color: var(--s-cold);   background: var(--s-cold-bg);   }
+.badge-done    { color: var(--s-done);   background: var(--s-done-bg);   }
+.badge-pend    { color: var(--s-pend);   background: var(--s-pend-bg);   }
+.badge-cancel  { color: var(--s-cancel); background: var(--s-cancel-bg); }
+
+/* ── BOTTOM NAV SAFE AREA ──────────────────────────────────── */
+.backoffice-root main {
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 1024px) {
+  .backoffice-root main {
+    padding-bottom: 24px;
+  }
+}
+
+/* ── RECHARTS DARK THEME ──────────────────────────────────── */
+.backoffice-root .recharts-cartesian-axis-tick-value {
+  fill: #4E5669;
+}
+
+.backoffice-root .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: #1A1E2A !important;
+  border: 1px solid rgba(196,157,91,0.22) !important;
+  border-radius: 10px !important;
+}
+
+/* ── SCROLLBAR DARK ──────────────────────────────────────── */
+.backoffice-root ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+}
+
+.backoffice-root ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.14);
+}

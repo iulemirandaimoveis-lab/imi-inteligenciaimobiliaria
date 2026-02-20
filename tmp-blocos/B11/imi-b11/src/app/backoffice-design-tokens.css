@@ -1,0 +1,61 @@
+/* ============================================================
+   IMI ATLANTIS — BACKOFFICE DESIGN SYSTEM v3.0
+   Semi-dark theme · Gold accent · Glassmorphism cards
+   Applied via: globals.css @import or direct include
+   ============================================================ */
+
+/* ── BACKOFFICE TOKEN OVERRIDES ─────────────────────────────── */
+.backoffice-root {
+  /* Content backgrounds — semi-dark */
+  --bo-bg-base:       #0D0F14;   /* page background */
+  --bo-bg-surface:    #13161E;   /* card base */
+  --bo-bg-elevated:   #1A1E2A;   /* elevated panels, modals */
+  --bo-bg-overlay:    #21263A;   /* hover/overlay states */
+
+  /* Borders */
+  --bo-border-subtle:  rgba(255,255,255,0.06);
+  --bo-border-default: rgba(255,255,255,0.10);
+  --bo-border-strong:  rgba(255,255,255,0.18);
+  --bo-border-gold:    rgba(196,157,91,0.25);
+
+  /* Text scale */
+  --bo-text-primary:   #F0F2F5;
+  --bo-text-secondary: #8B93A7;
+  --bo-text-tertiary:  #4E5669;
+  --bo-text-gold:      #C49D5B;
+  --bo-text-gold-dim:  #8A6D3F;
+
+  /* Glassmorphism KPI cards */
+  --bo-glass-bg:       rgba(26,30,42,0.70);
+  --bo-glass-border:   rgba(196,157,91,0.18);
+  --bo-glass-shadow:   0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
+  --bo-glass-glow:     0 0 0 1px rgba(196,157,91,0.18), 0 8px 32px rgba(196,157,91,0.08);
+  --bo-glass-blur:     blur(16px);
+
+  /* Status — IMI palette (no generic Tailwind colors) */
+  --status-hot-text:   #E8A87C;
+  --status-hot-bg:     rgba(232,168,124,0.10);
+  --status-hot-border: rgba(232,168,124,0.25);
+
+  --status-warm-text:  #C49D5B;
+  --status-warm-bg:    rgba(196,157,91,0.10);
+  --status-warm-border:rgba(196,157,91,0.25);
+
+  --status-cold-text:  #7B9EC4;
+  --status-cold-bg:    rgba(123,158,196,0.10);
+  --status-cold-border:rgba(123,158,196,0.22);
+
+  --status-done-text:  #6BB87B;
+  --status-done-bg:    rgba(107,184,123,0.10);
+  --status-done-border:rgba(107,184,123,0.22);
+
+  --status-pend-text:  #A89EC4;
+  --status-pend-bg:    rgba(168,158,196,0.10);
+  --status-pend-border:rgba(168,158,196,0.22);
+
+  /* Bottom nav — dark pill */
+  --nav-bg:        rgba(19,22,30,0.95);
+  --nav-border:    rgba(196,157,91,0.15);
+  --nav-active:    #C49D5B;
+  --nav-inactive:  #4E5669;
+}
