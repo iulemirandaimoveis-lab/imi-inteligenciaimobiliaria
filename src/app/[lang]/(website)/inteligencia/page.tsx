@@ -257,12 +257,10 @@ export default function MarketIntelligencePage() {
                     <p className="text-imi-300 text-lg mb-10 max-w-2xl mx-auto font-light">
                         Precisa de um estudo de viabilidade ou dossiê completo de mercado para seu próximo projeto?
                     </p>
-                    <Button asChild size="lg" className="bg-white text-imi-900 hover:bg-imi-50">
-                        <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer">
-                            <MessageCircle className="w-5 h-5 mr-3" />
-                            Solicitar Estudo de Mercado
-                        </a>
-                    </Button>
+                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="btn btn-primary bg-white text-imi-900 border border-imi-200 hover:bg-imi-50 h-14 px-10 inline-flex items-center text-lg shadow-md font-bold uppercase tracking-wider">
+                        <MessageCircle className="w-5 h-5 flex-shrink-0 mr-3" />
+                        Solicitar Estudo de Mercado
+                    </a>
                 </div>
             </section>
         </>

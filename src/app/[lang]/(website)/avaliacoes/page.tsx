@@ -53,7 +53,7 @@ export default function AppraisalsPage() {
         <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#C49D5B]/[0.07] blur-[80px]" />
 
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 py-20 lg:py-28">
+        <div className="relative z-10 container-custom py-20 lg:py-28">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-8 h-px bg-[#C49D5B]" />
@@ -80,7 +80,7 @@ export default function AppraisalsPage() {
 
       {/* CERTIFICAÇÃO */}
       <section className="bg-white py-8 border-b border-[#F1F3F5]">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+        <div className="container-custom">
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
             {[
               { icon: ShieldCheck, t: 'Avaliador Certificado', s: 'CNAI Nº 53290 — COFECI' },
@@ -102,8 +102,8 @@ export default function AppraisalsPage() {
       </section>
 
       {/* TIPOS */}
-      <section className="py-20 lg:py-28 bg-white">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+      <section className="section-padding bg-white">
+        <div className="container-custom">
           <div className="text-center mb-14">
             <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Serviços</span>
             <h2 className="text-[32px] lg:text-[44px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Tipos de Avaliação</h2>
@@ -135,8 +135,8 @@ export default function AppraisalsPage() {
       </section>
 
       {/* METODOLOGIA */}
-      <section className="py-20 bg-[#F8F9FA]">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+      <section className="section-padding bg-[#F8F9FA]">
+        <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-14">
               <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Processo</span>
@@ -159,8 +159,8 @@ export default function AppraisalsPage() {
       </section>
 
       {/* FORM */}
-      <section className="py-20 lg:py-28 bg-white" id="form">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+      <section className="section-padding bg-white" id="form">
+        <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-14">
               <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Solicitar</span>
@@ -173,13 +173,12 @@ export default function AppraisalsPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#141420] py-20">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
+      <section className="bg-[#141420] section-padding">
+        <div className="container-custom text-center">
           <h2 className="text-[28px] lg:text-[38px] font-black text-white mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Dúvidas sobre Avaliações?</h2>
           <p className="text-[#6C757D] text-lg mb-10 max-w-md mx-auto font-light">Nossa equipe técnica esclarece qualquer questão normativa ou processual.</p>
-          <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 bg-white hover:bg-[#C49D5B] text-[#1A1A1A] hover:text-white font-bold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg text-[14px]">
-            <MessageCircle className="w-5 h-5" />Falar com Especialista
+          <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="btn btn-primary h-14 px-10 bg-white text-imi-900 hover:bg-imi-50 border border-imi-200 shadow-lg text-[14px] uppercase tracking-wider font-bold">
+            <MessageCircle className="w-5 h-5 flex-shrink-0" />Falar com Especialista
           </a>
         </div>
       </section>

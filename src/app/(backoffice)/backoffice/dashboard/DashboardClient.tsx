@@ -77,10 +77,10 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
   ]
 
   const QUICK_ACTIONS = [
-    { label: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova', icon: Scale, color: 'bg-[#C49D5B] text-white' },
-    { label: 'Interpretar Email', href: '/backoffice/avaliacoes/email-honorarios', icon: FileText, color: 'bg-purple-600 text-white' },
-    { label: 'Novo Imóvel', href: '/backoffice/imoveis/novo', icon: Building2, color: 'bg-gray-900 text-white' },
-    { label: 'Simulador', href: '/backoffice/credito', icon: CreditCard, color: 'bg-blue-600 text-white' },
+    { label: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova', icon: Scale, color: 'bg-[#C49D5B] text-white shadow-sm hover:bg-[#b08a4a]' },
+    { label: 'Interpretar Email', href: '/backoffice/avaliacoes/email-honorarios', icon: FileText, color: 'bg-white text-gray-900 border border-gray-200 hover:border-[#C49D5B] hover:text-[#C49D5B]' },
+    { label: 'Novo Imóvel', href: '/backoffice/imoveis/novo', icon: Building2, color: 'bg-[#141420] text-white hover:bg-black shadow-sm' },
+    { label: 'Simulador', href: '/backoffice/credito', icon: CreditCard, color: 'bg-white text-gray-900 border border-gray-200 hover:border-[#C49D5B] hover:text-[#C49D5B]' },
   ]
 
   const STATUS_AV: Record<string, { l: string; c: string }> = {
@@ -274,11 +274,10 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                     <p className="text-sm font-medium text-gray-900 truncate">{lead.name}</p>
                     <p className="text-xs text-gray-500">{lead.source} • {lead.interest}</p>
                   </div>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${
-                    lead.status === 'qualificado' ? 'bg-emerald-50 text-emerald-700' :
-                    lead.status === 'proposta' ? 'bg-purple-50 text-purple-700' :
-                    'bg-blue-50 text-blue-700'
-                  }`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${lead.status === 'qualificado' ? 'bg-emerald-50 text-emerald-700' :
+                      lead.status === 'proposta' ? 'bg-purple-50 text-purple-700' :
+                        'bg-blue-50 text-blue-700'
+                    }`}>
                     {lead.status || 'novo'}
                   </span>
                 </Link>

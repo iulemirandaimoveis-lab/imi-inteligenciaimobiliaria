@@ -168,9 +168,9 @@ export default function TrackingLinksPage() {
         title="Gerenciador de Links Rastreáveis"
         subtitle="Construção de URLs UTM e geração de QR Codes para campanhas"
         breadcrumbs={[
-          { name: 'Dashboard', href: '/backoffice/dashboard' },
-          { name: 'Tracking', href: '/backoffice/tracking' },
-          { name: 'Links' },
+          { label: 'Dashboard', href: '/backoffice/dashboard' },
+          { label: 'Tracking', href: '/backoffice/tracking' },
+          { label: 'Links' },
         ]}
         action={
           <Button
@@ -402,7 +402,7 @@ export default function TrackingLinksPage() {
                 </TableHeader>
                 <TableBody>
                   {links.map((link) => (
-                    <TableRow key={link.id} hover>
+                    <TableRow key={link.id} className="hover:bg-gray-50">
                       <TableCell>
                         <span className="font-bold text-imi-900">
                           {link.campaign_name}

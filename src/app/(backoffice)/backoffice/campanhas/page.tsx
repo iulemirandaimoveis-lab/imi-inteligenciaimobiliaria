@@ -141,12 +141,16 @@ const totalStats = {
     leads: campanhasData.reduce((acc, c) => acc + c.leads, 0),
     conversions: campanhasData.reduce((acc, c) => acc + c.conversions, 0),
     revenue: campanhasData.reduce((acc, c) => acc + c.revenue, 0),
+    avgCTR: '0',
+    avgCPC: '0',
+    avgCPL: '0',
+    avgROI: '0'
 }
 
-totalStats['avgCTR'] = ((totalStats.clicks / totalStats.impressions) * 100).toFixed(2)
-totalStats['avgCPC'] = (totalStats.spent / totalStats.clicks).toFixed(2)
-totalStats['avgCPL'] = (totalStats.spent / totalStats.leads).toFixed(2)
-totalStats['avgROI'] = (((totalStats.revenue - totalStats.spent) / totalStats.spent) * 100).toFixed(0)
+totalStats.avgCTR = ((totalStats.clicks / totalStats.impressions) * 100).toFixed(2)
+totalStats.avgCPC = (totalStats.spent / totalStats.clicks).toFixed(2)
+totalStats.avgCPL = (totalStats.spent / totalStats.leads).toFixed(2)
+totalStats.avgROI = (((totalStats.revenue - totalStats.spent) / totalStats.spent) * 100).toFixed(0)
 
 export default function CampanhasPage() {
     const router = useRouter()

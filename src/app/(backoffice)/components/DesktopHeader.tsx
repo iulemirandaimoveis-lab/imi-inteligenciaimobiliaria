@@ -334,7 +334,7 @@ export default function DesktopHeader() {
 
     return (
         <header
-            className="hidden lg:flex lg:fixed lg:top-0 lg:right-0 lg:left-64 lg:z-30 lg:h-16 items-center"
+            className="hidden lg:flex lg:fixed lg:top-0 lg:right-0 lg:left-60 lg:z-30 lg:h-16 items-center"
             style={{
                 background: 'rgba(248,249,250,0.85)',
                 backdropFilter: 'blur(16px)',

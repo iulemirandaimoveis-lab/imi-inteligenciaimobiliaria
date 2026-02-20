@@ -81,7 +81,7 @@ export default function CorretoresPage() {
                     <div className="relative w-full md:w-96">
                         <Input
                             placeholder="Buscar por nome, email ou CRECI..."
-                            icon={<Search size={18} />}
+                            leftIcon={<Search size={18} />}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="bg-white dark:bg-card-dark border-gray-200 dark:border-white/10"
@@ -156,7 +156,7 @@ export default function CorretoresPage() {
                                             </span>
                                         </td>
                                         <td className="p-6">
-                                            <Badge variant={broker.status === 'active' ? 'success' : 'outline'} size="sm">
+                                            <Badge variant={broker.status === 'active' ? 'success' : 'default'} size="sm">
                                                 {broker.status === 'active' ? 'Ativo' : 'Inativo'}
                                             </Badge>
                                         </td>

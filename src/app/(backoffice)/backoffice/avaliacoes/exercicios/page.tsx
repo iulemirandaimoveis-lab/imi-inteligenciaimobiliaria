@@ -325,7 +325,7 @@ export default function ExerciciosPage() {
       const response = await fetch('/api/avaliacoes/gerar-exercicio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ categoria: filtroCategoria, nivel: filtroNivel, quantidade: 1 })
+        body: JSON.stringify({ categoria: selectedCat, nivel: selectedNivel, quantidade: 1 })
       })
       const _data = await response.json()
       if (_data.success && _data.exercicios?.length > 0) {
@@ -334,15 +334,15 @@ export default function ExerciciosPage() {
         throw new Error(_data.error || 'Falha na geração')
       }
       if (false) { // dead code block — replaced by server route above
-      const _r2 = await fetch('https://api.anthropic.com/v1/messages_DISABLED', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{
-            role: 'user',
-            content: `Crie 1 exercício de múltipla escolha sobre avaliação imobiliária NBR 14653, nível intermediário. Retorne APENAS JSON válido:
+        const _r2 = await fetch('https://api.anthropic.com/v1/messages_DISABLED', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1000,
+            messages: [{
+              role: 'user',
+              content: `Crie 1 exercício de múltipla escolha sobre avaliação imobiliária NBR 14653, nível intermediário. Retorne APENAS JSON válido:
 {
   "pergunta": "pergunta",
   "contexto": "contexto opcional",
@@ -351,13 +351,13 @@ export default function ExerciciosPage() {
   "explicacao": "explicação detalhada",
   "normaRef": "referência opcional"
 }`
-          }]
+            }]
+          })
         })
-      })
-      const data = await response.json()
-      const text = data.content?.[0]?.text || '{}'
-      const clean = text.replace(/```json|```/g, '').trim()
-      setIaExercicio(clean)
+        const data = await response.json()
+        const text = data.content?.[0]?.text || '{}'
+        const clean = text.replace(/```json|```/g, '').trim()
+        setIaExercicio(clean)
       } // end if(false)
     } catch {
       setIaExercicio(JSON.stringify({

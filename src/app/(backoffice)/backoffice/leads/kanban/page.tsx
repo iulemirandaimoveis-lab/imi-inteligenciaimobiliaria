@@ -63,7 +63,7 @@ export default function LeadsKanbanPage() {
                         <div className="hidden md:block w-64">
                             <Input
                                 placeholder="Buscar lead..."
-                                icon={<Search size={18} />}
+                                leftIcon={<Search size={18} />}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="bg-white dark:bg-card-dark rounded-2xl"

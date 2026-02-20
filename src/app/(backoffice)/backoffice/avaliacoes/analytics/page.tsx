@@ -79,9 +79,9 @@ export default function AvaliacoesAnalyticsPage() {
                 title="Intelligence: Laudos & Avaliações"
                 subtitle="Performance analítica do motor de avaliação imobiliária"
                 breadcrumbs={[
-                    { name: 'Dashboard', href: '/backoffice/dashboard' },
-                    { name: 'Avaliações', href: '/backoffice/avaliacoes' },
-                    { name: 'Analytics Strategist' },
+                    { label: 'Dashboard', href: '/backoffice/dashboard' },
+                    { label: 'Avaliações', href: '/backoffice/avaliacoes' },
+                    { label: 'Analytics Strategist' },
                 ]}
                 action={
                     <div className="flex items-center gap-4">
@@ -125,7 +125,7 @@ export default function AvaliacoesAnalyticsPage() {
                     value={`${data.overview.avgTime} Dias`}
                     change={{ value: -12, label: 'otimização de tempo', trend: 'up' }}
                     icon={<Clock />}
-                    variant="info"
+                    variant="primary"
                     className="shadow-elevated"
                 />
 
@@ -281,7 +281,7 @@ export default function AvaliacoesAnalyticsPage() {
 
                 {/* Geospatial Valuation Matrix */}
                 <Card className="shadow-elevated border-imi-50">
-                    <CardHeader title="Matriz de Valorização por Bairro" icon={<MapPin size={18} className="text-accent-500" />} />
+                    <CardHeader title="Matriz de Valorização por Bairro" />
                     <CardBody className="p-8">
                         <div className="space-y-6">
                             {data.avgByNeighborhood.map((item) => {

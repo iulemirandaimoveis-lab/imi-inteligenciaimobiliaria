@@ -22,7 +22,7 @@ export default async function BackofficeLayout({
     }
 
     return (
-        <div className="min-h-screen bg-imi-50">
+        <div className="min-h-screen bg-imi-50 overflow-x-hidden w-full">
             {/* Material Symbols Outlined Font (Backup for legacy components) */}
             <link
                 rel="stylesheet"
@@ -36,8 +36,8 @@ export default async function BackofficeLayout({
             <DesktopHeader />
 
             {/* Main Content Area */}
-            <main className="lg:pl-64 lg:pt-16">
-                <div className="p-6 pb-24 lg:pb-6">
+            <main className="lg:pl-60 pt-8 lg:pt-16">
+                <div className="p-4 sm:p-6 pb-24 lg:pb-6">
                     {children}
                 </div>
             </main>

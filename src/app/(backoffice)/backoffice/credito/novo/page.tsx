@@ -152,9 +152,9 @@ export default function CreditoNovoPage() {
                 title="Protocolar Solicitação de Crédito"
                 subtitle="Inicie um novo fluxo de análise bancária para seu cliente"
                 breadcrumbs={[
-                    { name: 'Dashboard', href: '/backoffice/dashboard' },
-                    { name: 'Crédito', href: '/backoffice/credito' },
-                    { name: 'Nova Operação' },
+                    { label: 'Dashboard', href: '/backoffice/dashboard' },
+                    { label: 'Crédito', href: '/backoffice/credito' },
+                    { label: 'Nova Operação' },
                 ]}
             />
 

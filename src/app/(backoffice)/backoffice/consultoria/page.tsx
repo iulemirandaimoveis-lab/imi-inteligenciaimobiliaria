@@ -142,8 +142,8 @@ export default function ConsultoriasPage() {
                 title="Consultorias Estratégicas"
                 subtitle="Gestão de Family Office e Ativos Internacionais"
                 breadcrumbs={[
-                    { name: 'Dashboard', href: '/backoffice/dashboard' },
-                    { name: 'Consultorias High-End' },
+                    { label: 'Dashboard', href: '/backoffice/dashboard' },
+                    { label: 'Consultorias High-End' },
                 ]}
                 action={
                     <Button

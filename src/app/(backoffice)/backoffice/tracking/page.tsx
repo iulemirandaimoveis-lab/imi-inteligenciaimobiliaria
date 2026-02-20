@@ -116,8 +116,8 @@ export default function TrackingDashboardPage() {
         title="Tracking & Analytics"
         subtitle="Monitore o desempenho dos seus links e campanhas"
         breadcrumbs={[
-          { name: 'Dashboard', href: '/backoffice/dashboard' },
-          { name: 'Tracking' },
+          { label: 'Dashboard', href: '/backoffice/dashboard' },
+          { label: 'Tracking' },
         ]}
         action={
           <Button
@@ -176,7 +176,7 @@ export default function TrackingDashboardPage() {
             trend: 'up',
           }}
           icon={<Clock size={20} />}
-          variant="info"
+          variant="primary"
         />
 
         <KPICard
@@ -313,7 +313,7 @@ export default function TrackingDashboardPage() {
               </TableHeader>
               <TableBody>
                 {mockAnalytics.topCampaigns.map((campaign) => (
-                  <TableRow key={campaign.id} hover>
+                  <TableRow key={campaign.id} className="hover:bg-gray-50">
                     <TableCell>
                       <span className="font-bold text-imi-900">{campaign.name}</span>
                     </TableCell>
@@ -326,10 +326,10 @@ export default function TrackingDashboardPage() {
                     <TableCell>
                       <span
                         className={`text-sm font-black ${campaign.roi >= 5
-                            ? 'text-green-600'
-                            : campaign.roi >= 2
-                              ? 'text-yellow-600'
-                              : 'text-red-600'
+                          ? 'text-green-600'
+                          : campaign.roi >= 2
+                            ? 'text-yellow-600'
+                            : 'text-red-600'
                           }`}
                       >
                         {campaign.roi}x

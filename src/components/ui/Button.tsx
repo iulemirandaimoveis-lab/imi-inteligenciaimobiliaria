@@ -5,6 +5,7 @@
 'use client'
 
 import { forwardRef, ButtonHTMLAttributes } from 'react'
+import { Slot } from '@radix-ui/react-slot'
 import { Loader } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -15,6 +16,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     icon?: React.ReactNode
     iconPosition?: 'left' | 'right'
     fullWidth?: boolean
+    asChild?: boolean
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -26,6 +28,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         icon,
         iconPosition = 'left',
         fullWidth = false,
+        asChild = false,
         disabled,
         children,
         ...props
@@ -82,16 +85,26 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             lg: 'w-[24px] h-[24px]',
         }
 
+        const commonClasses = cn(
+            baseStyles,
+            variants[variant],
+            sizes[size],
+            fullWidth && 'w-full',
+            className
+        )
+
+        if (asChild) {
+            return (
+                <Slot ref={ref} className={commonClasses} {...props}>
+                    {children}
+                </Slot>
+            )
+        }
+
         return (
             <button
                 ref={ref}
-                className={cn(
-                    baseStyles,
-                    variants[variant],
-                    sizes[size],
-                    fullWidth && 'w-full',
-                    className
-                )}
+                className={commonClasses}
                 disabled={disabled || loading}
                 {...props}
             >

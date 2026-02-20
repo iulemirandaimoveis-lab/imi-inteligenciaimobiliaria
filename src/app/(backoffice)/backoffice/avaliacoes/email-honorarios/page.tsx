@@ -185,7 +185,9 @@ export default function EmailHonorariosPage() {
         laudo_tipo: d.laudo_tipo || 'completo',
         valor_estimado_imovel: d.valor_estimado_imovel || null,
         observacoes_relevantes: d.observacoes_relevantes || '',
-        ...hon,
+        honorariosMin: hon.min,
+        honorariosRec: hon.rec,
+        honorariosMax: hon.max,
       }
 
       setAnalysis(result)
@@ -275,8 +277,7 @@ export default function EmailHonorariosPage() {
           <div className="flex border-b border-gray-200">
             {(['analise', 'resposta'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === tab ? 'border-[#C49D5B] text-[#C49D5B]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#C49D5B] text-[#C49D5B]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
                 {tab === 'analise' ? '📊 Análise do Email' : '✉ Rascunho de Resposta'}
               </button>
             ))}
@@ -374,7 +375,7 @@ export default function EmailHonorariosPage() {
               </div>
               {editing
                 ? <textarea value={editedDraft} onChange={e => setEditedDraft(e.target.value)}
-                    rows={22} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-[#C49D5B] resize-none" />
+                  rows={22} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-[#C49D5B] resize-none" />
                 : <pre className="whitespace-pre-wrap text-sm text-gray-800 bg-gray-50 rounded-xl p-4 font-sans leading-relaxed">{editing ? editedDraft : draft}</pre>
               }
             </div>

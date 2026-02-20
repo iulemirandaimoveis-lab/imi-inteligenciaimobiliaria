@@ -140,8 +140,8 @@ export default function ConteudosPage() {
         title="Marketing Intelligence & Conteúdo"
         subtitle="Editorial & Omnichannel Engine | Powered by IA"
         breadcrumbs={[
-          { name: 'Dashboard', href: '/backoffice/dashboard' },
-          { name: 'Estratégia de Conteúdo' },
+          { label: 'Dashboard', href: '/backoffice/dashboard' },
+          { label: 'Estratégia de Conteúdo' },
         ]}
         action={
           <div className="flex items-center gap-4">

@@ -5,7 +5,7 @@ import PageHeader from '@/components/backoffice/PageHeader'
 import { UserPlus, Shield, CheckCircle, Smartphone, Mail, Lock, User, Square, Key, CheckSquare, ArrowLeft } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import Card from '@/components/ui/Card'
+import { Card, CardHeader } from '@/components/ui/Card'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -127,7 +127,8 @@ export default function NovoCorretorPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Personal Data */}
                     <div className="lg:col-span-2 space-y-6">
-                        <Card title="Dados Pessoais" icon={<User size={20} />} className="bg-white dark:bg-card-dark border-gray-100 dark:border-white/5">
+                        <Card className="bg-white dark:bg-card-dark border-gray-100 dark:border-white/5">
+                            <CardHeader title="Dados Pessoais" className="px-6 pt-6 pb-0" />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
                                 <div className="space-y-2 col-span-2">
                                     <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Nome Completo</label>
@@ -135,7 +136,7 @@ export default function NovoCorretorPage() {
                                         placeholder="Ex: João da Silva"
                                         {...register('name')}
                                         error={errors.name?.message}
-                                        icon={<User size={18} />}
+                                        leftIcon={<User size={18} />}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -144,7 +145,7 @@ export default function NovoCorretorPage() {
                                         placeholder="joao@imi.com.br"
                                         {...register('email')}
                                         error={errors.email?.message}
-                                        icon={<Mail size={18} />}
+                                        leftIcon={<Mail size={18} />}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -153,7 +154,7 @@ export default function NovoCorretorPage() {
                                         placeholder="(11) 99999-9999"
                                         {...register('phone')}
                                         error={errors.phone?.message}
-                                        icon={<Smartphone size={18} />}
+                                        leftIcon={<Smartphone size={18} />}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -162,7 +163,7 @@ export default function NovoCorretorPage() {
                                         placeholder="12345-F"
                                         {...register('creci')}
                                         error={errors.creci?.message}
-                                        icon={<Shield size={18} />}
+                                        leftIcon={<Shield size={18} />}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -178,7 +179,8 @@ export default function NovoCorretorPage() {
                             </div>
                         </Card>
 
-                        <Card title="Segurança" icon={<Lock size={20} />} className="bg-white dark:bg-card-dark border-gray-100 dark:border-white/5">
+                        <Card className="bg-white dark:bg-card-dark border-gray-100 dark:border-white/5">
+                            <CardHeader title="Segurança" className="px-6 pt-6 pb-0" />
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
                                 <div className="space-y-2">
                                     <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Senha de Acesso</label>
@@ -187,7 +189,7 @@ export default function NovoCorretorPage() {
                                         placeholder="Mínimo 8 caracteres"
                                         {...register('password')}
                                         error={errors.password?.message}
-                                        icon={<Key size={18} />}
+                                        leftIcon={<Key size={18} />}
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -197,7 +199,7 @@ export default function NovoCorretorPage() {
                                         placeholder="Repita a senha"
                                         {...register('confirmPassword')}
                                         error={errors.confirmPassword?.message}
-                                        icon={<Key size={18} />}
+                                        leftIcon={<Key size={18} />}
                                     />
                                 </div>
                             </div>
