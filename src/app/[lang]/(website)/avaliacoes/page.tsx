@@ -1,177 +1,186 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { slideUp, staggerContainer } from '@/lib/animations'
-import { ShieldCheck, Home, Landmark, Scale, Briefcase, MessageCircle } from 'lucide-react'
-import Button from '@/components/ui/Button'
+import { ShieldCheck, Home, Landmark, Scale, Briefcase, MessageCircle, CheckCircle } from 'lucide-react'
 import AppraisalForm from '@/components/forms/AppraisalForm'
+
+const APPRAISAL_TYPES = [
+    {
+        icon: Home,
+        title: 'Venda e Compra',
+        tag: 'Mais Solicitado',
+        tagColor: 'bg-amber-50 text-amber-700',
+        description: 'Avaliação técnica para precificação estratégica. Análise profunda de mercado e comparativos para determinar o valor justo do ativo.',
+        points: ['Relatório comparativo de mercado', 'Análise de depreciação', 'Valor de liquidação forçada'],
+    },
+    {
+        icon: Landmark,
+        title: 'Garantia Bancária',
+        tag: 'Financiamentos',
+        tagColor: 'bg-blue-50 text-blue-600',
+        description: 'Laudos técnicos aceitos por Caixa, Bradesco, Itaú e Santander. Conformidade total com as exigências bancárias.',
+        points: ['Aceito por todos os grandes bancos', 'Formato PTAM', 'Prazo expresso disponível'],
+    },
+    {
+        icon: Scale,
+        title: 'Judicial / Extrajudicial',
+        tag: 'Perícia Técnica',
+        tagColor: 'bg-purple-50 text-purple-600',
+        description: 'Perícia técnica para processos judiciais, inventários, partilhas e arbitragens. Fundamentação normativa para uso legal.',
+        points: ['Habilitado junto ao TJPE', 'Assistência técnica judicial', 'Laudo pericial fundamentado'],
+    },
+    {
+        icon: Briefcase,
+        title: 'Patrimonial / Empresarial',
+        tag: 'Corporativo',
+        tagColor: 'bg-emerald-50 text-emerald-600',
+        description: 'Avaliação de portfólio imobiliário para fins contábeis, IFRS, fiscais ou reestruturação estratégica.',
+        points: ['Conformidade IFRS 13', 'Múltiplos ativos simultâneos', 'Relatório executivo incluso'],
+    },
+]
+
+const PROCESS = [
+    { n: '01', title: 'Vistoria Técnica', desc: 'Inspeção presencial com levantamento fotográfico, medições e análise das condições físicas do imóvel.' },
+    { n: '02', title: 'Pesquisa de Mercado', desc: 'Coleta e tratamento estatístico de dados comparativos conforme metodologia NBR 14653.' },
+    { n: '03', title: 'Laudo Técnico', desc: 'Emissão do documento final com valor conclusivo, fundamentação e ART do responsável técnico.' },
+]
 
 export default function AppraisalsPage() {
     return (
         <>
             {/* HERO */}
-            <section className="bg-imi-900 text-white section-padding relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-accent-500/5 -skew-x-12 translate-x-1/4" />
-                <div className="container-custom relative z-10">
-                    <div className="max-w-3xl">
+            <section className="relative bg-[#141420] overflow-hidden">
+                <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#C49D5B]/[0.07] blur-[80px]" />
+
+                <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 py-20 lg:py-28">
+                    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-px bg-accent-500" />
-                            <span className="text-accent-500 font-semibold uppercase tracking-[0.2em] text-xs">CNAI 53290</span>
+                            <div className="w-8 h-px bg-[#C49D5B]" />
+                            <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">CNAI 53290</span>
                         </div>
-                        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-                            Avaliações Imobiliárias
+                        <h1 className="text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                            Avaliações <span className="text-[#C49D5B]">Imobiliárias</span>
                         </h1>
-                        <p className="text-imi-300 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
-                            Laudos técnicos com metodologia normativa NBR 14653. Decisões seguras baseadas em análise profissional.
+                        <p className="text-[17px] lg:text-[19px] leading-relaxed font-light text-[#9CA3AF] max-w-2xl">
+                            Laudos técnicos com metodologia normativa <span className="text-white font-medium">NBR 14653</span>. Decisões seguras baseadas em análise profissional e independente.
                         </p>
-                    </div>
-                </div>
-            </section>
-
-            {/* BADGE CNAI */}
-            <section className="bg-imi-50 border-b border-imi-100 py-8">
-                <div className="container-custom">
-                    <div className="flex items-center justify-center gap-4 flex-wrap">
-                        <div className="flex items-center gap-3 px-6 py-3 bg-accent-500/10 rounded-xl border border-accent-500/20">
-                            <ShieldCheck className="w-6 h-6 text-accent-600" strokeWidth={1.5} />
-                            <span className="text-imi-900 font-semibold">
-                                Avaliador Certificado CNAI Nº 53290
-                            </span>
-                        </div>
-                        <div className="hidden md:block w-px h-8 bg-imi-100" />
-                        <span className="text-imi-500 text-sm font-medium">
-                            Certificação Nacional de Avaliador Imobiliário
-                        </span>
-                    </div>
-                </div>
-            </section>
-
-            {/* TIPOS DE AVALIAÇÃO */}
-            <section className="section-padding">
-                <div className="container-custom">
-                    <h2 className="font-display text-3xl md:text-4xl font-bold text-imi-900 mb-4 text-center">
-                        Tipos de Avaliação
-                    </h2>
-                    <p className="text-imi-500 text-lg max-w-2xl mx-auto text-center mb-12">
-                        Serviços especializados para diferentes necessidades de mercado e conformidade legal
-                    </p>
-
-                    <motion.div
-                        className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto"
-                        variants={staggerContainer}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                    >
-                        {[
-                            {
-                                icon: Home,
-                                title: 'Venda e Compra',
-                                description: 'Avaliação técnica para precificação estratégica de imóveis. Análise profunda de mercado e comparativos para determinar o valor justo.'
-                            },
-                            {
-                                icon: Landmark,
-                                title: 'Financiamento',
-                                description: 'Laudos técnicos aceitos por instituições financeiras para processos de financiamento imobiliário, seguindo rigorosas exigências bancárias.'
-                            },
-                            {
-                                icon: Scale,
-                                title: 'Judicial / Extrajudicial',
-                                description: 'Perícia técnica para processos judiciais, inventários, partilhas e arbitragens. Fundamentação normativa sólida para uso legal.'
-                            },
-                            {
-                                icon: Briefcase,
-                                title: 'Patrimonial',
-                                description: 'Avaliação de portfólio imobiliário para fins contábeis, fiscais ou estratégicos. Gestão de ativos baseada em inteligência técnica.'
-                            }
-                        ].map((item, index) => (
-                            <motion.div
-                                key={index}
-                                variants={slideUp}
-                                className="p-8 rounded-xl bg-white border border-imi-100 shadow-soft hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1"
-                            >
-                                <div className="w-12 h-12 bg-imi-900 text-white rounded-xl flex items-center justify-center mb-6">
-                                    <item.icon className="w-5 h-5" strokeWidth={1.5} />
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-12 flex flex-wrap gap-x-10 gap-y-6">
+                            {[{ v: '+500', l: 'Laudos emitidos' }, { v: 'NBR', l: '14653 metodologia' }, { v: '72h', l: 'Prazo expresso' }].map((s, i) => (
+                                <div key={i}>
+                                    <div className="text-[30px] font-black text-[#C49D5B] leading-none mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.v}</div>
+                                    <div className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#6C757D]">{s.l}</div>
                                 </div>
-                                <h3 className="text-xl font-bold text-imi-900 mb-3 font-display">
-                                    {item.title}
-                                </h3>
-                                <p className="text-imi-500 leading-relaxed text-sm">
-                                    {item.description}
-                                </p>
+                            ))}
+                        </motion.div>
+                    </motion.div>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
+            </section>
+
+            {/* CERTIFICAÇÃO */}
+            <section className="bg-white py-8 border-b border-[#F1F3F5]">
+                <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+                    <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+                        {[
+                            { icon: ShieldCheck, t: 'Avaliador Certificado', s: 'CNAI Nº 53290 — COFECI' },
+                            { icon: Scale, t: 'Habilitado TJPE', s: 'Perito judicial credenciado' },
+                            { icon: Landmark, t: 'Aceito em Bancos', s: 'Caixa, Bradesco, Itaú, Santander' },
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-[#F8F9FA] rounded-xl flex items-center justify-center">
+                                    <item.icon className="w-5 h-5 text-[#C49D5B]" strokeWidth={1.5} />
+                                </div>
+                                <div>
+                                    <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-[#1A1A1A]">{item.t}</p>
+                                    <p className="text-[11px] text-[#6C757D]">{item.s}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* TIPOS */}
+            <section className="py-20 lg:py-28 bg-white">
+                <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+                    <div className="text-center mb-14">
+                        <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Serviços</span>
+                        <h2 className="text-[32px] lg:text-[44px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Tipos de Avaliação</h2>
+                        <p className="text-[#6C757D] text-lg max-w-xl mx-auto font-light">Serviços especializados para cada necessidade de mercado e conformidade legal</p>
+                    </div>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        {APPRAISAL_TYPES.map((item, i) => (
+                            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}
+                                className="group bg-white border border-[#E9ECEF] rounded-2xl p-6 hover:border-[#C49D5B]/40 hover:shadow-[0_8px_32px_rgba(196,157,91,0.10)] transition-all duration-300">
+                                <div className="flex items-start justify-between mb-5">
+                                    <div className="w-11 h-11 bg-[#1A1A1A] rounded-xl flex items-center justify-center">
+                                        <item.icon className="w-5 h-5 text-white" strokeWidth={1.5} />
+                                    </div>
+                                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${item.tagColor}`}>{item.tag}</span>
+                                </div>
+                                <h3 className="text-[15px] font-bold text-[#1A1A1A] mb-2">{item.title}</h3>
+                                <p className="text-[13px] text-[#6C757D] leading-relaxed mb-5">{item.description}</p>
+                                <ul className="space-y-2">
+                                    {item.points.map((pt, j) => (
+                                        <li key={j} className="flex items-start gap-2 text-[12px] text-[#495057]">
+                                            <CheckCircle className="w-3.5 h-3.5 text-[#C49D5B] flex-shrink-0 mt-0.5" strokeWidth={2} />{pt}
+                                        </li>
+                                    ))}
+                                </ul>
                             </motion.div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 
             {/* METODOLOGIA */}
-            <section className="section-padding bg-imi-50">
-                <div className="container-custom">
-                    <h2 className="font-display text-3xl md:text-4xl font-bold text-imi-900 mb-6 text-center">
-                        Nossa Metodologia
-                    </h2>
-                    <p className="text-imi-500 text-center max-w-2xl mx-auto mb-12">
-                        Todas as avaliações seguem rigorosamente a <strong>NBR 14653</strong> e as diretrizes do IBAPE, garantindo segurança técnica absoluta.
-                    </p>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            { step: '1', title: 'Vistoria Técnica', desc: 'Inspeção detalhada do imóvel, acabamentos e análise do entorno imediato.' },
-                            { step: '2', title: 'Análise de Dados', desc: 'Pesquisa rigorosa de mercado e tratamento estatístico dos dados coletados.' },
-                            { step: '3', title: 'Laudo Técnico', desc: 'Emissão do documento final fundamentado em normas técnicas brasileiras.' }
-                        ].map((item, i) => (
-                            <motion.div
-                                key={i}
-                                className="text-center"
-                                variants={slideUp}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                            >
-                                <div className="w-12 h-12 bg-imi-900 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-6">
-                                    {item.step}
-                                </div>
-                                <h3 className="text-xl font-bold text-imi-900 mb-3 font-display">
-                                    {item.title}
-                                </h3>
-                                <p className="text-imi-500 text-sm leading-relaxed px-4">
-                                    {item.desc}
-                                </p>
-                            </motion.div>
-                        ))}
+            <section className="py-20 bg-[#F8F9FA]">
+                <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-14">
+                            <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Processo</span>
+                            <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Nossa Metodologia</h2>
+                            <p className="text-[#6C757D] max-w-lg mx-auto font-light">Todas as avaliações seguem rigorosamente a <strong className="text-[#1A1A1A]">NBR 14653</strong> e as diretrizes do IBAPE.</p>
+                        </div>
+                        <div className="grid lg:grid-cols-3 gap-8">
+                            {PROCESS.map((step, i) => (
+                                <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }} className="flex gap-4 lg:flex-col lg:gap-3">
+                                    <div className="w-11 h-11 flex-shrink-0 bg-[#1A1A1A] text-white rounded-full flex items-center justify-center text-[12px] font-black">{step.n}</div>
+                                    <div>
+                                        <h3 className="font-bold text-[#1A1A1A] mb-1.5">{step.title}</h3>
+                                        <p className="text-[13px] text-[#6C757D] leading-relaxed">{step.desc}</p>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* FORMULÁRIO */}
-            <section className="section-padding" id="form">
-                <div className="container-custom">
+            {/* FORM */}
+            <section className="py-20 lg:py-28 bg-white" id="form">
+                <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
                     <div className="max-w-4xl mx-auto">
-                        <h2 className="font-display text-3xl md:text-4xl font-bold text-imi-900 mb-12 text-center">
-                            Solicitar Avaliação Técnica
-                        </h2>
+                        <div className="text-center mb-14">
+                            <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Solicitar</span>
+                            <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Solicitar Avaliação Técnica</h2>
+                            <p className="text-[#6C757D] max-w-md mx-auto font-light">Preencha o formulário e retornaremos em até 24 horas com um orçamento detalhado.</p>
+                        </div>
                         <AppraisalForm />
                     </div>
                 </div>
             </section>
 
-            {/* CTA FINAL */}
-            <section className="bg-imi-900 text-white section-padding text-center relative overflow-hidden">
-                <div className="container-custom relative z-10">
-                    <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-                        Dúvidas sobre Avaliações?
-                    </h2>
-                    <p className="text-imi-300 text-lg mb-10 max-w-2xl mx-auto font-light">
-                        Nossa equipe técnica está pronta para esclarecer qualquer questão normativa ou processual.
-                    </p>
-                    <Button asChild size="lg" className="bg-white text-imi-900 hover:bg-imi-50">
-                        <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer">
-                            <MessageCircle className="w-5 h-5 mr-3" />
-                            Falar com Especialista
-                        </a>
-                    </Button>
+            {/* CTA */}
+            <section className="bg-[#141420] py-20">
+                <div className="max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
+                    <h2 className="text-[28px] lg:text-[38px] font-black text-white mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Dúvidas sobre Avaliações?</h2>
+                    <p className="text-[#6C757D] text-lg mb-10 max-w-md mx-auto font-light">Nossa equipe técnica esclarece qualquer questão normativa ou processual.</p>
+                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2.5 bg-white hover:bg-[#C49D5B] text-[#1A1A1A] hover:text-white font-bold px-8 py-4 rounded-xl transition-all duration-200 shadow-lg text-[14px]">
+                        <MessageCircle className="w-5 h-5" />Falar com Especialista
+                    </a>
                 </div>
             </section>
         </>

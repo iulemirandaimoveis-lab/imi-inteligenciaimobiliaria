@@ -87,22 +87,32 @@ export default function CreditPage() {
     return (
         <main className="bg-white">
             {/* HERO */}
-            <section className="bg-imi-900 text-white section-padding relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-accent-500/5 -skew-x-12 translate-x-1/4" />
-                <div className="container-custom relative z-10">
-                    <div className="max-w-3xl">
+            <section className="relative bg-[#141420] overflow-hidden">
+                <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#C49D5B]/[0.07] blur-[80px]" />
+                <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8 py-20 lg:py-28">
+                    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-px bg-accent-500" />
-                            <span className="text-accent-500 font-semibold uppercase tracking-[0.2em] text-xs">Crédito Imobiliário</span>
+                            <div className="w-8 h-px bg-[#C49D5B]" />
+                            <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Crédito Imobiliário</span>
                         </div>
-                        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-                            Financie com <span className="text-accent-500">Inteligência</span>
+                        <h1 className="text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                            Financie com <span className="text-[#C49D5B]">Inteligência</span>
                         </h1>
-                        <p className="text-imi-300 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
+                        <p className="text-[17px] lg:text-[19px] leading-relaxed font-light text-[#9CA3AF] max-w-2xl">
                             Assessoria especializada para garantir as melhores condições de crédito, seja através do consórcio CAIXA ou financiamento bancário personalizado.
                         </p>
-                    </div>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-12 flex flex-wrap gap-x-10 gap-y-6">
+                            {[{ v: 'CAIXA', l: 'Consórcio oficial' }, { v: '35', l: 'Anos de prazo máx.' }, { v: 'Selic', l: 'Taxas atualizadas' }].map((s, i) => (
+                                <div key={i}>
+                                    <div className="text-[30px] font-black text-[#C49D5B] leading-none mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.v}</div>
+                                    <div className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#6C757D]">{s.l}</div>
+                                </div>
+                            ))}
+                        </motion.div>
+                    </motion.div>
                 </div>
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
             </section>
 
             {/* MODALIDADES */}
