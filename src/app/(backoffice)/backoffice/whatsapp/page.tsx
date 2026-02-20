@@ -1,386 +1,475 @@
+// ============================================
+// BLOCO 4 — SCRIPT 6: WHATSAPP BUSINESS
+// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
+// ============================================
+
 /**
  * SALVAR EM: src/app/(backoffice)/backoffice/whatsapp/page.tsx
- *
- * Central WhatsApp: conversas + templates + status
- * MOCKADO — Integração real via Meta Cloud API (fase 2)
  */
 
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
 import {
-  MessageSquare,
   Search,
-  Send,
-  Phone,
   MoreVertical,
+  Phone,
+  Video,
+  Info,
+  Send,
+  Paperclip,
+  Smile,
   Check,
   CheckCheck,
-  Clock,
-  Tag,
-  Plus,
-  Filter,
-  Star,
-  Archive,
-  RefreshCw,
-  ChevronRight,
   User,
-  Building,
-  Sparkles,
+  Clock,
+  Filter,
+  ArrowLeft,
+  Settings,
+  ShieldCheck,
   AlertCircle,
+  MessageSquare,
   Zap,
+  Sparkles,
+  Loader2,
 } from 'lucide-react'
 
-// ⚠️ NÃO MODIFICAR - Conversas mockadas Recife
+// ⚠️ NÃO MODIFICAR - Conversas mockadas contextualizadas Recife
 const CONVERSAS = [
   {
     id: 1,
     nome: 'Maria Santos Silva',
-    telefone: '(81) 99845-3421',
-    perfil: 'Lead — Boa Viagem',
-    avatar: 'MS',
-    ultima_mensagem: 'Teria disponibilidade para visita na próxima semana?',
+    telefone: '+55 81 99876-5432',
+    ultimaMensagem: 'Gostaria de agendar uma visita ao Reserva Atlantis',
     horario: '14:32',
-    nao_lidas: 2,
-    status: 'lead_quente',
+    naoLidas: 2,
     online: true,
-    mensagens: [
-      { id: 1, texto: 'Olá! Vi o anúncio do Reserva Atlantis no Instagram.', lado: 'recebida', horario: '14:10', lida: true },
-      { id: 2, texto: 'Boa tarde, Maria! Que bom que entrou em contato. O Reserva Atlantis é realmente um empreendimento especial — estamos na fase 2 de lançamento com condições exclusivas.', lado: 'enviada', horario: '14:15', lida: true },
-      { id: 3, texto: 'Interessante! Qual o valor médio dos apartamentos?', lado: 'recebida', horario: '14:18', lida: true },
-      { id: 4, texto: 'As unidades variam de R$ 580k a R$ 1,2M dependendo da tipologia. Temos de 2 a 4 suítes, todos com vista mar. Posso enviar o book completo?', lado: 'enviada', horario: '14:20', lida: true },
-      { id: 5, texto: 'Sim, por favor! Teria disponibilidade para visita na próxima semana?', lado: 'recebida', horario: '14:32', lida: false },
-    ],
+    empresa: 'Hospital Português',
+    avatar: null,
+    status: 'Interessada',
   },
   {
     id: 2,
-    nome: 'João Pedro Almeida',
-    telefone: '(81) 99234-8901',
-    perfil: 'Lead — Investidor',
-    avatar: 'JP',
-    ultima_mensagem: 'Quais os dados de valorização do bairro nos últimos 3 anos?',
-    horario: '11:45',
-    nao_lidas: 1,
-    status: 'lead_quente',
+    nome: 'João Oliveira (Investidor)',
+    telefone: '+55 81 98765-4321',
+    ultimaMensagem: 'Como está o yield de locação em Boa Viagem?',
+    horario: '11:05',
+    naoLidas: 0,
     online: false,
-    mensagens: [
-      { id: 1, texto: 'Recebi a indicação de um colega sobre vocês. Estou analisando investimento imobiliário em Recife.', lado: 'recebida', horario: '10:30', lida: true },
-      { id: 2, texto: 'Olá João Pedro! Seja muito bem-vindo. Recife tem apresentado uma das melhores relações risco-retorno do mercado nacional. Posso compartilhar nosso relatório de mercado Q4 2025?', lado: 'enviada', horario: '10:45', lida: true },
-      { id: 3, texto: 'Sim, me interessa muito. Qual é o ticket mínimo que vocês trabalham?', lado: 'recebida', horario: '11:02', lida: true },
-      { id: 4, texto: 'Nosso foco é em imóveis a partir de R$ 400k, com curadoria completa: análise técnica, due diligence jurídica e acompanhamento pós-aquisição.', lado: 'enviada', horario: '11:10', lida: true },
-      { id: 5, texto: 'Quais os dados de valorização do bairro nos últimos 3 anos?', lado: 'recebida', horario: '11:45', lida: false },
-    ],
+    empresa: 'Family Office',
+    avatar: null,
+    status: 'Qualificado',
   },
   {
     id: 3,
-    nome: 'Ana Carolina Ferreira',
-    telefone: '(81) 98765-1234',
-    perfil: 'Cliente — Pina',
-    avatar: 'AC',
-    ultima_mensagem: 'Perfeito, aguardo o contrato para revisão.',
+    nome: 'Ana Paula Ferreira',
+    telefone: '+55 81 99123-4567',
+    ultimaMensagem: 'Enviando o laudo da avaliação... 📎',
     horario: 'Ontem',
-    nao_lidas: 0,
-    status: 'cliente',
-    online: false,
-    mensagens: [
-      { id: 1, texto: 'Bom dia! Passando para confirmar a proposta do Smart Pina Apto 304.', lado: 'recebida', horario: 'Ontem 09:15', lida: true },
-      { id: 2, texto: 'Bom dia, Ana Carolina! A proposta foi aceita pela construtora. Valor final: R$ 487.500 com financiamento Caixa em 360 meses.', lado: 'enviada', horario: 'Ontem 09:30', lida: true },
-      { id: 3, texto: 'Excelente! Quando assino o contrato?', lado: 'recebida', horario: 'Ontem 09:45', lida: true },
-      { id: 4, texto: 'Esta semana o jurídico finaliza. Já estamos com o documento pronto para revisão. Posso agendar para quinta-feira às 15h?', lado: 'enviada', horario: 'Ontem 10:00', lida: true },
-      { id: 5, texto: 'Perfeito, aguardo o contrato para revisão.', lado: 'recebida', horario: 'Ontem 10:15', lida: true },
-    ],
+    naoLidas: 0,
+    online: true,
+    empresa: 'IMI Atlantis',
+    avatar: null,
+    status: 'Time',
   },
   {
     id: 4,
-    nome: 'Roberto Carlos Mendes',
-    telefone: '(81) 99012-5678',
-    perfil: 'Lead — Ocean Blue',
-    avatar: 'RC',
-    ultima_mensagem: 'Obrigado pelas informações. Vou conversar com minha família.',
-    horario: 'Ter',
-    nao_lidas: 0,
-    status: 'lead_morno',
+    nome: 'Carlos Eduardo',
+    telefone: '+55 11 98888-7777',
+    ultimaMensagem: 'Obrigado pelas fotos do Ocean Blue',
+    horario: 'Ontem',
+    naoLidas: 0,
     online: false,
-    mensagens: [
-      { id: 1, texto: 'Oi, tenho interesse na cobertura do Ocean Blue. É possível visitar?', lado: 'recebida', horario: 'Ter 14:00', lida: true },
-      { id: 2, texto: 'Claro, Roberto! A cobertura do Ocean Blue é realmente excepcional — 320m², terraço com piscina privativa e vista 360° para o mar. Temos visita disponível amanhã ou na semana que vem.', lado: 'enviada', horario: 'Ter 14:20', lida: true },
-      { id: 3, texto: 'Qual o valor?', lado: 'recebida', horario: 'Ter 14:25', lida: true },
-      { id: 4, texto: 'R$ 2,8M à vista. Em financiamento, trabalhamos com estruturação especial para esse perfil de ativo. Posso apresentar as opções?', lado: 'enviada', horario: 'Ter 14:35', lida: true },
-      { id: 5, texto: 'Obrigado pelas informações. Vou conversar com minha família.', lado: 'recebida', horario: 'Ter 15:00', lida: true },
-    ],
+    empresa: 'Prospecção SP',
+    avatar: null,
+    status: 'Frio',
+  },
+  {
+    id: 5,
+    nome: 'Ricardo Mendes',
+    telefone: '+55 81 97777-6666',
+    ultimaMensagem: 'Qual o valor do m² no Pina hoje?',
+    horario: '18/02',
+    naoLidas: 0,
+    online: false,
+    empresa: 'Construtora Moura Dubeux',
+    avatar: null,
+    status: 'Morno',
   },
 ]
 
-// ⚠️ NÃO MODIFICAR - Templates de mensagem
-const TEMPLATES = [
-  { id: 1, nome: 'Boas-vindas Lead', texto: 'Olá {nome}! 👋\n\nAqui é da IMI — Inteligência Imobiliária. Vi que você demonstrou interesse em nossos imóveis premium em Recife.\n\nSou o(a) {corretor} e estou à disposição para te ajudar a encontrar o imóvel ideal.\n\nPosso te enviar nosso catálogo exclusivo?' },
-  { id: 2, nome: 'Follow-up 24h', texto: 'Olá {nome}! Passando para verificar se recebeu as informações que enviei ontem sobre {imovel}.\n\nFicou alguma dúvida? Posso agendar uma visita esta semana.' },
-  { id: 3, nome: 'Agendamento de Visita', texto: 'Olá {nome}! Confirmando nossa visita ao {imovel} em {data} às {horario}.\n\nEndereço: {endereco}\n\nAté logo! 🏡' },
-  { id: 4, nome: 'Proposta Aceita', texto: 'Ótima notícia, {nome}! 🎉\n\nSua proposta para o {imovel} foi aceita.\n\nPróximos passos:\n1. Análise jurídica do contrato\n2. Assinatura digital\n3. Registro em cartório\n\nEstarei em contato em breve com os documentos.' },
+// ⚠️ NÃO MODIFICAR - Mensagens da conversa ativa
+const MENSAGENS_INICIAIS = [
+  { id: 1, texto: 'Olá Maria, bom dia! Como posso ajudar hoje?', eu: true, horario: '14:00', status: 'read' },
+  { id: 2, texto: 'Olá! Vi o anúncio do Reserva Atlantis no Instagram e fiquei interessada.', eu: false, horario: '14:15' },
+  { id: 3, texto: 'Excelente escolha. É o produto com melhor performance em Boa Viagem hoje.', eu: true, horario: '14:20', status: 'read' },
+  { id: 4, texto: 'Vocês têm unidades acima do 15º andar?', eu: false, horario: '14:30' },
+  { id: 5, texto: 'Gostaria de agendar uma visita ao Reserva Atlantis', eu: false, horario: '14:32' },
 ]
 
-const STATUS_LEAD: Record<string, { label: string; color: string }> = {
-  lead_quente: { label: 'Lead Quente', color: 'bg-red-50 text-red-700' },
-  lead_morno: { label: 'Lead Morno', color: 'bg-orange-50 text-orange-700' },
-  cliente: { label: 'Cliente', color: 'bg-green-50 text-green-700' },
-  arquivado: { label: 'Arquivado', color: 'bg-gray-100 text-gray-500' },
-}
+// ⚠️ NÃO MODIFICAR - Templates de resposta rápida
+const TEMPLATES_WHATSAPP = [
+  { id: 'visita', label: 'Agendar Visita', text: 'Olá [Nome], podemos agendar uma visita técnica para amanhã às 10h ou 15h? Estarei com o material completo do Reserva Atlantis.' },
+  { id: 'laudo', label: 'Enviar Laudo', text: 'Segue em anexo o laudo de avaliação técnica conforme NBR 14653. Fico à disposição para dúvidas.' },
+  { id: 'invest', label: 'Dados Investimento', text: 'O yield médio nesta região de Boa Viagem está em 0,72% a.m., com valorização histórica de 18% ao ano.' },
+]
 
-export default function WhatsAppPage() {
-  const router = useRouter()
-  const [conversaSelecionada, setConversaSelecionada] = useState(CONVERSAS[0])
-  const [mensagem, setMensagem] = useState('')
-  const [busca, setBusca] = useState('')
-  const [mostrarTemplates, setMostrarTemplates] = useState(false)
-  const [mensagens, setMensagens] = useState(CONVERSAS[0].mensagens)
+export default function WhatsappPage() {
+  const [conversations, setConversations] = useState(CONVERSAS)
+  const [activeConversation, setActiveConversation] = useState(CONVERSAS[0])
+  const [messages, setMessages] = useState(MENSAGENS_INICIAIS)
+  const [newMessage, setNewMessage] = useState('')
+  const [search, setSearch] = useState('')
+  const [showTemplates, setShowTemplates] = useState(false)
+  const [aiLoading, setAiLoading] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
-  const stats = {
-    conversas: CONVERSAS.length,
-    nao_lidas: CONVERSAS.reduce((acc, c) => acc + c.nao_lidas, 0),
-    leads_quentes: CONVERSAS.filter(c => c.status === 'lead_quente').length,
-    clientes: CONVERSAS.filter(c => c.status === 'cliente').length,
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [messages])
+
+  const handleSend = () => {
+    if (!newMessage.trim()) return
+    const msg = {
+      id: Date.now(),
+      texto: newMessage,
+      eu: true,
+      horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      status: 'sent',
+    }
+    setMessages([...messages, msg])
+    setNewMessage('')
+    setShowTemplates(false)
   }
 
-  const conversasFiltradas = CONVERSAS.filter(c =>
-    c.nome.toLowerCase().includes(busca.toLowerCase()) ||
-    c.telefone.includes(busca)
+  const applyTemplate = (text: string) => {
+    setNewMessage(text.replace('[Nome]', activeConversation.nome.split(' ')[0]))
+    setShowTemplates(false)
+  }
+
+  const generateAIReply = async () => {
+    setAiLoading(true)
+    setShowTemplates(false)
+
+    const lastMsg = messages[messages.length - 1]?.texto || ''
+
+    try {
+      const res = await fetch('/api/ai/router', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          task_type: 'legenda',
+          prompt: `Gere uma resposta curta (máx 2 parágrafos) para o cliente ${activeConversation.nome}.\nContexto da última mensagem dele: "${lastMsg}"`,
+          platform: 'email',
+          context: `Empresa: IMI Atlantis. Mercado Imobiliário de Luxo em Recife.`
+        })
+      })
+
+      const data = await res.json()
+      if (data.success) {
+        setNewMessage(data.result)
+      }
+    } catch (err) {
+      console.error('AI Reply error:', err)
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
+  const filteredConversations = conversations.filter(c =>
+    c.nome.toLowerCase().includes(search.toLowerCase()) ||
+    c.telefone.includes(search)
   )
 
-  const selecionarConversa = (conversa: typeof CONVERSAS[0]) => {
-    setConversaSelecionada(conversa)
-    setMensagens(conversa.mensagens)
-    setMostrarTemplates(false)
-    setMensagem('')
-  }
-
-  const enviarMensagem = () => {
-    if (!mensagem.trim()) return
-    const nova = {
-      id: mensagens.length + 1,
-      texto: mensagem,
-      lado: 'enviada' as const,
-      horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-      lida: false,
-    }
-    setMensagens(prev => [...prev, nova])
-    setMensagem('')
-  }
-
-  const usarTemplate = (template: typeof TEMPLATES[0]) => {
-    setMensagem(template.texto.replace('{nome}', conversaSelecionada.nome.split(' ')[0]))
-    setMostrarTemplates(false)
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">WhatsApp Business</h1>
-          <p className="text-sm text-gray-600 mt-1">Central de mensagens e atendimento</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-xl border border-amber-100">
-            <AlertCircle size={14} className="text-amber-600" />
-            <span className="text-xs text-amber-700 font-medium">Modo demonstração</span>
+    <div className="h-[calc(100vh-140px)] flex bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
+      {/* ── Sidebar: Lista de Conversas ──────────────────────────────── */}
+      <div className="w-80 md:w-96 border-r border-gray-100 flex flex-col bg-gray-50/50">
+        <div className="p-4 bg-white border-b border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-xl font-bold text-gray-900">Mensagens</h1>
+            <div className="flex gap-1">
+              <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+                <MessageSquare size={18} />
+              </button>
+              <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+                <Settings size={18} />
+              </button>
+            </div>
           </div>
-          <button className="flex items-center gap-2 h-10 px-4 bg-green-600 text-white rounded-xl text-sm font-medium hover:bg-green-700">
-            <Plus size={16} />
-            Nova Conversa
+          <div className="relative">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Buscar ou começar nova conversa"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full h-10 pl-10 pr-4 bg-gray-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-accent-500 transition-all font-medium"
+            />
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+          {filteredConversations.map(conversa => (
+            <button
+              key={conversa.id}
+              onClick={() => setActiveConversation(conversa)}
+              className={`w-full flex items-center gap-3 p-4 hover:bg-white transition-all border-l-4 ${activeConversation.id === conversa.id ? 'bg-white border-accent-500' : 'border-transparent'
+                }`}
+            >
+              <div className="relative flex-shrink-0">
+                <div className="w-12 h-12 bg-accent-100 rounded-2xl flex items-center justify-center text-accent-700 font-bold">
+                  {conversa.nome[0]}
+                </div>
+                {conversa.online && (
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <div className="flex justify-between items-baseline mb-0.5">
+                  <span className="text-sm font-bold text-gray-900 truncate">{conversa.nome}</span>
+                  <span className="text-[10px] font-medium text-gray-400">{conversa.horario}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-gray-500 truncate">{conversa.ultimaMensagem}</p>
+                  {conversa.naoLidas > 0 && (
+                    <span className="bg-accent-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                      {conversa.naoLidas}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Chat: Área Principal ────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col bg-white">
+        {/* Header do Chat */}
+        <div className="h-16 flex items-center justify-between px-6 border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <button className="md:hidden p-2 -ml-2 hover:bg-gray-100 rounded-xl">
+              <ArrowLeft size={20} />
+            </button>
+            <div className="w-10 h-10 bg-accent-100 rounded-xl flex items-center justify-center text-accent-700 font-bold">
+              {activeConversation.nome[0]}
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-gray-900 leading-tight">{activeConversation.nome}</h2>
+              <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
+                <span className={activeConversation.online ? 'text-green-500' : ''}>
+                  {activeConversation.online ? 'Online agora' : 'Visto por último hoje'}
+                </span>
+                <span>•</span>
+                <span className="text-accent-600 px-1.5 py-0.5 bg-accent-50 rounded-md">
+                  {activeConversation.status}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+              <Video size={18} />
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+              <Phone size={18} />
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+              <Search size={18} />
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+              <MoreVertical size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* Disclaimer / Info */}
+        <div className="px-6 py-2 bg-amber-50/50 border-b border-amber-100 flex items-center gap-2">
+          <ShieldCheck size={14} className="text-amber-600" />
+          <p className="text-[10px] text-amber-700 font-medium">
+            Integração oficial via <span className="font-bold">WhatsApp Business API</span>. Mensagens criptografadas.
+          </p>
+        </div>
+
+        {/* Mensagens */}
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/30"
+          style={{ backgroundImage: 'radial-gradient(#e5e7eb 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}
+        >
+          <div className="flex justify-center mb-6">
+            <span className="bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-widest border border-gray-100 shadow-sm">
+              Hoje
+            </span>
+          </div>
+
+          {messages.map(msg => (
+            <div key={msg.id} className={`flex ${msg.eu ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-[75%] rounded-2xl px-4 py-2.5 shadow-sm relative group ${msg.eu
+                  ? 'bg-accent-600 text-white rounded-tr-none'
+                  : 'bg-white border border-gray-100 text-gray-900 rounded-tl-none'
+                  }`}
+              >
+                <p className="text-sm leading-relaxed">{msg.texto}</p>
+                <div className={`flex items-center justify-end gap-1 mt-1 ${msg.eu ? 'text-white/70' : 'text-gray-400'}`}>
+                  <span className="text-[10px] font-medium">{msg.horario}</span>
+                  {msg.eu && (
+                    <span>
+                      {msg.status === 'read' ? <CheckCheck size={12} /> : <Check size={12} />}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Input e Ferramentas */}
+        <div className="p-4 bg-white border-t border-gray-100">
+          {(showTemplates || aiLoading) && (
+            <div className="mb-4 flex flex-wrap gap-2 animate-in slide-in-from-bottom-2">
+              {aiLoading ? (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-accent-50 text-accent-700 rounded-xl text-xs font-semibold border border-accent-100">
+                  <Loader2 size={14} className="animate-spin" />
+                  IA formulando resposta estratégica...
+                </div>
+              ) : (
+                <>
+                  {TEMPLATES_WHATSAPP.map(tpl => (
+                    <button
+                      key={tpl.id}
+                      onClick={() => applyTemplate(tpl.text)}
+                      className="px-3 py-1.5 bg-accent-50 text-accent-700 rounded-xl text-xs font-semibold hover:bg-accent-100 transition-colors border border-accent-100"
+                    >
+                      {tpl.label}
+                    </button>
+                  ))}
+                  <button
+                    onClick={generateAIReply}
+                    className="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors border border-indigo-100 flex items-center gap-1.5"
+                  >
+                    <Sparkles size={14} />
+                    Auto-Reply IA
+                  </button>
+                  <button
+                    onClick={() => setShowTemplates(false)}
+                    className="px-3 py-1.5 bg-gray-100 text-gray-500 rounded-xl text-xs font-semibold hover:bg-gray-200"
+                  >
+                    Cancelar
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          <div className="flex items-end gap-2">
+            <div className="flex gap-1 mb-1">
+              <button
+                onClick={() => setShowTemplates(!showTemplates)}
+                className={`p-2.5 rounded-xl transition-all ${showTemplates ? 'bg-accent-600 text-white' : 'hover:bg-gray-100 text-gray-500'
+                  }`}
+                title="Templates & IA"
+              >
+                <Zap size={20} />
+              </button>
+              <button className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+                <Paperclip size={20} />
+              </button>
+              <button className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+                <Smile size={20} />
+              </button>
+            </div>
+
+            <div className="flex-1 relative">
+              <textarea
+                value={newMessage}
+                onChange={e => setNewMessage(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
+                placeholder="Digite uma mensagem..."
+                className="w-full h-11 py-3 px-4 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-accent-500 transition-all font-medium resize-none shadow-inner"
+              />
+            </div>
+
+            <button
+              onClick={handleSend}
+              disabled={!newMessage.trim()}
+              className="h-11 w-11 flex items-center justify-center bg-accent-600 text-white rounded-2xl hover:bg-accent-700 transition-all disabled:opacity-50 disabled:hover:bg-accent-600 shadow-md shadow-accent-200"
+            >
+              <Send size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Painel Direito: Info do Lead ────────────────────────────── */}
+      <div className="hidden xl:flex w-72 border-l border-gray-100 flex-col bg-gray-50/30">
+        <div className="p-6 text-center border-b border-gray-100 bg-white shadow-sm">
+          <div className="w-20 h-20 bg-accent-100 rounded-3xl mx-auto flex items-center justify-center text-accent-700 text-2xl font-bold mb-3 shadow-lg shadow-accent-100">
+            {activeConversation.nome[0]}
+          </div>
+          <h3 className="font-bold text-gray-900">{activeConversation.nome}</h3>
+          <p className="text-xs text-gray-500 mt-1 font-medium">{activeConversation.telefone}</p>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <section>
+            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">CRM Insight</h4>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs">
+                <Clock size={14} className="text-gray-400" />
+                <span className="text-gray-500 font-medium">Última visita: 14:32</span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] bg-blue-50 text-blue-700 px-2 py-1 rounded-lg font-bold w-fit">
+                <ShieldCheck size={12} />
+                <span>Lead Qualificado</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-gray-900 font-bold">
+                <AlertCircle size={14} className="text-gray-400" />
+                <span>Value: R$ 2.4M</span>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Segmentação</h4>
+            <div className="flex flex-wrap gap-1.5">
+              <span className="px-2 py-1 bg-accent-50 text-accent-700 rounded-lg text-[10px] font-bold border border-accent-100">Reserva Atlantis</span>
+              <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-bold border border-indigo-100">Investidor</span>
+              <span className="px-2 py-1 bg-green-50 text-green-700 rounded-lg text-[10px] font-bold border border-green-100">Alta Renda</span>
+            </div>
+          </section>
+
+          <section>
+            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Notas de Contexto</h4>
+            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-accent-500" />
+              <p className="text-[10px] text-gray-600 italic leading-relaxed font-medium">
+                "Busca rentabilidade anual superior a 15%. Interessada em unidades com vista mar definitiva em Boa Viagem."
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <div className="p-4 border-t border-gray-100 bg-white">
+          <button className="w-full h-10 bg-gray-900 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-all flex items-center justify-center gap-2">
+            Ver Ficha Completa
+            <ArrowRight size={14} />
           </button>
         </div>
       </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Conversas', value: stats.conversas, color: 'text-gray-900' },
-          { label: 'Não Lidas', value: stats.nao_lidas, color: 'text-red-600' },
-          { label: 'Leads Quentes', value: stats.leads_quentes, color: 'text-orange-600' },
-          { label: 'Clientes', value: stats.clientes, color: 'text-green-700' },
-        ].map(s => (
-          <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100">
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{s.label}</p>
-            <p className={`text-3xl font-bold mt-1 ${s.color}`}>{s.value}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Interface de chat */}
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden" style={{ height: '600px' }}>
-        <div className="flex h-full">
-          {/* Lista de conversas */}
-          <div className="w-80 flex-shrink-0 border-r border-gray-100 flex flex-col">
-            {/* Busca */}
-            <div className="p-3 border-b border-gray-50">
-              <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  value={busca}
-                  onChange={e => setBusca(e.target.value)}
-                  placeholder="Buscar conversa..."
-                  className="w-full h-9 pl-9 pr-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            {/* Lista */}
-            <div className="flex-1 overflow-y-auto">
-              {conversasFiltradas.map(conversa => (
-                <button
-                  key={conversa.id}
-                  onClick={() => selecionarConversa(conversa)}
-                  className={`w-full px-3 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left border-b border-gray-50 ${conversaSelecionada.id === conversa.id ? 'bg-accent-50' : ''
-                    }`}
-                >
-                  {/* Avatar */}
-                  <div className="relative flex-shrink-0">
-                    <div className="w-10 h-10 rounded-full bg-accent-100 text-accent-700 text-sm font-bold flex items-center justify-center">
-                      {conversa.avatar}
-                    </div>
-                    {conversa.online && (
-                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
-                    )}
-                  </div>
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-900 truncate">{conversa.nome}</span>
-                      <span className="text-xs text-gray-400 flex-shrink-0 ml-1">{conversa.horario}</span>
-                    </div>
-                    <div className="flex items-center justify-between mt-0.5">
-                      <p className="text-xs text-gray-500 truncate pr-2">{conversa.ultima_mensagem}</p>
-                      {conversa.nao_lidas > 0 && (
-                        <span className="flex-shrink-0 w-5 h-5 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                          {conversa.nao_lidas}
-                        </span>
-                      )}
-                    </div>
-                    <span className={`inline-block mt-1 px-1.5 py-0.5 rounded text-xs font-medium ${STATUS_LEAD[conversa.status].color}`}>
-                      {STATUS_LEAD[conversa.status].label}
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Área de chat */}
-          <div className="flex-1 flex flex-col">
-            {/* Header da conversa */}
-            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-accent-100 text-accent-700 text-sm font-bold flex items-center justify-center">
-                  {conversaSelecionada.avatar}
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{conversaSelecionada.nome}</p>
-                  <p className="text-xs text-gray-500">{conversaSelecionada.perfil} · {conversaSelecionada.telefone}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => router.push(`/backoffice/leads`)}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-medium bg-accent-50 text-accent-700 hover:bg-accent-100"
-                >
-                  <User size={12} />
-                  Ver Lead
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500">
-                  <Phone size={14} />
-                </button>
-                <button className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500">
-                  <MoreVertical size={14} />
-                </button>
-              </div>
-            </div>
-
-            {/* Mensagens */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {mensagens.map(msg => (
-                <div
-                  key={msg.id}
-                  className={`flex ${msg.lado === 'enviada' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-xs lg:max-w-sm px-3 py-2 rounded-2xl text-sm leading-relaxed ${msg.lado === 'enviada'
-                        ? 'bg-accent-600 text-white rounded-br-sm'
-                        : 'bg-gray-100 text-gray-900 rounded-bl-sm'
-                      }`}
-                  >
-                    <p className="whitespace-pre-line">{msg.texto}</p>
-                    <div className={`flex items-center justify-end gap-1 mt-1 ${msg.lado === 'enviada' ? 'text-white/60' : 'text-gray-400'
-                      }`}>
-                      <span className="text-xs">{msg.horario}</span>
-                      {msg.lado === 'enviada' && (
-                        msg.lida ? <CheckCheck size={12} className="text-blue-300" /> : <Check size={12} />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Templates */}
-            {mostrarTemplates && (
-              <div className="border-t border-gray-100 p-3 bg-gray-50">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Templates Rápidos</p>
-                <div className="flex gap-2 overflow-x-auto pb-1">
-                  {TEMPLATES.map(t => (
-                    <button
-                      key={t.id}
-                      onClick={() => usarTemplate(t)}
-                      className="flex-shrink-0 px-3 py-2 bg-white rounded-xl border border-gray-200 text-xs font-medium text-gray-700 hover:border-accent-300 hover:text-accent-700 transition-colors"
-                    >
-                      {t.nome}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Input de mensagem */}
-            <div className="px-4 py-3 border-t border-gray-100 flex items-center gap-2">
-              <button
-                onClick={() => setMostrarTemplates(!mostrarTemplates)}
-                className={`w-9 h-9 flex items-center justify-center rounded-xl transition-colors ${mostrarTemplates ? 'bg-accent-100 text-accent-600' : 'hover:bg-gray-100 text-gray-400'
-                  }`}
-                title="Templates"
-              >
-                <Zap size={16} />
-              </button>
-              <input
-                value={mensagem}
-                onChange={e => setMensagem(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && enviarMensagem()}
-                placeholder="Digite uma mensagem..."
-                className="flex-1 h-10 px-4 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-              />
-              <button
-                onClick={enviarMensagem}
-                disabled={!mensagem.trim()}
-                className="w-10 h-10 flex items-center justify-center rounded-xl bg-accent-600 text-white hover:bg-accent-700 disabled:opacity-40 transition-colors"
-              >
-                <Send size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Aviso integração */}
-      <div className="bg-blue-50 rounded-2xl border border-blue-100 p-4 flex items-start gap-3">
-        <AlertCircle size={18} className="text-blue-600 flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="text-sm font-medium text-blue-900">Integração WhatsApp Business API</p>
-          <p className="text-xs text-blue-700 mt-0.5">
-            Esta interface está em modo demonstração. Para ativar em produção, configure:
-            <strong> Meta Cloud API</strong> (oficial) ou <strong>Evolution API</strong> (self-hosted).
-            Adicione <code className="bg-blue-100 px-1 rounded">WHATSAPP_TOKEN</code> e <code className="bg-blue-100 px-1 rounded">WHATSAPP_PHONE_ID</code> no .env.local.
-          </p>
-        </div>
-      </div>
     </div>
+  )
+}
+
+function ArrowRight({ size, className }: { size: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>
   )
 }

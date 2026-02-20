@@ -7,18 +7,8 @@ import Button from '@/components/ui/Button';
 export function HeroSection() {
     return (
         <section className="relative overflow-hidden bg-[#141420] text-white py-20 lg:py-32">
-            {/* Background texture & pattern */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div
-                    className="absolute inset-0 opacity-[0.03]"
-                    style={{
-                        backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)',
-                        backgroundSize: '40px 40px',
-                    }}
-                />
-                {/* Gold gradient orb */}
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] -translate-y-1/4 translate-x-1/4 rounded-full bg-[#C49D5B]/[0.08] blur-[100px]" />
-            </div>
+            {/* Background pattern */}
+            <div className="absolute top-0 right-0 w-1/2 h-full hidden" />
 
             <div className="container-custom relative z-10 w-full">
                 <div className="max-w-4xl">
@@ -38,8 +28,7 @@ export function HeroSection() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight"
-                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight "
                     >
                         Renda em Dólar com<br />
                         <span className="text-[#C49D5B]">Imóveis Internacionais</span>
@@ -102,14 +91,10 @@ export function HeroSection() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.5, repeat: Infinity, repeatType: 'reverse' }}
-                className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:block z-10"
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:block"
             >
                 <ChevronDown className="w-8 h-8 text-white/20" />
             </motion.div>
-
-            {/* Bottom fade */}
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent" />
         </section>
     );
 }
-

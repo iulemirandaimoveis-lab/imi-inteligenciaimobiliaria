@@ -1,3 +1,8 @@
+// ============================================
+// SCRIPT 0 — API ROUTE: AI ROUTER UNIFICADO
+// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
+// ============================================
+
 /**
  * SALVAR EM: src/app/api/ai/router/route.ts
  *

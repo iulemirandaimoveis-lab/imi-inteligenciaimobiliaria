@@ -1,3 +1,8 @@
+// ============================================
+// BLOCO 4 — SCRIPT 4: INTEGRAÇÕES DO SISTEMA
+// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
+// ============================================
+
 /**
  * SALVAR EM: src/app/(backoffice)/backoffice/integracoes/page.tsx
  */
@@ -25,7 +30,7 @@ import {
   Link2,
 } from 'lucide-react'
 
-// ⚠️ NÃO MODIFICAR - Integrações disponíveis
+// ⚠️ NÃO MODIFICAR - Integrações disponíveis (Status: ativo, disponivel, configurar, breve)
 const INTEGRACOES = [
   // Portais
   {
@@ -220,10 +225,10 @@ const CATEGORIAS = [
 ]
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  ativo: { label: 'Ativo', color: 'bg-green-50 text-green-700' },
-  disponivel: { label: 'Disponível', color: 'bg-blue-50 text-blue-700' },
-  configurar: { label: 'Configurar', color: 'bg-amber-50 text-amber-700' },
-  breve: { label: 'Em breve', color: 'bg-gray-100 text-gray-500' },
+  ativo: { label: 'Ativo', color: 'bg-green-50 text-green-700 border-green-200' },
+  disponivel: { label: 'Disponível', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  configurar: { label: 'Configurar', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+  breve: { label: 'Em breve', color: 'bg-gray-100 text-gray-500 border-gray-200' },
 }
 
 export default function IntegracoesPage() {
@@ -282,31 +287,31 @@ export default function IntegracoesPage() {
         ))}
       </div>
 
-      {/* Busca */}
-      <div className="relative">
-        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input
-          value={busca}
-          onChange={e => setBusca(e.target.value)}
-          placeholder="Buscar integração..."
-          className="w-full h-11 pl-11 pr-4 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
-        />
-      </div>
-
-      {/* Filtros de categoria */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {CATEGORIAS.map(cat => (
-          <button
-            key={cat.id}
-            onClick={() => setCategoriaAtiva(cat.id)}
-            className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-colors ${categoriaAtiva === cat.id
+      {/* Barra de Busca e Filtros */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-2 flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            value={busca}
+            onChange={e => setBusca(e.target.value)}
+            placeholder="Buscar integração..."
+            className="w-full h-11 pl-11 pr-4 bg-transparent border-none rounded-xl text-sm text-gray-900 focus:ring-0"
+          />
+        </div>
+        <div className="flex items-center gap-2 px-2 overflow-x-auto pb-2 md:pb-0">
+          {CATEGORIAS.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setCategoriaAtiva(cat.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap uppercase tracking-wider ${categoriaAtiva === cat.id
                 ? 'bg-gray-900 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-          >
-            {cat.label}
-          </button>
-        ))}
+                : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Grade de integrações */}
@@ -317,28 +322,34 @@ export default function IntegracoesPage() {
           return (
             <div
               key={integracao.id}
-              className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-sm transition-shadow"
+              className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col hover:shadow-sm transition-all group"
             >
-              <div className="flex items-start justify-between mb-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${integracao.color}`}>
-                  <Icon size={20} />
+              <div className="flex items-start justify-between mb-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${integracao.color}`}>
+                  <Icon size={24} />
                 </div>
-                <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${statusCfg.color}`}>
+                <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${statusCfg.color}`}>
                   {statusCfg.label}
                 </span>
               </div>
 
               <h3 className="text-sm font-bold text-gray-900 mb-1">{integracao.nome}</h3>
-              <p className="text-xs text-gray-500 leading-relaxed mb-3">{integracao.desc}</p>
+              <p className="text-xs text-gray-500 leading-relaxed mb-4 min-h-[32px]">{integracao.desc}</p>
 
               {/* Info adicional para integrações ativas */}
               {integracao.status === 'ativo' && (
-                <div className="text-xs text-gray-400 mb-3 space-y-0.5">
+                <div className="text-[10px] text-gray-400 mb-4 space-y-1 bg-gray-50 p-2.5 rounded-xl border border-gray-100">
                   {integracao.ultima_sync && (
-                    <p>Última sync: {formatSync(integracao.ultima_sync)}</p>
+                    <div className="flex justify-between">
+                      <span className="font-medium uppercase tracking-widest text-[8px]">Última Sync</span>
+                      <span className="text-gray-600">{formatSync(integracao.ultima_sync)}</span>
+                    </div>
                   )}
                   {integracao.ativo_desde && (
-                    <p>Ativo desde: {new Date(integracao.ativo_desde).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}</p>
+                    <div className="flex justify-between">
+                      <span className="font-medium uppercase tracking-widest text-[8px]">Ativo Desde</span>
+                      <span className="text-gray-600">{new Date(integracao.ativo_desde).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}</span>
+                    </div>
                   )}
                 </div>
               )}
@@ -347,38 +358,38 @@ export default function IntegracoesPage() {
               <div className="flex items-center gap-2 mt-auto">
                 {integracao.status === 'ativo' && (
                   <>
-                    <button className="flex items-center gap-1.5 h-8 px-3 bg-green-50 text-green-700 rounded-xl text-xs font-medium hover:bg-green-100">
-                      <Check size={12} />
+                    <button className="flex items-center gap-1.5 h-9 px-3 bg-green-50 text-green-700 rounded-xl text-xs font-bold hover:bg-green-100 transition-colors">
+                      <Check size={14} />
                       Conectado
                     </button>
-                    <button className="h-8 px-3 bg-gray-100 text-gray-600 rounded-xl text-xs font-medium hover:bg-gray-200">
+                    <button className="h-9 px-3 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-200 transition-colors">
                       Configurar
                     </button>
                   </>
                 )}
                 {integracao.status === 'disponivel' && (
-                  <button className="flex items-center gap-1.5 h-8 px-3 bg-accent-50 text-accent-700 rounded-xl text-xs font-medium hover:bg-accent-100">
-                    <Link2 size={12} />
+                  <button className="flex items-center gap-1.5 h-9 px-4 bg-accent-50 text-accent-700 rounded-xl text-xs font-bold hover:bg-accent-100 transition-colors border border-accent-100">
+                    <Link2 size={14} />
                     Conectar
                   </button>
                 )}
                 {integracao.status === 'configurar' && (
-                  <button className="flex items-center gap-1.5 h-8 px-3 bg-amber-50 text-amber-700 rounded-xl text-xs font-medium hover:bg-amber-100">
-                    <Settings size={12} />
+                  <button className="flex items-center gap-1.5 h-9 px-4 bg-amber-50 text-amber-700 rounded-xl text-xs font-bold hover:bg-amber-100 transition-colors border border-amber-100">
+                    <Zap size={14} />
                     Configurar API Key
                   </button>
                 )}
                 {integracao.status === 'breve' && (
-                  <span className="text-xs text-gray-400 italic">Disponível em breve</span>
+                  <span className="text-xs text-gray-400 italic font-medium">Disponível em breve</span>
                 )}
                 {integracao.link && (
                   <a
                     href={integracao.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="ml-auto h-8 w-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600"
+                    className="ml-auto h-9 w-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    <ExternalLink size={12} />
+                    <ExternalLink size={14} />
                   </a>
                 )}
               </div>
@@ -387,9 +398,9 @@ export default function IntegracoesPage() {
         })}
 
         {integracoesFiltradas.length === 0 && (
-          <div className="col-span-3 text-center py-12">
-            <Layers size={40} className="mx-auto text-gray-200 mb-3" />
-            <p className="text-gray-500">Nenhuma integração encontrada</p>
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 bg-white rounded-3xl border border-gray-100">
+            <Layers size={48} className="mx-auto text-gray-200 mb-4" />
+            <p className="text-gray-500 font-medium italic">Nenhuma integração encontrada para os filtros selecionados</p>
           </div>
         )}
       </div>

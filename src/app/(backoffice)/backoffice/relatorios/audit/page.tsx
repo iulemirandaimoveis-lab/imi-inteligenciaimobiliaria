@@ -1,3 +1,8 @@
+// ============================================
+// BLOCO 4 — SCRIPT 8: TRILHA DE AUDITORIA (LOGS)
+// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
+// ============================================
+
 /**
  * SALVAR EM: src/app/(backoffice)/backoffice/relatorios/audit/page.tsx
  */
@@ -27,7 +32,7 @@ import {
   Lock,
 } from 'lucide-react'
 
-// ⚠️ NÃO MODIFICAR - Registros de auditoria mockados
+// ⚠️ NÃO MODIFICAR - Registros de auditoria mockados contextualizados
 const AUDIT_LOGS = [
   {
     id: 1,
@@ -180,14 +185,6 @@ export default function AuditPage() {
   const [busca, setBusca] = useState('')
   const [moduloFiltro, setModuloFiltro] = useState('todos')
   const [severidadeFiltro, setSeveridadeFiltro] = useState<string | null>(null)
-  const [showFiltros, setShowFiltros] = useState(false)
-
-  const stats = {
-    total: AUDIT_LOGS.length,
-    criticos: AUDIT_LOGS.filter(l => l.severidade === 'danger').length,
-    atencao: AUDIT_LOGS.filter(l => l.severidade === 'warning').length,
-    usuarios: [...new Set(AUDIT_LOGS.map(l => l.usuario))].length,
-  }
 
   const logsFiltrados = AUDIT_LOGS.filter(log => {
     const matchBusca =
@@ -198,6 +195,13 @@ export default function AuditPage() {
     const matchSeveridade = !severidadeFiltro || log.severidade === severidadeFiltro
     return matchBusca && matchModulo && matchSeveridade
   })
+
+  const stats = {
+    total: AUDIT_LOGS.length,
+    criticos: AUDIT_LOGS.filter(l => l.severidade === 'danger').length,
+    atencao: AUDIT_LOGS.filter(l => l.severidade === 'warning').length,
+    usuarios: [...new Set(AUDIT_LOGS.map(l => l.usuario))].length,
+  }
 
   const formatTimestamp = (iso: string) =>
     new Date(iso).toLocaleString('pt-BR', {
@@ -253,7 +257,7 @@ export default function AuditPage() {
 
       {/* Barra de busca e filtros */}
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="relative flex-1 min-w-48">
+        <div className="relative flex-1 min-w-[200px]">
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             value={busca}
@@ -282,9 +286,9 @@ export default function AuditPage() {
             <button
               key={k}
               onClick={() => setSeveridadeFiltro(severidadeFiltro === k ? null : k)}
-              className={`px-3 py-2 rounded-xl text-xs font-medium transition-all border ${severidadeFiltro === k
-                  ? `${v.color} border-current`
-                  : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${severidadeFiltro === k
+                ? `${v.color} border-current`
+                : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
                 }`}
             >
               {v.label}
@@ -298,45 +302,44 @@ export default function AuditPage() {
         {/* Cabeçalho */}
         <div className="grid grid-cols-12 gap-4 px-4 py-3 bg-gray-50 border-b border-gray-100">
           <div className="col-span-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Usuário</div>
-          <div className="col-span-1 text-xs font-bold text-gray-500 uppercase tracking-wider">Ação</div>
+          <div className="col-span-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Ação</div>
           <div className="col-span-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Descrição</div>
-          <div className="col-span-1 text-xs font-bold text-gray-500 uppercase tracking-wider">Módulo</div>
           <div className="col-span-1 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</div>
           <div className="col-span-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Timestamp</div>
         </div>
 
         {/* Linhas */}
-        {logsFiltrados.length === 0 ? (
-          <div className="text-center py-12">
-            <Shield size={40} className="mx-auto text-gray-200 mb-3" />
-            <p className="text-gray-500">Nenhum evento encontrado com os filtros selecionados</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-50">
-            {logsFiltrados.map(log => {
+        <div className="divide-y divide-gray-50">
+          {logsFiltrados.length === 0 ? (
+            <div className="text-center py-12">
+              <Shield size={40} className="mx-auto text-gray-200 mb-3" />
+              <p className="text-gray-500 font-medium">Nenhum evento encontrado</p>
+            </div>
+          ) : (
+            logsFiltrados.map(log => {
               const acaoCfg = ACAO_CONFIG[log.acao] || ACAO_CONFIG['view']
               const sevCfg = SEVERIDADE_CONFIG[log.severidade]
               const AcaoIcon = acaoCfg.icon
               const SevIcon = sevCfg.icon
 
               return (
-                <div key={log.id} className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-gray-50 transition-colors items-center">
+                <div key={log.id} className="grid grid-cols-12 gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center">
                   {/* Usuário */}
-                  <div className="col-span-3 flex items-center gap-2">
-                    <div className={`w-7 h-7 rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0 ${log.usuario === 'Sistema' ? 'bg-gray-100 text-gray-600' : 'bg-accent-100 text-accent-700'
+                  <div className="col-span-3 flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full text-[10px] font-bold flex items-center justify-center flex-shrink-0 ${log.usuario === 'Sistema' ? 'bg-gray-100 text-gray-600' : 'bg-accent-100 text-accent-700'
                       }`}>
                       {getInitials(log.usuario)}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-medium text-gray-900 truncate">{log.usuario}</p>
-                      <p className="text-xs text-gray-400 truncate">{log.ip}</p>
+                      <p className="text-sm font-bold text-gray-900 truncate">{log.usuario}</p>
+                      <p className="text-[10px] text-gray-400 truncate">{log.ip}</p>
                     </div>
                   </div>
 
                   {/* Ação */}
-                  <div className="col-span-1">
-                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${acaoCfg.color}`}>
-                      <AcaoIcon size={10} />
+                  <div className="col-span-2">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold border ${acaoCfg.color}`}>
+                      <AcaoIcon size={12} />
                       {acaoCfg.label}
                     </span>
                   </div>
@@ -345,47 +348,42 @@ export default function AuditPage() {
                   <div className="col-span-4">
                     <p className="text-xs text-gray-700 leading-relaxed line-clamp-2">{log.descricao}</p>
                     {log.entidade_id && (
-                      <p className="text-xs text-gray-400 font-mono mt-0.5">{log.entidade_id}</p>
+                      <p className="text-[10px] text-gray-400 font-mono mt-1 px-1.5 py-0.5 bg-gray-50 rounded inline-block">
+                        ID: {log.entidade_id}
+                      </p>
                     )}
                   </div>
 
-                  {/* Módulo */}
+                  {/* Status / Severidade */}
                   <div className="col-span-1">
-                    <span className="px-2 py-1 bg-gray-100 rounded-lg text-xs text-gray-600 font-medium capitalize">
-                      {log.modulo}
-                    </span>
-                  </div>
-
-                  {/* Severidade */}
-                  <div className="col-span-1">
-                    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${sevCfg.color}`}>
-                      <SevIcon size={10} />
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold ${sevCfg.color}`}>
+                      <SevIcon size={12} />
                       {sevCfg.label}
                     </span>
                   </div>
 
                   {/* Timestamp */}
                   <div className="col-span-2">
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <Clock size={10} />
+                    <div className="flex items-center gap-1.5 text-xs text-gray-700 font-medium">
+                      <Clock size={12} className="text-gray-400" />
                       {formatTimestamp(log.timestamp)}
                     </div>
-                    <p className="text-xs text-gray-400 truncate mt-0.5">{log.dispositivo}</p>
+                    <p className="text-[10px] text-gray-400 truncate mt-1">{log.dispositivo}</p>
                   </div>
                 </div>
               )
-            })}
-          </div>
-        )}
+            })
+          )}
+        </div>
 
         {/* Footer */}
         <div className="px-4 py-3 border-t border-gray-50 bg-gray-50 flex items-center justify-between">
-          <span className="text-xs text-gray-500">
-            {logsFiltrados.length} de {AUDIT_LOGS.length} eventos
+          <span className="text-xs text-gray-500 font-medium">
+            {logsFiltrados.length} de {AUDIT_LOGS.length} eventos registrados
           </span>
-          <div className="flex items-center gap-1.5 text-xs text-gray-400">
-            <Lock size={11} />
-            Logs imutáveis — armazenados em Supabase
+          <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+            <Lock size={12} />
+            Logs Imutáveis — Supabase DB
           </div>
         </div>
       </div>

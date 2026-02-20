@@ -1,3 +1,8 @@
+// ============================================
+// BLOCO 3 — SCRIPT 4: EDITOR DE CONTEÚDO
+// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
+// ============================================
+
 /**
  * SALVAR EM: src/app/(backoffice)/backoffice/conteudo/novo/page.tsx
  *
@@ -37,6 +42,8 @@ import {
   ArrowLeft,
   Info,
   Facebook,
+  Clock,
+  X,
 } from 'lucide-react'
 
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
@@ -260,49 +267,49 @@ export default function NovoConteudoPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-gray-900">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
           >
-            <ArrowLeft size={18} className="text-gray-600" />
+            <ArrowLeft size={20} className="text-gray-600" />
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Novo Conteúdo</h1>
-            <p className="text-sm text-gray-600 mt-0.5">
-              Editor com assistência de IA
+            <p className="text-sm text-gray-500 font-medium">
+              Editor inteligente com assistência de IA
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setPreview(!preview)}
-            className="flex items-center gap-2 h-10 px-4 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200"
+            className="flex items-center gap-2 h-11 px-4 bg-gray-100 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-200 transition-colors"
           >
-            <Eye size={16} />
-            {preview ? 'Editar' : 'Preview'}
+            <Eye size={18} />
+            {preview ? 'Voltar ao Editor' : 'Visualizar'}
           </button>
           <button
             onClick={salvarConteudo}
             disabled={!titulo || !corpo || salvo}
-            className="flex items-center gap-2 h-10 px-5 bg-accent-600 text-white rounded-xl text-sm font-medium hover:bg-accent-700 disabled:opacity-50"
+            className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl text-sm font-bold hover:bg-accent-700 disabled:opacity-50 transition-all shadow-lg shadow-accent-100"
           >
-            {salvo ? <Check size={16} /> : <Save size={16} />}
-            {salvo ? 'Salvo!' : 'Salvar Rascunho'}
+            {salvo ? <Check size={18} /> : <Save size={18} />}
+            {salvo ? 'Salvo com Sucesso!' : 'Salvar no Sistema'}
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ── Painel esquerdo: configuração ──────────────────────────────── */}
-        <div className="lg:col-span-1 space-y-4">
+        <div className="lg:col-span-1 space-y-6">
           {/* Tipo de conteúdo */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">
-              Tipo de Conteúdo
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">
+              Canal de Publicação
             </label>
             <div className="space-y-2">
               {TIPOS_CONTEUDO.map(t => {
@@ -311,18 +318,21 @@ export default function NovoConteudoPage() {
                   <button
                     key={t.id}
                     onClick={() => setTipo(t.id)}
-                    className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${tipo === t.id
-                        ? 'bg-accent-50 border border-accent-200'
-                        : 'hover:bg-gray-50 border border-transparent'
+                    className={`w-full flex items-center gap-4 p-3.5 rounded-2xl text-left transition-all group ${tipo === t.id
+                      ? 'bg-accent-50 border border-accent-100 shadow-sm'
+                      : 'hover:bg-gray-50 border border-transparent'
                       }`}
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${t.color}`}>
-                      <Icon size={16} />
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 ${t.color}`}>
+                      <Icon size={20} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{t.label}</p>
-                      <p className="text-xs text-gray-500">{t.desc}</p>
+                      <p className="text-sm font-bold text-gray-900 leading-tight">{t.label}</p>
+                      <p className="text-[10px] text-gray-500 font-medium mt-0.5">{t.desc}</p>
                     </div>
+                    {tipo === t.id && (
+                      <div className="ml-auto w-2 h-2 bg-accent-600 rounded-full" />
+                    )}
                   </button>
                 )
               })}
@@ -330,28 +340,31 @@ export default function NovoConteudoPage() {
           </div>
 
           {/* Contexto para IA */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-              Contexto para IA
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
+              Objetivo & Contexto
             </label>
             <textarea
               value={contexto}
               onChange={e => setContexto(e.target.value)}
-              placeholder="Ex: Post sobre Reserva Atlantis, público investidor, foco em retorno sobre capital..."
-              className="w-full h-20 px-3 py-2 text-sm border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-accent-500 resize-none"
+              placeholder="Ex: Lançamento Reserva Atlantis, foco em investidores, destacar valorização de 18% a.a. em Boa Viagem..."
+              className="w-full h-28 px-4 py-3 text-sm border border-gray-100 rounded-2xl text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all resize-none bg-gray-50 font-medium placeholder:text-gray-400"
             />
-            <p className="text-xs text-gray-400 mt-1">Quanto mais contexto, melhor o resultado da IA</p>
+            <div className="flex items-center gap-2 mt-2 px-1">
+              <Info size={12} className="text-accent-500" />
+              <p className="text-[10px] text-gray-400 font-medium italic">Dados ricos geram roteiros melhores pela IA.</p>
+            </div>
           </div>
 
-          {/* Ações IA */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                Assistente IA
+          {/* Assistente IA */}
+          <div className="bg-gradient-to-br from-accent-600 to-accent-700 rounded-2xl p-5 shadow-lg shadow-accent-100 text-white">
+            <div className="flex items-center justify-between mb-4">
+              <label className="text-[10px] font-bold text-white/70 uppercase tracking-widest">
+                Multi-Model Assistant
               </label>
-              <Sparkles size={14} className="text-accent-500" />
+              <Sparkles size={16} className="text-white animate-pulse" />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5 font-medium">
               {AI_SUGGESTIONS.filter(s => {
                 if (tipo === 'instagram' || tipo === 'facebook') return ['titulo', 'corpo', 'hashtags'].includes(s.id)
                 if (tipo === 'email') return ['titulo', 'intro', 'corpo', 'cta', 'email_subject'].includes(s.id)
@@ -360,66 +373,37 @@ export default function NovoConteudoPage() {
                 <button
                   key={sugestao.id}
                   onClick={() => gerarComIA(sugestao.task, sugestao.id)}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-accent-50 text-sm text-gray-700 hover:text-accent-700 transition-colors group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/10 text-xs text-white/90 hover:text-white transition-all group"
                 >
                   <span>{sugestao.label}</span>
-                  <Zap size={14} className="text-gray-300 group-hover:text-accent-500" />
+                  <Zap size={14} className="text-white/30 group-hover:text-white group-hover:fill-white transition-all" />
                 </button>
               ))}
-              <button
-                onClick={usarTemplate}
-                className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-gray-50 text-sm text-gray-500 transition-colors"
-              >
-                <span>Usar Template</span>
-                <FileText size={14} className="text-gray-300" />
-              </button>
-            </div>
-          </div>
-
-          {/* Metadata */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">
-              Informações
-            </label>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Tipo</span>
-                <span className="font-medium text-gray-900">{tipoAtual.label}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Caracteres</span>
-                <span className={`font-medium ${tipo === 'instagram' && charCount > 300
-                    ? 'text-red-600'
-                    : 'text-gray-900'
-                  }`}>
-                  {charCount.toLocaleString('pt-BR')}
-                  {tipo === 'instagram' && <span className="text-gray-400"> / 300</span>}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Criado em</span>
-                <span className="text-gray-900">{formatShortDate()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Status</span>
-                <span className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-lg text-xs font-medium">
-                  Rascunho
-                </span>
+              <div className="pt-2 mt-2 border-t border-white/10">
+                <button
+                  onClick={usarTemplate}
+                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/10 text-xs text-white/70 hover:text-white transition-all font-bold"
+                >
+                  <span>Preencher Template</span>
+                  <FileText size={14} className="opacity-50" />
+                </button>
               </div>
             </div>
           </div>
         </div>
 
         {/* ── Painel principal: editor ────────────────────────────────────── */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-6">
           {!preview ? (
             <>
               {/* Campo título */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <TipoIcon size={16} className={tipoAtual.color.split(' ')[0]} />
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                    {tipo === 'email' ? 'Subject Line / Assunto' : tipo === 'instagram' ? 'Título interno (não publicado)' : 'Título'}
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${tipoAtual.color}`}>
+                    <TipoIcon size={16} />
+                  </div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    {tipo === 'email' ? 'Subject Line do E-mail' : 'Título de Referência'}
                   </label>
                 </div>
                 <input
@@ -427,93 +411,108 @@ export default function NovoConteudoPage() {
                   onChange={e => setTitulo(e.target.value)}
                   placeholder={
                     tipo === 'email'
-                      ? 'Ex: Uma oportunidade que poucos conhecem...'
-                      : tipo === 'instagram'
-                        ? 'Ex: Post Boa Viagem — Fevereiro 2026'
-                        : 'Digite o título do conteúdo...'
+                      ? 'Ex: Oportunidade: Reserva Atlantis com 18% de valorização...'
+                      : 'Ex: Guia definitivo para investir em Boa Viagem'
                   }
-                  className="w-full h-12 px-4 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-transparent"
+                  className="w-full h-12 px-5 border border-gray-100 rounded-2xl text-base font-bold text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all bg-gray-50/50"
                 />
               </div>
 
-              {/* Barra de formatação (decorativa — editor plain text) */}
-              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                <div className="flex items-center gap-1 px-4 py-2 border-b border-gray-100 flex-wrap">
-                  {[Bold, Italic, Link2, List, Quote, Image].map((Icon, i) => (
-                    <button
-                      key={i}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
-                      title="Formatação"
-                    >
-                      <Icon size={14} />
-                    </button>
-                  ))}
-                  <div className="w-px h-5 bg-gray-200 mx-1" />
-                  <div className="flex items-center gap-1 ml-auto">
-                    <Info size={12} className="text-gray-400" />
-                    <span className="text-xs text-gray-400">Markdown suportado</span>
+              {/* Editor central */}
+              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                <div className="flex items-center gap-1 px-5 py-3 border-b border-gray-100 flex-wrap bg-gray-100/30">
+                  <div className="flex items-center gap-1 bg-white p-1 rounded-xl shadow-sm border border-gray-100">
+                    {[Bold, Italic, Link2, List, Quote, Image].map((Icon, i) => (
+                      <button
+                        key={i}
+                        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-400 hover:text-accent-600 transition-all font-bold"
+                        title="Formatação"
+                      >
+                        <Icon size={16} />
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2 ml-auto">
+                    <Hash size={14} className="text-gray-300" />
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Markdown Ativo</span>
                   </div>
                 </div>
 
-                {/* Área de edição */}
+                {/* Área de texto */}
                 <textarea
                   value={corpo}
                   onChange={e => handleCorpoChange(e.target.value)}
                   placeholder={
                     tipo === 'instagram'
-                      ? 'Escreva a legenda aqui...\n\nUse quebras de linha para separar parágrafos.\n\n#hashtag1 #hashtag2'
-                      : tipo === 'email'
-                        ? 'Prezado(a) [Nome],\n\nEscreva o corpo do email aqui...'
-                        : '## Introdução\n\nComece a escrever aqui...\n\n### Subtítulo\n\nConteúdo...'
+                      ? 'Escreva sua legenda luxuosa aqui...\n\nUse quebras de linha e emojis estrategicamente.\n\n#BoaViagem #IMIAntlantis'
+                      : 'Comece a estruturar seu conteúdo estratégico...'
                   }
-                  className="w-full h-96 px-6 py-4 text-sm text-gray-900 focus:outline-none resize-none leading-relaxed font-mono"
+                  className="w-full h-[500px] px-8 py-6 text-sm text-gray-900 focus:outline-none resize-none leading-relaxed font-sans scrollbar-thin scrollbar-thumb-gray-200"
                 />
 
-                {/* Rodapé do editor */}
-                <div className="flex items-center justify-between px-4 py-2 border-t border-gray-50 bg-gray-50">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-400">
-                      {corpo.split(/\s+/).filter(Boolean).length} palavras
-                    </span>
-                    <span className="text-xs text-gray-300">·</span>
-                    <span className="text-xs text-gray-400">
-                      {charCount} caracteres
-                    </span>
-                    {tipo === 'instagram' && charCount > 300 && (
-                      <>
-                        <span className="text-xs text-gray-300">·</span>
-                        <span className="text-xs text-red-600 font-medium">
-                          {charCount - 300} caracteres acima do limite Instagram
-                        </span>
-                      </>
-                    )}
+                {/* Status bar */}
+                <div className="flex items-center justify-between px-6 py-3 border-t border-gray-50 bg-gray-100/20">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Palavras:</span>
+                      <span className="text-xs font-bold text-gray-900">{corpo.split(/\s+/).filter(Boolean).length}</span>
+                    </div>
+                    <div className="h-4 w-px bg-gray-200" />
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Caractéres:</span>
+                      <span className={`text-xs font-bold ${tipo === 'instagram' && charCount > 300
+                        ? 'text-red-600'
+                        : 'text-gray-900'
+                        }`}>
+                        {charCount.toLocaleString('pt-BR')}
+                        {tipo === 'instagram' && <span className="text-gray-400"> / 300</span>}
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-xs text-gray-400">Salvo automaticamente</span>
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-accent-600 uppercase tracking-widest">
+                    <div className="w-2 h-2 bg-accent-500 rounded-full animate-pulse" />
+                    Backup Automático Ativo
+                  </div>
                 </div>
               </div>
             </>
           ) : (
-            /* ── Preview ────────────────────────────────────────────────── */
-            <div className="bg-white rounded-2xl border border-gray-100 p-8">
-              <div className="flex items-center gap-2 mb-4">
-                <span className={`px-3 py-1 rounded-lg text-xs font-medium ${tipoAtual.color}`}>
-                  {tipoAtual.label}
-                </span>
-                <span className="text-xs text-gray-400">{formatShortDate()}</span>
+            /* ── Preview Mode ───────────────────────────────────────────── */
+            <div className="bg-white rounded-2xl border border-gray-100 p-10 shadow-lg min-h-[600px] relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-8 opacity-5">
+                <LogoIMI className="w-32" />
               </div>
+
+              <div className="flex items-center gap-3 mb-8">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tipoAtual.color}`}>
+                  <TipoIcon size={20} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Prévia do Canal</span>
+                  <span className="text-sm font-bold text-gray-900">{tipoAtual.label}</span>
+                </div>
+                <div className="ml-auto flex items-center gap-2">
+                  <Clock size={14} className="text-gray-400" />
+                  <span className="text-xs font-bold text-gray-500">{formatShortDate()}</span>
+                </div>
+              </div>
+
               {titulo && (
-                <h1 className="text-2xl font-bold text-gray-900 mb-4">{titulo}</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-8 leading-tight tracking-tight border-l-4 border-accent-500 pl-6">
+                  {titulo}
+                </h1>
               )}
+
               {corpo ? (
                 <div className="prose prose-sm max-w-none">
-                  <pre className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed font-sans">
+                  <div className="text-base text-gray-800 whitespace-pre-wrap leading-relaxed font-sans space-y-4">
                     {corpo}
-                  </pre>
+                  </div>
                 </div>
               ) : (
-                <div className="text-center py-12 text-gray-400">
-                  <AlignLeft size={40} className="mx-auto mb-3 opacity-30" />
-                  <p>Nenhum conteúdo para visualizar ainda</p>
+                <div className="flex flex-col items-center justify-center py-20 text-gray-300">
+                  <AlignLeft size={64} className="mb-4 opacity-10" />
+                  <p className="font-bold uppercase tracking-widest text-sm">Sem conteúdo para exibir</p>
                 </div>
               )}
             </div>
@@ -521,67 +520,94 @@ export default function NovoConteudoPage() {
         </div>
       </div>
 
-      {/* ── Painel IA (drawer lateral simulado) ────────────────────────────── */}
+      {/* ── Modal Assistente IA ───────────────────────────────────────────── */}
       {aiPanel.open && (
-        <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-xl w-full max-w-lg">
-            {/* Header do painel */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-100">
-              <div className="flex items-center gap-2">
-                <Sparkles size={18} className="text-accent-600" />
-                <span className="font-medium text-gray-900">Assistente IA</span>
+        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-2xl w-full max-w-xl overflow-hidden scale-in-center">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 bg-accent-600 text-white">
+              <div className="flex items-center gap-3">
+                <Sparkles size={20} className="animate-pulse" />
+                <div>
+                  <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest block leading-none mb-1">Cérebro Artificial</span>
+                  <span className="text-base font-bold">Assistente Stratégico IMI</span>
+                </div>
               </div>
               <button
                 onClick={() => setAiPanel(p => ({ ...p, open: false }))}
-                className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500"
+                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 transition-colors text-2xl leading-none"
               >
-                ×
+                <X size={20} />
               </button>
             </div>
 
-            {/* Conteúdo */}
-            <div className="p-4">
+            {/* Content Area */}
+            <div className="p-8">
               {aiPanel.loading ? (
-                <div className="flex flex-col items-center justify-center py-8 gap-3">
-                  <Loader2 size={32} className="animate-spin text-accent-500" />
-                  <p className="text-sm text-gray-600">Gerando com IA...</p>
-                  <p className="text-xs text-gray-400">Claude Sonnet</p>
+                <div className="flex flex-col items-center justify-center py-12 gap-5">
+                  <div className="relative">
+                    <Loader2 size={48} className="animate-spin text-accent-600" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-2 h-2 bg-accent-600 rounded-full" />
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-gray-900 uppercase tracking-widest text-xs">Consultando Modelos...</p>
+                    <p className="text-[10px] text-gray-400 font-medium mt-1">Orquestrando Claude Sonnet & Gemini Pro</p>
+                  </div>
                 </div>
               ) : aiPanel.result ? (
-                <>
-                  <div className="bg-gray-50 rounded-xl p-4 mb-4 max-h-60 overflow-y-auto">
-                    <pre className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed font-sans">
+                <div className="space-y-6">
+                  <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 max-h-[350px] overflow-y-auto scrollbar-thin">
+                    <pre className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed font-sans font-medium">
                       {aiPanel.result}
                     </pre>
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  <div className="flex flex-col sm:flex-row items-center gap-3 font-bold">
                     <button
                       onClick={() => aplicarSugestao(aiPanel.result)}
-                      className="flex items-center gap-2 h-10 px-4 bg-accent-600 text-white rounded-xl text-sm font-medium hover:bg-accent-700 flex-1 justify-center"
+                      className="flex items-center gap-2 h-12 px-6 bg-accent-600 text-white rounded-2xl text-sm hover:bg-accent-700 w-full sm:flex-1 justify-center shadow-lg shadow-accent-100 transition-all"
                     >
-                      <Check size={16} />
-                      Aplicar ao Conteúdo
+                      <Check size={18} />
+                      Aplicar no Texto
                     </button>
-                    <button
-                      onClick={() => navigator.clipboard.writeText(aiPanel.result)}
-                      className="flex items-center gap-2 h-10 px-3 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200"
-                    >
-                      <Copy size={14} />
-                      Copiar
-                    </button>
-                    <button
-                      onClick={() => gerarComIA(aiPanel.task, aiPanel.field)}
-                      className="flex items-center gap-2 h-10 px-3 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200"
-                    >
-                      <RefreshCw size={14} />
-                    </button>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                      <button
+                        onClick={() => navigator.clipboard.writeText(aiPanel.result)}
+                        className="flex items-center gap-2 h-12 px-4 bg-gray-100 text-gray-700 rounded-2xl text-sm hover:bg-gray-200 flex-1 sm:flex-none justify-center transition-colors"
+                        title="Copiar para área de transferência"
+                      >
+                        <Copy size={18} />
+                      </button>
+                      <button
+                        onClick={() => gerarComIA(aiPanel.task, aiPanel.field)}
+                        className="flex items-center gap-2 h-12 px-4 bg-gray-100 text-gray-700 rounded-2xl text-sm hover:bg-gray-200 flex-1 sm:flex-none justify-center transition-colors shadow-inner"
+                        title="Regerar resposta"
+                      >
+                        <RefreshCw size={18} />
+                      </button>
+                    </div>
                   </div>
-                </>
+                </div>
               ) : null}
             </div>
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+function LogoIMI({ className }: { className?: string }) {
+  return (
+    <div className={className}>
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" rx="20" fill="currentColor" fillOpacity="0.1" />
+        <path d="M30 30H40V70H30V30Z" fill="currentColor" />
+        <path d="M45 30H55V70H45V30Z" fill="currentColor" />
+        <path d="M60 30H70V70H60V30Z" fill="currentColor" />
+      </svg>
     </div>
   )
 }

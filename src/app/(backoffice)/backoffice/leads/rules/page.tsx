@@ -1,3 +1,8 @@
+// ============================================
+// BLOCO 4 — SCRIPT 9: REGRAS DE PONTUAÇÃO
+// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
+// ============================================
+
 /**
  * SALVAR EM: src/app/(backoffice)/backoffice/leads/rules/page.tsx
  */

@@ -1,3 +1,8 @@
+// ============================================
+// BLOCO 4 — SCRIPT 7: CALENDÁRIO EDITORIAL
+// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
+// ============================================
+
 /**
  * SALVAR EM: src/app/(backoffice)/backoffice/conteudo/calendario/page.tsx
  */
@@ -24,7 +29,7 @@ import {
     Eye,
 } from 'lucide-react'
 
-// ⚠️ NÃO MODIFICAR - Conteúdos mockados calendário
+// ⚠️ NÃO MODIFICAR - Conteúdos mockados calendário contextualizados Recife
 const CONTEUDOS_CALENDARIO = [
     {
         id: 1,
@@ -313,12 +318,12 @@ export default function CalendarioPage() {
                                         key={dia}
                                         onClick={() => setDiaSelecionado(isSelecionado ? null : dia)}
                                         className={`relative aspect-square p-1 rounded-xl text-sm transition-all ${isSelecionado
-                                                ? 'bg-accent-600 text-white'
-                                                : isHoje
-                                                    ? 'bg-accent-50 border border-accent-200 text-accent-700 font-bold'
-                                                    : conteudosDia.length > 0
-                                                        ? 'hover:bg-gray-50 text-gray-900'
-                                                        : 'hover:bg-gray-50 text-gray-500'
+                                            ? 'bg-accent-600 text-white'
+                                            : isHoje
+                                                ? 'bg-accent-50 border border-accent-200 text-accent-700 font-bold'
+                                                : conteudosDia.length > 0
+                                                    ? 'hover:bg-gray-50 text-gray-900'
+                                                    : 'hover:bg-gray-50 text-gray-500'
                                             }`}
                                     >
                                         <span className="text-xs">{dia}</span>

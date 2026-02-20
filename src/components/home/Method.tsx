@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
+import { useParams } from 'next/navigation'
+
 interface MethodProps {
     dict: {
         method_pre: string
@@ -12,6 +14,9 @@ interface MethodProps {
 }
 
 export default function Method({ dict }: MethodProps) {
+    const params = useParams()
+    const lang = (params?.lang as string) || 'pt'
+
     return (
         <section className="relative bg-[#141420] py-20 lg:py-28 overflow-hidden">
             {/* Grid texture */}
@@ -35,7 +40,7 @@ export default function Method({ dict }: MethodProps) {
                 </h2>
 
                 <Link
-                    href="/sobre"
+                    href={`/${lang}/sobre`}
                     className="inline-flex items-center gap-2.5 text-white border border-white/15 hover:border-[#C49D5B] hover:text-[#C49D5B] font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[13px]"
                 >
                     {dict.method_cta}
