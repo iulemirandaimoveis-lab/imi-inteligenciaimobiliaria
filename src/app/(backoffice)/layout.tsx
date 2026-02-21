@@ -17,8 +17,7 @@ export default async function BackofficeLayout({
 
     return (
         <div
-            className="backoffice-root min-h-screen"
-            style={{ background: '#0D0F14' }}
+            className="backoffice-root min-h-screen transition-colors duration-200 bg-slate-50 dark:bg-[#0D0F14] text-slate-900 dark:text-slate-50"
         >
             <DesktopSidebar />
             <DesktopHeader />

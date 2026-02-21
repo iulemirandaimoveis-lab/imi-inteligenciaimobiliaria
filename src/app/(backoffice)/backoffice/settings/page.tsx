@@ -74,6 +74,14 @@ export default function SettingsPage() {
 
   useEffect(() => {
     setMounted(true)
+    const saved = localStorage.getItem('imi_backoffice_settings')
+    if (saved) {
+      try {
+        setSettings(JSON.parse(saved))
+      } catch (e) {
+        console.error('Failed to parse settings')
+      }
+    }
   }, [])
 
   if (!mounted) {
@@ -83,8 +91,11 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setIsSaving(true)
 
-    // TODO: Save to Supabase
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // Save to localStorage
+    localStorage.setItem('imi_backoffice_settings', JSON.stringify(settings))
+
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
     setIsSaving(false)
     setShowSuccess(true)
