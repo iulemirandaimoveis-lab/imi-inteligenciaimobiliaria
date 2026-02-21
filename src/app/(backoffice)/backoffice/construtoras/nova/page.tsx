@@ -34,6 +34,7 @@ export default function NovaConstrutora() {
     bairro: '',
     cidade: 'Recife',
     estado: 'PE',
+    pais: 'Brasil',
 
     // Contatos
     telefone: '',
@@ -376,6 +377,18 @@ export default function NovaConstrutora() {
                 onChange={handleChange}
                 className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 maxLength={2}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                País *
+              </label>
+              <input
+                type="text"
+                name="pais"
+                value={formData.pais}
+                onChange={handleChange}
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
               />
             </div>
           </div>

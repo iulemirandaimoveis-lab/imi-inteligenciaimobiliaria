@@ -183,19 +183,16 @@ export function DesktopSidebar() {
                 className="flex items-center gap-3 px-5 h-16 flex-shrink-0"
                 style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
             >
-                <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{
-                        background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)',
-                        boxShadow: '0 2px 8px rgba(196,157,91,0.35)',
-                    }}
+                <span
+                    className="text-2xl font-bold tracking-tight transition-colors text-white"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                 >
-                    <span className="text-sm font-black text-white tracking-tight">I</span>
-                </div>
-                <div>
-                    <p className="text-sm font-bold tracking-tight" style={{ color: '#F0F2F5' }}>IMI</p>
-                    <p className="text-[10px] font-medium" style={{ color: '#4E5669' }}>Inteligência Imobiliária</p>
-                </div>
+                    IMI
+                </span>
+                <div className="h-6 w-px bg-white/20"></div>
+                <span className="text-[9px] font-medium uppercase tracking-[0.15em] leading-[1.1]" style={{ color: '#8B93A7' }}>
+                    Inteligência<br />Imobiliária
+                </span>
             </div>
 
             {/* Nav */}

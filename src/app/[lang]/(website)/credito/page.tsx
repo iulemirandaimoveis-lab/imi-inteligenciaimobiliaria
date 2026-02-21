@@ -85,7 +85,7 @@ export default function CreditPage() {
     const ltv = (loanAmount / propertyValue) * 100
 
     return (
-        <main className="bg-white">
+        <main className="bg-[#0D0F14] min-h-screen">
             {/* HERO */}
             <section className="relative bg-[#141420] overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
@@ -118,10 +118,10 @@ export default function CreditPage() {
             {/* MODALIDADES */}
             <section className="section-padding">
                 <div className="container-custom">
-                    <h2 className="font-display text-3xl md:text-5xl font-bold text-imi-900 mb-4 text-center">
+                    <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-4 text-center">
                         Modalidades de Crédito
                     </h2>
-                    <p className="text-imi-500 text-lg max-w-2xl mx-auto text-center mb-16 font-light">
+                    <p className="text-[#9CA3AF] text-lg max-w-2xl mx-auto text-center mb-16 font-light">
                         Oferecemos as melhores opções do mercado para viabilizar seu investimento imobiliário com o máximo de eficiência financeira.
                     </p>
 
@@ -134,21 +134,21 @@ export default function CreditPage() {
                                 whileInView="visible"
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.1 }}
-                                className="p-10 rounded-3xl bg-white border border-imi-100 shadow-soft hover:shadow-card-hover transition-all duration-300"
+                                className="p-10 rounded-3xl bg-[#141420] border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:border-[#C49D5B]/30 hover:shadow-[0_12px_40px_rgba(196,157,91,0.15)] transition-all duration-300"
                             >
-                                <div className="w-14 h-14 bg-imi-900 text-white rounded-2xl flex items-center justify-center mb-8">
+                                <div className="w-14 h-14 bg-[#1A1E2A] border border-white/10 text-[#C49D5B] rounded-2xl flex items-center justify-center mb-8">
                                     <type.icon className="w-6 h-6" strokeWidth={1.5} />
                                 </div>
-                                <h3 className="text-2xl font-bold text-imi-900 mb-4 font-display">
+                                <h3 className="text-2xl font-bold text-white mb-4 font-display">
                                     {type.title}
                                 </h3>
-                                <p className="text-imi-500 mb-8 text-sm leading-relaxed">
+                                <p className="text-[#9CA3AF] mb-8 text-sm leading-relaxed">
                                     {type.description}
                                 </p>
                                 <ul className="space-y-4">
                                     {type.benefits.map((benefit, i) => (
-                                        <li key={i} className="flex items-start gap-3 text-sm text-imi-600 font-medium">
-                                            <ShieldCheck className="w-5 h-5 text-accent-500 flex-shrink-0" strokeWidth={1.5} />
+                                        <li key={i} className="flex items-start gap-3 text-sm text-[#D1D5DB] font-medium">
+                                            <ShieldCheck className="w-5 h-5 text-[#C49D5B] flex-shrink-0" strokeWidth={1.5} />
                                             {benefit}
                                         </li>
                                     ))}
@@ -160,24 +160,24 @@ export default function CreditPage() {
             </section>
 
             {/* SEÇÃO CAIXA CONSÓRCIOS */}
-            <section className="section-padding bg-imi-900 text-white relative overflow-hidden">
+            <section className="section-padding bg-[#0D0F14] text-white relative overflow-hidden border-t border-white/[0.05]">
                 <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                    <div className="absolute top-0 right-0 w-1/2 h-full bg-accent-500 -skew-x-12 translate-x-1/2" />
+                    <div className="absolute top-0 right-0 w-1/2 h-full bg-[#C49D5B] -skew-x-12 translate-x-1/2" />
                 </div>
 
                 <div className="container-custom relative z-10">
                     <div className="max-w-6xl mx-auto">
                         <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
                             <div>
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-8">
-                                    <span className="w-2 h-2 bg-accent-500 rounded-full animate-pulse" />
-                                    <span className="text-xs font-bold uppercase tracking-widest">IMI & CAIXA Consórcios</span>
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8">
+                                    <span className="w-2 h-2 bg-[#C49D5B] rounded-full animate-pulse" />
+                                    <span className="text-xs font-bold uppercase tracking-widest text-[#9CA3AF]">IMI & CAIXA Consórcios</span>
                                 </div>
                                 <h2 className="text-3xl md:text-5xl font-display font-bold mb-8 leading-tight">
                                     Parceiro Oficial <br />
-                                    <span className="text-accent-500">CAIXA Consórcios</span>
+                                    <span className="text-[#C49D5B]">CAIXA Consórcios</span>
                                 </h2>
-                                <p className="text-imi-300 text-lg font-light leading-relaxed mb-8">
+                                <p className="text-[#9CA3AF] text-lg font-light leading-relaxed mb-8">
                                     A IMI é parceira estratégica da Caixa Econômica Federal. O consórcio CAIXA é a solução mais segura e vendida do Brasil, com mais de 1 milhão de consorciados ativos e as menores taxas de administração do mercado.
                                 </p>
                                 <div className="space-y-4">
@@ -199,25 +199,25 @@ export default function CreditPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {consortiumPlans.map((plan, index) => (
                                     <div key={index} className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors group">
-                                        <p className="text-imi-400 text-[10px] font-bold uppercase tracking-widest mb-2">Carta de Crédito</p>
-                                        <p className="text-2xl font-bold text-white mb-4 font-display group-hover:text-accent-500 transition-colors">
+                                        <p className="text-[#9CA3AF] text-[10px] font-bold uppercase tracking-widest mb-2">Carta de Crédito</p>
+                                        <p className="text-2xl font-bold text-white mb-4 font-display group-hover:text-[#C49D5B] transition-colors">
                                             {formatCurrency(plan.value)}
                                         </p>
                                         <div className="space-y-2 text-xs">
                                             <div className="flex justify-between">
-                                                <span className="text-imi-400">Parcela Mensal</span>
-                                                <span className="font-bold text-accent-500">{formatCurrency(plan.monthly)}</span>
+                                                <span className="text-[#9CA3AF]">Parcela Mensal</span>
+                                                <span className="font-bold text-[#C49D5B]">{formatCurrency(plan.monthly)}</span>
                                             </div>
                                             <div className="flex justify-between border-t border-white/5 pt-2">
-                                                <span className="text-imi-400">Prazo</span>
+                                                <span className="text-[#9CA3AF]">Prazo</span>
                                                 <span>{plan.parcels} meses</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-imi-400">Taxa Admin</span>
+                                                <span className="text-[#9CA3AF]">Taxa Admin</span>
                                                 <span>{plan.admin} total</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-imi-400">Seguro</span>
+                                                <span className="text-[#9CA3AF]">Seguro</span>
                                                 <span>{plan.insurance}</span>
                                             </div>
                                         </div>
@@ -226,8 +226,8 @@ export default function CreditPage() {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl text-[10px] text-imi-400 uppercase tracking-tighter">
-                            <Info size={14} className="text-accent-500 flex-shrink-0" />
+                        <div className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-xl text-[10px] text-[#9CA3AF] uppercase tracking-tighter">
+                            <Info size={14} className="text-[#C49D5B] flex-shrink-0" />
                             <p>
                                 * Valores de referência com base nas condições vigentes da Caixa Consórcios. Sujeitos a alteração sem aviso prévio. Consulte condições atualizadas com nossos especialistas.
                             </p>
@@ -237,27 +237,27 @@ export default function CreditPage() {
             </section>
 
             {/* SIMULADOR DE FINANCIAMENTO */}
-            <section id="simulador" className="section-padding bg-imi-50">
+            <section id="simulador" className="section-padding bg-[#141420] border-t border-white/[0.05]">
                 <div className="container-custom">
                     <div className="max-w-4xl mx-auto">
                         <div className="text-center mb-16">
-                            <span className="text-accent-500 font-bold tracking-widest uppercase text-xs">Simulador Financeiro</span>
-                            <h2 className="font-display text-3xl md:text-5xl font-bold text-imi-900 mt-4 mb-6">
+                            <span className="text-[#C49D5B] font-bold tracking-widest uppercase text-xs">Simulador Financeiro</span>
+                            <h2 className="font-display text-3xl md:text-5xl font-bold text-white mt-4 mb-6">
                                 Financiamento Bancário
                             </h2>
-                            <p className="text-imi-500 text-lg font-light">
+                            <p className="text-[#9CA3AF] text-lg font-light">
                                 Calcule sua parcela mensal no Sistema Price e planeje sua aquisição com total clareza.
                             </p>
                         </div>
 
-                        <div className="bg-white rounded-3xl p-8 md:p-12 border border-imi-100 shadow-soft">
+                        <div className="bg-[#0D0F14] rounded-3xl p-8 md:p-12 border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                             <div className="grid lg:grid-cols-2 gap-16">
                                 <div className="space-y-10">
                                     {/* Valor do imóvel */}
                                     <div>
                                         <div className="flex justify-between mb-4">
-                                            <label className="text-sm font-bold text-imi-900 uppercase tracking-wider">Valor do Imóvel</label>
-                                            <span className="text-xl font-bold text-imi-900 font-display">{formatCurrency(propertyValue)}</span>
+                                            <label className="text-sm font-bold text-[#9CA3AF] uppercase tracking-wider">Valor do Imóvel</label>
+                                            <span className="text-xl font-bold text-white font-display">{formatCurrency(propertyValue)}</span>
                                         </div>
                                         <input
                                             type="range"
@@ -270,15 +270,15 @@ export default function CreditPage() {
                                                 setPropertyValue(val)
                                                 if (loanAmount > val * 0.8) setLoanAmount(val * 0.8)
                                             }}
-                                            className="w-full h-3 bg-imi-100 rounded-lg appearance-none cursor-pointer accent-imi-900 touch-pan-x"
+                                            className="w-full h-3 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#C49D5B] touch-pan-x"
                                         />
                                     </div>
 
                                     {/* Valor a financiar */}
                                     <div>
                                         <div className="flex justify-between mb-4">
-                                            <label className="text-sm font-bold text-imi-900 uppercase tracking-wider">Valor a Financiar</label>
-                                            <span className="text-xl font-bold text-imi-900 font-display">{formatCurrency(loanAmount)}</span>
+                                            <label className="text-sm font-bold text-[#9CA3AF] uppercase tracking-wider">Valor a Financiar</label>
+                                            <span className="text-xl font-bold text-white font-display">{formatCurrency(loanAmount)}</span>
                                         </div>
                                         <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
                                             {[50, 70, 80].map((percent) => (
@@ -286,8 +286,8 @@ export default function CreditPage() {
                                                     key={percent}
                                                     onClick={() => setLoanAmount((propertyValue * percent) / 100)}
                                                     className={`py-3 sm:py-2 text-sm sm:text-xs font-bold rounded-xl border transition-all min-h-[44px] ${Math.round((loanAmount / propertyValue) * 100) === percent
-                                                        ? 'bg-imi-900 text-white border-imi-900'
-                                                        : 'border-imi-100 text-imi-500 hover:border-imi-900'
+                                                        ? 'bg-[#1A1E2A] text-white border-[#21263A] border-l-2 border-[#C49D5B]'
+                                                        : 'border-white/10 text-[#9CA3AF] hover:bg-white/5 hover:border-white/20'
                                                         }`}
                                                 >
                                                     {percent}%
@@ -301,15 +301,15 @@ export default function CreditPage() {
                                             step="10000"
                                             value={loanAmount}
                                             onChange={(e) => setLoanAmount(Number(e.target.value))}
-                                            className="w-full h-3 bg-imi-100 rounded-lg appearance-none cursor-pointer accent-imi-900 touch-pan-x"
+                                            className="w-full h-3 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#C49D5B] touch-pan-x"
                                         />
                                     </div>
 
                                     {/* Prazo */}
                                     <div>
                                         <div className="flex justify-between mb-4">
-                                            <label className="text-sm font-bold text-imi-900 uppercase tracking-wider">Prazo de Pagamento</label>
-                                            <span className="text-xl font-bold text-imi-900 font-display">{years} anos</span>
+                                            <label className="text-sm font-bold text-[#9CA3AF] uppercase tracking-wider">Prazo de Pagamento</label>
+                                            <span className="text-xl font-bold text-white font-display">{years} anos</span>
                                         </div>
                                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                                             {[10, 15, 20, 30].map((y) => (
@@ -317,8 +317,8 @@ export default function CreditPage() {
                                                     key={y}
                                                     onClick={() => setYears(y)}
                                                     className={`py-3 sm:py-2 text-sm sm:text-xs font-bold rounded-xl border transition-all min-h-[44px] ${years === y
-                                                        ? 'bg-imi-900 text-white border-imi-900'
-                                                        : 'border-imi-100 text-imi-500 hover:border-imi-900'
+                                                        ? 'bg-[#1A1E2A] text-white border-[#21263A] border-l-2 border-[#C49D5B]'
+                                                        : 'border-white/10 text-[#9CA3AF] hover:bg-white/5 hover:border-white/20'
                                                         }`}
                                                 >
                                                     {y} anos
@@ -329,32 +329,32 @@ export default function CreditPage() {
                                 </div>
 
                                 {/* RESULTADO */}
-                                <div className="bg-imi-900 text-white rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-accent-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                                <div className="bg-[#141420] border border-white/[0.05] text-white rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#C49D5B]/10 rounded-full blur-3xl -mr-16 -mt-16" />
                                     <div className="relative z-10">
-                                        <div className="text-imi-400 text-xs font-bold uppercase tracking-widest mb-2">Parcela Mensal Estimada</div>
-                                        <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-10 font-display text-accent-500">
+                                        <div className="text-[#9CA3AF] text-xs font-bold uppercase tracking-widest mb-2">Parcela Mensal Estimada</div>
+                                        <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-10 font-display text-[#C49D5B]">
                                             {formatCurrency(monthlyPayment)}
                                         </div>
 
                                         <div className="space-y-6">
                                             <div className="flex justify-between text-sm py-4 border-b border-white/5">
-                                                <span className="text-imi-400 font-medium font-display uppercase tracking-widest text-[10px]">Total Financiado</span>
+                                                <span className="text-[#9CA3AF] font-medium font-display uppercase tracking-widest text-[10px]">Total Financiado</span>
                                                 <span className="font-bold">{formatCurrency(loanAmount)}</span>
                                             </div>
                                             <div className="flex justify-between text-sm py-4 border-b border-white/5">
-                                                <span className="text-imi-400 font-medium font-display uppercase tracking-widest text-[10px]">Total de Juros</span>
+                                                <span className="text-[#9CA3AF] font-medium font-display uppercase tracking-widest text-[10px]">Total de Juros</span>
                                                 <span className="font-bold">{formatCurrency(totalInterest)}</span>
                                             </div>
                                             <div className="flex justify-between text-sm py-4 border-b border-white/5">
-                                                <span className="text-imi-400 font-medium font-display uppercase tracking-widest text-[10px]">LTV (Alienação)</span>
+                                                <span className="text-[#9CA3AF] font-medium font-display uppercase tracking-widest text-[10px]">LTV (Alienação)</span>
                                                 <span className="font-bold">{ltv.toFixed(1)}%</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="mt-10 flex items-center gap-3 p-4 bg-white/5 rounded-xl text-[10px] text-imi-400 leading-tight">
-                                        <Info size={14} className="text-accent-500 flex-shrink-0" />
+                                    <div className="mt-10 flex items-center gap-3 p-4 bg-white/5 rounded-xl text-[10px] text-[#9CA3AF] leading-tight">
+                                        <Info size={14} className="text-[#C49D5B] flex-shrink-0" />
                                         <p>* Simulação baseada em taxa média de mercado. Valores reais podem variar conforme o banco escolhido e perfil de crédito.</p>
                                     </div>
                                 </div>
@@ -365,9 +365,9 @@ export default function CreditPage() {
             </section>
 
             {/* POR QUE ESCOLHER IMI */}
-            <section className="section-padding">
+            <section className="section-padding bg-[#0D0F14]">
                 <div className="container-custom">
-                    <h2 className="font-display text-3xl md:text-5xl font-bold text-imi-900 mb-16 text-center">
+                    <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-16 text-center">
                         Diferenciais da Assessoria IMI
                     </h2>
 
@@ -390,13 +390,13 @@ export default function CreditPage() {
                             }
                         ].map((item, index) => (
                             <div key={index} className="text-center group">
-                                <div className="w-20 h-20 bg-imi-50 text-imi-900 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-imi-900 group-hover:text-white transition-all duration-500 group-hover:-translate-y-2">
+                                <div className="w-20 h-20 bg-[#1A1E2A] text-[#C49D5B] border border-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 group-hover:bg-[#141420] group-hover:border-[#C49D5B]/30 transition-all duration-500 group-hover:-translate-y-2">
                                     <item.icon className="w-8 h-8" strokeWidth={1.5} />
                                 </div>
-                                <h3 className="text-xl font-bold text-imi-900 mb-4 font-display uppercase tracking-tight">
+                                <h3 className="text-xl font-bold text-white mb-4 font-display uppercase tracking-tight">
                                     {item.title}
                                 </h3>
-                                <p className="text-imi-500 leading-relaxed text-sm font-light">
+                                <p className="text-[#9CA3AF] leading-relaxed text-sm font-light">
                                     {item.description}
                                 </p>
                             </div>
@@ -406,28 +406,28 @@ export default function CreditPage() {
             </section>
 
             {/* FAQ */}
-            <section className="section-padding bg-imi-50">
+            <section className="section-padding bg-[#141420] border-t border-white/[0.05]">
                 <div className="container-custom">
                     <div className="max-w-3xl mx-auto">
                         <div className="text-center mb-16">
-                            <span className="text-accent-500 font-bold tracking-widest uppercase text-xs">Suporte Técnico</span>
-                            <h2 className="font-display text-3xl md:text-5xl font-bold text-imi-900 mt-4">
+                            <span className="text-[#C49D5B] font-bold tracking-widest uppercase text-xs">Suporte Técnico</span>
+                            <h2 className="font-display text-3xl md:text-5xl font-bold text-white mt-4">
                                 Dúvidas Frequentes
                             </h2>
                         </div>
 
                         <div className="space-y-4">
                             {faqs.map((faq, index) => (
-                                <div key={index} className="bg-white rounded-2xl border border-imi-100 overflow-hidden shadow-soft">
+                                <div key={index} className="bg-[#0D0F14] rounded-2xl border border-white/[0.05] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
                                     <button
                                         onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                                        className="w-full px-8 py-6 flex items-center justify-between text-left hover:bg-imi-50 transition-colors"
+                                        className="w-full px-8 py-6 flex items-center justify-between text-left hover:bg-white/5 transition-colors"
                                     >
-                                        <span className="font-bold text-imi-900 font-display">{faq.question}</span>
+                                        <span className="font-bold text-white font-display">{faq.question}</span>
                                         {openFaq === index ? (
-                                            <div className="w-8 h-8 bg-imi-900 text-white rounded-full flex items-center justify-center"><ChevronUp size={18} /></div>
+                                            <div className="w-8 h-8 bg-white/10 text-white rounded-full flex items-center justify-center"><ChevronUp size={18} /></div>
                                         ) : (
-                                            <div className="w-8 h-8 bg-imi-50 text-imi-900 rounded-full flex items-center justify-center"><ChevronDown size={18} /></div>
+                                            <div className="w-8 h-8 bg-[#1A1E2A] text-white rounded-full flex items-center justify-center"><ChevronDown size={18} /></div>
                                         )}
                                     </button>
                                     <AnimatePresence>
@@ -438,7 +438,7 @@ export default function CreditPage() {
                                                 exit={{ height: 0, opacity: 0 }}
                                                 className="px-8 pb-8"
                                             >
-                                                <p className="text-imi-500 text-sm leading-relaxed font-light">{faq.answer}</p>
+                                                <p className="text-[#9CA3AF] text-sm leading-relaxed font-light">{faq.answer}</p>
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -450,25 +450,24 @@ export default function CreditPage() {
             </section>
 
             {/* CTA FINAL */}
-            <section className="bg-white section-padding text-center relative overflow-hidden">
+            <section className="bg-[#0D0F14] section-padding text-center relative overflow-hidden">
                 <div className="container-custom relative z-10">
-                    <div className="max-w-4xl mx-auto bg-imi-900 text-white rounded-[40px] p-12 md:p-20 relative overflow-hidden shadow-2xl">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-accent-500/10 rounded-full blur-3xl -mr-32 -mt-32" />
+                    <div className="max-w-4xl mx-auto bg-[#141420] text-white rounded-[40px] p-12 md:p-20 relative overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.3)] border border-[#21263A] border-b-4 border-b-[#C49D5B]">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#C49D5B]/10 rounded-full blur-3xl -mr-32 -mt-32" />
                         <h2 className="font-display text-3xl md:text-5xl font-bold mb-8 relative z-10 tracking-tight leading-tight">
                             Vamos estruturar sua <br />
-                            <span className="text-accent-500">Engenharia Financeira?</span>
+                            <span className="text-[#C49D5B] italic">Engenharia Financeira?</span>
                         </h2>
-                        <p className="text-imi-300 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed relative z-10">
+                        <p className="text-[#9CA3AF] text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed relative z-10">
                             Fale agora com um especialista IMI e descubra qual a melhor alavancagem para o seu momento de investimento.
                         </p>
-                        <Button
-                            size="lg"
-                            className="w-full sm:w-auto bg-white text-imi-900 hover:bg-imi-50 h-14 sm:h-16 px-8 sm:px-12 text-base sm:text-lg font-bold shadow-xl relative z-10"
+                        <button
                             onClick={() => setIsModalOpen(true)}
+                            className="inline-flex items-center justify-center gap-3 h-14 sm:h-16 px-8 sm:px-12 text-[14px] sm:text-[16px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-2xl border border-[#21263A] border-l-4 border-[#C49D5B] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(196,157,91,0.15)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(196,157,91,0.25)] transition-all duration-300 relative z-10 w-full sm:w-auto"
                         >
-                            <MessageCircle className="w-6 h-6 mr-3 text-imi-900" />
+                            <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#C49D5B]" />
                             Agendar Sessão de Crédito
-                        </Button>
+                        </button>
                     </div>
                 </div>
             </section>

@@ -27,13 +27,13 @@ const locations = [
 
 export function LocationsSection() {
     return (
-        <section id="locations" className="section-padding">
+        <section id="locations" className="section-padding bg-[#141420]">
             <div className="container-custom">
                 <div className="max-w-2xl mx-auto text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-display font-bold text-imi-900 mb-6">
+                    <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
                         Mercados Premium Selecionados
                     </h2>
-                    <p className="text-lg text-imi-500 font-light">
+                    <p className="text-lg text-[#9CA3AF] font-light">
                         Atuamos apenas onde existem fundamentos sólidos de economia, turismo e potencial de valorização comprovado.
                     </p>
                 </div>
@@ -49,7 +49,7 @@ export function LocationsSection() {
                         <motion.article
                             key={location.name}
                             variants={slideUp}
-                            className="flex flex-col bg-white rounded-3xl overflow-hidden shadow-soft border border-imi-100 group hover:shadow-card-hover transition-all duration-500"
+                            className="flex flex-col bg-[#0D0F14] rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-white/[0.05] group hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(196,157,91,0.15)] hover:border-[#C49D5B]/30 transition-all duration-500"
                         >
                             <div className="relative aspect-[4/3] overflow-hidden">
                                 <Image
@@ -58,24 +58,24 @@ export function LocationsSection() {
                                     fill
                                     className="object-cover group-hover:scale-110 transition-transform duration-700"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-imi-900/60 to-transparent opacity-60" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#141420]/80 to-transparent opacity-80" />
                                 <div className="absolute bottom-6 left-6">
-                                    <span className="bg-accent-500 text-imi-900 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
+                                    <span className="bg-[#C49D5B] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
                                         Internacional
                                     </span>
                                 </div>
                             </div>
 
                             <div className="p-8 flex flex-col flex-grow">
-                                <h3 className="text-2xl font-bold text-imi-900 mb-4 font-display">
+                                <h3 className="text-2xl font-bold text-white mb-4 font-display">
                                     {location.name}
                                 </h3>
-                                <p className="text-imi-500 text-sm leading-relaxed mb-6 flex-grow">
+                                <p className="text-[#9CA3AF] text-sm leading-relaxed mb-6 flex-grow">
                                     {location.description}
                                 </p>
-                                <div className="pt-6 border-t border-imi-50">
-                                    <span className="text-sm font-bold text-imi-900 flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-accent-500" />
+                                <div className="pt-6 border-t border-white/5">
+                                    <span className="text-sm font-bold text-white flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#C49D5B]" />
                                         {location.stats}
                                     </span>
                                 </div>

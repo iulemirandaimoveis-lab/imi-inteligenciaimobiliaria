@@ -86,13 +86,16 @@ export default function Header({ lang, dict }: HeaderProps) {
                                     key={item.href}
                                     href={item.href}
                                     className={cn(
-                                        "relative text-sm font-medium tracking-tight transition-colors duration-300",
+                                        "relative text-sm font-medium tracking-tight transition-colors duration-300 flex items-center gap-1.5",
                                         pathname === item.href
                                             ? "text-navy-900 after:absolute after:left-0 after:bottom-[-4px] after:w-full after:h-0.5 after:bg-gold-600"
                                             : "text-slate-500 hover:text-navy-900"
                                     )}
                                 >
                                     {item.label}
+                                    {item.label === dict.properties && (
+                                        <span className="text-[14px]" title="United Arab Emirates">🇦🇪</span>
+                                    )}
                                 </Link>
                             ))}
 
@@ -148,13 +151,16 @@ export default function Header({ lang, dict }: HeaderProps) {
                                             href={item.href}
                                             onClick={() => setIsOpen(false)}
                                             className={cn(
-                                                "block text-lg font-medium py-3 px-4 rounded-xl transition-all h-12 flex items-center",
+                                                "block text-lg font-medium py-3 px-4 rounded-xl transition-all h-12 flex items-center gap-2",
                                                 pathname === item.href
                                                     ? "text-navy-900 bg-slate-50 border-l-2 border-gold-600"
                                                     : "text-slate-600 hover:text-navy-900 hover:bg-slate-50"
                                             )}
                                         >
                                             {item.label}
+                                            {item.label === dict.properties && (
+                                                <span className="text-[16px]">🇦🇪</span>
+                                            )}
                                         </Link>
                                     </motion.div>
                                 ))}

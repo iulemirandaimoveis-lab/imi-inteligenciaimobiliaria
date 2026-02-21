@@ -37,12 +37,12 @@ export function InvestmentSimulator() {
     }, [propertyValue, downPaymentPercent, interestRate, rentalYield]);
 
     return (
-        <div className="bg-white rounded-3xl overflow-hidden shadow-soft border border-imi-100" id="simulator">
+        <div className="bg-[#0D0F14] rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-white/[0.05]" id="simulator">
             <div className="grid grid-cols-1 lg:grid-cols-2">
                 {/* Inputs */}
                 <div className="p-8 md:p-12 space-y-10">
-                    <h3 className="text-2xl font-bold text-imi-900 font-display flex items-center gap-3">
-                        <TrendingUp className="w-6 h-6 text-accent-500" />
+                    <h3 className="text-2xl font-bold text-white font-display flex items-center gap-3">
+                        <TrendingUp className="w-6 h-6 text-[#C49D5B]" />
                         Configurar Cenário
                     </h3>
 
@@ -50,10 +50,10 @@ export function InvestmentSimulator() {
                         {/* Property Value */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold text-imi-500 uppercase tracking-wider flex items-center gap-2">
+                                <label className="text-sm font-bold text-[#9CA3AF] uppercase tracking-wider flex items-center gap-2">
                                     Valor do Imóvel
                                 </label>
-                                <span className="text-xl font-bold text-imi-900">${propertyValue.toLocaleString()}</span>
+                                <span className="text-xl font-bold text-white">${propertyValue.toLocaleString()}</span>
                             </div>
                             <input
                                 type="range"
@@ -62,17 +62,17 @@ export function InvestmentSimulator() {
                                 step="50000"
                                 value={propertyValue}
                                 onChange={(e) => setPropertyValue(Number(e.target.value))}
-                                className="w-full h-2 bg-imi-100 rounded-lg appearance-none cursor-pointer accent-imi-900"
+                                className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#C49D5B]"
                             />
                         </div>
 
                         {/* Down Payment */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
-                                <label className="text-sm font-bold text-imi-500 uppercase tracking-wider">
+                                <label className="text-sm font-bold text-[#9CA3AF] uppercase tracking-wider">
                                     Entrada (Down Payment)
                                 </label>
-                                <span className="text-xl font-bold text-imi-900">{downPaymentPercent}%</span>
+                                <span className="text-xl font-bold text-white">{downPaymentPercent}%</span>
                             </div>
                             <input
                                 type="range"
@@ -81,19 +81,19 @@ export function InvestmentSimulator() {
                                 step="5"
                                 value={downPaymentPercent}
                                 onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
-                                className="w-full h-2 bg-imi-100 rounded-lg appearance-none cursor-pointer accent-imi-900"
+                                className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#C49D5B]"
                             />
-                            <div className="text-xs text-imi-400 font-medium">Equivalente a: ${(propertyValue * (downPaymentPercent / 100)).toLocaleString()}</div>
+                            <div className="text-xs text-[#6B7280] font-medium">Equivalente a: ${(propertyValue * (downPaymentPercent / 100)).toLocaleString()}</div>
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-8">
                             {/* Interest Rate */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <label className="text-xs font-bold text-imi-500 uppercase tracking-wider">
+                                    <label className="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider">
                                         Taxa de Juros (a.a.)
                                     </label>
-                                    <span className="font-bold text-imi-900">{interestRate}%</span>
+                                    <span className="font-bold text-white">{interestRate}%</span>
                                 </div>
                                 <input
                                     type="range"
@@ -102,17 +102,17 @@ export function InvestmentSimulator() {
                                     step="0.25"
                                     value={interestRate}
                                     onChange={(e) => setInterestRate(Number(e.target.value))}
-                                    className="w-full h-2 bg-imi-100 rounded-lg appearance-none cursor-pointer accent-imi-900"
+                                    className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#C49D5B]"
                                 />
                             </div>
 
                             {/* Yield */}
                             <div className="space-y-4">
                                 <div className="flex justify-between items-center">
-                                    <label className="text-xs font-bold text-imi-500 uppercase tracking-wider">
+                                    <label className="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider">
                                         Yield Bruto (%)
                                     </label>
-                                    <span className="font-bold text-imi-900">{rentalYield}%</span>
+                                    <span className="font-bold text-white">{rentalYield}%</span>
                                 </div>
                                 <input
                                     type="range"
@@ -121,7 +121,7 @@ export function InvestmentSimulator() {
                                     step="0.5"
                                     value={rentalYield}
                                     onChange={(e) => setRentalYield(Number(e.target.value))}
-                                    className="w-full h-2 bg-imi-100 rounded-lg appearance-none cursor-pointer accent-imi-900"
+                                    className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#C49D5B]"
                                 />
                             </div>
                         </div>
@@ -129,41 +129,41 @@ export function InvestmentSimulator() {
                 </div>
 
                 {/* Result */}
-                <div className="bg-imi-900 p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-accent-500 opacity-5 rounded-full blur-3xl -mr-32 -mt-32" />
+                <div className="bg-[#141420] border-l border-white/[0.05] p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#C49D5B] opacity-5 rounded-full blur-3xl -mr-32 -mt-32" />
 
                     <div className="relative z-10 space-y-12">
                         <div>
-                            <p className="text-imi-400 text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <DollarSign className="w-4 h-4 text-accent-500" />
+                            <p className="text-[#9CA3AF] text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <DollarSign className="w-4 h-4 text-[#C49D5B]" />
                                 Fluxo de Caixa Mensal Limpo
                             </p>
                             <div className="flex items-baseline gap-2">
-                                <span className={`text-5xl font-bold font-display ${monthlyCashflow >= 0 ? 'text-white' : 'text-red-400'}`}>
+                                <span className={`text-5xl font-bold font-display ${monthlyCashflow >= 0 ? 'text-white' : 'text-[#EF4444]'}`}>
                                     ${Math.abs(monthlyCashflow).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                                 </span>
-                                <span className="text-imi-500 font-medium">/ mês</span>
+                                <span className="text-[#6B7280] font-medium">/ mês</span>
                             </div>
-                            {monthlyCashflow < 0 && <p className="text-red-400 text-xs mt-2 font-medium">Saldo Negativo no Cenário Atual</p>}
+                            {monthlyCashflow < 0 && <p className="text-[#EF4444] text-xs mt-2 font-medium">Saldo Negativo no Cenário Atual</p>}
                         </div>
 
                         <div className="h-px bg-white/10" />
 
                         <div>
-                            <p className="text-imi-400 text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <PieChart className="w-4 h-4 text-accent-500" />
+                            <p className="text-[#9CA3AF] text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <PieChart className="w-4 h-4 text-[#C49D5B]" />
                                 Retorno Cash-on-Cash
                             </p>
                             <div className="flex items-baseline gap-2">
-                                <span className={`text-5xl font-bold font-display ${cocReturn > 0 ? 'text-accent-500' : 'text-red-400'}`}>
+                                <span className={`text-5xl font-bold font-display ${cocReturn > 0 ? 'text-[#C49D5B]' : 'text-[#EF4444]'}`}>
                                     {cocReturn.toFixed(1)}%
                                 </span>
-                                <span className="text-imi-500 font-medium">ao ano</span>
+                                <span className="text-[#6B7280] font-medium">ao ano</span>
                             </div>
                         </div>
 
-                        <div className="bg-white/5 border border-white/10 p-4 rounded-xl flex gap-3 text-xs text-imi-400 leading-relaxed">
-                            <Info className="w-4 h-4 text-accent-500 flex-shrink-0" />
+                        <div className="bg-white/5 border border-white/10 p-4 rounded-xl flex gap-3 text-xs text-[#9CA3AF] leading-relaxed">
+                            <Info className="w-4 h-4 text-[#C49D5B] flex-shrink-0" />
                             <p>
                                 Estimativa líquida após hipoteca, impostos, HOA e taxas de gestão. Calculado com base no capital inicial investido (entrada + custos de fechamento).
                             </p>
@@ -171,13 +171,13 @@ export function InvestmentSimulator() {
                     </div>
 
                     <div className="mt-12 relative z-10">
-                        <button className="w-full bg-white text-imi-900 py-4 rounded-xl font-bold hover:bg-imi-50 transition-all duration-300 shadow-xl">
+                        <button className="w-full inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-xl border border-[#21263A] border-l-2 border-[#C49D5B] shadow-[0_8px_32px_rgba(196,157,91,0.15)] hover:bg-[#21263A] transition-all duration-300">
                             Receber Plano Detalhado
                         </button>
                     </div>
                 </div>
             </div>
-            <div className="bg-imi-50 py-4 px-8 text-[10px] text-imi-400 text-center uppercase tracking-tighter">
+            <div className="bg-white/5 py-4 px-8 text-[10px] text-[#9CA3AF] text-center uppercase tracking-tighter">
                 * Simulação informativa para fins de projeção. Resultados reais podem variar conforme mercado e gestão.
             </div>
         </div>

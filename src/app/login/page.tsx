@@ -66,14 +66,17 @@ export default function LoginPage() {
 
                 {/* Logo Section */}
                 <div className="relative z-10">
-                    <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center text-background-dark font-display font-bold text-3xl shadow-glow">
-                            I
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-display font-bold text-white tracking-tight">IMI Atlantis</h1>
-                            <p className="text-xs font-black text-primary uppercase tracking-[0.3em]">Inteligência Imobiliária</p>
-                        </div>
+                    <div className="flex items-center gap-3">
+                        <span
+                            className="text-2xl font-bold tracking-tight transition-colors text-white"
+                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        >
+                            IMI
+                        </span>
+                        <div className="h-6 w-px bg-white/20"></div>
+                        <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.15em] leading-[1.1] text-gray-400">
+                            Inteligência<br />Imobiliária
+                        </span>
                     </div>
                 </div>
 
@@ -111,49 +114,57 @@ export default function LoginPage() {
             </div>
 
             {/* Right Side - Login Form */}
-            <div className="w-full lg:w-[40%] flex items-center justify-center p-8 relative" style={{ background: '#0D0F14' }}>
+            <div className="w-full lg:w-[40%] flex items-center justify-center p-8 relative bg-white dark:bg-[#0D0F14]">
                 <div className="w-full max-w-md">
                     {/* Brand Header Mobile */}
                     <div className="lg:hidden mb-12 flex flex-col items-center">
-                        <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-background-dark font-display font-bold text-3xl shadow-glow mb-4">
-                            I
+                        <div className="flex items-center gap-3">
+                            <span
+                                className="text-2xl font-bold tracking-tight transition-colors text-imi-900 dark:text-white"
+                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                            >
+                                IMI
+                            </span>
+                            <div className="h-6 w-px bg-imi-200 dark:bg-white/20"></div>
+                            <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.15em] leading-[1.1] text-imi-500 dark:text-gray-400">
+                                Inteligência<br />Imobiliária
+                            </span>
                         </div>
-                        <h2 className="text-2xl font-display font-bold text-white">IMI Admin</h2>
                     </div>
 
                     <div className="mb-10 text-center lg:text-left">
-                        <h1 className="text-4xl font-display font-bold text-white mb-3">Bem-vindo</h1>
-                        <p className="text-gray-400 font-medium">Insira suas credenciais para acessar o painel administrativo.</p>
+                        <h1 className="text-4xl font-display font-bold text-imi-900 dark:text-white mb-3">Bem-vindo</h1>
+                        <p className="text-imi-500 dark:text-gray-400 font-medium">Insira suas credenciais para acessar o painel administrativo.</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">E-mail Corporativo</label>
+                            <label className="text-xs font-black text-imi-500 dark:text-gray-500 uppercase tracking-widest ml-1">E-mail Corporativo</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                                className="w-full h-14 px-6 bg-imi-50 dark:bg-white/5 border border-imi-100 dark:border-white/5 rounded-2xl text-imi-900 dark:text-white placeholder:text-imi-400 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                 placeholder="colaborador@imi.com.br"
                                 required
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">Senha de Acesso</label>
+                            <label className="text-xs font-black text-imi-500 dark:text-gray-500 uppercase tracking-widest ml-1">Senha de Acesso</label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                                    className="w-full h-14 px-6 bg-imi-50 dark:bg-white/5 border border-imi-100 dark:border-white/5 rounded-2xl text-imi-900 dark:text-white placeholder:text-imi-400 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
                                     placeholder="••••••••"
                                     required
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors"
+                                    className="absolute right-6 top-1/2 -translate-y-1/2 text-imi-400 dark:text-gray-400 hover:text-primary transition-colors"
                                 >
                                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                                 </button>
