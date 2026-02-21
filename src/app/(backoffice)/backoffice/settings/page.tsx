@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useTheme } from 'next-themes'
 import {
   Settings,
   User,
@@ -29,7 +30,7 @@ interface SettingsData {
   leadAlerts: boolean
 
   // Aparência
-  theme: 'light' | 'dark' | 'auto'
+  theme: 'light' | 'dark' | 'auto' | 'system'
   language: string
 
   // Segurança
@@ -43,6 +44,8 @@ interface SettingsData {
 }
 
 export default function SettingsPage() {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
   const [activeTab, setActiveTab] = useState('profile')
   const [isSaving, setIsSaving] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -67,6 +70,14 @@ export default function SettingsPage() {
 
   const handleChange = (field: keyof SettingsData, value: any) => {
     setSettings(prev => ({ ...prev, [field]: value }))
+  }
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
   }
 
   const handleSave = async () => {
@@ -132,8 +143,8 @@ export default function SettingsPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.id
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-blue-100 text-blue-700'
+                : 'text-gray-600 hover:bg-gray-100'
                 }`}
             >
               <Icon size={18} />
@@ -295,13 +306,16 @@ export default function SettingsPage() {
                   Tema
                 </label>
                 <select
-                  value={settings.theme}
-                  onChange={(e) => handleChange('theme', e.target.value)}
+                  value={theme}
+                  onChange={(e) => {
+                    handleChange('theme', e.target.value)
+                    setTheme(e.target.value)
+                  }}
                   className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 >
                   <option value="light">Claro</option>
                   <option value="dark">Escuro</option>
-                  <option value="auto">Automático</option>
+                  <option value="system">Automático (Sistema)</option>
                 </select>
               </div>
 

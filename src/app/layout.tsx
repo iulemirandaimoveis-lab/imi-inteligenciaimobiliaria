@@ -21,15 +21,24 @@ export const metadata = {
     description: 'Avaliações técnicas NBR 14653, consultoria estratégica e corretagem premium',
 };
 
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
+
 export default function RootLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
     return (
-        <html lang="pt-BR" className={`${playfair.variable} ${inter.variable}`}>
-            <body className={`${inter.className} min-h-screen bg-slate-50 relative`}>
-                {children}
+        <html lang="pt-BR" suppressHydrationWarning className={`${playfair.variable} ${inter.variable}`}>
+            <body className={`${inter.className} min-h-screen bg-slate-50 relative dark:bg-background-dark`}>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="dark"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    {children}
+                </ThemeProvider>
             </body>
         </html>
     )
