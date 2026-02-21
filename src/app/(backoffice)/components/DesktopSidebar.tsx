@@ -62,7 +62,7 @@ const NAV: NavItem[] = [
     {
         label: 'Financeiro', icon: Banknote,
         children: [
-            { label: 'Visão Geral', href: '/backoffice/financeiro', icon: BarChart },
+            { label: 'Visão Geral', href: '/backoffice/financeiro', icon: BarChart2 },
             { label: 'A Receber', href: '/backoffice/financeiro/receber', icon: TrendingUp },
             { label: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: TrendingUp },
             { label: 'Metas & Performance', href: '/backoffice/financeiro/metas', icon: Target },
