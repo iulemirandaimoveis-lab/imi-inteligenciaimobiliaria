@@ -7,7 +7,7 @@ import {
     Settings, ChevronDown, ChevronRight, LogOut,
     BookOpen, Mail, Sparkles, Calculator, BarChart2,
     BookmarkPlus, Target, Zap, CreditCard, Briefcase,
-    FileStack, FolderOpen, Banknote, Home
+    FileStack, FolderOpen, Banknote, Home, TrendingUp
 } from 'lucide-react'
 import { useState } from 'react'
 
