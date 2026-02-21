@@ -66,11 +66,11 @@ export default function Hero({ dict }: HeroProps) {
       {/* Background image */}
       <div className="absolute inset-0">
         <div
-          className="absolute inset-0 bg-cover bg-top bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-[85%_top] sm:bg-[bottom_right] md:bg-[85%_center] bg-no-repeat"
           style={{ backgroundImage: "url('/hero-bg.jpg')" }}
         />
-        {/* Dark overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#141420] via-[#141420]/75 to-[#141420]/20 md:bg-gradient-to-r md:from-[#141420] md:via-[#141420]/80 md:to-transparent" />
+        {/* Dark overlay gradient - stronger on the left for text readibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141420] via-[#141420]/80 to-transparent md:bg-gradient-to-r md:from-[#141420] md:via-[#141420]/90 md:to-transparent" />
       </div>
 
       {/* Gold glow orb */}
@@ -89,7 +89,7 @@ export default function Hero({ dict }: HeroProps) {
             initial="hidden"
             animate="visible"
             variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.12 } } }}
-            className="max-w-2xl"
+            className="max-w-lg md:max-w-xl lg:max-w-[50%]"
           >
             {/* Trust pills */}
             <motion.div
