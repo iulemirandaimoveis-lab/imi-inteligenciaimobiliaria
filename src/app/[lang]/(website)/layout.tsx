@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/website/Header'
 import Footer from '@/components/website/Footer'
 import { generateOrganizationSchema } from '@/lib/seo'
+import { getGlobalSettings } from '@/lib/settings'
 
 export const metadata: Metadata = {
     title: 'IMI – Inteligência Imobiliária',
@@ -17,6 +18,7 @@ export default async function WebsiteLayout({
 }) {
     const isRTL = lang === 'ar'
     const organizationSchema = generateOrganizationSchema()
+    const settings = await getGlobalSettings()
 
     return (
         <div className="flex flex-col min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -24,9 +26,9 @@ export default async function WebsiteLayout({
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
             />
-            <Header lang={lang} />
+            <Header lang={lang} settings={settings} />
             <main className="flex-grow pt-[68px] lg:pt-[76px]">{children}</main>
-            <Footer lang={lang} />
+            <Footer lang={lang} settings={settings} />
         </div>
     )
 }

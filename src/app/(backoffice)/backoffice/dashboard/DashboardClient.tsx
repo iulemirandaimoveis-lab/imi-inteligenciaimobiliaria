@@ -13,15 +13,15 @@ import Link from 'next/link'
 
 // ── Design tokens ──────────────────────────────────────────────
 const T = {
-    bg: '#0D0F14',
-    surface: '#13161E',
-    elevated: '#1A1E2A',
-    overlay: '#21263A',
-    border: 'rgba(255,255,255,0.07)',
-    borderGold: 'rgba(196,157,91,0.22)',
-    text: '#F0F2F5',
-    textSub: '#8B93A7',
-    textDim: '#4E5669',
+    bg: 'transparent',
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    overlay: 'var(--bo-surface)',
+    border: 'var(--bo-border)',
+    borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)',
+    textSub: 'var(--bo-text-muted)',
+    textDim: 'var(--bo-text-muted)',
     gold: '#C49D5B',
     goldLight: '#D4AF70',
     goldDim: 'rgba(196,157,91,0.60)',
@@ -70,11 +70,11 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
                     }}
                     onMouseEnter={e => {
                         (e.currentTarget as HTMLElement).style.border = '1px solid rgba(196,157,91,0.35)'
-                        ;(e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(196,157,91,0.18), 0 8px 32px rgba(196,157,91,0.08), 0 4px 24px rgba(0,0,0,0.32)'
+                            ; (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(196,157,91,0.18), 0 8px 32px rgba(196,157,91,0.08), 0 4px 24px rgba(0,0,0,0.32)'
                     }}
                     onMouseLeave={e => {
                         (e.currentTarget as HTMLElement).style.border = '1px solid rgba(196,157,91,0.18)'
-                        ;(e.currentTarget as HTMLElement).style.boxShadow = '0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset'
+                            ; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset'
                     }}
                 >
                     {/* Subtle gold corner glow */}
@@ -119,12 +119,12 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
 // ── Status badge ───────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
     const cfg: Record<string, { label: string; color: string; bg: string }> = {
-        concluida:        { label: 'Concluída',      color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-        em_andamento:     { label: 'Em Andamento',   color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
-        aguardando_docs:  { label: 'Aguard. Docs',   color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
-        hot:              { label: 'Quente',          color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-        warm:             { label: 'Morno',           color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
-        cold:             { label: 'Frio',            color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
+        concluida: { label: 'Concluída', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+        em_andamento: { label: 'Em Andamento', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
+        aguardando_docs: { label: 'Aguard. Docs', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
+        hot: { label: 'Quente', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
+        warm: { label: 'Morno', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
+        cold: { label: 'Frio', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
     }
     const c = cfg[status] || cfg.cold
     return (
@@ -189,8 +189,8 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
 
     // Format date
     const now = new Date()
-    const dayNames = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado']
-    const monthNames = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro']
+    const dayNames = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado']
+    const monthNames = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
     const dateStr = `${dayNames[now.getDay()]}, ${now.getDate()} de ${monthNames[now.getMonth()]}`
 
     return (

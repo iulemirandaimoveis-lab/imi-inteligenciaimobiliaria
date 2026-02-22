@@ -150,26 +150,42 @@ export default function NovoImovelPage() {
 
     setIsParsingPdf(true)
 
-    // Simulate AI parsing delay
-    await new Promise(resolve => setTimeout(resolve, 3000))
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
 
-    // Mock response from AI parser
-    setFormData(prev => ({
-      ...prev,
-      name: 'Reserva Atlantis',
-      type: 'Apartamento',
-      location: 'Boa Viagem',
-      address: 'Av. Boa Viagem, Recife - PE',
-      developer: 'Grupo IMI',
-      area: '120',
-      bedrooms: '3',
-      bathrooms: '3',
-      parking: '2',
-      features: ['Piscina', 'Academia', 'Salão de festas', 'Elevador', 'Segurança'],
-    }))
+      const res = await fetch('/api/imoveis/pdf-parse', {
+        method: 'POST',
+        body: formData,
+      })
 
-    setIsParsingPdf(false)
-    toast.success('PDF processado com sucesso! Os campos foram preenchidos automaticamente.')
+      if (!res.ok) {
+        throw new Error('Falha ao processar PDF')
+      }
+
+      const { data } = await res.json()
+
+      setFormData(prev => ({
+        ...prev,
+        name: data.name || prev.name,
+        type: data.type || prev.type,
+        location: data.location || prev.location,
+        address: data.address || prev.address,
+        developer: data.developer || prev.developer,
+        area: data.area?.toString() || prev.area,
+        bedrooms: data.bedrooms?.toString() || prev.bedrooms,
+        bathrooms: data.bathrooms?.toString() || prev.bathrooms,
+        parking: data.parking?.toString() || prev.parking,
+        features: Array.isArray(data.features) ? Array.from(new Set([...prev.features, ...data.features])) : prev.features,
+      }))
+
+      toast.success('PDF processado com sucesso! Os campos foram preenchidos.')
+    } catch (err: any) {
+      console.error(err)
+      toast.error('Erro ao ler o PDF: ' + err.message)
+    } finally {
+      setIsParsingPdf(false)
+    }
   }
 
   const handleChange = (field: keyof FormData, value: any) => {
@@ -249,12 +265,25 @@ export default function NovoImovelPage() {
 
     setIsSubmitting(true)
 
-    // TODO: Upload images to Supabase Storage
-    // TODO: Save to Supabase database
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    try {
+      const res = await fetch('/api/developments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
 
-    alert('Empreendimento cadastrado com sucesso!')
-    router.push('/backoffice/imoveis')
+      if (!res.ok) {
+        throw new Error('Erro ao salvar no banco')
+      }
+
+      toast.success('Empreendimento cadastrado com sucesso!')
+      router.push('/backoffice/imoveis')
+    } catch (err: any) {
+      console.error(err)
+      toast.error('Ocorreu um erro ao salvar o imóvel: ' + err.message)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const formatCurrency = (value: string) => {

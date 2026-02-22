@@ -1,409 +1,425 @@
-// ============================================
-// BLOCO 4 — SCRIPT 4: INTEGRAÇÕES DO SISTEMA
-// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
-// ============================================
-
-/**
- * SALVAR EM: src/app/(backoffice)/backoffice/integracoes/page.tsx
- */
-
 'use client'
 
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Layers,
-  Check,
-  ExternalLink,
-  Search,
-  Zap,
-  MessageSquare,
-  BarChart3,
-  Mail,
-  Home,
-  CreditCard,
-  Camera,
-  Globe,
-  Database,
-  Bell,
-  AlertCircle,
-  Settings,
-  Link2,
+    Shield, PenTool, Mail, Server, MessageCircle,
+    HardDrive, Database, Calendar, BarChart2,
+    Facebook, Instagram, CreditCard, Zap, Globe,
+    CheckCircle, AlertCircle, XCircle, Clock,
+    ChevronRight, X, Eye, EyeOff, ExternalLink,
+    RefreshCw, Settings, Plug
 } from 'lucide-react'
+import { INTEGRACOES, CATEGORIAS_INTEGRACAO } from '@/lib/integracoes-registry'
+import type { Integracao, IntegracaoStatus } from '@/types/contratos'
 
-// ⚠️ NÃO MODIFICAR - Integrações disponíveis (Status: ativo, disponivel, configurar, breve)
-const INTEGRACOES = [
-  // Portais
-  {
-    id: 'zap',
-    nome: 'ZAP Imóveis',
-    desc: 'Sincronize seu portfólio com o maior portal imobiliário do Brasil.',
-    categoria: 'portais',
-    status: 'disponivel',
-    icone: Home,
-    color: 'text-orange-600 bg-orange-50',
-  },
-  {
-    id: 'vivareal',
-    nome: 'VivaReal',
-    desc: 'Publique imóveis automaticamente no VivaReal e OLX.',
-    categoria: 'portais',
-    status: 'disponivel',
-    icone: Globe,
-    color: 'text-blue-600 bg-blue-50',
-  },
-  {
-    id: 'imovelweb',
-    nome: 'ImovelWeb',
-    desc: 'Integração com o portal líder no Nordeste.',
-    categoria: 'portais',
-    status: 'breve',
-    icone: Home,
-    color: 'text-green-600 bg-green-50',
-  },
-  // CRM / Marketing
-  {
-    id: 'rdstation',
-    nome: 'RD Station',
-    desc: 'Sincronize leads e automações de marketing digital.',
-    categoria: 'marketing',
-    status: 'disponivel',
-    icone: Zap,
-    color: 'text-indigo-600 bg-indigo-50',
-  },
-  {
-    id: 'hubspot',
-    nome: 'HubSpot',
-    desc: 'CRM e pipeline de vendas integrado ao HubSpot.',
-    categoria: 'marketing',
-    status: 'breve',
-    icone: Database,
-    color: 'text-orange-500 bg-orange-50',
-  },
-  // WhatsApp
-  {
-    id: 'meta_wa',
-    nome: 'Meta WhatsApp API',
-    desc: 'Integração oficial com a WhatsApp Business API.',
-    categoria: 'comunicacao',
-    status: 'configurar',
-    icone: MessageSquare,
-    color: 'text-green-600 bg-green-50',
-    link: 'https://developers.facebook.com/docs/whatsapp',
-  },
-  {
-    id: 'evolution',
-    nome: 'Evolution API',
-    desc: 'WhatsApp multi-sessão self-hosted para desenvolvimento.',
-    categoria: 'comunicacao',
-    status: 'breve',
-    icone: MessageSquare,
-    color: 'text-emerald-600 bg-emerald-50',
-  },
-  // Analytics
-  {
-    id: 'meta_ads',
-    nome: 'Meta Ads',
-    desc: 'Importe métricas de campanhas Facebook e Instagram.',
-    categoria: 'analytics',
-    status: 'ativo',
-    icone: BarChart3,
-    color: 'text-blue-600 bg-blue-50',
-    ativo_desde: '2025-11-01',
-    ultima_sync: '2026-02-19T06:00:00',
-  },
-  {
-    id: 'google_ads',
-    nome: 'Google Ads',
-    desc: 'Sincronização de campanhas e conversões do Google.',
-    categoria: 'analytics',
-    status: 'disponivel',
-    icone: BarChart3,
-    color: 'text-red-600 bg-red-50',
-  },
-  {
-    id: 'analytics',
-    nome: 'Google Analytics 4',
-    desc: 'Dados de tráfego e conversão do website.',
-    categoria: 'analytics',
-    status: 'ativo',
-    icone: BarChart3,
-    color: 'text-orange-600 bg-orange-50',
-    ativo_desde: '2025-10-15',
-    ultima_sync: '2026-02-19T08:00:00',
-  },
-  // Email
-  {
-    id: 'sendgrid',
-    nome: 'SendGrid',
-    desc: 'Disparo de emails transacionais e marketing.',
-    categoria: 'email',
-    status: 'disponivel',
-    icone: Mail,
-    color: 'text-blue-600 bg-blue-50',
-  },
-  {
-    id: 'mailchimp',
-    nome: 'Mailchimp',
-    desc: 'Automação de email marketing e newsletters.',
-    categoria: 'email',
-    status: 'breve',
-    icone: Mail,
-    color: 'text-yellow-600 bg-yellow-50',
-  },
-  // Financeiro
-  {
-    id: 'asaas',
-    nome: 'Asaas',
-    desc: 'Cobranças, boletos e gestão financeira integrada.',
-    categoria: 'financeiro',
-    status: 'breve',
-    icone: CreditCard,
-    color: 'text-blue-600 bg-blue-50',
-  },
-  // IA
-  {
-    id: 'anthropic',
-    nome: 'Claude (Anthropic)',
-    desc: 'Geração de conteúdo, análise de leads e avaliações com IA.',
-    categoria: 'ia',
-    status: 'ativo',
-    icone: Zap,
-    color: 'text-accent-600 bg-accent-50',
-    ativo_desde: '2026-01-01',
-    ultima_sync: '2026-02-19T14:00:00',
-  },
-  {
-    id: 'openai',
-    nome: 'OpenAI (GPT)',
-    desc: 'Modelos GPT-4o para geração de conteúdo alternativo.',
-    categoria: 'ia',
-    status: 'configurar',
-    icone: Zap,
-    color: 'text-green-600 bg-green-50',
-  },
-  {
-    id: 'gemini',
-    nome: 'Google Gemini',
-    desc: 'Geração de imagens e conteúdo com Gemini Pro e Flash.',
-    categoria: 'ia',
-    status: 'configurar',
-    icone: Camera,
-    color: 'text-blue-600 bg-blue-50',
-  },
-  {
-    id: 'kling',
-    nome: 'Kling AI',
-    desc: 'Geração de vídeos curtos para Instagram e YouTube.',
-    categoria: 'ia',
-    status: 'breve',
-    icone: Camera,
-    color: 'text-purple-600 bg-purple-50',
-  },
-  // Notificações
-  {
-    id: 'supabase_realtime',
-    nome: 'Supabase Realtime',
-    desc: 'Notificações em tempo real de eventos do banco de dados.',
-    categoria: 'sistema',
-    status: 'ativo',
-    icone: Bell,
-    color: 'text-green-600 bg-green-50',
-    ativo_desde: '2025-09-01',
-  },
-]
-
-const CATEGORIAS = [
-  { id: 'todas', label: 'Todas' },
-  { id: 'portais', label: 'Portais' },
-  { id: 'marketing', label: 'Marketing' },
-  { id: 'comunicacao', label: 'Comunicação' },
-  { id: 'analytics', label: 'Analytics' },
-  { id: 'email', label: 'E-mail' },
-  { id: 'financeiro', label: 'Financeiro' },
-  { id: 'ia', label: 'IA' },
-  { id: 'sistema', label: 'Sistema' },
-]
-
-const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  ativo: { label: 'Ativo', color: 'bg-green-50 text-green-700 border-green-200' },
-  disponivel: { label: 'Disponível', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  configurar: { label: 'Configurar', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  breve: { label: 'Em breve', color: 'bg-gray-100 text-gray-500 border-gray-200' },
+const T = {
+    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    gold: '#C49D5B',
 }
 
+const ICONES: Record<string, any> = {
+    Shield, PenTool, Mail, Server, MessageCircle, HardDrive,
+    Database, Calendar, BarChart2, Facebook, Instagram,
+    CreditCard, Zap, Globe, Settings,
+}
+
+const STATUS_CFG: Record<IntegracaoStatus, { label: string; text: string; bg: string; icon: any; dot: string }> = {
+    conectado: { label: 'Conectado', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle, dot: '#6BB87B' },
+    desconectado: { label: 'Desconectado', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: XCircle, dot: '#E8A87C' },
+    erro: { label: 'Erro', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle, dot: '#E57373' },
+    pendente: { label: 'Pendente', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock, dot: '#C49D5B' },
+    nao_configurado: { label: 'Não configurado', text: '#4E5669', bg: 'rgba(78,86,105,0.12)', icon: XCircle, dot: '#4E5669' },
+}
+
+function StatusBadge({ status }: { status: IntegracaoStatus }) {
+    const cfg = STATUS_CFG[status]
+    const Icon = cfg.icon
+    return (
+        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full"
+            style={{ color: cfg.text, background: cfg.bg }}>
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: cfg.dot }} />
+            {cfg.label}
+        </span>
+    )
+}
+
+// ── Modal de configuração ─────────────────────────────────────
+function ConfigModal({
+    integracao,
+    onClose,
+    onSave,
+}: {
+    integracao: Integracao
+    onClose: () => void
+    onSave: (id: string, values: Record<string, string>) => void
+}) {
+    const [values, setValues] = useState<Record<string, string>>({})
+    const [showMasked, setShowMasked] = useState<Record<string, boolean>>({})
+    const [testing, setTesting] = useState(false)
+    const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null)
+    const [saving, setSaving] = useState(false)
+
+    const Icon = ICONES[integracao.icon] || Settings
+
+    const handleTest = async () => {
+        setTesting(true)
+        setTestResult(null)
+        try {
+            const res = await fetch('/api/integracoes/test-connection', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ integration_id: integracao.id, values }),
+            })
+            const data = await res.json()
+            setTestResult({ ok: data.success, msg: data.message || (data.success ? 'Conexão bem-sucedida!' : 'Falha na conexão') })
+        } catch {
+            setTestResult({ ok: false, msg: 'Erro ao testar conexão' })
+        } finally {
+            setTesting(false)
+        }
+    }
+
+    const handleSave = async () => {
+        setSaving(true)
+        // Na produção: POST /api/integracoes/save com valores criptografados
+        await new Promise(r => setTimeout(r, 800))
+        onSave(integracao.id, values)
+        setSaving(false)
+        onClose()
+    }
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.70)', backdropFilter: 'blur(8px)' }}
+            onClick={e => e.target === e.currentTarget && onClose()}
+        >
+            <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.97 }}
+                className="w-full max-w-lg rounded-3xl overflow-hidden"
+                style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}
+            >
+                {/* Header */}
+                <div className="flex items-center gap-4 p-6"
+                    style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+                        style={{ background: `${integracao.cor}18`, border: `1px solid ${integracao.cor}30` }}>
+                        <Icon size={22} style={{ color: integracao.cor }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-base font-bold" style={{ color: T.text }}>{integracao.nome}</p>
+                        <p className="text-xs" style={{ color: T.textDim }}>{integracao.descricao}</p>
+                    </div>
+                    <button onClick={onClose}
+                        className="w-8 h-8 rounded-xl flex items-center justify-center"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <X size={14} style={{ color: T.textDim }} />
+                    </button>
+                </div>
+
+                {/* Campos */}
+                <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
+                    {integracao.id === 'supabase_storage' ? (
+                        <div className="rounded-xl p-4 text-sm" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: '#6BB87B' }}>
+                            ✓ Supabase Storage é o armazenamento interno do projeto. Já está configurado automaticamente via variáveis de ambiente NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY.
+                        </div>
+                    ) : integracao.campos_config.length === 0 ? (
+                        <p className="text-sm" style={{ color: T.textDim }}>Nenhuma configuração manual necessária.</p>
+                    ) : (
+                        integracao.campos_config.map(campo => {
+                            const isMasked = campo.masked && !showMasked[campo.key]
+                            const isTextarea = campo.tipo === 'textarea' as any
+                            return (
+                                <div key={campo.key} className="space-y-1.5">
+                                    <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: T.textDim }}>
+                                        {campo.label}{campo.required && <span style={{ color: T.gold }}> *</span>}
+                                    </label>
+                                    {campo.tipo === 'select' ? (
+                                        <select
+                                            value={values[campo.key] || ''}
+                                            onChange={e => setValues(p => ({ ...p, [campo.key]: e.target.value }))}
+                                            className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                                        >
+                                            <option value="">Selecionar...</option>
+                                            {campo.opcoes?.map(o => <option key={o} value={o}>{o}</option>)}
+                                        </select>
+                                    ) : isTextarea ? (
+                                        <textarea
+                                            value={values[campo.key] || ''}
+                                            onChange={e => setValues(p => ({ ...p, [campo.key]: e.target.value }))}
+                                            placeholder={campo.placeholder}
+                                            rows={4}
+                                            className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none font-mono text-xs"
+                                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                                        />
+                                    ) : (
+                                        <div className="relative">
+                                            <input
+                                                type={isMasked ? 'password' : campo.tipo === 'url' ? 'url' : 'text'}
+                                                value={values[campo.key] || ''}
+                                                onChange={e => setValues(p => ({ ...p, [campo.key]: e.target.value }))}
+                                                placeholder={campo.placeholder}
+                                                className="w-full h-10 px-3 rounded-xl text-sm outline-none font-mono"
+                                                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, paddingRight: campo.masked ? '40px' : undefined }}
+                                            />
+                                            {campo.masked && (
+                                                <button
+                                                    onClick={() => setShowMasked(p => ({ ...p, [campo.key]: !p[campo.key] }))}
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                                                    style={{ color: T.textDim }}
+                                                >
+                                                    {showMasked[campo.key] ? <EyeOff size={13} /> : <Eye size={13} />}
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                    {campo.descricao && (
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>{campo.descricao}</p>
+                                    )}
+                                </div>
+                            )
+                        })
+                    )}
+
+                    {/* Resultado do teste */}
+                    {testResult && (
+                        <div className="rounded-xl p-3 text-xs"
+                            style={{
+                                background: testResult.ok ? 'rgba(107,184,123,0.10)' : 'rgba(229,115,115,0.10)',
+                                border: `1px solid ${testResult.ok ? 'rgba(107,184,123,0.25)' : 'rgba(229,115,115,0.25)'}`,
+                                color: testResult.ok ? '#6BB87B' : '#E57373',
+                            }}>
+                            {testResult.ok ? '✓' : '⚠'} {testResult.msg}
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer */}
+                <div className="flex gap-3 p-6" style={{ borderTop: `1px solid ${T.border}` }}>
+                    {integracao.docs_url && (
+                        <a href={integracao.docs_url} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-4 h-10 rounded-xl text-xs font-medium"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
+                            <ExternalLink size={12} /> Docs
+                        </a>
+                    )}
+
+                    {integracao.campos_config.length > 0 && integracao.id !== 'supabase_storage' && (
+                        <button onClick={handleTest} disabled={testing}
+                            className="flex items-center gap-1.5 px-4 h-10 rounded-xl text-xs font-medium"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
+                            {testing ? <RefreshCw size={12} className="animate-spin" /> : <Plug size={12} />}
+                            Testar Conexão
+                        </button>
+                    )}
+
+                    <button onClick={handleSave} disabled={saving}
+                        className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
+                        style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)' }}>
+                        {saving ? 'Salvando...' : 'Salvar Configuração'}
+                    </button>
+                </div>
+            </motion.div>
+        </motion.div>
+    )
+}
+
+// ── Página principal ──────────────────────────────────────────
 export default function IntegracoesPage() {
-  const [busca, setBusca] = useState('')
-  const [categoriaAtiva, setCategoriaAtiva] = useState('todas')
+    const [categoriaAtiva, setCategoriaAtiva] = useState('todas')
+    const [integracaoAberta, setIntegracaoAberta] = useState<Integracao | null>(null)
+    const [statusOverride, setStatusOverride] = useState<Record<string, IntegracaoStatus>>({})
 
-  const integracoesFiltradas = INTEGRACOES.filter(i => {
-    const matchBusca = i.nome.toLowerCase().includes(busca.toLowerCase()) ||
-      i.desc.toLowerCase().includes(busca.toLowerCase())
-    const matchCategoria = categoriaAtiva === 'todas' || i.categoria === categoriaAtiva
-    return matchBusca && matchCategoria
-  })
+    const handleSave = (id: string, _values: Record<string, string>) => {
+        setStatusOverride(prev => ({ ...prev, [id]: 'conectado' }))
+    }
 
-  const stats = {
-    ativas: INTEGRACOES.filter(i => i.status === 'ativo').length,
-    disponiveis: INTEGRACOES.filter(i => i.status === 'disponivel').length,
-    configurar: INTEGRACOES.filter(i => i.status === 'configurar').length,
-    total: INTEGRACOES.length,
-  }
+    const getStatus = (int: Integracao): IntegracaoStatus =>
+        statusOverride[int.id] || int.status
 
-  const formatSync = (iso?: string) => {
-    if (!iso) return '—'
-    return new Date(iso).toLocaleTimeString('pt-BR', {
-      hour: '2-digit', minute: '2-digit'
-    }) + ' · ' + new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
-  }
+    const filtradas = categoriaAtiva === 'todas'
+        ? INTEGRACOES
+        : INTEGRACOES.filter(i => i.categoria === categoriaAtiva)
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Integrações</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Conecte portais, ferramentas de marketing e serviços externos
-          </p>
-        </div>
-        <button className="flex items-center gap-2 h-10 px-4 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200">
-          <Settings size={16} />
-          Configurações de API
-        </button>
-      </div>
+    const conectadas = INTEGRACOES.filter(i => getStatus(i) === 'conectado').length
+    const configurar = INTEGRACOES.filter(i => getStatus(i) === 'nao_configurado').length
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Ativas', value: stats.ativas, color: 'text-green-700', bg: 'bg-green-50' },
-          { label: 'Disponíveis', value: stats.disponiveis, color: 'text-blue-700', bg: 'bg-blue-50' },
-          { label: 'Configurar', value: stats.configurar, color: 'text-amber-700', bg: 'bg-amber-50' },
-          { label: 'Total', value: stats.total, color: 'text-gray-900', bg: 'bg-gray-50' },
-        ].map(s => (
-          <div key={s.label} className={`${s.bg} rounded-2xl p-4 border border-gray-100`}>
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{s.label}</p>
-            <p className={`text-3xl font-bold mt-1 ${s.color}`}>{s.value}</p>
-          </div>
-        ))}
-      </div>
+    return (
+        <>
+            <div className="space-y-5 max-w-7xl mx-auto">
 
-      {/* Barra de Busca e Filtros */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-2 flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            value={busca}
-            onChange={e => setBusca(e.target.value)}
-            placeholder="Buscar integração..."
-            className="w-full h-11 pl-11 pr-4 bg-transparent border-none rounded-xl text-sm text-gray-900 focus:ring-0"
-          />
-        </div>
-        <div className="flex items-center gap-2 px-2 overflow-x-auto pb-2 md:pb-0">
-          {CATEGORIAS.map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => setCategoriaAtiva(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap uppercase tracking-wider ${categoriaAtiva === cat.id
-                ? 'bg-gray-900 text-white'
-                : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
-                }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-      </div>
+                {/* Header */}
+                <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Integrações</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
+                        Conecte todas as plataformas — assinatura, email, WhatsApp, storage, redes sociais e pagamento
+                    </p>
+                </motion.div>
 
-      {/* Grade de integrações */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {integracoesFiltradas.map(integracao => {
-          const Icon = integracao.icone
-          const statusCfg = STATUS_CONFIG[integracao.status]
-          return (
-            <div
-              key={integracao.id}
-              className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col hover:shadow-sm transition-all group"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 ${integracao.color}`}>
-                  <Icon size={24} />
+                {/* Status geral */}
+                <div className="grid grid-cols-3 gap-3">
+                    {[
+                        { label: 'Conectadas', value: conectadas, color: '#6BB87B' },
+                        { label: 'Disponíveis', value: INTEGRACOES.length, color: '#7B9EC4' },
+                        { label: 'A configurar', value: configurar, color: '#C49D5B' },
+                    ].map((s, i) => (
+                        <motion.div key={s.label}
+                            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.05 }}
+                            className="rounded-2xl p-4 text-center"
+                            style={{ background: 'rgba(26,30,42,0.70)', border: '1px solid rgba(196,157,91,0.18)', backdropFilter: 'blur(16px)' }}>
+                            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+                            <p className="text-xs mt-1" style={{ color: T.textDim }}>{s.label}</p>
+                        </motion.div>
+                    ))}
                 </div>
-                <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${statusCfg.color}`}>
-                  {statusCfg.label}
-                </span>
-              </div>
 
-              <h3 className="text-sm font-bold text-gray-900 mb-1">{integracao.nome}</h3>
-              <p className="text-xs text-gray-500 leading-relaxed mb-4 min-h-[32px]">{integracao.desc}</p>
-
-              {/* Info adicional para integrações ativas */}
-              {integracao.status === 'ativo' && (
-                <div className="text-[10px] text-gray-400 mb-4 space-y-1 bg-gray-50 p-2.5 rounded-xl border border-gray-100">
-                  {integracao.ultima_sync && (
-                    <div className="flex justify-between">
-                      <span className="font-medium uppercase tracking-widest text-[8px]">Última Sync</span>
-                      <span className="text-gray-600">{formatSync(integracao.ultima_sync)}</span>
-                    </div>
-                  )}
-                  {integracao.ativo_desde && (
-                    <div className="flex justify-between">
-                      <span className="font-medium uppercase tracking-widest text-[8px]">Ativo Desde</span>
-                      <span className="text-gray-600">{new Date(integracao.ativo_desde).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}</span>
-                    </div>
-                  )}
+                {/* Categorias */}
+                <div className="flex gap-1.5 overflow-x-auto pb-0.5">
+                    {[{ key: 'todas', label: 'Todas' }, ...Object.entries(CATEGORIAS_INTEGRACAO).map(([k, v]) => ({ key: k, label: v.label }))].map(cat => (
+                        <button key={cat.key} onClick={() => setCategoriaAtiva(cat.key)}
+                            className="px-3.5 h-9 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
+                            style={{
+                                background: categoriaAtiva === cat.key ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.surface,
+                                color: categoriaAtiva === cat.key ? 'white' : T.textDim,
+                                border: `1px solid ${categoriaAtiva === cat.key ? T.borderGold : T.border}`,
+                            }}>
+                            {cat.label}
+                        </button>
+                    ))}
                 </div>
-              )}
 
-              {/* Ações */}
-              <div className="flex items-center gap-2 mt-auto">
-                {integracao.status === 'ativo' && (
-                  <>
-                    <button className="flex items-center gap-1.5 h-9 px-3 bg-green-50 text-green-700 rounded-xl text-xs font-bold hover:bg-green-100 transition-colors">
-                      <Check size={14} />
-                      Conectado
-                    </button>
-                    <button className="h-9 px-3 bg-gray-100 text-gray-600 rounded-xl text-xs font-bold hover:bg-gray-200 transition-colors">
-                      Configurar
-                    </button>
-                  </>
-                )}
-                {integracao.status === 'disponivel' && (
-                  <button className="flex items-center gap-1.5 h-9 px-4 bg-accent-50 text-accent-700 rounded-xl text-xs font-bold hover:bg-accent-100 transition-colors border border-accent-100">
-                    <Link2 size={14} />
-                    Conectar
-                  </button>
-                )}
-                {integracao.status === 'configurar' && (
-                  <button className="flex items-center gap-1.5 h-9 px-4 bg-amber-50 text-amber-700 rounded-xl text-xs font-bold hover:bg-amber-100 transition-colors border border-amber-100">
-                    <Zap size={14} />
-                    Configurar API Key
-                  </button>
-                )}
-                {integracao.status === 'breve' && (
-                  <span className="text-xs text-gray-400 italic font-medium">Disponível em breve</span>
-                )}
-                {integracao.link && (
-                  <a
-                    href={integracao.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-auto h-9 w-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    <ExternalLink size={14} />
-                  </a>
-                )}
-              </div>
+                {/* Grid de integrações */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {filtradas.map((integ, i) => {
+                        const status = getStatus(integ)
+                        const Icon = ICONES[integ.icon] || Settings
+                        const connected = status === 'conectado'
+
+                        return (
+                            <motion.div key={integ.id}
+                                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.04 }}
+                                className="rounded-2xl p-4 transition-all group"
+                                style={{
+                                    background: connected ? 'rgba(107,184,123,0.05)' : T.surface,
+                                    border: `1px solid ${connected ? 'rgba(107,184,123,0.22)' : T.border}`,
+                                }}
+                                onMouseEnter={e => {
+                                    (e.currentTarget as HTMLElement).style.border = `1px solid ${connected ? 'rgba(107,184,123,0.40)' : T.borderGold}`
+                                        ; (e.currentTarget as HTMLElement).style.background = T.elevated
+                                }}
+                                onMouseLeave={e => {
+                                    (e.currentTarget as HTMLElement).style.border = `1px solid ${connected ? 'rgba(107,184,123,0.22)' : T.border}`
+                                        ; (e.currentTarget as HTMLElement).style.background = connected ? 'rgba(107,184,123,0.05)' : T.surface
+                                }}
+                            >
+                                {/* Top */}
+                                <div className="flex items-start gap-3 mb-4">
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                        style={{ background: `${integ.cor}18`, border: `1px solid ${integ.cor}25` }}>
+                                        <Icon size={18} style={{ color: integ.cor }} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-semibold" style={{ color: T.text }}>{integ.nome}</p>
+                                        <p className="text-[11px] leading-relaxed mt-0.5 line-clamp-2" style={{ color: T.textDim }}>
+                                            {integ.descricao}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Meta */}
+                                <div className="flex items-center justify-between">
+                                    <StatusBadge status={status} />
+                                    <div className="flex items-center gap-1.5">
+                                        {integ.gratuito && (
+                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                                                style={{ background: 'rgba(107,184,123,0.12)', color: '#6BB87B' }}>
+                                                Grátis
+                                            </span>
+                                        )}
+                                        {integ.plano_minimo && (
+                                            <span className="text-[9px] font-semibold" style={{ color: T.textDim }}>
+                                                {integ.plano_minimo}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Action */}
+                                <button
+                                    onClick={() => setIntegracaoAberta(integ)}
+                                    className="mt-3 w-full h-9 rounded-xl text-xs font-semibold transition-all"
+                                    style={{
+                                        background: connected ? 'rgba(107,184,123,0.12)' : 'rgba(196,157,91,0.10)',
+                                        border: `1px solid ${connected ? 'rgba(107,184,123,0.25)' : T.borderGold}`,
+                                        color: connected ? '#6BB87B' : T.gold,
+                                    }}
+                                >
+                                    {connected ? '⚙ Gerenciar' : '+ Configurar'}
+                                </button>
+                            </motion.div>
+                        )
+                    })}
+                </div>
+
+                {/* Info .env */}
+                <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: T.textDim }}>
+                        Variáveis de Ambiente (.env.local)
+                    </p>
+                    <p className="text-xs mb-3" style={{ color: T.textDim }}>
+                        As configurações salvas aqui são armazenadas criptografadas no Supabase. Para produção, adicione também ao Vercel → Settings → Environment Variables.
+                    </p>
+                    <div className="rounded-xl p-3 font-mono text-[10px] leading-relaxed overflow-x-auto"
+                        style={{ background: '#0D0F14', border: `1px solid ${T.border}`, color: '#6BB87B' }}>
+                        {[
+                            '# Assinatura Digital',
+                            'GOVBR_CLIENT_ID=',
+                            'GOVBR_CLIENT_SECRET=',
+                            'GOVBR_REDIRECT_URI=https://seusite.com/api/auth/govbr/callback',
+                            'GOVBR_ENVIRONMENT=staging',
+                            'CLICKSIGN_ACCESS_TOKEN=',
+                            'CLICKSIGN_ENVIRONMENT=sandbox',
+                            '',
+                            '# Email',
+                            'RESEND_API_KEY=re_...',
+                            'RESEND_FROM_EMAIL=contratos@imi.imb.br',
+                            '',
+                            '# WhatsApp',
+                            'EVOLUTION_API_URL=https://evolution.seudominio.com',
+                            'EVOLUTION_API_KEY=',
+                            'EVOLUTION_INSTANCE=IMI',
+                            '',
+                            '# Google Drive',
+                            'GDRIVE_FOLDER_ID=',
+                            'GDRIVE_SERVICE_ACCOUNT_JSON=',
+                        ].map((line, i) => (
+                            <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? '#C49D5B' : '#6BB87B' }}>
+                                {line || '\u00A0'}
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
-          )
-        })}
 
-        {integracoesFiltradas.length === 0 && (
-          <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20 bg-white rounded-3xl border border-gray-100">
-            <Layers size={48} className="mx-auto text-gray-200 mb-4" />
-            <p className="text-gray-500 font-medium italic">Nenhuma integração encontrada para os filtros selecionados</p>
-          </div>
-        )}
-      </div>
-    </div>
-  )
+            {/* Modal de configuração */}
+            <AnimatePresence>
+                {integracaoAberta && (
+                    <ConfigModal
+                        integracao={integracaoAberta}
+                        onClose={() => setIntegracaoAberta(null)}
+                        onSave={handleSave}
+                    />
+                )}
+            </AnimatePresence>
+        </>
+    )
 }

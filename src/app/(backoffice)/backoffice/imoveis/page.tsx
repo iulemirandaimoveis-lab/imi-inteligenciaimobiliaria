@@ -1,27 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Plus, Search, Grid3X3, List, Building2, MapPin, Bed, Bath, Car, Ruler, DollarSign, Star, MoreHorizontal, Eye, Edit, CheckCircle, Clock, AlertCircle, Tag, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 
 const T = {
-    bg: '#0D0F14', surface: '#13161E', elevated: '#1A1E2A',
-    border: 'rgba(255,255,255,0.07)', borderGold: 'rgba(196,157,91,0.22)',
-    text: '#F0F2F5', textSub: '#8B93A7', textDim: '#4E5669',
+    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
     gold: '#C49D5B',
 }
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
-    disponivel:     { label: 'Disponível',    text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    em_negociacao:  { label: 'Negociação',    text: '#C49D5B', bg: 'rgba(196,157,91,0.12)',  icon: Clock },
-    reservado:      { label: 'Reservado',     text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
-    vendido:        { label: 'Vendido',       text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
-    lancamento:     { label: 'Lançamento',    text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Tag },
+    disponivel: { label: 'Disponível', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
+    em_negociacao: { label: 'Negociação', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock },
+    reservado: { label: 'Reservado', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
+    vendido: { label: 'Vendido', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
+    lancamento: { label: 'Lançamento', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Tag },
 }
 
-const IMOVEIS = [
+// Fallback mock
+const fallbackIMOVEIS = [
     { id: '1', codigo: 'IMI-2026-001', status: 'disponivel', destaque: true, tipo: 'Apartamento', titulo: 'Apartamento Premium com Vista Mar', bairro: 'Boa Viagem', area: 120, quartos: 3, banheiros: 3, vagas: 2, preco: 950000, construtora: 'Moura Dubeux', visitas: 234 },
     { id: '2', codigo: 'IMI-2026-002', status: 'disponivel', destaque: false, tipo: 'Casa', titulo: 'Casa em Condomínio de Alto Padrão', bairro: 'Setúbal', area: 450, quartos: 5, banheiros: 6, vagas: 4, preco: 3500000, construtora: null, visitas: 89 },
     { id: '3', codigo: 'IMI-2026-003', status: 'em_negociacao', destaque: true, tipo: 'Cobertura', titulo: 'Cobertura Duplex com Piscina Privativa', bairro: 'Boa Viagem', area: 320, quartos: 4, banheiros: 5, vagas: 3, preco: 2800000, construtora: 'Queiroz Galvão', visitas: 178 },
@@ -29,6 +30,23 @@ const IMOVEIS = [
     { id: '5', codigo: 'IMI-2026-005', status: 'lancamento', destaque: true, tipo: 'Empreendimento', titulo: 'Reserva Atlantis — Pré-lançamento', bairro: 'Ponta de Pedra', area: 120000, quartos: 0, banheiros: 0, vagas: 0, preco: 480000000, construtora: 'IMI Incorporações', visitas: 1240 },
     { id: '6', codigo: 'IMI-2026-006', status: 'reservado', destaque: false, tipo: 'Sala Comercial', titulo: 'Sala Comercial — Centro Empresarial', bairro: 'Boa Viagem', area: 65, quartos: 0, banheiros: 2, vagas: 2, preco: 580000, construtora: 'Inpar', visitas: 67 },
 ]
+
+interface Imovel {
+    id: any;
+    codigo: string;
+    status: string;
+    destaque: boolean;
+    tipo: string;
+    titulo: string;
+    bairro: string;
+    area: number;
+    quartos: number;
+    banheiros: number;
+    vagas: number;
+    preco: number;
+    construtora: string | null;
+    visitas: number;
+}
 
 const fmtPreco = (v: number, tipo: string) => {
     if (tipo === 'Studio' && v < 10000) return `R$ ${v.toLocaleString('pt-BR')}/mês`
@@ -49,11 +67,11 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
             style={{ background: T.surface, border: `1px solid ${T.border}` }}
             onMouseEnter={e => {
                 (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`
-                ;(e.currentTarget as HTMLElement).style.background = T.elevated
+                    ; (e.currentTarget as HTMLElement).style.background = T.elevated
             }}
             onMouseLeave={e => {
                 (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`
-                ;(e.currentTarget as HTMLElement).style.background = T.surface
+                    ; (e.currentTarget as HTMLElement).style.background = T.surface
             }}
         >
             {/* Image placeholder */}
@@ -134,18 +152,59 @@ export default function ImoveisPage() {
     const [search, setSearch] = useState('')
     const [view, setView] = useState<'grid' | 'list'>('grid')
     const [filter, setFilter] = useState('all')
+    const [imoveis, setImoveis] = useState<Imovel[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const total = IMOVEIS.length
-    const destaquesCount = IMOVEIS.filter(i => i.destaque).length
-    const lancamentosCount = IMOVEIS.filter(i => i.status === 'lancamento').length
-    const disponiveis = IMOVEIS.filter(i => i.status === 'disponivel').length
+    useEffect(() => {
+        const fetchProperties = async () => {
+            try {
+                const res = await fetch('/api/developments')
+                if (res.ok) {
+                    const data = await res.json()
+                    if (Array.isArray(data) && data.length > 0) {
+                        const formatted = data.map((d: any) => ({
+                            id: d.id,
+                            codigo: `IMI-${String(d.id).padStart(3, '0')}`,
+                            status: d.status || 'disponivel',
+                            destaque: !!d.is_highlighted,
+                            tipo: d.type || d.tipo || 'Imóvel',
+                            titulo: d.name || 'Empreendimento',
+                            bairro: d.neighborhood || d.region || 'Localização',
+                            area: d.private_area || d.area_from || 0,
+                            quartos: d.bedrooms || 0,
+                            banheiros: d.bathrooms || 0,
+                            vagas: d.parking_spaces || 0,
+                            preco: d.price_min || d.price_from || 0,
+                            construtora: d.developer || null,
+                            visitas: d.views || 0,
+                        }))
+                        setImoveis(formatted)
+                        return
+                    }
+                }
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+            setImoveis(fallbackIMOVEIS)
+        }
+        fetchProperties()
+    }, [])
 
-    const filtered = IMOVEIS.filter(im => {
+    const total = imoveis.length
+    const destaquesCount = imoveis.filter(i => i.destaque).length
+    const lancamentosCount = imoveis.filter(i => i.status === 'lancamento').length
+    const disponiveis = imoveis.filter(i => i.status === 'disponivel').length
+
+    const filtered = imoveis.filter(im => {
         const q = search.toLowerCase()
         const matchSearch = im.titulo.toLowerCase().includes(q) || im.bairro.toLowerCase().includes(q) || im.codigo.toLowerCase().includes(q)
         const matchFilter = filter === 'all' || im.status === filter
         return matchSearch && matchFilter
     })
+
+    if (loading) return <div className="p-10 text-center" style={{ color: T.textSub }}>Carregando imóveis...</div>
 
     const STATS = [
         { label: 'VGV Global (Est.)', value: 'R$ 1.2B', icon: DollarSign },

@@ -9,7 +9,7 @@ import {
     LayoutDashboard, Building2, Users, BarChart3, X,
     FileText, DollarSign, Briefcase, BookOpen, Settings,
     MessageSquare, Bell, Banknote, FolderOpen, MoreHorizontal,
-    Scale, CreditCard, FileStack, Layers, Target, Zap, Mail,
+    Scale, CreditCard, FileStack, Layers, Target, Zap, Mail, FileSignature, LogOut
 } from 'lucide-react'
 
 const MAIN = [
@@ -25,6 +25,7 @@ const GROUPS = [
         items: [
             { name: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale },
             { name: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova', icon: FileText },
+            { name: 'Contratos', href: '/backoffice/contratos', icon: FileSignature },
             { name: 'Email + Honorários', href: '/backoffice/avaliacoes/email-honorarios', icon: Mail },
             { name: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
             { name: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
@@ -61,19 +62,16 @@ const GOLD = '#C49D5B'
 
 export function MobileBottomNav() {
     const pathname = usePathname()
-    const { theme } = useTheme()
-    const isLight = theme === 'light'
     const [open, setOpen] = useState(false)
+    const SURFACE = 'var(--bo-surface)'
+    const DIM = 'var(--bo-text-muted)'
 
-    const SURFACE = isLight ? 'rgba(255,255,255,0.96)' : 'rgba(19,22,30,0.96)'
-    const DIM = isLight ? '#6b7280' : '#4E5669'
-
-    const SHEET_BG = isLight ? '#ffffff' : '#13161E'
-    const BORDER = isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.08)'
-    const TEXT = isLight ? '#111827' : '#F0F2F5'
-    const DIM_TEXT = isLight ? '#6b7280' : '#8B93A7'
-    const HOVER_BG = isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)'
-    const ICON_BG = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)'
+    const SHEET_BG = 'var(--bo-drawer-bg)'
+    const BORDER = 'var(--bo-border)'
+    const TEXT = 'var(--bo-text)'
+    const DIM_TEXT = 'var(--bo-text-muted)'
+    const HOVER_BG = 'var(--bo-hover)'
+    const ICON_BG = 'var(--bo-icon-bg)'
 
     useEffect(() => {
         document.body.style.overflow = open ? 'hidden' : ''
@@ -95,8 +93,8 @@ export function MobileBottomNav() {
                         background: SURFACE,
                         backdropFilter: 'blur(24px)',
                         WebkitBackdropFilter: 'blur(24px)',
-                        border: isLight ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(196,157,91,0.18)',
-                        boxShadow: isLight ? '0 -4px 24px rgba(0,0,0,0.06)' : '0 -4px 24px rgba(0,0,0,0.40), 0 2px 0 rgba(196,157,91,0.08) inset',
+                        border: `1px solid ${BORDER}`,
+                        boxShadow: 'var(--bo-shadow)',
                     }}
                 >
                     <div className="flex items-center justify-between px-1">
@@ -186,7 +184,7 @@ export function MobileBottomNav() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
                             className="lg:hidden fixed inset-0 z-40"
-                            style={{ background: isLight ? 'rgba(255,255,255,0.5)' : 'rgba(7,9,13,0.75)', backdropFilter: 'blur(6px)' }}
+                            style={{ background: 'rgba(7,9,13,0.75)', backdropFilter: 'blur(6px)' }}
                             onClick={() => setOpen(false)}
                         />
 
@@ -201,7 +199,7 @@ export function MobileBottomNav() {
                                 background: SHEET_BG,
                                 border: `1px solid ${BORDER}`,
                                 borderBottom: 'none',
-                                boxShadow: isLight ? '0 -16px 48px rgba(0,0,0,0.1)' : '0 -16px 48px rgba(0,0,0,0.6)',
+                                boxShadow: 'var(--bo-shadow-elevated)',
                                 maxHeight: '82vh',
                                 paddingBottom: 'calc(88px + env(safe-area-inset-bottom))',
                             }}
@@ -289,6 +287,33 @@ export function MobileBottomNav() {
                                         })}
                                     </div>
                                 ))}
+
+                                {/* User Profile & Logout */}
+                                <div className="mt-4 px-6 pb-6 pt-2 border-t" style={{ borderColor: 'var(--bo-border)' }}>
+                                    <div className="flex items-center gap-3 mt-4">
+                                        <div
+                                            className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+                                            style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)' }}
+                                        >
+                                            IM
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold truncate" style={{ color: 'var(--bo-text)' }}>Iule Miranda</p>
+                                            <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>Admin</p>
+                                        </div>
+                                        <motion.button
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={async () => {
+                                                setOpen(false)
+                                                console.log("Logout triggered locally for mobile")
+                                                window.location.href = '/login'
+                                            }}
+                                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-red-50 dark:bg-red-500/10"
+                                        >
+                                            <LogOut size={16} className="text-red-500" />
+                                        </motion.button>
+                                    </div>
+                                </div>
                             </div>
                         </motion.div>
                     </>

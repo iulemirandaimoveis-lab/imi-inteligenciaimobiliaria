@@ -49,6 +49,7 @@ async function main() {
         await executeSqlFile('004_multi_tenant_core.sql');
         await executeSqlFile('005_content_management.sql');
         await executeSqlFile('FIX_RLS_RECURSION_FINAL.sql');
+        await executeSqlFile('024_contratos.sql');
 
         console.log('\n✅ Migrations aplicadas!');
         console.log('\n📋 Verificando tabelas criadas...\n');

@@ -9,9 +9,9 @@ import {
 } from 'lucide-react'
 
 const T = {
-    surface: '#13161E', elevated: '#1A1E2A',
-    border: 'rgba(255,255,255,0.07)', borderGold: 'rgba(196,157,91,0.22)',
-    text: '#F0F2F5', textSub: '#8B93A7', textDim: '#4E5669',
+    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
     gold: '#C49D5B',
 }
 
@@ -49,15 +49,15 @@ const RELATORIOS = [
 ]
 
 const CAT_MAP: Record<string, { label: string; text: string; bg: string }> = {
-    avaliacoes:   { label: 'Avaliações',  text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
-    financeiro:   { label: 'Financeiro',  text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-    crm:          { label: 'CRM',         text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
-    imoveis:      { label: 'Imóveis',     text: '#C49D5B', bg: 'rgba(196,157,91,0.12)'  },
-    consultorias: { label: 'Consultorias',text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
+    avaliacoes: { label: 'Avaliações', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
+    financeiro: { label: 'Financeiro', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+    crm: { label: 'CRM', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
+    imoveis: { label: 'Imóveis', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
+    consultorias: { label: 'Consultorias', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
 }
 
 const CATEGORIAS = ['Todos', 'Avaliações', 'Financeiro', 'CRM', 'Imóveis', 'Consultorias']
-const CAT_KEYS:   Record<string, string> = {
+const CAT_KEYS: Record<string, string> = {
     'Todos': 'all', 'Avaliações': 'avaliacoes', 'Financeiro': 'financeiro',
     'CRM': 'crm', 'Imóveis': 'imoveis', 'Consultorias': 'consultorias',
 }

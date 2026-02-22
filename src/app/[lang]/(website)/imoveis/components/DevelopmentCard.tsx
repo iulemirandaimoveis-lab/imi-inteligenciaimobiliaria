@@ -57,14 +57,16 @@ export default function DevelopmentCard({ development, index, lang }: Developmen
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-[#1A1E2A] via-[#141420] to-[#0D0F14] flex flex-col items-center justify-center p-8">
                         {development.developerLogo ? (
-                            <div className="relative w-[120px] h-[60px] md:w-[160px] md:h-[80px] mb-4 opacity-50 group-hover:opacity-100 transition-all filter invert">
-                                <Image
-                                    src={development.developerLogo}
-                                    alt={development.developer}
-                                    fill
-                                    className="object-contain"
-                                    sizes="(max-width: 768px) 120px, 160px"
-                                />
+                            <div className="relative w-[120px] h-[60px] md:w-[160px] md:h-[80px] mb-4 bg-white rounded-xl p-3 flex items-center justify-center">
+                                <div className="relative w-full h-full opacity-70 group-hover:opacity-100 transition-all filter grayscale group-hover:grayscale-0">
+                                    <Image
+                                        src={development.developerLogo}
+                                        alt={development.developer}
+                                        fill
+                                        className="object-contain"
+                                        sizes="(max-width: 768px) 120px, 160px"
+                                    />
+                                </div>
                             </div>
                         ) : (
                             <Building2 className="w-16 h-16 text-white/20 mb-3" strokeWidth={1} />
@@ -99,13 +101,13 @@ export default function DevelopmentCard({ development, index, lang }: Developmen
                         </h3>
                     </Link>
                     {development.developerLogo && (
-                        <div className="relative w-14 h-9 md:w-16 md:h-10 flex-shrink-0 bg-white/5 rounded-lg p-1.5 border border-white/10 flex items-center justify-center filter invert">
-                            <div className="relative w-full h-full opacity-60">
+                        <div className="relative w-14 h-9 md:w-16 md:h-10 flex-shrink-0 bg-white rounded-lg p-1.5 border border-white/10 flex items-center justify-center">
+                            <div className="relative w-full h-full">
                                 <Image
                                     src={development.developerLogo}
                                     alt={development.developer}
                                     fill
-                                    className="object-contain"
+                                    className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
                                     sizes="64px"
                                 />
                             </div>

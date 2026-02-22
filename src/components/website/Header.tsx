@@ -6,8 +6,11 @@ import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, MessageCircle, ChevronDown } from 'lucide-react'
 
+import { GlobalSettings } from '@/lib/settings'
+
 interface HeaderProps {
     lang: string
+    settings?: GlobalSettings
 }
 
 const NAV_ITEMS = [
@@ -27,7 +30,7 @@ const LANGS = [
     { code: 'ar', flag: '🇸🇦', label: 'AR' },
 ]
 
-export default function Header({ lang }: HeaderProps) {
+export default function Header({ lang, settings }: HeaderProps) {
     const [open, setOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const pathname = usePathname()
@@ -66,8 +69,8 @@ export default function Header({ lang }: HeaderProps) {
             {/* ─── HEADER BAR ─── */}
             <header
                 className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${scrolled
-                        ? 'bg-white/95 backdrop-blur-xl shadow-[0_1px_0_rgba(0,0,0,0.06),0_4px_20px_rgba(0,0,0,0.05)]'
-                        : 'bg-white/90 backdrop-blur-md border-b border-black/[0.06]'
+                    ? 'bg-white/95 backdrop-blur-xl shadow-[0_1px_0_rgba(0,0,0,0.06),0_4px_20px_rgba(0,0,0,0.05)]'
+                    : 'bg-white/90 backdrop-blur-md border-b border-black/[0.06]'
                     }`}
             >
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,7 +89,13 @@ export default function Header({ lang }: HeaderProps) {
                             </span>
                             <div className="h-4 w-px bg-black/15 hidden sm:block" />
                             <span className="text-[10px] font-semibold text-[#6C757D] uppercase tracking-[0.16em] leading-[1.2] hidden sm:block">
-                                Inteligência<br />Imobiliária
+                                {settings?.companyName ? (
+                                    <>
+                                        {settings.companyName.split(' – ')[0]}<br />{settings.companyName.split(' – ')[1] || 'Imobiliária'}
+                                    </>
+                                ) : (
+                                    <>Inteligência<br />Imobiliária</>
+                                )}
                             </span>
                         </Link>
 
@@ -99,8 +108,8 @@ export default function Header({ lang }: HeaderProps) {
                                         key={item.key}
                                         href={`/${lang}/${item.key}`}
                                         className={`relative px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-150 rounded-lg ${active
-                                                ? 'text-[#1A1A1A]'
-                                                : 'text-[#6C757D] hover:text-[#1A1A1A] hover:bg-black/[0.03]'
+                                            ? 'text-[#1A1A1A]'
+                                            : 'text-[#6C757D] hover:text-[#1A1A1A] hover:bg-black/[0.03]'
                                             }`}
                                     >
                                         {item.label}
@@ -124,8 +133,8 @@ export default function Header({ lang }: HeaderProps) {
                                         key={l.code}
                                         href={`/${l.code}`}
                                         className={`text-[11px] font-bold px-1.5 py-0.5 rounded transition-colors duration-150 ${lang === l.code
-                                                ? 'text-[#C49D5B]'
-                                                : 'text-[#ADB5BD] hover:text-[#495057]'
+                                            ? 'text-[#C49D5B]'
+                                            : 'text-[#ADB5BD] hover:text-[#495057]'
                                             }`}
                                     >
                                         {l.label}
@@ -133,7 +142,7 @@ export default function Header({ lang }: HeaderProps) {
                                 ))}
                             </div>
                             <a
-                                href="https://wa.me/5581997230455"
+                                href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2 bg-[#1A1A1A] hover:bg-[#C49D5B] text-white text-[13px] font-semibold px-4 py-2.5 rounded-xl transition-all duration-200"
@@ -218,8 +227,8 @@ export default function Header({ lang }: HeaderProps) {
                                                     href={`/${lang}/${item.key}`}
                                                     onClick={() => setOpen(false)}
                                                     className={`flex items-center h-[54px] px-4 rounded-2xl text-[15px] font-semibold transition-all duration-150 ${active
-                                                            ? 'bg-[#F8F9FA] text-[#1A1A1A] border-l-[3px] border-[#C49D5B] pl-[13px]'
-                                                            : 'text-[#495057] hover:bg-[#F8F9FA] hover:text-[#1A1A1A]'
+                                                        ? 'bg-[#F8F9FA] text-[#1A1A1A] border-l-[3px] border-[#C49D5B] pl-[13px]'
+                                                        : 'text-[#495057] hover:bg-[#F8F9FA] hover:text-[#1A1A1A]'
                                                         }`}
                                                 >
                                                     {item.label}
@@ -237,7 +246,7 @@ export default function Header({ lang }: HeaderProps) {
                                     className="mt-6"
                                 >
                                     <a
-                                        href="https://wa.me/5581997230455"
+                                        href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         onClick={() => setOpen(false)}
@@ -261,8 +270,8 @@ export default function Header({ lang }: HeaderProps) {
                                             href={`/${l.code}`}
                                             onClick={() => setOpen(false)}
                                             className={`flex-1 h-11 flex items-center justify-center rounded-xl text-xl transition-all duration-150 ${lang === l.code
-                                                    ? 'bg-[#1A1A1A] ring-2 ring-[#C49D5B] ring-offset-1'
-                                                    : 'bg-[#F8F9FA] border border-[#E9ECEF]'
+                                                ? 'bg-[#1A1A1A] ring-2 ring-[#C49D5B] ring-offset-1'
+                                                : 'bg-[#F8F9FA] border border-[#E9ECEF]'
                                                 }`}
                                         >
                                             {l.flag}
@@ -283,10 +292,10 @@ export default function Header({ lang }: HeaderProps) {
                                         CRECI 17933 · CNAI 53290
                                     </p>
                                     <a
-                                        href="https://wa.me/5581997230455"
+                                        href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                         className="text-[13px] text-[#6C757D] mt-2 block hover:text-[#1A1A1A] transition-colors"
                                     >
-                                        +55 81 99723-0455
+                                        {settings?.companyPhone || '+55 81 99723-0455'}
                                     </a>
                                 </motion.div>
 

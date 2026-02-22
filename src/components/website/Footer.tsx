@@ -1,8 +1,12 @@
 import Link from 'next/link'
 import { Mail, MessageCircle, Linkedin } from 'lucide-react'
 
+import { GlobalSettings } from '@/lib/settings'
+
 interface FooterProps {
     lang: string
+    settings?: GlobalSettings
+    dict?: any
 }
 
 const NAV_COLS = [
@@ -43,7 +47,7 @@ const LANGS = [
     { code: 'es', label: 'ES' },
 ]
 
-export default function Footer({ lang }: FooterProps) {
+export default function Footer({ lang, settings }: FooterProps) {
     const year = new Date().getFullYear()
 
     return (
@@ -64,7 +68,7 @@ export default function Footer({ lang }: FooterProps) {
                                 IMI
                             </span>
                             <span className="ml-2 text-[11px] font-semibold text-[#6C757D] uppercase tracking-[0.18em]">
-                                Inteligência Imobiliária
+                                {settings?.companyName ? settings.companyName.split(' – ')[1] || 'Imobiliária' : 'Inteligência Imobiliária'}
                             </span>
                         </Link>
 
@@ -88,11 +92,11 @@ export default function Footer({ lang }: FooterProps) {
                                     <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#C49D5B] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <Mail className="w-5 h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium">iulemirandaimoveis@gmail.com</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
                                 </a>
 
                                 <a
-                                    href="https://wa.me/5581997230455"
+                                    href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-4 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-3 rounded-2xl group"
@@ -100,7 +104,7 @@ export default function Footer({ lang }: FooterProps) {
                                     <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <MessageCircle className="w-5 h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium">+55 81 99723-0455</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium">{settings?.companyPhone || '+55 81 99723-0455'}</span>
                                 </a>
 
                                 <a
@@ -145,7 +149,7 @@ export default function Footer({ lang }: FooterProps) {
                 {/* ── Bottom bar ── */}
                 <div className="mt-16 pt-8 border-t border-white/[0.07] flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-[11px] text-[#495057] font-medium">
-                        © {year} IMI – Inteligência Imobiliária. Todos os direitos reservados.
+                        © {year} {settings?.companyName || 'IMI – Inteligência Imobiliária'}. Todos os direitos reservados.
                     </p>
 
                     <div className="flex items-center gap-3">

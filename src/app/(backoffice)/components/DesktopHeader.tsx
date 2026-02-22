@@ -27,12 +27,12 @@ const notifications = [
 ]
 
 const S = {
-    surface: '#13161E',
-    elevated: '#1A1E2A',
-    border: 'rgba(255,255,255,0.08)',
-    borderGold: 'rgba(196,157,91,0.22)',
-    text: '#F0F2F5',
-    textMuted: '#8B93A7',
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
     gold: '#C49D5B',
 }
 
@@ -102,7 +102,7 @@ function NotificationBell() {
                 {unread > 0 && (
                     <span
                         className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 text-[8px] font-bold text-white rounded-full flex items-center justify-center"
-                        style={{ background: '#C49D5B', boxShadow: `0 0 0 2px #0D0F14` }}
+                        style={{ background: '#C49D5B', boxShadow: `0 0 0 2px var(--bo-surface)` }}
                     >
                         {unread}
                     </span>
@@ -139,23 +139,23 @@ function NotificationBell() {
                                         transition={{ delay: i * 0.04 }}
                                         className="flex gap-3 px-4 py-3.5 cursor-pointer transition-all"
                                         style={{ background: n.unread ? 'rgba(196,157,91,0.03)' : 'transparent' }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
                                         onMouseLeave={e => (e.currentTarget.style.background = n.unread ? 'rgba(196,157,91,0.03)' : 'transparent')}
                                     >
                                         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                                            style={{ background: 'rgba(196,157,91,0.12)' }}>
+                                            style={{ background: 'var(--bo-active-bg)' }}>
                                             <n.icon size={14} style={{ color: S.gold }} />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-medium leading-tight" style={{ color: S.text }}>{n.title}</p>
                                             <p className="text-[11px] mt-0.5 leading-tight truncate" style={{ color: S.textMuted }}>{n.description}</p>
-                                            <p className="text-[10px] mt-1" style={{ color: '#4E5669' }}>{n.time}</p>
+                                            <p className="text-[10px] mt-1" style={{ color: 'var(--bo-text-muted)' }}>{n.time}</p>
                                         </div>
                                         {n.unread && <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: S.gold }} />}
                                     </motion.div>
                                 ))}
                             </div>
-                            <div className="px-4 py-3 text-center" style={{ borderTop: `1px solid ${S.border}` }}>
+                            <div className="px-4 py-3 text-center" style={{ borderTop: `1px solid var(--bo-border)` }}>
                                 <span className="text-xs cursor-pointer" style={{ color: S.gold }}>Ver todas →</span>
                             </div>
                         </motion.div>
@@ -276,7 +276,7 @@ export default function DesktopHeader() {
                 <SearchBar />
                 <div className="flex items-center gap-1.5">
                     <NotificationBell />
-                    <div className="w-px h-5 mx-1" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                    <div className="w-px h-5 mx-1" style={{ background: 'var(--bo-border)' }} />
                     <UserMenu onSignOut={handleSignOut} />
                 </div>
             </div>

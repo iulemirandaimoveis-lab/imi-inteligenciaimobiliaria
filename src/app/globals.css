@@ -65,6 +65,38 @@
   --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Backoffice Theme Variables - Light Mode (Default to Light outside of dark mode, or handled in .dark) */
+  --bo-surface: #ffffff;
+  --bo-elevated: #f8f9fa;
+  --bo-border: rgba(0, 0, 0, 0.08);
+  --bo-border-light: rgba(0, 0, 0, 0.04);
+  --bo-border-gold: rgba(196, 157, 91, 0.3);
+  --bo-text: #1a1a1a;
+  --bo-text-muted: #6b7280;
+  --bo-hover: rgba(0, 0, 0, 0.04);
+  --bo-active-bg: rgba(196, 157, 91, 0.08);
+  --bo-icon-bg: rgba(0, 0, 0, 0.05);
+  --bo-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --bo-shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.1);
+  --bo-drawer-bg: #ffffff;
+}
+
+.dark {
+  /* Backoffice Theme Variables - Dark Mode */
+  --bo-surface: #13161E;
+  --bo-elevated: #1A1E2A;
+  --bo-border: rgba(255, 255, 255, 0.08);
+  --bo-border-light: rgba(255, 255, 255, 0.04);
+  --bo-border-gold: rgba(196, 157, 91, 0.22);
+  --bo-text: #F0F2F5;
+  --bo-text-muted: #8B93A7;
+  --bo-hover: rgba(255, 255, 255, 0.04);
+  --bo-active-bg: rgba(196, 157, 91, 0.15);
+  --bo-icon-bg: rgba(255, 255, 255, 0.05);
+  --bo-shadow: 0 -4px 24px rgba(0, 0, 0, 0.40);
+  --bo-shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.5);
+  --bo-drawer-bg: #13161E;
 }
 
 /* ── BASE RESETS ────────────────────────────────────────────── */

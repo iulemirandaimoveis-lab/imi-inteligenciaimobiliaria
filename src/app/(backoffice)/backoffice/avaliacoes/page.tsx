@@ -11,23 +11,23 @@ import {
 import Link from 'next/link'
 
 const T = {
-    bg: '#0D0F14', surface: '#13161E', elevated: '#1A1E2A',
-    border: 'rgba(255,255,255,0.07)', borderGold: 'rgba(196,157,91,0.22)',
-    text: '#F0F2F5', textSub: '#8B93A7', textDim: '#4E5669',
+    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
     gold: '#C49D5B',
 }
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
-    concluida:       { label: 'Concluída',    text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    em_andamento:    { label: 'Em Andamento', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)',  icon: Clock },
+    concluida: { label: 'Concluída', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
+    em_andamento: { label: 'Em Andamento', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock },
     aguardando_docs: { label: 'Aguard. Docs', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
-    cancelada:       { label: 'Cancelada',    text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle },
+    cancelada: { label: 'Cancelada', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle },
 }
 
 const HONOR_CFG: Record<string, { label: string; text: string }> = {
-    pago:     { label: 'Pago',    text: '#6BB87B' },
-    parcial:  { label: 'Parcial', text: '#C49D5B' },
-    pendente: { label: 'Pendente',text: '#E8A87C' },
+    pago: { label: 'Pago', text: '#6BB87B' },
+    parcial: { label: 'Parcial', text: '#C49D5B' },
+    pendente: { label: 'Pendente', text: '#E8A87C' },
 }
 
 const AVALIACOES = [
@@ -41,9 +41,9 @@ const AVALIACOES = [
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
 const QUICK_ACTIONS = [
-    { label: 'Nova Avaliação',      href: '/backoffice/avaliacoes/nova',             icon: Plus },
-    { label: 'Email + Honorários',  href: '/backoffice/avaliacoes/email-honorarios', icon: Mail },
-    { label: 'Exercícios NBR',      href: '/backoffice/avaliacoes/exercicios',       icon: BookOpen },
+    { label: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova', icon: Plus },
+    { label: 'Email + Honorários', href: '/backoffice/avaliacoes/email-honorarios', icon: Mail },
+    { label: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
 ]
 
 export default function AvaliacoesPage() {
@@ -51,16 +51,16 @@ export default function AvaliacoesPage() {
     const [search, setSearch] = useState('')
     const [tab, setTab] = useState('todos')
 
-    const honorariosPago    = AVALIACOES.filter(a => a.honorariosStatus === 'pago').reduce((s, a) => s + a.honorarios, 0)
-    const honorariosPendente= AVALIACOES.filter(a => a.honorariosStatus !== 'pago').reduce((s, a) => s + a.honorarios, 0)
-    const emAndamento       = AVALIACOES.filter(a => a.status === 'em_andamento' || a.status === 'aguardando_docs').length
-    const concluidas        = AVALIACOES.filter(a => a.status === 'concluida').length
+    const honorariosPago = AVALIACOES.filter(a => a.honorariosStatus === 'pago').reduce((s, a) => s + a.honorarios, 0)
+    const honorariosPendente = AVALIACOES.filter(a => a.honorariosStatus !== 'pago').reduce((s, a) => s + a.honorarios, 0)
+    const emAndamento = AVALIACOES.filter(a => a.status === 'em_andamento' || a.status === 'aguardando_docs').length
+    const concluidas = AVALIACOES.filter(a => a.status === 'concluida').length
 
     const KPIS = [
-        { label: 'Honorários Recebidos', value: fmt(honorariosPago),     icon: DollarSign, color: '#6BB87B' },
-        { label: 'A Receber',            value: fmt(honorariosPendente),  icon: TrendingUp, color: '#C49D5B' },
-        { label: 'Em Andamento',         value: emAndamento,             icon: Clock,       color: '#A89EC4' },
-        { label: 'Concluídas',           value: concluidas,              icon: CheckCircle, color: '#6BB87B' },
+        { label: 'Honorários Recebidos', value: fmt(honorariosPago), icon: DollarSign, color: '#6BB87B' },
+        { label: 'A Receber', value: fmt(honorariosPendente), icon: TrendingUp, color: '#C49D5B' },
+        { label: 'Em Andamento', value: emAndamento, icon: Clock, color: '#A89EC4' },
+        { label: 'Concluídas', value: concluidas, icon: CheckCircle, color: '#6BB87B' },
     ]
 
     const filtered = AVALIACOES.filter(a => {

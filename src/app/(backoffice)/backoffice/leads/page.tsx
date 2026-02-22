@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
@@ -11,13 +11,14 @@ import {
 
 // ── Tokens ─────────────────────────────────────────────────────
 const T = {
-    bg: '#0D0F14', surface: '#13161E', elevated: '#1A1E2A',
-    border: 'rgba(255,255,255,0.07)', borderGold: 'rgba(196,157,91,0.22)',
-    text: '#F0F2F5', textSub: '#8B93A7', textDim: '#4E5669',
+    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
     gold: '#C49D5B',
 }
 
-const leadsData = [
+// Fallback mock
+const fallbackLeads = [
     { id: 1, name: 'Maria Santos Silva', email: 'maria.santos@gmail.com', phone: '(81) 99845-3421', score: 92, status: 'hot', source: 'Instagram', interest: 'Apt 3Q', location: 'Boa Viagem', budget: '450k–600k', created: '2026-02-14T10:30:00', lastContact: '2026-02-14T15:20:00' },
     { id: 2, name: 'João Pedro Almeida', email: 'joao.almeida@hotmail.com', phone: '(81) 98732-1098', score: 85, status: 'hot', source: 'Google Ads', interest: 'Casa 4Q', location: 'Piedade', budget: '800k–1M', created: '2026-02-14T08:15:00', lastContact: '2026-02-14T14:45:00' },
     { id: 3, name: 'Ana Carolina Ferreira', email: 'anacarolina.f@outlook.com', phone: '(81) 99234-5678', score: 78, status: 'warm', source: 'Site', interest: 'Apt 2Q', location: 'Pina', budget: '300k–400k', created: '2026-02-13T16:20:00', lastContact: '2026-02-14T10:30:00' },
@@ -30,10 +31,25 @@ const leadsData = [
     { id: 10, name: 'Rafael Henrique Dias', email: 'rafael.dias@gmail.com', phone: '(81) 98321-0987', score: 82, status: 'hot', source: 'Indicação', interest: 'Apt 3Q', location: 'Pina', budget: '380k–480k', created: '2026-02-10T09:15:00', lastContact: '2026-02-14T08:30:00' },
 ]
 
+interface Lead {
+    id: any;
+    name: string;
+    email: string;
+    phone: string;
+    score: number;
+    status: string;
+    source: string;
+    interest: string;
+    location: string;
+    budget?: string;
+    created: string;
+    lastContact: string;
+}
+
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
-    hot:  { label: 'Quente', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-    warm: { label: 'Morno',  text: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
-    cold: { label: 'Frio',   text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
+    hot: { label: 'Quente', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
+    warm: { label: 'Morno', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
+    cold: { label: 'Frio', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
 }
 
 const scoreColor = (s: number) =>
@@ -66,21 +82,63 @@ export default function LeadsPage() {
     const router = useRouter()
     const [search, setSearch] = useState('')
     const [filter, setFilter] = useState('all')
+    const [leads, setLeads] = useState<Lead[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchLeads = async () => {
+            try {
+                const res = await fetch('/api/leads')
+                if (res.ok) {
+                    const data = await res.json()
+                    // Transform DB leads to UI expected format (if valid array)
+                    if (Array.isArray(data) && data.length > 0) {
+                        const formatted = data.map((l: any) => ({
+                            id: l.id,
+                            name: l.name || 'Sem nome',
+                            email: l.email || '',
+                            phone: l.phone || '',
+                            score: l.score || 50,
+                            status: l.status || 'warm',
+                            source: l.source || 'Site',
+                            interest: l.interest || '-',
+                            location: l.city || 'Desconhecido',
+                            budget: 'N/A',
+                            created: l.created_at || new Date().toISOString(),
+                            lastContact: l.updated_at || new Date().toISOString()
+                        }))
+                        setLeads(formatted)
+                        return
+                    }
+                }
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+            setLeads(fallbackLeads)
+        }
+        fetchLeads()
+    }, [])
 
     const stats = {
-        total: leadsData.length,
-        hot: leadsData.filter(l => l.status === 'hot').length,
-        warm: leadsData.filter(l => l.status === 'warm').length,
-        cold: leadsData.filter(l => l.status === 'cold').length,
-        avg: Math.round(leadsData.reduce((a, l) => a + l.score, 0) / leadsData.length),
+        total: leads.length,
+        hot: leads.filter(l => l.status === 'hot').length,
+        warm: leads.filter(l => l.status === 'warm').length,
+        cold: leads.filter(l => l.status === 'cold').length,
+        avg: leads.length > 0 ? Math.round(leads.reduce((a, l) => a + l.score, 0) / leads.length) : 0,
     }
 
-    const filtered = leadsData.filter(l => {
+    const filtered = leads.filter(l => {
         const q = search.toLowerCase()
         const matchSearch = l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q) || l.phone.includes(q)
         const matchFilter = filter === 'all' || l.status === filter
         return matchSearch && matchFilter
     })
+
+    if (loading) {
+        return <div className="p-10 text-center" style={{ color: T.textSub }}>Carregando leads...</div>
+    }
 
     return (
         <div className="space-y-5 max-w-7xl mx-auto">
@@ -181,11 +239,11 @@ export default function LeadsPage() {
                             onClick={() => router.push(`/backoffice/leads/${lead.id}`)}
                             onMouseEnter={e => {
                                 (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`
-                                ;(e.currentTarget as HTMLElement).style.background = T.elevated
+                                    ; (e.currentTarget as HTMLElement).style.background = T.elevated
                             }}
                             onMouseLeave={e => {
                                 (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`
-                                ;(e.currentTarget as HTMLElement).style.background = T.surface
+                                    ; (e.currentTarget as HTMLElement).style.background = T.surface
                             }}
                         >
                             <div className="flex items-center gap-3 p-4">

@@ -77,21 +77,20 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
                                 className="group bg-[#141420] rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#C49D5B]/40 hover:shadow-[0_8px_32px_rgba(196,157,91,0.15)] transition-all duration-500 flex flex-col h-full"
                             >
-                                {/* Logo Area - Fundo escuro com logo invertida */}
-                                <div className="relative aspect-[3/2] bg-gradient-to-br from-[#1A1E2A] via-[#141420] to-[#0D0F14] flex items-center justify-center p-6 border-b border-white/[0.05] shrink-0 overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#141420] via-transparent to-transparent opacity-60 z-0" />
+                                {/* Logo Area - Fundo claro para preservar as cores originais das marcas parceiras */}
+                                <div className="relative aspect-[3/2] bg-white flex items-center justify-center p-8 border-b border-white/[0.05] shrink-0 overflow-hidden group-hover:opacity-100 opacity-90 transition-opacity duration-300">
                                     {dev.logo_url ? (
-                                        <div className="relative w-full h-full max-w-[70%] max-h-[60%] z-10 filter invert opacity-60 group-hover:opacity-100 transition-all duration-300">
+                                        <div className="relative w-full h-full max-w-[80%] max-h-[70%] z-10 flex items-center justify-center">
                                             <img
                                                 src={dev.logo_url}
                                                 alt={dev.name}
-                                                className="w-full h-full object-contain"
+                                                className="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-500"
                                             />
                                         </div>
                                     ) : (
                                         <div className="flex flex-col items-center gap-3 z-10">
-                                            <Building2 className="w-16 h-16 text-white/20" strokeWidth={1} />
-                                            <span className="text-[#9CA3AF] font-bold text-sm uppercase tracking-wider">{dev.name}</span>
+                                            <Building2 className="w-12 h-12 text-[#9CA3AF] opacity-50" strokeWidth={1} />
+                                            <span className="text-[#9CA3AF] font-bold text-xs uppercase tracking-widest">{dev.name}</span>
                                         </div>
                                     )}
 

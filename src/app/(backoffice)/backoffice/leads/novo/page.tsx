@@ -164,12 +164,33 @@ export default function NovoLeadPage() {
 
         setIsSubmitting(true)
 
-        // TODO: Integrar com Supabase
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        try {
+            const res = await fetch('/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    source: formData.origem,
+                    // Additional fields not yet supported directly in API but can be mapped
+                    // The API `/api/leads` requires `name, email, phone, source`
+                })
+            })
 
-        // Simular sucesso
-        alert(`Lead criado com sucesso!\nScore: ${score}/20\nStatus: ${score >= 15 ? 'Quente' : score >= 10 ? 'Morno' : 'Frio'}`)
-        router.push('/backoffice/leads')
+            if (!res.ok) {
+                const errData = await res.json()
+                throw new Error(errData.error || 'Falha ao salvar lead')
+            }
+
+            alert(`Lead criado com sucesso!\nScore: ${score}/20\nStatus: ${score >= 15 ? 'Quente' : score >= 10 ? 'Morno' : 'Frio'}`)
+            router.push('/backoffice/leads')
+        } catch (e: any) {
+            console.error(e)
+            alert('Não foi possível cadastrar o lead. ' + e.message)
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     const getScoreColor = () => {

@@ -74,14 +74,18 @@ export default function SettingsPage() {
 
   useEffect(() => {
     setMounted(true)
-    const saved = localStorage.getItem('imi_backoffice_settings')
-    if (saved) {
+    const fetchSettings = async () => {
       try {
-        setSettings(JSON.parse(saved))
+        const res = await fetch('/api/settings')
+        const data = await res.json()
+        if (data.settings && Object.keys(data.settings).length > 0) {
+          setSettings(prev => ({ ...prev, ...data.settings }))
+        }
       } catch (e) {
-        console.error('Failed to parse settings')
+        console.error('Failed to fetch settings', e)
       }
     }
+    fetchSettings()
   }, [])
 
   if (!mounted) {
@@ -91,15 +95,22 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setIsSaving(true)
 
-    // Save to localStorage
-    localStorage.setItem('imi_backoffice_settings', JSON.stringify(settings))
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      })
+      if (!res.ok) throw new Error('Failed to save settings')
 
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    setIsSaving(false)
-    setShowSuccess(true)
-    setTimeout(() => setShowSuccess(false), 3000)
+      setShowSuccess(true)
+      setTimeout(() => setShowSuccess(false), 3000)
+    } catch (e) {
+      console.error('Error saving settings:', e)
+      alert('Erro ao salvar configurações')
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const tabs = [

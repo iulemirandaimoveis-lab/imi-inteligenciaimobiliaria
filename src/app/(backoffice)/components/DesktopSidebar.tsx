@@ -7,7 +7,8 @@ import {
     Settings, ChevronDown, ChevronRight, LogOut,
     BookOpen, Mail, Sparkles, Calculator, BarChart2,
     BookmarkPlus, Target, Zap, CreditCard, Briefcase,
-    FileStack, FolderOpen, Banknote, Home, TrendingUp
+    FileStack, FolderOpen, Banknote, Home, TrendingUp,
+    FileSignature, Layers
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -58,6 +59,13 @@ const NAV: NavItem[] = [
             { label: 'Nova', href: '/backoffice/consultorias/nova', icon: BookmarkPlus },
         ]
     },
+    {
+        label: 'Contratos', icon: FileSignature,
+        children: [
+            { label: 'Gerenciador', href: '/backoffice/contratos', icon: FileSignature },
+            { label: 'Novo Contrato', href: '/backoffice/contratos/novo', icon: BookmarkPlus },
+        ]
+    },
     { label: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
     {
         label: 'Financeiro', icon: Banknote,
@@ -69,8 +77,6 @@ const NAV: NavItem[] = [
         ]
     },
     { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
-    { label: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
-    { label: 'Configurações', href: '/backoffice/settings', icon: Settings },
 ]
 
 function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }) {
@@ -93,8 +99,8 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     onClick={() => setOpen(!open)}
                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
                     style={{
-                        color: isParentActive || open ? '#C49D5B' : '#8B93A7',
-                        background: isParentActive || open ? 'rgba(196,157,91,0.08)' : 'transparent',
+                        color: isParentActive || open ? '#C49D5B' : 'var(--bo-text-muted)',
+                        background: isParentActive || open ? 'var(--bo-active-bg)' : 'transparent',
                         fontWeight: isParentActive ? 600 : 500,
                     }}
                 >
@@ -119,7 +125,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 {open && (
                     <div
                         className="ml-5 mt-0.5 space-y-0.5 pl-3"
-                        style={{ borderLeft: '1px solid rgba(255,255,255,0.06)' }}
+                        style={{ borderLeft: '1px solid var(--bo-border-light)' }}
                     >
                         {item.children!.map(child => (
                             <NavItemComponent key={child.href || child.label} item={child} depth={depth + 1} />
@@ -135,7 +141,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             href={item.href!}
             className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all"
             style={{
-                color: isActive ? '#0D0F14' : '#8B93A7',
+                color: isActive ? '#ffffff' : 'var(--bo-text-muted)',
                 background: isActive
                     ? 'linear-gradient(135deg, #C49D5B, #A67C3D)'
                     : 'transparent',
@@ -144,14 +150,14 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             }}
             onMouseEnter={e => {
                 if (!isActive) {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'
-                        ; (e.currentTarget as HTMLElement).style.color = '#F0F2F5'
+                    (e.currentTarget as HTMLElement).style.background = 'var(--bo-hover)'
+                        ; (e.currentTarget as HTMLElement).style.color = 'var(--bo-text)'
                 }
             }}
             onMouseLeave={e => {
                 if (!isActive) {
                     (e.currentTarget as HTMLElement).style.background = 'transparent'
-                        ; (e.currentTarget as HTMLElement).style.color = '#8B93A7'
+                        ; (e.currentTarget as HTMLElement).style.color = 'var(--bo-text-muted)'
                 }
             }}
         >
@@ -209,7 +215,7 @@ export function DesktopSidebar() {
             >
                 <div
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer group transition-all"
-                    style={{ background: 'rgba(255,255,255,0.03)' }}
+                    style={{ background: 'var(--bo-icon-bg)' }}
                     onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
                     onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
                 >
@@ -220,13 +226,13 @@ export function DesktopSidebar() {
                         IM
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold truncate" style={{ color: '#F0F2F5' }}>Iule Miranda</p>
-                        <p className="text-[10px] truncate" style={{ color: '#4E5669' }}>CTO · CRECI 17933</p>
+                        <p className="text-xs font-semibold truncate" style={{ color: 'var(--bo-text)' }}>Iule Miranda</p>
+                        <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>CTO · CRECI 17933</p>
                     </div>
                     <LogOut
                         size={14}
                         className="transition-colors"
-                        style={{ color: '#4E5669' }}
+                        style={{ color: 'var(--bo-text-muted)' }}
                     />
                 </div>
             </div>
