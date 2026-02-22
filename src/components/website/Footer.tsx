@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Mail, MessageCircle, Linkedin } from 'lucide-react'
+import React from 'react'
 
 import { GlobalSettings } from '@/lib/settings'
 
@@ -86,13 +87,13 @@ export default function Footer({ lang, settings }: FooterProps) {
 
                             <div className="space-y-4">
                                 <a
-                                    href="mailto:iulemirandaimoveis@gmail.com"
+                                    href={`mailto:${settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}`}
                                     className="flex items-center gap-4 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-3 rounded-2xl group"
                                 >
                                     <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#C49D5B] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <Mail className="w-5 h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
                                 </a>
 
                                 <a
@@ -154,21 +155,20 @@ export default function Footer({ lang, settings }: FooterProps) {
 
                     <div className="flex items-center gap-3">
                         {LANGS.map((l, i) => (
-                            <>
-                                {i > 0 && <span key={`sep-${l.code}`} className="text-[#2D2D3A] text-[10px]">|</span>}
+                            <React.Fragment key={l.code}>
+                                {i > 0 && <span className="text-[#2D2D3A] text-[10px]">|</span>}
                                 <Link
-                                    key={l.code}
                                     href={`/${l.code}`}
                                     className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-150 ${lang === l.code ? 'text-[#C49D5B]' : 'text-[#495057] hover:text-white'
                                         }`}
                                 >
                                     {l.label}
                                 </Link>
-                            </>
+                            </React.Fragment>
                         ))}
                     </div>
                 </div>
-            </div>
-        </footer>
+            </div >
+        </footer >
     )
 }

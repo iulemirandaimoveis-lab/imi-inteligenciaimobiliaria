@@ -194,41 +194,41 @@ export function MobileBottomNav() {
                             animate={{ y: 0 }}
                             exit={{ y: '100%' }}
                             transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-                            className="lg:hidden fixed bottom-0 inset-x-0 z-50 rounded-t-3xl overflow-hidden transition-colors"
+                            className="lg:hidden fixed bottom-0 inset-x-0 z-50 rounded-t-3xl overflow-hidden transition-colors flex flex-col"
                             style={{
                                 background: SHEET_BG,
                                 border: `1px solid ${BORDER}`,
                                 borderBottom: 'none',
                                 boxShadow: 'var(--bo-shadow-elevated)',
-                                maxHeight: '82vh',
-                                paddingBottom: 'calc(88px + env(safe-area-inset-bottom))',
+                                height: '85vh',
                             }}
                         >
                             {/* Handle */}
-                            <div className="flex justify-center pt-3 pb-1">
+                            <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
                                 <div className="w-8 h-1 rounded-full" style={{ background: BORDER }} />
                             </div>
 
                             {/* Header */}
                             <div
-                                className="flex items-center justify-between px-5 py-3"
+                                className="flex items-center justify-between px-5 py-3 flex-shrink-0"
                                 style={{ borderBottom: `1px solid ${BORDER}` }}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold text-white transition-colors"
-                                        style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)' }}
+                                    <span
+                                        className="text-2xl font-bold tracking-tight transition-colors"
+                                        style={{ fontFamily: "'Playfair Display', Georgia, serif", color: TEXT }}
                                     >
-                                        I
-                                    </div>
-                                    <span className="text-base font-semibold" style={{ color: TEXT, fontFamily: 'var(--font-playfair), serif' }}>
-                                        IMI Atlantis
+                                        IMI
+                                    </span>
+                                    <div className="h-6 w-px" style={{ background: BORDER }}></div>
+                                    <span className="text-[9px] font-medium uppercase tracking-[0.15em] leading-[1.1]" style={{ color: DIM_TEXT }}>
+                                        Inteligência<br />Imobiliária
                                     </span>
                                 </div>
                                 <motion.button
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => setOpen(false)}
-                                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors"
+                                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors flex-shrink-0"
                                     style={{ background: ICON_BG }}
                                 >
                                     <X size={15} style={{ color: DIM_TEXT }} />
@@ -236,7 +236,7 @@ export function MobileBottomNav() {
                             </div>
 
                             {/* Groups */}
-                            <div className="overflow-y-auto" style={{ maxHeight: 'calc(82vh - 80px)' }}>
+                            <div className="overflow-y-auto flex-1 pb-[calc(88px+env(safe-area-inset-bottom))]">
                                 {GROUPS.map((group, gi) => (
                                     <div key={group.label} className="pt-4">
                                         <p

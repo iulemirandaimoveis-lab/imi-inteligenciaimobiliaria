@@ -435,8 +435,7 @@ export function useLeadExport() {
         const csv = [
             headers.join(','),
             ...rows.map(row => row.join(','))
-        ].join('
-')
+        ].join('\\n')
 
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
         const link = document.createElement('a')

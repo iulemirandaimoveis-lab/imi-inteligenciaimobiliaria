@@ -88,9 +88,11 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                                             />
                                         </div>
                                     ) : (
-                                        <div className="flex flex-col items-center gap-3 z-10">
-                                            <Building2 className="w-12 h-12 text-[#9CA3AF] opacity-50" strokeWidth={1} />
-                                            <span className="text-[#9CA3AF] font-bold text-xs uppercase tracking-widest">{dev.name}</span>
+                                        <div className="flex flex-col items-center gap-3 z-10 w-full">
+                                            <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 shadow-sm">
+                                                <Building2 className="w-7 h-7 text-slate-400" strokeWidth={1.5} />
+                                            </div>
+                                            <span className="text-slate-700 font-bold text-[10px] text-center uppercase tracking-[0.2em] leading-tight px-4">{dev.name}</span>
                                         </div>
                                     )}
 
@@ -121,13 +123,13 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                                         </p>
                                     )}
 
-                                    <div className="flex gap-3 mt-auto pt-4">
-                                        <Link href={`/${lang}/imoveis?construtora=${dev.slug}`} className="flex-1 inline-flex justify-center items-center gap-2 text-[12px] font-bold uppercase tracking-widest h-12 rounded-xl bg-[#1A1E2A] text-white border border-[#21263A] border-l-2 border-[#C49D5B] shadow-[0_4px_12px_rgba(0,0,0,0.2)] hover:bg-[#21263A] transition-all duration-300">
+                                    <div className="flex gap-2.5 mt-auto pt-6">
+                                        <Link href={`/${lang}/imoveis?construtora=${dev.slug}`} className="flex-1 flex justify-center items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.15em] h-12 rounded-lg bg-[#1A1E2A] text-white border border-[#21263A] hover:bg-[#21263A] transition-all duration-300">
                                             Ver Imóveis
-                                            <ChevronRight className="w-4 h-4 ml-1" />
+                                            <ChevronRight className="w-4 h-4 shrink-0" />
                                         </Link>
                                         {dev.website && (
-                                            <a href={dev.website} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex justify-center items-center text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300 shadow-sm" title="Visitar site oficial">
+                                            <a href={dev.website} target="_blank" rel="noopener noreferrer" className="w-12 h-12 shrink-0 rounded-lg bg-white/5 border border-white/10 flex justify-center items-center text-[#9CA3AF] hover:text-white hover:bg-white/10 transition-all duration-300" title="Visitar site oficial">
                                                 <ExternalLink className="w-4 h-4" />
                                             </a>
                                         )}
@@ -161,8 +163,8 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         <p className="text-[#9CA3AF] text-lg mb-8 max-w-xl mx-auto">
                             Estamos sempre em busca de novos parceiros para ampliar nosso portfólio.
                         </p>
-                        <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 h-14 px-10 text-[14px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-2xl border border-[#21263A] border-l-4 border-[#C49D5B] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(196,157,91,0.15)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(196,157,91,0.25)] transition-all duration-300">
-                            Ser um parceiro IMI
+                        <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 h-14 px-8 w-full sm:w-auto text-[13px] font-bold uppercase tracking-[0.15em] bg-[#1A1E2A] text-white rounded-xl border border-[#21263A] shadow-lg hover:-translate-y-1 transition-transform duration-300">
+                            Ser Parceiro
                         </a>
                     </motion.div>
                 </div>

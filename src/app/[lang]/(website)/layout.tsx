@@ -21,7 +21,7 @@ export default async function WebsiteLayout({
     const settings = await getGlobalSettings()
 
     return (
-        <div className="flex flex-col min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="flex flex-col min-h-screen overflow-x-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
