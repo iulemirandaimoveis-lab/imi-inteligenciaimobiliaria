@@ -84,7 +84,7 @@ export default function Hero({ dict }: HeroProps) {
 
       {/* Content */}
       <div className="relative z-10 flex-1 flex items-end">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24 pt-36">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24 pt-24 sm:pt-36">
           <motion.div
             initial="hidden"
             animate="visible"

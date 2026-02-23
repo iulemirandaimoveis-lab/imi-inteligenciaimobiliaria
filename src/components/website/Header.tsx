@@ -21,6 +21,7 @@ const NAV_ITEMS = [
     { key: 'consultoria', label: 'Consultoria' },
     { key: 'inteligencia', label: 'Inteligência' },
     { key: 'sobre', label: 'Sobre' },
+    { key: 'contato', label: 'Contato' },
 ]
 
 const LANGS = [

@@ -59,9 +59,9 @@ export default function Footer({ lang, settings }: FooterProps) {
             <div className="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 lg:py-20">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
-                    {/* ── Brand col ── */}
-                    <div className="lg:col-span-5">
-                        <Link href={`/${lang}`} className="inline-block mb-6 group">
+                    {/* ── Brand & Credenciais ── */}
+                    <div className="lg:col-span-5 overflow-hidden">
+                        <Link href={`/${lang}`} className="inline-block group mb-8">
                             <span
                                 className="text-[28px] font-black tracking-tight text-white group-hover:text-[#C49D5B] transition-colors duration-200"
                                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
@@ -168,7 +168,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                         ))}
                     </div>
                 </div>
-            </div >
-        </footer >
+            </div>
+        </footer>
     )
 }
