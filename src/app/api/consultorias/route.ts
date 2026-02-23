@@ -1,32 +1,40 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js'
+import { NextRequest } from 'next/server'
 
-export async function POST(request: Request) {
-    try {
-        const data = await request.json();
-        const supabase = await createClient();
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
-        // Cria lead associado
-        const { data: lead, error: leadError } = await supabase
-            .from('leads')
-            .insert({
-                name: data.clientName,
-                email: data.email || `consultoria_${Date.now()}@placeholder.com`,
-                source: 'consultoria',
-                status: 'new',
-            })
-            .select()
-            .single();
+export async function GET() {
+    const { data, error } = await supabase
+        .from('consultations')
+        .select('*')
+        .order('created_at', { ascending: false })
 
-        if (leadError) {
-            throw leadError;
-        }
+    if (error) return Response.json({ error: error.message }, { status: 500 })
+    return Response.json({ data })
+}
 
-        // Registra a consultoria como interação (se tabela existir)
-        // Por ora, apenas retorna sucesso com o lead criado
-        return NextResponse.json({ success: true, lead });
-    } catch (error) {
-        console.error('Error in API /consultorias:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-    }
+export async function POST(request: NextRequest) {
+    const body = await request.json()
+
+    const { data, error } = await supabase
+        .from('consultations')
+        .insert({
+            client_name: body.client_name || body.clienteNome || body.nome,
+            client_email: body.client_email || body.clienteEmail || body.email,
+            client_phone: body.client_phone || body.clienteTelefone || body.telefone,
+            type: body.type || body.tipo,
+            status: body.status || 'pending',
+            description: body.description || body.descricao,
+            scheduled_at: body.scheduled_at || body.dataAgendamento,
+            value: body.value || body.valor,
+            notes: body.notes || body.observacoes,
+        })
+        .select()
+        .single()
+
+    if (error) return Response.json({ error: error.message }, { status: 500 })
+    return Response.json({ data }, { status: 201 })
 }

@@ -8,7 +8,7 @@ import {
     BookOpen, Mail, Sparkles, Calculator, BarChart2,
     BookmarkPlus, Target, Zap, CreditCard, Briefcase,
     FileStack, FolderOpen, Banknote, Home, TrendingUp,
-    FileSignature, Layers
+    FileSignature, Layers, MessageSquare, Megaphone, Plug
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -36,6 +36,7 @@ const NAV: NavItem[] = [
         children: [
             { label: 'Portfólio', href: '/backoffice/imoveis', icon: Building2 },
             { label: 'Novo Imóvel', href: '/backoffice/imoveis/novo', icon: BookmarkPlus },
+            { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building2 },
         ]
     },
     {
@@ -43,6 +44,14 @@ const NAV: NavItem[] = [
         children: [
             { label: 'Pipeline', href: '/backoffice/leads', icon: Users },
             { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: BookmarkPlus },
+        ]
+    },
+    {
+        label: 'Marketing', icon: Megaphone,
+        children: [
+            { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
+            { label: 'Conteúdo', href: '/backoffice/conteudos', icon: FileText },
+            { label: 'Tracking', href: '/backoffice/tracking', icon: BarChart2 },
         ]
     },
     {
@@ -59,6 +68,7 @@ const NAV: NavItem[] = [
             { label: 'Nova', href: '/backoffice/consultorias/nova', icon: BookmarkPlus },
         ]
     },
+    { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
     {
         label: 'Contratos', icon: FileSignature,
         children: [
@@ -77,6 +87,15 @@ const NAV: NavItem[] = [
         ]
     },
     { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
+    {
+        label: 'Sistema', icon: Settings,
+        children: [
+            { label: 'Equipe', href: '/backoffice/equipe', icon: Users },
+            { label: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
+            { label: 'Configurações', href: '/backoffice/settings', icon: Settings },
+            { label: 'Automações', href: '/backoffice/automacoes', icon: Zap },
+        ]
+    },
 ]
 
 function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }) {

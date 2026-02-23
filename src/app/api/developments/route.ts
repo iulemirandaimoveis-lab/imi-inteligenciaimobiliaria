@@ -79,3 +79,30 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }
+
+export async function PUT(request: Request) {
+    try {
+        const body = await request.json()
+        const { id, ...updates } = body
+
+        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+
+        const supabase = createClient(supabaseUrl, supabaseServiceKey)
+        const { data, error } = await supabase
+            .from('developments')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single()
+
+        if (error) {
+            console.error('Supabase Error:', error)
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json(data)
+    } catch (error: any) {
+        console.error('Error updating development:', error)
+        return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+}

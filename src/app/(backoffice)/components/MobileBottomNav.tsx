@@ -9,7 +9,8 @@ import {
     LayoutDashboard, Building2, Users, BarChart3, X,
     FileText, DollarSign, Briefcase, BookOpen, Settings,
     MessageSquare, Bell, Banknote, FolderOpen, MoreHorizontal,
-    Scale, CreditCard, FileStack, Layers, Target, Zap, Mail, FileSignature, LogOut
+    Scale, CreditCard, FileStack, Layers, Target, Zap, Mail, FileSignature, LogOut,
+    Megaphone, BarChart2, Plug
 } from 'lucide-react'
 
 const MAIN = [
@@ -30,12 +31,14 @@ const GROUPS = [
             { name: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
             { name: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
             { name: 'Consultoria', href: '/backoffice/consultorias', icon: Briefcase },
+            { name: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
         ],
     },
     {
         label: 'Portfólio',
         items: [
             { name: 'Portfólio', href: '/backoffice/imoveis', icon: Building2 },
+            { name: 'Construtoras', href: '/backoffice/construtoras', icon: Building2 },
             { name: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
             { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
         ],
@@ -49,11 +52,20 @@ const GROUPS = [
         ],
     },
     {
+        label: 'Marketing',
+        items: [
+            { name: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
+            { name: 'Conteúdo', href: '/backoffice/conteudos', icon: FileText },
+            { name: 'Tracking', href: '/backoffice/tracking', icon: BarChart2 },
+        ],
+    },
+    {
         label: 'Sistema',
         items: [
-            { name: 'Integrações', href: '/backoffice/integracoes', icon: Layers },
-            { name: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+            { name: 'Equipe', href: '/backoffice/equipe', icon: Users },
+            { name: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
             { name: 'Configurações', href: '/backoffice/settings', icon: Settings },
+            { name: 'Automações', href: '/backoffice/automacoes', icon: Zap },
         ],
     },
 ]
