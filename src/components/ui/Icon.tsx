@@ -11,12 +11,9 @@ interface IconProps {
 }
 
 export default function Icon({ name, className = '', size, filled = false }: IconProps) {
-    const sizeClass = size ? `text-[${size}px]` : ''
-    const filledClass = filled ? 'filled' : ''
-    
     return (
-        <span 
-            className={`material-symbols-outlined ${sizeClass} ${filledClass} ${className}`}
+        <span
+            className={`material-symbols-outlined ${filled ? 'filled' : ''} ${className}`}
             style={size ? { fontSize: `${size}px` } : undefined}
         >
             {name}

@@ -634,7 +634,7 @@ export default function NovaAvaliacaoPage() {
                       onChange={(e: any) => setValorEstimadoHonorarios(Number(e.target.value))} placeholder="500000" />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                       { label: 'Mínimo', value: honorarios.minimo, color: 'text-gray-700' },
                       { label: 'Recomendado', value: honorarios.recomendado, color: 'text-[#C49D5B] font-bold' },
@@ -787,7 +787,7 @@ export default function NovaAvaliacaoPage() {
                   const max = Math.max(...valores)
                   const cv = (Math.sqrt(valores.map(v => Math.pow(v - media, 2)).reduce((a, b) => a + b, 0) / valores.length) / media) * 100
                   return (
-                    <div className="grid grid-cols-4 gap-3 text-center">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
                       {[
                         { l: 'Média', v: formatCurrency(media) + '/m²' },
                         { l: 'Mínimo', v: formatCurrency(min) + '/m²' },

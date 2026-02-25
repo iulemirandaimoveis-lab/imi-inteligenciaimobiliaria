@@ -1,33 +1,36 @@
 /* ============================================================
-   B11 — BACKOFFICE DARK THEME ADDITIONS
-   Add this block at the END of src/app/globals.css
+   B11 — BACKOFFICE DARK CONTEXT OVERRIDES
+   Scoped to .backoffice-root — applies dark surfaces
+   regardless of .dark class for the backoffice layout.
    ============================================================ */
 
 /* ── BACKOFFICE ROOT CONTEXT ───────────────────────────────── */
-/* Applied to the layout wrapper div.backoffice-root */
 .backoffice-root {
-  /* Override surface to dark */
-  --surface-0: #13161E;
-  --surface-1: #1A1E2A;
+  /* Mobile overflow guard */
+  overflow-x: hidden;
+  max-width: 100vw;
+
+  /* Surface overrides — force institutional dark palette */
+  --surface-0: var(--bo-surface);
+  --surface-1: var(--bo-elevated);
   --surface-2: #21263A;
 
-  /* Backoffice-specific tokens */
-  --bo-bg:          #0D0F14;
-  --bo-surface:     #13161E;
-  --bo-elevated:    #1A1E2A;
-  --bo-border:      rgba(255,255,255,0.07);
-  --bo-border-gold: rgba(196,157,91,0.22);
-  --bo-text:        #F0F2F5;
-  --bo-text-sub:    #8B93A7;
-  --bo-text-dim:    #4E5669;
+  /* Extended text tokens */
+  --bo-text-tertiary:  #4E5669;
+  --bo-text-gold:      #C49D5B;
+  --bo-text-gold-dim:  #8A6D3F;
 
-  /* Glass card system */
-  --glass-bg:       rgba(26,30,42,0.70);
-  --glass-border:   rgba(196,157,91,0.18);
-  --glass-blur:     blur(16px);
-  --glass-shadow:   0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
+  /* Extended border tokens */
+  --bo-border-subtle:  rgba(255,255,255,0.06);
+  --bo-border-strong:  rgba(255,255,255,0.18);
 
-  /* Status — unified palette (replaces Tailwind colors) */
+  /* Navigation tokens */
+  --nav-bg:        rgba(19,22,30,0.95);
+  --nav-border:    rgba(196,157,91,0.15);
+  --nav-active:    #C49D5B;
+  --nav-inactive:  #4E5669;
+
+  /* Status — unified palette */
   --s-hot:    #E8A87C;  --s-hot-bg:    rgba(232,168,124,0.12);
   --s-warm:   #C49D5B;  --s-warm-bg:   rgba(196,157,91,0.12);
   --s-cold:   #7B9EC4;  --s-cold-bg:   rgba(123,158,196,0.12);
@@ -47,30 +50,22 @@
 
 .backoffice-root input::placeholder,
 .backoffice-root textarea::placeholder {
-  color: var(--bo-text-dim);
-}
-
-/* ── ACCENT-600 BUTTON (used in many pages) ──────────────────── */
-/* Fix: accent-600 was rendering as brownish #A67C3D in Tailwind
-   This ensures the gradient gold CTA is consistent everywhere  */
-.backoffice-root .bg-accent-600,
-.backoffice-root [class*="bg-accent-"] {
-  background: linear-gradient(135deg, #C49D5B, #A67C3D);
+  color: var(--bo-text-muted);
 }
 
 /* ── GLASS CARD UTILITY ─────────────────────────────────────── */
 .glass-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-shadow);
+  background: rgba(26,30,42,0.70);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
   border-radius: 16px;
 }
 
 .glass-card:hover {
-  border-color: rgba(196,157,91,0.35);
-  box-shadow: 0 0 0 1px rgba(196,157,91,0.18), 0 8px 32px rgba(196,157,91,0.08), 0 4px 24px rgba(0,0,0,0.32);
+  border-color: rgba(255,255,255,0.14);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.36), 0 1px 0 rgba(255,255,255,0.06) inset;
 }
 
 /* ── STATUS BADGE UTILITY ─────────────────────────────────── */
@@ -82,24 +77,20 @@
 .badge-cancel  { color: var(--s-cancel); background: var(--s-cancel-bg); }
 
 /* ── BOTTOM NAV SAFE AREA ──────────────────────────────────── */
-.backoffice-root main {
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
-}
-
-@media (min-width: 1024px) {
+@media (max-width: 1023px) {
   .backoffice-root main {
-    padding-bottom: 24px;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
   }
 }
 
 /* ── RECHARTS DARK THEME ──────────────────────────────────── */
 .backoffice-root .recharts-cartesian-axis-tick-value {
-  fill: #4E5669;
+  fill: var(--bo-text-muted);
 }
 
 .backoffice-root .recharts-tooltip-wrapper .recharts-default-tooltip {
-  background: #1A1E2A !important;
-  border: 1px solid rgba(196,157,91,0.22) !important;
+  background: var(--bo-elevated) !important;
+  border: 1px solid var(--bo-border-gold) !important;
   border-radius: 10px !important;
 }
 

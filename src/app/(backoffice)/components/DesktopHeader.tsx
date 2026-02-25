@@ -26,16 +26,6 @@ const notifications = [
     },
 ]
 
-const S = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    gold: '#C49D5B',
-}
-
 function SearchBar() {
     const [focused, setFocused] = useState(false)
 
@@ -52,22 +42,22 @@ function SearchBar() {
             transition={{ duration: 0.15 }}
             className="relative flex items-center gap-3 h-9 px-4 w-full max-w-[280px] rounded-xl transition-all duration-200"
             style={{
-                background: S.surface,
-                border: `1px solid ${focused ? S.borderGold : S.border}`,
-                boxShadow: focused ? `0 0 0 3px rgba(196,157,91,0.08)` : 'none',
+                background: 'var(--bo-surface)',
+                border: `1px solid ${focused ? 'var(--bo-border-gold)' : 'var(--bo-border)'}`,
+                boxShadow: focused ? '0 0 0 3px rgba(196,157,91,0.08)' : 'none',
             }}
         >
-            <Search size={14} style={{ color: focused ? S.gold : S.textMuted }} className="flex-shrink-0 transition-colors" />
-            <span className="text-sm flex-1 text-left" style={{ color: S.textMuted }}>
+            <Search size={14} style={{ color: focused ? 'var(--accent-500)' : 'var(--bo-text-muted)' }} className="flex-shrink-0 transition-colors" />
+            <span className="text-sm flex-1 text-left" style={{ color: 'var(--bo-text-muted)' }}>
                 Buscar...
             </span>
             <div className="flex items-center gap-0.5 flex-shrink-0">
                 <kbd className="hidden sm:inline-flex items-center justify-center w-5 h-4 text-[9px] font-semibold rounded"
-                    style={{ background: S.elevated, color: S.textMuted, border: `1px solid ${S.border}` }}>
+                    style={{ background: 'var(--bo-elevated)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
                     ⌘
                 </kbd>
                 <kbd className="hidden sm:inline-flex items-center justify-center w-4 h-4 text-[9px] font-semibold rounded"
-                    style={{ background: S.elevated, color: S.textMuted, border: `1px solid ${S.border}` }}>
+                    style={{ background: 'var(--bo-elevated)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
                     K
                 </kbd>
             </div>
@@ -93,16 +83,16 @@ function NotificationBell() {
                 onClick={() => setOpen(!open)}
                 className="relative flex items-center justify-center w-9 h-9 rounded-xl transition-all"
                 style={{
-                    background: open ? S.elevated : 'transparent',
-                    border: `1px solid ${open ? S.borderGold : 'transparent'}`,
-                    color: open ? S.gold : S.textMuted,
+                    background: open ? 'var(--bo-elevated)' : 'transparent',
+                    border: `1px solid ${open ? 'var(--bo-border-gold)' : 'transparent'}`,
+                    color: open ? 'var(--accent-500)' : 'var(--bo-text-muted)',
                 }}
             >
                 <Bell size={16} />
                 {unread > 0 && (
                     <span
                         className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 text-[8px] font-bold text-white rounded-full flex items-center justify-center"
-                        style={{ background: '#C49D5B', boxShadow: `0 0 0 2px var(--bo-surface)` }}
+                        style={{ background: 'var(--accent-500)', boxShadow: '0 0 0 2px var(--bo-surface)' }}
                     >
                         {unread}
                     </span>
@@ -121,15 +111,15 @@ function NotificationBell() {
                             transition={{ duration: 0.16, ease: [0.34, 1.56, 0.64, 1] }}
                             className="absolute right-0 top-11 w-72 rounded-2xl z-20 overflow-hidden"
                             style={{
-                                background: S.elevated,
-                                border: `1px solid ${S.border}`,
-                                boxShadow: '0 20px 48px rgba(0,0,0,0.5), 0 4px 12px rgba(0,0,0,0.3)',
+                                background: 'var(--bo-elevated)',
+                                border: '1px solid var(--bo-border)',
+                                boxShadow: 'var(--bo-shadow-elevated)',
                             }}
                         >
                             <div className="flex items-center justify-between px-4 py-3.5"
-                                style={{ borderBottom: `1px solid ${S.border}` }}>
-                                <span className="text-sm font-semibold" style={{ color: S.text }}>Notificações</span>
-                                <span className="text-xs cursor-pointer" style={{ color: S.gold }}>Marcar lidas</span>
+                                style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                                <span className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Notificações</span>
+                                <span className="text-xs cursor-pointer" style={{ color: 'var(--accent-500)' }}>Marcar lidas</span>
                             </div>
                             <div>
                                 {notifications.map((n, i) => (
@@ -138,25 +128,25 @@ function NotificationBell() {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: i * 0.04 }}
                                         className="flex gap-3 px-4 py-3.5 cursor-pointer transition-all"
-                                        style={{ background: n.unread ? 'rgba(196,157,91,0.03)' : 'transparent' }}
+                                        style={{ background: n.unread ? 'var(--bo-active-bg)' : 'transparent' }}
                                         onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
-                                        onMouseLeave={e => (e.currentTarget.style.background = n.unread ? 'rgba(196,157,91,0.03)' : 'transparent')}
+                                        onMouseLeave={e => (e.currentTarget.style.background = n.unread ? 'var(--bo-active-bg)' : 'transparent')}
                                     >
                                         <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                                             style={{ background: 'var(--bo-active-bg)' }}>
-                                            <n.icon size={14} style={{ color: S.gold }} />
+                                            <n.icon size={14} style={{ color: 'var(--accent-500)' }} />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-medium leading-tight" style={{ color: S.text }}>{n.title}</p>
-                                            <p className="text-[11px] mt-0.5 leading-tight truncate" style={{ color: S.textMuted }}>{n.description}</p>
+                                            <p className="text-xs font-medium leading-tight" style={{ color: 'var(--bo-text)' }}>{n.title}</p>
+                                            <p className="text-[11px] mt-0.5 leading-tight truncate" style={{ color: 'var(--bo-text-muted)' }}>{n.description}</p>
                                             <p className="text-[10px] mt-1" style={{ color: 'var(--bo-text-muted)' }}>{n.time}</p>
                                         </div>
-                                        {n.unread && <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: S.gold }} />}
+                                        {n.unread && <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: 'var(--accent-500)' }} />}
                                     </motion.div>
                                 ))}
                             </div>
-                            <div className="px-4 py-3 text-center" style={{ borderTop: `1px solid var(--bo-border)` }}>
-                                <span className="text-xs cursor-pointer" style={{ color: S.gold }}>Ver todas →</span>
+                            <div className="px-4 py-3 text-center" style={{ borderTop: '1px solid var(--bo-border)' }}>
+                                <span className="text-xs cursor-pointer" style={{ color: 'var(--accent-500)' }}>Ver todas →</span>
                             </div>
                         </motion.div>
                     </>
@@ -184,17 +174,17 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                 onClick={() => setOpen(!open)}
                 className="flex items-center gap-2 h-9 px-2.5 rounded-xl transition-all"
                 style={{
-                    background: open ? S.elevated : 'transparent',
-                    border: `1px solid ${open ? S.borderGold : 'transparent'}`,
+                    background: open ? 'var(--bo-elevated)' : 'transparent',
+                    border: `1px solid ${open ? 'var(--bo-border-gold)' : 'transparent'}`,
                 }}
             >
                 <div className="w-6 h-6 rounded-full text-[10px] font-bold text-white flex items-center justify-center flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)' }}>
+                    style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}>
                     IM
                 </div>
-                <span className="hidden sm:block text-xs font-medium" style={{ color: S.text }}>Iule</span>
+                <span className="hidden sm:block text-xs font-medium" style={{ color: 'var(--bo-text)' }}>Iule</span>
                 <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.18 }}>
-                    <ChevronDown size={12} style={{ color: S.textMuted }} />
+                    <ChevronDown size={12} style={{ color: 'var(--bo-text-muted)' }} />
                 </motion.div>
             </motion.button>
 
@@ -210,20 +200,20 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                             transition={{ duration: 0.16, ease: [0.34, 1.56, 0.64, 1] }}
                             className="absolute right-0 top-11 w-56 rounded-2xl z-20 overflow-hidden"
                             style={{
-                                background: S.elevated,
-                                border: `1px solid ${S.border}`,
-                                boxShadow: '0 20px 48px rgba(0,0,0,0.5)',
+                                background: 'var(--bo-elevated)',
+                                border: '1px solid var(--bo-border)',
+                                boxShadow: 'var(--bo-shadow-elevated)',
                             }}
                         >
-                            <div className="px-4 py-4" style={{ borderBottom: `1px solid ${S.border}` }}>
+                            <div className="px-4 py-4" style={{ borderBottom: '1px solid var(--bo-border)' }}>
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 rounded-full text-sm font-bold text-white flex items-center justify-center"
-                                        style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)' }}>
+                                        style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}>
                                         IM
                                     </div>
                                     <div>
-                                        <p className="text-sm font-semibold" style={{ color: S.text }}>Iule Miranda</p>
-                                        <p className="text-[10px] font-semibold mt-0.5" style={{ color: S.gold }}>CRECI 17933 · Admin</p>
+                                        <p className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Iule Miranda</p>
+                                        <p className="text-[10px] font-semibold mt-0.5" style={{ color: 'var(--accent-500)' }}>CRECI 17933 · Admin</p>
                                     </div>
                                 </div>
                             </div>
@@ -233,18 +223,18 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                                 ].map(({ icon: Icon, label, action }) => (
                                     <button key={label} onClick={action}
                                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
-                                        style={{ color: S.textMuted }}
-                                        onMouseEnter={e => { (e.currentTarget.style.background = 'rgba(255,255,255,0.05)'); (e.currentTarget.style.color = S.text) }}
-                                        onMouseLeave={e => { (e.currentTarget.style.background = 'transparent'); (e.currentTarget.style.color = S.textMuted) }}
+                                        style={{ color: 'var(--bo-text-muted)' }}
+                                        onMouseEnter={e => { (e.currentTarget.style.background = 'var(--bo-hover)'); (e.currentTarget.style.color = 'var(--bo-text)') }}
+                                        onMouseLeave={e => { (e.currentTarget.style.background = 'transparent'); (e.currentTarget.style.color = 'var(--bo-text-muted)') }}
                                     >
                                         <Icon size={14} />{label}
                                     </button>
                                 ))}
-                                <div className="h-px my-1" style={{ background: S.border }} />
+                                <div className="h-px my-1" style={{ background: 'var(--bo-border)' }} />
                                 <button onClick={() => { setOpen(false); onSignOut() }}
                                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
-                                    style={{ color: '#E57373' }}
-                                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(229,115,115,0.08)')}
+                                    style={{ color: 'var(--s-cancel)' }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--s-cancel-bg)')}
                                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <LogOut size={14} />Sair
@@ -269,7 +259,7 @@ export default function DesktopHeader() {
                 background: 'rgba(13,15,20,0.85)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                borderBottom: '1px solid rgba(255,255,255,0.06)',
+                borderBottom: '1px solid var(--sidebar-border)',
             }}
         >
             <div className="w-full h-full px-6 flex items-center justify-between gap-4">

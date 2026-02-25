@@ -46,113 +46,91 @@ export function CommandPalette() {
 
     if (!open) return null
 
+    const itemClass = "flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-colors"
+
     return (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-start justify-center pt-[20vh] animate-in fade-in duration-200">
-            <Command className="w-full max-w-2xl bg-white dark:bg-card-dark rounded-2xl shadow-2xl overflow-hidden border border-gray-100 dark:border-white/10 animate-in zoom-in-95 duration-200">
-                <div className="flex items-center border-b border-gray-100 dark:border-white/5 px-4">
-                    <Search className="mr-2 h-5 w-5 shrink-0 opacity-50 text-gray-400" />
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh] animate-in fade-in duration-200"
+            style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}>
+            <Command className="w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+                style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+                <div className="flex items-center px-4" style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                    <Search className="mr-2 h-5 w-5 shrink-0 opacity-50" style={{ color: 'var(--bo-text-muted)' }} />
                     <Command.Input
                         placeholder="Busque por páginas, leads ou comandos..."
-                        className="flex h-16 w-full rounded-md bg-transparent py-3 text-lg outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500 text-gray-900 dark:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-16 w-full rounded-md bg-transparent py-3 text-lg outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        style={{ color: 'var(--bo-text)' }}
                     />
-                    <div className="text-xs text-gray-400 border border-gray-200 dark:border-white/10 px-2 py-1 rounded bg-gray-50 dark:bg-white/5">ESC</div>
+                    <div className="text-xs px-2 py-1 rounded" style={{ color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)', background: 'var(--bo-surface)' }}>ESC</div>
                 </div>
 
                 <Command.List className="max-h-[60vh] overflow-y-auto overflow-x-hidden py-2 px-2 custom-scrollbar">
-                    <Command.Empty className="py-12 text-center text-sm text-gray-500">
+                    <Command.Empty className="py-12 text-center text-sm" style={{ color: 'var(--bo-text-muted)' }}>
                         Nenhum resultado encontrado.
                     </Command.Empty>
 
-                    <Command.Group heading="Sugestões" className="px-2 pb-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/dashboard'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <LayoutDashboard className="h-5 w-5 opacity-70" />
-                            <span className="font-medium text-sm">Dashboard</span>
-                        </Command.Item>
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/leads'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <Users className="h-5 w-5 opacity-70" />
-                            <span className="font-medium text-sm">Gestão de Leads</span>
-                        </Command.Item>
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/imoveis'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <Building2 className="h-5 w-5 opacity-70" />
-                            <span className="font-medium text-sm">Portfólio de Imóveis</span>
-                        </Command.Item>
+                    <Command.Group heading="Sugestões" className="px-2 pb-2 text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--bo-text-muted)' }}>
+                        {[
+                            { href: '/backoffice/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+                            { href: '/backoffice/leads', icon: Users, label: 'Gestão de Leads' },
+                            { href: '/backoffice/imoveis', icon: Building2, label: 'Portfólio de Imóveis' },
+                        ].map(({ href, icon: Icon, label }) => (
+                            <Command.Item key={href} onSelect={() => runCommand(() => router.push(href))}
+                                className={itemClass}
+                                style={{ color: 'var(--bo-text-muted)' }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bo-hover)'; e.currentTarget.style.color = 'var(--bo-text)' }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--bo-text-muted)' }}>
+                                <Icon className="h-5 w-5 opacity-70" />
+                                <span className="font-medium text-sm">{label}</span>
+                            </Command.Item>
+                        ))}
                     </Command.Group>
 
-                    <Command.Separator className="h-px bg-gray-100 dark:bg-white/5 mx-2 my-2" />
+                    <Command.Separator className="h-px mx-2 my-2" style={{ background: 'var(--bo-border)' }} />
 
-                    <Command.Group heading="Ferramentas" className="px-2 pb-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 mt-2">
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/campanhas'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <BarChart3 className="h-5 w-5 opacity-70" />
-                            <span className="font-medium text-sm">Campanhas</span>
-                        </Command.Item>
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/conteudo'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <Sparkles className="h-5 w-5 opacity-70 text-purple-500" />
-                            <span className="font-medium text-sm">Conteúdo & IA</span>
-                        </Command.Item>
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/tracking'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <MousePointerClick className="h-5 w-5 opacity-70" />
-                            <span className="font-medium text-sm">Tracking</span>
-                        </Command.Item>
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/relatorios'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <PieChart className="h-5 w-5 opacity-70" />
-                            <span className="font-medium text-sm">Relatórios</span>
-                        </Command.Item>
+                    <Command.Group heading="Ferramentas" className="px-2 pb-2 text-xs font-bold uppercase tracking-widest mb-2 mt-2" style={{ color: 'var(--bo-text-muted)' }}>
+                        {[
+                            { href: '/backoffice/campanhas', icon: BarChart3, label: 'Campanhas' },
+                            { href: '/backoffice/conteudo', icon: Sparkles, label: 'Conteúdo & IA' },
+                            { href: '/backoffice/tracking', icon: MousePointerClick, label: 'Tracking' },
+                            { href: '/backoffice/relatorios', icon: PieChart, label: 'Relatórios' },
+                        ].map(({ href, icon: Icon, label }) => (
+                            <Command.Item key={href} onSelect={() => runCommand(() => router.push(href))}
+                                className={itemClass}
+                                style={{ color: 'var(--bo-text-muted)' }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bo-hover)'; e.currentTarget.style.color = 'var(--bo-text)' }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--bo-text-muted)' }}>
+                                <Icon className="h-5 w-5 opacity-70" />
+                                <span className="font-medium text-sm">{label}</span>
+                            </Command.Item>
+                        ))}
                     </Command.Group>
 
-                    <Command.Separator className="h-px bg-gray-100 dark:bg-white/5 mx-2 my-2" />
+                    <Command.Separator className="h-px mx-2 my-2" style={{ background: 'var(--bo-border)' }} />
 
-                    <Command.Group heading="Configurações" className="px-2 pb-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 mt-2">
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/settings'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <Settings className="h-5 w-5 opacity-70" />
-                            <span className="font-medium text-sm">Geral</span>
-                        </Command.Item>
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/settings/corretores'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <User className="h-5 w-5 opacity-70" />
-                            <span className="font-medium text-sm">Corretores</span>
-                        </Command.Item>
-                        <Command.Item
-                            onSelect={() => runCommand(() => router.push('/backoffice/integracoes'))}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors text-gray-700 dark:text-gray-300 aria-selected:bg-primary/10 aria-selected:text-primary"
-                        >
-                            <Layers className="h-5 w-5 opacity-70" />
-                            <span className="font-medium text-sm">Integrações</span>
-                        </Command.Item>
+                    <Command.Group heading="Configurações" className="px-2 pb-2 text-xs font-bold uppercase tracking-widest mb-2 mt-2" style={{ color: 'var(--bo-text-muted)' }}>
+                        {[
+                            { href: '/backoffice/settings', icon: Settings, label: 'Geral' },
+                            { href: '/backoffice/settings/corretores', icon: User, label: 'Corretores' },
+                            { href: '/backoffice/integracoes', icon: Layers, label: 'Integrações' },
+                        ].map(({ href, icon: Icon, label }) => (
+                            <Command.Item key={href} onSelect={() => runCommand(() => router.push(href))}
+                                className={itemClass}
+                                style={{ color: 'var(--bo-text-muted)' }}
+                                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bo-hover)'; e.currentTarget.style.color = 'var(--bo-text)' }}
+                                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--bo-text-muted)' }}>
+                                <Icon className="h-5 w-5 opacity-70" />
+                                <span className="font-medium text-sm">{label}</span>
+                            </Command.Item>
+                        ))}
                     </Command.Group>
                 </Command.List>
 
-                <div className="border-t border-gray-100 dark:border-white/5 p-2 bg-gray-50/50 dark:bg-white/[0.02]">
+                <div className="p-2" style={{ borderTop: '1px solid var(--bo-border)', background: 'rgba(255,255,255,0.02)' }}>
                     <div className="flex items-center justify-between px-3">
-                        <span className="text-[10px] text-gray-400">
-                            Navegue com <kbd className="font-sans px-1 py-0.5 rounded bg-white dark:bg-white/10 mx-1 border border-gray-200 dark:border-white/10">↑</kbd><kbd className="font-sans px-1 py-0.5 rounded bg-white dark:bg-white/10 mx-1 border border-gray-200 dark:border-white/10">↓</kbd>
+                        <span className="text-[10px]" style={{ color: 'var(--bo-text-muted)' }}>
+                            Navegue com <kbd className="font-sans px-1 py-0.5 rounded mx-1" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>↑</kbd><kbd className="font-sans px-1 py-0.5 rounded mx-1" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>↓</kbd>
                         </span>
-                        <span className="text-[10px] text-gray-400 flex items-center gap-1">
+                        <span className="text-[10px] flex items-center gap-1" style={{ color: 'var(--bo-text-muted)' }}>
                             <CommandIcon size={10} /> IMI Intelligence
                         </span>
                     </div>

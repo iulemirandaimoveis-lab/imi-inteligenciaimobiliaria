@@ -21,7 +21,7 @@ import { TrendingUp, Users, Eye, Clock, MapPin, Smartphone } from 'lucide-react'
 
 const supabase = createClient()
 
-const COLORS = ['#C49D5B', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
+const COLORS = ['#C49D5B', '#7B9EC4', '#6BB87B', '#E8A87C', '#A89EC4', '#E57373']
 
 interface TrackingAnalytics {
     totalClicks: number
@@ -243,7 +243,7 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Time Range Selector */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <h2 className="text-2xl font-bold text-imi-900">Analytics de Tracking</h2>
+                <h2 className="text-2xl font-bold" style={{ color: 'var(--bo-text)' }}>Analytics de Tracking</h2>
                 <div className="flex gap-2">
                     {[
                         { value: '7d', label: '7 dias' },
@@ -255,8 +255,9 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                             onClick={() => setTimeRange(option.value as any)}
                             className={`px-4 py-2 rounded-xl font-medium transition-all text-sm ${timeRange === option.value
                                     ? 'bg-accent-500 text-white shadow-md'
-                                    : 'bg-white border border-imi-200 text-imi-700 hover:border-accent-300 hover:bg-imi-50'
+                                    : 'border text-imi-700 hover:border-accent-300'
                                 }`}
+                            style={timeRange !== option.value ? { background: 'var(--bo-elevated)', borderColor: 'var(--bo-border)', color: 'var(--bo-text-muted)' } : undefined}
                         >
                             {option.label}
                         </button>
@@ -266,44 +267,28 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
 
             {/* KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-blue-50/50 rounded-2xl border border-blue-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3 mb-2">
-                        <Eye size={24} className="text-blue-600" />
-                        <span className="text-sm font-medium text-blue-700">Total Eventos</span>
+                {[
+                    { icon: Eye, label: 'Total Eventos', value: analytics.totalClicks, color: 'var(--s-cold)' },
+                    { icon: Users, label: 'Visualizações de Página', value: analytics.totalViews, color: 'var(--s-done)' },
+                    { icon: Clock, label: 'Tempo Médio', value: `${analytics.avgTimeOnPage}s`, color: 'var(--s-pend)' },
+                    { icon: TrendingUp, label: 'Taxa de Conversão', value: `${analytics.conversionRate}%`, color: 'var(--s-warm)' },
+                ].map(({ icon: Icon, label, value, color }) => (
+                    <div key={label} className="rounded-2xl p-6 transition-shadow"
+                        style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+                        <div className="flex items-center gap-3 mb-2">
+                            <Icon size={24} style={{ color }} />
+                            <span className="text-sm font-medium" style={{ color: 'var(--bo-text-muted)' }}>{label}</span>
+                        </div>
+                        <div className="text-3xl font-bold" style={{ color: 'var(--bo-text)' }}>{value}</div>
                     </div>
-                    <div className="text-3xl font-bold text-blue-900">{analytics.totalClicks}</div>
-                </div>
-
-                <div className="bg-green-50/50 rounded-2xl border border-green-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3 mb-2">
-                        <Users size={24} className="text-green-600" />
-                        <span className="text-sm font-medium text-green-700">Visualizações de Página</span>
-                    </div>
-                    <div className="text-3xl font-bold text-green-900">{analytics.totalViews}</div>
-                </div>
-
-                <div className="bg-purple-50/50 rounded-2xl border border-purple-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3 mb-2">
-                        <Clock size={24} className="text-purple-600" />
-                        <span className="text-sm font-medium text-purple-700">Tempo Médio</span>
-                    </div>
-                    <div className="text-3xl font-bold text-purple-900">{analytics.avgTimeOnPage}s</div>
-                </div>
-
-                <div className="bg-orange-50/50 rounded-2xl border border-orange-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-3 mb-2">
-                        <TrendingUp size={24} className="text-orange-600" />
-                        <span className="text-sm font-medium text-orange-700">Taxa de Conversão</span>
-                    </div>
-                    <div className="text-3xl font-bold text-orange-900">{analytics.conversionRate}%</div>
-                </div>
+                ))}
             </div>
 
             {/* Charts Row 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Clicks by Source */}
-                <div className="bg-white rounded-2xl border border-imi-100 p-6 shadow-sm">
-                    <h3 className="text-lg font-bold text-imi-900 mb-6">Tráfego por Origem</h3>
+                <div className="rounded-2xl p-6 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+                    <h3 className="text-lg font-bold mb-6" style={{ color: 'var(--bo-text)' }}>Tráfego por Origem</h3>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
@@ -321,7 +306,7 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                    contentStyle={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '10px', color: 'var(--bo-text)' }}
                                 />
                                 <Legend layout="horizontal" verticalAlign="bottom" align="center" />
                             </PieChart>
@@ -330,17 +315,17 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                 </div>
 
                 {/* Clicks by Device */}
-                <div className="bg-white rounded-2xl border border-imi-100 p-6 shadow-sm">
-                    <h3 className="text-lg font-bold text-imi-900 mb-6">Tráfego por Dispositivo</h3>
+                <div className="rounded-2xl p-6 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+                    <h3 className="text-lg font-bold mb-6" style={{ color: 'var(--bo-text)' }}>Tráfego por Dispositivo</h3>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={analytics.clicksByDevice} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                                <YAxis axisLine={false} tickLine={false} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--bo-text-muted)' }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--bo-text-muted)' }} />
                                 <Tooltip
-                                    cursor={{ fill: '#f8fafc' }}
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                    cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+                                    contentStyle={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '10px', color: 'var(--bo-text)' }}
                                 />
                                 <Bar dataKey="value" fill="#C49D5B" radius={[8, 8, 0, 0]} barSize={50} />
                             </BarChart>
@@ -350,23 +335,23 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
             </div>
 
             {/* Timeline */}
-            <div className="bg-white rounded-2xl border border-imi-100 p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-imi-900 mb-6">Evolução Diária</h3>
+            <div className="rounded-2xl p-6 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+                <h3 className="text-lg font-bold mb-6" style={{ color: 'var(--bo-text)' }}>Evolução Diária</h3>
                 <div className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={analytics.clicksByDay} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                            <XAxis dataKey="day" axisLine={false} tickLine={false} padding={{ left: 20, right: 20 }} />
-                            <YAxis axisLine={false} tickLine={false} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+                            <XAxis dataKey="day" axisLine={false} tickLine={false} padding={{ left: 20, right: 20 }} tick={{ fill: 'var(--bo-text-muted)' }} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--bo-text-muted)' }} />
                             <Tooltip
-                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                contentStyle={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '10px', color: 'var(--bo-text)' }}
                             />
                             <Line
                                 type="monotone"
                                 dataKey="clicks"
                                 stroke="#C49D5B"
                                 strokeWidth={3}
-                                dot={{ r: 4, strokeWidth: 2, fill: '#fff' }}
+                                dot={{ r: 4, strokeWidth: 2, fill: 'var(--bo-surface)' }}
                                 activeDot={{ r: 6 }}
                                 name="Cliques/Eventos"
                             />
@@ -376,29 +361,33 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
             </div>
 
             {/* Top Campaigns */}
-            <div className="bg-white rounded-2xl border border-imi-100 p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-imi-900 mb-6">Top Campanhas</h3>
+            <div className="rounded-2xl p-6 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+                <h3 className="text-lg font-bold mb-6" style={{ color: 'var(--bo-text)' }}>Top Campanhas</h3>
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                            <tr className="border-b border-imi-100">
-                                <th className="text-left py-3 px-4 text-sm font-bold text-imi-500 uppercase tracking-wider">Campanha</th>
-                                <th className="text-center py-3 px-4 text-sm font-bold text-imi-500 uppercase tracking-wider">Eventos</th>
-                                <th className="text-center py-3 px-4 text-sm font-bold text-imi-500 uppercase tracking-wider">Conversões</th>
-                                <th className="text-center py-3 px-4 text-sm font-bold text-imi-500 uppercase tracking-wider">Taxa Conv.</th>
+                            <tr style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                                <th className="text-left py-3 px-4 text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--bo-text-muted)' }}>Campanha</th>
+                                <th className="text-center py-3 px-4 text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--bo-text-muted)' }}>Eventos</th>
+                                <th className="text-center py-3 px-4 text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--bo-text-muted)' }}>Conversões</th>
+                                <th className="text-center py-3 px-4 text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--bo-text-muted)' }}>Taxa Conv.</th>
                             </tr>
                         </thead>
                         <tbody>
                             {analytics.topCampaigns.map((campaign, index) => (
-                                <tr key={index} className="border-b border-imi-50 hover:bg-imi-50 transition-colors">
-                                    <td className="py-4 px-4 font-medium text-imi-900">{campaign.campaign}</td>
-                                    <td className="py-4 px-4 text-center text-imi-700">{campaign.clicks}</td>
-                                    <td className="py-4 px-4 text-center text-imi-700">{campaign.conversions}</td>
+                                <tr key={index} className="transition-colors"
+                                    style={{ borderBottom: '1px solid var(--bo-border)' }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
+                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                                    <td className="py-4 px-4 font-medium" style={{ color: 'var(--bo-text)' }}>{campaign.campaign}</td>
+                                    <td className="py-4 px-4 text-center" style={{ color: 'var(--bo-text-muted)' }}>{campaign.clicks}</td>
+                                    <td className="py-4 px-4 text-center" style={{ color: 'var(--bo-text-muted)' }}>{campaign.conversions}</td>
                                     <td className="py-4 px-4 text-center">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${campaign.roi >= 5 ? 'bg-green-100 text-green-700' :
-                                                campaign.roi >= 2 ? 'bg-yellow-100 text-yellow-700' :
-                                                    'bg-gray-100 text-gray-700'
-                                            }`}>
+                                        <span className="px-3 py-1 rounded-full text-xs font-bold"
+                                            style={{
+                                                background: campaign.roi >= 5 ? 'var(--s-done-bg)' : campaign.roi >= 2 ? 'var(--s-warm-bg)' : 'var(--bo-active-bg)',
+                                                color: campaign.roi >= 5 ? 'var(--s-done)' : campaign.roi >= 2 ? 'var(--s-warm)' : 'var(--bo-text-muted)',
+                                            }}>
                                             {campaign.roi.toFixed(1)}%
                                         </span>
                                     </td>
@@ -406,7 +395,7 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                             ))}
                             {analytics.topCampaigns.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} className="py-8 text-center text-imi-500">
+                                    <td colSpan={4} className="py-8 text-center" style={{ color: 'var(--bo-text-muted)' }}>
                                         Nenhuma campanha registrada no período.
                                     </td>
                                 </tr>
@@ -418,35 +407,21 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
 
             {/* Top Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200 p-6">
-                    <div className="flex items-center gap-3 mb-2">
-                        <TrendingUp size={20} className="text-blue-600" />
-                        <span className="text-sm font-medium text-blue-700">Top Origem</span>
+                {[
+                    { icon: TrendingUp, label: 'Top Origem', value: analytics.topSource, color: 'var(--s-cold)' },
+                    { icon: Smartphone, label: 'Top Dispositivo', value: analytics.topDevice, color: 'var(--s-pend)' },
+                    { icon: MapPin, label: 'Top Localização', value: analytics.topLocation, color: 'var(--s-done)' },
+                ].map(({ icon: Icon, label, value, color }) => (
+                    <div key={label} className="rounded-2xl p-6" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+                        <div className="flex items-center gap-3 mb-2">
+                            <Icon size={20} style={{ color }} />
+                            <span className="text-sm font-medium" style={{ color: 'var(--bo-text-muted)' }}>{label}</span>
+                        </div>
+                        <div className="text-2xl font-bold capitalize truncate" style={{ color: 'var(--bo-text)' }} title={value}>
+                            {value}
+                        </div>
                     </div>
-                    <div className="text-2xl font-bold text-blue-900 capitalize truncate" title={analytics.topSource}>
-                        {analytics.topSource}
-                    </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200 p-6">
-                    <div className="flex items-center gap-3 mb-2">
-                        <Smartphone size={20} className="text-purple-600" />
-                        <span className="text-sm font-medium text-purple-700">Top Dispositivo</span>
-                    </div>
-                    <div className="text-2xl font-bold text-purple-900 capitalize truncate" title={analytics.topDevice}>
-                        {analytics.topDevice}
-                    </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200 p-6">
-                    <div className="flex items-center gap-3 mb-2">
-                        <MapPin size={20} className="text-green-600" />
-                        <span className="text-sm font-medium text-green-700">Top Localização</span>
-                    </div>
-                    <div className="text-2xl font-bold text-green-900 truncate" title={analytics.topLocation}>
-                        {analytics.topLocation}
-                    </div>
-                </div>
+                ))}
             </div>
         </div>
     )

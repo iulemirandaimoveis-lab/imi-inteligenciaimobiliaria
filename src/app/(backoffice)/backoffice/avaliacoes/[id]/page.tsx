@@ -178,7 +178,7 @@ export default function AvaliacaoDetalhesPage() {
                   <p className="text-sm font-medium">{avaliacaoData.property.address}</p>
                   <p className="text-sm text-gray-600">{avaliacaoData.property.city}/{avaliacaoData.property.state} - CEP: {avaliacaoData.property.cep}</p>
                 </div>
-                <div className="grid grid-cols-4 gap-6 pt-4 border-t">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t">
                   <div className="text-center">
                     <Bed size={24} className="mx-auto mb-2 text-blue-600" />
                     <p className="text-xl font-bold">{avaliacaoData.property.bedrooms}</p>
@@ -303,7 +303,7 @@ export default function AvaliacaoDetalhesPage() {
                   {comp.similarity}% similar
                 </span>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Área</p>
                   <p className="text-sm font-medium">{comp.area}m²</p>

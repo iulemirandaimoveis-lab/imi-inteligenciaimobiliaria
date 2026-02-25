@@ -365,7 +365,7 @@ export default function CampanhasPage() {
                             </div>
 
                             {/* Stats Grid */}
-                            <div className="p-6 grid grid-cols-3 gap-4">
+                            <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div>
                                     <p className="text-xs text-gray-600 mb-1">Impressões</p>
                                     <p className="text-lg font-bold text-gray-900">{formatNumber(campanha.impressions)}</p>

@@ -383,7 +383,7 @@ export default function LeadRulesPage() {
                 <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
                     Simulador de Score
                 </h3>
-                <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                     {[
                         { label: 'Lead Frio', range: '0–19 pts', color: 'bg-gray-100 text-gray-700', desc: 'Nutrição automática' },
                         { label: 'Lead Morno', range: '20–49 pts', color: 'bg-orange-50 text-orange-700', desc: 'Follow-up em 48h' },

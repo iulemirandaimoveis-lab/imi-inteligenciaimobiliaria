@@ -169,7 +169,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                         </div>
 
                         {/* Stats */}
-                        <div className="grid grid-cols-3 gap-4 mb-4 py-4 border-y border-gray-50">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 py-4 border-y border-gray-50">
                             <div>
                                 <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Projetos</p>
                                 <p className="text-lg font-bold text-blue-700">{construtora.empreendimentosAtivos || 0}</p>

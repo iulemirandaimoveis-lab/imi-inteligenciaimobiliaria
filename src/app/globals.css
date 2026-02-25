@@ -52,8 +52,8 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
   --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.10), 0 8px 16px rgba(0, 0, 0, 0.06);
-  --shadow-gold: 0 0 0 1px rgba(196, 157, 91, 0.20), 0 4px 16px rgba(196, 157, 91, 0.12);
-  --shadow-glow: 0 0 32px rgba(196, 157, 91, 0.18);
+  --shadow-gold: 0 0 0 1px rgba(196, 157, 91, 0.12), 0 4px 12px rgba(196, 157, 91, 0.06);
+  --shadow-glow: 0 0 16px rgba(196, 157, 91, 0.08);
 
   /* Blur */
   --blur-sm: blur(8px);
@@ -235,7 +235,7 @@
   }
 
   50% {
-    box-shadow: 0 0 0 6px rgba(196, 157, 91, 0.15);
+    box-shadow: 0 0 0 4px rgba(196, 157, 91, 0.08);
   }
 }
 
@@ -652,7 +652,7 @@
 
   .card-gold {
     @apply card;
-    border-color: rgba(196, 157, 91, 0.25);
+    border-color: rgba(196, 157, 91, 0.15);
     box-shadow: var(--shadow-gold);
   }
 
@@ -1325,6 +1325,176 @@
     box-shadow: none !important;
     border: 1px solid #ddd !important;
   }
+}
+
+/* ── BACKOFFICE COMPONENT DARK OVERRIDES ─────────────────────── */
+/* Cards */
+.backoffice-root .card {
+  background: var(--bo-elevated);
+  border-color: var(--bo-border);
+}
+
+.backoffice-root .card-interactive:hover {
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* Buttons — secondary and ghost */
+.backoffice-root .btn-secondary {
+  background: var(--bo-elevated);
+  color: var(--bo-text);
+  border-color: var(--bo-border);
+}
+
+.backoffice-root .btn-secondary:hover {
+  background: var(--bo-hover);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.backoffice-root .btn-ghost {
+  color: var(--bo-text-muted);
+}
+
+.backoffice-root .btn-ghost:hover {
+  background: var(--bo-hover);
+  color: var(--bo-text);
+}
+
+.backoffice-root .btn-danger {
+  background: var(--s-cancel-bg);
+  color: var(--s-cancel);
+  border-color: rgba(229,115,115,0.20);
+}
+
+.backoffice-root .btn-danger:hover {
+  background: rgba(229,115,115,0.16);
+}
+
+/* Badges */
+.backoffice-root .badge-gray {
+  background: var(--bo-hover);
+  color: var(--bo-text-muted);
+}
+
+/* Tables */
+.backoffice-root .table-header-row {
+  background: rgba(255,255,255,0.03);
+  border-color: var(--bo-border);
+}
+
+.backoffice-root .table-header-cell {
+  color: var(--bo-text-muted);
+}
+
+.backoffice-root .table-row {
+  border-color: var(--bo-border);
+}
+
+.backoffice-root .table-row:hover {
+  background: var(--bo-hover);
+}
+
+.backoffice-root .table-cell {
+  color: var(--bo-text);
+}
+
+/* Modals */
+.backoffice-root .modal-content {
+  background: var(--bo-elevated);
+  border: 1px solid var(--bo-border);
+}
+
+.backoffice-root .modal-header {
+  border-color: var(--bo-border);
+}
+
+.backoffice-root .modal-footer {
+  border-color: var(--bo-border);
+}
+
+/* Empty states */
+.backoffice-root .empty-state-icon {
+  background: var(--bo-hover);
+  color: var(--bo-text-muted);
+}
+
+.backoffice-root .empty-state-title {
+  color: var(--bo-text);
+}
+
+.backoffice-root .empty-state-description {
+  color: var(--bo-text-muted);
+}
+
+/* Dividers */
+.backoffice-root .divider {
+  background: linear-gradient(90deg, transparent 0%, var(--bo-border) 20%, var(--bo-border) 80%, transparent 100%);
+}
+
+/* Section headers */
+.backoffice-root .section-header {
+  border-color: var(--bo-border);
+}
+
+.backoffice-root .section-title {
+  color: var(--bo-text);
+}
+
+/* Typography headings */
+.backoffice-root .text-display,
+.backoffice-root .text-heading-1,
+.backoffice-root .text-heading-2,
+.backoffice-root .text-heading-3,
+.backoffice-root .text-heading-4 {
+  color: var(--bo-text);
+}
+
+.backoffice-root .text-body-large,
+.backoffice-root .text-body,
+.backoffice-root .text-body-small,
+.backoffice-root .text-label {
+  color: var(--bo-text-muted);
+}
+
+.backoffice-root .text-caption,
+.backoffice-root .text-label-small {
+  color: var(--bo-text-tertiary, var(--bo-text-muted));
+}
+
+/* Form labels */
+.backoffice-root .form-label {
+  color: var(--bo-text);
+}
+
+.backoffice-root .form-hint {
+  color: var(--bo-text-muted);
+}
+
+/* KPI cards */
+.backoffice-root .kpi-card::before {
+  background: none;
+}
+
+.backoffice-root .kpi-label {
+  color: var(--bo-text-muted);
+}
+
+.backoffice-root .kpi-value {
+  color: var(--bo-text);
+}
+
+/* Icon buttons */
+.backoffice-root .icon-btn {
+  color: var(--bo-text-muted);
+}
+
+.backoffice-root .icon-btn:hover {
+  color: var(--bo-text);
+  background: var(--bo-hover);
+}
+
+/* Page header */
+.backoffice-root .page-header::after {
+  background: linear-gradient(90deg, var(--accent-500), transparent);
 }
 
 /* ── B11 BACKOFFICE DARK ADDITIONS ── */

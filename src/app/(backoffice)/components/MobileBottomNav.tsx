@@ -4,7 +4,6 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useTheme } from 'next-themes'
 import {
     LayoutDashboard, Building2, Users, BarChart3, X,
     FileText, DollarSign, Briefcase, BookOpen, Settings,
@@ -70,20 +69,9 @@ const GROUPS = [
     },
 ]
 
-const GOLD = '#C49D5B'
-
 export function MobileBottomNav() {
     const pathname = usePathname()
     const [open, setOpen] = useState(false)
-    const SURFACE = 'var(--bo-surface)'
-    const DIM = 'var(--bo-text-muted)'
-
-    const SHEET_BG = 'var(--bo-drawer-bg)'
-    const BORDER = 'var(--bo-border)'
-    const TEXT = 'var(--bo-text)'
-    const DIM_TEXT = 'var(--bo-text-muted)'
-    const HOVER_BG = 'var(--bo-hover)'
-    const ICON_BG = 'var(--bo-icon-bg)'
 
     useEffect(() => {
         document.body.style.overflow = open ? 'hidden' : ''
@@ -102,10 +90,10 @@ export function MobileBottomNav() {
                 <div
                     className="mx-3 mb-3 rounded-2xl overflow-hidden transition-colors"
                     style={{
-                        background: SURFACE,
+                        background: 'var(--nav-bg)',
                         backdropFilter: 'blur(24px)',
                         WebkitBackdropFilter: 'blur(24px)',
-                        border: `1px solid ${BORDER}`,
+                        border: '1px solid var(--bo-border)',
                         boxShadow: 'var(--bo-shadow)',
                     }}
                 >
@@ -127,18 +115,18 @@ export function MobileBottomNav() {
                                                     exit={{ opacity: 0, scale: 0.7 }}
                                                     transition={{ type: 'spring', stiffness: 500, damping: 32 }}
                                                     className="absolute inset-0 mx-1 rounded-xl"
-                                                    style={{ background: 'rgba(196,157,91,0.10)' }}
+                                                    style={{ background: 'var(--bo-active-bg)' }}
                                                 />
                                             )}
                                         </AnimatePresence>
                                         <item.icon
                                             size={20}
                                             className="relative transition-colors duration-150"
-                                            style={{ color: active ? GOLD : DIM }}
+                                            style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
                                             className="relative text-[9px] font-semibold mt-1 transition-colors duration-150"
-                                            style={{ color: active ? GOLD : DIM }}
+                                            style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
                                         </span>
@@ -160,7 +148,7 @@ export function MobileBottomNav() {
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.7 }}
                                         className="absolute inset-0 mx-1 rounded-xl"
-                                        style={{ background: 'rgba(196,157,91,0.10)' }}
+                                        style={{ background: 'var(--bo-active-bg)' }}
                                     />
                                 )}
                             </AnimatePresence>
@@ -170,13 +158,13 @@ export function MobileBottomNav() {
                                 className="relative"
                             >
                                 {open
-                                    ? <X size={20} style={{ color: GOLD }} />
-                                    : <MoreHorizontal size={20} style={{ color: DIM }} />
+                                    ? <X size={20} style={{ color: 'var(--nav-active)' }} />
+                                    : <MoreHorizontal size={20} style={{ color: 'var(--nav-inactive)' }} />
                                 }
                             </motion.span>
                             <span
                                 className="relative text-[9px] font-semibold mt-1 transition-colors"
-                                style={{ color: open ? GOLD : DIM }}
+                                style={{ color: open ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                             >
                                 Menu
                             </span>
@@ -208,32 +196,33 @@ export function MobileBottomNav() {
                             transition={{ type: 'spring', stiffness: 400, damping: 40 }}
                             className="lg:hidden fixed bottom-0 inset-x-0 z-50 rounded-t-3xl overflow-hidden transition-colors flex flex-col"
                             style={{
-                                background: SHEET_BG,
-                                border: `1px solid ${BORDER}`,
+                                background: 'var(--bo-drawer-bg)',
+                                border: '1px solid var(--bo-border)',
                                 borderBottom: 'none',
                                 boxShadow: 'var(--bo-shadow-elevated)',
+                                maxHeight: '85vh',
                                 height: '85vh',
                             }}
                         >
                             {/* Handle */}
                             <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-                                <div className="w-8 h-1 rounded-full" style={{ background: BORDER }} />
+                                <div className="w-8 h-1 rounded-full" style={{ background: 'var(--bo-border)' }} />
                             </div>
 
                             {/* Header */}
                             <div
                                 className="flex items-center justify-between px-5 py-3 flex-shrink-0"
-                                style={{ borderBottom: `1px solid ${BORDER}` }}
+                                style={{ borderBottom: '1px solid var(--bo-border)' }}
                             >
                                 <div className="flex items-center gap-3">
                                     <span
                                         className="text-2xl font-bold tracking-tight transition-colors"
-                                        style={{ fontFamily: "'Playfair Display', Georgia, serif", color: TEXT }}
+                                        style={{ fontFamily: "'Playfair Display', Georgia, serif", color: 'var(--bo-text)' }}
                                     >
                                         IMI
                                     </span>
-                                    <div className="h-6 w-px" style={{ background: BORDER }}></div>
-                                    <span className="text-[9px] font-medium uppercase tracking-[0.15em] leading-[1.1]" style={{ color: DIM_TEXT }}>
+                                    <div className="h-6 w-px" style={{ background: 'var(--bo-border)' }}></div>
+                                    <span className="text-[9px] font-medium uppercase tracking-[0.15em] leading-[1.1]" style={{ color: 'var(--bo-text-muted)' }}>
                                         Inteligência<br />Imobiliária
                                     </span>
                                 </div>
@@ -241,9 +230,9 @@ export function MobileBottomNav() {
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => setOpen(false)}
                                     className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors flex-shrink-0"
-                                    style={{ background: ICON_BG }}
+                                    style={{ background: 'var(--bo-icon-bg)' }}
                                 >
-                                    <X size={15} style={{ color: DIM_TEXT }} />
+                                    <X size={15} style={{ color: 'var(--bo-text-muted)' }} />
                                 </motion.button>
                             </div>
 
@@ -253,7 +242,7 @@ export function MobileBottomNav() {
                                     <div key={group.label} className="pt-4">
                                         <p
                                             className="px-6 pb-2 text-[9px] font-bold uppercase tracking-[0.12em]"
-                                            style={{ color: DIM_TEXT }}
+                                            style={{ color: 'var(--bo-text-muted)' }}
                                         >
                                             {group.label}
                                         </p>
@@ -271,11 +260,11 @@ export function MobileBottomNav() {
                                                         onClick={() => setOpen(false)}
                                                         className="flex items-center gap-4 px-5 py-3 mx-2 rounded-xl transition-all"
                                                         style={{
-                                                            background: active ? 'rgba(196,157,91,0.08)' : 'transparent',
-                                                            color: active ? '#C49D5B' : DIM_TEXT,
+                                                            background: active ? 'var(--bo-active-bg)' : 'transparent',
+                                                            color: active ? 'var(--nav-active)' : 'var(--bo-text-muted)',
                                                         }}
                                                         onMouseEnter={e => {
-                                                            if (!active) (e.currentTarget as HTMLElement).style.background = HOVER_BG
+                                                            if (!active) (e.currentTarget as HTMLElement).style.background = 'var(--bo-hover)'
                                                         }}
                                                         onMouseLeave={e => {
                                                             if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent'
@@ -284,14 +273,14 @@ export function MobileBottomNav() {
                                                         <div
                                                             className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
                                                             style={{
-                                                                background: active ? 'rgba(196,157,91,0.15)' : ICON_BG,
+                                                                background: active ? 'rgba(196,157,91,0.15)' : 'var(--bo-icon-bg)',
                                                             }}
                                                         >
                                                             <item.icon size={15} />
                                                         </div>
                                                         <span className="text-sm font-medium flex-1">{item.name}</span>
                                                         {active && (
-                                                            <div className="w-1.5 h-1.5 rounded-full" style={{ background: GOLD }} />
+                                                            <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--nav-active)' }} />
                                                         )}
                                                     </Link>
                                                 </motion.div>
@@ -301,11 +290,11 @@ export function MobileBottomNav() {
                                 ))}
 
                                 {/* User Profile & Logout */}
-                                <div className="mt-4 px-6 pb-6 pt-2 border-t" style={{ borderColor: 'var(--bo-border)' }}>
+                                <div className="mt-4 px-6 pb-6 pt-2" style={{ borderTop: '1px solid var(--bo-border)' }}>
                                     <div className="flex items-center gap-3 mt-4">
                                         <div
                                             className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                                            style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)' }}
+                                            style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}
                                         >
                                             IM
                                         </div>
@@ -317,12 +306,12 @@ export function MobileBottomNav() {
                                             whileTap={{ scale: 0.9 }}
                                             onClick={async () => {
                                                 setOpen(false)
-                                                console.log("Logout triggered locally for mobile")
                                                 window.location.href = '/login'
                                             }}
-                                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-red-50 dark:bg-red-500/10"
+                                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
+                                            style={{ background: 'var(--s-cancel-bg)' }}
                                         >
-                                            <LogOut size={16} className="text-red-500" />
+                                            <LogOut size={16} style={{ color: 'var(--s-cancel)' }} />
                                         </motion.button>
                                     </div>
                                 </div>

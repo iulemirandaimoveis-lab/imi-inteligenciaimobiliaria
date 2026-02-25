@@ -17,17 +17,18 @@ export default async function BackofficeLayout({
 
     return (
         <div
-            className="backoffice-root min-h-screen transition-colors duration-200 bg-slate-50 dark:bg-[#0D0F14] text-slate-900 dark:text-slate-50"
+            className="backoffice-root min-h-screen transition-colors duration-200"
+            style={{
+                background: 'var(--bo-surface)',
+                color: 'var(--bo-text)',
+            }}
         >
             <DesktopSidebar />
             <DesktopHeader />
 
-            {/* Main Content */}
-            <main className="lg:pl-60 lg:pt-16">
-                <div
-                    className="p-4 pb-28 lg:p-6 lg:pb-8"
-                    style={{ minHeight: '100vh' }}
-                >
+            {/* Main Content — mobile padding handled by globals-b11-additions.css */}
+            <main className="lg:pl-60 lg:pt-16 min-h-screen">
+                <div className="p-4 lg:p-6">
                     {children}
                 </div>
             </main>
@@ -37,13 +38,12 @@ export default async function BackofficeLayout({
             <Toaster
                 position="top-right"
                 richColors
-                theme="dark"
                 closeButton
                 toastOptions={{
                     style: {
-                        background: '#1A1E2A',
-                        border: '1px solid rgba(196,157,91,0.25)',
-                        color: '#F0F2F5',
+                        background: 'var(--bo-elevated)',
+                        border: '1px solid var(--bo-border-gold)',
+                        color: 'var(--bo-text)',
                     },
                 }}
             />

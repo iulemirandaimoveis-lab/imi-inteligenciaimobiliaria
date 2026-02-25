@@ -275,7 +275,7 @@ export default function AutomacoesPage() {
                             </div>
 
                             {/* Stats */}
-                            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-100">
                                 <div>
                                     <p className="text-xs text-gray-600 mb-1">Execuções</p>
                                     <p className="text-lg font-bold text-gray-900">{automacao.execucoes}</p>

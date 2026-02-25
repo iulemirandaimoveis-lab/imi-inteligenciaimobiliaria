@@ -110,7 +110,7 @@ export default function AvaliacoesPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {QUICK_ACTIONS.map((a, i) => (
                     <Link key={a.href} href={a.href}>
                         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}

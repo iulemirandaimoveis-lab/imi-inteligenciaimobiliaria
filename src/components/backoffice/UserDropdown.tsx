@@ -39,7 +39,7 @@ export default function UserDropdown() {
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-all group"
             >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary via-primary-light to-primary-dark p-[2px] shadow-glow-sm">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary via-primary-light to-primary-dark p-[2px] shadow-sm">
                     <div className="w-full h-full rounded-full bg-white dark:bg-card-dark flex items-center justify-center overflow-hidden">
                         <img
                             src="https://avatar.vercel.sh/imi-admin"

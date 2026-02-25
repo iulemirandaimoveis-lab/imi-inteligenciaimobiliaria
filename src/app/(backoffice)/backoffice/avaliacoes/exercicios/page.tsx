@@ -358,7 +358,7 @@ export default function ExerciciosPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-1">Treino Concluído!</h2>
           <p className="text-gray-500">{score.total} questões respondidas</p>
 
-          <div className="grid grid-cols-3 gap-4 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
             {[
               { label: 'Aproveitamento', value: `${pct}%`, color: pct >= 70 ? 'text-emerald-600' : 'text-red-500' },
               { label: 'Corretas', value: score.corretas, color: 'text-emerald-600' },
@@ -488,7 +488,7 @@ export default function ExerciciosPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
           { label: 'Questões', value: EXERCICIOS.length, icon: BookOpen, color: 'text-blue-600 bg-blue-50' },
           { label: 'Categorias', value: CATEGORIAS.length, icon: Target, color: 'text-purple-600 bg-purple-50' },

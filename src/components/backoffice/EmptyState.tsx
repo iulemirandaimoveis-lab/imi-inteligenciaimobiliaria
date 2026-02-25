@@ -13,12 +13,14 @@ interface EmptyStateProps {
 
 export default function EmptyState({ icon: Icon, title, description, action }: EmptyStateProps) {
     return (
-        <div className="flex flex-col items-center justify-center py-32 px-12 bg-white dark:bg-[#0A0B0D] rounded-[40px] border-2 border-dashed border-imi-100 dark:border-white/5 transition-all duration-500 hover:border-imi-200">
-            <div className="w-20 h-20 rounded-3xl bg-imi-50 dark:bg-white/5 flex items-center justify-center mb-10 text-imi-500 shadow-inner">
+        <div className="flex flex-col items-center justify-center py-32 px-12 rounded-[40px] border-2 border-dashed transition-all duration-500"
+            style={{ background: 'var(--bo-elevated)', borderColor: 'var(--bo-border)' }}>
+            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-10 shadow-inner"
+                style={{ background: 'var(--bo-active-bg)', color: 'var(--accent-500)' }}>
                 <Icon size={32} strokeWidth={1.2} />
             </div>
-            <h3 className="text-2xl font-display font-bold text-imi-950 dark:text-white mb-4 tracking-tight">{title}</h3>
-            <p className="text-imi-500 dark:text-gray-400 text-center max-w-sm mb-12 text-base font-medium leading-relaxed">
+            <h3 className="text-2xl font-display font-bold mb-4 tracking-tight" style={{ color: 'var(--bo-text)' }}>{title}</h3>
+            <p className="text-center max-w-sm mb-12 text-base font-medium leading-relaxed" style={{ color: 'var(--bo-text-muted)' }}>
                 {description}
             </p>
             {action && (

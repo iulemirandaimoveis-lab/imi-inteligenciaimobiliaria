@@ -118,7 +118,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     onClick={() => setOpen(!open)}
                     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
                     style={{
-                        color: isParentActive || open ? '#C49D5B' : 'var(--bo-text-muted)',
+                        color: isParentActive || open ? 'var(--accent-500)' : 'var(--sidebar-text)',
                         background: isParentActive || open ? 'var(--bo-active-bg)' : 'transparent',
                         fontWeight: isParentActive ? 600 : 500,
                     }}
@@ -144,7 +144,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 {open && (
                     <div
                         className="ml-5 mt-0.5 space-y-0.5 pl-3"
-                        style={{ borderLeft: '1px solid var(--bo-border-light)' }}
+                        style={{ borderLeft: '1px solid var(--bo-border-subtle)' }}
                     >
                         {item.children!.map(child => (
                             <NavItemComponent key={child.href || child.label} item={child} depth={depth + 1} />
@@ -160,23 +160,23 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             href={item.href!}
             className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all"
             style={{
-                color: isActive ? '#ffffff' : 'var(--bo-text-muted)',
+                color: isActive ? '#ffffff' : 'var(--sidebar-text)',
                 background: isActive
-                    ? 'linear-gradient(135deg, #C49D5B, #A67C3D)'
+                    ? 'linear-gradient(135deg, var(--accent-500), var(--accent-600))'
                     : 'transparent',
                 fontWeight: isActive ? 600 : 400,
-                boxShadow: isActive ? '0 2px 12px rgba(196,157,91,0.35)' : 'none',
+                boxShadow: isActive ? '0 2px 12px rgba(196,157,91,0.25)' : 'none',
             }}
             onMouseEnter={e => {
                 if (!isActive) {
-                    (e.currentTarget as HTMLElement).style.background = 'var(--bo-hover)'
-                        ; (e.currentTarget as HTMLElement).style.color = 'var(--bo-text)'
+                    (e.currentTarget as HTMLElement).style.background = 'var(--sidebar-hover)'
+                    ;(e.currentTarget as HTMLElement).style.color = 'var(--sidebar-text-active)'
                 }
             }}
             onMouseLeave={e => {
                 if (!isActive) {
                     (e.currentTarget as HTMLElement).style.background = 'transparent'
-                        ; (e.currentTarget as HTMLElement).style.color = 'var(--bo-text-muted)'
+                    ;(e.currentTarget as HTMLElement).style.color = 'var(--sidebar-text)'
                 }
             }}
         >
@@ -199,14 +199,14 @@ export function DesktopSidebar() {
         <aside
             className="hidden lg:flex flex-col w-60 h-screen fixed left-0 top-0 z-40"
             style={{
-                background: '#0F1117',
-                borderRight: '1px solid rgba(255,255,255,0.06)',
+                background: 'var(--sidebar-bg)',
+                borderRight: '1px solid var(--sidebar-border)',
             }}
         >
             {/* Logo */}
             <div
                 className="flex items-center gap-3 px-5 h-16 flex-shrink-0"
-                style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+                style={{ borderBottom: '1px solid var(--sidebar-border)' }}
             >
                 <span
                     className="text-2xl font-bold tracking-tight transition-colors text-white"
@@ -215,7 +215,7 @@ export function DesktopSidebar() {
                     IMI
                 </span>
                 <div className="h-6 w-px bg-white/20"></div>
-                <span className="text-[9px] font-medium uppercase tracking-[0.15em] leading-[1.1]" style={{ color: '#8B93A7' }}>
+                <span className="text-[9px] font-medium uppercase tracking-[0.15em] leading-[1.1]" style={{ color: 'var(--sidebar-text)' }}>
                     Inteligência<br />Imobiliária
                 </span>
             </div>
@@ -230,17 +230,17 @@ export function DesktopSidebar() {
             {/* Footer / User */}
             <div
                 className="px-2.5 py-3 flex-shrink-0"
-                style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+                style={{ borderTop: '1px solid var(--sidebar-border)' }}
             >
                 <div
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer group transition-all"
                     style={{ background: 'var(--bo-icon-bg)' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.06)')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--sidebar-hover)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'var(--bo-icon-bg)')}
                 >
                     <div
                         className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-white"
-                        style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)' }}
+                        style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}
                     >
                         IM
                     </div>

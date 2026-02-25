@@ -331,7 +331,7 @@ export default function EmailHonorariosPage() {
                     <DollarSign size={14} /> Proposta de Honorários (IBAPE)
                   </p>
                 </div>
-                <div className="grid grid-cols-3 gap-0 divide-x divide-gray-100 p-4 text-center">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:divide-x divide-gray-100 p-4 text-center">
                   {[
                     { l: 'Mínimo', v: analysis.honorariosMin, cls: 'text-gray-700' },
                     { l: 'Recomendado', v: analysis.honorariosRec, cls: 'text-[#C49D5B]' },

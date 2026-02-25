@@ -63,16 +63,19 @@ interface KPICardProps {
 
 function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color = 'text-imi-600', bgColor = 'bg-imi-50' }: KPICardProps) {
     return (
-        <div className="bg-white rounded-2xl border border-imi-100 p-8 hover:shadow-xl hover:shadow-imi-900/5 transition-all duration-300 group flex flex-col h-full">
+        <div className="rounded-2xl p-8 transition-all duration-300 group flex flex-col h-full"
+            style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
             <div className="flex items-center justify-between mb-8">
-                <div className={`w-12 h-12 rounded-xl ${bgColor} flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-sm border border-black/5`}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                    style={{ background: 'var(--bo-active-bg)' }}>
                     <Icon size={22} className={color} strokeWidth={1.5} />
                 </div>
                 {trend && trendValue && (
-                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold tracking-tight ${trend === 'up' ? 'bg-green-500/10 text-green-700' :
-                        trend === 'down' ? 'bg-red-500/10 text-red-700' :
-                            'bg-gray-500/10 text-gray-700'
-                        }`}>
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold tracking-tight"
+                        style={{
+                            background: trend === 'up' ? 'var(--s-done-bg)' : trend === 'down' ? 'var(--s-cancel-bg)' : 'var(--bo-active-bg)',
+                            color: trend === 'up' ? 'var(--s-done)' : trend === 'down' ? 'var(--s-cancel)' : 'var(--bo-text-muted)',
+                        }}>
                         {trend === 'up' && <ArrowUp size={12} strokeWidth={3} />}
                         {trend === 'down' && <ArrowDown size={12} strokeWidth={3} />}
                         {trend === 'neutral' && <Minus size={12} strokeWidth={3} />}
@@ -82,17 +85,17 @@ function KPICard({ title, value, subtitle, icon: Icon, trend, trendValue, color 
             </div>
 
             <div className="flex-1">
-                <div className="text-sm font-bold text-imi-400 uppercase tracking-[0.15em] mb-2 leading-none">
+                <div className="text-sm font-bold uppercase tracking-[0.15em] mb-2 leading-none" style={{ color: 'var(--bo-text-muted)' }}>
                     {title}
                 </div>
-                <div className="text-4xl font-display font-bold text-imi-950 tracking-tighter tabular-nums">
+                <div className="text-4xl font-display font-bold tracking-tighter tabular-nums" style={{ color: 'var(--bo-text)' }}>
                     {value}
                 </div>
             </div>
 
             {(subtitle) && (
-                <div className="mt-8 pt-6 border-t border-imi-50 flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-imi-500 uppercase tracking-widest">{subtitle}</span>
+                <div className="mt-8 pt-6 flex items-center justify-between" style={{ borderTop: '1px solid var(--bo-border)' }}>
+                    <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--bo-text-muted)' }}>{subtitle}</span>
                 </div>
             )}
         </div>
@@ -323,10 +326,10 @@ export default function DashboardKPIs() {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[...Array(8)].map((_, i) => (
-                    <div key={i} className="bg-white rounded-2xl border border-imi-100 p-6 animate-pulse">
-                        <div className="w-12 h-12 bg-imi-100 rounded-xl mb-4" />
-                        <div className="h-8 bg-imi-100 rounded mb-2 w-20" />
-                        <div className="h-4 bg-imi-100 rounded w-32" />
+                    <div key={i} className="rounded-2xl p-6 animate-pulse" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
+                        <div className="w-12 h-12 rounded-xl mb-4" style={{ background: 'var(--bo-active-bg)' }} />
+                        <div className="h-8 rounded mb-2 w-20" style={{ background: 'var(--bo-active-bg)' }} />
+                        <div className="h-4 rounded w-32" style={{ background: 'var(--bo-active-bg)' }} />
                     </div>
                 ))}
             </div>
@@ -345,20 +348,18 @@ export default function DashboardKPIs() {
                     {alerts.map((alert, index) => (
                         <div
                             key={index}
-                            className={`rounded-xl p-4 flex items-center gap-3 ${alert.severity === 'high' ? 'bg-red-50 border border-red-200' :
-                                alert.severity === 'medium' ? 'bg-yellow-50 border border-yellow-200' :
-                                    'bg-blue-50 border border-blue-200'
-                                }`}
+                            className="rounded-xl p-4 flex items-center gap-3"
+                            style={{
+                                background: alert.severity === 'high' ? 'var(--s-cancel-bg)' : alert.severity === 'medium' ? 'var(--s-warm-bg)' : 'var(--s-cold-bg)',
+                                border: `1px solid ${alert.severity === 'high' ? 'rgba(229,115,115,0.22)' : alert.severity === 'medium' ? 'rgba(196,157,91,0.22)' : 'rgba(123,158,196,0.22)'}`,
+                            }}
                         >
-                            <AlertCircle size={20} className={
-                                alert.severity === 'high' ? 'text-red-600' :
-                                    alert.severity === 'medium' ? 'text-yellow-600' :
-                                        'text-blue-600'
-                            } />
-                            <span className={`text-sm font-medium ${alert.severity === 'high' ? 'text-red-700' :
-                                alert.severity === 'medium' ? 'text-yellow-700' :
-                                    'text-blue-700'
-                                }`}>
+                            <AlertCircle size={20} style={{
+                                color: alert.severity === 'high' ? 'var(--s-cancel)' : alert.severity === 'medium' ? 'var(--s-warm)' : 'var(--s-cold)',
+                            }} />
+                            <span className="text-sm font-medium" style={{
+                                color: alert.severity === 'high' ? 'var(--s-cancel)' : alert.severity === 'medium' ? 'var(--s-warm)' : 'var(--s-cold)',
+                            }}>
                                 {alert.message}
                             </span>
                         </div>
@@ -408,13 +409,14 @@ export default function DashboardKPIs() {
             </div>
 
             {/* Performance por Jurisdição - Structured & Precise */}
-            <div className="bg-white rounded-3xl border border-imi-100 p-8 shadow-sm">
+            <div className="rounded-3xl p-8 shadow-sm" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
                 <div className="flex items-center justify-between mb-10">
-                    <h3 className="text-xl font-bold text-imi-950 flex items-center gap-3">
-                        <Globe size={22} className="text-imi-500" strokeWidth={1.5} />
+                    <h3 className="text-xl font-bold flex items-center gap-3" style={{ color: 'var(--bo-text)' }}>
+                        <Globe size={22} style={{ color: 'var(--accent-500)' }} strokeWidth={1.5} />
                         Performance por Jurisdição
                     </h3>
-                    <div className="text-[10px] font-bold text-imi-400 uppercase tracking-widest bg-imi-50 px-3 py-1 rounded-full border border-imi-100">
+                    <div className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+                        style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-active-bg)', border: '1px solid var(--bo-border)' }}>
                         Consolidado Global
                     </div>
                 </div>
@@ -426,23 +428,27 @@ export default function DashboardKPIs() {
                         const avgTicketCountry = ticket > 0 ? ticket / (devCount || 1) : 0
 
                         return (
-                            <div key={country} className="border border-imi-100 rounded-3xl p-6 hover:bg-imi-50/50 transition-colors group">
+                            <div key={country} className="rounded-3xl p-6 transition-colors group"
+                                style={{ border: '1px solid var(--bo-border)' }}
+                                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
+                                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                                 <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-12 h-12 rounded-2xl bg-white border border-imi-100 shadow-sm flex items-center justify-center text-2xl grayscale group-hover:grayscale-0 transition-all duration-300">
+                                    <div className="w-12 h-12 rounded-2xl shadow-sm flex items-center justify-center text-2xl grayscale group-hover:grayscale-0 transition-all duration-300"
+                                        style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
                                         {country === 'Brasil' && '🇧🇷'}
                                         {country === 'EUA' && '🇺🇸'}
                                         {country === 'Dubai' && '🇦🇪'}
                                     </div>
                                     <div>
-                                        <div className="font-bold text-imi-900 text-lg leading-none">{country}</div>
-                                        <div className="text-[10px] font-bold text-imi-400 uppercase tracking-widest mt-1">{devCount} Unidades</div>
+                                        <div className="font-bold text-lg leading-none" style={{ color: 'var(--bo-text)' }}>{country}</div>
+                                        <div className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: 'var(--bo-text-muted)' }}>{devCount} Unidades</div>
                                     </div>
                                 </div>
 
-                                <div className="pt-6 border-t border-imi-100/50 space-y-4">
+                                <div className="pt-6 space-y-4" style={{ borderTop: '1px solid var(--bo-border)' }}>
                                     <div className="flex justify-between items-end">
-                                        <span className="text-[11px] font-bold text-imi-400 uppercase tracking-wider">Investimento Médio</span>
-                                        <span className="font-display font-bold text-imi-900 text-lg tabular-nums">
+                                        <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'var(--bo-text-muted)' }}>Investimento Médio</span>
+                                        <span className="font-display font-bold text-lg tabular-nums" style={{ color: 'var(--bo-text)' }}>
                                             {avgTicketCountry > 0 ? new Intl.NumberFormat('pt-BR', {
                                                 style: 'currency',
                                                 currency: 'BRL',
@@ -450,10 +456,10 @@ export default function DashboardKPIs() {
                                             }).format(avgTicketCountry) : '—'}
                                         </span>
                                     </div>
-                                    <div className="h-1 w-full bg-imi-100 rounded-full overflow-hidden">
+                                    <div className="h-1 w-full rounded-full overflow-hidden" style={{ background: 'var(--bo-active-bg)' }}>
                                         <div
-                                            className="h-full bg-imi-500 rounded-full"
-                                            style={{ width: country === 'Brasil' ? '100%' : country === 'EUA' ? '65%' : '40%' }}
+                                            className="h-full rounded-full"
+                                            style={{ background: 'var(--accent-500)', width: country === 'Brasil' ? '100%' : country === 'EUA' ? '65%' : '40%' }}
                                         />
                                     </div>
                                 </div>
@@ -505,15 +511,15 @@ export default function DashboardKPIs() {
                     <p className="text-xs text-imi-500 font-medium tracking-tight">Projeção conservadora baseada em conversão</p>
                 </div>
 
-                <div className="bg-white rounded-3xl border border-imi-100 p-8 shadow-sm group">
+                <div className="rounded-3xl p-8 shadow-sm group" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
                     <div className="flex items-center gap-4 mb-10">
-                        <div className="w-12 h-12 rounded-xl bg-imi-50 border border-imi-100 flex items-center justify-center">
-                            <Award size={20} className="text-imi-600" />
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--bo-active-bg)', border: '1px solid var(--bo-border)' }}>
+                            <Award size={20} style={{ color: 'var(--accent-500)' }} />
                         </div>
-                        <div className="text-[11px] font-bold text-imi-600 uppercase tracking-widest">Ticket Médio Institucional</div>
+                        <div className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--accent-500)' }}>Ticket Médio Institucional</div>
                     </div>
 
-                    <div className="text-4xl font-display font-bold text-imi-950 tracking-tighter tabular-nums mb-3">
+                    <div className="text-4xl font-display font-bold tracking-tighter tabular-nums mb-3" style={{ color: 'var(--bo-text)' }}>
                         {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL',
