@@ -1,104 +1,35 @@
-// ============================================
-// BLOCO 4 — SCRIPT 6: WHATSAPP BUSINESS
-// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
-// ============================================
-
-/**
- * SALVAR EM: src/app/(backoffice)/backoffice/whatsapp/page.tsx
- */
-
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
 import {
-  Search,
-  MoreVertical,
-  Phone,
-  Video,
-  Info,
-  Send,
-  Paperclip,
-  Smile,
-  Check,
-  CheckCheck,
-  User,
-  Clock,
-  Filter,
-  ArrowLeft,
-  Settings,
-  ShieldCheck,
-  AlertCircle,
-  MessageSquare,
-  Zap,
-  Sparkles,
-  Loader2,
+  Search, MoreVertical, Phone, Video, Send, Paperclip, Smile,
+  Check, CheckCheck, Clock, ArrowLeft, Settings, ShieldCheck,
+  AlertCircle, MessageSquare, Zap, Sparkles, Loader2, X
 } from 'lucide-react'
 
-// ⚠️ NÃO MODIFICAR - Conversas mockadas contextualizadas Recife
+/* ── Design Tokens ──────────────────────────────────────────── */
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  hover: 'var(--bo-hover)',
+  border: 'var(--bo-border)',
+  borderGold: 'var(--bo-border-gold)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  textTertiary: 'var(--bo-text-tertiary, var(--bo-text-muted))',
+  gold: '#C49D5B',
+  shadow: 'var(--bo-shadow)',
+}
+
+/* ── Mock Data (unchanged) ──────────────────────────────────── */
 const CONVERSAS = [
-  {
-    id: 1,
-    nome: 'Maria Santos Silva',
-    telefone: '+55 81 99876-5432',
-    ultimaMensagem: 'Gostaria de agendar uma visita ao Reserva Atlantis',
-    horario: '14:32',
-    naoLidas: 2,
-    online: true,
-    empresa: 'Hospital Português',
-    avatar: null,
-    status: 'Interessada',
-  },
-  {
-    id: 2,
-    nome: 'João Oliveira (Investidor)',
-    telefone: '+55 81 98765-4321',
-    ultimaMensagem: 'Como está o yield de locação em Boa Viagem?',
-    horario: '11:05',
-    naoLidas: 0,
-    online: false,
-    empresa: 'Family Office',
-    avatar: null,
-    status: 'Qualificado',
-  },
-  {
-    id: 3,
-    nome: 'Ana Paula Ferreira',
-    telefone: '+55 81 99123-4567',
-    ultimaMensagem: 'Enviando o laudo da avaliação... 📎',
-    horario: 'Ontem',
-    naoLidas: 0,
-    online: true,
-    empresa: 'IMI Atlantis',
-    avatar: null,
-    status: 'Time',
-  },
-  {
-    id: 4,
-    nome: 'Carlos Eduardo',
-    telefone: '+55 11 98888-7777',
-    ultimaMensagem: 'Obrigado pelas fotos do Ocean Blue',
-    horario: 'Ontem',
-    naoLidas: 0,
-    online: false,
-    empresa: 'Prospecção SP',
-    avatar: null,
-    status: 'Frio',
-  },
-  {
-    id: 5,
-    nome: 'Ricardo Mendes',
-    telefone: '+55 81 97777-6666',
-    ultimaMensagem: 'Qual o valor do m² no Pina hoje?',
-    horario: '18/02',
-    naoLidas: 0,
-    online: false,
-    empresa: 'Construtora Moura Dubeux',
-    avatar: null,
-    status: 'Morno',
-  },
+  { id: 1, nome: 'Maria Santos Silva', telefone: '+55 81 99876-5432', ultimaMensagem: 'Gostaria de agendar uma visita ao Reserva Atlantis', horario: '14:32', naoLidas: 2, online: true, empresa: 'Hospital Português', status: 'Interessada' },
+  { id: 2, nome: 'João Oliveira (Investidor)', telefone: '+55 81 98765-4321', ultimaMensagem: 'Como está o yield de locação em Boa Viagem?', horario: '11:05', naoLidas: 0, online: false, empresa: 'Family Office', status: 'Qualificado' },
+  { id: 3, nome: 'Ana Paula Ferreira', telefone: '+55 81 99123-4567', ultimaMensagem: 'Enviando o laudo da avaliação... 📎', horario: 'Ontem', naoLidas: 0, online: true, empresa: 'IMI Atlantis', status: 'Time' },
+  { id: 4, nome: 'Carlos Eduardo', telefone: '+55 11 98888-7777', ultimaMensagem: 'Obrigado pelas fotos do Ocean Blue', horario: 'Ontem', naoLidas: 0, online: false, empresa: 'Prospecção SP', status: 'Frio' },
+  { id: 5, nome: 'Ricardo Mendes', telefone: '+55 81 97777-6666', ultimaMensagem: 'Qual o valor do m² no Pina hoje?', horario: '18/02', naoLidas: 0, online: false, empresa: 'Construtora Moura Dubeux', status: 'Morno' },
 ]
 
-// ⚠️ NÃO MODIFICAR - Mensagens da conversa ativa
 const MENSAGENS_INICIAIS = [
   { id: 1, texto: 'Olá Maria, bom dia! Como posso ajudar hoje?', eu: true, horario: '14:00', status: 'read' },
   { id: 2, texto: 'Olá! Vi o anúncio do Reserva Atlantis no Instagram e fiquei interessada.', eu: false, horario: '14:15' },
@@ -107,39 +38,38 @@ const MENSAGENS_INICIAIS = [
   { id: 5, texto: 'Gostaria de agendar uma visita ao Reserva Atlantis', eu: false, horario: '14:32' },
 ]
 
-// ⚠️ NÃO MODIFICAR - Templates de resposta rápida
 const TEMPLATES_WHATSAPP = [
   { id: 'visita', label: 'Agendar Visita', text: 'Olá [Nome], podemos agendar uma visita técnica para amanhã às 10h ou 15h? Estarei com o material completo do Reserva Atlantis.' },
   { id: 'laudo', label: 'Enviar Laudo', text: 'Segue em anexo o laudo de avaliação técnica conforme NBR 14653. Fico à disposição para dúvidas.' },
   { id: 'invest', label: 'Dados Investimento', text: 'O yield médio nesta região de Boa Viagem está em 0,72% a.m., com valorização histórica de 18% ao ano.' },
 ]
 
+type Conversa = typeof CONVERSAS[number]
+type Msg = typeof MENSAGENS_INICIAIS[number]
+
 export default function WhatsappPage() {
-  const [conversations, setConversations] = useState(CONVERSAS)
-  const [activeConversation, setActiveConversation] = useState(CONVERSAS[0])
-  const [messages, setMessages] = useState(MENSAGENS_INICIAIS)
+  const [activeConversation, setActiveConversation] = useState<Conversa>(CONVERSAS[0])
+  const [messages, setMessages] = useState<Msg[]>(MENSAGENS_INICIAIS)
   const [newMessage, setNewMessage] = useState('')
   const [search, setSearch] = useState('')
   const [showTemplates, setShowTemplates] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
+  const [showInfo, setShowInfo] = useState(false)
+  // Mobile: show chat (true) or list (false)
+  const [mobileShowChat, setMobileShowChat] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-    }
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
   }, [messages])
 
   const handleSend = () => {
     if (!newMessage.trim()) return
-    const msg = {
-      id: Date.now(),
-      texto: newMessage,
-      eu: true,
+    setMessages(prev => [...prev, {
+      id: Date.now(), texto: newMessage, eu: true,
       horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
       status: 'sent',
-    }
-    setMessages([...messages, msg])
+    }])
     setNewMessage('')
     setShowTemplates(false)
   }
@@ -152,9 +82,7 @@ export default function WhatsappPage() {
   const generateAIReply = async () => {
     setAiLoading(true)
     setShowTemplates(false)
-
     const lastMsg = messages[messages.length - 1]?.texto || ''
-
     try {
       const res = await fetch('/api/ai/router', {
         method: 'POST',
@@ -166,142 +94,177 @@ export default function WhatsappPage() {
           context: `Empresa: IMI Atlantis. Mercado Imobiliário de Luxo em Recife.`
         })
       })
-
       const data = await res.json()
-      if (data.success) {
-        setNewMessage(data.result)
-      }
-    } catch (err) {
-      console.error('AI Reply error:', err)
-    } finally {
-      setAiLoading(false)
-    }
+      if (data.success) setNewMessage(data.result)
+    } catch (err) { console.error('AI Reply error:', err) }
+    finally { setAiLoading(false) }
   }
 
-  const filteredConversations = conversations.filter(c =>
-    c.nome.toLowerCase().includes(search.toLowerCase()) ||
-    c.telefone.includes(search)
+  const selectConversation = (c: Conversa) => {
+    setActiveConversation(c)
+    setMobileShowChat(true)
+    setShowInfo(false)
+  }
+
+  const filteredConversations = CONVERSAS.filter(c =>
+    c.nome.toLowerCase().includes(search.toLowerCase()) || c.telefone.includes(search)
   )
 
   return (
-    <div className="h-[calc(100vh-140px)] flex bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
-      {/* ── Sidebar: Lista de Conversas ──────────────────────────────── */}
-      <div className="w-80 md:w-96 border-r border-gray-100 flex flex-col bg-gray-50/50">
-        <div className="p-4 bg-white border-b border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold text-gray-900">Mensagens</h1>
+    <div
+      className="flex overflow-hidden rounded-2xl lg:rounded-3xl"
+      style={{
+        height: 'calc(100vh - 140px)',
+        background: T.elevated,
+        border: `1px solid ${T.border}`,
+        boxShadow: T.shadow,
+      }}
+    >
+      {/* ═══════════════ SIDEBAR: CONVERSATION LIST ═══════════════ */}
+      <div
+        className={`${mobileShowChat ? 'hidden' : 'flex'} lg:flex flex-col w-full lg:w-80 xl:w-96 flex-shrink-0`}
+        style={{ borderRight: `1px solid ${T.border}`, background: T.surface }}
+      >
+        {/* Header */}
+        <div className="p-4 flex-shrink-0" style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-lg font-bold" style={{ color: T.text }}>Mensagens</h1>
             <div className="flex gap-1">
-              <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+              <button className="p-2 rounded-xl transition-colors" style={{ color: T.textMuted }}
+                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <MessageSquare size={18} />
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+              <button className="p-2 rounded-xl transition-colors" style={{ color: T.textMuted }}
+                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <Settings size={18} />
               </button>
             </div>
           </div>
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textTertiary }} />
             <input
               type="text"
               placeholder="Buscar ou começar nova conversa"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-gray-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-accent-500 transition-all font-medium"
+              className="w-full h-10 pl-10 pr-4 rounded-xl text-sm font-medium outline-none transition-all"
+              style={{ background: T.hover, color: T.text, border: `1px solid transparent` }}
+              onFocus={e => (e.currentTarget.style.borderColor = T.gold)}
+              onBlur={e => (e.currentTarget.style.borderColor = 'transparent')}
             />
           </div>
         </div>
 
+        {/* Conversation List */}
         <div className="flex-1 overflow-y-auto">
-          {filteredConversations.map(conversa => (
-            <button
-              key={conversa.id}
-              onClick={() => setActiveConversation(conversa)}
-              className={`w-full flex items-center gap-3 p-4 hover:bg-white transition-all border-l-4 ${activeConversation.id === conversa.id ? 'bg-white border-accent-500' : 'border-transparent'
-                }`}
-            >
-              <div className="relative flex-shrink-0">
-                <div className="w-12 h-12 bg-accent-100 rounded-2xl flex items-center justify-center text-accent-700 font-bold">
-                  {conversa.nome[0]}
-                </div>
-                {conversa.online && (
-                  <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />
-                )}
-              </div>
-              <div className="flex-1 min-w-0 text-left">
-                <div className="flex justify-between items-baseline mb-0.5">
-                  <span className="text-sm font-bold text-gray-900 truncate">{conversa.nome}</span>
-                  <span className="text-[10px] font-medium text-gray-400">{conversa.horario}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-xs text-gray-500 truncate">{conversa.ultimaMensagem}</p>
-                  {conversa.naoLidas > 0 && (
-                    <span className="bg-accent-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
-                      {conversa.naoLidas}
-                    </span>
+          {filteredConversations.map(conversa => {
+            const active = activeConversation.id === conversa.id
+            return (
+              <button
+                key={conversa.id}
+                onClick={() => selectConversation(conversa)}
+                className="w-full flex items-center gap-3 p-4 transition-all"
+                style={{
+                  background: active ? T.elevated : 'transparent',
+                  borderLeft: active ? `3px solid ${T.gold}` : '3px solid transparent',
+                }}
+                onMouseEnter={e => { if (!active) e.currentTarget.style.background = T.hover }}
+                onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent' }}
+              >
+                <div className="relative flex-shrink-0">
+                  <div className="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm"
+                    style={{ background: 'rgba(196,157,91,0.12)', color: T.gold }}>
+                    {conversa.nome[0]}
+                  </div>
+                  {conversa.online && (
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full"
+                      style={{ background: 'var(--s-done)', border: `2px solid ${T.elevated}` }} />
                   )}
                 </div>
-              </div>
-            </button>
-          ))}
+                <div className="flex-1 min-w-0 text-left">
+                  <div className="flex justify-between items-baseline mb-0.5">
+                    <span className="text-sm font-semibold truncate" style={{ color: T.text }}>{conversa.nome}</span>
+                    <span className="text-[10px] font-medium flex-shrink-0 ml-2" style={{ color: T.textTertiary }}>{conversa.horario}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <p className="text-xs truncate" style={{ color: T.textMuted }}>{conversa.ultimaMensagem}</p>
+                    {conversa.naoLidas > 0 && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center text-white flex-shrink-0 ml-2"
+                        style={{ background: T.gold }}>{conversa.naoLidas}</span>
+                    )}
+                  </div>
+                </div>
+              </button>
+            )
+          })}
         </div>
       </div>
 
-      {/* ── Chat: Área Principal ────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col bg-white">
-        {/* Header do Chat */}
-        <div className="h-16 flex items-center justify-between px-6 border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="flex items-center gap-3">
-            <button className="md:hidden p-2 -ml-2 hover:bg-gray-100 rounded-xl">
+      {/* ═══════════════ CHAT AREA ═══════════════ */}
+      <div className={`${mobileShowChat ? 'flex' : 'hidden'} lg:flex flex-1 flex-col min-w-0`}
+        style={{ background: T.elevated }}>
+
+        {/* Chat Header */}
+        <div className="h-14 flex items-center justify-between px-3 sm:px-5 flex-shrink-0"
+          style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button className="lg:hidden p-1.5 rounded-xl flex-shrink-0"
+              onClick={() => setMobileShowChat(false)}
+              style={{ color: T.textMuted }}>
               <ArrowLeft size={20} />
             </button>
-            <div className="w-10 h-10 bg-accent-100 rounded-xl flex items-center justify-center text-accent-700 font-bold">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0"
+              style={{ background: 'rgba(196,157,91,0.12)', color: T.gold }}>
               {activeConversation.nome[0]}
             </div>
-            <div>
-              <h2 className="text-sm font-bold text-gray-900 leading-tight">{activeConversation.nome}</h2>
-              <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
-                <span className={activeConversation.online ? 'text-green-500' : ''}>
+            <div className="min-w-0">
+              <h2 className="text-sm font-bold leading-tight truncate" style={{ color: T.text }}>{activeConversation.nome}</h2>
+              <div className="flex items-center gap-1.5 text-[10px] font-medium" style={{ color: T.textTertiary }}>
+                <span style={{ color: activeConversation.online ? 'var(--s-done)' : T.textTertiary }}>
                   {activeConversation.online ? 'Online agora' : 'Visto por último hoje'}
                 </span>
                 <span>•</span>
-                <span className="text-accent-600 px-1.5 py-0.5 bg-accent-50 rounded-md">
-                  {activeConversation.status}
-                </span>
+                <span className="px-1.5 py-0.5 rounded-md"
+                  style={{ background: 'rgba(196,157,91,0.10)', color: T.gold }}>{activeConversation.status}</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
-              <Video size={18} />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
-              <Phone size={18} />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
-              <Search size={18} />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
+          <div className="flex items-center gap-0.5 flex-shrink-0">
+            {[Video, Phone, Search].map((Icon, i) => (
+              <button key={i} className="hidden sm:flex p-2 rounded-xl transition-colors"
+                style={{ color: T.textMuted }}
+                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                <Icon size={18} />
+              </button>
+            ))}
+            <button className="p-2 rounded-xl transition-colors"
+              onClick={() => setShowInfo(!showInfo)}
+              style={{ color: showInfo ? T.gold : T.textMuted }}
+              onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
               <MoreVertical size={18} />
             </button>
           </div>
         </div>
 
-        {/* Disclaimer / Info */}
-        <div className="px-6 py-2 bg-amber-50/50 border-b border-amber-100 flex items-center gap-2">
-          <ShieldCheck size={14} className="text-amber-600" />
-          <p className="text-[10px] text-amber-700 font-medium">
+        {/* WhatsApp API Disclaimer */}
+        <div className="px-3 sm:px-5 py-1.5 flex items-center gap-2 flex-shrink-0"
+          style={{ background: 'var(--s-warm-bg)', borderBottom: `1px solid rgba(196,157,91,0.15)` }}>
+          <ShieldCheck size={13} style={{ color: 'var(--s-warm)' }} />
+          <p className="text-[10px] font-medium" style={{ color: 'var(--s-warm)' }}>
             Integração oficial via <span className="font-bold">WhatsApp Business API</span>. Mensagens criptografadas.
           </p>
         </div>
 
-        {/* Mensagens */}
-        <div
-          ref={scrollRef}
-          className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/30"
-          style={{ backgroundImage: 'radial-gradient(#e5e7eb 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}
-        >
-          <div className="flex justify-center mb-6">
-            <span className="bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-widest border border-gray-100 shadow-sm">
+        {/* Messages Area */}
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3"
+          style={{ background: T.surface }}>
+          <div className="flex justify-center mb-4">
+            <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"
+              style={{ background: T.elevated, color: T.textTertiary, border: `1px solid ${T.border}` }}>
               Hoje
             </span>
           </div>
@@ -309,56 +272,49 @@ export default function WhatsappPage() {
           {messages.map(msg => (
             <div key={msg.id} className={`flex ${msg.eu ? 'justify-end' : 'justify-start'}`}>
               <div
-                className={`max-w-[75%] rounded-2xl px-4 py-2.5 shadow-sm relative group ${msg.eu
-                  ? 'bg-accent-600 text-white rounded-tr-none'
-                  : 'bg-white border border-gray-100 text-gray-900 rounded-tl-none'
-                  }`}
+                className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 ${msg.eu ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}
+                style={msg.eu
+                  ? { background: `linear-gradient(135deg, ${T.gold}, #8B5E1F)`, color: '#fff' }
+                  : { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
+                }
               >
-                <p className="text-sm leading-relaxed">{msg.texto}</p>
-                <div className={`flex items-center justify-end gap-1 mt-1 ${msg.eu ? 'text-white/70' : 'text-gray-400'}`}>
+                <p className="text-sm leading-relaxed" style={msg.eu ? {} : { color: T.text }}>{msg.texto}</p>
+                <div className="flex items-center justify-end gap-1 mt-1"
+                  style={{ color: msg.eu ? 'rgba(255,255,255,0.65)' : T.textTertiary }}>
                   <span className="text-[10px] font-medium">{msg.horario}</span>
-                  {msg.eu && (
-                    <span>
-                      {msg.status === 'read' ? <CheckCheck size={12} /> : <Check size={12} />}
-                    </span>
-                  )}
+                  {msg.eu && (msg.status === 'read' ? <CheckCheck size={12} /> : <Check size={12} />)}
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Input e Ferramentas */}
-        <div className="p-4 bg-white border-t border-gray-100">
+        {/* Input Area — always at bottom */}
+        <div className="flex-shrink-0 p-3 sm:p-4" style={{ borderTop: `1px solid ${T.border}`, background: T.elevated }}>
           {(showTemplates || aiLoading) && (
-            <div className="mb-4 flex flex-wrap gap-2 animate-in slide-in-from-bottom-2">
+            <div className="mb-3 flex flex-wrap gap-2">
               {aiLoading ? (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-accent-50 text-accent-700 rounded-xl text-xs font-semibold border border-accent-100">
-                  <Loader2 size={14} className="animate-spin" />
-                  IA formulando resposta estratégica...
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold"
+                  style={{ background: 'rgba(196,157,91,0.10)', color: T.gold, border: `1px solid rgba(196,157,91,0.20)` }}>
+                  <Loader2 size={14} className="animate-spin" /> IA formulando resposta...
                 </div>
               ) : (
                 <>
                   {TEMPLATES_WHATSAPP.map(tpl => (
-                    <button
-                      key={tpl.id}
-                      onClick={() => applyTemplate(tpl.text)}
-                      className="px-3 py-1.5 bg-accent-50 text-accent-700 rounded-xl text-xs font-semibold hover:bg-accent-100 transition-colors border border-accent-100"
-                    >
+                    <button key={tpl.id} onClick={() => applyTemplate(tpl.text)}
+                      className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
+                      style={{ background: 'rgba(196,157,91,0.10)', color: T.gold, border: `1px solid rgba(196,157,91,0.20)` }}>
                       {tpl.label}
                     </button>
                   ))}
-                  <button
-                    onClick={generateAIReply}
-                    className="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors border border-indigo-100 flex items-center gap-1.5"
-                  >
-                    <Sparkles size={14} />
-                    Auto-Reply IA
+                  <button onClick={generateAIReply}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors"
+                    style={{ background: 'var(--s-cold-bg)', color: 'var(--s-cold)', border: `1px solid rgba(123,158,196,0.20)` }}>
+                    <Sparkles size={14} /> Auto-Reply IA
                   </button>
-                  <button
-                    onClick={() => setShowTemplates(false)}
-                    className="px-3 py-1.5 bg-gray-100 text-gray-500 rounded-xl text-xs font-semibold hover:bg-gray-200"
-                  >
+                  <button onClick={() => setShowTemplates(false)}
+                    className="px-3 py-1.5 rounded-xl text-xs font-semibold"
+                    style={{ background: T.hover, color: T.textMuted }}>
                     Cancelar
                   </button>
                 </>
@@ -367,109 +323,105 @@ export default function WhatsappPage() {
           )}
 
           <div className="flex items-end gap-2">
-            <div className="flex gap-1 mb-1">
-              <button
-                onClick={() => setShowTemplates(!showTemplates)}
-                className={`p-2.5 rounded-xl transition-all ${showTemplates ? 'bg-accent-600 text-white' : 'hover:bg-gray-100 text-gray-500'
-                  }`}
-                title="Templates & IA"
-              >
-                <Zap size={20} />
-              </button>
-              <button className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
-                <Paperclip size={20} />
-              </button>
-              <button className="p-2.5 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors">
-                <Smile size={20} />
-              </button>
+            <div className="flex gap-0.5 mb-0.5 flex-shrink-0">
+              <button onClick={() => setShowTemplates(!showTemplates)}
+                className="p-2 sm:p-2.5 rounded-xl transition-all"
+                style={{ background: showTemplates ? T.gold : 'transparent', color: showTemplates ? '#fff' : T.textMuted }}
+                title="Templates & IA"><Zap size={18} /></button>
+              <button className="hidden sm:flex p-2.5 rounded-xl transition-colors" style={{ color: T.textMuted }}
+                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}><Paperclip size={18} /></button>
+              <button className="hidden sm:flex p-2.5 rounded-xl transition-colors" style={{ color: T.textMuted }}
+                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}><Smile size={18} /></button>
             </div>
-
-            <div className="flex-1 relative">
+            <div className="flex-1">
               <textarea
                 value={newMessage}
                 onChange={e => setNewMessage(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
                 placeholder="Digite uma mensagem..."
-                className="w-full h-11 py-3 px-4 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-accent-500 transition-all font-medium resize-none shadow-inner"
+                className="w-full h-11 py-3 px-4 rounded-2xl text-sm font-medium resize-none outline-none transition-all"
+                style={{ background: T.surface, color: T.text, border: `1px solid ${T.border}` }}
+                onFocus={e => (e.currentTarget.style.borderColor = T.gold)}
+                onBlur={e => (e.currentTarget.style.borderColor = T.border)}
               />
             </div>
-
-            <button
-              onClick={handleSend}
-              disabled={!newMessage.trim()}
-              className="h-11 w-11 flex items-center justify-center bg-accent-600 text-white rounded-2xl hover:bg-accent-700 transition-all disabled:opacity-50 disabled:hover:bg-accent-600 shadow-md shadow-accent-200"
-            >
+            <button onClick={handleSend} disabled={!newMessage.trim()}
+              className="h-11 w-11 flex items-center justify-center rounded-2xl transition-all disabled:opacity-40 flex-shrink-0"
+              style={{ background: `linear-gradient(135deg, ${T.gold}, #8B5E1F)`, color: '#fff' }}>
               <Send size={18} />
             </button>
           </div>
         </div>
       </div>
 
-      {/* ── Painel Direito: Info do Lead ────────────────────────────── */}
-      <div className="hidden xl:flex w-72 border-l border-gray-100 flex-col bg-gray-50/30">
-        <div className="p-6 text-center border-b border-gray-100 bg-white shadow-sm">
-          <div className="w-20 h-20 bg-accent-100 rounded-3xl mx-auto flex items-center justify-center text-accent-700 text-2xl font-bold mb-3 shadow-lg shadow-accent-100">
-            {activeConversation.nome[0]}
+      {/* ═══════════════ INFO PANEL (RIGHT) ═══════════════ */}
+      {showInfo && (
+        <div className="hidden lg:flex w-72 flex-col flex-shrink-0"
+          style={{ borderLeft: `1px solid ${T.border}`, background: T.surface }}>
+          <div className="p-5 text-center flex-shrink-0" style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
+            <button className="absolute right-2 top-2 p-1 rounded-lg lg:hidden" onClick={() => setShowInfo(false)}
+              style={{ color: T.textMuted }}><X size={16} /></button>
+            <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold mb-3"
+              style={{ background: 'rgba(196,157,91,0.12)', color: T.gold }}>
+              {activeConversation.nome[0]}
+            </div>
+            <h3 className="font-bold text-sm" style={{ color: T.text }}>{activeConversation.nome}</h3>
+            <p className="text-xs mt-1 font-medium" style={{ color: T.textMuted }}>{activeConversation.telefone}</p>
           </div>
-          <h3 className="font-bold text-gray-900">{activeConversation.nome}</h3>
-          <p className="text-xs text-gray-500 mt-1 font-medium">{activeConversation.telefone}</p>
-        </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          <section>
-            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">CRM Insight</h4>
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-xs">
-                <Clock size={14} className="text-gray-400" />
-                <span className="text-gray-500 font-medium">Última visita: 14:32</span>
+          <div className="flex-1 overflow-y-auto p-5 space-y-5">
+            <section>
+              <h4 className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: T.textTertiary }}>CRM Insight</h4>
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-2 text-xs" style={{ color: T.textMuted }}>
+                  <Clock size={14} style={{ color: T.textTertiary }} />
+                  <span className="font-medium">Última visita: 14:32</span>
+                </div>
+                <div className="flex items-center gap-2 text-[10px] px-2 py-1 rounded-lg font-bold w-fit"
+                  style={{ background: 'var(--s-cold-bg)', color: 'var(--s-cold)' }}>
+                  <ShieldCheck size={12} /><span>Lead Qualificado</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-bold" style={{ color: T.text }}>
+                  <AlertCircle size={14} style={{ color: T.textTertiary }} />
+                  <span>Value: R$ 2.4M</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-[10px] bg-blue-50 text-blue-700 px-2 py-1 rounded-lg font-bold w-fit">
-                <ShieldCheck size={12} />
-                <span>Lead Qualificado</span>
+            </section>
+
+            <section>
+              <h4 className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: T.textTertiary }}>Segmentação</h4>
+              <div className="flex flex-wrap gap-1.5">
+                <span className="px-2 py-1 rounded-lg text-[10px] font-bold"
+                  style={{ background: 'rgba(196,157,91,0.10)', color: T.gold, border: `1px solid rgba(196,157,91,0.20)` }}>Reserva Atlantis</span>
+                <span className="px-2 py-1 rounded-lg text-[10px] font-bold"
+                  style={{ background: 'var(--s-cold-bg)', color: 'var(--s-cold)', border: '1px solid rgba(123,158,196,0.20)' }}>Investidor</span>
+                <span className="px-2 py-1 rounded-lg text-[10px] font-bold"
+                  style={{ background: 'var(--s-done-bg)', color: 'var(--s-done)', border: '1px solid rgba(107,184,123,0.20)' }}>Alta Renda</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-900 font-bold">
-                <AlertCircle size={14} className="text-gray-400" />
-                <span>Value: R$ 2.4M</span>
+            </section>
+
+            <section>
+              <h4 className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: T.textTertiary }}>Notas de Contexto</h4>
+              <div className="p-3 rounded-xl relative overflow-hidden"
+                style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                <div className="absolute top-0 left-0 w-1 h-full" style={{ background: T.gold }} />
+                <p className="text-[10px] italic leading-relaxed font-medium pl-2" style={{ color: T.textMuted }}>
+                  "Busca rentabilidade anual superior a 15%. Interessada em unidades com vista mar definitiva em Boa Viagem."
+                </p>
               </div>
-            </div>
-          </section>
+            </section>
+          </div>
 
-          <section>
-            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Segmentação</h4>
-            <div className="flex flex-wrap gap-1.5">
-              <span className="px-2 py-1 bg-accent-50 text-accent-700 rounded-lg text-[10px] font-bold border border-accent-100">Reserva Atlantis</span>
-              <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-bold border border-indigo-100">Investidor</span>
-              <span className="px-2 py-1 bg-green-50 text-green-700 rounded-lg text-[10px] font-bold border border-green-100">Alta Renda</span>
-            </div>
-          </section>
-
-          <section>
-            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Notas de Contexto</h4>
-            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-accent-500" />
-              <p className="text-[10px] text-gray-600 italic leading-relaxed font-medium">
-                "Busca rentabilidade anual superior a 15%. Interessada em unidades com vista mar definitiva em Boa Viagem."
-              </p>
-            </div>
-          </section>
+          <div className="p-4 flex-shrink-0" style={{ borderTop: `1px solid ${T.border}`, background: T.elevated }}>
+            <button className="w-full h-10 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
+              style={{ background: `linear-gradient(135deg, ${T.gold}, #8B5E1F)`, color: '#fff' }}>
+              Ver Ficha Completa →
+            </button>
+          </div>
         </div>
-
-        <div className="p-4 border-t border-gray-100 bg-white">
-          <button className="w-full h-10 bg-gray-900 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-all flex items-center justify-center gap-2">
-            Ver Ficha Completa
-            <ArrowRight size={14} />
-          </button>
-        </div>
-      </div>
+      )}
     </div>
-  )
-}
-
-function ArrowRight({ size, className }: { size: number; className?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
   )
 }
