@@ -128,7 +128,7 @@ export default function UsuariosPage() {
       ) : (
         <>
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
             <div className="bg-white rounded-xl p-4 border">
               <p className="text-xs text-gray-600 mb-1">Total</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>

@@ -332,8 +332,8 @@ export default function ConteudosPage() {
             subtitle="Mapeamento cronológico de publicações"
             className="bg-imi-50/50"
           />
-          <CardBody className="p-8">
-            <div className="grid grid-cols-7 gap-4">
+          <CardBody className="p-4 sm:p-8 overflow-x-auto">
+            <div className="grid grid-cols-7 gap-2 sm:gap-4 min-w-[500px]">
               {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map((day) => (
                 <div
                   key={day}

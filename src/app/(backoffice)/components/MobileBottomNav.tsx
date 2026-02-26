@@ -6,9 +6,9 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     LayoutDashboard, Building2, Users, BarChart3, X,
-    FileText, DollarSign, Briefcase, BookOpen, Settings,
-    MessageSquare, Bell, Banknote, FolderOpen, MoreHorizontal,
-    Scale, CreditCard, FileStack, Layers, Target, Zap, Mail, FileSignature, LogOut,
+    FileText, Briefcase, BookOpen, Settings,
+    MessageSquare, Banknote, FolderOpen, MoreHorizontal,
+    Scale, CreditCard, FileStack, Layers, Zap, FileSignature, LogOut,
     Megaphone, BarChart2, Plug
 } from 'lucide-react'
 
@@ -21,41 +21,44 @@ const MAIN = [
 
 const GROUPS = [
     {
-        label: 'Operações',
+        label: 'Operações Imobiliárias',
         items: [
+            { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
+            { name: 'Construtoras', href: '/backoffice/construtoras', icon: Building2 },
+            { name: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
             { name: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale },
-            { name: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova', icon: FileText },
             { name: 'Contratos', href: '/backoffice/contratos', icon: FileSignature },
-            { name: 'Email + Honorários', href: '/backoffice/avaliacoes/email-honorarios', icon: Mail },
-            { name: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
-            { name: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
             { name: 'Consultoria', href: '/backoffice/consultorias', icon: Briefcase },
-            { name: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+            { name: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
         ],
     },
     {
-        label: 'Portfólio',
+        label: 'Comercial',
         items: [
-            { name: 'Portfólio', href: '/backoffice/imoveis', icon: Building2 },
-            { name: 'Construtoras', href: '/backoffice/construtoras', icon: Building2 },
-            { name: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
+            { name: 'Leads', href: '/backoffice/leads', icon: Users },
+            { name: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+            { name: 'Omni Channel', href: '/backoffice/omnichannel', icon: Layers },
+        ],
+    },
+    {
+        label: 'Financeiro',
+        items: [
             { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
         ],
     },
     {
-        label: 'Gestão',
+        label: 'Marketing & Growth',
         items: [
-            { name: 'Leads', href: '/backoffice/leads', icon: Users },
-            { name: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
+            { name: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
+            { name: 'Conteúdos', href: '/backoffice/conteudos', icon: FileText },
+            { name: 'Tracking', href: '/backoffice/tracking', icon: BarChart2 },
             { name: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
         ],
     },
     {
-        label: 'Marketing',
+        label: 'Relatórios',
         items: [
-            { name: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
-            { name: 'Conteúdo', href: '/backoffice/conteudos', icon: FileText },
-            { name: 'Tracking', href: '/backoffice/tracking', icon: BarChart2 },
+            { name: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
         ],
     },
     {
@@ -63,8 +66,8 @@ const GROUPS = [
         items: [
             { name: 'Equipe', href: '/backoffice/equipe', icon: Users },
             { name: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
-            { name: 'Configurações', href: '/backoffice/settings', icon: Settings },
             { name: 'Automações', href: '/backoffice/automacoes', icon: Zap },
+            { name: 'Configurações', href: '/backoffice/settings', icon: Settings },
         ],
     },
 ]
@@ -95,16 +98,18 @@ export function MobileBottomNav() {
                         WebkitBackdropFilter: 'blur(24px)',
                         border: '1px solid var(--bo-border)',
                         boxShadow: 'var(--bo-shadow)',
+                        height: '60px',
                     }}
                 >
-                    <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center justify-between px-1 h-full">
                         {MAIN.map(item => {
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
                                 <Link key={item.href} href={item.href} className="flex-1">
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="relative flex flex-col items-center justify-center py-3 w-full"
+                                        className="relative flex flex-col items-center justify-center w-full"
+                                        style={{ minHeight: '44px' }}
                                     >
                                         <AnimatePresence>
                                             {active && (
@@ -139,7 +144,8 @@ export function MobileBottomNav() {
                         <motion.button
                             whileTap={{ scale: 0.85 }}
                             onClick={() => setOpen(!open)}
-                            className="relative flex-1 flex flex-col items-center justify-center py-3"
+                            className="relative flex-1 flex flex-col items-center justify-center"
+                            style={{ minHeight: '44px' }}
                         >
                             <AnimatePresence>
                                 {open && (
@@ -258,8 +264,9 @@ export function MobileBottomNav() {
                                                     <Link
                                                         href={item.href}
                                                         onClick={() => setOpen(false)}
-                                                        className="flex items-center gap-4 px-5 py-3 mx-2 rounded-xl transition-all"
+                                                        className="flex items-center gap-4 px-5 mx-2 rounded-xl transition-all"
                                                         style={{
+                                                            minHeight: '44px',
                                                             background: active ? 'var(--bo-active-bg)' : 'transparent',
                                                             color: active ? 'var(--nav-active)' : 'var(--bo-text-muted)',
                                                         }}

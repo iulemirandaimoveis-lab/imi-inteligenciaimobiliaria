@@ -5,9 +5,9 @@ import Link from 'next/link'
 import {
     LayoutDashboard, Building2, FileText, Users, Scale,
     Settings, ChevronDown, ChevronRight, LogOut,
-    BookOpen, Mail, Sparkles, Calculator, BarChart2,
-    BookmarkPlus, Target, Zap, CreditCard, Briefcase,
-    FileStack, FolderOpen, Banknote, Home, TrendingUp,
+    BookOpen, BarChart2,
+    Zap, CreditCard, Briefcase,
+    FileStack, FolderOpen, Banknote,
     FileSignature, Layers, MessageSquare, Megaphone, Plug
 } from 'lucide-react'
 import { useState } from 'react'
@@ -20,80 +20,112 @@ interface NavItem {
     children?: NavItem[]
 }
 
-const NAV: NavItem[] = [
-    { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
+interface NavSection {
+    label: string
+    items: NavItem[]
+}
+
+const SECTIONS: NavSection[] = [
     {
-        label: 'Avaliações', icon: Scale, badge: '5',
-        children: [
-            { label: 'Todas', href: '/backoffice/avaliacoes', icon: FileText },
-            { label: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova', icon: BookmarkPlus },
-            { label: 'Email + Honorários', href: '/backoffice/avaliacoes/email-honorarios', icon: Mail },
-            { label: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
+        label: 'Painel',
+        items: [
+            { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
         ]
     },
     {
-        label: 'Imóveis', icon: Building2,
-        children: [
-            { label: 'Portfólio', href: '/backoffice/imoveis', icon: Building2 },
-            { label: 'Novo Imóvel', href: '/backoffice/imoveis/novo', icon: BookmarkPlus },
+        label: 'Operações Imobiliárias',
+        items: [
+            {
+                label: 'Imóveis', icon: Building2,
+                children: [
+                    { label: 'Portfólio', href: '/backoffice/imoveis', icon: Building2 },
+                    { label: 'Novo Imóvel', href: '/backoffice/imoveis/novo', icon: Building2 },
+                ]
+            },
             { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building2 },
+            { label: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
+            {
+                label: 'Avaliações', icon: Scale,
+                children: [
+                    { label: 'Todas', href: '/backoffice/avaliacoes', icon: Scale },
+                    { label: 'Nova', href: '/backoffice/avaliacoes/nova', icon: Scale },
+                    { label: 'Email + Honorários', href: '/backoffice/avaliacoes/email-honorarios', icon: Scale },
+                    { label: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
+                ]
+            },
+            {
+                label: 'Contratos', icon: FileSignature,
+                children: [
+                    { label: 'Gerenciador', href: '/backoffice/contratos', icon: FileSignature },
+                    { label: 'Novo', href: '/backoffice/contratos/novo', icon: FileSignature },
+                ]
+            },
+            {
+                label: 'Consultoria', icon: Briefcase,
+                children: [
+                    { label: 'Consultorias', href: '/backoffice/consultorias', icon: Briefcase },
+                    { label: 'Nova', href: '/backoffice/consultorias/nova', icon: Briefcase },
+                ]
+            },
+            {
+                label: 'Crédito', icon: CreditCard,
+                children: [
+                    { label: 'Operações', href: '/backoffice/credito', icon: CreditCard },
+                    { label: 'Simulador', href: '/backoffice/credito/simulador', icon: CreditCard },
+                ]
+            },
         ]
     },
     {
-        label: 'Leads', icon: Users,
-        children: [
-            { label: 'Pipeline', href: '/backoffice/leads', icon: Users },
-            { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: BookmarkPlus },
+        label: 'Comercial',
+        items: [
+            {
+                label: 'Leads', icon: Users,
+                children: [
+                    { label: 'Pipeline', href: '/backoffice/leads', icon: Users },
+                    { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: Users },
+                ]
+            },
+            { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+            { label: 'Omni Channel', href: '/backoffice/omnichannel', icon: Layers },
         ]
     },
     {
-        label: 'Marketing', icon: Megaphone,
-        children: [
+        label: 'Financeiro',
+        items: [
+            {
+                label: 'Financeiro', icon: Banknote,
+                children: [
+                    { label: 'Visão Geral', href: '/backoffice/financeiro', icon: Banknote },
+                    { label: 'A Receber', href: '/backoffice/financeiro/receber', icon: Banknote },
+                    { label: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: Banknote },
+                    { label: 'Metas', href: '/backoffice/financeiro/metas', icon: Banknote },
+                ]
+            },
+        ]
+    },
+    {
+        label: 'Marketing & Growth',
+        items: [
             { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
-            { label: 'Conteúdo', href: '/backoffice/conteudos', icon: FileText },
+            { label: 'Conteúdos', href: '/backoffice/conteudos', icon: FileText },
             { label: 'Tracking', href: '/backoffice/tracking', icon: BarChart2 },
+            { label: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
         ]
     },
     {
-        label: 'Crédito', icon: CreditCard,
-        children: [
-            { label: 'Operações', href: '/backoffice/credito', icon: CreditCard },
-            { label: 'Simulador', href: '/backoffice/credito/simulador', icon: Calculator },
+        label: 'Relatórios',
+        items: [
+            { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
         ]
     },
     {
-        label: 'Consultoria', icon: Briefcase,
-        children: [
-            { label: 'Consultorias', href: '/backoffice/consultorias', icon: Briefcase },
-            { label: 'Nova', href: '/backoffice/consultorias/nova', icon: BookmarkPlus },
-        ]
-    },
-    { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
-    {
-        label: 'Contratos', icon: FileSignature,
-        children: [
-            { label: 'Gerenciador', href: '/backoffice/contratos', icon: FileSignature },
-            { label: 'Novo Contrato', href: '/backoffice/contratos/novo', icon: BookmarkPlus },
-        ]
-    },
-    { label: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
-    {
-        label: 'Financeiro', icon: Banknote,
-        children: [
-            { label: 'Visão Geral', href: '/backoffice/financeiro', icon: BarChart2 },
-            { label: 'A Receber', href: '/backoffice/financeiro/receber', icon: TrendingUp },
-            { label: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: TrendingUp },
-            { label: 'Metas & Performance', href: '/backoffice/financeiro/metas', icon: Target },
-        ]
-    },
-    { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
-    {
-        label: 'Sistema', icon: Settings,
-        children: [
+        label: 'Sistema',
+        items: [
             { label: 'Equipe', href: '/backoffice/equipe', icon: Users },
             { label: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
-            { label: 'Configurações', href: '/backoffice/settings', icon: Settings },
             { label: 'Automações', href: '/backoffice/automacoes', icon: Zap },
+            { label: 'Configurações', href: '/backoffice/settings', icon: Settings },
         ]
     },
 ]
@@ -221,9 +253,21 @@ export function DesktopSidebar() {
             </div>
 
             {/* Nav */}
-            <nav className="flex-1 overflow-y-auto py-3 px-2.5 space-y-0.5">
-                {NAV.map(item => (
-                    <NavItemComponent key={item.href || item.label} item={item} />
+            <nav className="flex-1 overflow-y-auto py-3 px-2.5">
+                {SECTIONS.map((section, idx) => (
+                    <div key={section.label} className={idx > 0 ? 'mt-4' : ''}>
+                        <p
+                            className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em]"
+                            style={{ color: 'var(--bo-text-muted)', opacity: 0.7 }}
+                        >
+                            {section.label}
+                        </p>
+                        <div className="space-y-0.5">
+                            {section.items.map(item => (
+                                <NavItemComponent key={item.href || item.label} item={item} />
+                            ))}
+                        </div>
+                    </div>
                 ))}
             </nav>
 

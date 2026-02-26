@@ -264,7 +264,7 @@ export default function IntegracoesPage() {
                 </motion.div>
 
                 {/* Status geral */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                         { label: 'Conectadas', value: conectadas, color: '#6BB87B' },
                         { label: 'Disponíveis', value: INTEGRACOES.length, color: '#7B9EC4' },
