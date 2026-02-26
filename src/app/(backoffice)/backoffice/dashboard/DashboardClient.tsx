@@ -212,8 +212,8 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
                     style={{
-                        background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)',
-                        boxShadow: '0 2px 12px rgba(196,157,91,0.35)',
+                        background: '#C49D5B',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
                     }}
                 >
                     <Plus size={16} />
@@ -223,7 +223,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
             </motion.div>
 
             {/* ── KPI Grid ─────────────────────────────────────── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                 {KPIS.map((kpi, i) => <KPICard key={kpi.label} kpi={kpi} index={i} />)}
             </div>
 

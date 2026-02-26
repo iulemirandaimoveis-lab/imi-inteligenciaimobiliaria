@@ -132,7 +132,7 @@ export default function SettingsPage() {
   }
 
   const toggleCheckedStyle = {
-    background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)',
+    background: '#C49D5B',
   }
 
   const toggleUncheckedStyle = {
@@ -155,7 +155,7 @@ export default function SettingsPage() {
           onClick={handleSave}
           disabled={isSaving}
           className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}
+          style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
         >
           {isSaving ? (
             <><Loader2 size={16} className="animate-spin" /> Salvando...</>

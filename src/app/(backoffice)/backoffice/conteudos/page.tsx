@@ -326,7 +326,7 @@ export default function ConteudosPage() {
           )}
         </>
       ) : (
-        <Card className="shadow-elevated border-imi-50 overflow-hidden">
+        <Card className="shadow-elevated border-imi-50 overflow-visible">
           <CardHeader
             title="Editorial Planner"
             subtitle="Mapeamento cronológico de publicações"

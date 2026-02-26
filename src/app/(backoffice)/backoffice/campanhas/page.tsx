@@ -214,7 +214,7 @@ export default function CampanhasPage() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
                 <div className="bg-white rounded-xl p-4 border border-gray-100">
                     <p className="text-xs text-gray-600 mb-1">Orçamento Total</p>
                     <p className="text-2xl font-bold text-gray-900">{formatPrice(totalStats.budget)}</p>
@@ -250,7 +250,7 @@ export default function CampanhasPage() {
             </div>
 
             {/* Métricas Médias */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
                     <p className="text-xs text-blue-700 font-medium mb-1">CTR Médio</p>
                     <p className="text-2xl font-bold text-blue-900">{totalStats.avgCTR}%</p>

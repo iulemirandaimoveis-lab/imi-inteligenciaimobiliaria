@@ -132,7 +132,7 @@ export default function EquipePage() {
                 </div>
                 <motion.button whileTap={{ scale: 0.96 }}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}>
+                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                     <Plus size={16} /> Adicionar Membro
                 </motion.button>
             </motion.div>

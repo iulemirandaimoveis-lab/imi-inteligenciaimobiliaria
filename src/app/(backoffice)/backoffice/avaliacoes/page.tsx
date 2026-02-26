@@ -84,7 +84,7 @@ export default function AvaliacoesPage() {
                 <motion.button whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}
+                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Nova Avaliação
                 </motion.button>
@@ -156,7 +156,7 @@ export default function AvaliacoesPage() {
                         <button key={t.key} onClick={() => setTab(t.key)}
                             className="px-3.5 h-8 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: tab === t.key ? 'linear-gradient(135deg, #C49D5B, #8B5E1F)' : T.elevated,
+                                background: tab === t.key ? '#C49D5B' : T.elevated,
                                 color: tab === t.key ? 'white' : T.textDim,
                                 border: `1px solid ${tab === t.key ? T.borderGold : T.border}`,
                             }}

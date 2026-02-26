@@ -160,7 +160,7 @@ export default function FluxoCaixaPage() {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white rounded-xl p-5 border">
                     <div className="flex items-center justify-between mb-3">
                         <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Saldo Anterior</p>
@@ -280,20 +280,20 @@ export default function FluxoCaixaPage() {
                 <table className="w-full">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Data</th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Descrição</th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Categoria</th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Valor</th>
+                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Data</th>
+                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Descrição</th>
+                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Categoria</th>
+                            <th className="px-3 sm:px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th className="px-3 sm:px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Valor</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {filtered.map((l) => (
                             <tr key={l.id} className="hover:bg-gray-50 transition-colors">
-                                <td className="px-6 py-4 text-sm text-gray-600">
+                                <td className="px-3 sm:px-6 py-4 text-sm text-gray-600">
                                     {new Date(l.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className="px-3 sm:px-6 py-4">
                                     <div className="flex items-center gap-3">
                                         {l.tipo === 'entrada'
                                             ? <ArrowUpCircle size={16} className="text-green-500 flex-shrink-0" />
@@ -302,12 +302,12 @@ export default function FluxoCaixaPage() {
                                         <span className="text-sm text-gray-900">{l.descricao}</span>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className="px-3 sm:px-6 py-4">
                                     <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">
                                         {l.categoria}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className="px-3 sm:px-6 py-4">
                                     <span className={`px-2 py-1 rounded text-xs font-medium ${l.status === 'confirmado'
                                             ? 'bg-green-50 text-green-700'
                                             : 'bg-orange-50 text-orange-700'
@@ -315,7 +315,7 @@ export default function FluxoCaixaPage() {
                                         {l.status === 'confirmado' ? 'Confirmado' : 'Pendente'}
                                     </span>
                                 </td>
-                                <td className={`px-6 py-4 text-right text-sm font-bold ${l.tipo === 'entrada' ? 'text-green-700' : 'text-red-700'}`}>
+                                <td className={`px-3 sm:px-6 py-4 text-right text-sm font-bold ${l.tipo === 'entrada' ? 'text-green-700' : 'text-red-700'}`}>
                                     {l.tipo === 'saida' ? '-' : '+'}{formatCurrency(l.valor)}
                                 </td>
                             </tr>

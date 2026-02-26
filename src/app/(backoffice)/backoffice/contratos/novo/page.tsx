@@ -81,7 +81,7 @@ function FormParte({ titulo, parte, onChange }: { titulo: string; parte: any; on
                 {['pessoa_fisica', 'pessoa_juridica'].map(t => (
                     <button key={t} onClick={() => onChange({ ...parte, tipo: t })}
                         className="flex-1 h-10 rounded-xl text-xs font-semibold transition-all"
-                        style={{ background: parte.tipo === t ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated, color: parte.tipo === t ? 'white' : T.textDim, border: `1px solid ${parte.tipo === t ? T.borderGold : T.border}` }}>
+                        style={{ background: parte.tipo === t ? '#C49D5B' : T.elevated, color: parte.tipo === t ? 'white' : T.textDim, border: `1px solid ${parte.tipo === t ? T.borderGold : T.border}` }}>
                         {t === 'pessoa_fisica' ? '👤 Pessoa Física' : '🏢 Pessoa Jurídica'}
                     </button>
                 ))}
@@ -209,7 +209,7 @@ function NovoContratoInner() {
                         <div key={s.id} className="flex items-center flex-shrink-0">
                             <div className="flex flex-col items-center">
                                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                                    style={{ background: i < step ? '#6BB87B' : i === step ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
+                                    style={{ background: i < step ? '#6BB87B' : i === step ? '#C49D5B' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
                                     {i < step ? '✓' : i + 1}
                                 </div>
                                 <span className="text-[9px] mt-1 hidden sm:block" style={{ color: i === step ? T.gold : T.textDim }}>{s.label}</span>
@@ -228,7 +228,7 @@ function NovoContratoInner() {
                             <div className="flex gap-2 overflow-x-auto pb-0.5">
                                 {['todos', ...Object.keys(CATEGORIAS_LABEL)].map(cat => (
                                     <button key={cat} onClick={() => setCatF(cat)} className="px-3 h-8 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
-                                        style={{ background: catF === cat ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated, color: catF === cat ? 'white' : T.textDim, border: `1px solid ${catF === cat ? T.borderGold : T.border}` }}>
+                                        style={{ background: catF === cat ? '#C49D5B' : T.elevated, color: catF === cat ? 'white' : T.textDim, border: `1px solid ${catF === cat ? T.borderGold : T.border}` }}>
                                         {cat === 'todos' ? 'Todos' : `${ICONES_CAT[cat] || ''} ${(CATEGORIAS_LABEL as any)[cat]}`}
                                     </button>
                                 ))}
@@ -290,7 +290,7 @@ function NovoContratoInner() {
                                     <div className="flex gap-2 flex-wrap">
                                         {idiomasSel.map(l => (
                                             <button key={l} onClick={() => setIdiomaPrim(l)} className="flex items-center gap-1.5 px-3 h-8 rounded-xl text-xs font-semibold transition-all"
-                                                style={{ background: idiomaPrim === l ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated, color: idiomaPrim === l ? 'white' : T.textDim, border: `1px solid ${idiomaPrim === l ? T.borderGold : T.border}` }}>
+                                                style={{ background: idiomaPrim === l ? '#C49D5B' : T.elevated, color: idiomaPrim === l ? 'white' : T.textDim, border: `1px solid ${idiomaPrim === l ? T.borderGold : T.border}` }}>
                                                 {(IDIOMAS_LABEL as any)[l]?.flag} {(IDIOMAS_LABEL as any)[l]?.label}
                                             </button>
                                         ))}
@@ -389,7 +389,7 @@ function NovoContratoInner() {
                             {idiomasSel.map(lang => (
                                 <motion.button key={lang} whileTap={{ scale: 0.97 }} onClick={() => gerar(lang)} disabled={gerando}
                                     className="w-full flex items-center justify-between h-14 px-6 rounded-2xl font-semibold text-sm text-white"
-                                    style={{ background: gerando ? 'rgba(196,157,91,0.18)' : 'linear-gradient(135deg,#C49D5B,#8B5E1F)', boxShadow: gerando ? 'none' : '0 4px 20px rgba(196,157,91,0.28)' }}>
+                                    style={{ background: gerando ? 'rgba(196,157,91,0.18)' : '#C49D5B', boxShadow: gerando ? 'none' : '0 1px 2px rgba(0,0,0,0.1)' }}>
                                     <div className="flex items-center gap-3">
                                         {gerando ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
                                         <span>Gerar em {(IDIOMAS_LABEL as any)[lang]?.flag} {(IDIOMAS_LABEL as any)[lang]?.label}</span>
@@ -428,14 +428,14 @@ function NovoContratoInner() {
                             <div className="flex gap-2">
                                 {(['email', 'whatsapp', 'ambos'] as const).map(c => (
                                     <button key={c} onClick={() => setCanal(c)} className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-semibold transition-all"
-                                        style={{ background: canal === c ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated, color: canal === c ? 'white' : T.textDim, border: `1px solid ${canal === c ? T.borderGold : T.border}` }}>
+                                        style={{ background: canal === c ? '#C49D5B' : T.elevated, color: canal === c ? 'white' : T.textDim, border: `1px solid ${canal === c ? T.borderGold : T.border}` }}>
                                         {c === 'email' ? <><Mail size={12} />Email</> : c === 'whatsapp' ? <><MessageSquare size={12} />WhatsApp</> : '📤 Ambos'}
                                     </button>
                                 ))}
                             </div>
                             {envioOk
                                 ? <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: '#6BB87B' }} /><p className="text-xs font-semibold" style={{ color: '#6BB87B' }}>Enviado com sucesso!</p></div>
-                                : <button onClick={enviar} disabled={enviando} className="w-full h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2" style={{ background: 'linear-gradient(135deg,#C49D5B,#8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.25)' }}>
+                                : <button onClick={enviar} disabled={enviando} className="w-full h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2" style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                                     {enviando ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                                     {enviando ? 'Enviando...' : `Enviar via ${canal}`}
                                 </button>
@@ -478,7 +478,7 @@ function NovoContratoInner() {
                     </button>
                     {step < STEPS.length - 1 && (
                         <button onClick={() => setStep(s => s + 1)} disabled={!ok()} className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white transition-all"
-                            style={{ background: ok() ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : 'rgba(196,157,91,0.15)', opacity: ok() ? 1 : 0.5, boxShadow: ok() ? '0 2px 12px rgba(196,157,91,0.25)' : 'none' }}>
+                            style={{ background: ok() ? '#C49D5B' : 'rgba(196,157,91,0.15)', opacity: ok() ? 1 : 0.5, boxShadow: ok() ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}>
                             Avançar <ChevronRight size={16} />
                         </button>
                     )}

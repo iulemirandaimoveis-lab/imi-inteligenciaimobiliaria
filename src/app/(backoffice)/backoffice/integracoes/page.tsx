@@ -222,7 +222,7 @@ function ConfigModal({
 
                     <button onClick={handleSave} disabled={saving}
                         className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
-                        style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)' }}>
+                        style={{ background: '#C49D5B' }}>
                         {saving ? 'Salvando...' : 'Salvar Configuração'}
                     </button>
                 </div>
@@ -287,7 +287,7 @@ export default function IntegracoesPage() {
                         <button key={cat.key} onClick={() => setCategoriaAtiva(cat.key)}
                             className="px-3.5 h-9 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: categoriaAtiva === cat.key ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.surface,
+                                background: categoriaAtiva === cat.key ? '#C49D5B' : T.surface,
                                 color: categoriaAtiva === cat.key ? 'white' : T.textDim,
                                 border: `1px solid ${categoriaAtiva === cat.key ? T.borderGold : T.border}`,
                             }}>

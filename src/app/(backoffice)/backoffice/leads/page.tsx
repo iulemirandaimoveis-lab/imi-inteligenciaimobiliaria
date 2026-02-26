@@ -155,7 +155,7 @@ export default function LeadsPage() {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/leads/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}
+                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Novo Lead
                 </motion.button>
@@ -205,7 +205,7 @@ export default function LeadsPage() {
                                 className="px-3.5 h-10 rounded-xl text-xs font-semibold transition-all"
                                 style={{
                                     background: filter === s
-                                        ? (s === 'all' ? 'linear-gradient(135deg, #C49D5B, #8B5E1F)' : STATUS_CFG[s]?.bg || T.elevated)
+                                        ? (s === 'all' ? '#C49D5B' : STATUS_CFG[s]?.bg || T.elevated)
                                         : T.elevated,
                                     color: filter === s
                                         ? (s === 'all' ? 'white' : STATUS_CFG[s]?.text || T.textSub)

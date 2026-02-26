@@ -229,7 +229,7 @@ export default function ImoveisPage() {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/imoveis/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}
+                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Novo Empreendimento
                 </motion.button>
@@ -286,7 +286,7 @@ export default function ImoveisPage() {
                                 onClick={() => setFilter(s)}
                                 className="px-3 h-10 rounded-xl text-xs font-semibold transition-all hidden sm:block"
                                 style={{
-                                    background: filter === s ? 'linear-gradient(135deg, #C49D5B, #8B5E1F)' : T.elevated,
+                                    background: filter === s ? '#C49D5B' : T.elevated,
                                     color: filter === s ? 'white' : T.textDim,
                                     border: `1px solid ${filter === s ? T.borderGold : T.border}`,
                                 }}
@@ -303,7 +303,7 @@ export default function ImoveisPage() {
                                     onClick={() => setView(v)}
                                     className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
                                     style={{
-                                        background: view === v ? 'linear-gradient(135deg, #C49D5B, #8B5E1F)' : T.elevated,
+                                        background: view === v ? '#C49D5B' : T.elevated,
                                         border: `1px solid ${view === v ? T.borderGold : T.border}`,
                                     }}
                                 >

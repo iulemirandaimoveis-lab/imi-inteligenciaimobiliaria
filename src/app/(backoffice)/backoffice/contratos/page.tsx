@@ -81,7 +81,7 @@ export default function ContratosPage() {
                 <motion.button whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/contratos/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg,#C49D5B,#8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}>
+                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                     <Sparkles size={15} /> Novo Contrato
                 </motion.button>
             </motion.div>
@@ -114,7 +114,7 @@ export default function ContratosPage() {
                         onClick={() => setActiveTab(tab.key as any)}
                         className="flex items-center gap-2 px-4 h-10 rounded-xl text-sm font-semibold transition-all"
                         style={{
-                            background: activeTab === tab.key ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.surface,
+                            background: activeTab === tab.key ? '#C49D5B' : T.surface,
                             color: activeTab === tab.key ? 'white' : T.textDim,
                             border: `1px solid ${activeTab === tab.key ? T.borderGold : T.border}`,
                         }}>
@@ -143,7 +143,7 @@ export default function ContratosPage() {
                                         <button key={s} onClick={() => setFilterStatus(s)}
                                             className="px-3 h-10 rounded-xl text-xs font-semibold flex-shrink-0"
                                             style={{
-                                                background: filterStatus === s ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated,
+                                                background: filterStatus === s ? '#C49D5B' : T.elevated,
                                                 color: filterStatus === s ? 'white' : T.textDim,
                                                 border: `1px solid ${filterStatus === s ? T.borderGold : T.border}`,
                                             }}>
@@ -204,7 +204,7 @@ export default function ContratosPage() {
                                 <p className="text-sm mb-3">Nenhum contrato encontrado</p>
                                 <button onClick={() => router.push('/backoffice/contratos/novo')}
                                     className="text-xs font-semibold px-4 py-2 rounded-xl text-white"
-                                    style={{ background: 'linear-gradient(135deg,#C49D5B,#8B5E1F)' }}>
+                                    style={{ background: '#C49D5B' }}>
                                     Gerar primeiro contrato
                                 </button>
                             </div>
