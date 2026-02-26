@@ -78,6 +78,10 @@ export default function SettingsPage() {
           const data = await res.json()
           if (data.settings && Object.keys(data.settings).length > 0) {
             setSettings(prev => ({ ...prev, ...data.settings }))
+            // Sync saved theme with next-themes
+            if (data.settings.theme && ['light', 'dark', 'system'].includes(data.settings.theme)) {
+              setTheme(data.settings.theme)
+            }
           }
         }
       } catch (e) {
@@ -85,7 +89,7 @@ export default function SettingsPage() {
       }
     }
     fetchSettings()
-  }, [])
+  }, [setTheme])
 
   if (!mounted) return null
 
@@ -132,7 +136,8 @@ export default function SettingsPage() {
   }
 
   const toggleUncheckedStyle = {
-    background: 'rgba(255,255,255,0.08)',
+    background: 'var(--bo-hover)',
+    border: '1px solid var(--bo-border)',
   }
 
   return (

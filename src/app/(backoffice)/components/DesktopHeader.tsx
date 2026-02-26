@@ -256,10 +256,10 @@ export default function DesktopHeader() {
         <header
             className="hidden lg:flex lg:fixed lg:top-0 lg:right-0 lg:left-60 lg:z-30 lg:h-16 items-center"
             style={{
-                background: 'rgba(13,15,20,0.85)',
+                background: 'var(--header-bg, rgba(255,255,255,0.85))',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                borderBottom: '1px solid var(--sidebar-border)',
+                borderBottom: '1px solid var(--bo-border)',
             }}
         >
             <div className="w-full h-full px-6 flex items-center justify-between gap-4">

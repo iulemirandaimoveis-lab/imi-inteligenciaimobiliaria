@@ -190,7 +190,7 @@ export function MobileBottomNav() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
                             className="lg:hidden fixed inset-0 z-40"
-                            style={{ background: 'rgba(7,9,13,0.75)', backdropFilter: 'blur(6px)' }}
+                            style={{ background: 'var(--backdrop-bg, rgba(0,0,0,0.4))', backdropFilter: 'blur(6px)' }}
                             onClick={() => setOpen(false)}
                         />
 

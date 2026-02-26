@@ -453,7 +453,7 @@ function NovoContratoInner() {
                         )}
                         <AnimatePresence>
                             {preview && (
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(8px)' }}>
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'var(--backdrop-bg, rgba(0,0,0,0.4))', backdropFilter: 'blur(8px)' }}>
                                     <motion.div initial={{ scale: 0.96 }} animate={{ scale: 1 }} exit={{ scale: 0.96 }} className="relative w-full max-w-3xl max-h-[88vh] rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                         <div className="flex items-center justify-between p-4" style={{ borderBottom: `1px solid ${T.border}` }}>
                                             <p className="text-sm font-bold" style={{ color: T.text }}>{resultado.numero}</p>

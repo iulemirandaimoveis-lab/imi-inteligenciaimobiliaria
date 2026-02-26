@@ -1,45 +1,62 @@
 /* ============================================================
-   B11 — BACKOFFICE DARK CONTEXT OVERRIDES
-   Scoped to .backoffice-root — applies dark surfaces
-   regardless of .dark class for the backoffice layout.
+   B11 — BACKOFFICE CONTEXT OVERRIDES
+   Scoped to .backoffice-root — dark AND light mode aware.
+   Uses --bo-* CSS vars (light defined in :root, dark in .dark)
    ============================================================ */
 
-/* ── BACKOFFICE ROOT CONTEXT ───────────────────────────────── */
+/* ── BACKOFFICE ROOT CONTEXT (both themes) ─────────────────── */
 .backoffice-root {
   /* Mobile overflow guard */
   overflow-x: hidden;
   max-width: 100vw;
 
-  /* Surface overrides — force institutional dark palette */
+  /* Surface overrides */
   --surface-0: var(--bo-surface);
   --surface-1: var(--bo-elevated);
-  --surface-2: #21263A;
 
-  /* Extended text tokens */
-  --bo-text-tertiary:  #4E5669;
-  --bo-text-gold:      #C49D5B;
-  --bo-text-gold-dim:  #8A6D3F;
-
-  /* Extended border tokens */
-  --bo-border-subtle:  rgba(255,255,255,0.06);
-  --bo-border-strong:  rgba(255,255,255,0.18);
-
-  /* Navigation tokens */
-  --nav-bg:        rgba(19,22,30,0.95);
-  --nav-border:    rgba(196,157,91,0.15);
-  --nav-active:    #C49D5B;
-  --nav-inactive:  #4E5669;
-
-  /* Status — unified palette */
+  /* Status — unified palette (same both themes) */
   --s-hot:    #E8A87C;  --s-hot-bg:    rgba(232,168,124,0.12);
   --s-warm:   #C49D5B;  --s-warm-bg:   rgba(196,157,91,0.12);
   --s-cold:   #7B9EC4;  --s-cold-bg:   rgba(123,158,196,0.12);
   --s-done:   #6BB87B;  --s-done-bg:   rgba(107,184,123,0.12);
   --s-pend:   #A89EC4;  --s-pend-bg:   rgba(168,158,196,0.12);
   --s-cancel: #E57373;  --s-cancel-bg: rgba(229,115,115,0.12);
+
+  /* Gold accent tokens (same both themes) */
+  --bo-text-gold:      #C49D5B;
+  --bo-text-gold-dim:  #8A6D3F;
+
+  /* Navigation tokens — nav always dark */
+  --nav-active:    #C49D5B;
+
+  /* Page background */
+  background-color: var(--bo-surface);
+  color: var(--bo-text);
 }
 
-/* ── BACKOFFICE INPUT DARK ─────────────────────────────────── */
+/* ── LIGHT-MODE tokens ──────────────────────────────────────── */
+.backoffice-root {
+  --surface-2: #F1F3F5;
+  --bo-text-tertiary:  #9CA3AF;
+  --bo-border-subtle:  rgba(0,0,0,0.04);
+  --bo-border-strong:  rgba(0,0,0,0.12);
+  --nav-bg:        rgba(255,255,255,0.95);
+  --nav-border:    rgba(0,0,0,0.06);
+  --nav-inactive:  #9CA3AF;
+}
+
+/* ── DARK-MODE tokens ───────────────────────────────────────── */
+.dark .backoffice-root {
+  --surface-2: #21263A;
+  --bo-text-tertiary:  #4E5669;
+  --bo-border-subtle:  rgba(255,255,255,0.06);
+  --bo-border-strong:  rgba(255,255,255,0.18);
+  --nav-bg:        rgba(19,22,30,0.95);
+  --nav-border:    rgba(196,157,91,0.15);
+  --nav-inactive:  #4E5669;
+}
+
+/* ── BACKOFFICE INPUT ────────────────────────────────────────── */
 .backoffice-root input,
 .backoffice-root textarea,
 .backoffice-root select {
@@ -53,22 +70,32 @@
   color: var(--bo-text-muted);
 }
 
-/* ── GLASS CARD UTILITY ─────────────────────────────────────── */
-.glass-card {
-  background: rgba(26,30,42,0.70);
-  border: 1px solid rgba(255,255,255,0.08);
+/* ── GLASS CARD UTILITY ──────────────────────────────────────── */
+.backoffice-root .glass-card {
+  background: var(--bo-elevated);
+  border: 1px solid var(--bo-border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
+  box-shadow: var(--bo-shadow);
   border-radius: 16px;
 }
 
-.glass-card:hover {
+.dark .backoffice-root .glass-card {
+  background: rgba(26,30,42,0.70);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
+}
+
+.backoffice-root .glass-card:hover {
+  border-color: var(--bo-border-strong);
+}
+
+.dark .backoffice-root .glass-card:hover {
   border-color: rgba(255,255,255,0.14);
   box-shadow: 0 8px 32px rgba(0,0,0,0.36), 0 1px 0 rgba(255,255,255,0.06) inset;
 }
 
-/* ── STATUS BADGE UTILITY ─────────────────────────────────── */
+/* ── STATUS BADGE UTILITY ────────────────────────────────────── */
 .badge-hot     { color: var(--s-hot);    background: var(--s-hot-bg);    }
 .badge-warm    { color: var(--s-warm);   background: var(--s-warm-bg);   }
 .badge-cold    { color: var(--s-cold);   background: var(--s-cold-bg);   }
@@ -76,14 +103,14 @@
 .badge-pend    { color: var(--s-pend);   background: var(--s-pend-bg);   }
 .badge-cancel  { color: var(--s-cancel); background: var(--s-cancel-bg); }
 
-/* ── BOTTOM NAV SAFE AREA ──────────────────────────────────── */
+/* ── BOTTOM NAV SAFE AREA ─────────────────────────────────────── */
 @media (max-width: 1023px) {
   .backoffice-root main {
     padding-bottom: calc(88px + env(safe-area-inset-bottom));
   }
 }
 
-/* ── RECHARTS DARK THEME ──────────────────────────────────── */
+/* ── RECHARTS THEME ───────────────────────────────────────────── */
 .backoffice-root .recharts-cartesian-axis-tick-value {
   fill: var(--bo-text-muted);
 }
@@ -94,23 +121,28 @@
   border-radius: 10px !important;
 }
 
-/* ── SCROLLBAR DARK ──────────────────────────────────────── */
+.backoffice-root .recharts-cartesian-grid-horizontal line,
+.backoffice-root .recharts-cartesian-grid-vertical line {
+  stroke: var(--bo-border) !important;
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────────── */
 .backoffice-root ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
+  background: var(--bo-hover);
 }
 
 .backoffice-root ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.14);
+  background: var(--bo-border-strong);
 }
 
+
 /* ============================================================
-   EXECUÇÃO 2 — UNIFIED DESIGN SYSTEM OVERRIDES
+   EXECUÇÃO 2+3 — UNIFIED DESIGN SYSTEM OVERRIDES
    Converts ALL hardcoded Tailwind color classes to CSS vars
-   within .backoffice-root scope. This covers 59+ page files
-   in a single place.
+   within .backoffice-root scope. Works in both light & dark.
    ============================================================ */
 
-/* ── SURFACES / BACKGROUNDS ──────────────────────────────── */
+/* ── SURFACES / BACKGROUNDS ──────────────────────────────────── */
 .backoffice-root .bg-white {
   background-color: var(--bo-elevated) !important;
 }
@@ -120,10 +152,27 @@
 }
 
 .backoffice-root .bg-gray-100 {
-  background-color: rgba(255,255,255,0.04) !important;
+  background-color: var(--bo-hover) !important;
 }
 
-/* ── TEXT COLORS ──────────────────────────────────────────── */
+.backoffice-root .bg-gray-200 {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .bg-gray-800 {
+  background-color: var(--bo-elevated) !important;
+}
+
+/* Filter buttons (active state with bg-gray-900) */
+.backoffice-root .bg-gray-900 {
+  background-color: var(--accent-600) !important;
+}
+
+.backoffice-root .text-gray-900.bg-gray-900 {
+  color: #fff !important;
+}
+
+/* ── TEXT COLORS ──────────────────────────────────────────────── */
 .backoffice-root .text-gray-900 {
   color: var(--bo-text) !important;
 }
@@ -148,7 +197,7 @@
   color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
 }
 
-/* ── BORDER COLORS ───────────────────────────────────────── */
+/* ── BORDER COLORS ───────────────────────────────────────────── */
 .backoffice-root .border-gray-100 {
   border-color: var(--bo-border) !important;
 }
@@ -178,7 +227,7 @@
   border-color: var(--bo-border) !important;
 }
 
-/* ── HOVER STATES ────────────────────────────────────────── */
+/* ── HOVER STATES ────────────────────────────────────────────── */
 .backoffice-root .hover\:bg-gray-50:hover {
   background-color: var(--bo-hover) !important;
 }
@@ -187,24 +236,15 @@
   background-color: var(--bo-hover) !important;
 }
 
-/* ── SEMANTIC COLOR OVERRIDES (keep functional colors) ───── */
-/* Green stays green but with adjusted bg for dark */
-.backoffice-root .bg-green-50 {
-  background-color: var(--s-done-bg) !important;
-}
-
+/* ── SEMANTIC COLOR OVERRIDES ────────────────────────────────── */
+/* Green → done status */
+.backoffice-root .bg-green-50,
 .backoffice-root .bg-green-100 {
   background-color: var(--s-done-bg) !important;
 }
 
-.backoffice-root .text-green-600 {
-  color: var(--s-done) !important;
-}
-
-.backoffice-root .text-green-700 {
-  color: var(--s-done) !important;
-}
-
+.backoffice-root .text-green-600,
+.backoffice-root .text-green-700,
 .backoffice-root .text-green-900 {
   color: var(--s-done) !important;
 }
@@ -213,7 +253,7 @@
   border-color: rgba(107,184,123,0.20) !important;
 }
 
-/* Red */
+/* Red → cancel status */
 .backoffice-root .bg-red-50 {
   background-color: var(--s-cancel-bg) !important;
 }
@@ -228,7 +268,7 @@
   border-color: rgba(229,115,115,0.20) !important;
 }
 
-/* Orange */
+/* Orange → hot status */
 .backoffice-root .bg-orange-50 {
   background-color: var(--s-hot-bg) !important;
 }
@@ -243,7 +283,7 @@
   border-color: rgba(232,168,124,0.20) !important;
 }
 
-/* Blue */
+/* Blue → cold status */
 .backoffice-root .bg-blue-50 {
   background-color: var(--s-cold-bg) !important;
 }
@@ -258,7 +298,7 @@
   border-color: rgba(123,158,196,0.20) !important;
 }
 
-/* Purple */
+/* Purple → pend status */
 .backoffice-root .bg-purple-50 {
   background-color: var(--s-pend-bg) !important;
 }
@@ -273,7 +313,30 @@
   border-color: rgba(168,158,196,0.20) !important;
 }
 
-/* Accent gold - keep accent-* classes working */
+/* Emerald → done status */
+.backoffice-root .text-emerald-600,
+.backoffice-root .text-emerald-700 {
+  color: var(--s-done) !important;
+}
+
+.backoffice-root .bg-emerald-50 {
+  background-color: var(--s-done-bg) !important;
+}
+
+/* Amber/Yellow → warm status */
+.backoffice-root .text-amber-600,
+.backoffice-root .text-amber-700,
+.backoffice-root .text-yellow-600,
+.backoffice-root .text-yellow-700 {
+  color: var(--s-warm) !important;
+}
+
+.backoffice-root .bg-amber-50,
+.backoffice-root .bg-yellow-50 {
+  background-color: var(--s-warm-bg) !important;
+}
+
+/* Accent gold */
 .backoffice-root .bg-accent-50 {
   background-color: rgba(196,157,91,0.08) !important;
 }
@@ -282,16 +345,16 @@
   color: var(--bo-text-gold, #C49D5B) !important;
 }
 
-/* ── SHADOW OVERRIDES ────────────────────────────────────── */
-.backoffice-root .hover\:shadow-lg:hover {
-  box-shadow: 0 12px 32px rgba(0,0,0,0.25), 0 4px 8px rgba(0,0,0,0.12) !important;
-}
-
+/* ── SHADOW OVERRIDES ────────────────────────────────────────── */
 .backoffice-root .shadow-lg {
-  box-shadow: 0 12px 32px rgba(0,0,0,0.20), 0 4px 8px rgba(0,0,0,0.10) !important;
+  box-shadow: var(--bo-shadow) !important;
 }
 
-/* ── TABLE OVERRIDES ─────────────────────────────────────── */
+.backoffice-root .hover\:shadow-lg:hover {
+  box-shadow: var(--bo-shadow-elevated) !important;
+}
+
+/* ── TABLE OVERRIDES ─────────────────────────────────────────── */
 .backoffice-root table {
   border-collapse: collapse;
 }
@@ -317,15 +380,21 @@
   color: var(--bo-text) !important;
 }
 
-/* ── RING / FOCUS OVERRIDES ──────────────────────────────── */
+/* ── RING / FOCUS OVERRIDES ──────────────────────────────────── */
 .backoffice-root .focus\:ring-accent-500:focus,
 .backoffice-root .focus\:ring-2:focus {
   --tw-ring-color: rgba(196,157,91,0.40);
 }
 
-/* ── BUTTON OVERRIDES ────────────────────────────────────── */
-/* Primary gold buttons - keep them as-is (accent-600) */
-/* Secondary/ghost buttons */
+.backoffice-root .focus\:ring-accent-500:focus {
+  --tw-ring-color: rgba(196,157,91,0.40) !important;
+}
+
+.backoffice-root .focus\:border-accent-500:focus {
+  border-color: var(--bo-border-gold) !important;
+}
+
+/* ── BUTTON OVERRIDES ────────────────────────────────────────── */
 .backoffice-root button.border-gray-200,
 .backoffice-root a.border-gray-200 {
   border-color: var(--bo-border) !important;
@@ -338,16 +407,7 @@
   color: var(--bo-text) !important;
 }
 
-/* Filter buttons (active state with bg-gray-900) */
-.backoffice-root .bg-gray-900 {
-  background-color: var(--accent-600) !important;
-}
-
-.backoffice-root .text-gray-900.bg-gray-900 {
-  color: #fff !important;
-}
-
-/* ── IMI-* TAILWIND CLASS OVERRIDES (for pages using text-imi-*) ── */
+/* ── IMI-* TAILWIND CLASS OVERRIDES ──────────────────────────── */
 .backoffice-root .text-imi-900 {
   color: var(--bo-text) !important;
 }
@@ -377,7 +437,7 @@
 }
 
 .backoffice-root .bg-imi-100 {
-  background-color: rgba(255,255,255,0.04) !important;
+  background-color: var(--bo-hover) !important;
 }
 
 .backoffice-root .border-imi-100 {
@@ -388,60 +448,22 @@
   border-color: var(--bo-border) !important;
 }
 
-/* ── ADDITIONAL CARD PATTERN OVERRIDES ─────────────────── */
-/* rounded-2xl cards with bg-white in legacy pages */
+/* ── ADDITIONAL CARD PATTERN OVERRIDES ────────────────────────── */
 .backoffice-root [class*="rounded-2xl"][class*="border"] {
   border-color: var(--bo-border);
 }
 
-/* Fix tab/chip pills in legacy pages */
-.backoffice-root .bg-gray-200 {
-  background-color: var(--bo-hover) !important;
-}
-
-.backoffice-root .bg-gray-800 {
-  background-color: var(--bo-elevated) !important;
-}
-
-/* ── PLACEHOLDER TEXT ──────────────────────────────────── */
+/* ── PLACEHOLDER TEXT ─────────────────────────────────────────── */
 .backoffice-root .placeholder\:text-gray-400::placeholder {
   color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
 }
 
-/* ── EMERALD → Done status ─────────────────────────────── */
-.backoffice-root .text-emerald-600,
-.backoffice-root .text-emerald-700 {
-  color: var(--s-done) !important;
-}
-
-.backoffice-root .bg-emerald-50 {
-  background-color: var(--s-done-bg) !important;
-}
-
-/* ── AMBER/YELLOW → Warm status ────────────────────────── */
-.backoffice-root .text-amber-600,
-.backoffice-root .text-amber-700,
-.backoffice-root .text-yellow-600,
-.backoffice-root .text-yellow-700 {
-  color: var(--s-warm) !important;
-}
-
-.backoffice-root .bg-amber-50,
-.backoffice-root .bg-yellow-50 {
-  background-color: var(--s-warm-bg) !important;
-}
-
-/* ── PAGE BACKGROUND ───────────────────────────────────── */
-.backoffice-root {
-  background-color: var(--bo-surface);
-  color: var(--bo-text);
-}
-
+/* ── PAGE BACKGROUND ──────────────────────────────────────────── */
 .backoffice-root main {
   background-color: var(--bo-surface);
 }
 
-/* ── IMI DIVIDE/HOVER OVERRIDES ────────────────────────── */
+/* ── IMI DIVIDE/HOVER OVERRIDES ───────────────────────────────── */
 .backoffice-root .divide-imi-50 > :not([hidden]) ~ :not([hidden]) {
   border-color: var(--bo-border) !important;
 }
@@ -472,35 +494,20 @@
   color: var(--bo-text) !important;
 }
 
-/* ── SELECT OPTION DARK FIX ────────────────────────────── */
+/* ── SELECT OPTION FIX ────────────────────────────────────────── */
 .backoffice-root select option {
   background-color: var(--bo-elevated);
   color: var(--bo-text);
 }
 
-/* ── DISABLED STATE OVERRIDES ──────────────────────────── */
+/* ── DISABLED STATE OVERRIDES ─────────────────────────────────── */
 .backoffice-root .disabled\:bg-imi-50:disabled,
 .backoffice-root .disabled\:bg-white:disabled {
   background-color: var(--bo-surface) !important;
   opacity: 0.5;
 }
 
-/* ── FOCUS RING GOLD ───────────────────────────────────── */
-.backoffice-root .focus\:ring-accent-500:focus {
-  --tw-ring-color: rgba(196,157,91,0.40) !important;
-}
-
-.backoffice-root .focus\:border-accent-500:focus {
-  border-color: var(--bo-border-gold) !important;
-}
-
-/* ── RECHARTS IN BACKOFFICE ────────────────────────────── */
-.backoffice-root .recharts-cartesian-grid-horizontal line,
-.backoffice-root .recharts-cartesian-grid-vertical line {
-  stroke: var(--bo-border) !important;
-}
-
-/* ── LINK COLORS ───────────────────────────────────────── */
+/* ── LINK COLORS ──────────────────────────────────────────────── */
 .backoffice-root a.text-accent-600,
 .backoffice-root .text-accent-600 {
   color: var(--bo-text-gold, #C49D5B);

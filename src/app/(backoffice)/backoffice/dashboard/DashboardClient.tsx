@@ -62,19 +62,19 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
                 <div
                     className="relative overflow-hidden rounded-2xl p-5 cursor-pointer transition-all duration-200 group"
                     style={{
-                        background: 'rgba(26,30,42,0.70)',
-                        border: '1px solid rgba(196,157,91,0.18)',
+                        background: 'var(--bo-elevated)',
+                        border: '1px solid var(--bo-border-gold)',
                         backdropFilter: 'blur(16px)',
                         WebkitBackdropFilter: 'blur(16px)',
-                        boxShadow: '0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset',
+                        boxShadow: 'var(--bo-shadow)',
                     }}
                     onMouseEnter={e => {
                         (e.currentTarget as HTMLElement).style.border = '1px solid rgba(196,157,91,0.35)'
-                            ; (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(196,157,91,0.18), 0 8px 32px rgba(196,157,91,0.08), 0 4px 24px rgba(0,0,0,0.32)'
+                            ; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--bo-shadow-elevated)'
                     }}
                     onMouseLeave={e => {
-                        (e.currentTarget as HTMLElement).style.border = '1px solid rgba(196,157,91,0.18)'
-                            ; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset'
+                        (e.currentTarget as HTMLElement).style.border = '1px solid var(--bo-border-gold)'
+                            ; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--bo-shadow)'
                     }}
                 >
                     {/* Subtle gold corner glow */}
@@ -275,7 +275,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                                         borderRadius: 10,
                                         color: T.text,
                                         fontSize: 11,
-                                        boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                                        boxShadow: 'var(--bo-shadow-elevated)',
                                     }}
                                     formatter={(v: any) => [`R$ ${v}k`, 'Receita']}
                                 />
@@ -350,7 +350,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                             <span className="text-xs font-medium" style={{ color: T.gold }}>Ver todos →</span>
                         </Link>
                     </div>
-                    <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+                    <div className="divide-y" style={{ borderColor: 'var(--bo-border)' }}>
                         {(recentLeads.length > 0 ? recentLeads : [
                             { id: 1, name: 'Maria Santos Silva', source: 'Instagram', status: 'hot', interest: 'Apt 3Q', created_at: new Date().toISOString() },
                             { id: 2, name: 'João Pedro Almeida', source: 'Google', status: 'warm', interest: 'Casa 4Q', created_at: new Date().toISOString() },
@@ -360,7 +360,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                                 key={lead.id}
                                 className="flex items-center gap-3 px-5 py-3.5 cursor-pointer transition-all"
                                 style={{}}
-                                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
+                                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
                                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                             >
                                 <div
@@ -401,7 +401,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                             <span className="text-xs font-medium" style={{ color: T.gold }}>Ver todas →</span>
                         </Link>
                     </div>
-                    <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+                    <div className="divide-y" style={{ borderColor: 'var(--bo-border)' }}>
                         {(recentAvaliacoes.length > 0 ? recentAvaliacoes : [
                             { id: 1, protocolo: 'AVL-2026-001', cliente_nome: 'Banco BTG', tipo_imovel: 'Apartamento', bairro: 'Boa Viagem', status: 'concluida', honorarios: 3500 },
                             { id: 2, protocolo: 'AVL-2026-002', cliente_nome: 'Roberto Mendes', tipo_imovel: 'Casa', bairro: 'Graças', status: 'em_andamento', honorarios: 4200 },
@@ -410,7 +410,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                             <div
                                 key={av.id}
                                 className="flex items-center gap-3 px-5 py-3.5 cursor-pointer transition-all"
-                                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
+                                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
                                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                             >
                                 <div

@@ -95,7 +95,7 @@ function ConfigModal({
         <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: 'rgba(0,0,0,0.70)', backdropFilter: 'blur(8px)' }}
+            style={{ background: 'var(--backdrop-bg, rgba(0,0,0,0.4))', backdropFilter: 'blur(8px)' }}
             onClick={e => e.target === e.currentTarget && onClose()}
         >
             <motion.div
@@ -379,7 +379,7 @@ export default function IntegracoesPage() {
                         As configurações salvas aqui são armazenadas criptografadas no Supabase. Para produção, adicione também ao Vercel → Settings → Environment Variables.
                     </p>
                     <div className="rounded-xl p-3 font-mono text-[10px] leading-relaxed overflow-x-auto"
-                        style={{ background: '#0D0F14', border: `1px solid ${T.border}`, color: '#6BB87B' }}>
+                        style={{ background: 'var(--bo-surface)', border: `1px solid ${T.border}`, color: 'var(--s-done)' }}>
                         {[
                             '# Assinatura Digital',
                             'GOVBR_CLIENT_ID=',

@@ -80,6 +80,8 @@
   --bo-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   --bo-shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.1);
   --bo-drawer-bg: #ffffff;
+  --header-bg: rgba(255,255,255,0.85);
+  --backdrop-bg: rgba(0,0,0,0.3);
 }
 
 .dark {
@@ -97,6 +99,8 @@
   --bo-shadow: 0 -4px 24px rgba(0, 0, 0, 0.40);
   --bo-shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.5);
   --bo-drawer-bg: #13161E;
+  --header-bg: rgba(13,15,20,0.85);
+  --backdrop-bg: rgba(7,9,13,0.75);
 }
 
 /* ── BASE RESETS ────────────────────────────────────────────── */
@@ -1335,7 +1339,7 @@
 }
 
 .backoffice-root .card-interactive:hover {
-  border-color: rgba(255,255,255,0.12);
+  border-color: var(--bo-border-strong, var(--bo-border));
 }
 
 /* Buttons — secondary and ghost */
@@ -1347,7 +1351,7 @@
 
 .backoffice-root .btn-secondary:hover {
   background: var(--bo-hover);
-  border-color: rgba(255,255,255,0.12);
+  border-color: var(--bo-border-strong, var(--bo-border));
 }
 
 .backoffice-root .btn-ghost {
@@ -1377,7 +1381,7 @@
 
 /* Tables */
 .backoffice-root .table-header-row {
-  background: rgba(255,255,255,0.03);
+  background: var(--bo-surface);
   border-color: var(--bo-border);
 }
 
@@ -1499,3 +1503,10 @@
 
 /* ── B11 BACKOFFICE DARK ADDITIONS ── */
 @import './globals-b11-additions.css';
+/* Z-Index Stack for Backoffice */
+.z-sidebar      { z-index: 40; }   /* Sidebar desktop */
+.z-mobile-nav   { z-index: 50; }   /* Bottom nav mobile */
+.z-drawer       { z-index: 60; }   /* Drawer mobile expansível */
+.z-modal        { z-index: 70; }   /* Modais */
+.z-command      { z-index: 80; }   /* Command palette */
+.z-toast        { z-index: 90; }   /* Toast notifications */

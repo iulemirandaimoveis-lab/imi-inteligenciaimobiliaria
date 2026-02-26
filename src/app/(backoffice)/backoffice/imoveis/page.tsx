@@ -78,7 +78,7 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
             <div
                 className="relative h-36 flex items-end p-3"
                 style={{
-                    background: `linear-gradient(160deg, #1A1E2A 0%, #0F1117 100%)`,
+                    background: `linear-gradient(160deg, var(--bo-elevated) 0%, var(--bo-surface) 100%)`,
                     borderBottom: `1px solid ${T.border}`,
                 }}
             >
