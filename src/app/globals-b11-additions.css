@@ -102,3 +102,406 @@
 .backoffice-root ::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.14);
 }
+
+/* ============================================================
+   EXECUÇÃO 2 — UNIFIED DESIGN SYSTEM OVERRIDES
+   Converts ALL hardcoded Tailwind color classes to CSS vars
+   within .backoffice-root scope. This covers 59+ page files
+   in a single place.
+   ============================================================ */
+
+/* ── SURFACES / BACKGROUNDS ──────────────────────────────── */
+.backoffice-root .bg-white {
+  background-color: var(--bo-elevated) !important;
+}
+
+.backoffice-root .bg-gray-50 {
+  background-color: var(--bo-surface) !important;
+}
+
+.backoffice-root .bg-gray-100 {
+  background-color: rgba(255,255,255,0.04) !important;
+}
+
+/* ── TEXT COLORS ──────────────────────────────────────────── */
+.backoffice-root .text-gray-900 {
+  color: var(--bo-text) !important;
+}
+
+.backoffice-root .text-gray-800 {
+  color: var(--bo-text) !important;
+}
+
+.backoffice-root .text-gray-700 {
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root .text-gray-600 {
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root .text-gray-500 {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+.backoffice-root .text-gray-400 {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+/* ── BORDER COLORS ───────────────────────────────────────── */
+.backoffice-root .border-gray-100 {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .border-gray-200 {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .border-gray-300 {
+  border-color: var(--bo-border-strong, var(--bo-border)) !important;
+}
+
+.backoffice-root .border {
+  border-color: var(--bo-border);
+}
+
+.backoffice-root .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .border-b.border-gray-100,
+.backoffice-root .border-t.border-gray-100 {
+  border-color: var(--bo-border) !important;
+}
+
+/* ── HOVER STATES ────────────────────────────────────────── */
+.backoffice-root .hover\:bg-gray-50:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .hover\:bg-gray-100:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+/* ── SEMANTIC COLOR OVERRIDES (keep functional colors) ───── */
+/* Green stays green but with adjusted bg for dark */
+.backoffice-root .bg-green-50 {
+  background-color: var(--s-done-bg) !important;
+}
+
+.backoffice-root .bg-green-100 {
+  background-color: var(--s-done-bg) !important;
+}
+
+.backoffice-root .text-green-600 {
+  color: var(--s-done) !important;
+}
+
+.backoffice-root .text-green-700 {
+  color: var(--s-done) !important;
+}
+
+.backoffice-root .text-green-900 {
+  color: var(--s-done) !important;
+}
+
+.backoffice-root .border-green-200 {
+  border-color: rgba(107,184,123,0.20) !important;
+}
+
+/* Red */
+.backoffice-root .bg-red-50 {
+  background-color: var(--s-cancel-bg) !important;
+}
+
+.backoffice-root .text-red-600,
+.backoffice-root .text-red-700,
+.backoffice-root .text-red-900 {
+  color: var(--s-cancel) !important;
+}
+
+.backoffice-root .border-red-200 {
+  border-color: rgba(229,115,115,0.20) !important;
+}
+
+/* Orange */
+.backoffice-root .bg-orange-50 {
+  background-color: var(--s-hot-bg) !important;
+}
+
+.backoffice-root .text-orange-600,
+.backoffice-root .text-orange-700,
+.backoffice-root .text-orange-900 {
+  color: var(--s-hot) !important;
+}
+
+.backoffice-root .border-orange-200 {
+  border-color: rgba(232,168,124,0.20) !important;
+}
+
+/* Blue */
+.backoffice-root .bg-blue-50 {
+  background-color: var(--s-cold-bg) !important;
+}
+
+.backoffice-root .text-blue-600,
+.backoffice-root .text-blue-700,
+.backoffice-root .text-blue-900 {
+  color: var(--s-cold) !important;
+}
+
+.backoffice-root .border-blue-200 {
+  border-color: rgba(123,158,196,0.20) !important;
+}
+
+/* Purple */
+.backoffice-root .bg-purple-50 {
+  background-color: var(--s-pend-bg) !important;
+}
+
+.backoffice-root .text-purple-600,
+.backoffice-root .text-purple-700,
+.backoffice-root .text-purple-900 {
+  color: var(--s-pend) !important;
+}
+
+.backoffice-root .border-purple-200 {
+  border-color: rgba(168,158,196,0.20) !important;
+}
+
+/* Accent gold - keep accent-* classes working */
+.backoffice-root .bg-accent-50 {
+  background-color: rgba(196,157,91,0.08) !important;
+}
+
+.backoffice-root .text-accent-700 {
+  color: var(--bo-text-gold, #C49D5B) !important;
+}
+
+/* ── SHADOW OVERRIDES ────────────────────────────────────── */
+.backoffice-root .hover\:shadow-lg:hover {
+  box-shadow: 0 12px 32px rgba(0,0,0,0.25), 0 4px 8px rgba(0,0,0,0.12) !important;
+}
+
+.backoffice-root .shadow-lg {
+  box-shadow: 0 12px 32px rgba(0,0,0,0.20), 0 4px 8px rgba(0,0,0,0.10) !important;
+}
+
+/* ── TABLE OVERRIDES ─────────────────────────────────────── */
+.backoffice-root table {
+  border-collapse: collapse;
+}
+
+.backoffice-root thead {
+  background-color: var(--bo-surface) !important;
+}
+
+.backoffice-root thead th {
+  color: var(--bo-text-muted) !important;
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root tbody tr {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root tbody tr:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root tbody td {
+  color: var(--bo-text) !important;
+}
+
+/* ── RING / FOCUS OVERRIDES ──────────────────────────────── */
+.backoffice-root .focus\:ring-accent-500:focus,
+.backoffice-root .focus\:ring-2:focus {
+  --tw-ring-color: rgba(196,157,91,0.40);
+}
+
+/* ── BUTTON OVERRIDES ────────────────────────────────────── */
+/* Primary gold buttons - keep them as-is (accent-600) */
+/* Secondary/ghost buttons */
+.backoffice-root button.border-gray-200,
+.backoffice-root a.border-gray-200 {
+  border-color: var(--bo-border) !important;
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root button.border-gray-200:hover,
+.backoffice-root a.border-gray-200:hover {
+  background-color: var(--bo-hover) !important;
+  color: var(--bo-text) !important;
+}
+
+/* Filter buttons (active state with bg-gray-900) */
+.backoffice-root .bg-gray-900 {
+  background-color: var(--accent-600) !important;
+}
+
+.backoffice-root .text-gray-900.bg-gray-900 {
+  color: #fff !important;
+}
+
+/* ── IMI-* TAILWIND CLASS OVERRIDES (for pages using text-imi-*) ── */
+.backoffice-root .text-imi-900 {
+  color: var(--bo-text) !important;
+}
+
+.backoffice-root .text-imi-800 {
+  color: var(--bo-text) !important;
+}
+
+.backoffice-root .text-imi-700 {
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root .text-imi-600 {
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root .text-imi-500 {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+.backoffice-root .text-imi-400 {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+.backoffice-root .bg-imi-50 {
+  background-color: var(--bo-surface) !important;
+}
+
+.backoffice-root .bg-imi-100 {
+  background-color: rgba(255,255,255,0.04) !important;
+}
+
+.backoffice-root .border-imi-100 {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .border-imi-200 {
+  border-color: var(--bo-border) !important;
+}
+
+/* ── ADDITIONAL CARD PATTERN OVERRIDES ─────────────────── */
+/* rounded-2xl cards with bg-white in legacy pages */
+.backoffice-root [class*="rounded-2xl"][class*="border"] {
+  border-color: var(--bo-border);
+}
+
+/* Fix tab/chip pills in legacy pages */
+.backoffice-root .bg-gray-200 {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .bg-gray-800 {
+  background-color: var(--bo-elevated) !important;
+}
+
+/* ── PLACEHOLDER TEXT ──────────────────────────────────── */
+.backoffice-root .placeholder\:text-gray-400::placeholder {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+/* ── EMERALD → Done status ─────────────────────────────── */
+.backoffice-root .text-emerald-600,
+.backoffice-root .text-emerald-700 {
+  color: var(--s-done) !important;
+}
+
+.backoffice-root .bg-emerald-50 {
+  background-color: var(--s-done-bg) !important;
+}
+
+/* ── AMBER/YELLOW → Warm status ────────────────────────── */
+.backoffice-root .text-amber-600,
+.backoffice-root .text-amber-700,
+.backoffice-root .text-yellow-600,
+.backoffice-root .text-yellow-700 {
+  color: var(--s-warm) !important;
+}
+
+.backoffice-root .bg-amber-50,
+.backoffice-root .bg-yellow-50 {
+  background-color: var(--s-warm-bg) !important;
+}
+
+/* ── PAGE BACKGROUND ───────────────────────────────────── */
+.backoffice-root {
+  background-color: var(--bo-surface);
+  color: var(--bo-text);
+}
+
+.backoffice-root main {
+  background-color: var(--bo-surface);
+}
+
+/* ── IMI DIVIDE/HOVER OVERRIDES ────────────────────────── */
+.backoffice-root .divide-imi-50 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .divide-imi-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .hover\:bg-imi-50:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .hover\:bg-imi-100:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .hover\:bg-imi-200:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .hover\:border-imi-200:hover,
+.backoffice-root .hover\:border-imi-300:hover {
+  border-color: var(--bo-border-strong, var(--bo-border)) !important;
+}
+
+.backoffice-root .hover\:text-imi-900:hover,
+.backoffice-root .hover\:text-imi-600:hover {
+  color: var(--bo-text) !important;
+}
+
+/* ── SELECT OPTION DARK FIX ────────────────────────────── */
+.backoffice-root select option {
+  background-color: var(--bo-elevated);
+  color: var(--bo-text);
+}
+
+/* ── DISABLED STATE OVERRIDES ──────────────────────────── */
+.backoffice-root .disabled\:bg-imi-50:disabled,
+.backoffice-root .disabled\:bg-white:disabled {
+  background-color: var(--bo-surface) !important;
+  opacity: 0.5;
+}
+
+/* ── FOCUS RING GOLD ───────────────────────────────────── */
+.backoffice-root .focus\:ring-accent-500:focus {
+  --tw-ring-color: rgba(196,157,91,0.40) !important;
+}
+
+.backoffice-root .focus\:border-accent-500:focus {
+  border-color: var(--bo-border-gold) !important;
+}
+
+/* ── RECHARTS IN BACKOFFICE ────────────────────────────── */
+.backoffice-root .recharts-cartesian-grid-horizontal line,
+.backoffice-root .recharts-cartesian-grid-vertical line {
+  stroke: var(--bo-border) !important;
+}
+
+/* ── LINK COLORS ───────────────────────────────────────── */
+.backoffice-root a.text-accent-600,
+.backoffice-root .text-accent-600 {
+  color: var(--bo-text-gold, #C49D5B);
+}
