@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import {
     Users,
     Plus,
@@ -15,10 +16,16 @@ import {
     CheckCircle,
     XCircle,
     Clock,
-    Calendar,
     Award,
     TrendingUp,
 } from 'lucide-react'
+
+const T = {
+    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    gold: '#C49D5B',
+}
 
 type UserRole = 'admin' | 'manager' | 'agent' | 'viewer'
 type UserStatus = 'active' | 'inactive' | 'pending'
@@ -42,195 +49,135 @@ interface TeamMember {
 
 const mockTeam: TeamMember[] = [
     {
-        id: '1',
-        name: 'Laila Miranda',
-        email: 'laila@iulemirandaimoveis.com.br',
-        phone: '(81) 99999-9999',
-        role: 'admin',
-        status: 'active',
-        joinedAt: '2024-01-01',
-        lastActive: '2026-02-15T18:30:00',
-        stats: { leads: 145, sales: 23, revenue: 15600000 },
+        id: '1', name: 'Laila Miranda', email: 'laila@iulemirandaimoveis.com.br',
+        phone: '(81) 99999-9999', role: 'admin', status: 'active', joinedAt: '2024-01-01',
+        lastActive: '2026-02-15T18:30:00', stats: { leads: 145, sales: 23, revenue: 15600000 },
     },
     {
-        id: '2',
-        name: 'Carlos Eduardo Silva',
-        email: 'carlos@iulemirandaimoveis.com.br',
-        phone: '(81) 98888-8888',
-        role: 'manager',
-        status: 'active',
-        joinedAt: '2024-03-15',
-        lastActive: '2026-02-15T17:45:00',
-        stats: { leads: 98, sales: 15, revenue: 9800000 },
+        id: '2', name: 'Carlos Eduardo Silva', email: 'carlos@iulemirandaimoveis.com.br',
+        phone: '(81) 98888-8888', role: 'manager', status: 'active', joinedAt: '2024-03-15',
+        lastActive: '2026-02-15T17:45:00', stats: { leads: 98, sales: 15, revenue: 9800000 },
     },
     {
-        id: '3',
-        name: 'Ana Paula Costa',
-        email: 'ana@iulemirandaimoveis.com.br',
-        phone: '(81) 97777-7777',
-        role: 'agent',
-        status: 'active',
-        joinedAt: '2024-06-01',
-        lastActive: '2026-02-15T16:20:00',
-        stats: { leads: 67, sales: 9, revenue: 5400000 },
+        id: '3', name: 'Ana Paula Costa', email: 'ana@iulemirandaimoveis.com.br',
+        phone: '(81) 97777-7777', role: 'agent', status: 'active', joinedAt: '2024-06-01',
+        lastActive: '2026-02-15T16:20:00', stats: { leads: 67, sales: 9, revenue: 5400000 },
     },
     {
-        id: '4',
-        name: 'Roberto Mendes',
-        email: 'roberto@iulemirandaimoveis.com.br',
-        phone: '(81) 96666-6666',
-        role: 'agent',
-        status: 'active',
-        joinedAt: '2024-08-10',
-        lastActive: '2026-02-15T14:10:00',
-        stats: { leads: 52, sales: 7, revenue: 4200000 },
+        id: '4', name: 'Roberto Mendes', email: 'roberto@iulemirandaimoveis.com.br',
+        phone: '(81) 96666-6666', role: 'agent', status: 'active', joinedAt: '2024-08-10',
+        lastActive: '2026-02-15T14:10:00', stats: { leads: 52, sales: 7, revenue: 4200000 },
     },
     {
-        id: '5',
-        name: 'Juliana Santos',
-        email: 'juliana@iulemirandaimoveis.com.br',
-        phone: '(81) 95555-5555',
-        role: 'viewer',
-        status: 'pending',
-        joinedAt: '2026-02-14',
-        lastActive: '2026-02-14T10:00:00',
-        stats: { leads: 0, sales: 0, revenue: 0 },
+        id: '5', name: 'Juliana Santos', email: 'juliana@iulemirandaimoveis.com.br',
+        phone: '(81) 95555-5555', role: 'viewer', status: 'pending', joinedAt: '2026-02-14',
+        lastActive: '2026-02-14T10:00:00', stats: { leads: 0, sales: 0, revenue: 0 },
     },
 ]
 
+const ROLE_CFG: Record<UserRole, { label: string; color: string; bg: string; icon: any }> = {
+    admin: { label: 'Administrador', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: Shield },
+    manager: { label: 'Gerente', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: Award },
+    agent: { label: 'Corretor', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: Users },
+    viewer: { label: 'Visualizador', color: '#8B93A7', bg: 'rgba(139,147,167,0.12)', icon: Users },
+}
+
+const STATUS_CFG: Record<UserStatus, { label: string; color: string; bg: string; icon: any }> = {
+    active: { label: 'Ativo', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
+    inactive: { label: 'Inativo', color: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
+    pending: { label: 'Pendente', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock },
+}
+
 export default function EquipePage() {
     const router = useRouter()
-    const [team, setTeam] = useState(mockTeam)
+    const [team] = useState(mockTeam)
     const [searchTerm, setSearchTerm] = useState('')
     const [roleFilter, setRoleFilter] = useState<UserRole | 'all'>('all')
-    const [statusFilter, setStatusFilter] = useState<UserStatus | 'all'>('all')
 
-    const getRoleBadge = (role: UserRole) => {
-        const badges = {
-            admin: { label: 'Administrador', color: 'bg-purple-100 text-purple-700', icon: Shield },
-            manager: { label: 'Gerente', color: 'bg-blue-100 text-blue-700', icon: Award },
-            agent: { label: 'Corretor', color: 'bg-green-100 text-green-700', icon: Users },
-            viewer: { label: 'Visualizador', color: 'bg-gray-100 text-gray-700', icon: Users },
-        }
-        return badges[role]
-    }
-
-    const getStatusBadge = (status: UserStatus) => {
-        const badges = {
-            active: { label: 'Ativo', color: 'bg-green-100 text-green-700', icon: CheckCircle },
-            inactive: { label: 'Inativo', color: 'bg-red-100 text-red-700', icon: XCircle },
-            pending: { label: 'Pendente', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
-        }
-        return badges[status]
-    }
-
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-            minimumFractionDigits: 0,
-        }).format(value)
-    }
+    const formatCurrency = (value: number) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(value)
 
     const formatLastActive = (timestamp: string) => {
-        const date = new Date(timestamp)
-        const now = new Date()
-        const diff = now.getTime() - date.getTime()
-        const minutes = Math.floor(diff / 60000)
-        const hours = Math.floor(diff / 3600000)
-
-        if (minutes < 60) return `${minutes}m atrás`
-        if (hours < 24) return `${hours}h atrás`
-        return date.toLocaleDateString('pt-BR')
+        const diff = Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000)
+        if (diff < 60) return `${diff}m atrás`
+        if (diff < 1440) return `${Math.floor(diff / 60)}h atrás`
+        return new Date(timestamp).toLocaleDateString('pt-BR')
     }
 
     const filteredTeam = team
-        .filter(member =>
-            member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            member.email.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        .filter(member => roleFilter === 'all' || member.role === roleFilter)
-        .filter(member => statusFilter === 'all' || member.status === statusFilter)
+        .filter(m => m.name.toLowerCase().includes(searchTerm.toLowerCase()) || m.email.toLowerCase().includes(searchTerm.toLowerCase()))
+        .filter(m => roleFilter === 'all' || m.role === roleFilter)
 
     const totalStats = team.reduce(
-        (acc, member) => ({
-            leads: acc.leads + member.stats.leads,
-            sales: acc.sales + member.stats.sales,
-            revenue: acc.revenue + member.stats.revenue,
-        }),
+        (acc, m) => ({ leads: acc.leads + m.stats.leads, sales: acc.sales + m.stats.sales, revenue: acc.revenue + m.stats.revenue }),
         { leads: 0, sales: 0, revenue: 0 }
     )
 
+    const KPIS = [
+        { label: 'Total de Leads', value: totalStats.leads, icon: Users, color: '#7B9EC4' },
+        { label: 'Total de Vendas', value: totalStats.sales, icon: CheckCircle, color: '#6BB87B' },
+        { label: 'Receita Total', value: formatCurrency(totalStats.revenue), icon: TrendingUp, color: '#A89EC4' },
+    ]
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-5 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="flex items-start justify-between">
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+                className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Gestão de Equipe</h1>
-                    <p className="text-sm text-gray-600 mt-1">
-                        {team.length} membro{team.length !== 1 ? 's' : ''} • {team.filter(m => m.status === 'active').length} ativo{team.filter(m => m.status === 'active').length !== 1 ? 's' : ''}
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Gestão de Equipe</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
+                        {team.length} membros &bull; {team.filter(m => m.status === 'active').length} ativos
                     </p>
                 </div>
+                <motion.button whileTap={{ scale: 0.96 }}
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}>
+                    <Plus size={16} /> Adicionar Membro
+                </motion.button>
+            </motion.div>
 
-                <button className="flex items-center gap-2 h-10 px-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors">
-                    <Plus size={18} />
-                    Adicionar Membro
-                </button>
-            </div>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                            <Users size={20} className="text-blue-600" />
+            {/* Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {KPIS.map((k, i) => (
+                    <motion.div key={k.label}
+                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="rounded-2xl p-5"
+                        style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                                style={{ background: `${k.color}18` }}>
+                                <k.icon size={18} style={{ color: k.color }} />
+                            </div>
+                            <p className="text-xs font-medium" style={{ color: T.textDim }}>{k.label}</p>
                         </div>
-                        <p className="text-sm font-medium text-gray-600">Total de Leads</p>
-                    </div>
-                    <p className="text-2xl font-bold text-gray-900">{totalStats.leads}</p>
-                </div>
-
-                <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-                            <CheckCircle size={20} className="text-green-600" />
-                        </div>
-                        <p className="text-sm font-medium text-gray-600">Total de Vendas</p>
-                    </div>
-                    <p className="text-2xl font-bold text-gray-900">{totalStats.sales}</p>
-                </div>
-
-                <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                            <TrendingUp size={20} className="text-purple-600" />
-                        </div>
-                        <p className="text-sm font-medium text-gray-600">Receita Total</p>
-                    </div>
-                    <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalStats.revenue)}</p>
-                </div>
+                        <p className="text-2xl font-bold" style={{ color: T.text }}>{k.value}</p>
+                    </motion.div>
+                ))}
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                <div className="flex flex-col md:flex-row gap-4">
-                    {/* Search */}
+            <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="flex flex-col sm:flex-row gap-3">
                     <div className="flex-1 relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
                         <input
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Buscar por nome ou email..."
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, caretColor: T.gold }}
+                            onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
+                            onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
                         />
                     </div>
-
-                    {/* Role Filter */}
                     <select
                         value={roleFilter}
                         onChange={(e) => setRoleFilter(e.target.value as UserRole | 'all')}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        className="h-10 px-4 rounded-xl text-sm outline-none"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     >
                         <option value="all">Todas as funções</option>
                         <option value="admin">Administrador</option>
@@ -238,147 +185,97 @@ export default function EquipePage() {
                         <option value="agent">Corretor</option>
                         <option value="viewer">Visualizador</option>
                     </select>
-
-                    {/* Status Filter */}
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value as UserStatus | 'all')}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                    >
-                        <option value="all">Todos os status</option>
-                        <option value="active">Ativo</option>
-                        <option value="inactive">Inativo</option>
-                        <option value="pending">Pendente</option>
-                    </select>
                 </div>
             </div>
 
-            {/* Team List */}
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50 border-b border-gray-100">
-                            <tr>
-                                <th className="text-left py-4 px-6 text-xs font-medium text-gray-600 uppercase">
-                                    Membro
-                                </th>
-                                <th className="text-left py-4 px-6 text-xs font-medium text-gray-600 uppercase">
-                                    Função
-                                </th>
-                                <th className="text-left py-4 px-6 text-xs font-medium text-gray-600 uppercase">
-                                    Status
-                                </th>
-                                <th className="text-left py-4 px-6 text-xs font-medium text-gray-600 uppercase">
-                                    Performance
-                                </th>
-                                <th className="text-left py-4 px-6 text-xs font-medium text-gray-600 uppercase">
-                                    Última Atividade
-                                </th>
-                                <th className="text-right py-4 px-6 text-xs font-medium text-gray-600 uppercase">
-                                    Ações
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {filteredTeam.map((member) => {
-                                const roleBadge = getRoleBadge(member.role)
-                                const statusBadge = getStatusBadge(member.status)
-                                const RoleIcon = roleBadge.icon
-                                const StatusIcon = statusBadge.icon
+            {/* Team members */}
+            <div className="space-y-2">
+                {filteredTeam.map((member, i) => {
+                    const role = ROLE_CFG[member.role]
+                    const status = STATUS_CFG[member.status]
+                    return (
+                        <motion.div key={member.id}
+                            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.04 }}
+                            className="rounded-2xl p-4 transition-all"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
+                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}
+                        >
+                            <div className="flex items-center gap-3">
+                                {/* Avatar */}
+                                <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+                                    style={{ background: 'rgba(196,157,91,0.15)', color: T.gold }}>
+                                    {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                </div>
 
-                                return (
-                                    <tr key={member.id} className="hover:bg-gray-50 transition-colors">
-                                        {/* Member */}
-                                        <td className="py-4 px-6">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                                                    {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-medium text-gray-900">{member.name}</p>
-                                                    <div className="flex items-center gap-3 mt-1">
-                                                        <span className="text-xs text-gray-600 flex items-center gap-1">
-                                                            <Mail size={12} />
-                                                            {member.email}
-                                                        </span>
-                                                        <span className="text-xs text-gray-600 flex items-center gap-1">
-                                                            <Phone size={12} />
-                                                            {member.phone}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                                        <p className="text-sm font-semibold" style={{ color: T.text }}>{member.name}</p>
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                            style={{ color: role.color, background: role.bg }}>
+                                            {role.label}
+                                        </span>
+                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                            style={{ color: status.color, background: status.bg }}>
+                                            {status.label}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-3 flex-wrap">
+                                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textDim }}>
+                                            <Mail size={10} /> {member.email}
+                                        </span>
+                                        <span className="text-[11px] flex items-center gap-1 hidden sm:flex" style={{ color: T.textDim }}>
+                                            <Phone size={10} /> {member.phone}
+                                        </span>
+                                    </div>
+                                </div>
 
-                                        {/* Role */}
-                                        <td className="py-4 px-6">
-                                            <span className={`px-3 py-1.5 ${roleBadge.color} rounded-lg text-xs font-medium flex items-center gap-1.5 w-fit`}>
-                                                <RoleIcon size={14} />
-                                                {roleBadge.label}
-                                            </span>
-                                        </td>
+                                {/* Stats */}
+                                <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
+                                    <div className="text-right">
+                                        <p className="text-xs font-bold" style={{ color: T.text }}>{member.stats.leads}</p>
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>leads</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-xs font-bold" style={{ color: '#6BB87B' }}>{member.stats.sales}</p>
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>vendas</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>
+                                            <Clock size={9} className="inline mr-1" />{formatLastActive(member.lastActive)}
+                                        </p>
+                                    </div>
+                                </div>
 
-                                        {/* Status */}
-                                        <td className="py-4 px-6">
-                                            <span className={`px-3 py-1.5 ${statusBadge.color} rounded-lg text-xs font-medium flex items-center gap-1.5 w-fit`}>
-                                                <StatusIcon size={14} />
-                                                {statusBadge.label}
-                                            </span>
-                                        </td>
-
-                                        {/* Performance */}
-                                        <td className="py-4 px-6">
-                                            <div className="space-y-1">
-                                                <p className="text-xs text-gray-600">
-                                                    {member.stats.leads} leads • {member.stats.sales} vendas
-                                                </p>
-                                                <p className="text-xs font-medium text-gray-900">
-                                                    {formatCurrency(member.stats.revenue)}
-                                                </p>
-                                            </div>
-                                        </td>
-
-                                        {/* Last Active */}
-                                        <td className="py-4 px-6">
-                                            <div className="flex items-center gap-1.5 text-xs text-gray-600">
-                                                <Clock size={12} />
-                                                {formatLastActive(member.lastActive)}
-                                            </div>
-                                        </td>
-
-                                        {/* Actions */}
-                                        <td className="py-4 px-6">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button className="w-8 h-8 flex items-center justify-center text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                                    <Edit size={16} />
-                                                </button>
-                                                <button className="w-8 h-8 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                                    <Trash2 size={16} />
-                                                </button>
-                                                <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                                                    <MoreVertical size={16} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-
-                {filteredTeam.length === 0 && (
-                    <div className="py-12 text-center">
-                        <Users size={48} className="mx-auto text-gray-300 mb-4" />
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">
-                            Nenhum membro encontrado
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                            Tente ajustar os filtros de busca
-                        </p>
-                    </div>
-                )}
+                                {/* Actions */}
+                                <div className="flex items-center gap-1 flex-shrink-0">
+                                    <button className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
+                                        style={{ color: T.textDim }}
+                                        onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
+                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                                        <Edit size={13} />
+                                    </button>
+                                    <button className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
+                                        style={{ color: T.textDim }}
+                                        onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
+                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                                        <MoreVertical size={13} />
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )
+                })}
             </div>
+
+            {filteredTeam.length === 0 && (
+                <div className="text-center py-16" style={{ color: T.textDim }}>
+                    <Users size={32} className="mx-auto mb-3 opacity-30" />
+                    <p className="text-sm">Nenhum membro encontrado</p>
+                </div>
+            )}
         </div>
     )
 }

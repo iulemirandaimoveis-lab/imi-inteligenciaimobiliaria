@@ -245,9 +245,8 @@ export default function ImoveisPage() {
                         transition={{ delay: i * 0.05 }}
                         className="rounded-2xl p-4"
                         style={{
-                            background: 'rgba(26,30,42,0.70)',
-                            border: '1px solid rgba(196,157,91,0.18)',
-                            backdropFilter: 'blur(16px)',
+                            background: T.elevated,
+                            border: `1px solid ${T.borderGold}`,
                         }}
                     >
                         <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'rgba(196,157,91,0.10)' }}>

@@ -274,7 +274,7 @@ export default function IntegracoesPage() {
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.05 }}
                             className="rounded-2xl p-4 text-center"
-                            style={{ background: 'rgba(26,30,42,0.70)', border: '1px solid rgba(196,157,91,0.18)', backdropFilter: 'blur(16px)' }}>
+                            style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
                             <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
                             <p className="text-xs mt-1" style={{ color: T.textDim }}>{s.label}</p>
                         </motion.div>

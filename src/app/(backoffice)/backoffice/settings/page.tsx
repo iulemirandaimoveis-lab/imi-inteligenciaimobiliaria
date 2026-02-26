@@ -3,41 +3,36 @@
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import {
-  Settings,
   User,
   Bell,
   Shield,
   Palette,
-  Globe,
-  Mail,
   Database,
   Save,
   Loader2,
   CheckCircle,
 } from 'lucide-react'
 
+const T = {
+  bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+  text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+  gold: '#C49D5B',
+}
+
 interface SettingsData {
-  // Perfil
   companyName: string
   companyEmail: string
   companyPhone: string
   companyAddress: string
-
-  // Notificações
   emailNotifications: boolean
   pushNotifications: boolean
   weeklyReport: boolean
   leadAlerts: boolean
-
-  // Aparência
   theme: 'light' | 'dark' | 'auto' | 'system'
   language: string
-
-  // Segurança
   twoFactorAuth: boolean
   sessionTimeout: string
-
-  // Integrações
   googleAnalytics: string
   facebookPixel: string
   whatsappApi: string
@@ -49,6 +44,7 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('profile')
   const [isSaving, setIsSaving] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   const [settings, setSettings] = useState<SettingsData>({
     companyName: 'Iu Lê Miranda Imóveis',
@@ -59,7 +55,7 @@ export default function SettingsPage() {
     pushNotifications: true,
     weeklyReport: true,
     leadAlerts: true,
-    theme: 'light',
+    theme: 'dark',
     language: 'pt-BR',
     twoFactorAuth: false,
     sessionTimeout: '30',
@@ -70,6 +66,7 @@ export default function SettingsPage() {
 
   const handleChange = (field: keyof SettingsData, value: any) => {
     setSettings(prev => ({ ...prev, [field]: value }))
+    setSaveError('')
   }
 
   useEffect(() => {
@@ -77,9 +74,11 @@ export default function SettingsPage() {
     const fetchSettings = async () => {
       try {
         const res = await fetch('/api/settings')
-        const data = await res.json()
-        if (data.settings && Object.keys(data.settings).length > 0) {
-          setSettings(prev => ({ ...prev, ...data.settings }))
+        if (res.ok) {
+          const data = await res.json()
+          if (data.settings && Object.keys(data.settings).length > 0) {
+            setSettings(prev => ({ ...prev, ...data.settings }))
+          }
         }
       } catch (e) {
         console.error('Failed to fetch settings', e)
@@ -88,12 +87,11 @@ export default function SettingsPage() {
     fetchSettings()
   }, [])
 
-  if (!mounted) {
-    return null
-  }
+  if (!mounted) return null
 
   const handleSave = async () => {
     setIsSaving(true)
+    setSaveError('')
 
     try {
       const res = await fetch('/api/settings', {
@@ -101,13 +99,15 @@ export default function SettingsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings)
       })
-      if (!res.ok) throw new Error('Failed to save settings')
-
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Falha ao salvar')
+      }
       setShowSuccess(true)
       setTimeout(() => setShowSuccess(false), 3000)
-    } catch (e) {
+    } catch (e: any) {
       console.error('Error saving settings:', e)
-      alert('Erro ao salvar configurações')
+      setSaveError(e.message || 'Erro ao salvar configurações')
     } finally {
       setIsSaving(false)
     }
@@ -121,13 +121,27 @@ export default function SettingsPage() {
     { id: 'integrations', label: 'Integrações', icon: Database },
   ]
 
+  const inputStyle = {
+    background: T.elevated,
+    border: `1px solid ${T.border}`,
+    color: T.text,
+  }
+
+  const toggleCheckedStyle = {
+    background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)',
+  }
+
+  const toggleUncheckedStyle = {
+    background: 'rgba(255,255,255,0.08)',
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Configurações</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-xl font-bold" style={{ color: T.text }}>Configurações</h1>
+          <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
             Gerencie as preferências e configurações do sistema
           </p>
         </div>
@@ -135,41 +149,43 @@ export default function SettingsPage() {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="flex items-center gap-2 h-10 px-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
+          style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}
         >
           {isSaving ? (
-            <>
-              <Loader2 size={18} className="animate-spin" />
-              Salvando...
-            </>
+            <><Loader2 size={16} className="animate-spin" /> Salvando...</>
           ) : showSuccess ? (
-            <>
-              <CheckCircle size={18} />
-              Salvo!
-            </>
+            <><CheckCircle size={16} /> Salvo!</>
           ) : (
-            <>
-              <Save size={18} />
-              Salvar Alterações
-            </>
+            <><Save size={16} /> Salvar Alterações</>
           )}
         </button>
       </div>
 
+      {/* Error banner */}
+      {saveError && (
+        <div className="rounded-xl p-3 text-sm" style={{ background: 'rgba(229,115,115,0.10)', border: '1px solid rgba(229,115,115,0.25)', color: '#E57373' }}>
+          ⚠ {saveError}
+        </div>
+      )}
+
       {/* Tabs */}
-      <div className="bg-white rounded-2xl p-2 border border-gray-100 flex gap-2 overflow-x-auto">
+      <div className="rounded-2xl p-2 flex gap-2 overflow-x-auto"
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {tabs.map((tab) => {
           const Icon = tab.icon
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.id
-                ? 'bg-blue-100 text-blue-700'
-                : 'text-gray-600 hover:bg-gray-100'
-                }`}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap"
+              style={{
+                background: activeTab === tab.id ? 'var(--bo-active-bg)' : 'transparent',
+                color: activeTab === tab.id ? T.gold : T.textDim,
+                border: activeTab === tab.id ? `1px solid ${T.borderGold}` : '1px solid transparent',
+              }}
             >
-              <Icon size={18} />
+              <Icon size={16} />
               {tab.label}
             </button>
           )
@@ -177,63 +193,37 @@ export default function SettingsPage() {
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-2xl p-8 border border-gray-100">
+      <div className="rounded-2xl p-6 sm:p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Profile Tab */}
         {activeTab === 'profile' && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Informações da Empresa</h3>
-              <p className="text-sm text-gray-600">Dados básicos da sua imobiliária</p>
+              <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Informações da Empresa</h3>
+              <p className="text-sm" style={{ color: T.textDim }}>Dados básicos da sua imobiliária</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nome da Empresa
-                </label>
-                <input
-                  type="text"
-                  value={settings.companyName}
-                  onChange={(e) => handleChange('companyName', e.target.value)}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Corporativo
-                </label>
-                <input
-                  type="email"
-                  value={settings.companyEmail}
-                  onChange={(e) => handleChange('companyEmail', e.target.value)}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Telefone
-                </label>
-                <input
-                  type="tel"
-                  value={settings.companyPhone}
-                  onChange={(e) => handleChange('companyPhone', e.target.value)}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Endereço
-                </label>
-                <input
-                  type="text"
-                  value={settings.companyAddress}
-                  onChange={(e) => handleChange('companyAddress', e.target.value)}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+              {[
+                { key: 'companyName', label: 'Nome da Empresa', type: 'text' },
+                { key: 'companyEmail', label: 'Email Corporativo', type: 'email' },
+                { key: 'companyPhone', label: 'Telefone', type: 'tel' },
+                { key: 'companyAddress', label: 'Endereço', type: 'text' },
+              ].map(field => (
+                <div key={field.key}>
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
+                    {field.label}
+                  </label>
+                  <input
+                    type={field.type}
+                    value={(settings as any)[field.key]}
+                    onChange={(e) => handleChange(field.key as keyof SettingsData, e.target.value)}
+                    className="w-full h-11 px-4 rounded-xl text-sm outline-none transition-all"
+                    style={inputStyle}
+                    onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
+                    onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -242,74 +232,35 @@ export default function SettingsPage() {
         {activeTab === 'notifications' && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Preferências de Notificações</h3>
-              <p className="text-sm text-gray-600">Escolha como deseja receber atualizações</p>
+              <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Preferências de Notificações</h3>
+              <p className="text-sm" style={{ color: T.textDim }}>Escolha como deseja receber atualizações</p>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Notificações por Email</p>
-                  <p className="text-xs text-gray-600 mt-1">Receba atualizações importantes por email</p>
+            <div className="space-y-3">
+              {[
+                { key: 'emailNotifications', label: 'Notificações por Email', desc: 'Receba atualizações importantes por email' },
+                { key: 'pushNotifications', label: 'Notificações Push', desc: 'Alertas em tempo real no navegador' },
+                { key: 'weeklyReport', label: 'Relatório Semanal', desc: 'Resumo de performance toda segunda-feira' },
+                { key: 'leadAlerts', label: 'Alertas de Novos Leads', desc: 'Notificação imediata quando um lead chegar' },
+              ].map(item => (
+                <div key={item.key} className="flex items-center justify-between p-4 rounded-xl"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                  <div>
+                    <p className="text-sm font-medium" style={{ color: T.text }}>{item.label}</p>
+                    <p className="text-xs mt-1" style={{ color: T.textDim }}>{item.desc}</p>
+                  </div>
+                  <button
+                    onClick={() => handleChange(item.key as keyof SettingsData, !(settings as any)[item.key])}
+                    className="w-11 h-6 rounded-full relative transition-all flex-shrink-0"
+                    style={(settings as any)[item.key] ? toggleCheckedStyle : toggleUncheckedStyle}
+                  >
+                    <span
+                      className="absolute top-[2px] w-5 h-5 rounded-full bg-white transition-all"
+                      style={{ left: (settings as any)[item.key] ? '22px' : '2px' }}
+                    />
+                  </button>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.emailNotifications}
-                    onChange={(e) => handleChange('emailNotifications', e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Notificações Push</p>
-                  <p className="text-xs text-gray-600 mt-1">Alertas em tempo real no navegador</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.pushNotifications}
-                    onChange={(e) => handleChange('pushNotifications', e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Relatório Semanal</p>
-                  <p className="text-xs text-gray-600 mt-1">Resumo de performance toda segunda-feira</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.weeklyReport}
-                    onChange={(e) => handleChange('weeklyReport', e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
-
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Alertas de Novos Leads</p>
-                  <p className="text-xs text-gray-600 mt-1">Notificação imediata quando um lead chegar</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.leadAlerts}
-                    onChange={(e) => handleChange('leadAlerts', e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
+              ))}
             </div>
           </div>
         )}
@@ -318,13 +269,13 @@ export default function SettingsPage() {
         {activeTab === 'appearance' && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Aparência e Idioma</h3>
-              <p className="text-sm text-gray-600">Personalize a interface do sistema</p>
+              <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Aparência e Idioma</h3>
+              <p className="text-sm" style={{ color: T.textDim }}>Personalize a interface do sistema</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
                   Tema
                 </label>
                 <select
@@ -333,7 +284,8 @@ export default function SettingsPage() {
                     handleChange('theme', e.target.value)
                     setTheme(e.target.value)
                   }}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full h-11 px-4 rounded-xl text-sm outline-none"
+                  style={inputStyle}
                 >
                   <option value="light">Claro</option>
                   <option value="dark">Escuro</option>
@@ -342,13 +294,14 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
                   Idioma
                 </label>
                 <select
                   value={settings.language}
                   onChange={(e) => handleChange('language', e.target.value)}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full h-11 px-4 rounded-xl text-sm outline-none"
+                  style={inputStyle}
                 >
                   <option value="pt-BR">Português (Brasil)</option>
                   <option value="en-US">English (US)</option>
@@ -363,35 +316,38 @@ export default function SettingsPage() {
         {activeTab === 'security' && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Segurança e Privacidade</h3>
-              <p className="text-sm text-gray-600">Proteja sua conta e dados</p>
+              <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Segurança e Privacidade</h3>
+              <p className="text-sm" style={{ color: T.textDim }}>Proteja sua conta e dados</p>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center justify-between p-4 rounded-xl"
+                style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Autenticação de Dois Fatores</p>
-                  <p className="text-xs text-gray-600 mt-1">Adicione uma camada extra de segurança</p>
+                  <p className="text-sm font-medium" style={{ color: T.text }}>Autenticação de Dois Fatores</p>
+                  <p className="text-xs mt-1" style={{ color: T.textDim }}>Adicione uma camada extra de segurança</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.twoFactorAuth}
-                    onChange={(e) => handleChange('twoFactorAuth', e.target.checked)}
-                    className="sr-only peer"
+                <button
+                  onClick={() => handleChange('twoFactorAuth', !settings.twoFactorAuth)}
+                  className="w-11 h-6 rounded-full relative transition-all flex-shrink-0"
+                  style={settings.twoFactorAuth ? toggleCheckedStyle : toggleUncheckedStyle}
+                >
+                  <span
+                    className="absolute top-[2px] w-5 h-5 rounded-full bg-white transition-all"
+                    style={{ left: settings.twoFactorAuth ? '22px' : '2px' }}
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
+                </button>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
                   Tempo de Sessão (minutos)
                 </label>
                 <select
                   value={settings.sessionTimeout}
                   onChange={(e) => handleChange('sessionTimeout', e.target.value)}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full h-11 px-4 rounded-xl text-sm outline-none"
+                  style={inputStyle}
                 >
                   <option value="15">15 minutos</option>
                   <option value="30">30 minutos</option>
@@ -407,49 +363,32 @@ export default function SettingsPage() {
         {activeTab === 'integrations' && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Integrações Externas</h3>
-              <p className="text-sm text-gray-600">Conecte com ferramentas de terceiros</p>
+              <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Integrações Externas</h3>
+              <p className="text-sm" style={{ color: T.textDim }}>Conecte com ferramentas de terceiros</p>
             </div>
 
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Google Analytics ID
-                </label>
-                <input
-                  type="text"
-                  value={settings.googleAnalytics}
-                  onChange={(e) => handleChange('googleAnalytics', e.target.value)}
-                  placeholder="G-XXXXXXXXXX"
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Facebook Pixel ID
-                </label>
-                <input
-                  type="text"
-                  value={settings.facebookPixel}
-                  onChange={(e) => handleChange('facebookPixel', e.target.value)}
-                  placeholder="123456789012345"
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  WhatsApp API Token
-                </label>
-                <input
-                  type="text"
-                  value={settings.whatsappApi}
-                  onChange={(e) => handleChange('whatsappApi', e.target.value)}
-                  placeholder="EAAxxxxxxxxxx"
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+              {[
+                { key: 'googleAnalytics', label: 'Google Analytics ID', placeholder: 'G-XXXXXXXXXX' },
+                { key: 'facebookPixel', label: 'Facebook Pixel ID', placeholder: '123456789012345' },
+                { key: 'whatsappApi', label: 'WhatsApp API Token', placeholder: 'EAAxxxxxxxxxx' },
+              ].map(field => (
+                <div key={field.key}>
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
+                    {field.label}
+                  </label>
+                  <input
+                    type="text"
+                    value={(settings as any)[field.key]}
+                    onChange={(e) => handleChange(field.key as keyof SettingsData, e.target.value)}
+                    placeholder={field.placeholder}
+                    className="w-full h-11 px-4 rounded-xl text-sm outline-none font-mono transition-all"
+                    style={inputStyle}
+                    onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
+                    onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         )}

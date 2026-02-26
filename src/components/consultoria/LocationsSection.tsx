@@ -20,7 +20,7 @@ const locations = [
     {
         name: 'Dubai, UAE',
         description: 'Isenção de impostos (Tax-Free), alto luxo e segurança extrema. O mercado imobiliário mais dinâmico e futurista do mundo.',
-        image: 'https://images.unsplash.com/photo-1512453979798-5ea936a7d40c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         stats: 'Tax-Free Rental Income'
     }
 ];

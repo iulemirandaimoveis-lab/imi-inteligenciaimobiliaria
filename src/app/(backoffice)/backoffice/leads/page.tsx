@@ -67,9 +67,8 @@ function StatCard({ label, value, color }: { label: string; value: number; color
         <div
             className="rounded-2xl p-4"
             style={{
-                background: 'rgba(26,30,42,0.70)',
-                border: '1px solid rgba(196,157,91,0.18)',
-                backdropFilter: 'blur(16px)',
+                background: T.elevated,
+                border: `1px solid ${T.borderGold}`,
             }}
         >
             <p className="text-xs font-medium mb-1" style={{ color: color || T.textSub }}>{label}</p>

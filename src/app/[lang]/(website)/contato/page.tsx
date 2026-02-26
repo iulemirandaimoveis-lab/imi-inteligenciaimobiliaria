@@ -241,8 +241,8 @@ export default function ContactPage() {
                     <p className="text-imi-400 text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
                         Precisa de agilidade? Fale diretamente com nossa equipe técnica pelo WhatsApp.
                     </p>
-                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="btn btn-primary bg-white text-imi-900 border border-imi-200 hover:bg-imi-50 h-14 px-10 inline-flex items-center text-lg shadow-md font-bold uppercase tracking-wider">
-                        <MessageCircle className="w-5 h-5 mr-3" />
+                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="btn btn-primary bg-white text-imi-900 border border-imi-200 hover:bg-imi-50 h-14 px-6 sm:px-10 inline-flex items-center text-base sm:text-lg shadow-md font-bold uppercase tracking-wider whitespace-nowrap">
+                        <MessageCircle className="w-5 h-5 mr-2 sm:mr-3 flex-shrink-0" />
                         Abrir Chat no WhatsApp
                     </a>
                 </div>

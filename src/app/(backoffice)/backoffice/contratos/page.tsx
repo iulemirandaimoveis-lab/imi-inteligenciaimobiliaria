@@ -93,7 +93,7 @@ export default function ContratosPage() {
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
                         className="rounded-2xl p-4"
-                        style={{ background: 'rgba(26,30,42,0.70)', border: '1px solid rgba(196,157,91,0.18)', backdropFilter: 'blur(16px)' }}>
+                        style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
                         <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
                             style={{ background: `${k.color}18` }}>
                             <k.icon size={16} style={{ color: k.color }} />
