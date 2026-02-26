@@ -325,7 +325,7 @@ export default function ExerciciosPage() {
       const response = await fetch('/api/avaliacoes/gerar-exercicio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ categoria: filtroCategoria, nivel: filtroNivel, quantidade: 1 })
+        body: JSON.stringify({ categoria: selectedCat, nivel: selectedNivel, quantidade: 1 })
       })
       const _data = await response.json()
       if (_data.success && _data.exercicios?.length > 0) {
