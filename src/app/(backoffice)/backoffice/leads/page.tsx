@@ -162,7 +162,7 @@ export default function LeadsPage() {
             </motion.div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                 <StatCard label="Total" value={stats.total} />
                 <StatCard label="Quentes" value={stats.hot} color={STATUS_CFG.hot.text} />
                 <StatCard label="Mornos" value={stats.warm} color={STATUS_CFG.warm.text} />
@@ -197,7 +197,7 @@ export default function LeadsPage() {
                     </div>
 
                     {/* Filter tabs */}
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 overflow-x-auto flex-shrink-0">
                         {['all', 'hot', 'warm', 'cold'].map(s => (
                             <button
                                 key={s}

@@ -45,8 +45,21 @@ async function gerarConteudo(
   })
 
   if (!response.ok) {
-    const err = await response.text()
-    throw new Error(`Anthropic API error: ${err}`)
+    const status = response.status
+    let errText = ''
+    try { errText = await response.text() } catch { }
+
+    // Parse known Anthropic errors into user-friendly messages
+    if (status === 401) throw new Error('Chave da API Anthropic inválida ou ausente. Verifique a configuração.')
+    if (status === 429) throw new Error('Limite de requisições atingido. Aguarde um momento e tente novamente.')
+    if (status === 529) throw new Error('Serviço da IA temporariamente sobrecarregado. Tente novamente em alguns minutos.')
+    if (errText.includes('credit balance') || errText.includes('billing'))
+      throw new Error('Créditos insuficientes na API de IA. Entre em contato com o suporte para recarregar.')
+    if (errText.includes('too many tokens') || errText.includes('context length'))
+      throw new Error('O contrato solicitado excede o limite de tamanho. Tente simplificar as instruções.')
+    if (status >= 500) throw new Error('Erro no servidor da IA. Tente novamente em alguns minutos.')
+
+    throw new Error('Erro ao gerar contrato. Tente novamente ou contate o suporte.')
   }
 
   const data = await response.json()

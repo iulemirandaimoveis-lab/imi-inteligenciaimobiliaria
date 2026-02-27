@@ -287,7 +287,19 @@ export default function ImoveisPage() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        {/* Status filter */}
+                        {/* Status filter — mobile dropdown */}
+                        <select
+                            value={filter}
+                            onChange={e => setFilter(e.target.value)}
+                            className="sm:hidden h-10 px-3 rounded-xl text-xs font-semibold outline-none"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                        >
+                            <option value="all">Todos</option>
+                            <option value="disponivel">Disponível</option>
+                            <option value="em_negociacao">Negociação</option>
+                            <option value="lancamento">Lançamento</option>
+                        </select>
+                        {/* Status filter — desktop buttons */}
                         {['all', 'disponivel', 'em_negociacao', 'lancamento'].map(s => (
                             <button
                                 key={s}

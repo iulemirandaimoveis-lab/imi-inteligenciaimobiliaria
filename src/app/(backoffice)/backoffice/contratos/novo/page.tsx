@@ -212,7 +212,7 @@ function NovoContratoInner() {
                                     style={{ background: i < step ? '#6BB87B' : i === step ? '#C49D5B' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
                                     {i < step ? '✓' : i + 1}
                                 </div>
-                                <span className="text-[9px] mt-1 hidden sm:block" style={{ color: i === step ? T.gold : T.textDim }}>{s.label}</span>
+                                <span className="text-[10px] mt-1 hidden sm:block" style={{ color: i === step ? T.gold : T.textDim }}>{s.label}</span>
                             </div>
                             {i < STEPS.length - 1 && <div className="w-6 sm:w-8 h-px mx-1" style={{ background: i < step ? '#6BB87B' : T.border }} />}
                         </div>
@@ -382,8 +382,13 @@ function NovoContratoInner() {
                                 <div className="col-span-2"><p style={{ color: T.textDim }}>Assinatura</p><p className="font-semibold mt-0.5" style={{ color: T.gold }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</p></div>
                             </div>
                         </div>
-                        {erro && <div className="flex items-center gap-3 p-4 rounded-2xl" style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.20)' }}>
-                            <AlertCircle size={16} style={{ color: '#E57373' }} /><p className="text-xs" style={{ color: '#E57373' }}>{erro}</p>
+                        {erro && <div className="flex items-start gap-3 p-4 rounded-2xl" style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.20)' }}>
+                            <AlertCircle size={16} className="flex-shrink-0 mt-0.5" style={{ color: '#E57373' }} />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-xs font-semibold mb-1" style={{ color: '#E57373' }}>Erro ao gerar contrato</p>
+                                <p className="text-xs" style={{ color: '#E57373' }}>{erro}</p>
+                                <button onClick={() => setErro(null)} className="text-[11px] font-semibold mt-2 underline" style={{ color: '#E57373' }}>Tentar novamente</button>
+                            </div>
                         </div>}
                         <div className="space-y-2">
                             {idiomasSel.map(lang => (

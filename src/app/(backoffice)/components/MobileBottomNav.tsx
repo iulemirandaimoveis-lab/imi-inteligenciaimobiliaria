@@ -130,7 +130,7 @@ export function MobileBottomNav() {
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="relative text-[9px] font-semibold mt-1 transition-colors duration-150"
+                                            className="relative text-[10px] font-semibold mt-0.5 transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
@@ -169,7 +169,7 @@ export function MobileBottomNav() {
                                 }
                             </motion.span>
                             <span
-                                className="relative text-[9px] font-semibold mt-1 transition-colors"
+                                className="relative text-[10px] font-semibold mt-0.5 transition-colors"
                                 style={{ color: open ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                             >
                                 Menu
@@ -243,11 +243,11 @@ export function MobileBottomNav() {
                             </div>
 
                             {/* Groups */}
-                            <div className="overflow-y-auto flex-1 pb-[calc(88px+env(safe-area-inset-bottom))]">
+                            <div className="overflow-y-auto flex-1 pb-[calc(80px+env(safe-area-inset-bottom))]">
                                 {GROUPS.map((group, gi) => (
                                     <div key={group.label} className="pt-4">
                                         <p
-                                            className="px-6 pb-2 text-[9px] font-bold uppercase tracking-[0.12em]"
+                                            className="px-6 pb-2 text-[10px] font-bold uppercase tracking-[0.12em]"
                                             style={{ color: 'var(--bo-text-muted)' }}
                                         >
                                             {group.label}
