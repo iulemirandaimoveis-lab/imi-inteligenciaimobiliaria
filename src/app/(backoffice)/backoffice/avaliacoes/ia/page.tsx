@@ -130,9 +130,20 @@ export default function AvaliacaoIAPage() {
         setCurrentStep(3)
     }
 
-    const handleSave = () => {
-        alert('Laudo salvo com sucesso!')
-        router.push('/backoffice/avaliacoes')
+    const handleSave = async () => {
+        try {
+            const response = await fetch('/api/avaliacoes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(laudoData),
+            })
+            if (!response.ok) throw new Error('Erro ao salvar')
+            alert('Laudo salvo com sucesso!')
+            router.push('/backoffice/avaliacoes')
+        } catch (error) {
+            console.error('Erro ao salvar:', error)
+            alert('Erro ao salvar o laudo.')
+        }
     }
 
     const formatCurrency = (value: number) => {
@@ -192,8 +203,8 @@ export default function AvaliacaoIAPage() {
                             <div key={step.number} className="flex items-center flex-1">
                                 <div className="flex flex-col items-center flex-1">
                                     <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isCompleted ? 'bg-green-500 text-white' :
-                                            isActive ? 'bg-purple-500 text-white' :
-                                                'bg-gray-100 text-gray-400'
+                                        isActive ? 'bg-purple-500 text-white' :
+                                            'bg-gray-100 text-gray-400'
                                         }`}>
                                         {isCompleted ? <CheckCircle size={24} /> : <StepIcon size={24} />}
                                     </div>

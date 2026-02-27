@@ -31,10 +31,20 @@ export default function NovaConsultoriaPage() {
 
   const handleSubmit = async () => {
     setLoading(true)
-    // TODO: Supabase insert
-    await new Promise(r => setTimeout(r, 800))
-    setLoading(false)
-    router.push('/backoffice/consultorias')
+    try {
+      const response = await fetch('/api/consultorias', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
+      router.push('/backoffice/consultorias')
+    } catch (error) {
+      console.error('Erro ao salvar consultoria:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const steps = ['Cliente', 'Tipo & Escopo', 'Honorários']
@@ -58,10 +68,9 @@ export default function NovaConsultoriaPage() {
         {steps.map((s, i) => (
           <div key={s} className="flex items-center flex-1">
             <div className={`flex items-center gap-2 flex-1 ${i < steps.length - 1 ? 'mr-0' : ''}`}>
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors ${
-                step > i + 1 ? 'bg-emerald-500 text-white' :
-                step === i + 1 ? 'bg-[#C49D5B] text-white' :
-                'bg-gray-100 text-gray-400'}`}>
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors ${step > i + 1 ? 'bg-emerald-500 text-white' :
+                  step === i + 1 ? 'bg-[#C49D5B] text-white' :
+                    'bg-gray-100 text-gray-400'}`}>
                 {step > i + 1 ? '✓' : i + 1}
               </div>
               <span className={`text-xs font-medium whitespace-nowrap ${step === i + 1 ? 'text-gray-900' : 'text-gray-400'}`}>{s}</span>
@@ -85,8 +94,7 @@ export default function NovaConsultoriaPage() {
             <div className="flex gap-2">
               {['PF', 'PJ'].map(t => (
                 <button key={t} onClick={() => set('cliente_tipo', t)}
-                  className={`flex-1 h-9 rounded-xl border text-sm font-medium transition-colors ${
-                    form.cliente_tipo === t ? 'bg-[#141420] text-white border-[#141420]' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}`}>
+                  className={`flex-1 h-9 rounded-xl border text-sm font-medium transition-colors ${form.cliente_tipo === t ? 'bg-[#141420] text-white border-[#141420]' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}`}>
                   {t === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
                 </button>
               ))}
@@ -137,8 +145,7 @@ export default function NovaConsultoriaPage() {
               <label className="block text-xs font-medium text-gray-700 mb-2">Tipo de Consultoria</label>
               {TIPOS.map(t => (
                 <button key={t.v} onClick={() => set('tipo', t.v)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all ${
-                    form.tipo === t.v ? 'border-[#C49D5B] bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                  className={`w-full text-left p-3 rounded-xl border transition-all ${form.tipo === t.v ? 'border-[#C49D5B] bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
                   <p className="text-sm font-medium text-gray-900">{t.l}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{t.desc}</p>
                 </button>
@@ -242,13 +249,13 @@ export default function NovaConsultoriaPage() {
         </button>
         {step < 3
           ? <button onClick={() => setStep(s => s + 1)}
-              className="h-10 px-6 bg-[#C49D5B] text-white rounded-xl text-sm font-semibold hover:bg-[#b08a4a] transition-colors">
-              Continuar
-            </button>
+            className="h-10 px-6 bg-[#C49D5B] text-white rounded-xl text-sm font-semibold hover:bg-[#b08a4a] transition-colors">
+            Continuar
+          </button>
           : <button onClick={handleSubmit} disabled={loading}
-              className="h-10 px-6 bg-[#141420] text-white rounded-xl text-sm font-semibold hover:bg-[#1f1f30] disabled:opacity-60 flex items-center gap-2 transition-colors">
-              {loading ? 'Salvando…' : <><Save size={15} /> Criar Consultoria</>}
-            </button>
+            className="h-10 px-6 bg-[#141420] text-white rounded-xl text-sm font-semibold hover:bg-[#1f1f30] disabled:opacity-60 flex items-center gap-2 transition-colors">
+            {loading ? 'Salvando…' : <><Save size={15} /> Criar Consultoria</>}
+          </button>
         }
       </div>
     </div>

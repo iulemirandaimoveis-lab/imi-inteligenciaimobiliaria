@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { Building2, MapPin, Calendar, FileText } from 'lucide-react';
 import { Development } from '../types/development';
-import { formatBRL } from '../data/developments';
 import Badge from '@/components/ui/Badge';
 import { motion } from 'framer-motion';
 import { slideUp, staggerContainer } from '@/lib/animations';

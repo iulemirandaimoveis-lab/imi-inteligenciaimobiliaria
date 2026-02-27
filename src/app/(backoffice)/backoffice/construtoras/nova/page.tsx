@@ -105,9 +105,13 @@ export default function NovaConstrutora() {
     setLoading(true)
 
     try {
-      // TODO: Integrar com Supabase
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
+      const response = await fetch('/api/developers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
       router.push('/backoffice/construtoras')
     } catch (error) {
       console.error('Erro ao salvar construtora:', error)

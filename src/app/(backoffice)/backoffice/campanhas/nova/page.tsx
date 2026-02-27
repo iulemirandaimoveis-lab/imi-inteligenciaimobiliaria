@@ -217,13 +217,21 @@ export default function NovaCampanhaPage() {
 
     setIsSubmitting(true)
 
-    // TODO: Upload images to Supabase Storage
-    // TODO: Save to Supabase database
-    // TODO: Generate campaign ID
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    try {
+      // TODO: Upload images to Supabase Storage
+      const response = await fetch('/api/campanhas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
 
-    alert('Campanha criada com sucesso! ID: CMP-2026-001')
-    router.push('/backoffice/campanhas')
+      router.push('/backoffice/campanhas')
+    } catch (error) {
+      console.error('Erro ao salvar campanha:', error)
+      setIsSubmitting(false)
+    }
   }
 
   const formatCurrency = (value: string) => {
@@ -282,8 +290,8 @@ export default function NovaCampanhaPage() {
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isCompleted ? 'bg-green-500 text-white' :
-                      isActive ? 'bg-blue-500 text-white' :
-                        'bg-gray-100 text-gray-400'
+                    isActive ? 'bg-blue-500 text-white' :
+                      'bg-gray-100 text-gray-400'
                     }`}>
                     {isCompleted ? <Check size={24} /> : <StepIcon size={24} />}
                   </div>
@@ -572,8 +580,8 @@ export default function NovaCampanhaPage() {
                       type="button"
                       onClick={() => toggleLocation(loc)}
                       className={`h-10 px-4 rounded-lg text-sm font-medium transition-all ${formData.location.includes(loc)
-                          ? 'bg-blue-500 text-white'
-                          : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+                        ? 'bg-blue-500 text-white'
+                        : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
                         }`}
                     >
                       {loc}
@@ -597,8 +605,8 @@ export default function NovaCampanhaPage() {
                       type="button"
                       onClick={() => toggleInterest(interest)}
                       className={`h-10 px-4 rounded-lg text-sm font-medium transition-all ${formData.interests.includes(interest)
-                          ? 'bg-blue-500 text-white'
-                          : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+                        ? 'bg-blue-500 text-white'
+                        : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
                         }`}
                     >
                       {interest}

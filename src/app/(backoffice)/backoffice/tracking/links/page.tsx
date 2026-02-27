@@ -1,483 +1,260 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import PageHeader from '../../../components/PageHeader'
-import { Button } from '@/components/ui/Button'
-import { Card, CardHeader, CardBody, CardFooter } from '@/components/ui/Card'
-import { Input } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
-import { Badge } from '@/components/ui/Badge'
+import { useRouter } from 'next/navigation'
 import {
-  TableContainer,
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from '@/components/ui/Table'
-import { EmptyState } from '@/components/ui/EmptyState'
-import {
-  Link2,
-  Plus,
-  Copy,
-  QrCode,
-  ExternalLink,
-  Trash2,
-  Download,
-  Check,
+    ArrowLeft, Link2, Plus, Copy, QrCode, ExternalLink,
+    Trash2, Download, Check, Loader2, Search, RefreshCw
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import QRCode from 'qrcode'
-import { useDevelopments } from '@/hooks/use-developments'
 import { toast } from 'sonner'
 
 const supabase = createClient()
 
-// UTM Sources
-const utmSources = [
-  { value: 'instagram', label: 'Instagram' },
-  { value: 'facebook', label: 'Facebook' },
-  { value: 'google', label: 'Google' },
-  { value: 'email', label: 'Email' },
-  { value: 'whatsapp', label: 'WhatsApp' },
-  { value: 'linkedin', label: 'LinkedIn' },
-  { value: 'direct', label: 'Direto' },
-  { value: 'referral', label: 'Referência' },
-]
-
-// UTM Mediums
-const utmMediums = [
-  { value: 'cpc', label: 'CPC (Custo por Clique)' },
-  { value: 'organic', label: 'Orgânico' },
-  { value: 'social', label: 'Social' },
-  { value: 'email', label: 'Email' },
-  { value: 'referral', label: 'Referência' },
-  { value: 'banner', label: 'Banner' },
-  { value: 'story', label: 'Story' },
-  { value: 'post', label: 'Post' },
-]
-
-// Mock existing links (depois virá do Supabase)
-const mockLinks = [
-  {
-    id: '1',
-    campaign_name: 'Instagram Stories - Setembro',
-    url: 'https://iulemirandaimoveis.com.br/pt/imoveis/reserva-atlantis?utm_source=instagram&utm_medium=story&utm_campaign=set-2024',
-    short_url: 'imi.co/ra-ig-set',
-    clicks: 847,
-    created_at: '2024-09-01',
-  },
-  {
-    id: '2',
-    campaign_name: 'Facebook Ads - Jardins',
-    url: 'https://iulemirandaimoveis.com.br/pt/imoveis/villa-jardins?utm_source=facebook&utm_medium=cpc&utm_campaign=fb-jardins',
-    short_url: 'imi.co/vj-fb',
-    clicks: 623,
-    created_at: '2024-08-28',
-  },
-]
-
-export default function TrackingLinksPage() {
-  const [showGenerator, setShowGenerator] = useState(false)
-  const [links, setLinks] = useState(mockLinks)
-  const [copiedId, setCopiedId] = useState<string | null>(null)
-  const { developments } = useDevelopments()
-
-  const devOptions = developments?.map((d: any) => ({
-    value: d.id,
-    label: d.name
-  })) || []
-
-  // Form state
-  const [formData, setFormData] = useState({
-    development_id: '',
-    campaign_name: '',
-    utm_source: '',
-    utm_medium: '',
-    utm_campaign: '',
-    utm_content: '',
-    custom_slug: '',
-  })
-
-  const [generatedLink, setGeneratedLink] = useState<string | null>(null)
-  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null)
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleGenerate = async () => {
-    const selectedDev = developments?.find(
-      (d: any) => d.id === formData.development_id
-    )
-
-    // Normalizar slug do empreendimento
-    const devSlug = selectedDev?.slug || selectedDev?.name.toLowerCase().replace(/\s+/g, '-') || 'empreendimento'
-    const baseUrl = `https://www.iulemirandaimoveis.com.br/pt/imoveis/${devSlug}`
-
-    const params = new URLSearchParams()
-    if (formData.utm_source) params.set('utm_source', formData.utm_source)
-    if (formData.utm_medium) params.set('utm_medium', formData.utm_medium)
-    if (formData.utm_campaign) params.set('utm_campaign', formData.utm_campaign)
-    if (formData.utm_content) params.set('utm_content', formData.utm_content)
-
-    const fullUrl = `${baseUrl}?${params.toString()}`
-    setGeneratedLink(fullUrl)
-
-    // Gerar QR Code
-    try {
-      const qr = await QRCode.toDataURL(fullUrl, {
-        width: 600,
-        margin: 2,
-        color: {
-          dark: '#0A0A0A',
-          light: '#FFFFFF',
-        },
-      })
-      setQrCodeUrl(qr)
-      toast.success('Link UTM e QR Code gerados com sucesso!')
-    } catch (error) {
-      console.error('Erro ao gerar QR Code:', error)
-      toast.error('Ocorreu um erro ao gerar o QR Code.')
-    }
-  }
-
-  const handleCopy = (text: string, id: string) => {
-    navigator.clipboard.writeText(text)
-    setCopiedId(id)
-    toast.success('Link copiado para a área de transferência!')
-    setTimeout(() => setCopiedId(null), 2000)
-  }
-
-  const handleDownloadQR = () => {
-    if (!qrCodeUrl) return
-
-    const link = document.createElement('a')
-    link.download = `qrcode-${formData.campaign_name || 'link'}.png`
-    link.href = qrCodeUrl
-    link.click()
-  }
-
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Gerenciador de Links Rastreáveis"
-        subtitle="Construção de URLs UTM e geração de QR Codes para campanhas"
-        breadcrumbs={[
-          { label: 'Dashboard', href: '/backoffice/dashboard' },
-          { label: 'Tracking', href: '/backoffice/tracking' },
-          { label: 'Links' },
-        ]}
-        action={
-          <Button
-            variant={showGenerator ? 'outline' : 'primary'}
-            icon={showGenerator ? <X size={20} /> : <Plus size={20} />}
-            onClick={() => setShowGenerator(!showGenerator)}
-          >
-            {showGenerator ? 'Fechar Gerador' : 'Criar Link UTM'}
-          </Button>
-        }
-      />
-
-      {/* Link Generator */}
-      {showGenerator && (
-        <Card className="animate-in slide-in-from-top duration-300">
-          <CardHeader
-            title="Sessão: Engenharia de Link"
-            subtitle="Configure os parâmetros UTM para rastreamento preciso de conversões"
-          />
-          <CardBody>
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <Select
-                  label="Empreendimento Alvo"
-                  name="development_id"
-                  value={formData.development_id}
-                  onChange={handleChange}
-                  options={[
-                    { value: '', label: 'Selecione o ativo imobiliário' },
-                    ...devOptions,
-                  ]}
-                />
-
-                <Input
-                  label="Nome Interno da Campanha"
-                  name="campaign_name"
-                  value={formData.campaign_name}
-                  onChange={handleChange}
-                  placeholder="Ex: Lançamento Verão - Stories 01"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <Select
-                  label="Origem (utm_source)"
-                  name="utm_source"
-                  value={formData.utm_source}
-                  onChange={handleChange}
-                  options={[
-                    { value: '', label: 'Selecione a fonte do tráfego' },
-                    ...utmSources,
-                  ]}
-                  hint="Canal onde o link será veiculado"
-                />
-
-                <Select
-                  label="Mídia (utm_medium)"
-                  name="utm_medium"
-                  value={formData.utm_medium}
-                  onChange={handleChange}
-                  options={[
-                    { value: '', label: 'Selecione o formato da mídia' },
-                    ...utmMediums,
-                  ]}
-                  hint="Ex: Story, Banner, CPC, Bio"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <Input
-                  label="Nome da Campanha (utm_campaign)"
-                  name="utm_campaign"
-                  value={formData.utm_campaign}
-                  onChange={handleChange}
-                  placeholder="Ex: blackfriday-2024"
-                  hint="Identificador da campanha no Analytics"
-                />
-
-                <Input
-                  label="Conteúdo (utm_content)"
-                  name="utm_content"
-                  value={formData.utm_content}
-                  onChange={handleChange}
-                  placeholder="Ex: variant-a"
-                  hint="Diferencie anúncios ou versões (Teste A/B)"
-                />
-              </div>
-
-              <Input
-                label="Slug Personalizado (Encurtador)"
-                name="custom_slug"
-                value={formData.custom_slug}
-                onChange={handleChange}
-                placeholder="Ex: reserva-oferta"
-                hint="Cria um redirecionamento simplificado: imi.co/reserva-oferta"
-              />
-            </div>
-          </CardBody>
-
-          <CardFooter className="bg-imi-50/50">
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setShowGenerator(false)
-                setGeneratedLink(null)
-                setQrCodeUrl(null)
-              }}
-              className="text-imi-500"
-            >
-              Cancelar Operação
-            </Button>
-            <Button
-              onClick={handleGenerate}
-              disabled={
-                !formData.development_id ||
-                !formData.campaign_name ||
-                !formData.utm_source ||
-                !formData.utm_medium
-              }
-              icon={<Link2 size={20} />}
-              className="px-12 shadow-glow"
-            >
-              Gerar Ativos de Tracking
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
-
-      {/* Generated Link Preview */}
-      {generatedLink && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in zoom-in duration-500">
-          {/* Full Link Card */}
-          <Card className="border-accent-100 ring-4 ring-accent-50/50">
-            <CardHeader
-              title="URL Rastreável Gerada"
-              subtitle="Utilize este link em seus botões e anúncios"
-            />
-            <CardBody>
-              <div className="space-y-6">
-                <div className="p-6 bg-imi-950 rounded-2xl border border-imi-800 shadow-inner overflow-hidden">
-                  <p className="text-[10px] font-black text-accent-500 uppercase tracking-widest mb-3">Target URL com UTM</p>
-                  <p className="text-sm text-white break-all font-mono leading-relaxed">
-                    {generatedLink}
-                  </p>
-                </div>
-                <div className="flex gap-3">
-                  <Button
-                    variant="primary"
-                    fullWidth
-                    icon={copiedId === 'full' ? <Check size={20} /> : <Copy size={20} />}
-                    onClick={() => handleCopy(generatedLink, 'full')}
-                    className="h-14"
-                  >
-                    {copiedId === 'full' ? 'Link Copiado!' : 'Copiar URL UTM'}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    icon={<ExternalLink size={20} />}
-                    onClick={() => window.open(generatedLink, '_blank')}
-                    className="h-14 w-14 p-0 shrink-0"
-                  />
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          {/* QR Code Card */}
-          <Card className="border-purple-100 shadow-elevated">
-            <CardHeader
-              title="QR Code Institucional"
-              subtitle="Alta resolução para materiais impressos ou PDV"
-            />
-            <CardBody>
-              {qrCodeUrl && (
-                <div className="space-y-6">
-                  <div className="flex justify-center p-6 bg-white border-2 border-dashed border-imi-100 rounded-2xl">
-                    <img
-                      src={qrCodeUrl}
-                      alt="QR Code Campanha"
-                      className="w-[180px] h-[180px] object-contain"
-                    />
-                  </div>
-                  <Button
-                    variant="outline"
-                    fullWidth
-                    icon={<Download size={20} />}
-                    onClick={handleDownloadQR}
-                    className="h-14 border-imi-200 text-imi-600"
-                  >
-                    Baixar QR Code (PNG)
-                  </Button>
-                </div>
-              )}
-            </CardBody>
-          </Card>
-        </div>
-      )}
-
-      {/* Existing Links Table */}
-      <Card>
-        <CardHeader
-          title="Histórico de Links Gerados"
-          subtitle={`${links.length} URLs em circulação no ecossistema`}
-        />
-        <CardBody>
-          {links.length === 0 ? (
-            <EmptyState
-              icon={Link2}
-              title="Base de Links Vazia"
-              description="Ainda não existem links rastreados. Inicie uma nova campanha para monitorar leads."
-              action={{
-                label: 'Criar Novo Link',
-                onClick: () => setShowGenerator(true),
-                icon: <Plus size={18} />,
-              }}
-              className="bg-imi-50/50 border-dashed border-2"
-            />
-          ) : (
-            <TableContainer>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Identificador da Campanha</TableHead>
-                    <TableHead>Short Link</TableHead>
-                    <TableHead>Performance</TableHead>
-                    <TableHead>Data de Emissão</TableHead>
-                    <TableHead className="text-right">Ações de Gestão</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {links.map((link) => (
-                    <TableRow key={link.id} className="hover:bg-gray-50">
-                      <TableCell>
-                        <span className="font-bold text-imi-900">
-                          {link.campaign_name}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <code className="text-xs font-black text-accent-700 bg-accent-50 px-2 py-1 rounded-md border border-accent-100">
-                          {link.short_url}
-                        </code>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="primary" size="sm" dot>{link.clicks} cliques</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs font-medium text-imi-500">
-                          {new Date(link.created_at).toLocaleDateString('pt-BR')}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            icon={
-                              copiedId === link.id ? (
-                                <Check size={16} />
-                              ) : (
-                                <Copy size={16} />
-                              )
-                            }
-                            onClick={() => handleCopy(link.url, link.id)}
-                            className="text-imi-400"
-                          />
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            icon={<ExternalLink size={16} />}
-                            onClick={() => window.open(link.url, '_blank')}
-                            className="text-imi-400"
-                          />
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            icon={<Trash2 size={16} />}
-                            className="text-red-300 hover:text-red-500 hover:bg-red-50"
-                          />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </CardBody>
-      </Card>
-    </div>
-  )
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    border: 'var(--bo-border)',
+    hover: 'var(--bo-hover)',
+    accent: '#C49D5B',
+    accentBg: 'rgba(196,157,91,0.10)',
 }
 
-function X({ size, className }: { size: number; className?: string }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
-  )
+export default function TrackingLinksPage() {
+    const router = useRouter()
+    const [links, setLinks] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+    const [copiedId, setCopiedId] = useState<string | null>(null)
+    const [search, setSearch] = useState('')
+
+    useEffect(() => { loadLinks() }, [])
+
+    const loadLinks = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch('/api/qr/links')
+            const data = await res.json()
+            if (res.ok) setLinks(data.links || [])
+        } catch (err) {
+            console.error('Error loading links:', err)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleCopy = (text: string, id: string) => {
+        navigator.clipboard.writeText(text)
+        setCopiedId(id)
+        toast.success('Link copiado!')
+        setTimeout(() => setCopiedId(null), 2000)
+    }
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Tem certeza que deseja excluir este link?')) return
+        try {
+            const res = await fetch(`/api/qr/links?id=${id}`, { method: 'DELETE' })
+            if (res.ok) {
+                setLinks(prev => prev.filter(l => l.id !== id))
+                toast.success('Link excluído')
+            }
+        } catch (err) {
+            toast.error('Erro ao excluir')
+        }
+    }
+
+    const handleDownloadQR = async (url: string, name: string) => {
+        try {
+            const qr = await QRCode.toDataURL(url, {
+                width: 600,
+                margin: 2,
+                color: { dark: '#0A0A0A', light: '#FFFFFF' },
+                errorCorrectionLevel: 'H'
+            })
+            const a = document.createElement('a')
+            a.href = qr
+            a.download = `qrcode-${name}.png`
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            toast.success('QR Code baixado!')
+        } catch {
+            toast.error('Erro ao gerar QR Code')
+        }
+    }
+
+    const filtered = links.filter(l =>
+        !search || (l.campaign_name || '').toLowerCase().includes(search.toLowerCase()) ||
+        (l.short_code || '').toLowerCase().includes(search.toLowerCase())
+    )
+
+    return (
+        <div className="space-y-6 max-w-6xl mx-auto">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => router.push('/backoffice/tracking')}
+                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                    >
+                        <ArrowLeft size={18} style={{ color: T.accent }} />
+                    </button>
+                    <div>
+                        <h1 className="text-lg font-bold" style={{ color: T.text }}>Links Rastreáveis</h1>
+                        <p className="text-xs" style={{ color: T.textMuted }}>{links.length} links gerados</p>
+                    </div>
+                </div>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => router.push('/backoffice/tracking/qr')}
+                        className="h-10 px-4 rounded-xl text-sm font-semibold flex items-center gap-2 text-white"
+                        style={{ background: T.accent }}
+                    >
+                        <QrCode size={16} />
+                        Novo QR Code
+                    </button>
+                </div>
+            </div>
+
+            {/* Search + Refresh */}
+            <div className="flex gap-2">
+                <div className="relative flex-1">
+                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        placeholder="Buscar por campanha ou código..."
+                        className="w-full h-10 pl-10 pr-4 rounded-xl text-sm"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                    />
+                </div>
+                <button
+                    onClick={loadLinks}
+                    className="h-10 w-10 rounded-xl flex items-center justify-center"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                >
+                    <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
+                </button>
+            </div>
+
+            {/* Links List */}
+            {loading ? (
+                <div className="flex items-center justify-center h-48">
+                    <Loader2 size={24} className="animate-spin" style={{ color: T.accent }} />
+                </div>
+            ) : filtered.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-48 gap-3">
+                    <Link2 size={32} className="opacity-30" style={{ color: T.textMuted }} />
+                    <p className="text-sm" style={{ color: T.textMuted }}>
+                        {search ? 'Nenhum link encontrado' : 'Nenhum link gerado ainda'}
+                    </p>
+                    {!search && (
+                        <button
+                            onClick={() => router.push('/backoffice/tracking/qr')}
+                            className="text-sm font-semibold"
+                            style={{ color: T.accent }}
+                        >
+                            Criar primeiro link
+                        </button>
+                    )}
+                </div>
+            ) : (
+                <div className="space-y-3">
+                    {filtered.map(link => (
+                        <div
+                            key={link.id}
+                            className="rounded-xl p-4 transition-all"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                        >
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-bold truncate" style={{ color: T.text }}>
+                                        {link.campaign_name || 'Sem nome'}
+                                    </p>
+                                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                                        {link.short_code && (
+                                            <code
+                                                className="text-[10px] font-bold px-2 py-0.5 rounded"
+                                                style={{ background: T.accentBg, color: T.accent }}
+                                            >
+                                                /l/{link.short_code}
+                                            </code>
+                                        )}
+                                        {link.utm_params?.source && (
+                                            <span className="text-[10px] font-medium px-2 py-0.5 rounded" style={{ background: T.hover, color: T.textMuted }}>
+                                                {link.utm_params.source}
+                                            </span>
+                                        )}
+                                        {link.utm_params?.medium && (
+                                            <span className="text-[10px] font-medium px-2 py-0.5 rounded" style={{ background: T.hover, color: T.textMuted }}>
+                                                {link.utm_params.medium}
+                                            </span>
+                                        )}
+                                        <span className="text-[10px]" style={{ color: T.textMuted }}>
+                                            {new Date(link.created_at).toLocaleDateString('pt-BR')}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Stats */}
+                                <div className="flex items-center gap-4">
+                                    <div className="text-center">
+                                        <p className="text-lg font-bold" style={{ color: T.text }}>{link.clicks || 0}</p>
+                                        <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: T.textMuted }}>Cliques</p>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={() => handleCopy(link.short_url || link.url || '', link.id)}
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                            style={{ background: T.hover }}
+                                            title="Copiar link"
+                                        >
+                                            {copiedId === link.id ? (
+                                                <Check size={14} style={{ color: 'var(--s-done, #34d399)' }} />
+                                            ) : (
+                                                <Copy size={14} style={{ color: T.textMuted }} />
+                                            )}
+                                        </button>
+                                        {link.short_url && (
+                                            <button
+                                                onClick={() => handleDownloadQR(link.short_url, link.campaign_name || link.short_code)}
+                                                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                                style={{ background: T.hover }}
+                                                title="Baixar QR Code"
+                                            >
+                                                <Download size={14} style={{ color: T.textMuted }} />
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => window.open(link.url || link.short_url, '_blank')}
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                            style={{ background: T.hover }}
+                                            title="Abrir link"
+                                        >
+                                            <ExternalLink size={14} style={{ color: T.textMuted }} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(link.id)}
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                            style={{ background: T.hover }}
+                                            title="Excluir"
+                                        >
+                                            <Trash2 size={14} style={{ color: 'var(--s-cancel, #ef4444)' }} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    )
 }

@@ -109,7 +109,14 @@ const SECTIONS: NavSection[] = [
         items: [
             { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
             { label: 'Conteúdos', href: '/backoffice/conteudos', icon: FileText },
-            { label: 'Tracking', href: '/backoffice/tracking', icon: BarChart2 },
+            {
+                label: 'Tracking', icon: BarChart2,
+                children: [
+                    { label: 'Analytics', href: '/backoffice/tracking', icon: BarChart2 },
+                    { label: 'QR Code', href: '/backoffice/tracking/qr', icon: BarChart2 },
+                    { label: 'Links', href: '/backoffice/tracking/links', icon: BarChart2 },
+                ]
+            },
             { label: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
         ]
     },

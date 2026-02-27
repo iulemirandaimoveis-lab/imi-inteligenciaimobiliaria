@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Building2, MapPin, Bed, Maximize, Car, Map } from 'lucide-react';
 import { Development } from '../types/development';
-import { formatBRL } from '../data/developments';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 
