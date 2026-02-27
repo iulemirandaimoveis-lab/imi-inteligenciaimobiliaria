@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
@@ -11,12 +11,18 @@ import {
   Mail,
   MapPin,
   Save,
+  Upload,
+  X,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function NovaConstrutora() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [logoPreview, setLogoPreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState({
     // Dados Empresa
@@ -105,16 +111,33 @@ export default function NovaConstrutora() {
     setLoading(true)
 
     try {
+      let logoUrl: string | null = null
+
+      // Upload logo if selected
+      if (logoFile) {
+        const { uploadFile } = await import('@/lib/supabase-storage')
+        const result = await uploadFile(logoFile, 'developers', `new-${Date.now()}`)
+        if (result.error) {
+          toast.error(`Erro no upload do logo: ${result.error}`)
+        } else {
+          logoUrl = result.url
+        }
+      }
+
+      const payload = { ...formData, logo_url: logoUrl }
+
       const response = await fetch('/api/developers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
+      toast.success('Construtora criada com sucesso!')
       router.push('/backoffice/construtoras')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao salvar construtora:', error)
+      toast.error(error.message || 'Erro ao salvar construtora')
     } finally {
       setLoading(false)
     }
@@ -167,6 +190,51 @@ export default function NovaConstrutora() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Logo Upload */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center gap-2 mb-6">
+            <Building2 size={20} className="text-accent-600" />
+            <h2 className="text-lg font-bold text-gray-900">Logo da Construtora</h2>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="w-24 h-24 rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden relative">
+              {logoPreview ? (
+                <>
+                  <img src={logoPreview} alt="Logo" className="w-full h-full object-contain p-2" />
+                  <button
+                    type="button"
+                    onClick={() => { setLogoFile(null); setLogoPreview(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
+                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center"
+                  >
+                    <X size={12} />
+                  </button>
+                </>
+              ) : (
+                <Building2 size={32} className="text-gray-300" />
+              )}
+            </div>
+            <div>
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                setLogoFile(file)
+                const reader = new FileReader()
+                reader.onloadend = () => setLogoPreview(reader.result as string)
+                reader.readAsDataURL(file)
+              }} className="hidden" />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+              >
+                <Upload size={16} />
+                {logoPreview ? 'Trocar Logo' : 'Upload Logo'}
+              </button>
+              <p className="text-xs text-gray-500 mt-2">PNG, JPG ou SVG. Máx 2MB.</p>
+            </div>
+          </div>
+        </div>
+
         {/* Dados da Empresa */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100">
           <div className="flex items-center gap-2 mb-6">

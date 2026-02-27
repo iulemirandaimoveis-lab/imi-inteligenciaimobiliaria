@@ -1,326 +1,436 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 import {
-  ArrowLeft,
-  FileText,
-  MapPin,
-  Building2,
-  Bed,
-  Bath,
-  Ruler,
-  Car,
-  DollarSign,
-  Calendar,
-  CheckCircle,
-  Award,
-  User,
-  Phone,
-  Mail,
-  Download,
-  Share2,
-  Edit,
-  Eye,
-  Camera,
-  TrendingUp,
-  Home,
+    ArrowLeft, FileText, MapPin, Bed, Bath, Ruler, Car,
+    DollarSign, Calendar, CheckCircle, Award, User, Phone, Mail,
+    Download, Edit, Loader2, AlertTriangle, Trash2, Home
 } from 'lucide-react'
+import { toast } from 'sonner'
 
-// ⚠️ NÃO MODIFICAR - Dados reais AVL-2026-001
-const avaliacaoData = {
-  protocol: 'AVL-2026-001',
-  status: 'concluida',
-  client: {
-    name: 'Maria Santos Silva',
-    email: 'maria.santos@gmail.com',
-    phone: '(81) 99845-3421',
-    cpf: '123.456.789-00',
-  },
-  property: {
-    type: 'Apartamento',
-    location: 'Boa Viagem',
-    address: 'Av. Boa Viagem, 3456 - Apto 802',
-    city: 'Recife',
-    state: 'PE',
-    cep: '51020-240',
-    area: 85,
-    bedrooms: 3,
-    bathrooms: 2,
-    parking: 2,
-    floor: 8,
-    totalFloors: 20,
-    buildYear: 2018,
-    condition: 'Excelente',
-  },
-  features: ['Varanda gourmet', 'Armários planejados', 'Ar-condicionado', 'Piso porcelanato'],
-  evaluation: {
-    estimatedValue: 580000,
-    minValue: 550000,
-    maxValue: 610000,
-    pricePerM2: 6824,
-    method: 'Comparativo de Dados de Mercado',
-    confidenceLevel: '85%',
-    marketVariation: '+3.2%',
-  },
-  comparables: [
-    { address: 'Av. Boa Viagem, 3200 - Apto 705', area: 82, price: 570000, similarity: 95 },
-    { address: 'Av. Conselheiro Aguiar, 2890 - Apto 903', area: 88, price: 595000, similarity: 92 },
-  ],
-  timeline: {
-    requestDate: '2026-02-10',
-    visitDate: '2026-02-12',
-    deliveryDate: '2026-02-14',
-  },
-  team: {
-    evaluator: 'Iule Miranda',
-    cnai: 'CNAI 53290',
-    creci: 'CRECI 17933',
-  },
-  purpose: 'Venda',
+const T = {
+    surface: 'var(--bo-surface)', surfaceAlt: 'var(--bo-surface-alt)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
+    accent: '#C49D5B',
 }
 
+const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
+    concluida: { label: 'Concluída', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+    em_andamento: { label: 'Em Andamento', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
+    aguardando_docs: { label: 'Aguard. Docs', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
+    cancelada: { label: 'Cancelada', text: '#E57373', bg: 'rgba(229,115,115,0.12)' },
+}
+
+const formatPrice = (price: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(price)
+
 export default function AvaliacaoDetalhesPage() {
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState('overview')
+    const params = useParams()
+    const router = useRouter()
+    const [data, setData] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const [activeTab, setActiveTab] = useState<'overview' | 'info'>('overview')
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+    const [deleting, setDeleting] = useState(false)
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(price)
-  }
+    useEffect(() => {
+        async function fetchAvaliacao() {
+            try {
+                const res = await fetch(`/api/avaliacoes?id=${params.id}`)
+                if (!res.ok) throw new Error('Falha ao carregar avaliação')
+                const result = await res.json()
+                setData(result)
+            } catch (err: any) {
+                setError(err.message)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchAvaliacao()
+    }, [params.id])
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-4">
-          <button onClick={() => router.back()} className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50">
-            <ArrowLeft size={20} className="mx-auto" />
-          </button>
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold">{avaliacaoData.protocol}</h1>
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 rounded-lg text-sm font-medium">
-                <Award size={14} />
-                {avaliacaoData.team.cnai}
-              </span>
+    const handleDelete = async () => {
+        setDeleting(true)
+        try {
+            const res = await fetch(`/api/avaliacoes?id=${params.id}`, { method: 'DELETE' })
+            if (!res.ok) throw new Error('Falha ao cancelar')
+            toast.success('Avaliação cancelada')
+            router.push('/backoffice/avaliacoes')
+        } catch (err: any) {
+            toast.error(err.message)
+        } finally {
+            setDeleting(false)
+        }
+    }
+
+    const handleStatusUpdate = async (newStatus: string) => {
+        try {
+            const res = await fetch('/api/avaliacoes', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: params.id, status: newStatus }),
+            })
+            if (!res.ok) throw new Error('Falha ao atualizar')
+            setData({ ...data, status: newStatus })
+            toast.success(`Status atualizado para ${STATUS_CFG[newStatus]?.label || newStatus}`)
+        } catch (err: any) {
+            toast.error(err.message)
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <Loader2 className="w-8 h-8 animate-spin" style={{ color: T.accent }} />
             </div>
-            <p className="text-sm text-gray-600">
-              {avaliacaoData.client.name} • {avaliacaoData.property.type} - {avaliacaoData.property.location}
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <button className="h-10 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-            <Download size={16} />
-            Baixar PDF
-          </button>
-          <button className="h-10 px-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 flex items-center gap-2">
-            <Edit size={16} />
-            Editar
-          </button>
-        </div>
-      </div>
+        )
+    }
 
-      {/* KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Valor Avaliado</p>
-          <p className="text-xl font-bold text-green-700">{formatPrice(avaliacaoData.evaluation.estimatedValue)}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Preço/m²</p>
-          <p className="text-xl font-bold text-blue-700">{formatPrice(avaliacaoData.evaluation.pricePerM2)}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Variação</p>
-          <p className="text-xl font-bold text-purple-700">{avaliacaoData.evaluation.marketVariation}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Confiança</p>
-          <p className="text-xl font-bold text-accent-700">{avaliacaoData.evaluation.confidenceLevel}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Área</p>
-          <p className="text-xl font-bold">{avaliacaoData.property.area}m²</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Prazo</p>
-          <p className="text-xl font-bold">3 dias</p>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="border-b">
-        <div className="flex gap-6">
-          {['overview', 'comparables'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`pb-4 px-2 text-sm font-medium border-b-2 ${activeTab === tab ? 'border-accent-600 text-accent-600' : 'border-transparent text-gray-600'
-                }`}
-            >
-              {tab === 'overview' ? 'Visão Geral' : 'Comparáveis'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Content */}
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            {/* Imóvel */}
-            <div className="bg-white rounded-2xl p-6 border">
-              <h2 className="text-lg font-bold mb-4">Dados do Imóvel</h2>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Endereço</p>
-                  <p className="text-sm font-medium">{avaliacaoData.property.address}</p>
-                  <p className="text-sm text-gray-600">{avaliacaoData.property.city}/{avaliacaoData.property.state} - CEP: {avaliacaoData.property.cep}</p>
+    if (error || !data) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="text-center">
+                    <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-red-400" />
+                    <p className="text-lg font-bold mb-2" style={{ color: T.text }}>{error || 'Avaliação não encontrada'}</p>
+                    <button onClick={() => router.push('/backoffice/avaliacoes')}
+                        className="mt-4 px-4 py-2 rounded-xl text-white text-sm" style={{ backgroundColor: T.accent }}>
+                        Voltar
+                    </button>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-4 border-t">
-                  <div className="text-center">
-                    <Bed size={24} className="mx-auto mb-2 text-blue-600" />
-                    <p className="text-xl font-bold">{avaliacaoData.property.bedrooms}</p>
-                    <p className="text-xs text-gray-600">Quartos</p>
-                  </div>
-                  <div className="text-center">
-                    <Bath size={24} className="mx-auto mb-2 text-purple-600" />
-                    <p className="text-xl font-bold">{avaliacaoData.property.bathrooms}</p>
-                    <p className="text-xs text-gray-600">Banheiros</p>
-                  </div>
-                  <div className="text-center">
-                    <Ruler size={24} className="mx-auto mb-2 text-green-600" />
-                    <p className="text-xl font-bold">{avaliacaoData.property.area}m²</p>
-                    <p className="text-xs text-gray-600">Área</p>
-                  </div>
-                  <div className="text-center">
-                    <Car size={24} className="mx-auto mb-2 text-orange-600" />
-                    <p className="text-xl font-bold">{avaliacaoData.property.parking}</p>
-                    <p className="text-xs text-gray-600">Vagas</p>
-                  </div>
+            </div>
+        )
+    }
+
+    const sc = STATUS_CFG[data.status] || STATUS_CFG.em_andamento
+    const caracteristicas = Array.isArray(data.caracteristicas) ? data.caracteristicas : []
+
+    return (
+        <div className="space-y-6 animate-in fade-in duration-500">
+            {/* Header */}
+            <div className="flex items-start justify-between flex-wrap gap-4">
+                <div className="flex items-start gap-4">
+                    <button onClick={() => router.back()}
+                        className="w-10 h-10 rounded-lg flex items-center justify-center hover:opacity-80"
+                        style={{ border: `1px solid ${T.border}`, color: T.text }}>
+                        <ArrowLeft size={20} />
+                    </button>
+                    <div>
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                            <h1 className="text-2xl font-bold" style={{ color: T.text }}>{data.protocolo || `AVL-${data.id?.slice(0, 8)}`}</h1>
+                            <span className="px-3 py-1 rounded-full text-xs font-bold"
+                                style={{ color: sc.text, background: sc.bg }}>
+                                {sc.label}
+                            </span>
+                        </div>
+                        <p className="text-sm" style={{ color: T.textMuted }}>
+                            {data.cliente_nome} · {data.tipo_imovel} - {data.bairro}
+                        </p>
+                    </div>
                 </div>
-              </div>
+                <div className="flex gap-2">
+                    {data.laudo_url && (
+                        <a href={data.laudo_url} target="_blank" rel="noopener noreferrer"
+                            className="h-10 px-4 rounded-xl flex items-center gap-2 text-sm font-medium hover:opacity-80"
+                            style={{ border: `1px solid ${T.border}`, color: T.text }}>
+                            <Download size={16} /> PDF
+                        </a>
+                    )}
+                    <button onClick={() => setShowDeleteConfirm(true)}
+                        className="h-10 px-4 rounded-xl text-sm font-medium hover:bg-red-500/20"
+                        style={{ border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}>
+                        <Trash2 size={16} />
+                    </button>
+                </div>
             </div>
 
-            {/* Features */}
-            <div className="bg-white rounded-2xl p-6 border">
-              <h2 className="text-lg font-bold mb-4">Características</h2>
-              <div className="flex flex-wrap gap-2">
-                {avaliacaoData.features.map((f, i) => (
-                  <span key={i} className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-sm">{f}</span>
-                ))}
-              </div>
-            </div>
-          </div>
+            {showDeleteConfirm && (
+                <div className="rounded-xl p-4 flex items-center justify-between"
+                    style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)' }}>
+                    <p className="text-sm" style={{ color: T.text }}>Cancelar avaliação <strong>{data.protocolo}</strong>?</p>
+                    <div className="flex gap-2">
+                        <button onClick={() => setShowDeleteConfirm(false)} className="px-4 py-2 rounded-lg text-sm" style={{ color: T.textMuted }}>Não</button>
+                        <button onClick={handleDelete} disabled={deleting}
+                            className="px-4 py-2 rounded-lg text-white text-sm bg-red-500 disabled:opacity-50">
+                            {deleting ? 'Cancelando...' : 'Confirmar'}
+                        </button>
+                    </div>
+                </div>
+            )}
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Cliente */}
-            <div className="bg-white rounded-2xl p-6 border">
-              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Cliente</h3>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Nome</p>
-                  <p className="font-medium">{avaliacaoData.client.name}</p>
+            {/* Status Workflow */}
+            {data.status !== 'cancelada' && data.status !== 'concluida' && (
+                <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: T.textMuted }}>Atualizar Status</p>
+                    <div className="flex gap-2 flex-wrap">
+                        {['aguardando_docs', 'em_andamento', 'concluida'].map(s => {
+                            const cfg = STATUS_CFG[s]
+                            if (!cfg || s === data.status) return null
+                            return (
+                                <button key={s} onClick={() => handleStatusUpdate(s)}
+                                    className="px-3 py-1.5 rounded-xl text-xs font-semibold hover:opacity-80"
+                                    style={{ color: cfg.text, background: cfg.bg, border: `1px solid ${cfg.text}30` }}>
+                                    {cfg.label}
+                                </button>
+                            )
+                        })}
+                    </div>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">E-mail</p>
-                  <a href={`mailto:${avaliacaoData.client.email}`} className="text-sm text-accent-600">
-                    {avaliacaoData.client.email}
-                  </a>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Telefone</p>
-                  <a href={`tel:${avaliacaoData.client.phone}`} className="text-sm text-accent-600">
-                    {avaliacaoData.client.phone}
-                  </a>
-                </div>
-              </div>
+            )}
+
+            {/* KPIs */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {data.valor_estimado && (
+                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Valor Avaliado</p>
+                        <p className="text-xl font-bold" style={{ color: '#10B981' }}>{formatPrice(Number(data.valor_estimado))}</p>
+                    </div>
+                )}
+                {data.valor_m2 && (
+                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Preço/m²</p>
+                        <p className="text-xl font-bold" style={{ color: '#3B82F6' }}>{formatPrice(Number(data.valor_m2))}</p>
+                    </div>
+                )}
+                {data.area_privativa && (
+                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Área</p>
+                        <p className="text-xl font-bold" style={{ color: T.text }}>{data.area_privativa}m²</p>
+                    </div>
+                )}
+                {data.honorarios && (
+                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Honorários</p>
+                        <p className="text-xl font-bold" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
+                        {data.honorarios_status && (
+                            <p className="text-[10px] font-bold mt-1" style={{
+                                color: data.honorarios_status === 'pago' ? '#6BB87B' : data.honorarios_status === 'parcial' ? '#C49D5B' : '#E8A87C'
+                            }}>
+                                {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
+                            </p>
+                        )}
+                    </div>
+                )}
             </div>
 
-            {/* Avaliador */}
-            <div className="bg-white rounded-2xl p-6 border">
-              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Responsável</h3>
-              <p className="font-medium mb-3">{avaliacaoData.team.evaluator}</p>
-              <div className="flex gap-2">
-                <span className="px-2 py-1 bg-amber-50 text-amber-700 rounded text-xs">{avaliacaoData.team.cnai}</span>
-                <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs">{avaliacaoData.team.creci}</span>
-              </div>
+            {/* Tabs */}
+            <div style={{ borderBottom: `1px solid ${T.border}` }}>
+                <div className="flex gap-6">
+                    {([
+                        { key: 'overview', label: 'Visão Geral' },
+                        { key: 'info', label: 'Todas Informações' },
+                    ] as const).map(tab => (
+                        <button key={tab.key} onClick={() => setActiveTab(tab.key)}
+                            className="pb-4 px-2 text-sm font-medium transition-colors"
+                            style={{
+                                borderBottom: `2px solid ${activeTab === tab.key ? T.accent : 'transparent'}`,
+                                color: activeTab === tab.key ? T.accent : T.textMuted,
+                            }}>
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
             </div>
 
-            {/* Cronograma */}
-            <div className="bg-white rounded-2xl p-6 border">
-              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Cronograma</h3>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Solicitação</p>
-                  <p className="text-sm font-medium">{new Date(avaliacaoData.timeline.requestDate).toLocaleDateString('pt-BR')}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Vistoria</p>
-                  <p className="text-sm font-medium">{new Date(avaliacaoData.timeline.visitDate).toLocaleDateString('pt-BR')}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Entrega</p>
-                  <p className="text-sm font-medium">{new Date(avaliacaoData.timeline.deliveryDate).toLocaleDateString('pt-BR')}</p>
-                </div>
-              </div>
-            </div>
+            {/* OVERVIEW */}
+            {activeTab === 'overview' && (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 space-y-6">
+                        {/* Property Data */}
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Dados do Imóvel</h2>
+                            <div className="space-y-4">
+                                <div>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Endereço</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>
+                                        {data.endereco}{data.complemento ? ` - ${data.complemento}` : ''}
+                                    </p>
+                                    <p className="text-sm" style={{ color: T.textMuted }}>
+                                        {data.bairro}, {data.cidade}/{data.estado}{data.cep ? ` - CEP: ${data.cep}` : ''}
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
+                                    {data.quartos != null && (
+                                        <div className="text-center">
+                                            <Bed size={24} className="mx-auto mb-2" style={{ color: '#3B82F6' }} />
+                                            <p className="text-xl font-bold" style={{ color: T.text }}>{data.quartos}</p>
+                                            <p className="text-xs" style={{ color: T.textMuted }}>Quartos</p>
+                                        </div>
+                                    )}
+                                    {data.banheiros != null && (
+                                        <div className="text-center">
+                                            <Bath size={24} className="mx-auto mb-2" style={{ color: '#8B5CF6' }} />
+                                            <p className="text-xl font-bold" style={{ color: T.text }}>{data.banheiros}</p>
+                                            <p className="text-xs" style={{ color: T.textMuted }}>Banheiros</p>
+                                        </div>
+                                    )}
+                                    {data.area_privativa != null && (
+                                        <div className="text-center">
+                                            <Ruler size={24} className="mx-auto mb-2" style={{ color: '#10B981' }} />
+                                            <p className="text-xl font-bold" style={{ color: T.text }}>{data.area_privativa}m²</p>
+                                            <p className="text-xs" style={{ color: T.textMuted }}>Área</p>
+                                        </div>
+                                    )}
+                                    {data.vagas != null && (
+                                        <div className="text-center">
+                                            <Car size={24} className="mx-auto mb-2" style={{ color: '#F59E0B' }} />
+                                            <p className="text-xl font-bold" style={{ color: T.text }}>{data.vagas}</p>
+                                            <p className="text-xs" style={{ color: T.textMuted }}>Vagas</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
 
-            {/* Valores */}
-            <div className="bg-white rounded-2xl p-6 border">
-              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Intervalo</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Mínimo</span>
-                  <span className="font-medium">{formatPrice(avaliacaoData.evaluation.minValue)}</span>
+                        {/* Features */}
+                        {caracteristicas.length > 0 && (
+                            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Características</h2>
+                                <div className="flex flex-wrap gap-2">
+                                    {caracteristicas.map((f: string, i: number) => (
+                                        <span key={i} className="px-3 py-1.5 rounded-lg text-sm"
+                                            style={{ background: 'rgba(59,130,246,0.1)', color: '#3B82F6' }}>
+                                            {f}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Value Range */}
+                        {(data.valor_minimo || data.valor_maximo || data.valor_estimado) && (
+                            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Intervalo de Valores</h2>
+                                <div className="space-y-2 text-sm">
+                                    {data.valor_minimo && (
+                                        <div className="flex justify-between">
+                                            <span style={{ color: T.textMuted }}>Mínimo</span>
+                                            <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_minimo))}</span>
+                                        </div>
+                                    )}
+                                    {data.valor_estimado && (
+                                        <div className="flex justify-between">
+                                            <span style={{ color: T.textMuted }}>Avaliado</span>
+                                            <span className="font-bold" style={{ color: T.accent }}>{formatPrice(Number(data.valor_estimado))}</span>
+                                        </div>
+                                    )}
+                                    {data.valor_maximo && (
+                                        <div className="flex justify-between">
+                                            <span style={{ color: T.textMuted }}>Máximo</span>
+                                            <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_maximo))}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Sidebar */}
+                    <div className="space-y-6">
+                        {/* Client */}
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Cliente</h3>
+                            <div className="space-y-3">
+                                <div>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Nome</p>
+                                    <p className="font-medium" style={{ color: T.text }}>{data.cliente_nome || '—'}</p>
+                                </div>
+                                {data.cliente_email && (
+                                    <div>
+                                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>E-mail</p>
+                                        <p className="text-sm" style={{ color: T.accent }}>{data.cliente_email}</p>
+                                    </div>
+                                )}
+                                {data.cliente_telefone && (
+                                    <div>
+                                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Telefone</p>
+                                        <p className="text-sm" style={{ color: T.accent }}>{data.cliente_telefone}</p>
+                                    </div>
+                                )}
+                                {data.cliente_cpf_cnpj && (
+                                    <div>
+                                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>CPF/CNPJ</p>
+                                        <p className="text-sm font-mono" style={{ color: T.text }}>{data.cliente_cpf_cnpj}</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Evaluation Details */}
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Avaliação</h3>
+                            <div className="space-y-3">
+                                {data.finalidade && (
+                                    <div>
+                                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Finalidade</p>
+                                        <p className="text-sm font-medium" style={{ color: T.text }}>{data.finalidade}</p>
+                                    </div>
+                                )}
+                                {data.metodologia && (
+                                    <div>
+                                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Metodologia</p>
+                                        <p className="text-sm font-medium" style={{ color: T.text }}>{data.metodologia}</p>
+                                    </div>
+                                )}
+                                {data.grau_fundamentacao && (
+                                    <div>
+                                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Grau Fundamentação</p>
+                                        <p className="text-sm font-medium" style={{ color: T.text }}>Grau {data.grau_fundamentacao}</p>
+                                    </div>
+                                )}
+                                {data.prazo_entrega && (
+                                    <div>
+                                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Prazo Entrega</p>
+                                        <p className="text-sm font-medium" style={{ color: T.text }}>
+                                            {new Date(data.prazo_entrega).toLocaleDateString('pt-BR')}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Timeline */}
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Cronograma</h3>
+                            <div className="space-y-3">
+                                <div>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Criada em</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>
+                                        {data.created_at ? new Date(data.created_at).toLocaleDateString('pt-BR') : '—'}
+                                    </p>
+                                </div>
+                                <div>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Atualizada em</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>
+                                        {data.updated_at ? new Date(data.updated_at).toLocaleDateString('pt-BR') : '—'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Avaliado</span>
-                  <span className="font-bold text-accent-700">{formatPrice(avaliacaoData.evaluation.estimatedValue)}</span>
+            )}
+
+            {/* INFO TAB */}
+            {activeTab === 'info' && (
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Todas as Informações</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {Object.entries(data).map(([key, value]) => {
+                            if (value == null || value === '' || value === '{}') return null
+                            const display = typeof value === 'object' ? JSON.stringify(value) : String(value)
+                            return (
+                                <div key={key} className={key === 'observacoes' || key === 'caracteristicas' ? 'md:col-span-2' : ''}>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>{key}</p>
+                                    <p className="text-sm font-medium break-all" style={{ color: T.text }}>{display}</p>
+                                </div>
+                            )
+                        })}
+                    </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Máximo</span>
-                  <span className="font-medium">{formatPrice(avaliacaoData.evaluation.maxValue)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+            )}
         </div>
-      )}
-
-      {activeTab === 'comparables' && (
-        <div className="space-y-4">
-          {avaliacaoData.comparables.map((comp, i) => (
-            <div key={i} className="bg-white rounded-2xl p-6 border">
-              <div className="flex justify-between mb-4">
-                <div>
-                  <h3 className="font-bold">Comparável {i + 1}</h3>
-                  <p className="text-sm text-gray-600">{comp.address}</p>
-                </div>
-                <span className="px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-sm font-medium">
-                  {comp.similarity}% similar
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Área</p>
-                  <p className="text-sm font-medium">{comp.area}m²</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Valor</p>
-                  <p className="text-sm font-medium">{formatPrice(comp.price)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Preço/m²</p>
-                  <p className="text-sm font-medium">{formatPrice(comp.price / comp.area)}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
+    )
 }

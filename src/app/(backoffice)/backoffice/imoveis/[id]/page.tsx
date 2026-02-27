@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import { toast } from 'sonner'
 import {
   ArrowLeft,
   MapPin,
@@ -10,607 +11,442 @@ import {
   Bath,
   Ruler,
   Car,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  Users,
-  Eye,
   Edit,
-  Share2,
-  Download,
-  Phone,
-  Mail,
-  MessageSquare,
+  Trash2,
   CheckCircle,
-  Clock,
-  Target,
-  Zap,
-  Home,
-  Sparkles,
+  Calendar,
+  Loader2,
   Image as ImageIcon,
+  ExternalLink,
+  Tag,
+  Star,
+  Globe,
+  FileText,
 } from 'lucide-react'
 
-// ⚠️ NÃO MODIFICAR - DADOS REAIS DO RESERVA ATLANTIS
-const imovelData = {
-  id: 1,
-  name: 'Reserva Atlantis',
-  type: 'Apartamento',
-  status: 'lancamento',
-  location: 'Boa Viagem',
-  address: 'Av. Boa Viagem, 5420',
-  city: 'Recife',
-  state: 'PE',
-  cep: '51020-240',
+const T = {
+  bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+  text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+  gold: '#C49D5B',
+}
 
-  // Valores
-  price: 650000,
-  pricePerM2: 8125,
-  minPrice: 580000,
-  maxPrice: 1200000,
+const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
+  disponivel: { label: 'Disponível', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+  em_negociacao: { label: 'Negociação', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
+  reservado: { label: 'Reservado', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
+  vendido: { label: 'Vendido', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
+  lancamento: { label: 'Lançamento', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
+  arquivado: { label: 'Arquivado', color: '#6B7280', bg: 'rgba(107,114,128,0.12)' },
+}
 
-  // Características
-  area: 80,
-  minArea: 60,
-  maxArea: 120,
-  bedrooms: 3,
-  bathrooms: 2,
-  parking: 2,
-  floors: 24,
-  unitsPerFloor: 5,
-
-  // Vendas
-  units: 120,
-  unitsSold: 45,
-  unitsAvailable: 75,
-  leads: 67,
-  views: 1234,
-  conversions: 12,
-
-  // Construtora
-  developer: 'Grupo IMI',
-  developerPhone: '(81) 3025-5555',
-  developerEmail: 'contato@grupoimi.com.br',
-
-  // Cronograma
-  launchDate: '2026-02-01',
-  completionDate: '2027-06-30',
-  completionProgress: 15,
-
-  // Descrição
-  description: `O Reserva Atlantis é um empreendimento premium localizado na orla de Boa Viagem, 
-    com vista privilegiada para o mar. Projeto arquitetônico moderno de alto padrão, 
-    assinado pelo renomado escritório Arquitetura Tropical.
-    
-    Com 24 andares e apenas 5 apartamentos por andar, garantindo privacidade e exclusividade.
-    Apartamentos de 60m² (2 quartos) até 120m² (3 quartos com suíte master).
-    
-    Localização estratégica: a 200m da praia, próximo ao Shopping Recife, hospitais de referência,
-    e principais avenidas da zona sul da cidade.`,
-
-  // Features completas
-  features: [
-    { category: 'Apartamento', items: ['Vista Mar', 'Varanda Gourmet', 'Suite Master', 'Closet', 'Lavabo'] },
-    { category: 'Lazer', items: ['Piscina Infinity', 'Academia Completa', 'Sauna', 'Salão de Festas', 'Espaço Gourmet'] },
-    { category: 'Serviços', items: ['Portaria 24h', 'Concierge', 'Salão de Beleza', 'Coworking', 'Brinquedoteca'] },
-    { category: 'Sustentabilidade', items: ['Energia Solar', 'Reuso de Água', 'Coleta Seletiva', 'Bike Place'] },
-  ],
-
-  // Plantas disponíveis
-  floorPlans: [
-    { name: '2 Quartos', area: 60, bedrooms: 2, bathrooms: 1, parking: 1, price: 580000, available: 8 },
-    { name: '3 Quartos', area: 80, bedrooms: 3, bathrooms: 2, parking: 2, price: 650000, available: 42 },
-    { name: '3 Quartos Premium', area: 95, bedrooms: 3, bathrooms: 2, parking: 2, price: 780000, available: 18 },
-    { name: 'Cobertura', area: 120, bedrooms: 4, bathrooms: 3, parking: 3, price: 1200000, available: 7 },
-  ],
-
-  // Histórico de vendas (últimos 6 meses)
-  salesHistory: [
-    { month: 'Ago/25', sold: 4, revenue: 2600000 },
-    { month: 'Set/25', sold: 6, revenue: 3900000 },
-    { month: 'Out/25', sold: 8, revenue: 5200000 },
-    { month: 'Nov/25', sold: 7, revenue: 4550000 },
-    { month: 'Dez/25', sold: 12, revenue: 7800000 },
-    { month: 'Jan/26', sold: 8, revenue: 5200000 },
-  ],
-
-  // Leads por origem
-  leadsBySource: [
-    { source: 'Instagram', count: 28, conversions: 5 },
-    { source: 'Google Ads', count: 18, conversions: 3 },
-    { source: 'Site', count: 12, conversions: 2 },
-    { source: 'Indicação', count: 9, conversions: 2 },
-  ],
-
-  // Visitas agendadas
-  scheduledVisits: [
-    { date: '2026-02-15T10:00', client: 'Maria Santos', phone: '(81) 99845-3421' },
-    { date: '2026-02-15T14:00', client: 'João Pedro', phone: '(81) 98732-1098' },
-    { date: '2026-02-16T10:30', client: 'Ana Carolina', phone: '(81) 99234-5678' },
-  ],
+const formatPrice = (price: number) => {
+  if (!price) return 'N/A'
+  if (price >= 1000000) return `R$ ${(price / 1000000).toFixed(1).replace('.', ',')}M`
+  if (price >= 1000) return `R$ ${Math.floor(price / 1000)}k`
+  return `R$ ${price.toLocaleString('pt-BR')}`
 }
 
 export default function ImovelDetalhesPage() {
   const router = useRouter()
   const params = useParams()
-  const [activeTab, setActiveTab] = useState<'overview' | 'sales' | 'leads'>('overview')
+  const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState(false)
+  const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'info'>('overview')
 
-  // ⚠️ NÃO MODIFICAR CÁLCULOS
-  const soldPercentage = (imovelData.unitsSold / imovelData.units) * 100
-  const conversionRate = (imovelData.conversions / imovelData.leads) * 100
-  const totalRevenue = imovelData.salesHistory.reduce((acc, h) => acc + h.revenue, 0)
-  const avgTicket = totalRevenue / imovelData.salesHistory.reduce((acc, h) => acc + h.sold, 0)
-
-  // ⚠️ NÃO MODIFICAR FUNÇÃO getStatusConfig
-  const getStatusConfig = (status: string) => {
-    const configs: Record<string, { label: string; color: string; bg: string }> = {
-      lancamento: { label: 'Lançamento 🚀', color: 'text-blue-700', bg: 'bg-blue-50' },
-      obras: { label: 'Em Obras 🏗️', color: 'text-orange-700', bg: 'bg-orange-50' },
-      pronto: { label: 'Pronto ✅', color: 'text-green-700', bg: 'bg-green-50' },
+  useEffect(() => {
+    const fetchDevelopment = async () => {
+      try {
+        const res = await fetch(`/api/developments?id=${params.id}`)
+        if (!res.ok) throw new Error('Erro ao carregar')
+        const d = await res.json()
+        setData(d)
+      } catch (err: any) {
+        console.error(err)
+        toast.error('Erro ao carregar empreendimento')
+      } finally {
+        setLoading(false)
+      }
     }
-    return configs[status] || configs.lancamento
-  }
+    if (params.id) fetchDevelopment()
+  }, [params.id])
 
-  const statusConfig = getStatusConfig(imovelData.status)
-
-  // ⚠️ NÃO MODIFICAR FUNÇÃO formatPrice
-  const formatPrice = (price: number) => {
-    if (price >= 1000000) {
-      return `R$ ${(price / 1000000).toFixed(1)}M`
+  const handleDelete = async () => {
+    if (!confirm('Tem certeza que deseja arquivar este empreendimento?')) return
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/developments?id=${params.id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Erro ao arquivar')
+      toast.success('Empreendimento arquivado com sucesso')
+      router.push('/backoffice/imoveis')
+    } catch (err: any) {
+      toast.error(err.message)
+    } finally {
+      setDeleting(false)
     }
-    return `R$ ${(price / 1000).toFixed(0)}k`
   }
 
-  // ⚠️ NÃO MODIFICAR FUNÇÃO formatDate
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr)
-    return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <Loader2 size={48} className="animate-spin mx-auto mb-4" style={{ color: T.gold }} />
+          <p style={{ color: T.textDim }}>Carregando empreendimento...</p>
+        </div>
+      </div>
+    )
   }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <Building2 size={48} className="mx-auto mb-4" style={{ color: T.textDim }} />
+          <p className="text-lg font-semibold mb-2" style={{ color: T.text }}>Empreendimento não encontrado</p>
+          <button onClick={() => router.push('/backoffice/imoveis')} className="text-sm underline" style={{ color: T.gold }}>
+            Voltar à lista
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const status = STATUS_MAP[data.status] || STATUS_MAP.disponivel
+  const features = Array.isArray(data.features) ? data.features : []
+  const galleryImages = Array.isArray(data.gallery_images) ? data.gallery_images : (Array.isArray(data.images) ? (typeof data.images[0] === 'string' ? data.images : []) : [])
+  const coverImage = data.image || (galleryImages.length > 0 ? galleryImages[0] : null)
+  const developerInfo = data.developers || null
 
   return (
-    <div className="space-y-6">
-      {/* ⚠️ NÃO MODIFICAR HEADER */}
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-4">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition-colors flex-shrink-0"
+            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
+            style={{ border: `1px solid ${T.border}`, background: T.surface }}
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} style={{ color: T.text }} />
           </button>
-
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {imovelData.name}
-            </h1>
-            <div className="flex items-center gap-4 text-sm text-gray-600">
-              <span className="flex items-center gap-1">
-                <MapPin size={14} />
-                {imovelData.address}, {imovelData.location}
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <Building2 size={14} />
-                {imovelData.developer}
-              </span>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-2xl font-bold" style={{ color: T.text }}>
+                {data.name}
+              </h1>
+              {data.is_highlighted && <Star size={18} style={{ fill: T.gold, color: T.gold }} />}
+            </div>
+            <div className="flex items-center gap-4 text-sm" style={{ color: T.textDim }}>
+              {data.address && (
+                <span className="flex items-center gap-1">
+                  <MapPin size={14} />
+                  {data.address}{data.neighborhood ? `, ${data.neighborhood}` : ''}
+                </span>
+              )}
+              {(developerInfo?.name || data.developer) && (
+                <>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <Building2 size={14} />
+                    {developerInfo?.name || data.developer}
+                  </span>
+                </>
+              )}
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="h-10 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
-            <Share2 size={16} />
-            <span className="hidden sm:inline">Compartilhar</span>
-          </button>
-          <button className="h-10 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
-            <Download size={16} />
-            <span className="hidden sm:inline">Exportar</span>
-          </button>
           <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
-            className="h-10 px-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2"
+            className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-semibold text-white"
+            style={{ background: T.gold }}
           >
             <Edit size={16} />
             <span className="hidden sm:inline">Editar</span>
           </button>
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
+            style={{ border: `1px solid ${T.border}`, color: '#EF4444', background: T.surface }}
+          >
+            {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+            <span className="hidden sm:inline">{deleting ? 'Arquivando...' : 'Arquivar'}</span>
+          </button>
         </div>
       </div>
 
-      {/* ⚠️ NÃO MODIFICAR STATUS E PREÇO */}
+      {/* Status & Price Badges */}
       <div className="flex items-center gap-3 flex-wrap">
-        <div className={`px-4 py-2 rounded-xl border ${statusConfig.bg} border-current`}>
-          <span className={`text-sm font-medium ${statusConfig.color}`}>
-            {statusConfig.label}
+        <div className="px-4 py-2 rounded-xl" style={{ background: status.bg, border: `1px solid ${status.color}33` }}>
+          <span className="text-sm font-medium" style={{ color: status.color }}>
+            {status.label}
           </span>
         </div>
-        <div className="px-4 py-2 rounded-xl bg-green-50 border border-green-200">
-          <span className="text-sm font-medium text-green-700">
-            {imovelData.unitsSold} vendidas • {imovelData.unitsAvailable} disponíveis
-          </span>
-        </div>
-        <div className="px-4 py-2 rounded-xl bg-accent-50 border border-accent-200">
-          <span className="text-sm font-medium text-accent-700">
-            {formatPrice(imovelData.minPrice)} - {formatPrice(imovelData.maxPrice)}
-          </span>
-        </div>
+        {(data.tipo || data.property_type) && (
+          <div className="px-4 py-2 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+            <span className="text-sm font-medium flex items-center gap-1.5" style={{ color: T.textSub }}>
+              <Tag size={13} /> {data.tipo || data.property_type}
+            </span>
+          </div>
+        )}
+        {(data.price_min || data.price_max) && (
+          <div className="px-4 py-2 rounded-xl" style={{ background: 'rgba(196,157,91,0.08)', border: `1px solid ${T.borderGold}` }}>
+            <span className="text-sm font-bold" style={{ color: T.gold }}>
+              {data.price_min && data.price_max
+                ? `${formatPrice(data.price_min)} - ${formatPrice(data.price_max)}`
+                : formatPrice(data.price_min || data.price_max)}
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* ⚠️ NÃO MODIFICAR KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <div className="bg-white rounded-xl p-4 border border-gray-100">
-          <div className="flex items-center gap-2 mb-2">
-            <Target size={16} className="text-blue-600" />
-            <p className="text-xs text-gray-600">Total Unidades</p>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { icon: Ruler, label: 'Área', value: data.private_area ? `${data.private_area}m²` : 'N/A', color: '#6BB87B' },
+          { icon: Bed, label: 'Quartos', value: data.bedrooms || 'N/A', color: '#7B9EC4' },
+          { icon: Bath, label: 'Banheiros', value: data.bathrooms || 'N/A', color: '#A89EC4' },
+          { icon: Car, label: 'Vagas', value: data.parking_spaces || 'N/A', color: '#E8A87C' },
+        ].map((kpi, i) => (
+          <div key={i} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+            <div className="flex items-center gap-2 mb-2">
+              <kpi.icon size={16} style={{ color: kpi.color }} />
+              <p className="text-xs" style={{ color: T.textDim }}>{kpi.label}</p>
+            </div>
+            <p className="text-2xl font-bold" style={{ color: T.text }}>{kpi.value}</p>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{imovelData.units}</p>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 border border-gray-100">
-          <div className="flex items-center gap-2 mb-2">
-            <CheckCircle size={16} className="text-green-600" />
-            <p className="text-xs text-gray-600">Vendidas</p>
-          </div>
-          <p className="text-2xl font-bold text-green-700">{imovelData.unitsSold}</p>
-          <p className="text-xs text-gray-500">{soldPercentage.toFixed(1)}%</p>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 border border-gray-100">
-          <div className="flex items-center gap-2 mb-2">
-            <Users size={16} className="text-accent-600" />
-            <p className="text-xs text-gray-600">Leads</p>
-          </div>
-          <p className="text-2xl font-bold text-accent-700">{imovelData.leads}</p>
-          <p className="text-xs text-gray-500">{imovelData.conversions} conversões</p>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 border border-gray-100">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp size={16} className="text-purple-600" />
-            <p className="text-xs text-gray-600">Taxa Conversão</p>
-          </div>
-          <p className="text-2xl font-bold text-purple-700">{conversionRate.toFixed(1)}%</p>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 border border-gray-100">
-          <div className="flex items-center gap-2 mb-2">
-            <Eye size={16} className="text-gray-600" />
-            <p className="text-xs text-gray-600">Visualizações</p>
-          </div>
-          <p className="text-2xl font-bold text-gray-900">{imovelData.views.toLocaleString('pt-BR')}</p>
-        </div>
-
-        <div className="bg-white rounded-xl p-4 border border-gray-100">
-          <div className="flex items-center gap-2 mb-2">
-            <DollarSign size={16} className="text-green-600" />
-            <p className="text-xs text-gray-600">Ticket Médio</p>
-          </div>
-          <p className="text-2xl font-bold text-green-700">{formatPrice(avgTicket)}</p>
-        </div>
+        ))}
       </div>
 
-      {/* ⚠️ NÃO MODIFICAR TABS */}
-      <div className="border-b border-gray-200">
+      {/* Tabs */}
+      <div style={{ borderBottom: `1px solid ${T.border}` }}>
         <div className="flex gap-6">
-          <button
-            onClick={() => setActiveTab('overview')}
-            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'overview'
-                ? 'border-accent-600 text-accent-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
-          >
-            Visão Geral
-          </button>
-          <button
-            onClick={() => setActiveTab('sales')}
-            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'sales'
-                ? 'border-accent-600 text-accent-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
-          >
-            Vendas & Analytics
-          </button>
-          <button
-            onClick={() => setActiveTab('leads')}
-            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'leads'
-                ? 'border-accent-600 text-accent-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
-              }`}
-          >
-            Leads & Visitas
-          </button>
+          {[
+            { key: 'overview', label: 'Visão Geral' },
+            { key: 'gallery', label: 'Galeria' },
+            { key: 'info', label: 'Informações' },
+          ].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className="pb-4 px-2 text-sm font-medium transition-colors"
+              style={{
+                borderBottom: `2px solid ${activeTab === tab.key ? T.gold : 'transparent'}`,
+                color: activeTab === tab.key ? T.gold : T.textDim,
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* ⚠️ NÃO MODIFICAR TAB CONTENT */}
+      {/* Tab Content */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Imagem */}
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <div className="relative h-96 bg-gradient-to-br from-gray-100 to-gray-200">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <ImageIcon size={64} className="text-gray-400" />
+            {/* Cover Image */}
+            <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+              {coverImage ? (
+                <img src={coverImage} alt={data.name} className="w-full h-80 object-cover" />
+              ) : (
+                <div className="h-80 flex items-center justify-center" style={{ background: T.elevated }}>
+                  <ImageIcon size={64} style={{ color: T.textDim }} />
                 </div>
-                <div className="absolute top-6 left-6">
-                  <span className={`px-4 py-2 rounded-xl text-sm font-medium border ${statusConfig.bg} ${statusConfig.color} backdrop-blur-sm`}>
-                    {statusConfig.label}
-                  </span>
-                </div>
-              </div>
+              )}
             </div>
 
-            {/* Descrição */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Sobre o Empreendimento</h2>
-              <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
-                {imovelData.description}
-              </div>
-            </div>
-
-            {/* Características */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Características</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <Bed size={24} className="text-blue-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900 mb-1">{imovelData.bedrooms}</p>
-                  <p className="text-sm text-gray-600">Quartos</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <Bath size={24} className="text-purple-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900 mb-1">{imovelData.bathrooms}</p>
-                  <p className="text-sm text-gray-600">Banheiros</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <Ruler size={24} className="text-green-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900 mb-1">{imovelData.area}m²</p>
-                  <p className="text-sm text-gray-600">Área</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <Car size={24} className="text-orange-600" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900 mb-1">{imovelData.parking}</p>
-                  <p className="text-sm text-gray-600">Vagas</p>
+            {/* Description */}
+            {data.description && (
+              <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Sobre o Empreendimento</h2>
+                <div className="prose prose-sm max-w-none leading-relaxed whitespace-pre-line" style={{ color: T.textSub }}>
+                  {data.description}
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Features */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Diferenciais</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {imovelData.features.map((category, index) => (
-                  <div key={index}>
-                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">
-                      {category.category}
-                    </h3>
-                    <ul className="space-y-2">
-                      {category.items.map((item, i) => (
-                        <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
-                          <CheckCircle size={14} className="text-green-600 flex-shrink-0" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+            {features.length > 0 && (
+              <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Diferenciais</h2>
+                <div className="flex flex-wrap gap-2">
+                  {features.map((f: string, i: number) => (
+                    <span key={i} className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
+                      <CheckCircle size={13} style={{ color: T.gold }} />
+                      {f}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* Plantas */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Plantas Disponíveis</h2>
-              <div className="space-y-4">
-                {imovelData.floorPlans.map((plan, index) => (
-                  <div key={index} className="p-4 border border-gray-200 rounded-xl hover:border-accent-300 transition-colors">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-bold text-gray-900">{plan.name}</h3>
-                      <span className="text-2xl font-bold text-accent-700">
-                        {formatPrice(plan.price)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-6 text-sm text-gray-600">
-                      <span className="flex items-center gap-1">
-                        <Ruler size={14} />
-                        {plan.area}m²
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Bed size={14} />
-                        {plan.bedrooms}Q
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Bath size={14} />
-                        {plan.bathrooms}B
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Car size={14} />
-                        {plan.parking}V
-                      </span>
-                      <span className={`ml-auto px-3 py-1 rounded-full text-xs font-medium ${plan.available > 10 ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
-                        }`}>
-                        {plan.available} disponíveis
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Right Column */}
           <div className="space-y-6">
-            {/* Contato Construtora */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
-                Construtora
-              </h3>
-              <p className="font-bold text-gray-900 mb-4">{imovelData.developer}</p>
-              <div className="space-y-3">
-                <a
-                  href={`tel:${imovelData.developerPhone}`}
-                  className="flex items-center gap-3 text-sm text-gray-700 hover:text-accent-600 transition-colors"
-                >
-                  <Phone size={16} />
-                  {imovelData.developerPhone}
-                </a>
-                <a
-                  href={`mailto:${imovelData.developerEmail}`}
-                  className="flex items-center gap-3 text-sm text-gray-700 hover:text-accent-600 transition-colors"
-                >
-                  <Mail size={16} />
-                  {imovelData.developerEmail}
-                </a>
+            {/* Developer Card */}
+            {(developerInfo || data.developer) && (
+              <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: T.gold }}>Construtora</h3>
+                <div className="flex items-center gap-3 mb-4">
+                  {developerInfo?.logo_url ? (
+                    <img src={developerInfo.logo_url} alt={developerInfo.name} className="w-10 h-10 rounded-lg object-contain" style={{ background: T.elevated }} />
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: T.elevated }}>
+                      <Building2 size={18} style={{ color: T.gold }} />
+                    </div>
+                  )}
+                  <p className="font-bold" style={{ color: T.text }}>{developerInfo?.name || data.developer}</p>
+                </div>
+                {developerInfo?.email && <p className="text-sm mb-1" style={{ color: T.textSub }}>{developerInfo.email}</p>}
+                {developerInfo?.phone && <p className="text-sm" style={{ color: T.textSub }}>{developerInfo.phone}</p>}
               </div>
-            </div>
+            )}
 
-            {/* Cronograma */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
-                Cronograma
-              </h3>
+            {/* Timeline */}
+            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: T.gold }}>Cronograma</h3>
               <div className="space-y-4">
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Lançamento</p>
-                  <p className="text-sm font-medium text-gray-900">
-                    {new Date(imovelData.launchDate).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-1">Entrega Prevista</p>
-                  <p className="text-sm font-medium text-gray-900">
-                    {new Date(imovelData.completionDate).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-600 mb-2">Progresso da Obra</p>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-accent-500 rounded-full transition-all duration-500"
-                      style={{ width: `${imovelData.completionProgress}%` }}
-                    />
+                {data.delivery_date && (
+                  <div>
+                    <p className="text-xs mb-1" style={{ color: T.textDim }}>Entrega Prevista</p>
+                    <p className="text-sm font-medium flex items-center gap-1.5" style={{ color: T.text }}>
+                      <Calendar size={14} />
+                      {new Date(data.delivery_date).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                    </p>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">{imovelData.completionProgress}% concluído</p>
-                </div>
+                )}
+                {data.created_at && (
+                  <div>
+                    <p className="text-xs mb-1" style={{ color: T.textDim }}>Cadastrado em</p>
+                    <p className="text-sm font-medium" style={{ color: T.text }}>{new Date(data.created_at).toLocaleDateString('pt-BR')}</p>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Localização */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
-                Localização
-              </h3>
-              <div className="space-y-2 text-sm text-gray-700">
-                <p>{imovelData.address}</p>
-                <p>{imovelData.location} - {imovelData.city}/{imovelData.state}</p>
-                <p>CEP: {imovelData.cep}</p>
+            {/* Pricing */}
+            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: T.gold }}>Valores</h3>
+              <div className="space-y-3">
+                {data.price_min && <div className="flex justify-between"><span className="text-sm" style={{ color: T.textDim }}>Preço Mínimo</span><span className="text-sm font-bold" style={{ color: T.text }}>{formatPrice(data.price_min)}</span></div>}
+                {data.price_max && <div className="flex justify-between"><span className="text-sm" style={{ color: T.textDim }}>Preço Máximo</span><span className="text-sm font-bold" style={{ color: T.text }}>{formatPrice(data.price_max)}</span></div>}
+                {data.price_per_sqm && <div className="flex justify-between"><span className="text-sm" style={{ color: T.textDim }}>Preço/m²</span><span className="text-sm font-bold" style={{ color: T.text }}>{formatPrice(data.price_per_sqm)}</span></div>}
+                {data.units_count && <div className="flex justify-between pt-3" style={{ borderTop: `1px solid ${T.border}` }}><span className="text-sm" style={{ color: T.textDim }}>Total Unidades</span><span className="text-sm font-bold" style={{ color: T.text }}>{data.units_count}</span></div>}
+                {data.available_units && <div className="flex justify-between"><span className="text-sm" style={{ color: T.textDim }}>Disponíveis</span><span className="text-sm font-bold" style={{ color: '#6BB87B' }}>{data.available_units}</span></div>}
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-4" style={{ color: T.gold }}>Links Rápidos</h3>
+              <div className="space-y-2">
+                {data.slug && (
+                  <a href={`/pt/imoveis/${data.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm p-2.5 rounded-xl transition-colors" style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
+                    <Globe size={14} style={{ color: T.gold }} /> Ver no site público <ExternalLink size={12} className="ml-auto" />
+                  </a>
+                )}
+                {data.brochure_url && (
+                  <a href={data.brochure_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm p-2.5 rounded-xl transition-colors" style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
+                    <FileText size={14} style={{ color: T.gold }} /> Download Brochure <ExternalLink size={12} className="ml-auto" />
+                  </a>
+                )}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {activeTab === 'sales' && (
-        <div className="space-y-6">
-          {/* Histórico de Vendas */}
-          <div className="bg-white rounded-2xl p-6 border border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">Histórico de Vendas (6 meses)</h2>
-            <div className="space-y-4">
-              {imovelData.salesHistory.map((history, index) => {
-                const maxSold = Math.max(...imovelData.salesHistory.map(h => h.sold))
-                const percentage = (history.sold / maxSold) * 100
-
-                return (
-                  <div key={index} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-gray-900">{history.month}</span>
-                      <div className="flex items-center gap-4">
-                        <span className="text-gray-600">{history.sold} unidades</span>
-                        <span className="font-bold text-green-700">{formatPrice(history.revenue)}</span>
-                      </div>
-                    </div>
-                    <div className="h-8 bg-gray-100 rounded-lg overflow-hidden">
-                      <div
-                        className="h-full bg-accent-500 rounded-lg transition-all duration-700"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Leads por Origem */}
-          <div className="bg-white rounded-2xl p-6 border border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">Leads por Origem</h2>
-            <div className="space-y-4">
-              {imovelData.leadsBySource.map((source, index) => {
-                const convRate = (source.conversions / source.count) * 100
-
-                return (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                    <div>
-                      <p className="font-medium text-gray-900 mb-1">{source.source}</p>
-                      <p className="text-sm text-gray-600">
-                        {source.count} leads • {source.conversions} conversões
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-accent-700">{convRate.toFixed(1)}%</p>
-                      <p className="text-xs text-gray-500">taxa conversão</p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'leads' && (
-        <div className="space-y-6">
-          {/* Visitas Agendadas */}
-          <div className="bg-white rounded-2xl p-6 border border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">Visitas Agendadas</h2>
-            <div className="space-y-4">
-              {imovelData.scheduledVisits.map((visit, index) => (
-                <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-accent-300 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-accent-50 rounded-lg flex items-center justify-center">
-                      <Calendar size={20} className="text-accent-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{visit.client}</p>
-                      <p className="text-sm text-gray-600">{formatDate(visit.date)}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={`https://wa.me/55${visit.phone.replace(/\D/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition-colors"
-                    >
-                      <MessageSquare size={16} />
-                    </a>
-                    <a
-                      href={`tel:${visit.phone}`}
-                      className="w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition-colors"
-                    >
-                      <Phone size={16} />
-                    </a>
-                  </div>
+      {activeTab === 'gallery' && (
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Galeria de Imagens</h2>
+          {galleryImages.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {galleryImages.map((url: string, i: number) => (
+                <div key={i} className="relative group rounded-xl overflow-hidden cursor-pointer" style={{ border: `1px solid ${T.border}` }}>
+                  <img src={url} alt={`${data.name} ${i + 1}`} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
               ))}
             </div>
+          ) : (
+            <div className="text-center py-16">
+              <ImageIcon size={48} className="mx-auto mb-3" style={{ color: T.textDim }} />
+              <p className="text-sm" style={{ color: T.textDim }}>Nenhuma imagem cadastrada</p>
+              <button onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)} className="text-sm mt-3 underline" style={{ color: T.gold }}>
+                Adicionar imagens
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'info' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Dados Completos</h2>
+            <div className="space-y-3">
+              {[
+                ['ID', data.id],
+                ['Slug', data.slug],
+                ['Nome', data.name],
+                ['Tipo', data.tipo || data.property_type],
+                ['Status', data.status],
+                ['Status Comercial', data.status_comercial],
+                ['Endereço', data.address],
+                ['Bairro', data.neighborhood],
+                ['Cidade', data.city],
+                ['Estado', data.state],
+                ['País', data.country],
+                ['Área Privativa', data.private_area ? `${data.private_area}m²` : null],
+                ['Quartos', data.bedrooms],
+                ['Banheiros', data.bathrooms],
+                ['Vagas', data.parking_spaces],
+                ['Preço Mín.', data.price_min ? `R$ ${data.price_min.toLocaleString('pt-BR')}` : null],
+                ['Preço Máx.', data.price_max ? `R$ ${data.price_max.toLocaleString('pt-BR')}` : null],
+                ['Preço/m²', data.price_per_sqm ? `R$ ${data.price_per_sqm.toLocaleString('pt-BR')}` : null],
+                ['Unidades Total', data.units_count],
+                ['Disponíveis', data.available_units],
+                ['Entrega', data.delivery_date ? new Date(data.delivery_date).toLocaleDateString('pt-BR') : null],
+                ['Construtora', developerInfo?.name || data.developer],
+                ['Destacado', data.is_highlighted ? 'Sim' : 'Não'],
+                ['Criado em', data.created_at ? new Date(data.created_at).toLocaleString('pt-BR') : null],
+                ['Atualizado', data.updated_at ? new Date(data.updated_at).toLocaleString('pt-BR') : null],
+              ].filter(([, v]) => v !== null && v !== undefined && v !== '').map(([label, value], i) => (
+                <div key={i} className="flex justify-between py-2" style={{ borderBottom: `1px solid ${T.border}` }}>
+                  <span className="text-sm" style={{ color: T.textDim }}>{label}</span>
+                  <span className="text-sm font-medium text-right max-w-[60%] truncate" style={{ color: T.text }}>{String(value)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Metadata</h2>
+            {data.amenities && typeof data.amenities === 'object' && (
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold mb-2" style={{ color: T.textSub }}>Amenities</h3>
+                <pre className="text-xs p-3 rounded-xl overflow-auto max-h-40" style={{ background: T.elevated, color: T.textSub }}>{JSON.stringify(data.amenities, null, 2)}</pre>
+              </div>
+            )}
+            {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold mb-2" style={{ color: T.textSub }}>Tags</h3>
+                <div className="flex flex-wrap gap-2">
+                  {data.tags.map((tag: string, i: number) => (
+                    <span key={i} className="text-xs px-2 py-1 rounded-lg" style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {data.specs && typeof data.specs === 'object' && (
+              <div>
+                <h3 className="text-sm font-semibold mb-2" style={{ color: T.textSub }}>Specs</h3>
+                <pre className="text-xs p-3 rounded-xl overflow-auto max-h-40" style={{ background: T.elevated, color: T.textSub }}>{JSON.stringify(data.specs, null, 2)}</pre>
+              </div>
+            )}
           </div>
         </div>
       )}

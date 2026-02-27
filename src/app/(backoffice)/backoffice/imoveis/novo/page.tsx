@@ -266,14 +266,39 @@ export default function NovoImovelPage() {
     setIsSubmitting(true)
 
     try {
+      // 1. Upload images to Supabase Storage if any
+      let imageUrls: string[] = []
+      if (formData.images.length > 0) {
+        toast.info(`Enviando ${formData.images.length} imagem(ns)...`)
+        const { uploadMultipleFiles } = await import('@/lib/supabase-storage')
+        const uploadResults = await uploadMultipleFiles(
+          formData.images,
+          'developments',
+          'new'
+        )
+        imageUrls = uploadResults.filter(r => !r.error).map(r => r.url)
+        const failedCount = uploadResults.filter(r => r.error).length
+        if (failedCount > 0) toast.warning(`${failedCount} imagem(ns) falharam no upload`)
+      }
+
+      // 2. Send to API
+      const payload = {
+        ...formData,
+        images: undefined,
+        logo: undefined,
+        gallery_images: imageUrls,
+        image: imageUrls[0] || null,
+      }
+
       const res = await fetch('/api/developments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       })
 
       if (!res.ok) {
-        throw new Error('Erro ao salvar no banco')
+        const errData = await res.json()
+        throw new Error(errData.error || 'Erro ao salvar no banco')
       }
 
       toast.success('Empreendimento cadastrado com sucesso!')
