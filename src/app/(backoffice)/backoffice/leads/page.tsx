@@ -17,19 +17,7 @@ const T = {
     gold: '#C49D5B',
 }
 
-// Fallback mock
-const fallbackLeads = [
-    { id: 1, name: 'Maria Santos Silva', email: 'maria.santos@gmail.com', phone: '(81) 99845-3421', score: 92, status: 'hot', source: 'Instagram', interest: 'Apt 3Q', location: 'Boa Viagem', budget: '450k–600k', created: '2026-02-14T10:30:00', lastContact: '2026-02-14T15:20:00' },
-    { id: 2, name: 'João Pedro Almeida', email: 'joao.almeida@hotmail.com', phone: '(81) 98732-1098', score: 85, status: 'hot', source: 'Google Ads', interest: 'Casa 4Q', location: 'Piedade', budget: '800k–1M', created: '2026-02-14T08:15:00', lastContact: '2026-02-14T14:45:00' },
-    { id: 3, name: 'Ana Carolina Ferreira', email: 'anacarolina.f@outlook.com', phone: '(81) 99234-5678', score: 78, status: 'warm', source: 'Site', interest: 'Apt 2Q', location: 'Pina', budget: '300k–400k', created: '2026-02-13T16:20:00', lastContact: '2026-02-14T10:30:00' },
-    { id: 4, name: 'Roberto Carlos Mendes', email: 'roberto.mendes@empresarial.com.br', phone: '(81) 98123-4567', score: 88, status: 'hot', source: 'Indicação', interest: 'Sala Comercial', location: 'Boa Viagem', budget: '250k–350k', created: '2026-02-13T09:00:00', lastContact: '2026-02-13T16:15:00' },
-    { id: 5, name: 'Camila Nascimento', email: 'camila.nasc@gmail.com', phone: '(81) 99678-2345', score: 65, status: 'warm', source: 'WhatsApp', interest: 'Apt 2Q', location: 'Imbiribeira', budget: '280k–350k', created: '2026-02-12T14:00:00', lastContact: '2026-02-13T10:00:00' },
-    { id: 6, name: 'Fernando Augusto Rocha', email: 'fernando.rocha@yahoo.com', phone: '(81) 98765-4321', score: 72, status: 'warm', source: 'WhatsApp', interest: 'Cobertura', location: 'Boa Viagem', budget: '1.2M–1.5M', created: '2026-02-12T09:45:00', lastContact: '2026-02-12T16:30:00' },
-    { id: 7, name: 'Juliana Oliveira Santos', email: 'ju.oliveira@gmail.com', phone: '(81) 99654-3210', score: 58, status: 'cold', source: 'Instagram', interest: 'Apt 2Q', location: 'Candeias', budget: '200k–280k', created: '2026-02-11T13:20:00', lastContact: '2026-02-11T13:20:00' },
-    { id: 8, name: 'Carlos Eduardo Martins', email: 'carlos.martins@empresa.com', phone: '(81) 98543-2109', score: 95, status: 'hot', source: 'Site', interest: 'Apt 4Q', location: 'Boa Viagem', budget: '700k–900k', created: '2026-02-11T10:00:00', lastContact: '2026-02-14T11:45:00' },
-    { id: 9, name: 'Mariana Souza Campos', email: 'mariana.campos@hotmail.com', phone: '(81) 99432-1098', score: 70, status: 'warm', source: 'Google Ads', interest: 'Casa 3Q', location: 'Piedade', budget: '500k–650k', created: '2026-02-10T15:30:00', lastContact: '2026-02-13T14:20:00' },
-    { id: 10, name: 'Rafael Henrique Dias', email: 'rafael.dias@gmail.com', phone: '(81) 98321-0987', score: 82, status: 'hot', source: 'Indicação', interest: 'Apt 3Q', location: 'Pina', budget: '380k–480k', created: '2026-02-10T09:15:00', lastContact: '2026-02-14T08:30:00' },
-]
+// No fallback mock — real Supabase data only
 
 interface Lead {
     id: any;
@@ -115,7 +103,7 @@ export default function LeadsPage() {
             } finally {
                 setLoading(false)
             }
-            setLeads(fallbackLeads)
+            setLeads([])
         }
         fetchLeads()
     }, [])

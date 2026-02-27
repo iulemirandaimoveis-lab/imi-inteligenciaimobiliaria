@@ -21,15 +21,7 @@ const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon
     lancamento: { label: 'Lançamento', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Tag },
 }
 
-// Fallback mock
-const fallbackIMOVEIS = [
-    { id: '1', codigo: 'IMI-2026-001', status: 'disponivel', destaque: true, tipo: 'Apartamento', titulo: 'Apartamento Premium com Vista Mar', bairro: 'Boa Viagem', area: 120, quartos: 3, banheiros: 3, vagas: 2, preco: 950000, construtora: 'Moura Dubeux', visitas: 234 },
-    { id: '2', codigo: 'IMI-2026-002', status: 'disponivel', destaque: false, tipo: 'Casa', titulo: 'Casa em Condomínio de Alto Padrão', bairro: 'Setúbal', area: 450, quartos: 5, banheiros: 6, vagas: 4, preco: 3500000, construtora: null, visitas: 89 },
-    { id: '3', codigo: 'IMI-2026-003', status: 'em_negociacao', destaque: true, tipo: 'Cobertura', titulo: 'Cobertura Duplex com Piscina Privativa', bairro: 'Boa Viagem', area: 320, quartos: 4, banheiros: 5, vagas: 3, preco: 2800000, construtora: 'Queiroz Galvão', visitas: 178 },
-    { id: '4', codigo: 'IMI-2026-004', status: 'disponivel', destaque: false, tipo: 'Studio', titulo: 'Studio Moderno — Boa Viagem', bairro: 'Boa Viagem', area: 42, quartos: 1, banheiros: 1, vagas: 1, preco: 2800, construtora: 'JHSF', visitas: 312 },
-    { id: '5', codigo: 'IMI-2026-005', status: 'lancamento', destaque: true, tipo: 'Empreendimento', titulo: 'Reserva Atlantis — Pré-lançamento', bairro: 'Ponta de Pedra', area: 120000, quartos: 0, banheiros: 0, vagas: 0, preco: 480000000, construtora: 'IMI Incorporações', visitas: 1240 },
-    { id: '6', codigo: 'IMI-2026-006', status: 'reservado', destaque: false, tipo: 'Sala Comercial', titulo: 'Sala Comercial — Centro Empresarial', bairro: 'Boa Viagem', area: 65, quartos: 0, banheiros: 2, vagas: 2, preco: 580000, construtora: 'Inpar', visitas: 67 },
-]
+// No fallback mock — real Supabase data only
 
 interface Imovel {
     id: any;
@@ -194,7 +186,7 @@ export default function ImoveisPage() {
             } catch (err) {
                 console.error(err)
             }
-            setImoveis(fallbackIMOVEIS)
+            setImoveis([])
             setLoading(false)
         }
         fetchProperties()
