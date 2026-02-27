@@ -37,7 +37,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         // Base: Focus, transitions, disabled
         const baseStyles = `
       inline-flex items-center justify-center gap-[8px]
-      font-medium text-sm
+      font-medium text-sm text-center max-w-full
       transition-all duration-200 ease-smooth
       focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2
       disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
@@ -72,11 +72,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       `,
         }
 
-        // Sizes - Mínimo 48px para touch
+        // Sizes - Mínimo 48px para touch, com min-h e h-auto para permitir wrap de texto longo
         const sizes = {
-            sm: 'h-[40px] px-[16px] rounded-[8px]',
-            md: 'h-[48px] px-[24px] rounded-[12px]', // Padrão touch-friendly
-            lg: 'h-[56px] px-[32px] rounded-[12px] text-base',
+            sm: 'min-h-[40px] h-auto py-2 px-[16px] rounded-[8px]',
+            md: 'min-h-[48px] h-auto py-3 px-[20px] sm:px-[24px] rounded-[12px]', // Padrão touch-friendly
+            lg: 'min-h-[56px] h-auto py-4 px-[24px] sm:px-[32px] rounded-[12px] text-base',
         }
 
         const iconSizes = {

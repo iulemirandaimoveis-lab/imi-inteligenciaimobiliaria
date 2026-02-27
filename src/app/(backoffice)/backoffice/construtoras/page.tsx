@@ -38,12 +38,12 @@ export default async function BackofficeConstrutorasPage() {
     address: dev.address,
     is_active: dev.is_active,
     logo_url: dev.logo_url,
-    // Contagem de empreendimentos ativos baseada na real relation the banco de dados
-    empreendimentosAtivos: Array.isArray(dev.developments) ? dev.developments.length : 0,
-    unidadesVendidas: Math.floor(Math.random() * 50), // Mocks provisórios para o que não tá no schema base ainda
-    receitaTotal: Math.floor(Math.random() * 50000000),
-    rating: 4.0 + (Math.random() * 1.0),
-    parceriaDuracao: "Avaliação 2026",
+    // Contagem de empreendimentos ativos baseada na real relation do banco de dados
+    empreendimentosAtivos: Array.isArray(dev.developments) ? dev.developments.length : dev.developments?.[0]?.count || 0,
+    unidadesVendidas: 0, // Placeholder
+    receitaTotal: 0, // Placeholder
+    rating: 4.8,
+    parceriaDuracao: "Em análise",
   }))
 
   return (

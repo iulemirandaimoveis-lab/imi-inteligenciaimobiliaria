@@ -52,23 +52,23 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                         Fale diretamente com nossa mesa de negócios técnica e tire todas as suas dúvidas sobre rentabilidade e viabilidade.
                     </motion.p>
 
-                    <motion.div variants={slideUp} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <motion.div variants={slideUp} className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
                         <Button
                             size="lg"
-                            className="bg-white text-imi-900 hover:bg-imi-50 min-w-[280px] h-16 font-bold uppercase tracking-[0.2em] text-sm shadow-xl"
+                            className="bg-white text-imi-900 hover:bg-imi-50 w-full sm:w-auto sm:min-w-[280px] min-h-[64px] h-auto py-4 font-bold uppercase tracking-[0.2em] text-xs sm:text-sm shadow-xl flex-wrap text-center"
                             onClick={() => handleCTAClick('info')}
                         >
-                            <MessageCircle className="w-5 h-5 mr-3 text-imi-600" />
+                            <MessageCircle className="w-5 h-5 mr-0 sm:mr-3 shrink-0 text-imi-600 mb-1 sm:mb-0 block sm:inline-block" />
                             Falar com Especialista
                         </Button>
 
                         <Button
                             size="lg"
                             variant="outline"
-                            className="border-white/30 text-white hover:bg-white/10 min-w-[280px] h-16 font-bold uppercase tracking-[0.2em] text-sm"
+                            className="border-white/30 text-white hover:bg-white/10 w-full sm:w-auto sm:min-w-[280px] min-h-[64px] h-auto py-4 font-bold uppercase tracking-[0.2em] text-xs sm:text-sm flex-wrap text-center"
                             onClick={() => handleCTAClick('table')}
                         >
-                            <FileText className="w-5 h-5 mr-3 text-accent-500" />
+                            <FileText className="w-5 h-5 mr-0 sm:mr-3 shrink-0 text-accent-500 mb-1 sm:mb-0 block sm:inline-block" />
                             Solicitar Tabela Completa
                         </Button>
                     </motion.div>

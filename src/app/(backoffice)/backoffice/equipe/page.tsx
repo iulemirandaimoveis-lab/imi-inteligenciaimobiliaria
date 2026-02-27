@@ -1,281 +1,60 @@
-'use client'
+import { createClient } from '@/lib/supabase/server'
+import EquipeClient from './EquipeClient'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import {
-    Users,
-    Plus,
-    Search,
-    Mail,
-    Phone,
-    Shield,
-    Edit,
-    Trash2,
-    MoreVertical,
-    CheckCircle,
-    XCircle,
-    Clock,
-    Award,
-    TrendingUp,
-} from 'lucide-react'
+export default async function EquipePage() {
+    const supabase = await createClient()
 
-const T = {
-    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#C49D5B',
-}
+    const { data: teamMembers } = await supabase
+        .from('team_members')
+        .select(`
+            id,
+            user_id,
+            first_name,
+            last_name,
+            role,
+            status,
+            phone,
+            created_at,
+            users:user_id (
+                email,
+                last_sign_in_at
+            )
+        `)
 
-type UserRole = 'admin' | 'manager' | 'agent' | 'viewer'
-type UserStatus = 'active' | 'inactive' | 'pending'
+    const activeTeam = teamMembers?.map(member => {
+        // Obtenha os emails de auth de alguma forma, mas team_members normalmente deve ter o básico.
+        // O Supabase auth não costuma vir exposto pro user-level fácil assim no select, 
+        // caso dê null em users ou email, é preferível ter um campo `email` em team_members real.
+        // Simulando com o que tiver ou mock-placeholder caso a política recuse auth.users join.
+        
+        let email = 'email@privado.com'
+        let lastActive = member.created_at
 
-interface TeamMember {
-    id: string
-    name: string
-    email: string
-    phone: string
-    role: UserRole
-    status: UserStatus
-    avatar?: string
-    joinedAt: string
-    lastActive: string
-    stats: {
-        leads: number
-        sales: number
-        revenue: number
-    }
-}
+        // Safely extract from joined reference if possible
+        if (member.users && Array.isArray(member.users) && member.users.length > 0) {
+           email = member.users[0].email || email
+           lastActive = member.users[0].last_sign_in_at || lastActive
+        } else if (member.users && !Array.isArray(member.users)) {
+            email = (member.users as any).email || email
+            lastActive = (member.users as any).last_sign_in_at || lastActive
+        }
 
-const mockTeam: TeamMember[] = [
-    {
-        id: '1', name: 'Laila Miranda', email: 'laila@iulemirandaimoveis.com.br',
-        phone: '(81) 99999-9999', role: 'admin', status: 'active', joinedAt: '2024-01-01',
-        lastActive: '2026-02-15T18:30:00', stats: { leads: 145, sales: 23, revenue: 15600000 },
-    },
-    {
-        id: '2', name: 'Carlos Eduardo Silva', email: 'carlos@iulemirandaimoveis.com.br',
-        phone: '(81) 98888-8888', role: 'manager', status: 'active', joinedAt: '2024-03-15',
-        lastActive: '2026-02-15T17:45:00', stats: { leads: 98, sales: 15, revenue: 9800000 },
-    },
-    {
-        id: '3', name: 'Ana Paula Costa', email: 'ana@iulemirandaimoveis.com.br',
-        phone: '(81) 97777-7777', role: 'agent', status: 'active', joinedAt: '2024-06-01',
-        lastActive: '2026-02-15T16:20:00', stats: { leads: 67, sales: 9, revenue: 5400000 },
-    },
-    {
-        id: '4', name: 'Roberto Mendes', email: 'roberto@iulemirandaimoveis.com.br',
-        phone: '(81) 96666-6666', role: 'agent', status: 'active', joinedAt: '2024-08-10',
-        lastActive: '2026-02-15T14:10:00', stats: { leads: 52, sales: 7, revenue: 4200000 },
-    },
-    {
-        id: '5', name: 'Juliana Santos', email: 'juliana@iulemirandaimoveis.com.br',
-        phone: '(81) 95555-5555', role: 'viewer', status: 'pending', joinedAt: '2026-02-14',
-        lastActive: '2026-02-14T10:00:00', stats: { leads: 0, sales: 0, revenue: 0 },
-    },
-]
+        return {
+            id: member.id,
+            name: `${member.first_name || ''} ${member.last_name || ''}`.trim() || 'Usuário ' + member.id.substring(0,4),
+            email: email,
+            phone: member.phone || '',
+            role: member.role || 'viewer',
+            status: member.status || 'pending',
+            joinedAt: member.created_at,
+            lastActive: lastActive,
+            stats: {
+                leads: 0,
+                sales: 0,
+                revenue: 0
+            }
+        }
+    }) || []
 
-const ROLE_CFG: Record<UserRole, { label: string; color: string; bg: string; icon: any }> = {
-    admin: { label: 'Administrador', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: Shield },
-    manager: { label: 'Gerente', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: Award },
-    agent: { label: 'Corretor', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: Users },
-    viewer: { label: 'Visualizador', color: '#8B93A7', bg: 'rgba(139,147,167,0.12)', icon: Users },
-}
-
-const STATUS_CFG: Record<UserStatus, { label: string; color: string; bg: string; icon: any }> = {
-    active: { label: 'Ativo', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    inactive: { label: 'Inativo', color: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
-    pending: { label: 'Pendente', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock },
-}
-
-export default function EquipePage() {
-    const router = useRouter()
-    const [team] = useState(mockTeam)
-    const [searchTerm, setSearchTerm] = useState('')
-    const [roleFilter, setRoleFilter] = useState<UserRole | 'all'>('all')
-
-    const formatCurrency = (value: number) =>
-        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(value)
-
-    const formatLastActive = (timestamp: string) => {
-        const diff = Math.floor((Date.now() - new Date(timestamp).getTime()) / 60000)
-        if (diff < 60) return `${diff}m atrás`
-        if (diff < 1440) return `${Math.floor(diff / 60)}h atrás`
-        return new Date(timestamp).toLocaleDateString('pt-BR')
-    }
-
-    const filteredTeam = team
-        .filter(m => m.name.toLowerCase().includes(searchTerm.toLowerCase()) || m.email.toLowerCase().includes(searchTerm.toLowerCase()))
-        .filter(m => roleFilter === 'all' || m.role === roleFilter)
-
-    const totalStats = team.reduce(
-        (acc, m) => ({ leads: acc.leads + m.stats.leads, sales: acc.sales + m.stats.sales, revenue: acc.revenue + m.stats.revenue }),
-        { leads: 0, sales: 0, revenue: 0 }
-    )
-
-    const KPIS = [
-        { label: 'Total de Leads', value: totalStats.leads, icon: Users, color: '#7B9EC4' },
-        { label: 'Total de Vendas', value: totalStats.sales, icon: CheckCircle, color: '#6BB87B' },
-        { label: 'Receita Total', value: formatCurrency(totalStats.revenue), icon: TrendingUp, color: '#A89EC4' },
-    ]
-
-    return (
-        <div className="space-y-5 max-w-7xl mx-auto">
-            {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Gestão de Equipe</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
-                        {team.length} membros &bull; {team.filter(m => m.status === 'active').length} ativos
-                    </p>
-                </div>
-                <motion.button whileTap={{ scale: 0.96 }}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
-                    <Plus size={16} /> Adicionar Membro
-                </motion.button>
-            </motion.div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {KPIS.map((k, i) => (
-                    <motion.div key={k.label}
-                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl p-5"
-                        style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                style={{ background: `${k.color}18` }}>
-                                <k.icon size={18} style={{ color: k.color }} />
-                            </div>
-                            <p className="text-xs font-medium" style={{ color: T.textDim }}>{k.label}</p>
-                        </div>
-                        <p className="text-2xl font-bold" style={{ color: T.text }}>{k.value}</p>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Filters */}
-            <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="flex-1 relative">
-                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Buscar por nome ou email..."
-                            className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, caretColor: T.gold }}
-                            onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
-                            onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
-                        />
-                    </div>
-                    <select
-                        value={roleFilter}
-                        onChange={(e) => setRoleFilter(e.target.value as UserRole | 'all')}
-                        className="h-10 px-4 rounded-xl text-sm outline-none"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                    >
-                        <option value="all">Todas as funções</option>
-                        <option value="admin">Administrador</option>
-                        <option value="manager">Gerente</option>
-                        <option value="agent">Corretor</option>
-                        <option value="viewer">Visualizador</option>
-                    </select>
-                </div>
-            </div>
-
-            {/* Team members */}
-            <div className="space-y-2">
-                {filteredTeam.map((member, i) => {
-                    const role = ROLE_CFG[member.role]
-                    const status = STATUS_CFG[member.status]
-                    return (
-                        <motion.div key={member.id}
-                            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.04 }}
-                            className="rounded-2xl p-4 transition-all"
-                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}
-                        >
-                            <div className="flex items-center gap-3">
-                                {/* Avatar */}
-                                <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                                    style={{ background: 'rgba(196,157,91,0.15)', color: T.gold }}>
-                                    {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                                </div>
-
-                                {/* Info */}
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                                        <p className="text-sm font-semibold" style={{ color: T.text }}>{member.name}</p>
-                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                            style={{ color: role.color, background: role.bg }}>
-                                            {role.label}
-                                        </span>
-                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                            style={{ color: status.color, background: status.bg }}>
-                                            {status.label}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-3 flex-wrap">
-                                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textDim }}>
-                                            <Mail size={10} /> {member.email}
-                                        </span>
-                                        <span className="text-[11px] flex items-center gap-1 hidden sm:flex" style={{ color: T.textDim }}>
-                                            <Phone size={10} /> {member.phone}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Stats */}
-                                <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
-                                    <div className="text-right">
-                                        <p className="text-xs font-bold" style={{ color: T.text }}>{member.stats.leads}</p>
-                                        <p className="text-[10px]" style={{ color: T.textDim }}>leads</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-xs font-bold" style={{ color: '#6BB87B' }}>{member.stats.sales}</p>
-                                        <p className="text-[10px]" style={{ color: T.textDim }}>vendas</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-[10px]" style={{ color: T.textDim }}>
-                                            <Clock size={9} className="inline mr-1" />{formatLastActive(member.lastActive)}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex items-center gap-1 flex-shrink-0">
-                                    <button className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
-                                        style={{ color: T.textDim }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                                        <Edit size={13} />
-                                    </button>
-                                    <button className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
-                                        style={{ color: T.textDim }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                                        <MoreVertical size={13} />
-                                    </button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )
-                })}
-            </div>
-
-            {filteredTeam.length === 0 && (
-                <div className="text-center py-16" style={{ color: T.textDim }}>
-                    <Users size={32} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">Nenhum membro encontrado</p>
-                </div>
-            )}
-        </div>
-    )
+    return <EquipeClient initialTeam={activeTeam} />
 }

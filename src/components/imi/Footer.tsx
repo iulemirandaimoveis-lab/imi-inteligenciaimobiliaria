@@ -47,17 +47,17 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-[11px] text-slate-500 font-medium">
+                <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6">
+                    <p className="text-[11px] text-slate-500 font-medium text-center md:text-left">
                         © 2026 IMI – Inteligência Imobiliária. Todos direitos reservados.
                     </p>
 
-                    <div className="flex gap-6 text-[10px] font-bold tracking-[0.2em] text-slate-500">
-                        <span className="text-yellow-400 cursor-pointer">PT</span>
-                        <span className="hover:text-slate-300 cursor-pointer">EN</span>
-                        <span className="hover:text-slate-300 cursor-pointer">JP</span>
-                        <span className="hover:text-slate-300 cursor-pointer">AR</span>
-                        <span className="hover:text-slate-300 cursor-pointer">ES</span>
+                    <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-[10px] font-bold tracking-[0.2em] text-slate-500 mt-2 sm:mt-0">
+                        <span className="text-yellow-400 cursor-pointer transition-colors px-2 py-1">PT</span>
+                        <span className="hover:text-slate-300 cursor-pointer transition-colors px-2 py-1">EN</span>
+                        <span className="hover:text-slate-300 cursor-pointer transition-colors px-2 py-1">JP</span>
+                        <span className="hover:text-slate-300 cursor-pointer transition-colors px-2 py-1">AR</span>
+                        <span className="hover:text-slate-300 cursor-pointer transition-colors px-2 py-1">ES</span>
                     </div>
                 </div>
 

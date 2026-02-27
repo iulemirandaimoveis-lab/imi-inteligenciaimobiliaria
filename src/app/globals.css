@@ -701,13 +701,12 @@
 
   /* ── BOTÕES ────────────────────────────────────────────────  */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 font-medium;
+    @apply inline-flex items-center justify-center gap-2 font-medium text-center flex-wrap;
     @apply transition-all duration-150;
     @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500;
     border-radius: 10px;
     cursor: pointer;
     user-select: none;
-    white-space: nowrap;
   }
 
   .btn:active {
@@ -715,15 +714,15 @@
   }
 
   .btn-sm {
-    @apply btn h-9 px-3 text-sm;
+    @apply btn min-h-9 h-auto py-2 px-3 text-sm;
   }
 
   .btn-md {
-    @apply btn h-11 px-5 text-sm;
+    @apply btn min-h-11 h-auto py-2.5 px-4 sm:px-5 text-sm;
   }
 
   .btn-lg {
-    @apply btn h-12 px-6 text-base;
+    @apply btn min-h-12 h-auto py-3 px-5 sm:px-6 text-base;
   }
 
   .btn-primary {
