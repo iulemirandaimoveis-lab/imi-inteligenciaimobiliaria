@@ -512,3 +512,445 @@
 .backoffice-root .text-accent-600 {
   color: var(--bo-text-gold, #C49D5B);
 }
+
+/* ============================================================
+   SPRINT 4 — PREMIUM VISUAL IDENTITY
+   Unified interaction system, glassmorphism, micro-interactions,
+   loading skeletons, and decorative accents.
+   ============================================================ */
+
+/* ── SIDEBAR PREMIUM POLISH ──────────────────────────────────── */
+
+/* Sidebar glass overlay */
+.backoffice-root ~ aside,
+aside[style*="sidebar-bg"] {
+  background: var(--sidebar-bg);
+}
+
+/* Sidebar nav item smooth transitions */
+.backoffice-root aside nav a,
+.backoffice-root aside nav button {
+  transition: all 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+/* Active sidebar item glow */
+.backoffice-root aside nav a[style*="gradient"] {
+  transition: all 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.backoffice-root aside nav a[style*="gradient"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 16px rgba(196,157,91,0.15);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+}
+
+.backoffice-root aside nav a[style*="gradient"]:hover::after {
+  opacity: 1;
+}
+
+/* Sidebar section labels — subtle gold underline */
+.backoffice-root aside nav p[class*="uppercase"] {
+  position: relative;
+  padding-bottom: 6px;
+}
+
+.backoffice-root aside nav p[class*="uppercase"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  width: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(196,157,91,0.40), transparent);
+}
+
+/* ── UNIFIED CARD HOVER SYSTEM ───────────────────────────────── */
+
+/* All rounded-2xl bordered elements get premium hover */
+.backoffice-root [class*="rounded-2xl"] {
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms cubic-bezier(0.22, 1, 0.36, 1), background 200ms ease;
+}
+
+/* Interactive card lift on hover — applied via data attr or group */
+.backoffice-root .group:hover > [class*="rounded-2xl"],
+.backoffice-root [class*="rounded-2xl"][class*="cursor-pointer"]:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--bo-shadow-elevated);
+}
+
+/* ── GLASS KPI CARD ENHANCED ─────────────────────────────────── */
+
+.backoffice-root .glass-card,
+.backoffice-root [style*="border-gold"][class*="rounded-2xl"] {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gold shimmer on glass cards — subtle sweep */
+.backoffice-root .glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(196,157,91,0.04) 45%,
+    rgba(196,157,91,0.08) 50%,
+    rgba(196,157,91,0.04) 55%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: none;
+}
+
+.backoffice-root .glass-card:hover::before {
+  animation: card-shimmer 0.8s ease-out forwards;
+}
+
+@keyframes card-shimmer {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* ── ROW / LIST ITEM HOVER ───────────────────────────────────── */
+
+/* Table rows get a subtle gold left accent on hover */
+.backoffice-root tbody tr {
+  position: relative;
+  transition: background-color 150ms ease, transform 100ms ease;
+}
+
+.backoffice-root tbody tr::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 2px;
+  background: var(--accent-500);
+  border-radius: 0 2px 2px 0;
+  opacity: 0;
+  transform: scaleY(0);
+  transition: opacity 200ms ease, transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.backoffice-root tbody tr:hover::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+/* ── STATUS BADGE PREMIUM ────────────────────────────────────── */
+
+.badge-hot, .badge-warm, .badge-cold,
+.badge-done, .badge-pend, .badge-cancel {
+  border-radius: 9999px;
+  padding: 2px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.badge-hot:hover, .badge-warm:hover, .badge-cold:hover,
+.badge-done:hover, .badge-pend:hover, .badge-cancel:hover {
+  transform: scale(1.04);
+}
+
+/* ── PRIMARY BUTTON GLOW ─────────────────────────────────────── */
+
+.backoffice-root button[style*="C49D5B"],
+.backoffice-root button[style*="accent-500"] {
+  position: relative;
+  transition: transform 100ms ease, box-shadow 200ms ease;
+}
+
+.backoffice-root button[style*="C49D5B"]:hover,
+.backoffice-root button[style*="accent-500"]:hover {
+  box-shadow: 0 4px 16px rgba(196,157,91,0.30), 0 0 0 1px rgba(196,157,91,0.10);
+}
+
+.backoffice-root button[style*="C49D5B"]:active,
+.backoffice-root button[style*="accent-500"]:active {
+  transform: scale(0.97);
+}
+
+/* ── PAGE HEADER DECORATION ──────────────────────────────────── */
+
+/* Gold accent line under page titles */
+.backoffice-root h1 {
+  position: relative;
+}
+
+.backoffice-root h1::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 2px;
+  margin-top: 8px;
+  background: linear-gradient(90deg, var(--accent-500), transparent);
+  border-radius: 2px;
+}
+
+/* ── EMPTY STATE ─────────────────────────────────────────────── */
+
+.backoffice-root .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.backoffice-root .empty-state-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  background: rgba(196,157,91,0.08);
+  border: 1px solid rgba(196,157,91,0.15);
+  color: var(--accent-500);
+  animation: float 4s ease-in-out infinite;
+}
+
+.backoffice-root .empty-state-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--bo-text);
+  margin-bottom: 4px;
+}
+
+.backoffice-root .empty-state-desc {
+  font-size: 13px;
+  color: var(--bo-text-muted);
+  max-width: 280px;
+}
+
+/* ── LOADING SKELETON SYSTEM ─────────────────────────────────── */
+
+@keyframes skeleton-pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.6; }
+}
+
+.backoffice-root .skeleton {
+  background: var(--bo-hover);
+  border-radius: 8px;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.backoffice-root .skeleton-card {
+  background: var(--bo-elevated);
+  border: 1px solid var(--bo-border);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.backoffice-root .skeleton-text {
+  height: 12px;
+  background: var(--bo-hover);
+  border-radius: 6px;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.backoffice-root .skeleton-text.lg {
+  height: 20px;
+}
+
+.backoffice-root .skeleton-circle {
+  border-radius: 50%;
+  background: var(--bo-hover);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── STAT CARD WITH GOLD ACCENT LINE ─────────────────────────── */
+
+.backoffice-root .stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.backoffice-root .stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-500), rgba(196,157,91,0.30), transparent);
+}
+
+/* ── SEARCH INPUT FOCUS GLOW ─────────────────────────────────── */
+
+.backoffice-root input[type="text"]:focus,
+.backoffice-root input[type="search"]:focus,
+.backoffice-root input[type="email"]:focus,
+.backoffice-root input[type="number"]:focus,
+.backoffice-root textarea:focus,
+.backoffice-root select:focus {
+  border-color: var(--bo-border-gold) !important;
+  box-shadow: 0 0 0 3px rgba(196,157,91,0.08);
+  outline: none;
+}
+
+/* ── SMOOTH PAGE TRANSITIONS ─────────────────────────────────── */
+
+.backoffice-root main > div {
+  animation: page-enter 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── TOOLTIP / POPOVER PREMIUM ───────────────────────────────── */
+
+.backoffice-root [class*="absolute"][class*="rounded-2xl"][class*="z-20"] {
+  animation: dropdown-enter 160ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── PREMIUM SCROLLBAR ───────────────────────────────────────── */
+
+.backoffice-root ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.backoffice-root ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.backoffice-root ::-webkit-scrollbar-thumb {
+  background: rgba(196,157,91,0.20);
+  border-radius: 10px;
+}
+
+.backoffice-root ::-webkit-scrollbar-thumb:hover {
+  background: rgba(196,157,91,0.40);
+}
+
+/* ── DECORATIVE CORNER ACCENT ────────────────────────────────── */
+
+/* Subtle corner glow on main content area */
+.backoffice-root main::before {
+  content: '';
+  position: fixed;
+  top: 64px;
+  left: 240px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(196,157,91,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (max-width: 1023px) {
+  .backoffice-root main::before {
+    left: 0;
+    top: 56px;
+  }
+}
+
+/* ── NOTIFICATION DOT PULSE ──────────────────────────────────── */
+
+.backoffice-root [class*="absolute"][class*="rounded-full"][style*="accent-500"] {
+  animation: notif-pulse 2s ease-in-out infinite;
+}
+
+@keyframes notif-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(196,157,91,0); }
+  50% { box-shadow: 0 0 0 4px rgba(196,157,91,0.15); }
+}
+
+/* ── STAR/DESTAQUE GLOW ──────────────────────────────────────── */
+
+.backoffice-root svg[style*="fill: rgb(196, 157, 91)"],
+.backoffice-root svg[style*="fill: #C49D5B"] {
+  filter: drop-shadow(0 0 4px rgba(196,157,91,0.40));
+}
+
+/* ── TAB / FILTER BUTTON ACTIVE INDICATOR ────────────────────── */
+
+.backoffice-root button[style*="C49D5B"][class*="rounded-xl"] {
+  position: relative;
+}
+
+/* ── RESPONSIVE TABLE SCROLL HINT ────────────────────────────── */
+
+@media (max-width: 768px) {
+  .backoffice-root .overflow-x-auto {
+    position: relative;
+  }
+
+  .backoffice-root .overflow-x-auto::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 32px;
+    background: linear-gradient(90deg, transparent, var(--bo-surface));
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* ── LOADING SPINNER GOLD ────────────────────────────────────── */
+
+.backoffice-root svg[class*="animate-spin"],
+.backoffice-root .animate-spin {
+  color: var(--accent-500) !important;
+}
+
+/* ── FOCUS VISIBLE — GOLD RING ───────────────────────────────── */
+
+.backoffice-root *:focus-visible {
+  outline: 2px solid rgba(196,157,91,0.50);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ── SMOOTH DARK SHIMMER FOR SKELETON CARDS ──────────────────── */
+
+.dark .backoffice-root .skeleton,
+.dark .backoffice-root .skeleton-text {
+  background: rgba(255,255,255,0.04);
+}
+
+.dark .backoffice-root .skeleton-card {
+  background: rgba(26,30,42,0.50);
+  border-color: rgba(255,255,255,0.06);
+}

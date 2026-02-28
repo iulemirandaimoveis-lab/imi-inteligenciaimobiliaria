@@ -107,7 +107,7 @@ export default function AvaliacoesPage() {
                     <motion.div key={k.label}
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl p-4"
+                        className="stat-card rounded-2xl p-4"
                         style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border-gold)', backdropFilter: 'blur(16px)' }}>
                         <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
                             style={{ background: `${k.color}18` }}>
@@ -174,8 +174,21 @@ export default function AvaliacoesPage() {
 
             {/* Loading */}
             {loading && (
-                <div className="flex items-center justify-center py-16">
-                    <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.gold }} />
+                <div className="space-y-2">
+                    {[...Array(4)].map((_, i) => (
+                        <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
+                            <div className="skeleton w-10 h-10 rounded-xl flex-shrink-0" />
+                            <div className="flex-1">
+                                <div className="skeleton h-3 w-24 mb-2" />
+                                <div className="skeleton h-4 w-48 mb-1" />
+                                <div className="skeleton h-3 w-64" />
+                            </div>
+                            <div className="flex-shrink-0 text-right">
+                                <div className="skeleton h-4 w-20 mb-1" />
+                                <div className="skeleton h-3 w-14" />
+                            </div>
+                        </div>
+                    ))}
                 </div>
             )}
 
@@ -236,15 +249,30 @@ export default function AvaliacoesPage() {
             )}
 
             {!loading && filtered.length === 0 && (
-                <div className="text-center py-16" style={{ color: T.textDim }}>
-                    <Scale size={32} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-sm mb-3">Nenhuma avaliação encontrada</p>
-                    <button onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                        className="text-xs font-semibold px-4 py-2 rounded-xl text-white"
-                        style={{ background: '#C49D5B' }}>
-                        Nova Avaliação
-                    </button>
-                </div>
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="empty-state rounded-2xl"
+                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                >
+                    <div className="empty-state-icon">
+                        <Scale size={24} />
+                    </div>
+                    <p className="empty-state-title">Nenhuma avaliação encontrada</p>
+                    <p className="empty-state-desc">
+                        {search ? 'Tente buscar com outros termos' : 'Comece criando uma nova avaliação NBR 14653.'}
+                    </p>
+                    {!search && (
+                        <motion.button
+                            whileTap={{ scale: 0.96 }}
+                            onClick={() => router.push('/backoffice/avaliacoes/nova')}
+                            className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
+                            style={{ background: '#C49D5B' }}
+                        >
+                            <Plus size={14} /> Nova Avaliação
+                        </motion.button>
+                    )}
+                </motion.div>
             )}
         </div>
     )

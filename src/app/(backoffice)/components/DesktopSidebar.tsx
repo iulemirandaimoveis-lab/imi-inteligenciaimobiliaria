@@ -11,6 +11,7 @@ import {
     FileSignature, Layers, MessageSquare, Megaphone, Plug
 } from 'lucide-react'
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface NavItem {
     label: string
@@ -172,24 +173,38 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                             {item.badge}
                         </span>
                     )}
-                    <span style={{ opacity: 0.5 }}>
-                        {open
-                            ? <ChevronDown size={13} />
-                            : <ChevronRight size={13} />
-                        }
-                    </span>
+                    <motion.span
+                        animate={{ rotate: open ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                        style={{ opacity: 0.5, display: 'flex' }}
+                    >
+                        <ChevronDown size={13} />
+                    </motion.span>
                 </button>
 
-                {open && (
-                    <div
-                        className="ml-5 mt-0.5 space-y-0.5 pl-3"
-                        style={{ borderLeft: '1px solid var(--bo-border-subtle)' }}
-                    >
-                        {item.children!.map(child => (
-                            <NavItemComponent key={child.href || child.label} item={child} depth={depth + 1} />
-                        ))}
-                    </div>
-                )}
+                <AnimatePresence initial={false}>
+                    {open && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                            className="ml-5 mt-0.5 space-y-0.5 pl-3 overflow-hidden"
+                            style={{ borderLeft: '1px solid var(--bo-border-subtle)' }}
+                        >
+                            {item.children!.map((child, i) => (
+                                <motion.div
+                                    key={child.href || child.label}
+                                    initial={{ opacity: 0, x: -6 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.03, duration: 0.2 }}
+                                >
+                                    <NavItemComponent item={child} depth={depth + 1} />
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         )
     }
@@ -197,7 +212,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
     return (
         <Link
             href={item.href!}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all"
+            className="relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all"
             style={{
                 color: isActive ? '#ffffff' : 'var(--sidebar-text)',
                 background: isActive
@@ -219,6 +234,15 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 }
             }}
         >
+            {/* Active indicator bar */}
+            {isActive && (
+                <motion.div
+                    layoutId="sidebar-active"
+                    className="absolute -left-[11px] top-1/2 w-[3px] h-4 rounded-full"
+                    style={{ background: '#C49D5B', transform: 'translateY(-50%)' }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+                />
+            )}
             <item.icon size={15} className="flex-shrink-0" />
             <span className="flex-1">{item.label}</span>
             {item.badge && (
@@ -242,6 +266,13 @@ export function DesktopSidebar() {
                 borderRight: '1px solid var(--sidebar-border)',
             }}
         >
+            {/* Decorative gradient accent */}
+            <div
+                className="absolute top-0 right-0 w-32 h-48 pointer-events-none"
+                style={{
+                    background: 'radial-gradient(ellipse at top right, rgba(196,157,91,0.06) 0%, transparent 70%)',
+                }}
+            />
             {/* Logo */}
             <div
                 className="flex items-center gap-3 px-5 h-16 flex-shrink-0"

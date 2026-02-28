@@ -50,10 +50,13 @@ const timeAgo = (d: string) => {
     return `${Math.floor(diff / 1440)}d`
 }
 
-function StatCard({ label, value, color }: { label: string; value: number; color?: string }) {
+function StatCard({ label, value, color, index = 0 }: { label: string; value: number; color?: string; index?: number }) {
     return (
-        <div
-            className="rounded-2xl p-4"
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.06, duration: 0.35 }}
+            className="stat-card rounded-2xl p-4"
             style={{
                 background: T.elevated,
                 border: `1px solid ${T.borderGold}`,
@@ -61,7 +64,7 @@ function StatCard({ label, value, color }: { label: string; value: number; color
         >
             <p className="text-xs font-medium mb-1" style={{ color: color || T.textSub }}>{label}</p>
             <p className="text-2xl font-bold" style={{ color: color || T.text }}>{value}</p>
-        </div>
+        </motion.div>
     )
 }
 
@@ -124,7 +127,34 @@ export default function LeadsPage() {
     })
 
     if (loading) {
-        return <div className="p-10 text-center" style={{ color: T.textSub }}>Carregando leads...</div>
+        return (
+            <div className="space-y-5 max-w-7xl mx-auto">
+                <div className="flex items-start justify-between gap-4">
+                    <div>
+                        <div className="skeleton h-6 w-24 mb-2" />
+                        <div className="skeleton h-4 w-48" />
+                    </div>
+                    <div className="skeleton h-10 w-32 rounded-xl" />
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 100}ms` }}>
+                            <div className="skeleton h-3 w-16 mb-3" />
+                            <div className="skeleton lg h-6 w-12" />
+                        </div>
+                    ))}
+                </div>
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
+                        <div className="skeleton-circle w-10 h-10 flex-shrink-0" />
+                        <div className="flex-1">
+                            <div className="skeleton h-4 w-36 mb-2" />
+                            <div className="skeleton h-3 w-48" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
     }
 
     return (
@@ -151,11 +181,11 @@ export default function LeadsPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                <StatCard label="Total" value={stats.total} />
-                <StatCard label="Quentes" value={stats.hot} color={STATUS_CFG.hot.text} />
-                <StatCard label="Mornos" value={stats.warm} color={STATUS_CFG.warm.text} />
-                <StatCard label="Frios" value={stats.cold} color={STATUS_CFG.cold.text} />
-                <StatCard label="Score Médio" value={stats.avg} />
+                <StatCard label="Total" value={stats.total} index={0} />
+                <StatCard label="Quentes" value={stats.hot} color={STATUS_CFG.hot.text} index={1} />
+                <StatCard label="Mornos" value={stats.warm} color={STATUS_CFG.warm.text} index={2} />
+                <StatCard label="Frios" value={stats.cold} color={STATUS_CFG.cold.text} index={3} />
+                <StatCard label="Score Médio" value={stats.avg} index={4} />
             </div>
 
             {/* Filters */}
@@ -314,10 +344,30 @@ export default function LeadsPage() {
             </div>
 
             {filtered.length === 0 && (
-                <div className="text-center py-16" style={{ color: T.textDim }}>
-                    <Users size={32} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">Nenhum lead encontrado</p>
-                </div>
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="empty-state rounded-2xl"
+                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                >
+                    <div className="empty-state-icon">
+                        <Users size={24} />
+                    </div>
+                    <p className="empty-state-title">Nenhum lead encontrado</p>
+                    <p className="empty-state-desc">
+                        {search ? 'Tente buscar com outros termos' : 'Seu pipeline está vazio. Comece adicionando novos leads.'}
+                    </p>
+                    {!search && (
+                        <motion.button
+                            whileTap={{ scale: 0.96 }}
+                            onClick={() => router.push('/backoffice/leads/novo')}
+                            className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
+                            style={{ background: '#C49D5B' }}
+                        >
+                            <Plus size={14} /> Novo Lead
+                        </motion.button>
+                    )}
+                </motion.div>
             )}
         </div>
     )

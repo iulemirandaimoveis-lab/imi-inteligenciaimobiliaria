@@ -204,7 +204,39 @@ export default function ImoveisPage() {
         return matchSearch && matchFilter
     })
 
-    if (loading) return <div className="p-10 text-center" style={{ color: T.textSub }}>Carregando imóveis...</div>
+    if (loading) return (
+        <div className="space-y-5 max-w-7xl mx-auto">
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <div className="skeleton h-6 w-56 mb-2" />
+                    <div className="skeleton h-4 w-72" />
+                </div>
+                <div className="skeleton h-10 w-44 rounded-xl" />
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 100}ms` }}>
+                        <div className="skeleton w-9 h-9 rounded-xl mb-3" />
+                        <div className="skeleton lg h-5 w-16 mb-2" />
+                        <div className="skeleton h-3 w-24" />
+                    </div>
+                ))}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className="skeleton-card overflow-hidden" style={{ animationDelay: `${i * 60}ms` }}>
+                        <div className="skeleton h-36 w-full rounded-none" />
+                        <div className="p-4 space-y-2">
+                            <div className="skeleton h-3 w-20" />
+                            <div className="skeleton h-4 w-40" />
+                            <div className="skeleton h-3 w-28" />
+                            <div className="skeleton lg h-5 w-24 mt-2" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
 
     const STATS = [
         { label: 'VGV Global (Est.)', value: 'R$ 1.2B', icon: DollarSign },
@@ -243,7 +275,7 @@ export default function ImoveisPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl p-4"
+                        className="stat-card rounded-2xl p-4"
                         style={{
                             background: T.elevated,
                             border: `1px solid ${T.borderGold}`,
