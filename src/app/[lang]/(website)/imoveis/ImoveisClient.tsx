@@ -26,6 +26,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         bedrooms: null,
         priceRange: [0, 10000000],
         location: null,
+        neighborhood: null,
         sort: 'relevant'
     });
 
@@ -58,6 +59,18 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         return Array.from(locs).filter(Boolean).sort();
     }, [initialDevelopments]);
 
+    // Extract unique neighborhoods
+    const availableNeighborhoods = useMemo(() => {
+        const hoods = new Set<string>();
+        const devs = filters.location
+            ? initialDevelopments.filter(d => d.location.city === filters.location || d.location.country === filters.location)
+            : initialDevelopments;
+        devs.forEach(dev => {
+            if (dev.location.neighborhood) hoods.add(dev.location.neighborhood);
+        });
+        return Array.from(hoods).filter(Boolean).sort();
+    }, [initialDevelopments, filters.location]);
+
     const filteredDevelopments = useMemo(() => {
         return initialDevelopments.filter((dev) => {
             // Location
@@ -66,6 +79,11 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 const matchCountry = dev.location.country === filters.location;
                 const matchRegion = dev.region === filters.location.toLowerCase().replace(' ', '-'); // Fallback for region matching
                 if (!matchCity && !matchCountry && !matchRegion) return false;
+            }
+
+            // Neighborhood
+            if (filters.neighborhood) {
+                if (dev.location.neighborhood !== filters.neighborhood) return false;
             }
 
             // Price - Check if development starts within budget
@@ -104,7 +122,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
     }, [filters, initialDevelopments]);
 
     // Separar Pronta Entrega para seção especial (apenas se filtros estiverem limpos ou compatíveis)
-    const showReadySection = !filters.location && !filters.bedrooms && filters.type.length === 0;
+    const showReadySection = !filters.location && !filters.neighborhood && !filters.bedrooms && filters.type.length === 0;
     const readyDevelopments = showReadySection
         ? initialDevelopments.filter(dev => dev.status === 'ready' && dev.region === 'paraiba')
         : [];
@@ -187,6 +205,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 filters={filters}
                 onFilterChange={setFilters}
                 locations={availableLocations}
+                neighborhoods={availableNeighborhoods}
             />
 
             {/* Seção Especial Pronta Entrega */}
@@ -256,6 +275,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                     bedrooms: null,
                                     priceRange: [0, 10000000],
                                     location: null,
+                                    neighborhood: null,
                                     sort: 'relevant'
                                 })}
                                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 text-white font-medium hover:bg-white/5 transition-colors"

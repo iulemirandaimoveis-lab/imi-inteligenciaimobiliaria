@@ -1,343 +1,164 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import {
-    Bell,
-    Check,
-    CheckCheck,
-    Trash2,
-    Filter,
-    Calendar,
-    User,
-    Home,
-    DollarSign,
-    TrendingUp,
-    FileText,
-    AlertCircle,
-    Info,
-    CheckCircle,
+    Bell, Check, CheckCheck, Loader2,
+    User, Home, DollarSign, FileText, AlertCircle, Info, CheckCircle,
 } from 'lucide-react'
 
-type NotificationType = 'lead' | 'property' | 'credit' | 'evaluation' | 'campaign' | 'system'
-type NotificationPriority = 'high' | 'medium' | 'low'
+const T = {
+    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    gold: '#3B82F6',
+}
 
 interface Notification {
     id: string
-    type: NotificationType
-    priority: NotificationPriority
+    type: string
     title: string
-    message: string
-    timestamp: string
+    message: string | null
     read: boolean
-    actionUrl?: string
+    read_at: string | null
+    created_at: string
 }
 
-const mockNotifications: Notification[] = [
-    {
-        id: '1',
-        type: 'lead',
-        priority: 'high',
-        title: 'Novo Lead Qualificado',
-        message: 'Maria Santos (Score 18/20) demonstrou interesse em apartamento de 3 quartos em Boa Viagem',
-        timestamp: '2026-02-15T18:30:00',
-        read: false,
-        actionUrl: '/backoffice/leads/1',
-    },
-    {
-        id: '2',
-        type: 'credit',
-        priority: 'high',
-        title: 'Crédito Aprovado',
-        message: 'Financiamento de Carlos Silva foi aprovado pela Caixa. Valor: R$ 544.000',
-        timestamp: '2026-02-15T16:45:00',
-        read: false,
-        actionUrl: '/backoffice/credito/1',
-    },
-    {
-        id: '3',
-        type: 'evaluation',
-        priority: 'medium',
-        title: 'Laudo Concluído',
-        message: 'Avaliação técnica AVL-2026-001 foi finalizada e está disponível para download',
-        timestamp: '2026-02-15T14:20:00',
-        read: false,
-        actionUrl: '/backoffice/avaliacoes/1',
-    },
-    {
-        id: '4',
-        type: 'campaign',
-        priority: 'medium',
-        title: 'Meta de Campanha Atingida',
-        message: 'Campanha "Reserva Atlantis - Instagram" atingiu 50 leads (100% da meta)',
-        timestamp: '2026-02-15T12:10:00',
-        read: true,
-        actionUrl: '/backoffice/campanhas/1/analytics',
-    },
-    {
-        id: '5',
-        type: 'property',
-        priority: 'low',
-        title: 'Novo Empreendimento Publicado',
-        message: 'Empreendimento "Vista Mar Residence" foi publicado com sucesso',
-        timestamp: '2026-02-15T10:00:00',
-        read: true,
-        actionUrl: '/backoffice/imoveis/1',
-    },
-    {
-        id: '6',
-        type: 'system',
-        priority: 'low',
-        title: 'Atualização do Sistema',
-        message: 'Nova versão disponível com melhorias de performance e correções',
-        timestamp: '2026-02-15T08:00:00',
-        read: true,
-    },
-]
+const TYPE_ICONS: Record<string, any> = {
+    lead: User, imovel: Home, financeiro: DollarSign, contrato: FileText,
+    alerta: AlertCircle, info: Info, sucesso: CheckCircle,
+}
+const TYPE_COLORS: Record<string, string> = {
+    lead: '#7B9EC4', imovel: '#6BB87B', financeiro: '#3B82F6', contrato: '#A89EC4',
+    alerta: '#E57373', info: '#7B9EC4', sucesso: '#6BB87B',
+}
+
+const timeAgo = (d: string) => {
+    const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
+    if (diff < 1) return 'agora'
+    if (diff < 60) return `${diff}min`
+    if (diff < 1440) return `${Math.floor(diff / 60)}h`
+    return `${Math.floor(diff / 1440)}d atrás`
+}
 
 export default function NotificacoesPage() {
-    const router = useRouter()
-    const [notifications, setNotifications] = useState(mockNotifications)
+    const [notifications, setNotifications] = useState<Notification[]>([])
+    const [loading, setLoading] = useState(true)
     const [filter, setFilter] = useState<'all' | 'unread'>('all')
-    const [typeFilter, setTypeFilter] = useState<NotificationType | 'all'>('all')
 
-    const getTypeIcon = (type: NotificationType) => {
-        const icons = {
-            lead: User,
-            property: Home,
-            credit: DollarSign,
-            evaluation: FileText,
-            campaign: TrendingUp,
-            system: Info,
-        }
-        return icons[type]
+    const fetchNotifications = async () => {
+        try {
+            const res = await fetch('/api/notifications')
+            if (res.ok) setNotifications(await res.json())
+        } catch (err) { console.error(err) }
+        finally { setLoading(false) }
     }
 
-    const getTypeColor = (type: NotificationType) => {
-        const colors = {
-            lead: 'bg-blue-100 text-blue-600',
-            property: 'bg-green-100 text-green-600',
-            credit: 'bg-purple-100 text-purple-600',
-            evaluation: 'bg-orange-100 text-orange-600',
-            campaign: 'bg-pink-100 text-pink-600',
-            system: 'bg-gray-100 text-gray-600',
-        }
-        return colors[type]
+    useEffect(() => { fetchNotifications() }, [])
+
+    const markRead = async (id: string) => {
+        await fetch('/api/notifications', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
+        })
+        setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
     }
 
-    const getPriorityBadge = (priority: NotificationPriority) => {
-        const badges = {
-            high: { label: 'Alta', color: 'bg-red-100 text-red-700' },
-            medium: { label: 'Média', color: 'bg-yellow-100 text-yellow-700' },
-            low: { label: 'Baixa', color: 'bg-gray-100 text-gray-600' },
-        }
-        return badges[priority]
-    }
-
-    const formatTimestamp = (timestamp: string) => {
-        const date = new Date(timestamp)
-        const now = new Date()
-        const diff = now.getTime() - date.getTime()
-        const minutes = Math.floor(diff / 60000)
-        const hours = Math.floor(diff / 3600000)
-        const days = Math.floor(diff / 86400000)
-
-        if (minutes < 60) return `${minutes}m atrás`
-        if (hours < 24) return `${hours}h atrás`
-        if (days < 7) return `${days}d atrás`
-        return date.toLocaleDateString('pt-BR')
-    }
-
-    const markAsRead = (id: string) => {
-        setNotifications(prev =>
-            prev.map(n => (n.id === id ? { ...n, read: true } : n))
-        )
-    }
-
-    const markAllAsRead = () => {
+    const markAllRead = async () => {
+        await fetch('/api/notifications', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ read_all: true }),
+        })
         setNotifications(prev => prev.map(n => ({ ...n, read: true })))
     }
 
-    const deleteNotification = (id: string) => {
-        setNotifications(prev => prev.filter(n => n.id !== id))
-    }
-
-    const handleNotificationClick = (notification: Notification) => {
-        markAsRead(notification.id)
-        if (notification.actionUrl) {
-            router.push(notification.actionUrl)
-        }
-    }
-
-    const filteredNotifications = notifications
-        .filter(n => filter === 'all' || !n.read)
-        .filter(n => typeFilter === 'all' || n.type === typeFilter)
-
+    const filtered = notifications.filter(n => filter === 'all' || !n.read)
     const unreadCount = notifications.filter(n => !n.read).length
 
+    if (loading) {
+        return <div className="flex items-center justify-center h-64"><Loader2 size={24} className="animate-spin" style={{ color: T.gold }} /></div>
+    }
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-5 max-w-3xl mx-auto">
             {/* Header */}
-            <div className="flex items-start justify-between">
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Notificações</h1>
-                    <p className="text-sm text-gray-600 mt-1">
-                        {unreadCount} não lida{unreadCount !== 1 ? 's' : ''} de {notifications.length} total
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Notificações</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
+                        {unreadCount > 0 ? `${unreadCount} não lida${unreadCount > 1 ? 's' : ''}` : 'Tudo em dia'}
                     </p>
                 </div>
-
-                <button
-                    onClick={markAllAsRead}
-                    disabled={unreadCount === 0}
-                    className="flex items-center gap-2 h-10 px-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <CheckCheck size={18} />
-                    Marcar todas como lidas
-                </button>
-            </div>
-
-            {/* Filters */}
-            <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <Filter size={18} className="text-gray-400" />
-                        <span className="text-sm font-medium text-gray-700">Filtros:</span>
-                    </div>
-
-                    {/* Status Filter */}
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setFilter('all')}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === 'all'
-                                    ? 'bg-blue-100 text-blue-700'
-                                    : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                        >
-                            Todas ({notifications.length})
-                        </button>
-                        <button
-                            onClick={() => setFilter('unread')}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === 'unread'
-                                    ? 'bg-blue-100 text-blue-700'
-                                    : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                        >
-                            Não lidas ({unreadCount})
-                        </button>
-                    </div>
-
-                    <div className="h-6 w-px bg-gray-200" />
-
-                    {/* Type Filter */}
-                    <select
-                        value={typeFilter}
-                        onChange={(e) => setTypeFilter(e.target.value as NotificationType | 'all')}
-                        className="h-10 px-4 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                    >
-                        <option value="all">Todos os tipos</option>
-                        <option value="lead">Leads</option>
-                        <option value="property">Imóveis</option>
-                        <option value="credit">Crédito</option>
-                        <option value="evaluation">Avaliações</option>
-                        <option value="campaign">Campanhas</option>
-                        <option value="system">Sistema</option>
-                    </select>
-                </div>
-            </div>
-
-            {/* Notifications List */}
-            <div className="space-y-3">
-                {filteredNotifications.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-12 border border-gray-100 text-center">
-                        <Bell size={48} className="mx-auto text-gray-300 mb-4" />
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">
-                            Nenhuma notificação
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                            {filter === 'unread'
-                                ? 'Você está em dia! Não há notificações não lidas.'
-                                : 'Não há notificações para exibir.'}
-                        </p>
-                    </div>
-                ) : (
-                    filteredNotifications.map((notification) => {
-                        const TypeIcon = getTypeIcon(notification.type)
-                        const typeColor = getTypeColor(notification.type)
-                        const priorityBadge = getPriorityBadge(notification.priority)
-
-                        return (
-                            <div
-                                key={notification.id}
-                                className={`bg-white rounded-2xl p-6 border transition-all ${notification.read
-                                        ? 'border-gray-100'
-                                        : 'border-blue-200 bg-blue-50/30'
-                                    }`}
-                            >
-                                <div className="flex items-start gap-4">
-                                    {/* Icon */}
-                                    <div className={`w-12 h-12 rounded-xl ${typeColor} flex items-center justify-center flex-shrink-0`}>
-                                        <TypeIcon size={24} />
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-start justify-between gap-4 mb-2">
-                                            <div className="flex items-center gap-3">
-                                                <h3 className="text-base font-bold text-gray-900">
-                                                    {notification.title}
-                                                </h3>
-                                                {!notification.read && (
-                                                    <div className="w-2 h-2 rounded-full bg-blue-600" />
-                                                )}
-                                            </div>
-                                            <span className={`px-3 py-1 ${priorityBadge.color} rounded-lg text-xs font-medium flex-shrink-0`}>
-                                                {priorityBadge.label}
-                                            </span>
-                                        </div>
-
-                                        <p className="text-sm text-gray-700 mb-3">
-                                            {notification.message}
-                                        </p>
-
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2 text-xs text-gray-500">
-                                                <Calendar size={14} />
-                                                {formatTimestamp(notification.timestamp)}
-                                            </div>
-
-                                            <div className="flex items-center gap-2">
-                                                {!notification.read && (
-                                                    <button
-                                                        onClick={() => markAsRead(notification.id)}
-                                                        className="flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                                    >
-                                                        <Check size={14} />
-                                                        Marcar como lida
-                                                    </button>
-                                                )}
-                                                {notification.actionUrl && (
-                                                    <button
-                                                        onClick={() => handleNotificationClick(notification)}
-                                                        className="h-8 px-3 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                                                    >
-                                                        Ver detalhes
-                                                    </button>
-                                                )}
-                                                <button
-                                                    onClick={() => deleteNotification(notification.id)}
-                                                    className="w-8 h-8 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })
+                {unreadCount > 0 && (
+                    <button onClick={markAllRead} className="flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold"
+                        style={{ background: T.elevated, color: T.textSub, border: `1px solid ${T.border}` }}>
+                        <CheckCheck size={14} /> Marcar todas como lidas
+                    </button>
                 )}
+            </motion.div>
+
+            {/* Filter */}
+            <div className="flex gap-2">
+                {(['all', 'unread'] as const).map(f => (
+                    <button key={f} onClick={() => setFilter(f)}
+                        className="px-3.5 h-9 rounded-xl text-xs font-semibold transition-all"
+                        style={{
+                            background: filter === f ? T.gold : T.elevated,
+                            color: filter === f ? 'white' : T.textDim,
+                            border: `1px solid ${filter === f ? T.borderGold : T.border}`,
+                        }}>
+                        {f === 'all' ? `Todas (${notifications.length})` : `Não lidas (${unreadCount})`}
+                    </button>
+                ))}
             </div>
+
+            {/* List */}
+            {filtered.length === 0 ? (
+                <div className="rounded-2xl p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <Bell size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textDim }} />
+                    <p className="text-sm font-semibold" style={{ color: T.textSub }}>
+                        {filter === 'unread' ? 'Nenhuma notificação não lida' : 'Nenhuma notificação'}
+                    </p>
+                    <p className="text-xs mt-1" style={{ color: T.textDim }}>As notificações aparecerão aqui quando houver atividade</p>
+                </div>
+            ) : (
+                <div className="space-y-2">
+                    {filtered.map((n, i) => {
+                        const Icon = TYPE_ICONS[n.type] || Bell
+                        const color = TYPE_COLORS[n.type] || T.gold
+                        return (
+                            <motion.div key={n.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                                className="flex items-start gap-3 p-4 rounded-2xl transition-all cursor-pointer"
+                                style={{
+                                    background: n.read ? T.surface : T.elevated,
+                                    border: `1px solid ${n.read ? T.border : T.borderGold}`,
+                                    opacity: n.read ? 0.7 : 1,
+                                }}
+                                onClick={() => !n.read && markRead(n.id)}>
+                                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${color}18` }}>
+                                    <Icon size={16} style={{ color }} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-xs font-semibold truncate" style={{ color: T.text }}>{n.title}</p>
+                                        {!n.read && <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: T.gold }} />}
+                                    </div>
+                                    {n.message && <p className="text-[11px] mt-0.5 line-clamp-2" style={{ color: T.textDim }}>{n.message}</p>}
+                                    <p className="text-[10px] mt-1" style={{ color: T.textDim }}>{timeAgo(n.created_at)}</p>
+                                </div>
+                                {!n.read && (
+                                    <button className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
+                                        style={{ background: 'rgba(26,26,46,0.08)' }} onClick={e => { e.stopPropagation(); markRead(n.id) }}>
+                                        <Check size={12} style={{ color: T.gold }} />
+                                    </button>
+                                )}
+                            </motion.div>
+                        )
+                    })}
+                </div>
+            )}
         </div>
     )
 }

@@ -330,8 +330,20 @@ export default function NovaAvaliacaoPage() {
   const handleSubmit = async () => {
     if (!validateStep(currentStep)) return
     setIsSubmitting(true)
-    await new Promise(r => setTimeout(r, 2000))
-    router.push('/backoffice/avaliacoes')
+
+    try {
+      const response = await fetch('/api/avaliacoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
+      router.push('/backoffice/avaliacoes')
+    } catch (error) {
+      console.error('Erro ao salvar avaliação:', error)
+      setIsSubmitting(false)
+    }
   }
 
   const STEPS = [

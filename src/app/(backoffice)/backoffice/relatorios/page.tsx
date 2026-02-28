@@ -119,7 +119,7 @@ export default function RelatoriosPage() {
                             onClick={() => setCatAtiva(cat)}
                             className="px-3.5 h-10 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: catAtiva === cat ? '#1A1A2E' : T.surface,
+                                background: catAtiva === cat ? '#3B82F6' : T.surface,
                                 color: catAtiva === cat ? 'white' : T.textDim,
                                 border: `1px solid ${catAtiva === cat ? T.borderGold : T.border}`,
                                 whiteSpace: 'nowrap',
@@ -193,8 +193,8 @@ export default function RelatoriosPage() {
                                     style={{
                                         background: loading
                                             ? 'rgba(26,26,46,0.30)'
-                                            : '#1A1A2E',
-                                        boxShadow: loading ? 'none' : '0 2px 10px rgba(26,26,46,0.25)',
+                                            : '#3B82F6',
+                                        boxShadow: loading ? 'none' : '0 1px 2px rgba(0,0,0,0.1)',
                                         opacity: loading ? 0.7 : 1,
                                     }}
                                 >

@@ -26,7 +26,7 @@ export default function DevelopmentCard({ development, onEdit, onDelete, onSelec
     const area = specs.area || development.area_from || '-'
 
     // Handle price safely
-    const price = development.price_min || development.price_from || 0
+    const price = development.price_from || 0
 
     return (
         <div className="group relative bg-white dark:bg-[#0A0B0D] rounded-3xl border border-imi-100 dark:border-white/5 shadow-sm hover:shadow-2xl hover:shadow-imi-950/10 transition-all duration-500 overflow-hidden flex flex-col h-full hover:-translate-y-2">

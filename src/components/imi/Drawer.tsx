@@ -1,11 +1,40 @@
 "use client"
 
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { X } from 'lucide-react'
+
 interface Props {
     open: boolean
     setOpen: (value: boolean) => void
 }
 
+const NAV_ITEMS = [
+    { label: 'Imóveis', href: '/pt/imoveis' },
+    { label: 'Construtoras', href: '/pt/construtoras' },
+    { label: 'Avaliações', href: '/pt/avaliacoes' },
+    { label: 'Crédito', href: '/pt/credito' },
+    { label: 'Consultoria', href: '/pt/consultoria' },
+    { label: 'Inteligência', href: '/pt/inteligencia' },
+    { label: 'Conteúdo', href: '/pt/conteudo' },
+    { label: 'Sobre', href: '/pt/sobre' },
+    { label: 'Contato', href: '/pt/contato' },
+]
+
+const LANGUAGES = [
+    { code: 'pt', flag: '🇧🇷' },
+    { code: 'en', flag: '🇬🇧' },
+    { code: 'ja', flag: '🇯🇵' },
+    { code: 'ar', flag: '🇸🇦' },
+    { code: 'es', flag: '🇪🇸' },
+]
+
 export default function Drawer({ open, setOpen }: Props) {
+    const pathname = usePathname()
+
+    // Detect current lang from pathname
+    const currentLang = pathname?.split('/')[1] || 'pt'
+
     return (
         <div className={`fixed inset-0 z-[70] ${open ? "visible" : "invisible"}`}>
             {/* Backdrop */}
@@ -19,47 +48,93 @@ export default function Drawer({ open, setOpen }: Props) {
                 className={`fixed top-0 right-0 h-full w-full max-w-[340px] bg-white z-[80] transform transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"
                     } shadow-2xl flex flex-col`}
             >
-                <div className="p-8 flex justify-end">
-                    <button onClick={() => setOpen(false)} className="text-2xl text-slate-400 hover:text-black transition-colors">
-                        ✕
+                {/* Header */}
+                <div className="px-6 py-5 flex items-center justify-between border-b border-neutral-100">
+                    <div className="flex items-center gap-3">
+                        <span className="text-2xl font-serif font-black tracking-tight text-black">
+                            IMI
+                        </span>
+                        <div className="h-5 w-px bg-neutral-200" />
+                        <span className="text-[9px] tracking-[1.5px] text-slate-500 uppercase font-bold leading-tight">
+                            Inteligência<br />Imobiliária
+                        </span>
+                    </div>
+                    <button
+                        onClick={() => setOpen(false)}
+                        className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-neutral-100 transition-colors"
+                    >
+                        <X size={22} strokeWidth={1.5} className="text-neutral-500" />
                     </button>
                 </div>
 
-                <nav className="px-8 flex-1 overflow-y-auto">
-                    <ul className="space-y-1 text-[18px] text-slate-700 font-bold">
-                        <li className="py-3 px-4 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors">Avaliações</li>
-                        <li className="py-3 px-4 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors">Imóveis</li>
+                {/* Navigation */}
+                <nav className="flex-1 overflow-y-auto px-4 py-4">
+                    <ul className="space-y-1">
+                        {NAV_ITEMS.map(item => {
+                            // Adjust href for current language
+                            const href = item.href.replace('/pt/', `/${currentLang}/`)
+                            const isActive = pathname === href ||
+                                (pathname?.startsWith(href) && href !== `/${currentLang}/`)
 
-                        <li className="py-3 bg-slate-100 rounded-lg border-l-4 border-yellow-400 pl-4 text-black">
-                            Construtoras
-                        </li>
-
-                        <li className="py-3 px-4 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors">Crédito</li>
-                        <li className="py-3 px-4 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors">Consultoria</li>
-                        <li className="py-3 px-4 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors">Inteligência</li>
-                        <li className="py-3 px-4 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors">Sobre</li>
-                        <li className="py-3 px-4 hover:bg-slate-50 rounded-xl cursor-pointer transition-colors">Contato</li>
+                            return (
+                                <li key={item.label}>
+                                    <Link
+                                        href={href}
+                                        onClick={() => setOpen(false)}
+                                        className={`block py-3 px-4 rounded-xl text-[16px] font-bold transition-all ${isActive
+                                                ? 'bg-neutral-100 text-black border-l-[3px] border-[#3B82F6] pl-[13px]'
+                                                : 'text-neutral-600 hover:bg-neutral-50 hover:text-black'
+                                            }`}
+                                    >
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            )
+                        })}
                     </ul>
 
-                    <button className="w-full mt-8 bg-[#1e1e2f] text-white py-4 rounded-xl font-bold shadow-lg hover:bg-black transition-all active:scale-[0.98]">
+                    {/* WhatsApp CTA */}
+                    <a
+                        href="https://wa.me/5581997230455"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full mt-6 bg-[#1e1e2f] text-white py-4 rounded-xl font-bold text-center shadow-lg hover:bg-black transition-all active:scale-[0.98]"
+                    >
                         Falar pelo WhatsApp
-                    </button>
+                    </a>
 
-                    <div className="flex gap-3 mt-8">
-                        <span className="bg-[#1e1e2f] rounded-xl w-12 h-12 flex items-center justify-center text-2xl border-2 border-yellow-400 shadow-sm cursor-pointer">🇧🇷</span>
-                        <span className="bg-slate-50 rounded-xl w-12 h-12 flex items-center justify-center text-2xl opacity-40 hover:opacity-100 transition-opacity cursor-pointer">🇬🇧</span>
-                        <span className="bg-slate-50 rounded-xl w-12 h-12 flex items-center justify-center text-2xl opacity-40 hover:opacity-100 transition-opacity cursor-pointer">🇯🇵</span>
-                        <span className="bg-slate-50 rounded-xl w-12 h-12 flex items-center justify-center text-2xl opacity-40 hover:opacity-100 transition-opacity cursor-pointer">🇸🇦</span>
+                    {/* Languages */}
+                    <div className="flex gap-2.5 mt-6 justify-center">
+                        {LANGUAGES.map(lang => {
+                            const isActive = currentLang === lang.code
+                            const newPath = pathname?.replace(`/${currentLang}`, `/${lang.code}`) || `/${lang.code}`
+                            return (
+                                <Link
+                                    key={lang.code}
+                                    href={newPath}
+                                    onClick={() => setOpen(false)}
+                                    className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl transition-all ${isActive
+                                            ? 'bg-[#1e1e2f] border-2 border-[#3B82F6] shadow-sm'
+                                            : 'bg-neutral-50 border border-neutral-200 opacity-50 hover:opacity-100'
+                                        }`}
+                                >
+                                    {lang.flag}
+                                </Link>
+                            )
+                        })}
                     </div>
+                </nav>
 
-                    <div className="mt-12 mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-100 text-center">
-                        <strong className="text-lg text-slate-900">Iule Miranda</strong>
-                        <div className="h-0.5 w-8 bg-yellow-400 mx-auto my-2 rounded-full"></div>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                {/* Footer card */}
+                <div className="p-4 bg-neutral-50 border-t border-neutral-100">
+                    <div className="bg-white rounded-2xl p-5 text-center shadow-sm border border-neutral-100">
+                        <p className="font-black text-base text-neutral-900">Iule Miranda</p>
+                        <div className="h-0.5 w-8 bg-[#1A1A2E] mx-auto my-2 rounded-full" />
+                        <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
                             CRECI 17933 | CNAI 53290
                         </p>
                     </div>
-                </nav>
+                </div>
             </div>
         </div>
     )

@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
     Plus, Search, FileText, CheckCircle, Clock, AlertCircle,
-    Scale, Mail, BookOpen, DollarSign, Building2, ChevronRight,
-    Download, Eye, TrendingUp, BarChart2
+    Scale, Mail, BookOpen, DollarSign, ChevronRight, Loader2,
+    TrendingUp
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -30,14 +30,6 @@ const HONOR_CFG: Record<string, { label: string; text: string }> = {
     pendente: { label: 'Pendente', text: '#E8A87C' },
 }
 
-const AVALIACOES = [
-    { id: '1', protocolo: 'AVL-2026-001', status: 'concluida', cliente: 'Maria Santos Silva', tipo: 'Apartamento', bairro: 'Boa Viagem', area: 85, valor: 580000, metodo: 'Comparativo', finalidade: 'Compra e Venda', prazo: '2026-01-15', criada: '2026-01-08', honorarios: 1800, honorariosStatus: 'pago' },
-    { id: '2', protocolo: 'AVL-2026-002', status: 'em_andamento', cliente: 'TJ-PE — Processo 0001234', tipo: 'Casa', bairro: 'Graças', area: 320, valor: null, metodo: 'Evolutivo', finalidade: 'Partilha Judicial', prazo: '2026-02-28', criada: '2026-01-25', honorarios: 4500, honorariosStatus: 'parcial' },
-    { id: '3', protocolo: 'AVL-2026-003', status: 'aguardando_docs', cliente: 'Banco Bradesco', tipo: 'Apartamento', bairro: 'Pina', area: 68, valor: null, metodo: 'Comparativo', finalidade: 'Financiamento SFH', prazo: '2026-02-25', criada: '2026-02-18', honorarios: 1500, honorariosStatus: 'pendente' },
-    { id: '4', protocolo: 'AVL-2026-004', status: 'concluida', cliente: 'Carlos Menezes', tipo: 'Cobertura', bairro: 'Boa Viagem', area: 280, valor: 2400000, metodo: 'Comparativo', finalidade: 'Inventário', prazo: '2026-02-10', criada: '2026-02-01', honorarios: 7200, honorariosStatus: 'pago' },
-    { id: '5', protocolo: 'AVL-2026-005', status: 'em_andamento', cliente: 'FII Recife Imóveis', tipo: 'Comercial - Loja', bairro: 'Boa Viagem', area: 145, valor: null, metodo: 'Renda', finalidade: 'Fundo de Investimento', prazo: '2026-03-05', criada: '2026-02-19', honorarios: 5500, honorariosStatus: 'pendente' },
-]
-
 const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
 const QUICK_ACTIONS = [
@@ -50,11 +42,30 @@ export default function AvaliacoesPage() {
     const router = useRouter()
     const [search, setSearch] = useState('')
     const [tab, setTab] = useState('todos')
+    const [avaliacoes, setAvaliacoes] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const honorariosPago = AVALIACOES.filter(a => a.honorariosStatus === 'pago').reduce((s, a) => s + a.honorarios, 0)
-    const honorariosPendente = AVALIACOES.filter(a => a.honorariosStatus !== 'pago').reduce((s, a) => s + a.honorarios, 0)
-    const emAndamento = AVALIACOES.filter(a => a.status === 'em_andamento' || a.status === 'aguardando_docs').length
-    const concluidas = AVALIACOES.filter(a => a.status === 'concluida').length
+    useEffect(() => {
+        async function fetchAvaliacoes() {
+            try {
+                const res = await fetch('/api/avaliacoes')
+                if (!res.ok) throw new Error('Falha ao carregar')
+                const result = await res.json()
+                setAvaliacoes(result.data || [])
+            } catch (err) {
+                console.error('Erro ao buscar avaliações:', err)
+                setAvaliacoes([])
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchAvaliacoes()
+    }, [])
+
+    const honorariosPago = avaliacoes.filter(a => a.honorarios_status === 'pago').reduce((s, a) => s + (Number(a.honorarios) || 0), 0)
+    const honorariosPendente = avaliacoes.filter(a => a.honorarios_status !== 'pago').reduce((s, a) => s + (Number(a.honorarios) || 0), 0)
+    const emAndamento = avaliacoes.filter(a => a.status === 'em_andamento' || a.status === 'aguardando_docs').length
+    const concluidas = avaliacoes.filter(a => a.status === 'concluida').length
 
     const KPIS = [
         { label: 'Honorários Recebidos', value: fmt(honorariosPago), icon: DollarSign, color: '#6BB87B' },
@@ -63,20 +74,21 @@ export default function AvaliacoesPage() {
         { label: 'Concluídas', value: concluidas, icon: CheckCircle, color: '#6BB87B' },
     ]
 
-    const filtered = AVALIACOES.filter(a => {
+    const filtered = avaliacoes.filter(a => {
         const q = search.toLowerCase()
-        const matchSearch = !q || a.cliente.toLowerCase().includes(q) || a.protocolo.toLowerCase().includes(q) || a.bairro.toLowerCase().includes(q)
+        const matchSearch = !q ||
+            (a.cliente_nome || '').toLowerCase().includes(q) ||
+            (a.protocolo || '').toLowerCase().includes(q) ||
+            (a.bairro || '').toLowerCase().includes(q)
         const matchTab = tab === 'todos' || a.status === tab
         return matchSearch && matchTab
     })
 
     return (
         <div className="space-y-5 max-w-7xl mx-auto">
-
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="flex items-start justify-between gap-4"
-            >
+                className="flex items-start justify-between gap-4">
                 <div>
                     <h1 className="text-xl font-bold" style={{ color: T.text }}>Avaliações</h1>
                     <p className="text-sm mt-0.5" style={{ color: T.textDim }}>Gestão de laudos NBR 14653</p>
@@ -84,8 +96,7 @@ export default function AvaliacoesPage() {
                 <motion.button whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#1A1A2E', boxShadow: '0 2px 12px rgba(26,26,46,0.30)' }}
-                >
+                    style={{ background: '#3B82F6', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                     <Plus size={16} /> Nova Avaliação
                 </motion.button>
             </motion.div>
@@ -96,9 +107,8 @@ export default function AvaliacoesPage() {
                     <motion.div key={k.label}
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl p-4"
-                        style={{ background: 'rgba(26,30,42,0.70)', border: '1px solid rgba(26,26,46,0.18)', backdropFilter: 'blur(16px)' }}
-                    >
+                        className="stat-card rounded-2xl p-4"
+                        style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border-gold)', backdropFilter: 'blur(16px)' }}>
                         <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
                             style={{ background: `${k.color}18` }}>
                             <k.icon size={16} style={{ color: k.color }} />
@@ -118,8 +128,7 @@ export default function AvaliacoesPage() {
                             className="flex items-center gap-3 p-3.5 rounded-2xl cursor-pointer transition-all group"
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}
                             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}
-                        >
+                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
                             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                                 style={{ background: 'rgba(26,26,46,0.10)' }}>
                                 <a.icon size={15} style={{ color: T.gold }} />
@@ -133,7 +142,6 @@ export default function AvaliacoesPage() {
 
             {/* Filter + Search */}
             <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                {/* Search */}
                 <div className="relative">
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
                     <input type="text" placeholder="Buscar por cliente, protocolo, bairro..."
@@ -144,8 +152,6 @@ export default function AvaliacoesPage() {
                         onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
                     />
                 </div>
-
-                {/* Tabs */}
                 <div className="flex items-center gap-2 overflow-x-auto pb-0.5">
                     {[
                         { key: 'todos', label: 'Todos' },
@@ -156,80 +162,117 @@ export default function AvaliacoesPage() {
                         <button key={t.key} onClick={() => setTab(t.key)}
                             className="px-3.5 h-8 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: tab === t.key ? '#1A1A2E' : T.elevated,
+                                background: tab === t.key ? '#3B82F6' : T.elevated,
                                 color: tab === t.key ? 'white' : T.textDim,
                                 border: `1px solid ${tab === t.key ? T.borderGold : T.border}`,
-                            }}
-                        >
+                            }}>
                             {t.label}
                         </button>
                     ))}
                 </div>
             </div>
 
-            {/* List */}
-            <div className="space-y-2">
-                {filtered.map((av, i) => {
-                    const sc = STATUS_CFG[av.status] || STATUS_CFG.em_andamento
-                    const hc = HONOR_CFG[av.honorariosStatus]
-                    const SIcon = sc.icon
-                    return (
-                        <motion.div key={av.id}
-                            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.04 }}
-                            onClick={() => router.push(`/backoffice/avaliacoes/${av.id}`)}
-                            className="rounded-2xl cursor-pointer transition-all"
-                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}
-                        >
-                            <div className="flex items-center gap-3 p-4">
-                                {/* Icon */}
-                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                    style={{ background: `${sc.text}18` }}>
-                                    <SIcon size={18} style={{ color: sc.text }} />
-                                </div>
-
-                                {/* Main */}
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                        <p className="text-xs font-mono" style={{ color: T.textDim }}>{av.protocolo}</p>
-                                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                            style={{ color: sc.text, background: sc.bg }}>
-                                            {sc.label}
-                                        </span>
-                                    </div>
-                                    <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{av.cliente}</p>
-                                    <p className="text-[11px] mt-0.5" style={{ color: T.textDim }}>
-                                        {av.tipo} · {av.bairro} · {av.area}m² · {av.metodo}
-                                    </p>
-                                </div>
-
-                                {/* Right */}
-                                <div className="text-right flex-shrink-0">
-                                    <p className="text-sm font-bold" style={{ color: T.gold }}>
-                                        {fmt(av.honorarios)}
-                                    </p>
-                                    <p className="text-[10px] font-semibold mt-0.5" style={{ color: hc.text }}>
-                                        {hc.label}
-                                    </p>
-                                    {av.valor && (
-                                        <p className="text-[10px] mt-0.5" style={{ color: T.textDim }}>
-                                            Vlr: {fmt(av.valor)}
-                                        </p>
-                                    )}
-                                </div>
+            {/* Loading */}
+            {loading && (
+                <div className="space-y-2">
+                    {[...Array(4)].map((_, i) => (
+                        <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
+                            <div className="skeleton w-10 h-10 rounded-xl flex-shrink-0" />
+                            <div className="flex-1">
+                                <div className="skeleton h-3 w-24 mb-2" />
+                                <div className="skeleton h-4 w-48 mb-1" />
+                                <div className="skeleton h-3 w-64" />
                             </div>
-                        </motion.div>
-                    )
-                })}
-            </div>
-
-            {filtered.length === 0 && (
-                <div className="text-center py-16" style={{ color: T.textDim }}>
-                    <Scale size={32} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">Nenhuma avaliação encontrada</p>
+                            <div className="flex-shrink-0 text-right">
+                                <div className="skeleton h-4 w-20 mb-1" />
+                                <div className="skeleton h-3 w-14" />
+                            </div>
+                        </div>
+                    ))}
                 </div>
+            )}
+
+            {/* List */}
+            {!loading && (
+                <div className="space-y-2">
+                    {filtered.map((av, i) => {
+                        const sc = STATUS_CFG[av.status] || STATUS_CFG.em_andamento
+                        const hc = HONOR_CFG[av.honorarios_status] || HONOR_CFG.pendente
+                        const SIcon = sc.icon
+                        return (
+                            <motion.div key={av.id}
+                                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.04 }}
+                                onClick={() => router.push(`/backoffice/avaliacoes/${av.id}`)}
+                                className="rounded-2xl cursor-pointer transition-all"
+                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
+                                <div className="flex items-center gap-3 p-4">
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                        style={{ background: `${sc.text}18` }}>
+                                        <SIcon size={18} style={{ color: sc.text }} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-0.5">
+                                            <p className="text-xs font-mono" style={{ color: T.textDim }}>{av.protocolo || '—'}</p>
+                                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                                style={{ color: sc.text, background: sc.bg }}>
+                                                {sc.label}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{av.cliente_nome || '—'}</p>
+                                        <p className="text-[11px] mt-0.5" style={{ color: T.textDim }}>
+                                            {av.tipo_imovel || '—'} · {av.bairro || '—'} · {av.area_privativa ? `${av.area_privativa}m²` : ''} · {av.metodologia || '—'}
+                                        </p>
+                                    </div>
+                                    <div className="text-right flex-shrink-0">
+                                        {av.honorarios && (
+                                            <p className="text-sm font-bold" style={{ color: T.gold }}>
+                                                {fmt(Number(av.honorarios))}
+                                            </p>
+                                        )}
+                                        <p className="text-[10px] font-semibold mt-0.5" style={{ color: hc.text }}>
+                                            {hc.label}
+                                        </p>
+                                        {av.valor_estimado && (
+                                            <p className="text-[10px] mt-0.5" style={{ color: T.textDim }}>
+                                                Vlr: {fmt(Number(av.valor_estimado))}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )
+                    })}
+                </div>
+            )}
+
+            {!loading && filtered.length === 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="empty-state rounded-2xl"
+                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                >
+                    <div className="empty-state-icon">
+                        <Scale size={24} />
+                    </div>
+                    <p className="empty-state-title">Nenhuma avaliação encontrada</p>
+                    <p className="empty-state-desc">
+                        {search ? 'Tente buscar com outros termos' : 'Comece criando uma nova avaliação NBR 14653.'}
+                    </p>
+                    {!search && (
+                        <motion.button
+                            whileTap={{ scale: 0.96 }}
+                            onClick={() => router.push('/backoffice/avaliacoes/nova')}
+                            className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
+                            style={{ background: '#3B82F6' }}
+                        >
+                            <Plus size={14} /> Nova Avaliação
+                        </motion.button>
+                    )}
+                </motion.div>
             )}
         </div>
     )

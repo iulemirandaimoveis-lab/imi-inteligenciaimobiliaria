@@ -5,10 +5,6 @@ import DashboardClient from './DashboardClient'
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  // Busca stats consolidadas via função SQL
-  const { data: statsRaw } = await supabase.rpc('get_dashboard_stats')
-  const { data: avStats } = await supabase.rpc('get_avaliacoes_stats')
-
   // Atividade recente: últimos 5 leads
   const { data: recentLeads } = await supabase
     .from('leads')
@@ -23,27 +19,59 @@ export default async function DashboardPage() {
     .order('created_at', { ascending: false })
     .limit(5)
 
-  // Imóveis disponíveis
-  const { data: imoveisStats } = await supabase
-    .from('developments')
-    .select('id, name, status')
+  // Conta leads e imoveis
+  const { count: leadsCount } = await supabase.from('leads').select('*', { count: 'exact', head: true })
+  const { count: imoveisCount } = await supabase.from('developments').select('*', { count: 'exact', head: true })
+  const { count: avCount } = await supabase.from('avaliacoes').select('*', { count: 'exact', head: true })
+  const { count: devCount } = await supabase.from('developers').select('*', { count: 'exact', head: true })
 
-  const stats = statsRaw || {
-    total_leads: 127,
-    leads_today: 4,
-    total_avaliacoes: 5,
-    total_imoveis: 34,
-    conversion_rate: 23.5,
-    receita_mes: 24500,
+  // Data ranges para leads today
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const { count: leadsTodayCount } = await supabase
+    .from('leads')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', today.toISOString())
+
+  // Busca avaliacoes para calcular honorarios
+  const { data: avaliacoesParaHonorarios } = await supabase
+    .from('avaliacoes')
+    .select('status, honorarios')
+
+  let honorariosRecebidos = 0;
+  let honorariosPendentes = 0;
+  let concluidas = 0;
+  let andamento = 0;
+
+  if (avaliacoesParaHonorarios) {
+      for (const av of avaliacoesParaHonorarios) {
+          if (av.status === 'concluida') {
+              honorariosRecebidos += Number(av.honorarios || 0);
+              concluidas++;
+          } else if (av.status === 'pgto_pendente') {
+              honorariosPendentes += Number(av.honorarios || 0);
+          } else if (av.status === 'em_andamento') {
+              andamento++;
+          }
+      }
   }
 
-  const avStatsData = avStats || {
-    total: 5,
-    concluidas: 2,
-    em_andamento: 2,
-    aguardando_docs: 1,
-    honorarios_recebidos: 9800,
-    honorarios_pendentes: 7500,
+  const stats = {
+    total_leads: leadsCount || 0,
+    leads_today: leadsTodayCount || 0,
+    total_avaliacoes: avCount || 0,
+    total_imoveis: imoveisCount || 0,
+    conversion_rate: 0, // Placeholder real
+    receita_mes: honorariosRecebidos, // Baseado nas avaliações
+  }
+
+  const avStatsData = {
+    total: avCount || 0,
+    concluidas: concluidas,
+    em_andamento: andamento,
+    aguardando_docs: avaliacoesParaHonorarios?.filter(a => a.status === 'aguardando_docs').length || 0,
+    honorarios_recebidos: honorariosRecebidos,
+    honorarios_pendentes: honorariosPendentes,
   }
 
   return (
@@ -52,7 +80,7 @@ export default async function DashboardPage() {
       avStats={avStatsData}
       recentLeads={recentLeads || []}
       recentAvaliacoes={recentAvaliacoes || []}
-      imoveisCount={imoveisStats?.length || 5}
+      imoveisCount={imoveisCount || 0}
     />
   )
 }

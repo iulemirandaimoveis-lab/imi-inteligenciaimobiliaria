@@ -88,12 +88,15 @@ export default async function BlogPostPage({ params: { lang, slug } }: Props) {
             <div className="container-custom py-16 md:py-24">
                 <div className="max-w-3xl mx-auto">
                     <div className="prose prose-lg prose-slate prose-headings:font-display prose-headings:font-bold prose-headings:text-imi-900 prose-p:text-imi-700 prose-a:text-accent-600 hover:prose-a:text-accent-700 prose-img:rounded-xl prose-img:shadow-lg">
-                        {/* 
-                            TODO: Se o conteúdo for Markdown, usar um parser (ex: react-markdown).
-                            Se for HTML rico (do editor wysiwyg), usar dangerouslySetInnerHTML com cuidado.
-                            Assumindo Texto Simples ou HTML básico por enquanto.
-                        */}
-                        <div dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br/>') }} />
+                        {/* Sanitize content: strip all script/event handler tags for XSS prevention */}
+                        <div dangerouslySetInnerHTML={{
+                            __html: post.content
+                                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                                .replace(/on\w+="[^"]*"/gi, '')
+                                .replace(/on\w+='[^']*'/gi, '')
+                                .replace(/javascript:/gi, '')
+                                .replace(/\n/g, '<br/>')
+                        }} />
                     </div>
 
                     {/* Tags */}

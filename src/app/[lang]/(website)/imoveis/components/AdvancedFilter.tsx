@@ -12,13 +12,15 @@ export interface FilterState {
     bedrooms: number | null;
     priceRange: [number, number];
     location: string | null;
+    neighborhood: string | null;
     sort: 'price-asc' | 'price-desc' | 'newest' | 'relevant';
 }
 
 interface AdvancedFilterProps {
     filters: FilterState;
     onFilterChange: (newFilters: FilterState) => void;
-    locations: string[]; // List of available cities/neighborhoods
+    locations: string[];
+    neighborhoods?: string[];
     maxPrice?: number;
 }
 
@@ -40,7 +42,7 @@ const TYPE_OPTIONS = [
     { label: 'Garden', value: 'garden' },
 ];
 
-export default function AdvancedFilter({ filters, onFilterChange, locations, maxPrice = 10000000 }: AdvancedFilterProps) {
+export default function AdvancedFilter({ filters, onFilterChange, locations, neighborhoods = [], maxPrice = 10000000 }: AdvancedFilterProps) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
@@ -77,6 +79,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, max
             bedrooms: null,
             priceRange: [0, maxPrice],
             location: null,
+            neighborhood: null,
             sort: 'relevant'
         };
         onFilterChange(cleared);
@@ -155,6 +158,46 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, max
                                     </motion.div>
                                 )}
                             </div>
+
+                            {/* Neighborhood Filter */}
+                            {neighborhoods.length > 0 && (
+                                <div className="relative">
+                                    <FilterButton
+                                        label={filters.neighborhood || "Bairro"}
+                                        icon={MapPin}
+                                        active={activeDropdown === 'neighborhood'}
+                                        hasValue={!!filters.neighborhood}
+                                        onClick={() => setActiveDropdown(activeDropdown === 'neighborhood' ? null : 'neighborhood')}
+                                    />
+                                    {activeDropdown === 'neighborhood' && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className="filter-dropdown absolute top-full left-0 mt-2 w-64 bg-[#1A1E2A] rounded-2xl shadow-2xl border border-white/[0.05] p-2 overflow-hidden z-50 max-h-72 overflow-y-auto"
+                                        >
+                                            <button
+                                                onClick={() => { updateFilter('neighborhood', null); setActiveDropdown(null); }}
+                                                className={cn("w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors", !filters.neighborhood ? "font-bold text-white" : "text-[#9CA3AF]")}
+                                            >
+                                                Todos os bairros
+                                            </button>
+                                            {neighborhoods.map(hood => (
+                                                <button
+                                                    key={hood}
+                                                    onClick={() => { updateFilter('neighborhood', hood); setActiveDropdown(null); }}
+                                                    className={cn(
+                                                        "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors flex justify-between items-center",
+                                                        filters.neighborhood === hood ? "bg-[#21263A] font-bold text-white" : "text-[#9CA3AF]"
+                                                    )}
+                                                >
+                                                    {hood}
+                                                    {filters.neighborhood === hood && <Check className="w-4 h-4 text-[#3B82F6]" />}
+                                                </button>
+                                            ))}
+                                        </motion.div>
+                                    )}
+                                </div>
+                            )}
 
                             {/* Type Filter */}
                             <div className="relative">
@@ -261,7 +304,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, max
                                 )}
                             </div>
 
-                            {(filters.location || filters.type.length > 0 || filters.bedrooms || filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice) && (
+                            {(filters.location || filters.neighborhood || filters.type.length > 0 || filters.bedrooms || filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice) && (
                                 <button onClick={clearFilters} className="text-xs font-bold text-red-500 hover:text-red-600 uppercase tracking-wider ml-auto px-4">
                                     Limpar Filtros
                                 </button>
@@ -335,6 +378,40 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, max
                                     </div>
                                 </div>
 
+                                {/* Neighborhood Section */}
+                                {neighborhoods.length > 0 && (
+                                    <div>
+                                        <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Bairro</h3>
+                                        <div className="flex flex-wrap gap-2.5">
+                                            <button
+                                                onClick={() => updateMobileFilter('neighborhood', null)}
+                                                className={cn(
+                                                    "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
+                                                    !mobileFilters.neighborhood
+                                                        ? "bg-[#1A1A2E]/10 border-[#3B82F6]/50 text-[#3B82F6] shadow-sm"
+                                                        : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
+                                                )}
+                                            >
+                                                Todos
+                                            </button>
+                                            {neighborhoods.map(hood => (
+                                                <button
+                                                    key={hood}
+                                                    onClick={() => updateMobileFilter('neighborhood', hood)}
+                                                    className={cn(
+                                                        "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
+                                                        mobileFilters.neighborhood === hood
+                                                            ? "bg-[#1A1A2E]/10 border-[#3B82F6]/50 text-[#3B82F6] shadow-sm"
+                                                            : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
+                                                    )}
+                                                >
+                                                    {hood}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Type Section */}
                                 <div>
                                     <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Tipo do Imóvel</h3>
@@ -394,6 +471,35 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, max
                                                 {num}+
                                             </button>
                                         ))}
+                                    </div>
+                                </div>
+
+                                {/* Price Section */}
+                                <div>
+                                    <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Faixa de Preço</h3>
+                                    <div className="grid grid-cols-2 gap-2.5">
+                                        {PRICE_OPTIONS.map((opt, idx) => {
+                                            const isActive = opt.value > 3000000
+                                                ? mobileFilters.priceRange[0] === 3000000
+                                                : mobileFilters.priceRange[1] === opt.value && mobileFilters.priceRange[0] === 0;
+                                            return (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => {
+                                                        if (opt.value > 3000000) updateMobileFilter('priceRange', [3000000, maxPrice]);
+                                                        else updateMobileFilter('priceRange', [0, opt.value]);
+                                                    }}
+                                                    className={cn(
+                                                        "px-4 py-3 rounded-lg text-[13px] font-semibold border text-left transition-all",
+                                                        isActive
+                                                            ? "bg-[#1A1A2E]/10 border-[#3B82F6]/50 text-[#3B82F6] shadow-sm"
+                                                            : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
+                                                    )}
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>

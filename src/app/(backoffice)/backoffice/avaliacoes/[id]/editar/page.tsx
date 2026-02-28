@@ -107,7 +107,7 @@ export default function EditarAvaliacaoPage() {
     clientName: '',
     clientEmail: '',
     clientPhone: '',
-    clientDocument: '',
+    clientCPF: '',
 
     // Avaliação
     purpose: '',
@@ -135,7 +135,7 @@ export default function EditarAvaliacaoPage() {
         clientName: 'Carlos Eduardo Silva',
         clientEmail: 'carlos.silva@email.com',
         clientPhone: '(81) 99876-5432',
-        clientDocument: '123.456.789-00',
+        clientCPF: '123.456.789-00',
         purpose: 'Compra e Venda',
         method: 'Comparativo Direto de Dados de Mercado',
         requestDate: '2026-02-01',
@@ -224,12 +224,21 @@ export default function EditarAvaliacaoPage() {
 
     setIsSubmitting(true)
 
-    // TODO: Upload documents to Supabase Storage
-    // TODO: Update in Supabase database
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    try {
+      // TODO: Upload documents to Supabase Storage
+      const response = await fetch('/api/avaliacoes', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: params.id, ...formData }),
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Erro ao atualizar')
 
-    alert('Avaliação atualizada com sucesso!')
-    router.push(`/backoffice/avaliacoes/${params.id}`)
+      router.push(`/backoffice/avaliacoes`)
+    } catch (error) {
+      console.error('Erro ao atualizar avaliação:', error)
+      setIsSubmitting(false)
+    }
   }
 
   const formatFileSize = (bytes: number) => {

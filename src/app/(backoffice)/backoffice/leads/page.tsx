@@ -17,19 +17,7 @@ const T = {
     gold: '#3B82F6',
 }
 
-// Fallback mock
-const fallbackLeads = [
-    { id: 1, name: 'Maria Santos Silva', email: 'maria.santos@gmail.com', phone: '(81) 99845-3421', score: 92, status: 'hot', source: 'Instagram', interest: 'Apt 3Q', location: 'Boa Viagem', budget: '450k–600k', created: '2026-02-14T10:30:00', lastContact: '2026-02-14T15:20:00' },
-    { id: 2, name: 'João Pedro Almeida', email: 'joao.almeida@hotmail.com', phone: '(81) 98732-1098', score: 85, status: 'hot', source: 'Google Ads', interest: 'Casa 4Q', location: 'Piedade', budget: '800k–1M', created: '2026-02-14T08:15:00', lastContact: '2026-02-14T14:45:00' },
-    { id: 3, name: 'Ana Carolina Ferreira', email: 'anacarolina.f@outlook.com', phone: '(81) 99234-5678', score: 78, status: 'warm', source: 'Site', interest: 'Apt 2Q', location: 'Pina', budget: '300k–400k', created: '2026-02-13T16:20:00', lastContact: '2026-02-14T10:30:00' },
-    { id: 4, name: 'Roberto Carlos Mendes', email: 'roberto.mendes@empresarial.com.br', phone: '(81) 98123-4567', score: 88, status: 'hot', source: 'Indicação', interest: 'Sala Comercial', location: 'Boa Viagem', budget: '250k–350k', created: '2026-02-13T09:00:00', lastContact: '2026-02-13T16:15:00' },
-    { id: 5, name: 'Camila Nascimento', email: 'camila.nasc@gmail.com', phone: '(81) 99678-2345', score: 65, status: 'warm', source: 'WhatsApp', interest: 'Apt 2Q', location: 'Imbiribeira', budget: '280k–350k', created: '2026-02-12T14:00:00', lastContact: '2026-02-13T10:00:00' },
-    { id: 6, name: 'Fernando Augusto Rocha', email: 'fernando.rocha@yahoo.com', phone: '(81) 98765-4321', score: 72, status: 'warm', source: 'WhatsApp', interest: 'Cobertura', location: 'Boa Viagem', budget: '1.2M–1.5M', created: '2026-02-12T09:45:00', lastContact: '2026-02-12T16:30:00' },
-    { id: 7, name: 'Juliana Oliveira Santos', email: 'ju.oliveira@gmail.com', phone: '(81) 99654-3210', score: 58, status: 'cold', source: 'Instagram', interest: 'Apt 2Q', location: 'Candeias', budget: '200k–280k', created: '2026-02-11T13:20:00', lastContact: '2026-02-11T13:20:00' },
-    { id: 8, name: 'Carlos Eduardo Martins', email: 'carlos.martins@empresa.com', phone: '(81) 98543-2109', score: 95, status: 'hot', source: 'Site', interest: 'Apt 4Q', location: 'Boa Viagem', budget: '700k–900k', created: '2026-02-11T10:00:00', lastContact: '2026-02-14T11:45:00' },
-    { id: 9, name: 'Mariana Souza Campos', email: 'mariana.campos@hotmail.com', phone: '(81) 99432-1098', score: 70, status: 'warm', source: 'Google Ads', interest: 'Casa 3Q', location: 'Piedade', budget: '500k–650k', created: '2026-02-10T15:30:00', lastContact: '2026-02-13T14:20:00' },
-    { id: 10, name: 'Rafael Henrique Dias', email: 'rafael.dias@gmail.com', phone: '(81) 98321-0987', score: 82, status: 'hot', source: 'Indicação', interest: 'Apt 3Q', location: 'Pina', budget: '380k–480k', created: '2026-02-10T09:15:00', lastContact: '2026-02-14T08:30:00' },
-]
+// No fallback mock — real Supabase data only
 
 interface Lead {
     id: any;
@@ -62,10 +50,13 @@ const timeAgo = (d: string) => {
     return `${Math.floor(diff / 1440)}d`
 }
 
-function StatCard({ label, value, color }: { label: string; value: number; color?: string }) {
+function StatCard({ label, value, color, index = 0 }: { label: string; value: number; color?: string; index?: number }) {
     return (
-        <div
-            className="rounded-2xl p-4"
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.06, duration: 0.35 }}
+            className="stat-card rounded-2xl p-4"
             style={{
                 background: T.elevated,
                 border: `1px solid ${T.borderGold}`,
@@ -73,7 +64,7 @@ function StatCard({ label, value, color }: { label: string; value: number; color
         >
             <p className="text-xs font-medium mb-1" style={{ color: color || T.textSub }}>{label}</p>
             <p className="text-2xl font-bold" style={{ color: color || T.text }}>{value}</p>
-        </div>
+        </motion.div>
     )
 }
 
@@ -115,7 +106,7 @@ export default function LeadsPage() {
             } finally {
                 setLoading(false)
             }
-            setLeads(fallbackLeads)
+            setLeads([])
         }
         fetchLeads()
     }, [])
@@ -136,7 +127,34 @@ export default function LeadsPage() {
     })
 
     if (loading) {
-        return <div className="p-10 text-center" style={{ color: T.textSub }}>Carregando leads...</div>
+        return (
+            <div className="space-y-5 max-w-7xl mx-auto">
+                <div className="flex items-start justify-between gap-4">
+                    <div>
+                        <div className="skeleton h-6 w-24 mb-2" />
+                        <div className="skeleton h-4 w-48" />
+                    </div>
+                    <div className="skeleton h-10 w-32 rounded-xl" />
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 100}ms` }}>
+                            <div className="skeleton h-3 w-16 mb-3" />
+                            <div className="skeleton lg h-6 w-12" />
+                        </div>
+                    ))}
+                </div>
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
+                        <div className="skeleton-circle w-10 h-10 flex-shrink-0" />
+                        <div className="flex-1">
+                            <div className="skeleton h-4 w-36 mb-2" />
+                            <div className="skeleton h-3 w-48" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
     }
 
     return (
@@ -154,20 +172,20 @@ export default function LeadsPage() {
                 <motion.button
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/leads/novo')}
-                    className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #3B82F6, #2563EB)', boxShadow: '0 2px 12px rgba(59,130,246,0.25)' }}
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: '#3B82F6', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Novo Lead
                 </motion.button>
             </motion.div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-                <StatCard label="Total" value={stats.total} />
-                <StatCard label="Quentes" value={stats.hot} color={STATUS_CFG.hot.text} />
-                <StatCard label="Mornos" value={stats.warm} color={STATUS_CFG.warm.text} />
-                <StatCard label="Frios" value={stats.cold} color={STATUS_CFG.cold.text} />
-                <StatCard label="Score Médio" value={stats.avg} />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                <StatCard label="Total" value={stats.total} index={0} />
+                <StatCard label="Quentes" value={stats.hot} color={STATUS_CFG.hot.text} index={1} />
+                <StatCard label="Mornos" value={stats.warm} color={STATUS_CFG.warm.text} index={2} />
+                <StatCard label="Frios" value={stats.cold} color={STATUS_CFG.cold.text} index={3} />
+                <StatCard label="Score Médio" value={stats.avg} index={4} />
             </div>
 
             {/* Filters */}
@@ -197,7 +215,7 @@ export default function LeadsPage() {
                     </div>
 
                     {/* Filter tabs */}
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 overflow-x-auto flex-shrink-0">
                         {['all', 'hot', 'warm', 'cold'].map(s => (
                             <button
                                 key={s}
@@ -205,7 +223,7 @@ export default function LeadsPage() {
                                 className="px-3.5 h-10 rounded-xl text-xs font-semibold transition-all"
                                 style={{
                                     background: filter === s
-                                        ? (s === 'all' ? 'linear-gradient(135deg, #3B82F6, #2563EB)' : STATUS_CFG[s]?.bg || T.elevated)
+                                        ? (s === 'all' ? '#3B82F6' : STATUS_CFG[s]?.bg || T.elevated)
                                         : T.elevated,
                                     color: filter === s
                                         ? (s === 'all' ? 'white' : STATUS_CFG[s]?.text || T.textSub)
@@ -326,10 +344,30 @@ export default function LeadsPage() {
             </div>
 
             {filtered.length === 0 && (
-                <div className="text-center py-16" style={{ color: T.textDim }}>
-                    <Users size={32} className="mx-auto mb-3 opacity-30" />
-                    <p className="text-sm">Nenhum lead encontrado</p>
-                </div>
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="empty-state rounded-2xl"
+                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                >
+                    <div className="empty-state-icon">
+                        <Users size={24} />
+                    </div>
+                    <p className="empty-state-title">Nenhum lead encontrado</p>
+                    <p className="empty-state-desc">
+                        {search ? 'Tente buscar com outros termos' : 'Seu pipeline está vazio. Comece adicionando novos leads.'}
+                    </p>
+                    {!search && (
+                        <motion.button
+                            whileTap={{ scale: 0.96 }}
+                            onClick={() => router.push('/backoffice/leads/novo')}
+                            className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
+                            style={{ background: '#3B82F6' }}
+                        >
+                            <Plus size={14} /> Novo Lead
+                        </motion.button>
+                    )}
+                </motion.div>
             )}
         </div>
     )

@@ -78,6 +78,10 @@ export default function SettingsPage() {
           const data = await res.json()
           if (data.settings && Object.keys(data.settings).length > 0) {
             setSettings(prev => ({ ...prev, ...data.settings }))
+            // Sync saved theme with next-themes
+            if (data.settings.theme && ['light', 'dark', 'system'].includes(data.settings.theme)) {
+              setTheme(data.settings.theme)
+            }
           }
         }
       } catch (e) {
@@ -85,7 +89,7 @@ export default function SettingsPage() {
       }
     }
     fetchSettings()
-  }, [])
+  }, [setTheme])
 
   if (!mounted) return null
 
@@ -128,11 +132,12 @@ export default function SettingsPage() {
   }
 
   const toggleCheckedStyle = {
-    background: '#1A1A2E',
+    background: '#3B82F6',
   }
 
   const toggleUncheckedStyle = {
-    background: 'rgba(255,255,255,0.08)',
+    background: 'var(--bo-hover)',
+    border: '1px solid var(--bo-border)',
   }
 
   return (
@@ -149,8 +154,8 @@ export default function SettingsPage() {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #3B82F6, #2563EB)', boxShadow: '0 2px 12px rgba(59,130,246,0.25)' }}
+          className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
+          style={{ background: '#3B82F6', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
         >
           {isSaving ? (
             <><Loader2 size={16} className="animate-spin" /> Salvando...</>

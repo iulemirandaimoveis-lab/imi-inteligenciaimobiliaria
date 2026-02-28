@@ -1,6 +1,8 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Header from '@/components/website/Header'
 import Footer from '@/components/website/Footer'
+import AnalyticsProvider from '@/components/website/AnalyticsProvider'
 import { generateOrganizationSchema } from '@/lib/seo'
 import { getGlobalSettings } from '@/lib/settings'
 
@@ -26,6 +28,12 @@ export default async function WebsiteLayout({
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
             />
+            <Suspense fallback={null}>
+                <AnalyticsProvider
+                    googleAnalytics={settings.googleAnalytics}
+                    facebookPixel={settings.facebookPixel}
+                />
+            </Suspense>
             <Header lang={lang} settings={settings} />
             <main className="flex-grow pt-[68px] lg:pt-[76px]">{children}</main>
             <Footer lang={lang} settings={settings} />

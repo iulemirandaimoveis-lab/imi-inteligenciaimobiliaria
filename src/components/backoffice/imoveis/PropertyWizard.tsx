@@ -119,7 +119,7 @@ export default function PropertyWizard({ onSubmit, isSubmitting }: PropertyWizar
                     {currentStep === 0 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <Input label="Nome do Empreendimento" {...register('name')} placeholder="Ex: Residencial Atlantis" error={errors.name?.message} icon={<Building2 size={18} />} />
+                                <Input label="Nome do Empreendimento" {...register('name')} placeholder="Ex: Residencial Atlantis" error={errors.name?.message} />
 
                                 <Select label="Construtora" {...register('developer_id')} error={errors.developer_id?.message}>
                                     <option value="">Selecione...</option>
@@ -152,7 +152,7 @@ export default function PropertyWizard({ onSubmit, isSubmitting }: PropertyWizar
                     {currentStep === 1 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <Input label="Cidade" {...register('city')} placeholder="Ex: João Pessoa" error={errors.city?.message} icon={<MapPin size={18} />} />
+                                <Input label="Cidade" {...register('city')} placeholder="Ex: João Pessoa" error={errors.city?.message} />
                                 <Input label="Bairro" {...register('neighborhood')} placeholder="Ex: Altiplano" error={errors.neighborhood?.message} />
                             </div>
                             <Input label="Endereço Completo" {...register('address')} placeholder="Rua, Número..." />
@@ -160,7 +160,7 @@ export default function PropertyWizard({ onSubmit, isSubmitting }: PropertyWizar
                             <div className="h-px bg-gray-100 dark:bg-white/10 my-4" />
 
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                <Input label="Área (m²)" type="number" {...register('area_min')} placeholder="0" error={errors.area_min?.message} icon={<LayoutDashboard size={18} />} />
+                                <Input label="Área (m²)" type="number" {...register('area_min')} placeholder="0" error={errors.area_min?.message} />
                                 <Input label="Quartos" type="number" {...register('bedrooms')} placeholder="0" />
                                 <Input label="Banheiros" type="number" {...register('bathrooms')} placeholder="0" />
                                 <Input label="Vagas" type="number" {...register('parking_spots')} placeholder="0" />

@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { Building2, MapPin, Calendar, FileText } from 'lucide-react';
 import { Development } from '../types/development';
-import { formatBRL } from '../data/developments';
 import Badge from '@/components/ui/Badge';
 import { motion } from 'framer-motion';
 import { slideUp, staggerContainer } from '@/lib/animations';
@@ -67,7 +66,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             )}
                         </div>
 
-                        <motion.h1 variants={slideUp} className="font-display text-4xl md:text-6xl lg:text-7xl text-white font-bold mb-8 leading-[1.1] tracking-tight">
+                        <motion.h1 variants={slideUp} className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-bold mb-8 leading-[1.1] tracking-tight text-balance">
                             {development.name}
                         </motion.h1>
 
@@ -96,8 +95,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
 
                         <motion.div variants={slideUp} className="mt-12">
                             <p className="text-[10px] text-imi-400 mb-2 uppercase tracking-[0.3em] font-bold">Investimento de</p>
-                            <p className="text-4xl md:text-6xl font-bold text-white tracking-tighter font-display">
-                                <span className="text-xl md:text-2xl mr-2 font-sans font-normal text-imi-500">R$</span>
+                            <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tighter font-display">
+                                <span className="text-lg md:text-2xl mr-2 font-sans font-normal text-imi-500">R$</span>
                                 {development.priceRange.min.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                             </p>
                         </motion.div>

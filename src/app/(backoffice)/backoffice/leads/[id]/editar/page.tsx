@@ -208,11 +208,20 @@ export default function EditarLeadPage() {
 
         setIsSubmitting(true)
 
-        // TODO: Integrar com Supabase
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        try {
+            const response = await fetch('/api/leads', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: params.id, ...formData }),
+            })
+            const result = await response.json()
+            if (!response.ok) throw new Error(result.error || 'Erro ao atualizar')
 
-        alert('Lead atualizado com sucesso!')
-        router.push(`/backoffice/leads/${params.id}`)
+            router.push(`/backoffice/leads/${params.id}`)
+        } catch (error) {
+            console.error('Erro ao atualizar lead:', error)
+            setIsSubmitting(false)
+        }
     }
 
     const getScoreColor = () => {

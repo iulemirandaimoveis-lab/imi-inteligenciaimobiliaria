@@ -250,12 +250,21 @@ export default function EditarCampanhaPage() {
 
     setIsSubmitting(true)
 
-    // TODO: Upload images to Supabase Storage
-    // TODO: Update in Supabase database
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    try {
+      // TODO: Upload images to Supabase Storage
+      const response = await fetch('/api/campanhas', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: params.id, ...formData }),
+      })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Erro ao atualizar')
 
-    alert('Campanha atualizada com sucesso!')
-    router.push(`/backoffice/campanhas/${params.id}`)
+      router.push(`/backoffice/campanhas`)
+    } catch (error) {
+      console.error('Erro ao atualizar campanha:', error)
+      setIsSubmitting(false)
+    }
   }
 
   const formatCurrency = (value: string) => {

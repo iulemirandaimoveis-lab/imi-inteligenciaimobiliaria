@@ -1,389 +1,414 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import PageHeader from '../../components/PageHeader'
-import { Button } from '@/components/ui/Button'
-import { Card, CardHeader, CardBody } from '@/components/ui/Card'
-import { KPICard } from '@/components/ui/Badge'
-import { Badge } from '@/components/ui/Badge'
-import { Select } from '@/components/ui/Select'
 import {
-  TableContainer,
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from '@/components/ui/Table'
-import {
-  Link2,
-  MousePointer,
-  Eye,
-  Clock,
-  TrendingUp,
-  Smartphone,
-  Monitor,
-  Tablet,
-  MapPin,
-  ExternalLink,
+    Link2, QrCode, MousePointer, Eye, Clock, TrendingUp, Users,
+    Smartphone, Monitor, Tablet, MapPin, BarChart3, Loader2,
+    RefreshCw, ArrowUpRight, FileText, Percent, Timer,
 } from 'lucide-react'
 
-// Mock data (depois virá do Supabase)
-const mockAnalytics = {
-  kpis: {
-    totalClicks: 3248,
-    clicksChange: 18.2,
-    totalViews: 12847,
-    viewsChange: 12.5,
-    avgTime: 342, // segundos
-    timeChange: 8.3,
-    conversionRate: 2.53,
-    conversionChange: -0.4,
-  },
-  clicksBySource: [
-    { source: 'Instagram', clicks: 1243, percentage: 38.3 },
-    { source: 'Facebook', clicks: 892, percentage: 27.5 },
-    { source: 'Google', clicks: 654, percentage: 20.1 },
-    { source: 'WhatsApp', clicks: 289, percentage: 8.9 },
-    { source: 'Email', clicks: 170, percentage: 5.2 },
-  ],
-  clicksByDevice: [
-    { device: 'Mobile', clicks: 1948, percentage: 60.0, icon: Smartphone },
-    { device: 'Desktop', clicks: 975, percentage: 30.0, icon: Monitor },
-    { device: 'Tablet', clicks: 325, percentage: 10.0, icon: Tablet },
-  ],
-  topCampaigns: [
-    {
-      id: '1',
-      name: 'Reserva Atlantis - Instagram Stories',
-      clicks: 847,
-      conversions: 42,
-      roi: 8.2,
-      link: 'https://imi.co/ra-ig-stories',
-    },
-    {
-      id: '2',
-      name: 'Villa Jardins - Facebook Ads',
-      clicks: 623,
-      conversions: 28,
-      roi: 5.4,
-      link: 'https://imi.co/vj-fb-ads',
-    },
-    {
-      id: '3',
-      name: 'Lançamento Piedade - Google Ads',
-      clicks: 512,
-      conversions: 31,
-      roi: 7.1,
-      link: 'https://imi.co/lp-gads',
-    },
-    {
-      id: '4',
-      name: 'Email Newsletter - Setembro',
-      clicks: 289,
-      conversions: 12,
-      roi: 3.8,
-      link: 'https://imi.co/newsletter-set',
-    },
-  ],
-  topLocations: [
-    { city: 'Recife', state: 'PE', clicks: 1847 },
-    { city: 'São Paulo', state: 'SP', clicks: 523 },
-    { city: 'Rio de Janeiro', state: 'RJ', clicks: 312 },
-    { city: 'Fortaleza', state: 'CE', clicks: 198 },
-    { city: 'Salvador', state: 'BA', clicks: 142 },
-  ],
-  timeline: [
-    { date: '2024-02-08', clicks: 412 },
-    { date: '2024-02-09', clicks: 458 },
-    { date: '2024-02-10', clicks: 389 },
-    { date: '2024-02-11', clicks: 523 },
-    { date: '2024-02-12', clicks: 467 },
-    { date: '2024-02-13', clicks: 502 },
-    { date: '2024-02-14', clicks: 497 },
-  ],
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    border: 'var(--bo-border)',
+    hover: 'var(--bo-hover)',
+    accent: '#3B82F6',
+    accentBg: 'rgba(26,26,46,0.10)',
+}
+
+interface Analytics {
+    kpis: {
+        totalPageViews: number
+        totalSessions: number
+        totalClicks: number
+        totalLeads: number
+        convertedLeads: number
+        avgPagesPerSession: number
+        avgDurationSeconds: number
+        bounceRate: number
+        conversionRate: number
+        totalTrackedLinks: number
+    }
+    dailyTimeline: Array<{ day: string; views: number; sessions: number; clicks: number; leads: number }>
+    bySource: Array<{ name: string; sessions: number; clicks: number; leads: number; total: number }>
+    byDevice: Array<{ name: string; value: number; percentage: number }>
+    topPages: Array<{ page: string; views: number; avgDuration: number }>
+    topProperties: Array<{ slug: string; views: number }>
+    topCampaigns: Array<{ campaign: string; clicks: number; leads: number; conversionRate: number }>
+}
+
+function formatDuration(seconds: number): string {
+    if (seconds < 60) return `${seconds}s`
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return `${m}m ${s}s`
 }
 
 export default function TrackingDashboardPage() {
-  const router = useRouter()
-  const [timeRange, setTimeRange] = useState('7d')
+    const router = useRouter()
+    const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d')
+    const [loading, setLoading] = useState(true)
+    const [data, setData] = useState<Analytics | null>(null)
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Tracking & Analytics"
-        subtitle="Monitore o desempenho dos seus links e campanhas"
-        breadcrumbs={[
-          { label: 'Dashboard', href: '/backoffice/dashboard' },
-          { label: 'Tracking' },
-        ]}
-        action={
-          <Button
-            icon={<Link2 size={20} />}
-            onClick={() => router.push('/backoffice/tracking/links')}
-          >
-            Gerenciar Links
-          </Button>
+    useEffect(() => { load() }, [timeRange])
+
+    const load = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch(`/api/tracking/analytics?time_range=${timeRange}`)
+            if (res.ok) setData(await res.json())
+        } catch (err) {
+            console.error('Analytics load error:', err)
+        } finally {
+            setLoading(false)
         }
-      />
+    }
 
-      {/* Period Selector */}
-      <div className="flex justify-end">
-        <Select
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value)}
-          options={[
-            { value: '7d', label: 'Últimos 7 dias' },
-            { value: '30d', label: 'Últimos 30 dias' },
-            { value: '90d', label: 'Últimos 90 dias' },
-          ]}
-          className="w-48"
-        />
-      </div>
+    const deviceIcons: Record<string, any> = { mobile: Smartphone, desktop: Monitor, tablet: Tablet }
 
-      {/* KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard
-          label="Total de Cliques"
-          value={mockAnalytics.kpis.totalClicks.toLocaleString('pt-BR')}
-          change={{
-            value: mockAnalytics.kpis.clicksChange,
-            trend: 'up',
-            label: 'vs período anterior',
-          }}
-          icon={<MousePointer size={20} />}
-          variant="primary"
-        />
-
-        <KPICard
-          label="Visualizações de Página"
-          value={mockAnalytics.kpis.totalViews.toLocaleString('pt-BR')}
-          change={{
-            value: mockAnalytics.kpis.viewsChange,
-            trend: 'up',
-          }}
-          icon={<Eye size={20} />}
-          variant="success"
-        />
-
-        <KPICard
-          label="Tempo Médio"
-          value={`${Math.floor(mockAnalytics.kpis.avgTime / 60)}m ${mockAnalytics.kpis.avgTime % 60}s`}
-          change={{
-            value: mockAnalytics.kpis.timeChange,
-            trend: 'up',
-          }}
-          icon={<Clock size={20} />}
-          variant="primary"
-        />
-
-        <KPICard
-          label="Taxa de Conversão"
-          value={`${mockAnalytics.kpis.conversionRate}%`}
-          change={{
-            value: Math.abs(mockAnalytics.kpis.conversionChange),
-            trend: 'down',
-          }}
-          icon={<TrendingUp size={20} />}
-          variant="warning"
-        />
-      </div>
-
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Clicks by Source */}
-        <Card>
-          <CardHeader title="Cliques por Origem" subtitle="Distribuição por canal de tráfego" />
-          <CardBody>
-            <div className="space-y-6">
-              {mockAnalytics.clicksBySource.map((item) => (
-                <div key={item.source} className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-imi-900">
-                      {item.source}
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-bold text-imi-500">{item.percentage}%</span>
-                      <Badge variant="neutral" size="sm">{item.clicks.toLocaleString()}</Badge>
-                    </div>
-                  </div>
-                  <div className="h-2 bg-imi-50 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[#1A1A2E] transition-all duration-700 ease-smooth"
-                      style={{ width: `${item.percentage}%` }}
-                    />
-                  </div>
+    return (
+        <div className="space-y-6 max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>
+                        Tracking & Analytics
+                    </h1>
+                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
+                        Inteligência comportamental completa — visitantes, sessões, cliques e leads
+                    </p>
                 </div>
-              ))}
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => router.push('/backoffice/tracking/qr')}
+                        className="h-9 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 text-white transition-all"
+                        style={{ background: T.accent }}
+                    >
+                        <QrCode size={14} /> Novo QR Code
+                    </button>
+                    <button
+                        onClick={() => router.push('/backoffice/tracking/links')}
+                        className="h-9 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                    >
+                        <Link2 size={14} /> Links
+                    </button>
+                </div>
             </div>
-          </CardBody>
-        </Card>
 
-        {/* Clicks by Device */}
-        <Card>
-          <CardHeader title="Cliques por Dispositivo" subtitle="Acessos por categoria de hardware" />
-          <CardBody>
-            <div className="space-y-6">
-              {mockAnalytics.clicksByDevice.map((item) => {
-                const Icon = item.icon
-                return (
-                  <div key={item.device} className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-imi-50 border border-imi-100 flex items-center justify-center text-imi-600">
-                          <Icon size={18} />
+            {/* Time Range + Refresh */}
+            <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                    {(['7d', '30d', '90d'] as const).map(range => (
+                        <button
+                            key={range}
+                            onClick={() => setTimeRange(range)}
+                            className="h-8 px-3 rounded-lg text-[11px] font-semibold transition-all"
+                            style={{
+                                background: timeRange === range ? T.accent : T.elevated,
+                                color: timeRange === range ? '#fff' : T.textMuted,
+                                border: timeRange === range ? 'none' : `1px solid ${T.border}`,
+                            }}
+                        >
+                            {range === '7d' ? '7 dias' : range === '30d' ? '30 dias' : '90 dias'}
+                        </button>
+                    ))}
+                </div>
+                <button
+                    onClick={load}
+                    className="h-8 w-8 rounded-lg flex items-center justify-center transition-all"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                >
+                    <RefreshCw size={13} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
+                </button>
+            </div>
+
+            {loading ? (
+                <div className="flex items-center justify-center h-64">
+                    <Loader2 size={28} className="animate-spin" style={{ color: T.accent }} />
+                </div>
+            ) : data ? (
+                <>
+                    {/* ── KPIs Row 1 ── */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                        {[
+                            { icon: Eye, label: 'Page Views', value: data.kpis.totalPageViews.toLocaleString('pt-BR'), color: '#60a5fa' },
+                            { icon: Users, label: 'Sessões', value: data.kpis.totalSessions.toLocaleString('pt-BR'), color: '#a78bfa' },
+                            { icon: MousePointer, label: 'Cliques', value: data.kpis.totalClicks.toLocaleString('pt-BR'), color: '#f59e0b' },
+                            { icon: TrendingUp, label: 'Leads', value: data.kpis.totalLeads.toLocaleString('pt-BR'), color: '#34d399' },
+                            { icon: Timer, label: 'Tempo Médio', value: formatDuration(data.kpis.avgDurationSeconds), color: '#f472b6' },
+                            { icon: Percent, label: 'Conversão', value: `${data.kpis.conversionRate}%`, color: '#c084fc' },
+                        ].map(({ icon: Icon, label, value, color }) => (
+                            <div
+                                key={label}
+                                className="rounded-xl p-4 transition-all"
+                                style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                            >
+                                <div className="flex items-center gap-1.5 mb-1.5">
+                                    <Icon size={14} style={{ color }} />
+                                    <span className="text-[10px] font-medium" style={{ color: T.textMuted }}>{label}</span>
+                                </div>
+                                <div className="text-lg font-bold truncate" style={{ color: T.text }}>{value}</div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* ── KPIs Row 2 (secondary) ── */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {[
+                            { label: 'Págs/Sessão', value: data.kpis.avgPagesPerSession.toString() },
+                            { label: 'Bounce Rate', value: `${data.kpis.bounceRate}%` },
+                            { label: 'Links Rastreados', value: data.kpis.totalTrackedLinks.toString() },
+                            { label: 'Leads Convertidos', value: data.kpis.convertedLeads.toString() },
+                        ].map(({ label, value }) => (
+                            <div
+                                key={label}
+                                className="rounded-xl p-3 flex items-center justify-between"
+                                style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                            >
+                                <span className="text-[10px] font-medium" style={{ color: T.textMuted }}>{label}</span>
+                                <span className="text-sm font-bold" style={{ color: T.text }}>{value}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* ── Daily Timeline ── */}
+                    <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Evolução Diária</h3>
+                        {data.dailyTimeline.length > 0 ? (
+                            <div className="flex items-end gap-[2px] h-28">
+                                {data.dailyTimeline.slice(-30).map((day, i) => {
+                                    const max = Math.max(...data.dailyTimeline.map(d => d.views + d.clicks), 1)
+                                    const total = day.views + day.clicks
+                                    const pct = (total / max) * 100
+                                    return (
+                                        <div
+                                            key={i}
+                                            className="flex-1 rounded-t transition-all hover:opacity-80 relative group"
+                                            style={{
+                                                height: `${Math.max(pct, 3)}%`,
+                                                background: total > 0 ? (day.leads > 0 ? '#34d399' : T.accent) : T.hover,
+                                                minWidth: 3,
+                                            }}
+                                            title={`${day.day}: ${day.views} views, ${day.clicks} cliques, ${day.leads} leads`}
+                                        />
+                                    )
+                                })}
+                            </div>
+                        ) : (
+                            <p className="text-xs text-center py-8" style={{ color: T.textMuted }}>Sem dados no período</p>
+                        )}
+                        <div className="flex items-center gap-4 mt-3">
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-2.5 h-2.5 rounded-sm" style={{ background: T.accent }} />
+                                <span className="text-[10px]" style={{ color: T.textMuted }}>Views + Cliques</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-2.5 h-2.5 rounded-sm" style={{ background: '#34d399' }} />
+                                <span className="text-[10px]" style={{ color: T.textMuted }}>Dia com Lead</span>
+                            </div>
                         </div>
-                        <span className="text-sm font-bold text-imi-900">
-                          {item.device}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs font-bold text-imi-500">{item.percentage}%</span>
-                        <Badge variant="neutral" size="sm">{item.clicks.toLocaleString()}</Badge>
-                      </div>
                     </div>
-                    <div className="h-2 bg-imi-50 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-blue-500 transition-all duration-700 ease-smooth"
-                        style={{ width: `${item.percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </CardBody>
-        </Card>
-      </div>
 
-      {/* Timeline Chart */}
-      <Card>
-        <CardHeader title="Evolução dos Cliques" subtitle="Volume diário na última semana" />
-        <CardBody>
-          <div className="space-y-4">
-            {mockAnalytics.timeline.map((day) => {
-              const maxClicks = Math.max(...mockAnalytics.timeline.map((d) => d.clicks))
-              const percentage = (day.clicks / maxClicks) * 100
-              const date = new Date(day.date)
-              const dayName = date.toLocaleDateString('pt-BR', { weekday: 'short' })
+                    {/* ── Source + Device Row ── */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {/* By Source */}
+                        <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Tráfego por Origem</h3>
+                            <div className="space-y-3">
+                                {data.bySource.length > 0 ? data.bySource.map(item => {
+                                    const maxTotal = Math.max(...data.bySource.map(s => s.total), 1)
+                                    const pct = Math.round((item.total / maxTotal) * 100)
+                                    return (
+                                        <div key={item.name}>
+                                            <div className="flex justify-between mb-1">
+                                                <span className="text-xs font-semibold capitalize" style={{ color: T.text }}>
+                                                    {item.name}
+                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px]" style={{ color: T.textMuted }}>
+                                                        {item.sessions}s · {item.clicks}c · {item.leads}l
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="h-1.5 rounded-full" style={{ background: T.hover }}>
+                                                <div
+                                                    className="h-full rounded-full transition-all duration-700"
+                                                    style={{ width: `${pct}%`, background: T.accent }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                }) : (
+                                    <p className="text-xs text-center py-6" style={{ color: T.textMuted }}>Sem dados</p>
+                                )}
+                            </div>
+                        </div>
 
-              return (
-                <div key={day.date} className="flex items-center gap-4">
-                  <div className="w-20 text-xs font-black text-imi-400 uppercase tracking-widest">
-                    <div className="text-imi-900">{dayName}</div>
-                    <div className="text-[10px] font-medium opacity-60">
-                      {date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                        {/* By Device */}
+                        <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Sessões por Dispositivo</h3>
+                            <div className="space-y-3">
+                                {data.byDevice.length > 0 ? data.byDevice.map(item => {
+                                    const Icon = deviceIcons[item.name.toLowerCase()] || Monitor
+                                    return (
+                                        <div key={item.name}>
+                                            <div className="flex items-center justify-between mb-1">
+                                                <div className="flex items-center gap-2">
+                                                    <div
+                                                        className="w-7 h-7 rounded-lg flex items-center justify-center"
+                                                        style={{ background: T.accentBg }}
+                                                    >
+                                                        <Icon size={13} style={{ color: T.accent }} />
+                                                    </div>
+                                                    <span className="text-xs font-semibold capitalize" style={{ color: T.text }}>
+                                                        {item.name}
+                                                    </span>
+                                                </div>
+                                                <span
+                                                    className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                                                    style={{ background: T.accentBg, color: T.accent }}
+                                                >
+                                                    {item.value} ({item.percentage}%)
+                                                </span>
+                                            </div>
+                                            <div className="h-1.5 rounded-full" style={{ background: T.hover }}>
+                                                <div
+                                                    className="h-full rounded-full transition-all duration-700"
+                                                    style={{ width: `${item.percentage}%`, background: '#60a5fa' }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                }) : (
+                                    <p className="text-xs text-center py-6" style={{ color: T.textMuted }}>Sem dados</p>
+                                )}
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="h-10 bg-imi-50 rounded-xl overflow-hidden relative border border-imi-100/50">
-                      <div
-                        className="h-full bg-gradient-to-r from-accent-400 to-[#16162A] transition-all duration-700 ease-smooth flex items-center justify-end pr-4"
-                        style={{ width: `${percentage}%` }}
-                      >
-                        <span className="text-xs font-black text-white drop-shadow-sm">
-                          {day.clicks}
-                        </span>
-                      </div>
+
+                    {/* ── Top Pages + Properties Row ── */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {/* Top Pages */}
+                        <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Páginas Mais Visitadas</h3>
+                            <div className="space-y-2">
+                                {data.topPages.length > 0 ? data.topPages.slice(0, 8).map((p, i) => (
+                                    <div
+                                        key={i}
+                                        className="flex items-center justify-between py-2 px-3 rounded-lg"
+                                        style={{ background: i % 2 === 0 ? T.surface : 'transparent' }}
+                                    >
+                                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                                            <FileText size={12} style={{ color: T.textMuted }} />
+                                            <span className="text-xs font-medium truncate" style={{ color: T.text }}>
+                                                {p.page}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-3 shrink-0">
+                                            <span className="text-[10px] font-bold" style={{ color: T.accent }}>
+                                                {p.views}
+                                            </span>
+                                            <span className="text-[10px]" style={{ color: T.textMuted }}>
+                                                {formatDuration(p.avgDuration)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )) : (
+                                    <p className="text-xs text-center py-6" style={{ color: T.textMuted }}>Sem dados</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Top Properties */}
+                        <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Imóveis Mais Visualizados</h3>
+                            <div className="space-y-2">
+                                {data.topProperties.length > 0 ? data.topProperties.map((p, i) => (
+                                    <div
+                                        key={i}
+                                        className="flex items-center justify-between py-2.5 px-3 rounded-lg"
+                                        style={{ background: T.surface }}
+                                    >
+                                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                                            <div
+                                                className="w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold shrink-0"
+                                                style={{ background: T.accentBg, color: T.accent }}
+                                            >
+                                                #{i + 1}
+                                            </div>
+                                            <span className="text-xs font-semibold truncate" style={{ color: T.text }}>
+                                                {p.slug.replace(/-/g, ' ')}
+                                            </span>
+                                        </div>
+                                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ background: T.accentBg, color: T.accent }}>
+                                            {p.views} views
+                                        </span>
+                                    </div>
+                                )) : (
+                                    <p className="text-xs text-center py-6" style={{ color: T.textMuted }}>
+                                        Nenhum imóvel visualizado ainda
+                                    </p>
+                                )}
+                            </div>
+                        </div>
                     </div>
-                  </div>
+
+                    {/* ── Top Campaigns ── */}
+                    <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Top Campanhas</h3>
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                                        <th className="text-left py-2 px-3 text-[10px] font-bold uppercase" style={{ color: T.textMuted }}>Campanha</th>
+                                        <th className="text-center py-2 px-3 text-[10px] font-bold uppercase" style={{ color: T.textMuted }}>Cliques</th>
+                                        <th className="text-center py-2 px-3 text-[10px] font-bold uppercase" style={{ color: T.textMuted }}>Leads</th>
+                                        <th className="text-center py-2 px-3 text-[10px] font-bold uppercase" style={{ color: T.textMuted }}>Conv. %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.topCampaigns.length > 0 ? data.topCampaigns.map((c, i) => (
+                                        <tr key={i} style={{ borderBottom: `1px solid ${T.border}` }}>
+                                            <td className="py-2.5 px-3 text-xs font-medium" style={{ color: T.text }}>{c.campaign}</td>
+                                            <td className="py-2.5 px-3 text-center text-xs" style={{ color: T.textMuted }}>{c.clicks}</td>
+                                            <td className="py-2.5 px-3 text-center text-xs" style={{ color: T.textMuted }}>{c.leads}</td>
+                                            <td className="py-2.5 px-3 text-center">
+                                                <span
+                                                    className="px-2 py-0.5 rounded text-[10px] font-bold"
+                                                    style={{
+                                                        background: c.conversionRate >= 5 ? 'rgba(52,211,153,0.1)' : T.accentBg,
+                                                        color: c.conversionRate >= 5 ? '#34d399' : T.accent,
+                                                    }}
+                                                >
+                                                    {c.conversionRate}%
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    )) : (
+                                        <tr>
+                                            <td colSpan={4} className="py-6 text-center text-xs" style={{ color: T.textMuted }}>
+                                                Nenhuma campanha no período
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <div className="flex flex-col items-center justify-center h-64 gap-4">
+                    <BarChart3 size={36} className="opacity-30" style={{ color: T.textMuted }} />
+                    <p className="text-sm" style={{ color: T.textMuted }}>Erro ao carregar analytics</p>
+                    <button onClick={load} className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: T.accent }}>
+                        Tentar novamente
+                    </button>
                 </div>
-              )
-            })}
-          </div>
-        </CardBody>
-      </Card>
-
-      {/* Top Campaigns */}
-      <Card>
-        <CardHeader title="Performance por Campanha" subtitle="Métricas detalhadas dos links ativos" />
-        <CardBody>
-          <TableContainer>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Campanha Principal</TableHead>
-                  <TableHead>Cliques</TableHead>
-                  <TableHead>Conversões</TableHead>
-                  <TableHead>ROI Est.</TableHead>
-                  <TableHead className="text-right">Ação</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {mockAnalytics.topCampaigns.map((campaign) => (
-                  <TableRow key={campaign.id} className="hover:bg-gray-50">
-                    <TableCell>
-                      <span className="font-bold text-imi-900">{campaign.name}</span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="neutral" size="sm">{campaign.clicks.toLocaleString()}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="success" size="sm" dot>{campaign.conversions}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`text-sm font-black ${campaign.roi >= 5
-                          ? 'text-green-600'
-                          : campaign.roi >= 2
-                            ? 'text-yellow-600'
-                            : 'text-red-600'
-                          }`}
-                      >
-                        {campaign.roi}x
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        icon={<ExternalLink size={16} />}
-                        onClick={() => window.open(campaign.link, '_blank')}
-                      >
-                        Explorar
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </CardBody>
-      </Card>
-
-      {/* Top Locations */}
-      <Card className="bg-imi-50/50">
-        <CardHeader
-          title="Geolocalização de Acessos"
-          subtitle="Ranking de cidades com maior interesse"
-        />
-        <CardBody>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mockAnalytics.topLocations.map((location, index) => (
-              <div
-                key={`${location.city}-${location.state}`}
-                className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-imi-100 shadow-sm"
-              >
-                <div className="w-10 h-10 rounded-xl bg-accent-100 text-[#0F0F1E] flex items-center justify-center text-sm font-black">
-                  #{index + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-imi-900 truncate">
-                    {location.city}, {location.state}
-                  </p>
-                  <div className="flex items-center gap-1 text-xs text-imi-500 font-medium">
-                    <MapPin size={12} />
-                    {location.clicks.toLocaleString()} cliques
-                  </div>
-                </div>
-                <Badge variant="primary" size="sm">Forte</Badge>
-              </div>
-            ))}
-          </div>
-        </CardBody>
-      </Card>
-    </div>
-  )
+            )}
+        </div>
+    )
 }

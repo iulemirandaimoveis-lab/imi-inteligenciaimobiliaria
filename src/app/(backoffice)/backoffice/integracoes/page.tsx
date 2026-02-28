@@ -95,7 +95,7 @@ function ConfigModal({
         <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: 'rgba(0,0,0,0.70)', backdropFilter: 'blur(8px)' }}
+            style={{ background: 'var(--backdrop-bg, rgba(0,0,0,0.4))', backdropFilter: 'blur(8px)' }}
             onClick={e => e.target === e.currentTarget && onClose()}
         >
             <motion.div
@@ -222,7 +222,7 @@ function ConfigModal({
 
                     <button onClick={handleSave} disabled={saving}
                         className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
-                        style={{ background: '#1A1A2E' }}>
+                        style={{ background: '#3B82F6' }}>
                         {saving ? 'Salvando...' : 'Salvar Configuração'}
                     </button>
                 </div>
@@ -264,7 +264,7 @@ export default function IntegracoesPage() {
                 </motion.div>
 
                 {/* Status geral */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                         { label: 'Conectadas', value: conectadas, color: '#6BB87B' },
                         { label: 'Disponíveis', value: INTEGRACOES.length, color: '#7B9EC4' },
@@ -287,7 +287,7 @@ export default function IntegracoesPage() {
                         <button key={cat.key} onClick={() => setCategoriaAtiva(cat.key)}
                             className="px-3.5 h-9 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: categoriaAtiva === cat.key ? '#1A1A2E' : T.surface,
+                                background: categoriaAtiva === cat.key ? '#3B82F6' : T.surface,
                                 color: categoriaAtiva === cat.key ? 'white' : T.textDim,
                                 border: `1px solid ${categoriaAtiva === cat.key ? T.borderGold : T.border}`,
                             }}>
@@ -379,7 +379,7 @@ export default function IntegracoesPage() {
                         As configurações salvas aqui são armazenadas criptografadas no Supabase. Para produção, adicione também ao Vercel → Settings → Environment Variables.
                     </p>
                     <div className="rounded-xl p-3 font-mono text-[10px] leading-relaxed overflow-x-auto"
-                        style={{ background: '#0D0F14', border: `1px solid ${T.border}`, color: '#6BB87B' }}>
+                        style={{ background: 'var(--bo-surface)', border: `1px solid ${T.border}`, color: 'var(--s-done)' }}>
                         {[
                             '# Assinatura Digital',
                             'GOVBR_CLIENT_ID=',

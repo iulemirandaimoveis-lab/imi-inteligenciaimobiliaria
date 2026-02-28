@@ -10,7 +10,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    accent: '#3B82F6',
+    gold: '#3B82F6',
 }
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
@@ -21,15 +21,7 @@ const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon
     lancamento: { label: 'Lançamento', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Tag },
 }
 
-// Fallback mock
-const fallbackIMOVEIS = [
-    { id: '1', codigo: 'IMI-2026-001', status: 'disponivel', destaque: true, tipo: 'Apartamento', titulo: 'Apartamento Premium com Vista Mar', bairro: 'Boa Viagem', area: 120, quartos: 3, banheiros: 3, vagas: 2, preco: 950000, construtora: 'Moura Dubeux', visitas: 234 },
-    { id: '2', codigo: 'IMI-2026-002', status: 'disponivel', destaque: false, tipo: 'Casa', titulo: 'Casa em Condomínio de Alto Padrão', bairro: 'Setúbal', area: 450, quartos: 5, banheiros: 6, vagas: 4, preco: 3500000, construtora: null, visitas: 89 },
-    { id: '3', codigo: 'IMI-2026-003', status: 'em_negociacao', destaque: true, tipo: 'Cobertura', titulo: 'Cobertura Duplex com Piscina Privativa', bairro: 'Boa Viagem', area: 320, quartos: 4, banheiros: 5, vagas: 3, preco: 2800000, construtora: 'Queiroz Galvão', visitas: 178 },
-    { id: '4', codigo: 'IMI-2026-004', status: 'disponivel', destaque: false, tipo: 'Studio', titulo: 'Studio Moderno — Boa Viagem', bairro: 'Boa Viagem', area: 42, quartos: 1, banheiros: 1, vagas: 1, preco: 2800, construtora: 'JHSF', visitas: 312 },
-    { id: '5', codigo: 'IMI-2026-005', status: 'lancamento', destaque: true, tipo: 'Empreendimento', titulo: 'Reserva Atlantis — Pré-lançamento', bairro: 'Ponta de Pedra', area: 120000, quartos: 0, banheiros: 0, vagas: 0, preco: 480000000, construtora: 'IMI Incorporações', visitas: 1240 },
-    { id: '6', codigo: 'IMI-2026-006', status: 'reservado', destaque: false, tipo: 'Sala Comercial', titulo: 'Sala Comercial — Centro Empresarial', bairro: 'Boa Viagem', area: 65, quartos: 0, banheiros: 2, vagas: 2, preco: 580000, construtora: 'Inpar', visitas: 67 },
-]
+// No fallback mock — real Supabase data only
 
 interface Imovel {
     id: any;
@@ -59,6 +51,7 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
     const s = STATUS_MAP[imovel.status] || STATUS_MAP.disponivel
     const SIcon = s.icon
     return (
+        <Link href={`/backoffice/imoveis/${imovel.id}`}>
         <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -74,20 +67,23 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                     ; (e.currentTarget as HTMLElement).style.background = T.surface
             }}
         >
-            {/* Image placeholder */}
+            {/* Image */}
             <div
                 className="relative h-36 flex items-end p-3"
                 style={{
-                    background: `linear-gradient(160deg, #1A1E2A 0%, #0F1117 100%)`,
+                    background: imovel.image ? undefined : `linear-gradient(160deg, var(--bo-elevated) 0%, var(--bo-surface) 100%)`,
                     borderBottom: `1px solid ${T.border}`,
                 }}
             >
-                {/* Abstract architectural lines decoration */}
-                <div className="absolute inset-0 overflow-hidden opacity-10">
-                    <div className="absolute top-4 left-4 w-16 h-16 border border-[#3B82F6] rounded-lg rotate-12" />
-                    <div className="absolute bottom-6 right-6 w-24 h-24 border border-[#3B82F6] rounded-xl -rotate-6" />
-                    <div className="absolute top-8 right-12 w-8 h-8 bg-[#1A1A2E] rounded opacity-30" />
-                </div>
+                {imovel.image ? (
+                    <img src={imovel.image} alt={imovel.titulo} className="absolute inset-0 w-full h-full object-cover" />
+                ) : (
+                    <div className="absolute inset-0 overflow-hidden opacity-10">
+                        <div className="absolute top-4 left-4 w-16 h-16 border border-[#3B82F6] rounded-lg rotate-12" />
+                        <div className="absolute bottom-6 right-6 w-24 h-24 border border-[#3B82F6] rounded-xl -rotate-6" />
+                        <div className="absolute top-8 right-12 w-8 h-8 bg-[#1A1A2E] rounded opacity-30" />
+                    </div>
+                )}
 
                 <div className="relative flex items-end justify-between w-full">
                     <span
@@ -144,6 +140,7 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                 </div>
             </div>
         </motion.div>
+        </Link>
     )
 }
 
@@ -162,32 +159,35 @@ export default function ImoveisPage() {
                 if (res.ok) {
                     const data = await res.json()
                     if (Array.isArray(data) && data.length > 0) {
-                        const formatted = data.map((d: any) => ({
-                            id: d.id,
-                            codigo: `IMI-${String(d.id).padStart(3, '0')}`,
-                            status: d.status || 'disponivel',
-                            destaque: !!d.is_highlighted,
-                            tipo: d.type || d.tipo || 'Imóvel',
-                            titulo: d.name || 'Empreendimento',
-                            bairro: d.neighborhood || d.region || 'Localização',
-                            area: d.private_area || d.area_from || 0,
-                            quartos: d.bedrooms || 0,
-                            banheiros: d.bathrooms || 0,
-                            vagas: d.parking_spaces || 0,
-                            preco: d.price_min || d.price_from || 0,
-                            construtora: d.developer || null,
-                            visitas: d.views || 0,
-                        }))
+                        const formatted = data
+                            .filter((d: any) => d.status !== 'arquivado' && d.status_comercial !== 'archived')
+                            .map((d: any) => ({
+                                id: d.id,
+                                codigo: d.slug ? `IMI-${d.slug.substring(0, 8).toUpperCase()}` : `IMI-${String(d.id).substring(0, 8)}`,
+                                status: d.status || 'disponivel',
+                                destaque: !!d.is_highlighted,
+                                tipo: d.type || d.tipo || d.property_type || 'Imóvel',
+                                titulo: d.name || 'Empreendimento',
+                                bairro: d.neighborhood || d.region || 'Localização',
+                                area: d.private_area || d.area_from || 0,
+                                quartos: d.bedrooms || 0,
+                                banheiros: d.bathrooms || 0,
+                                vagas: d.parking_spaces || 0,
+                                preco: d.price_min || d.price_from || 0,
+                                construtora: d.developer || d.developers?.name || null,
+                                visitas: d.views || 0,
+                                image: d.image || (Array.isArray(d.gallery_images) && d.gallery_images[0]) || null,
+                            }))
                         setImoveis(formatted)
+                        setLoading(false)
                         return
                     }
                 }
             } catch (err) {
                 console.error(err)
-            } finally {
-                setLoading(false)
             }
-            setImoveis(fallbackIMOVEIS)
+            setImoveis([])
+            setLoading(false)
         }
         fetchProperties()
     }, [])
@@ -204,7 +204,39 @@ export default function ImoveisPage() {
         return matchSearch && matchFilter
     })
 
-    if (loading) return <div className="p-10 text-center" style={{ color: T.textSub }}>Carregando imóveis...</div>
+    if (loading) return (
+        <div className="space-y-5 max-w-7xl mx-auto">
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <div className="skeleton h-6 w-56 mb-2" />
+                    <div className="skeleton h-4 w-72" />
+                </div>
+                <div className="skeleton h-10 w-44 rounded-xl" />
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 100}ms` }}>
+                        <div className="skeleton w-9 h-9 rounded-xl mb-3" />
+                        <div className="skeleton lg h-5 w-16 mb-2" />
+                        <div className="skeleton h-3 w-24" />
+                    </div>
+                ))}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className="skeleton-card overflow-hidden" style={{ animationDelay: `${i * 60}ms` }}>
+                        <div className="skeleton h-36 w-full rounded-none" />
+                        <div className="p-4 space-y-2">
+                            <div className="skeleton h-3 w-20" />
+                            <div className="skeleton h-4 w-40" />
+                            <div className="skeleton h-3 w-28" />
+                            <div className="skeleton lg h-5 w-24 mt-2" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
 
     const STATS = [
         { label: 'VGV Global (Est.)', value: 'R$ 1.2B', icon: DollarSign },
@@ -229,7 +261,7 @@ export default function ImoveisPage() {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/imoveis/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#1A1A2E', boxShadow: '0 2px 12px rgba(26,26,46,0.30)' }}
+                    style={{ background: '#3B82F6', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Novo Empreendimento
                 </motion.button>
@@ -243,7 +275,7 @@ export default function ImoveisPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl p-4"
+                        className="stat-card rounded-2xl p-4"
                         style={{
                             background: T.elevated,
                             border: `1px solid ${T.borderGold}`,
@@ -279,14 +311,26 @@ export default function ImoveisPage() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        {/* Status filter */}
+                        {/* Status filter — mobile dropdown */}
+                        <select
+                            value={filter}
+                            onChange={e => setFilter(e.target.value)}
+                            className="sm:hidden h-10 px-3 rounded-xl text-xs font-semibold outline-none"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                        >
+                            <option value="all">Todos</option>
+                            <option value="disponivel">Disponível</option>
+                            <option value="em_negociacao">Negociação</option>
+                            <option value="lancamento">Lançamento</option>
+                        </select>
+                        {/* Status filter — desktop buttons */}
                         {['all', 'disponivel', 'em_negociacao', 'lancamento'].map(s => (
                             <button
                                 key={s}
                                 onClick={() => setFilter(s)}
                                 className="px-3 h-10 rounded-xl text-xs font-semibold transition-all hidden sm:block"
                                 style={{
-                                    background: filter === s ? '#1A1A2E' : T.elevated,
+                                    background: filter === s ? '#3B82F6' : T.elevated,
                                     color: filter === s ? 'white' : T.textDim,
                                     border: `1px solid ${filter === s ? T.borderGold : T.border}`,
                                 }}
@@ -303,7 +347,7 @@ export default function ImoveisPage() {
                                     onClick={() => setView(v)}
                                     className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
                                     style={{
-                                        background: view === v ? '#1A1A2E' : T.elevated,
+                                        background: view === v ? '#3B82F6' : T.elevated,
                                         border: `1px solid ${view === v ? T.borderGold : T.border}`,
                                     }}
                                 >
@@ -333,8 +377,8 @@ export default function ImoveisPage() {
                     {filtered.map((im, i) => {
                         const s = STATUS_MAP[im.status] || STATUS_MAP.disponivel
                         return (
+                            <Link key={im.id} href={`/backoffice/imoveis/${im.id}`}>
                             <motion.div
-                                key={im.id}
                                 initial={{ opacity: 0, x: -8 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.03 }}
@@ -362,6 +406,7 @@ export default function ImoveisPage() {
                                     </p>
                                 </div>
                             </motion.div>
+                            </Link>
                         )
                     })}
                 </div>

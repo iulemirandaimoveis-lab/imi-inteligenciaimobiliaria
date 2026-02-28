@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Development } from '../types/development';
-import { formatBRL } from '../data/developments';
+import { formatCurrency as formatBRL } from '@/lib/utils';
 import Button from '@/components/ui/Button';
 import { MessageCircle, Info, Loader2 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';

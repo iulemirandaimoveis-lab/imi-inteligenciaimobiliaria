@@ -1,3 +1,4 @@
+import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Inter } from 'next/font/google';
 // DEPLOY_VERSION: v1.6.4 - RESTORE APPROVED STATE
 import './globals.css';
@@ -16,7 +17,13 @@ const inter = Inter({
     display: 'swap',
 });
 
-export const metadata = {
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    viewportFit: 'cover',
+};
+
+export const metadata: Metadata = {
     title: 'IMI – Inteligência Imobiliária',
     description: 'Avaliações técnicas NBR 14653, consultoria estratégica e corretagem premium',
 };
@@ -30,7 +37,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="pt-BR" suppressHydrationWarning className={`${playfair.variable} ${inter.variable}`}>
-            <body className={`${inter.className} min-h-screen bg-slate-50 relative dark:bg-background-dark`}>
+            <body className={`${inter.className} min-h-screen bg-[#0D0F14] relative`}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="dark"

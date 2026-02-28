@@ -147,7 +147,7 @@ export default function MarketIntelligencePage() {
                                             stroke="#23232D"
                                             strokeWidth={4}
                                             dot={{ r: 6, fill: '#23232D', strokeWidth: 2, stroke: '#fff' }}
-                                            activeDot={{ r: 8, fill: '#D4AF37' }}
+                                            activeDot={{ r: 8, fill: '#3B82F6' }}
                                         />
                                     </LineChart>
                                 </ResponsiveContainer>
@@ -181,7 +181,7 @@ export default function MarketIntelligencePage() {
                                         <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
                                         <Bar dataKey="value" fill="#23232D" radius={[0, 8, 8, 0]} barSize={32}>
                                             {neighborhoodData.map((_entry, index) => (
-                                                <rect key={index} fill={index === 0 ? '#D4AF37' : '#23232D'} />
+                                                <rect key={index} fill={index === 0 ? '#3B82F6' : '#23232D'} />
                                             ))}
                                         </Bar>
                                     </BarChart>

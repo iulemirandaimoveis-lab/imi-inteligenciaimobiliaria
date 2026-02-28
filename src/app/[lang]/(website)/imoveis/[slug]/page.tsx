@@ -43,7 +43,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
             <div className="container-custom py-16 md:py-24">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-20">
-                    <div className="lg:col-span-8 space-y-24">
+                    <div className="lg:col-span-8 space-y-16 md:space-y-24">
                         <DevelopmentDetails development={development} />
                         <DevelopmentGallery development={development} />
                         <DevelopmentUnits propertyId={development.id} propertyName={development.name} />

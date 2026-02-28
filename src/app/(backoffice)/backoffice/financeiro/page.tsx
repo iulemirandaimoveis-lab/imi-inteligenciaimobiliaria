@@ -1,328 +1,339 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import {
-    TrendingUp,
-    TrendingDown,
-    DollarSign,
-    Calendar,
-    Download,
-    ArrowUpCircle,
-    ArrowDownCircle,
-    BarChart3,
-    Filter,
+    TrendingUp, TrendingDown, DollarSign, Plus, Loader2,
+    ArrowUpCircle, ArrowDownCircle, Download, X, CheckCircle,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
-// ⚠️ NÃO MODIFICAR - Dados mockados
-const fluxoMensal = [
-    { mes: 'Set/25', entradas: 380000, saidas: 220000, saldo: 160000 },
-    { mes: 'Out/25', entradas: 420000, saidas: 195000, saldo: 225000 },
-    { mes: 'Nov/25', entradas: 310000, saidas: 240000, saldo: 70000 },
-    { mes: 'Dez/25', entradas: 580000, saidas: 260000, saldo: 320000 },
-    { mes: 'Jan/26', entradas: 490000, saidas: 210000, saldo: 280000 },
-    { mes: 'Fev/26', entradas: 345000, saidas: 185000, saldo: 160000 },
+const T = {
+    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    gold: '#3B82F6',
+}
+
+interface Transaction {
+    id: string
+    type: 'receita' | 'despesa'
+    category: string
+    description: string
+    amount: number
+    due_date: string | null
+    paid_date: string | null
+    status: string
+    payment_method: string | null
+    notes: string | null
+    created_at: string
+}
+
+const CATEGORIAS = [
+    'Comissão', 'Honorário', 'Consultoria', 'Marketing',
+    'Pessoal', 'Infraestrutura', 'Tecnologia', 'Jurídico', 'Outros'
 ]
 
-const lancamentos = [
-    {
-        id: 1,
-        data: '2026-02-18',
-        descricao: 'Comissão Venda - Reserva Atlantis Apto 905',
-        categoria: 'Comissão',
-        tipo: 'entrada',
-        valor: 48000,
-        status: 'confirmado',
-    },
-    {
-        id: 2,
-        data: '2026-02-17',
-        descricao: 'Honorário Avaliação - Villa Jardins Unidade 304',
-        categoria: 'Honorário',
-        tipo: 'entrada',
-        valor: 12500,
-        status: 'confirmado',
-    },
-    {
-        id: 3,
-        data: '2026-02-16',
-        descricao: 'Folha de Pagamento - Fevereiro 2026',
-        categoria: 'Pessoal',
-        tipo: 'saida',
-        valor: 45000,
-        status: 'confirmado',
-    },
-    {
-        id: 4,
-        data: '2026-02-15',
-        descricao: 'Comissão Venda - Ocean Blue Cobertura',
-        categoria: 'Comissão',
-        tipo: 'entrada',
-        valor: 72000,
-        status: 'confirmado',
-    },
-    {
-        id: 5,
-        data: '2026-02-14',
-        descricao: 'Meta Ads - Campanha Reserva Atlantis',
-        categoria: 'Marketing',
-        tipo: 'saida',
-        valor: 8500,
-        status: 'confirmado',
-    },
-    {
-        id: 6,
-        data: '2026-02-13',
-        descricao: 'Aluguel Escritório - Boa Viagem',
-        categoria: 'Infraestrutura',
-        tipo: 'saida',
-        valor: 7200,
-        status: 'confirmado',
-    },
-    {
-        id: 7,
-        data: '2026-02-12',
-        descricao: 'Honorário Consultoria - Fundo Soberano Qatar',
-        categoria: 'Consultoria',
-        tipo: 'entrada',
-        valor: 95000,
+const formatCurrency = (v: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
+
+export default function FinanceiroPage() {
+    const [transactions, setTransactions] = useState<Transaction[]>([])
+    const [loading, setLoading] = useState(true)
+    const [tipoFilter, setTipoFilter] = useState<'todos' | 'receita' | 'despesa'>('todos')
+    const [showForm, setShowForm] = useState(false)
+    const [saving, setSaving] = useState(false)
+
+    // Form state
+    const [form, setForm] = useState({
+        type: 'receita' as 'receita' | 'despesa',
+        category: 'Comissão',
+        description: '',
+        amount: '',
+        due_date: '',
         status: 'pendente',
-    },
-    {
-        id: 8,
-        data: '2026-02-10',
-        descricao: 'Ferramentas SaaS (Supabase, Vercel, Claude API)',
-        categoria: 'Tecnologia',
-        tipo: 'saida',
-        valor: 3200,
-        status: 'confirmado',
-    },
-    {
-        id: 9,
-        data: '2026-02-08',
-        descricao: 'Comissão Venda - Smart Pina Unidade 12B',
-        categoria: 'Comissão',
-        tipo: 'entrada',
-        valor: 31500,
-        status: 'confirmado',
-    },
-    {
-        id: 10,
-        data: '2026-02-06',
-        descricao: 'Assessoria Jurídica - Contratos Fevereiro',
-        categoria: 'Jurídico',
-        tipo: 'saida',
-        valor: 6800,
-        status: 'confirmado',
-    },
-]
+        payment_method: '',
+        notes: '',
+    })
 
-const maxBarValue = Math.max(...fluxoMensal.map(m => Math.max(m.entradas, m.saidas)))
+    const fetchTransactions = async () => {
+        try {
+            const res = await fetch('/api/financeiro')
+            if (res.ok) {
+                const data = await res.json()
+                setTransactions(data)
+            }
+        } catch (err) {
+            console.error(err)
+        } finally {
+            setLoading(false)
+        }
+    }
 
-export default function FluxoCaixaPage() {
-    const [tipoFilter, setTipoFilter] = useState<'todos' | 'entrada' | 'saida'>('todos')
-    const [periodoFilter, setPeriodoFilter] = useState('fev26')
+    useEffect(() => { fetchTransactions() }, [])
 
-    const filtered = lancamentos.filter(l => tipoFilter === 'todos' || l.tipo === tipoFilter)
+    const handleSubmit = async () => {
+        if (!form.description || !form.amount) {
+            toast.error('Descrição e valor são obrigatórios')
+            return
+        }
+        setSaving(true)
+        try {
+            const res = await fetch('/api/financeiro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...form,
+                    amount: parseFloat(form.amount),
+                    due_date: form.due_date || null,
+                }),
+            })
+            if (res.ok) {
+                toast.success('Lançamento criado!')
+                setShowForm(false)
+                setForm({ type: 'receita', category: 'Comissão', description: '', amount: '', due_date: '', status: 'pendente', payment_method: '', notes: '' })
+                fetchTransactions()
+            } else {
+                const data = await res.json()
+                toast.error(data.error || 'Erro ao salvar')
+            }
+        } catch { toast.error('Erro de conexão') }
+        finally { setSaving(false) }
+    }
 
-    const totalEntradas = lancamentos.filter(l => l.tipo === 'entrada').reduce((s, l) => s + l.valor, 0)
-    const totalSaidas = lancamentos.filter(l => l.tipo === 'saida').reduce((s, l) => s + l.valor, 0)
-    const saldoLiquido = totalEntradas - totalSaidas
-    const saldoAnterior = 280000 // Janeiro
+    const markPaid = async (id: string) => {
+        try {
+            const res = await fetch('/api/financeiro', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status: 'pago', paid_date: new Date().toISOString().split('T')[0] }),
+            })
+            if (res.ok) {
+                toast.success('Marcado como pago')
+                fetchTransactions()
+            }
+        } catch { toast.error('Erro ao atualizar') }
+    }
 
-    const formatCurrency = (v: number) =>
-        v >= 1000000
-            ? `R$ ${(v / 1000000).toFixed(2)}M`
-            : `R$ ${v.toLocaleString('pt-BR')}`
+    const filtered = transactions.filter(t =>
+        t.status !== 'cancelado' && (tipoFilter === 'todos' || t.type === tipoFilter)
+    )
+
+    const totalReceitas = transactions.filter(t => t.type === 'receita' && t.status !== 'cancelado').reduce((s, t) => s + Number(t.amount), 0)
+    const totalDespesas = transactions.filter(t => t.type === 'despesa' && t.status !== 'cancelado').reduce((s, t) => s + Number(t.amount), 0)
+    const saldo = totalReceitas - totalDespesas
+    const pendentes = transactions.filter(t => t.status === 'pendente').length
+
+    if (loading) {
+        return <div className="flex items-center justify-center h-64"><Loader2 size={24} className="animate-spin" style={{ color: T.gold }} /></div>
+    }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Fluxo de Caixa</h1>
-                    <p className="text-sm text-gray-600 mt-1">Entradas, saídas e saldo operacional</p>
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Financeiro</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>Gestão de receitas, despesas e fluxo de caixa</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <select
-                        value={periodoFilter}
-                        onChange={e => setPeriodoFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
-                    >
-                        <option value="jan26">Janeiro 2026</option>
-                        <option value="fev26">Fevereiro 2026</option>
-                        <option value="mar26">Março 2026</option>
-                    </select>
-                    <button className="flex items-center gap-2 h-11 px-5 border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
-                        <Download size={16} />
-                        Exportar
-                    </button>
-                </div>
-            </div>
+                <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowForm(true)}
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: T.gold, boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                    <Plus size={16} /> Novo Lançamento
+                </motion.button>
+            </motion.div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl p-5 border">
-                    <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Saldo Anterior</p>
-                        <DollarSign size={18} className="text-gray-400" />
-                    </div>
-                    <p className="text-2xl font-bold text-gray-900">{formatCurrency(saldoAnterior)}</p>
-                    <p className="text-xs text-gray-500 mt-1">Jan/26</p>
-                </div>
-                <div className="bg-white rounded-xl p-5 border">
-                    <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Entradas</p>
-                        <ArrowUpCircle size={18} className="text-green-500" />
-                    </div>
-                    <p className="text-2xl font-bold text-green-700">{formatCurrency(totalEntradas)}</p>
-                    <p className="text-xs text-gray-500 mt-1">{lancamentos.filter(l => l.tipo === 'entrada').length} lançamentos</p>
-                </div>
-                <div className="bg-white rounded-xl p-5 border">
-                    <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Saídas</p>
-                        <ArrowDownCircle size={18} className="text-red-500" />
-                    </div>
-                    <p className="text-2xl font-bold text-red-700">{formatCurrency(totalSaidas)}</p>
-                    <p className="text-xs text-gray-500 mt-1">{lancamentos.filter(l => l.tipo === 'saida').length} lançamentos</p>
-                </div>
-                <div className={`rounded-xl p-5 border ${saldoLiquido >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-                    <div className="flex items-center justify-between mb-3">
-                        <p className={`text-xs font-medium uppercase tracking-wider ${saldoLiquido >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            Saldo Período
-                        </p>
-                        {saldoLiquido >= 0 ? <TrendingUp size={18} className="text-green-500" /> : <TrendingDown size={18} className="text-red-500" />}
-                    </div>
-                    <p className={`text-2xl font-bold ${saldoLiquido >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                        {formatCurrency(saldoLiquido)}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                        Saldo final: {formatCurrency(saldoAnterior + saldoLiquido)}
-                    </p>
-                </div>
-            </div>
-
-            {/* Gráfico de Barras (CSS puro) */}
-            <div className="bg-white rounded-2xl p-6 border">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-lg font-bold text-gray-900">Evolução 6 Meses</h2>
-                    <div className="flex items-center gap-4 text-xs">
-                        <span className="flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded bg-green-500 inline-block" />
-                            Entradas
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded bg-red-400 inline-block" />
-                            Saídas
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded bg-[#1A1A2E] inline-block" />
-                            Saldo
-                        </span>
-                    </div>
-                </div>
-                <div className="flex items-end gap-4 h-48">
-                    {fluxoMensal.map((m) => (
-                        <div key={m.mes} className="flex-1 flex flex-col items-center gap-1">
-                            <div className="w-full flex items-end gap-1 h-40">
-                                {/* Entradas */}
-                                <div className="flex-1 flex flex-col justify-end">
-                                    <div
-                                        className="bg-green-500 rounded-t-sm transition-all"
-                                        style={{ height: `${(m.entradas / maxBarValue) * 100}%` }}
-                                    />
-                                </div>
-                                {/* Saídas */}
-                                <div className="flex-1 flex flex-col justify-end">
-                                    <div
-                                        className="bg-red-400 rounded-t-sm transition-all"
-                                        style={{ height: `${(m.saidas / maxBarValue) * 100}%` }}
-                                    />
-                                </div>
-                                {/* Saldo */}
-                                <div className="flex-1 flex flex-col justify-end">
-                                    <div
-                                        className={`rounded-t-sm transition-all ${m.saldo >= 0 ? 'bg-[#1A1A2E]' : 'bg-red-600'}`}
-                                        style={{ height: `${(Math.abs(m.saldo) / maxBarValue) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-                            <span className="text-xs text-gray-500 font-medium">{m.mes}</span>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                    { label: 'Receitas', value: totalReceitas, color: '#6BB87B', icon: ArrowUpCircle },
+                    { label: 'Despesas', value: totalDespesas, color: '#E57373', icon: ArrowDownCircle },
+                    { label: 'Saldo', value: saldo, color: saldo >= 0 ? '#6BB87B' : '#E57373', icon: saldo >= 0 ? TrendingUp : TrendingDown },
+                    { label: 'Pendentes', value: pendentes, color: '#3B82F6', icon: DollarSign, isCount: true },
+                ].map((kpi, i) => (
+                    <motion.div key={kpi.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                        className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
+                        <div className="flex items-center justify-between mb-2">
+                            <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: kpi.color }}>{kpi.label}</p>
+                            <kpi.icon size={16} style={{ color: kpi.color }} />
                         </div>
-                    ))}
-                </div>
+                        <p className="text-xl font-bold" style={{ color: T.text }}>
+                            {(kpi as any).isCount ? kpi.value : formatCurrency(kpi.value as number)}
+                        </p>
+                    </motion.div>
+                ))}
             </div>
 
-            {/* Lançamentos */}
-            <div className="bg-white rounded-2xl border overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-gray-900">Lançamentos</h2>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setTipoFilter('todos')}
-                            className={`px-4 h-9 rounded-lg text-sm font-medium transition-colors ${tipoFilter === 'todos' ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
-                        >
-                            Todos
-                        </button>
-                        <button
-                            onClick={() => setTipoFilter('entrada')}
-                            className={`px-4 h-9 rounded-lg text-sm font-medium transition-colors ${tipoFilter === 'entrada' ? 'bg-green-600 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
-                        >
-                            Entradas
-                        </button>
-                        <button
-                            onClick={() => setTipoFilter('saida')}
-                            className={`px-4 h-9 rounded-lg text-sm font-medium transition-colors ${tipoFilter === 'saida' ? 'bg-red-600 text-white' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
-                        >
-                            Saídas
-                        </button>
+            {/* Filter + Table */}
+            <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <h2 className="text-sm font-bold" style={{ color: T.text }}>Lançamentos ({filtered.length})</h2>
+                    <div className="flex items-center gap-1.5 overflow-x-auto">
+                        {(['todos', 'receita', 'despesa'] as const).map(f => (
+                            <button key={f} onClick={() => setTipoFilter(f)}
+                                className="px-3.5 h-9 rounded-xl text-xs font-semibold transition-all flex-shrink-0"
+                                style={{
+                                    background: tipoFilter === f ? (f === 'receita' ? 'rgba(107,184,123,0.15)' : f === 'despesa' ? 'rgba(229,115,115,0.15)' : T.gold) : T.elevated,
+                                    color: tipoFilter === f ? (f === 'receita' ? '#6BB87B' : f === 'despesa' ? '#E57373' : 'white') : T.textDim,
+                                    border: `1px solid ${tipoFilter === f ? T.borderGold : T.border}`,
+                                }}>
+                                {f === 'todos' ? 'Todos' : f === 'receita' ? 'Receitas' : 'Despesas'}
+                            </button>
+                        ))}
                     </div>
                 </div>
-                <table className="w-full">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Data</th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Descrição</th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Categoria</th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {filtered.map((l) => (
-                            <tr key={l.id} className="hover:bg-gray-50 transition-colors">
-                                <td className="px-6 py-4 text-sm text-gray-600">
-                                    {new Date(l.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-3">
-                                        {l.tipo === 'entrada'
-                                            ? <ArrowUpCircle size={16} className="text-green-500 flex-shrink-0" />
-                                            : <ArrowDownCircle size={16} className="text-red-500 flex-shrink-0" />
-                                        }
-                                        <span className="text-sm text-gray-900">{l.descricao}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">
-                                        {l.categoria}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className={`px-2 py-1 rounded text-xs font-medium ${l.status === 'confirmado'
-                                            ? 'bg-green-50 text-green-700'
-                                            : 'bg-orange-50 text-orange-700'
-                                        }`}>
-                                        {l.status === 'confirmado' ? 'Confirmado' : 'Pendente'}
-                                    </span>
-                                </td>
-                                <td className={`px-6 py-4 text-right text-sm font-bold ${l.tipo === 'entrada' ? 'text-green-700' : 'text-red-700'}`}>
-                                    {l.tipo === 'saida' ? '-' : '+'}{formatCurrency(l.valor)}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+
+                {filtered.length === 0 ? (
+                    <div className="p-12 text-center">
+                        <DollarSign size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textDim }} />
+                        <p className="text-sm font-semibold" style={{ color: T.textSub }}>Nenhum lançamento encontrado</p>
+                        <p className="text-xs mt-1" style={{ color: T.textDim }}>Clique em "Novo Lançamento" para começar</p>
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Data</th>
+                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Descrição</th>
+                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider hidden sm:table-cell" style={{ color: T.textDim }}>Categoria</th>
+                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Status</th>
+                                    <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Valor</th>
+                                    <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filtered.map(t => (
+                                    <tr key={t.id} className="transition-colors" style={{ borderBottom: `1px solid ${T.border}` }}
+                                        onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
+                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                                        <td className="px-4 py-3 text-xs" style={{ color: T.textSub }}>
+                                            {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : '—'}
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex items-center gap-2">
+                                                {t.type === 'receita'
+                                                    ? <ArrowUpCircle size={14} className="flex-shrink-0" style={{ color: '#6BB87B' }} />
+                                                    : <ArrowDownCircle size={14} className="flex-shrink-0" style={{ color: '#E57373' }} />}
+                                                <span className="text-xs font-medium truncate max-w-[200px]" style={{ color: T.text }}>{t.description}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 hidden sm:table-cell">
+                                            <span className="text-[10px] font-semibold px-2 py-1 rounded-lg" style={{ background: T.elevated, color: T.textSub }}>{t.category}</span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{
+                                                color: t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#3B82F6',
+                                                background: t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(26,26,46,0.12)',
+                                            }}>
+                                                {t.status === 'pago' ? 'Pago' : t.status === 'atrasado' ? 'Atrasado' : 'Pendente'}
+                                            </span>
+                                        </td>
+                                        <td className={`px-4 py-3 text-right text-xs font-bold`} style={{ color: t.type === 'receita' ? '#6BB87B' : '#E57373' }}>
+                                            {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
+                                        </td>
+                                        <td className="px-4 py-3 text-right">
+                                            {t.status === 'pendente' && (
+                                                <button onClick={() => markPaid(t.id)} className="text-[10px] font-semibold px-2 py-1 rounded-lg transition-all"
+                                                    style={{ color: '#6BB87B', background: 'rgba(107,184,123,0.08)' }}>
+                                                    <CheckCircle size={12} className="inline mr-1" />Pagar
+                                                </button>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
+
+            {/* New Transaction Modal */}
+            {showForm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)' }}>
+                    <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
+                        className="w-full max-w-lg rounded-2xl p-6 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-bold" style={{ color: T.text }}>Novo Lançamento</h3>
+                            <button onClick={() => setShowForm(false)}><X size={18} style={{ color: T.textDim }} /></button>
+                        </div>
+
+                        {/* Type toggle */}
+                        <div className="flex gap-2">
+                            {(['receita', 'despesa'] as const).map(t => (
+                                <button key={t} onClick={() => setForm(f => ({ ...f, type: t }))}
+                                    className="flex-1 h-10 rounded-xl text-xs font-semibold transition-all"
+                                    style={{
+                                        background: form.type === t ? (t === 'receita' ? 'rgba(107,184,123,0.15)' : 'rgba(229,115,115,0.15)') : T.elevated,
+                                        color: form.type === t ? (t === 'receita' ? '#6BB87B' : '#E57373') : T.textDim,
+                                        border: `1px solid ${form.type === t ? T.borderGold : T.border}`,
+                                    }}>
+                                    {t === 'receita' ? '↑ Receita' : '↓ Despesa'}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="sm:col-span-2">
+                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Descrição *</label>
+                                <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                                    placeholder="Ex: Comissão Venda Apt 905" className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
+                            </div>
+                            <div>
+                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Valor (R$) *</label>
+                                <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
+                                    placeholder="0.00" className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
+                            </div>
+                            <div>
+                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Categoria</label>
+                                <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+                                    className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
+                                    {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Data de Vencimento</label>
+                                <input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))}
+                                    className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
+                            </div>
+                            <div>
+                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Método de Pagamento</label>
+                                <select value={form.payment_method} onChange={e => setForm(f => ({ ...f, payment_method: e.target.value }))}
+                                    className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
+                                    <option value="">Não informado</option>
+                                    <option value="pix">PIX</option>
+                                    <option value="transferencia">Transferência</option>
+                                    <option value="boleto">Boleto</option>
+                                    <option value="cartao">Cartão</option>
+                                    <option value="dinheiro">Dinheiro</option>
+                                </select>
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Observações</label>
+                                <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+                                    rows={2} placeholder="Notas adicionais..." className="w-full px-3 py-2 rounded-xl text-sm outline-none resize-none"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3 pt-2">
+                            <button onClick={() => setShowForm(false)} className="flex-1 h-10 rounded-xl text-sm font-semibold"
+                                style={{ background: T.elevated, color: T.textSub, border: `1px solid ${T.border}` }}>Cancelar</button>
+                            <button onClick={handleSubmit} disabled={saving}
+                                className="flex-1 h-10 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2"
+                                style={{ background: T.gold }}>
+                                {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+                                {saving ? 'Salvando...' : 'Salvar'}
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
         </div>
     )
 }

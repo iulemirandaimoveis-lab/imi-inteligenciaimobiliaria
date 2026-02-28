@@ -326,14 +326,14 @@ export default function ConteudosPage() {
           )}
         </>
       ) : (
-        <Card className="shadow-elevated border-imi-50 overflow-hidden">
+        <Card className="shadow-elevated border-imi-50 overflow-visible">
           <CardHeader
             title="Editorial Planner"
             subtitle="Mapeamento cronológico de publicações"
             className="bg-imi-50/50"
           />
-          <CardBody className="p-8">
-            <div className="grid grid-cols-7 gap-4">
+          <CardBody className="p-4 sm:p-8 overflow-x-auto">
+            <div className="grid grid-cols-7 gap-1 sm:gap-4 min-w-0">
               {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map((day) => (
                 <div
                   key={day}
