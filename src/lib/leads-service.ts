@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Cliente Supabase Service Role para operações privilegiadas (bypass RLS se necessário)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export interface CreateLeadData {

@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 
 const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
 )
 
 // Default user_id for single-tenant settings (no auth required)

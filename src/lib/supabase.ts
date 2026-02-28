@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder';
 
 // Avoid crashing if keys are blank
 export const supabase = (supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith('http'))
@@ -31,7 +31,7 @@ export async function getSession() {
 }
 
 // Admin client for bypass - Required for internal API routes
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder';
 export const supabaseAdmin = (supabaseUrl && serviceRoleKey && supabaseUrl.startsWith('http'))
     ? createClient(supabaseUrl, serviceRoleKey, {
         auth: {

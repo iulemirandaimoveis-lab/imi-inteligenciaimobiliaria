@@ -4,26 +4,6 @@ import { logAudit, getRequestMeta } from '@/lib/governance'
 
 export async function GET() {
     try {
-        const supabase = await createClient()
-        const { data, error } = await supabase
-            .from('leads')
-            .select('*')
-            .order('created_at', { ascending: false })
-
-        if (error) {
-            console.error('Error fetching leads:', error)
-            return NextResponse.json([], { status: 200 })
-        }
-
-        return NextResponse.json(data || [])
-    } catch (error) {
-        console.error('Error in GET /api/leads:', error)
-        return NextResponse.json([], { status: 200 })
-    }
-}
-
-export async function GET() {
-    try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
 
