@@ -127,20 +127,20 @@ export default function Hero({ dict }: HeroProps) {
             {/* CTAs */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.55 } } }}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full"
             >
               <Link
                 href={`/${lang}/avaliacoes#form`}
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 h-14 rounded-2xl font-bold text-base transition-all duration-300 active:scale-95"
+                className="group w-full sm:w-auto inline-flex flex-wrap text-center items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-14 h-auto rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 active:scale-95"
                 style={{ background: 'linear-gradient(135deg, #1A1A2E 0%, #2D2D4E 100%)', color: '#141420' }}
               >
                 {dict.cta_appraisal || 'Solicitar Avaliação'}
-                <TrendingUp size={17} className="group-hover:translate-x-0.5 transition-transform" />
+                <TrendingUp size={17} className="group-hover:translate-x-0.5 transition-transform shrink-0" />
               </Link>
 
               <button
                 onClick={handleWhatsApp}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 h-14 rounded-2xl font-semibold text-base border border-white/20 text-white hover:bg-white/8 hover:border-white/30 transition-all duration-300 active:scale-95"
+                className="inline-flex w-full sm:w-auto flex-wrap text-center items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-14 h-auto rounded-2xl font-semibold text-sm sm:text-base border border-white/20 text-white hover:bg-white/8 hover:border-white/30 transition-all duration-300 active:scale-95"
               >
                 {dict.cta_whatsapp || 'Falar com especialista'}
               </button>
