@@ -333,7 +333,7 @@ export default function ConteudosPage() {
             className="bg-imi-50/50"
           />
           <CardBody className="p-4 sm:p-8 overflow-x-auto">
-            <div className="grid grid-cols-7 gap-2 sm:gap-4 min-w-[500px]">
+            <div className="grid grid-cols-7 gap-1 sm:gap-4 min-w-0">
               {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map((day) => (
                 <div
                   key={day}

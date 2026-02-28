@@ -2,29 +2,28 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Bell, LogOut, Settings, ChevronDown, TrendingUp, Users, FileText } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { Search, Bell, LogOut, Settings, ChevronDown } from 'lucide-react'
+import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 const supabase = createClient()
 
-const notifications = [
-    {
-        id: 1, icon: Users, title: 'Novo lead qualificado',
-        description: 'Maria Santos — Boa Viagem, 3Q',
-        time: '8 min atrás', unread: true,
-    },
-    {
-        id: 2, icon: FileText, title: 'Avaliação aprovada',
-        description: 'Reserva Atlantis — Laudo NBR enviado',
-        time: '2h atrás', unread: true,
-    },
-    {
-        id: 3, icon: TrendingUp, title: 'Meta mensal atingida',
-        description: 'Pipeline Q1 superou R$ 2.4M',
-        time: '1d atrás', unread: false,
-    },
-]
+interface Notification {
+    id: string
+    type: string
+    title: string
+    message?: string
+    read: boolean
+    created_at: string
+}
+
+function timeAgo(d: string) {
+    const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
+    if (diff < 1) return 'agora'
+    if (diff < 60) return `${diff}min`
+    if (diff < 1440) return `${Math.floor(diff / 60)}h`
+    return `${Math.floor(diff / 1440)}d`
+}
 
 function SearchBar() {
     const [focused, setFocused] = useState(false)
@@ -67,14 +66,41 @@ function SearchBar() {
 
 function NotificationBell() {
     const [open, setOpen] = useState(false)
-    const unread = notifications.filter(n => n.unread).length
+    const [notifications, setNotifications] = useState<Notification[]>([])
+    const [unread, setUnread] = useState(0)
     const ref = useRef<HTMLDivElement>(null)
+    const pathname = usePathname()
+    const router = useRouter()
+
+    useEffect(() => {
+        fetch('/api/notifications')
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    setNotifications(data.slice(0, 10))
+                    setUnread(data.filter((n: Notification) => !n.read).length)
+                }
+            })
+            .catch(() => {})
+    }, [pathname])
 
     useEffect(() => {
         const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
         document.addEventListener('mousedown', h)
         return () => document.removeEventListener('mousedown', h)
     }, [])
+
+    const markAllRead = async () => {
+        try {
+            await fetch('/api/notifications', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ read_all: true }),
+            })
+            setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+            setUnread(0)
+        } catch {}
+    }
 
     return (
         <div ref={ref} className="relative">
@@ -94,7 +120,7 @@ function NotificationBell() {
                         className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 text-[8px] font-bold text-white rounded-full flex items-center justify-center"
                         style={{ background: 'var(--accent-500)', boxShadow: '0 0 0 2px var(--bo-surface)' }}
                     >
-                        {unread}
+                        {unread > 9 ? '9+' : unread}
                     </span>
                 )}
             </motion.button>
@@ -109,44 +135,64 @@ function NotificationBell() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: -6, scale: 0.97 }}
                             transition={{ duration: 0.16, ease: [0.34, 1.56, 0.64, 1] }}
-                            className="absolute right-0 top-11 w-72 rounded-2xl z-20 overflow-hidden"
+                            className="absolute right-0 top-11 w-80 rounded-2xl z-20 overflow-hidden"
                             style={{
                                 background: 'var(--bo-elevated)',
                                 border: '1px solid var(--bo-border)',
                                 boxShadow: 'var(--bo-shadow-elevated)',
+                                maxHeight: '70vh',
                             }}
                         >
                             <div className="flex items-center justify-between px-4 py-3.5"
                                 style={{ borderBottom: '1px solid var(--bo-border)' }}>
                                 <span className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>Notificações</span>
-                                <span className="text-xs cursor-pointer" style={{ color: 'var(--accent-500)' }}>Marcar lidas</span>
+                                {unread > 0 && (
+                                    <button onClick={markAllRead} className="text-xs cursor-pointer" style={{ color: 'var(--accent-500)' }}>
+                                        Marcar lidas
+                                    </button>
+                                )}
                             </div>
-                            <div>
-                                {notifications.map((n, i) => (
+                            <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 100px)' }}>
+                                {notifications.length > 0 ? notifications.map((n, i) => (
                                     <motion.div key={n.id}
                                         initial={{ opacity: 0, x: -6 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.04 }}
-                                        className="flex gap-3 px-4 py-3.5 cursor-pointer transition-all"
-                                        style={{ background: n.unread ? 'var(--bo-active-bg)' : 'transparent' }}
+                                        transition={{ delay: i * 0.03 }}
+                                        className="flex gap-3 px-4 py-3 cursor-pointer transition-all"
+                                        style={{
+                                            background: !n.read ? 'var(--bo-active-bg)' : 'transparent',
+                                            borderBottom: '1px solid var(--bo-border)',
+                                        }}
                                         onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
-                                        onMouseLeave={e => (e.currentTarget.style.background = n.unread ? 'var(--bo-active-bg)' : 'transparent')}
+                                        onMouseLeave={e => (e.currentTarget.style.background = !n.read ? 'var(--bo-active-bg)' : 'transparent')}
                                     >
-                                        <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                                            style={{ background: 'var(--bo-active-bg)' }}>
-                                            <n.icon size={14} style={{ color: 'var(--accent-500)' }} />
-                                        </div>
+                                        <div
+                                            className="w-2 h-2 rounded-full mt-1.5 shrink-0"
+                                            style={{ background: n.read ? 'transparent' : 'var(--accent-500)' }}
+                                        />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-medium leading-tight" style={{ color: 'var(--bo-text)' }}>{n.title}</p>
-                                            <p className="text-[11px] mt-0.5 leading-tight truncate" style={{ color: 'var(--bo-text-muted)' }}>{n.description}</p>
-                                            <p className="text-[10px] mt-1" style={{ color: 'var(--bo-text-muted)' }}>{n.time}</p>
+                                            {n.message && (
+                                                <p className="text-[11px] mt-0.5 leading-tight truncate" style={{ color: 'var(--bo-text-muted)' }}>{n.message}</p>
+                                            )}
+                                            <p className="text-[10px] mt-1" style={{ color: 'var(--bo-text-muted)' }}>{timeAgo(n.created_at)}</p>
                                         </div>
-                                        {n.unread && <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: 'var(--accent-500)' }} />}
                                     </motion.div>
-                                ))}
+                                )) : (
+                                    <div className="py-8 text-center">
+                                        <Bell size={20} className="mx-auto mb-2" style={{ color: 'var(--bo-text-muted)', opacity: 0.3 }} />
+                                        <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>Nenhuma notificação</p>
+                                    </div>
+                                )}
                             </div>
                             <div className="px-4 py-3 text-center" style={{ borderTop: '1px solid var(--bo-border)' }}>
-                                <span className="text-xs cursor-pointer" style={{ color: 'var(--accent-500)' }}>Ver todas →</span>
+                                <button
+                                    onClick={() => { setOpen(false); router.push('/backoffice/notificacoes') }}
+                                    className="text-xs cursor-pointer"
+                                    style={{ color: 'var(--accent-500)' }}
+                                >
+                                    Ver todas →
+                                </button>
                             </div>
                         </motion.div>
                     </>
