@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logAudit, getRequestMeta } from '@/lib/governance'
 
 export const runtime = 'nodejs'
 
@@ -125,6 +126,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
+        // Audit log
+        const meta = getRequestMeta(req)
+        logAudit({
+            action: 'create',
+            entity_type: 'development',
+            entity_id: data.id,
+            new_data: { name, type, city: newDev.city },
+            ...meta,
+        })
+
         return NextResponse.json(data)
     } catch (error: any) {
         console.error('Error creating development:', error)
@@ -155,6 +166,16 @@ export async function PUT(request: Request) {
             console.error('Supabase Error:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
+
+        // Audit log
+        const meta = getRequestMeta(request)
+        logAudit({
+            action: 'update',
+            entity_type: 'development',
+            entity_id: id,
+            new_data: updates,
+            ...meta,
+        })
 
         return NextResponse.json(data)
     } catch (error: any) {
@@ -188,6 +209,16 @@ export async function DELETE(request: Request) {
             console.error('Supabase Error:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
+
+        // Audit log
+        const meta = getRequestMeta(request)
+        logAudit({
+            action: 'delete',
+            entity_type: 'development',
+            entity_id: id,
+            old_data: { name: data.name },
+            ...meta,
+        })
 
         return NextResponse.json({ success: true, data })
     } catch (error: any) {
