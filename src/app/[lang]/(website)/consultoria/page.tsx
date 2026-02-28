@@ -36,7 +36,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
             <section className="section-padding bg-[#141420]">
                 <div className="container-custom">
                     <div className="text-center mb-16">
-                        <span className="text-[#C49D5B] font-bold tracking-widest uppercase text-xs">Destinos de Investimento</span>
+                        <span className="text-[#3B82F6] font-bold tracking-widest uppercase text-xs">Destinos de Investimento</span>
                         <h2 className="text-3xl md:text-5xl font-display font-bold mt-4 mb-6 text-white">
                             Estratégias Prontas por Praça
                         </h2>
@@ -50,11 +50,11 @@ export default function ConsultoriaPage({ params }: PageProps) {
                             <Link
                                 key={city.slug}
                                 href={`/${lang}/consultoria/${city.slug}`}
-                                className="group bg-[#0D0F14] border border-white/[0.05] p-8 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(196,157,91,0.15)] hover:border-[#C49D5B]/30 hover:-translate-y-1 transition-all duration-300"
+                                className="group bg-[#0D0F14] border border-white/[0.05] p-8 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] hover:border-[#3B82F6]/30 hover:-translate-y-1 transition-all duration-300"
                             >
                                 <div className="flex items-center gap-3 mb-6">
                                     <span className="text-3xl">{city.flag}</span>
-                                    <h3 className="text-xl font-bold text-white font-display group-hover:text-[#C49D5B] transition-colors">
+                                    <h3 className="text-xl font-bold text-white font-display group-hover:text-[#3B82F6] transition-colors">
                                         {city.name}
                                     </h3>
                                 </div>
@@ -76,7 +76,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
                 <div className="container-custom">
                     <div className="max-w-6xl mx-auto">
                         <div className="text-center mb-16">
-                            <span className="text-[#C49D5B] font-bold tracking-widest uppercase text-xs">Análise de Viabilidade</span>
+                            <span className="text-[#3B82F6] font-bold tracking-widest uppercase text-xs">Análise de Viabilidade</span>
                             <h2 className="text-3xl md:text-5xl font-display font-bold mt-4 mb-6 text-white">
                                 Simule seu Investimento em Tempo Real
                             </h2>

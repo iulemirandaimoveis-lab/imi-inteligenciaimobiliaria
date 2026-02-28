@@ -192,7 +192,7 @@ export default function ContasReceberPage() {
                     </button>
                     <button
                         onClick={() => router.push('/backoffice/financeiro/receber/novo')}
-                        className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
+                        className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
                     >
                         <Plus size={20} />
                         Nova Cobrança
@@ -238,13 +238,13 @@ export default function ContasReceberPage() {
                             placeholder="Buscar por protocolo, cliente ou imóvel..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                         />
                     </div>
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
                     >
                         <option value="all">Todos os status</option>
                         <option value="pendente">Pendente</option>
@@ -280,7 +280,7 @@ export default function ContasReceberPage() {
                                         <div className="flex items-start justify-between gap-4 mb-2">
                                             <div>
                                                 <div className="flex items-center gap-3 mb-1">
-                                                    <span className="text-sm font-bold text-accent-600">{conta.protocol}</span>
+                                                    <span className="text-sm font-bold text-[#3B82F6]">{conta.protocol}</span>
                                                     <span className={`px-3 py-1 rounded-lg text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
                                                         {statusConfig.label}
                                                     </span>

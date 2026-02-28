@@ -1,6 +1,6 @@
 // components/ui/Button.tsx
-// Button Component - Padrão Institucional Premium
-// Altura mínima 48px (touch-friendly)
+// Button Component - Institutional Dark Premium
+// Height: sm=36px, md=44px (Apple HIG), lg=48px
 
 'use client'
 
@@ -36,53 +36,63 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         // Base: Focus, transitions, disabled
         const baseStyles = `
-      inline-flex items-center justify-center gap-[8px]
-      font-medium text-sm
-      transition-all duration-200 ease-smooth
-      focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2
+      inline-flex items-center justify-center gap-2
+      font-semibold text-sm
+      transition-all duration-200
+      focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1
       disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
-      active:scale-[0.98]
+      active:scale-[0.97]
     `
 
-        // Variants
+        // Variants — institutional dark, NO gold
         const variants = {
             primary: `
-        bg-accent-500 text-white
-        hover:bg-accent-600
-        shadow-sm hover:shadow-md
+        bg-[#1A1A2E] text-white
+        hover:bg-[#16162A]
+        shadow-[0_1px_3px_rgba(0,0,0,0.2),0_0_0_1px_rgba(255,255,255,0.05)_inset]
+        hover:shadow-[0_2px_8px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.08)_inset]
+        dark:bg-white dark:text-[#1A1A2E]
+        dark:hover:bg-gray-100
+        dark:shadow-[0_1px_3px_rgba(0,0,0,0.1)]
       `,
             secondary: `
-        bg-imi-100 text-imi-900
-        border border-imi-200
-        hover:bg-imi-200 hover:border-imi-300
+        bg-gray-100 text-gray-800
+        border border-gray-200
+        hover:bg-gray-200 hover:border-gray-300
+        dark:bg-white/8 dark:text-gray-200 dark:border-white/10
+        dark:hover:bg-white/12
       `,
             outline: `
-        bg-transparent text-imi-700 
-        border-2 border-imi-200
-        hover:bg-imi-50 hover:border-imi-300
+        bg-transparent text-gray-700
+        border border-gray-300
+        hover:bg-gray-50 hover:border-gray-400
+        dark:text-gray-300 dark:border-white/15
+        dark:hover:bg-white/5 dark:hover:border-white/25
       `,
             ghost: `
-        bg-transparent text-imi-700
-        hover:bg-imi-100
+        bg-transparent text-gray-600
+        hover:bg-gray-100
+        dark:text-gray-400
+        dark:hover:bg-white/8
       `,
             danger: `
-        bg-red-500 text-white
-        hover:bg-red-600
+        bg-red-600 text-white
+        hover:bg-red-700
         shadow-sm hover:shadow-md
       `,
         }
 
-        // Sizes - Mínimo 48px para touch
+        // Sizes — 44px default (Apple HIG standard)
         const sizes = {
-            sm: 'h-[40px] px-[16px] rounded-[8px]',
-            md: 'h-[48px] px-[24px] rounded-[12px]', // Padrão touch-friendly
-            lg: 'h-[56px] px-[32px] rounded-[12px] text-base',
+            sm: 'h-9 px-3.5 rounded-lg text-xs',
+            md: 'h-11 px-5 rounded-xl',       // 44px — touch-friendly standard
+            lg: 'h-12 px-6 rounded-xl text-base', // 48px
         }
 
         const iconSizes = {
-            sm: 'w-[16px] h-[16px]',
-            md: 'w-[20px] h-[20px]',
-            lg: 'w-[24px] h-[24px]',
+            sm: 'w-4 h-4',
+            md: 'w-[18px] h-[18px]',
+            lg: 'w-5 h-5',
         }
 
         const commonClasses = cn(

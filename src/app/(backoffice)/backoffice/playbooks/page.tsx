@@ -147,7 +147,7 @@ export default function PlaybooksPage() {
               <button onClick={() => toggle(pb.id)}
                 className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors text-left">
                 <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0">
-                  <Icon size={18} className="text-[#C49D5B]" />
+                  <Icon size={18} className="text-[#3B82F6]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -161,12 +161,12 @@ export default function PlaybooksPage() {
                     </span>
                     <span className="text-xs text-gray-500">{pb.etapas.length} etapas</span>
                     {done.size > 0 && (
-                      <span className="text-xs font-medium text-[#C49D5B]">{pct}% concluído</span>
+                      <span className="text-xs font-medium text-[#3B82F6]">{pct}% concluído</span>
                     )}
                   </div>
                   {done.size > 0 && (
                     <div className="h-1 bg-gray-100 rounded-full mt-2 overflow-hidden">
-                      <div className="h-full bg-[#C49D5B] rounded-full transition-all" style={{ width: `${pct}%` }} />
+                      <div className="h-full bg-[#1A1A2E] rounded-full transition-all" style={{ width: `${pct}%` }} />
                     </div>
                   )}
                 </div>

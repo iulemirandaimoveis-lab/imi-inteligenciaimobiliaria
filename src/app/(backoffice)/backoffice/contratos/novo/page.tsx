@@ -15,7 +15,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#C49D5B',
+    gold: '#3B82F6',
 }
 const ICONES_CAT: Record<string, string> = {
     locacao: '🏠', venda: '📋', captacao: '🎯', avaliacao: '⚖️', credito: '💳',
@@ -32,7 +32,7 @@ const STEPS = [
 ]
 const PLATAFORMAS = [
     { id: 'sem_assinatura', label: 'Sem assinatura digital', sub: 'Gera e baixa — assine fisicamente ou via outro meio', icon: FileText, cor: '#4E5669', gratuito: true, env: '' },
-    { id: 'clicksign', label: 'ClickSign', sub: 'Juridicamente válido BR · WhatsApp integrado · ~R$99/mês', icon: FileSignature, cor: '#C49D5B', gratuito: false, env: 'CLICKSIGN_ACCESS_TOKEN' },
+    { id: 'clicksign', label: 'ClickSign', sub: 'Juridicamente válido BR · WhatsApp integrado · ~R$99/mês', icon: FileSignature, cor: '#3B82F6', gratuito: false, env: 'CLICKSIGN_ACCESS_TOKEN' },
     { id: 'docusign', label: 'DocuSign', sub: 'Aceito globalmente · maior plataforma de assinatura do mundo', icon: Shield, cor: '#7B9EC4', gratuito: false, env: 'DOCUSIGN_ACCESS_TOKEN' },
     { id: 'govbr', label: 'Gov.br Assinatura', sub: 'Gratuito · válido no Brasil · exige CPF autenticado via Gov.br', icon: Lock, cor: '#6BB87B', gratuito: true, env: 'GOVBR_CLIENT_ID' },
 ]
@@ -74,14 +74,14 @@ function FormParte({ titulo, parte, onChange }: { titulo: string; parte: any; on
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(196,157,91,0.12)' }}><User size={15} style={{ color: T.gold }} /></div>
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(26,26,46,0.12)' }}><User size={15} style={{ color: T.gold }} /></div>
                 <h3 className="text-sm font-bold" style={{ color: T.text }}>{titulo}</h3>
             </div>
             <div className="flex gap-2">
                 {['pessoa_fisica', 'pessoa_juridica'].map(t => (
                     <button key={t} onClick={() => onChange({ ...parte, tipo: t })}
                         className="flex-1 h-10 rounded-xl text-xs font-semibold transition-all"
-                        style={{ background: parte.tipo === t ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated, color: parte.tipo === t ? 'white' : T.textDim, border: `1px solid ${parte.tipo === t ? T.borderGold : T.border}` }}>
+                        style={{ background: parte.tipo === t ? '#1A1A2E' : T.elevated, color: parte.tipo === t ? 'white' : T.textDim, border: `1px solid ${parte.tipo === t ? T.borderGold : T.border}` }}>
                         {t === 'pessoa_fisica' ? '👤 Pessoa Física' : '🏢 Pessoa Jurídica'}
                     </button>
                 ))}
@@ -209,7 +209,7 @@ function NovoContratoInner() {
                         <div key={s.id} className="flex items-center flex-shrink-0">
                             <div className="flex flex-col items-center">
                                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                                    style={{ background: i < step ? '#6BB87B' : i === step ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
+                                    style={{ background: i < step ? '#6BB87B' : i === step ? '#1A1A2E' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
                                     {i < step ? '✓' : i + 1}
                                 </div>
                                 <span className="text-[9px] mt-1 hidden sm:block" style={{ color: i === step ? T.gold : T.textDim }}>{s.label}</span>
@@ -228,7 +228,7 @@ function NovoContratoInner() {
                             <div className="flex gap-2 overflow-x-auto pb-0.5">
                                 {['todos', ...Object.keys(CATEGORIAS_LABEL)].map(cat => (
                                     <button key={cat} onClick={() => setCatF(cat)} className="px-3 h-8 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
-                                        style={{ background: catF === cat ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated, color: catF === cat ? 'white' : T.textDim, border: `1px solid ${catF === cat ? T.borderGold : T.border}` }}>
+                                        style={{ background: catF === cat ? '#1A1A2E' : T.elevated, color: catF === cat ? 'white' : T.textDim, border: `1px solid ${catF === cat ? T.borderGold : T.border}` }}>
                                         {cat === 'todos' ? 'Todos' : `${ICONES_CAT[cat] || ''} ${(CATEGORIAS_LABEL as any)[cat]}`}
                                     </button>
                                 ))}
@@ -240,13 +240,13 @@ function NovoContratoInner() {
                                 return (
                                     <motion.button key={m.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }}
                                         onClick={() => setModelo(m)} className="text-left rounded-2xl p-4 transition-all"
-                                        style={{ background: sel ? 'rgba(196,157,91,0.10)' : T.surface, border: `1px solid ${sel ? T.borderGold : T.border}` }}>
+                                        style={{ background: sel ? 'rgba(26,26,46,0.10)' : T.surface, border: `1px solid ${sel ? T.borderGold : T.border}` }}>
                                         <div className="flex items-start gap-3">
                                             <div className="text-2xl w-10 h-10 flex items-center justify-center flex-shrink-0">{ICONES_CAT[m.categoria]}</div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
                                                     <p className="text-xs font-semibold" style={{ color: sel ? T.gold : T.text }}>{m.nome}</p>
-                                                    {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(196,157,91,0.18)', color: T.gold }}>★</span>}
+                                                    {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(26,26,46,0.18)', color: T.gold }}>★</span>}
                                                     {m.internacional && <span className="text-[9px]" style={{ color: '#E8A87C' }}>🌐</span>}
                                                 </div>
                                                 <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>
@@ -274,7 +274,7 @@ function NovoContratoInner() {
                                         <button key={lang} disabled={!disp || obrig}
                                             onClick={() => { if (obrig) return; setIdiomasSel(p => p.includes(lang) ? p.filter(l => l !== lang) : [...p, lang]) }}
                                             className="flex items-center gap-2 p-3 rounded-xl text-left transition-all"
-                                            style={{ background: sel ? 'rgba(196,157,91,0.12)' : T.elevated, border: `1px solid ${sel ? T.borderGold : T.border}`, opacity: disp ? 1 : 0.3, cursor: disp && !obrig ? 'pointer' : 'default' }}>
+                                            style={{ background: sel ? 'rgba(26,26,46,0.12)' : T.elevated, border: `1px solid ${sel ? T.borderGold : T.border}`, opacity: disp ? 1 : 0.3, cursor: disp && !obrig ? 'pointer' : 'default' }}>
                                             <span className="text-xl">{cfg.flag}</span>
                                             <div>
                                                 <p className="text-xs font-semibold" style={{ color: sel ? T.gold : T.text }}>{cfg.label}</p>
@@ -290,7 +290,7 @@ function NovoContratoInner() {
                                     <div className="flex gap-2 flex-wrap">
                                         {idiomasSel.map(l => (
                                             <button key={l} onClick={() => setIdiomaPrim(l)} className="flex items-center gap-1.5 px-3 h-8 rounded-xl text-xs font-semibold transition-all"
-                                                style={{ background: idiomaPrim === l ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated, color: idiomaPrim === l ? 'white' : T.textDim, border: `1px solid ${idiomaPrim === l ? T.borderGold : T.border}` }}>
+                                                style={{ background: idiomaPrim === l ? '#1A1A2E' : T.elevated, color: idiomaPrim === l ? 'white' : T.textDim, border: `1px solid ${idiomaPrim === l ? T.borderGold : T.border}` }}>
                                                 {(IDIOMAS_LABEL as any)[l]?.flag} {(IDIOMAS_LABEL as any)[l]?.label}
                                             </button>
                                         ))}
@@ -389,7 +389,7 @@ function NovoContratoInner() {
                             {idiomasSel.map(lang => (
                                 <motion.button key={lang} whileTap={{ scale: 0.97 }} onClick={() => gerar(lang)} disabled={gerando}
                                     className="w-full flex items-center justify-between h-14 px-6 rounded-2xl font-semibold text-sm text-white"
-                                    style={{ background: gerando ? 'rgba(196,157,91,0.18)' : 'linear-gradient(135deg,#C49D5B,#8B5E1F)', boxShadow: gerando ? 'none' : '0 4px 20px rgba(196,157,91,0.28)' }}>
+                                    style={{ background: gerando ? 'rgba(26,26,46,0.18)' : '#1A1A2E', boxShadow: gerando ? 'none' : '0 4px 20px rgba(26,26,46,0.28)' }}>
                                     <div className="flex items-center gap-3">
                                         {gerando ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
                                         <span>Gerar em {(IDIOMAS_LABEL as any)[lang]?.flag} {(IDIOMAS_LABEL as any)[lang]?.label}</span>
@@ -428,14 +428,14 @@ function NovoContratoInner() {
                             <div className="flex gap-2">
                                 {(['email', 'whatsapp', 'ambos'] as const).map(c => (
                                     <button key={c} onClick={() => setCanal(c)} className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-semibold transition-all"
-                                        style={{ background: canal === c ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated, color: canal === c ? 'white' : T.textDim, border: `1px solid ${canal === c ? T.borderGold : T.border}` }}>
+                                        style={{ background: canal === c ? '#1A1A2E' : T.elevated, color: canal === c ? 'white' : T.textDim, border: `1px solid ${canal === c ? T.borderGold : T.border}` }}>
                                         {c === 'email' ? <><Mail size={12} />Email</> : c === 'whatsapp' ? <><MessageSquare size={12} />WhatsApp</> : '📤 Ambos'}
                                     </button>
                                 ))}
                             </div>
                             {envioOk
                                 ? <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: '#6BB87B' }} /><p className="text-xs font-semibold" style={{ color: '#6BB87B' }}>Enviado com sucesso!</p></div>
-                                : <button onClick={enviar} disabled={enviando} className="w-full h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2" style={{ background: 'linear-gradient(135deg,#C49D5B,#8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.25)' }}>
+                                : <button onClick={enviar} disabled={enviando} className="w-full h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2" style={{ background: '#1A1A2E', boxShadow: '0 2px 12px rgba(26,26,46,0.25)' }}>
                                     {enviando ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                                     {enviando ? 'Enviando...' : `Enviar via ${canal}`}
                                 </button>
@@ -445,7 +445,7 @@ function NovoContratoInner() {
                             <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}>
                                 <div className="flex items-center gap-2 mb-2"><FileSignature size={16} style={{ color: T.gold }} /><h3 className="text-sm font-bold" style={{ color: T.text }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</h3></div>
                                 <p className="text-xs mb-3" style={{ color: T.textDim }}>Envie para assinatura digital juridicamente válida. Configure a variável de ambiente antes de ativar.</p>
-                                <button className="w-full h-11 rounded-xl text-sm font-semibold flex items-center justify-center gap-2" style={{ background: 'rgba(196,157,91,0.10)', border: `1px solid ${T.borderGold}`, color: T.gold }}>
+                                <button className="w-full h-11 rounded-xl text-sm font-semibold flex items-center justify-center gap-2" style={{ background: 'rgba(26,26,46,0.10)', border: `1px solid ${T.borderGold}`, color: T.gold }}>
                                     <Shield size={15} /> Enviar para Assinatura Digital
                                 </button>
                                 <p className="text-[9px] text-center mt-2 font-mono" style={{ color: T.textDim }}>{PLATAFORMAS.find(p => p.id === plat)?.env}</p>
@@ -478,7 +478,7 @@ function NovoContratoInner() {
                     </button>
                     {step < STEPS.length - 1 && (
                         <button onClick={() => setStep(s => s + 1)} disabled={!ok()} className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white transition-all"
-                            style={{ background: ok() ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : 'rgba(196,157,91,0.15)', opacity: ok() ? 1 : 0.5, boxShadow: ok() ? '0 2px 12px rgba(196,157,91,0.25)' : 'none' }}>
+                            style={{ background: ok() ? '#1A1A2E' : 'rgba(26,26,46,0.15)', opacity: ok() ? 1 : 0.5, boxShadow: ok() ? '0 2px 12px rgba(26,26,46,0.25)' : 'none' }}>
                             Avançar <ChevronRight size={16} />
                         </button>
                     )}
@@ -490,7 +490,7 @@ function NovoContratoInner() {
 
 export default function NovoContratoPage() {
     return (
-        <Suspense fallback={<div className="flex h-64 items-center justify-center"><Loader2 size={24} className="animate-spin" style={{ color: '#C49D5B' }} /></div>}>
+        <Suspense fallback={<div className="flex h-64 items-center justify-center"><Loader2 size={24} className="animate-spin" style={{ color: '#3B82F6' }} /></div>}>
             <NovoContratoInner />
         </Suspense>
     )

@@ -157,13 +157,13 @@ export default function AvaliacoesAnalyticsPage() {
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-4">
-                                            <span className="text-xs font-black text-accent-600">{item.percentage}%</span>
+                                            <span className="text-xs font-black text-[#3B82F6]">{item.percentage}%</span>
                                             <Badge variant="neutral" size="sm">{item.count} laudos</Badge>
                                         </div>
                                     </div>
                                     <div className="h-3 bg-imi-50 rounded-full overflow-hidden border border-imi-100">
                                         <div
-                                            className="h-full bg-accent-500 transition-all duration-1000 ease-smooth rounded-full"
+                                            className="h-full bg-[#1A1A2E] transition-all duration-1000 ease-smooth rounded-full"
                                             style={{ width: `${item.percentage}%` }}
                                         />
                                     </div>
@@ -220,14 +220,14 @@ export default function AvaliacoesAnalyticsPage() {
                                 <div key={month.month} className="group">
                                     <div className="flex flex-col md:flex-row items-center gap-8">
                                         <div className="w-20 text-center md:text-left shrink-0">
-                                            <span className="text-xs font-black uppercase text-imi-900 group-hover:text-accent-600 transition-colors">
+                                            <span className="text-xs font-black uppercase text-imi-900 group-hover:text-[#3B82F6] transition-colors">
                                                 {month.month}
                                             </span>
                                         </div>
                                         <div className="flex-1 w-full relative">
                                             <div className="h-12 bg-imi-50 rounded-2xl overflow-hidden border border-imi-100/50">
                                                 <div
-                                                    className="h-full bg-accent-500/10 border-r-4 border-accent-500 transition-all duration-1000 ease-smooth"
+                                                    className="h-full bg-[#1A1A2E]/10 border-r-4 border-[#3B82F6] transition-all duration-1000 ease-smooth"
                                                     style={{ width: `${percentage}%` }}
                                                 />
                                                 <div className="absolute inset-y-0 left-6 flex items-center gap-4">
@@ -258,7 +258,7 @@ export default function AvaliacoesAnalyticsPage() {
                         <div className="space-y-4">
                             {data.topClients.map((client, index) => (
                                 <div key={client.name} className="flex items-center gap-6 p-6 bg-imi-50/50 rounded-3xl border border-imi-100/30 hover:bg-white hover:border-accent-200 transition-all group">
-                                    <div className="w-12 h-12 rounded-2xl bg-imi-950 text-accent-500 flex items-center justify-center text-lg font-black shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                    <div className="w-12 h-12 rounded-2xl bg-imi-950 text-[#3B82F6] flex items-center justify-center text-lg font-black shrink-0 shadow-lg group-hover:scale-110 transition-transform">
                                         {index + 1}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -268,7 +268,7 @@ export default function AvaliacoesAnalyticsPage() {
                                         </p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xl font-black text-accent-700">
+                                        <p className="text-xl font-black text-[#0F0F1E]">
                                             R$ {(client.revenue / 1000).toFixed(0)}k
                                         </p>
                                         <p className="text-[9px] font-black text-imi-400 uppercase tracking-widest">Revenue Life-Time</p>
@@ -337,7 +337,7 @@ export default function AvaliacoesAnalyticsPage() {
 
                         <div className="text-center p-8 bg-white/5 rounded-3xl border border-white/10">
                             <p className="text-[10px] font-bold text-imi-400 uppercase tracking-widest mb-3">Unit Billing Médio</p>
-                            <p className="text-5xl font-black text-accent-500 mb-2">
+                            <p className="text-5xl font-black text-[#3B82F6] mb-2">
                                 <span className="text-xl">R$</span>{(data.overview.totalRevenue / data.overview.total).toFixed(0)}
                             </p>
                             <p className="text-xs text-imi-500 font-bold uppercase tracking-widest">Por Laudo Emitido</p>

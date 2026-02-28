@@ -9,17 +9,17 @@
 
 /* ── CSS VARIABLES ─────────────────────────────────────────── */
 :root {
-  /* Accent — Dourado Institucional */
-  --accent-50: #FFF9E6;
-  --accent-100: #FFF0C2;
-  --accent-200: #FFE699;
-  --accent-300: #FFD966;
-  --accent-400: #E6C24D;
-  --accent-500: #C49D5B;
-  --accent-600: #A67C3D;
-  --accent-700: #8B5E1F;
-  --accent-800: #6B4510;
-  --accent-900: #4A2F08;
+  /* Accent — Institutional Blue */
+  --accent-50: #EFF6FF;
+  --accent-100: #DBEAFE;
+  --accent-200: #BFDBFE;
+  --accent-300: #93C5FD;
+  --accent-400: #60A5FA;
+  --accent-500: #3B82F6;
+  --accent-600: #2563EB;
+  --accent-700: #1D4ED8;
+  --accent-800: #1E40AF;
+  --accent-900: #1E3A8A;
 
   /* IMI — Neutros Institucionais */
   --imi-50: #F8F9FA;
@@ -427,7 +427,7 @@
   }
 
   /* Gradients */
-  .gradient-gold {
+  .gradient-accent {
     background: linear-gradient(135deg, var(--accent-400) 0%, var(--accent-600) 100%);
   }
 
@@ -435,16 +435,36 @@
     background: linear-gradient(135deg, #0F1923 0%, #1A2738 100%);
   }
 
+  .gradient-institutional {
+    background: linear-gradient(135deg, #1A1A2E 0%, #0F0F1E 100%);
+  }
+
   .gradient-surface {
     background: linear-gradient(180deg, #FFFFFF 0%, #F8F9FA 100%);
   }
 
   /* Text gradient */
-  .text-gradient-gold {
+  .text-gradient-accent {
     background: linear-gradient(135deg, var(--accent-400), var(--accent-600));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Cinematic glow — premium accent border glow */
+  .cinematic-glow {
+    box-shadow:
+      0 0 0 1px rgba(59, 130, 246, 0.08),
+      0 4px 24px rgba(0, 0, 0, 0.08),
+      0 0 0 0 rgba(59, 130, 246, 0);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .cinematic-glow:hover {
+    box-shadow:
+      0 0 0 1px rgba(59, 130, 246, 0.2),
+      0 8px 32px rgba(0, 0, 0, 0.12),
+      0 0 20px -5px rgba(59, 130, 246, 0.15);
   }
 
   /* Shimmer loading */
@@ -724,15 +744,25 @@
 
   .btn-primary {
     @apply btn-md;
-    background: var(--accent-600);
+    background: #1A1A2E;
     color: white;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(196, 157, 91, 0.15) inset;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  }
+
+  .dark .btn-primary {
+    background: #FFFFFF;
+    color: #1A1A2E;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .btn-primary:hover {
-    background: var(--accent-700);
-    box-shadow: var(--shadow-md), 0 0 0 1px rgba(196, 157, 91, 0.2) inset;
+    background: #16162A;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
     transform: translateY(-1px);
+  }
+
+  .dark .btn-primary:hover {
+    background: #F3F4F6;
   }
 
   .btn-primary:active {

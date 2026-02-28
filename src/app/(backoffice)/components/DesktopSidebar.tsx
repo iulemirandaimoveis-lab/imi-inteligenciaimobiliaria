@@ -128,7 +128,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     {item.badge && (
                         <span
                             className="text-[10px] px-1.5 py-0.5 rounded-full font-bold text-white"
-                            style={{ background: 'rgba(196,157,91,0.60)' }}
+                            style={{ background: 'rgba(26,26,46,0.60)' }}
                         >
                             {item.badge}
                         </span>
@@ -165,7 +165,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     ? 'linear-gradient(135deg, var(--accent-500), var(--accent-600))'
                     : 'transparent',
                 fontWeight: isActive ? 600 : 400,
-                boxShadow: isActive ? '0 2px 12px rgba(196,157,91,0.25)' : 'none',
+                boxShadow: isActive ? '0 2px 12px rgba(26,26,46,0.25)' : 'none',
             }}
             onMouseEnter={e => {
                 if (!isActive) {
@@ -185,7 +185,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             {item.badge && (
                 <span
                     className="text-[10px] px-1.5 py-0.5 rounded-full font-bold text-white"
-                    style={{ background: 'rgba(196,157,91,0.60)' }}
+                    style={{ background: 'rgba(26,26,46,0.60)' }}
                 >
                     {item.badge}
                 </span>

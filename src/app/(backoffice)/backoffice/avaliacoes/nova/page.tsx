@@ -226,7 +226,7 @@ function InputField({ icon: Icon, error, ...props }: any) {
       {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />}
       <input
         {...props}
-        className={`w-full h-10 ${Icon ? 'pl-9' : 'px-3'} pr-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] ${error ? 'border-red-300 bg-red-50' : 'border-gray-200'} bg-white`}
+        className={`w-full h-10 ${Icon ? 'pl-9' : 'px-3'} pr-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${error ? 'border-red-300 bg-red-50' : 'border-gray-200'} bg-white`}
       />
     </div>
   )
@@ -371,10 +371,10 @@ export default function NovaAvaliacaoPage() {
             return (
               <div key={step.n} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all ${done ? 'bg-emerald-500 text-white' : active ? 'bg-[#C49D5B] text-white' : 'bg-gray-100 text-gray-400'}`}>
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all ${done ? 'bg-emerald-500 text-white' : active ? 'bg-[#1A1A2E] text-white' : 'bg-gray-100 text-gray-400'}`}>
                     {done ? <Check size={16} /> : <Icon size={16} />}
                   </div>
-                  <span className={`text-xs mt-1 hidden sm:block ${active ? 'text-[#C49D5B] font-medium' : done ? 'text-emerald-600' : 'text-gray-400'}`}>
+                  <span className={`text-xs mt-1 hidden sm:block ${active ? 'text-[#3B82F6] font-medium' : done ? 'text-emerald-600' : 'text-gray-400'}`}>
                     {step.label}
                   </span>
                 </div>
@@ -424,7 +424,7 @@ export default function NovaAvaliacaoPage() {
               <div className="col-span-2">
                 <Label required>Tipo de Imóvel</Label>
                 <select value={formData.tipo} onChange={e => handleChange('tipo', e.target.value)}
-                  className={`w-full h-10 px-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] bg-white ${errors.tipo ? 'border-red-300' : 'border-gray-200'}`}>
+                  className={`w-full h-10 px-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white ${errors.tipo ? 'border-red-300' : 'border-gray-200'}`}>
                   <option value="">Selecione...</option>
                   {TIPOS_IMOVEL.map(t => <option key={t}>{t}</option>)}
                 </select>
@@ -468,14 +468,14 @@ export default function NovaAvaliacaoPage() {
               <div>
                 <Label>Padrão Construtivo</Label>
                 <select value={formData.padrao} onChange={e => handleChange('padrao', e.target.value)}
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] bg-white">
+                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white">
                   {PADROES.map(p => <option key={p}>{p}</option>)}
                 </select>
               </div>
               <div>
                 <Label>Estado de Conservação</Label>
                 <select value={formData.estado_conservacao} onChange={e => handleChange('estado_conservacao', e.target.value)}
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] bg-white">
+                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white">
                   {ESTADOS_CONSERVACAO.map(e => <option key={e}>{e}</option>)}
                 </select>
               </div>
@@ -486,7 +486,7 @@ export default function NovaAvaliacaoPage() {
               <div className="flex flex-wrap gap-2 mt-1">
                 {CARACTERISTICAS.map(c => (
                   <button key={c} type="button" onClick={() => toggleCaracteristica(c)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${formData.caracteristicas.includes(c) ? 'bg-[#C49D5B] text-white border-[#C49D5B]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#C49D5B]'}`}>
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${formData.caracteristicas.includes(c) ? 'bg-[#1A1A2E] text-white border-[#3B82F6]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#3B82F6]'}`}>
                     {c}
                   </button>
                 ))}
@@ -503,7 +503,7 @@ export default function NovaAvaliacaoPage() {
             <div className="flex gap-3">
               {(['PF', 'PJ'] as const).map(t => (
                 <button key={t} type="button" onClick={() => handleChange('clienteTipo', t)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${formData.clienteTipo === t ? 'bg-[#C49D5B] text-white border-[#C49D5B]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#C49D5B]'}`}>
+                  className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${formData.clienteTipo === t ? 'bg-[#1A1A2E] text-white border-[#3B82F6]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#3B82F6]'}`}>
                   {t === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
                 </button>
               ))}
@@ -556,8 +556,8 @@ export default function NovaAvaliacaoPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
                 {FINALIDADES.map(f => (
                   <button key={f.value} type="button" onClick={() => handleChange('finalidade', f.value)}
-                    className={`flex items-start gap-3 p-3 border rounded-xl text-left transition-all ${formData.finalidade === f.value ? 'border-[#C49D5B] bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                    <div className={`w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0 ${formData.finalidade === f.value ? 'border-[#C49D5B] bg-[#C49D5B]' : 'border-gray-300'}`} />
+                    className={`flex items-start gap-3 p-3 border rounded-xl text-left transition-all ${formData.finalidade === f.value ? 'border-[#3B82F6] bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                    <div className={`w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0 ${formData.finalidade === f.value ? 'border-[#3B82F6] bg-[#1A1A2E]' : 'border-gray-300'}`} />
                     <div>
                       <p className="text-sm font-medium text-gray-900">{f.label}</p>
                       {f.subtitulo && <p className="text-xs text-gray-500">{f.subtitulo}</p>}
@@ -576,8 +576,8 @@ export default function NovaAvaliacaoPage() {
                   const Icon = m.icone
                   return (
                     <button key={m.value} type="button" onClick={() => handleChange('metodologia', m.value)}
-                      className={`w-full flex items-center gap-4 p-4 border rounded-xl text-left transition-all ${formData.metodologia === m.value ? 'border-[#C49D5B] bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${formData.metodologia === m.value ? 'bg-[#C49D5B] text-white' : 'bg-gray-100 text-gray-500'}`}>
+                      className={`w-full flex items-center gap-4 p-4 border rounded-xl text-left transition-all ${formData.metodologia === m.value ? 'border-[#3B82F6] bg-amber-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${formData.metodologia === m.value ? 'bg-[#1A1A2E] text-white' : 'bg-gray-100 text-gray-500'}`}>
                         <Icon size={20} />
                       </div>
                       <div className="flex-1">
@@ -598,14 +598,14 @@ export default function NovaAvaliacaoPage() {
               <div>
                 <Label>Grau de Fundamentação</Label>
                 <select value={formData.grauFundamentacao} onChange={e => handleChange('grauFundamentacao', e.target.value)}
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] bg-white">
+                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white">
                   {GRAUS_FUNDAMENTACAO.map(g => <option key={g}>Grau {g}</option>)}
                 </select>
               </div>
               <div>
                 <Label>Grau de Precisão</Label>
                 <select value={formData.grauPrecisao} onChange={e => handleChange('grauPrecisao', e.target.value)}
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] bg-white">
+                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white">
                   {GRAUS_PRECISAO.map(g => <option key={g}>Grau {g}</option>)}
                 </select>
               </div>
@@ -637,7 +637,7 @@ export default function NovaAvaliacaoPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                       { label: 'Mínimo', value: honorarios.minimo, color: 'text-gray-700' },
-                      { label: 'Recomendado', value: honorarios.recomendado, color: 'text-[#C49D5B] font-bold' },
+                      { label: 'Recomendado', value: honorarios.recomendado, color: 'text-[#3B82F6] font-bold' },
                       { label: 'Máximo', value: honorarios.maximo, color: 'text-gray-700' },
                     ].map(item => (
                       <div key={item.label} className="text-center p-3 bg-white rounded-lg border border-gray-100">
@@ -650,7 +650,7 @@ export default function NovaAvaliacaoPage() {
                   <p className="text-xs text-gray-500 italic">{honorarios.justificativa}</p>
 
                   <button type="button" onClick={() => handleChange('valorHonorarios', honorarios.recomendado.toString())}
-                    className="w-full py-2 bg-[#C49D5B] text-white rounded-lg text-sm font-medium hover:bg-[#b08a4a] transition-colors">
+                    className="w-full py-2 bg-[#1A1A2E] text-white rounded-lg text-sm font-medium hover:bg-[#16162A] transition-colors">
                     Usar Valor Recomendado ({formatCurrency(honorarios.recomendado)})
                   </button>
                 </div>
@@ -667,7 +667,7 @@ export default function NovaAvaliacaoPage() {
               <div>
                 <Label>Forma de Pagamento</Label>
                 <select value={formData.formaPagamento} onChange={e => handleChange('formaPagamento', e.target.value)}
-                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] bg-white">
+                  className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white">
                   <option>À vista</option>
                   <option>50% entrada / 50% entrega</option>
                   <option>Parcelado 2x</option>
@@ -680,7 +680,7 @@ export default function NovaAvaliacaoPage() {
               <Label>Observações</Label>
               <textarea value={formData.observacoes} onChange={e => handleChange('observacoes', e.target.value)}
                 rows={3} placeholder="Informações adicionais sobre a avaliação..."
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] resize-none" />
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] resize-none" />
             </div>
           </div>
         )}
@@ -694,7 +694,7 @@ export default function NovaAvaliacaoPage() {
                 <p className="text-xs text-gray-500 mt-0.5">NBR 14653-2 exige mín. 3 amostras (Grau II) ou 5 amostras (Grau III)</p>
               </div>
               <button type="button" onClick={addComparavel}
-                className="flex items-center gap-2 px-4 py-2 bg-[#C49D5B] text-white rounded-lg text-sm font-medium hover:bg-[#b08a4a] transition-colors">
+                className="flex items-center gap-2 px-4 py-2 bg-[#1A1A2E] text-white rounded-lg text-sm font-medium hover:bg-[#16162A] transition-colors">
                 + Adicionar
               </button>
             </div>
@@ -730,24 +730,24 @@ export default function NovaAvaliacaoPage() {
                     <Label>Endereço / Referência</Label>
                     <input value={comp.endereco} onChange={e => updateComparavel(comp.id, 'endereco', e.target.value)}
                       placeholder="Ex: Av. Conselheiro Aguiar, 3200 - Boa Viagem"
-                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B]" />
+                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]" />
                   </div>
                   <div>
                     <Label>Área (m²)</Label>
                     <input type="number" value={comp.area || ''} onChange={e => updateComparavel(comp.id, 'area', Number(e.target.value))}
                       placeholder="90"
-                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B]" />
+                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]" />
                   </div>
                   <div>
                     <Label>Valor de Oferta (R$)</Label>
                     <input type="number" value={comp.valorVenda || ''} onChange={e => updateComparavel(comp.id, 'valorVenda', Number(e.target.value))}
                       placeholder="550000"
-                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B]" />
+                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]" />
                   </div>
                   <div>
                     <Label>Fonte do Dado</Label>
                     <select value={comp.fonteDado} onChange={e => updateComparavel(comp.id, 'fonteDado', e.target.value)}
-                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] bg-white">
+                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white">
                       <option>ZAP Imóveis</option>
                       <option>VivaReal</option>
                       <option>OLX</option>
@@ -760,14 +760,14 @@ export default function NovaAvaliacaoPage() {
                   <div>
                     <Label>Data de Coleta</Label>
                     <input type="date" value={comp.dataColeta} onChange={e => updateComparavel(comp.id, 'dataColeta', e.target.value)}
-                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B]" />
+                      className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]" />
                   </div>
                 </div>
 
                 {/* Valor m² calculado */}
                 {comp.area > 0 && comp.valorVenda > 0 && (
                   <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
-                    <BarChart2 size={14} className="text-[#C49D5B]" />
+                    <BarChart2 size={14} className="text-[#3B82F6]" />
                     <span className="text-xs text-gray-600">
                       Valor unitário: <strong className="text-gray-900">{formatCurrency(comp.valorVenda / comp.area)}/m²</strong>
                     </span>
@@ -796,7 +796,7 @@ export default function NovaAvaliacaoPage() {
                       ].map(item => (
                         <div key={item.l}>
                           <p className="text-xs text-gray-500">{item.l}</p>
-                          <p className={`text-sm font-bold mt-0.5 ${item.ok === false ? 'text-red-400' : item.ok === true ? 'text-emerald-400' : 'text-[#C49D5B]'}`}>{item.v}</p>
+                          <p className={`text-sm font-bold mt-0.5 ${item.ok === false ? 'text-red-400' : item.ok === true ? 'text-emerald-400' : 'text-[#3B82F6]'}`}>{item.v}</p>
                         </div>
                       ))}
                     </div>
@@ -829,7 +829,7 @@ export default function NovaAvaliacaoPage() {
                 const files = Array.from(e.target.files || [])
                 setFormData(prev => ({ ...prev, documentos: [...prev.documentos, ...files] }))
               }} className="hidden" />
-              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#C49D5B] hover:bg-amber-50 transition-all">
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#3B82F6] hover:bg-amber-50 transition-all">
                 <Upload size={32} className="mx-auto text-gray-400 mb-3" />
                 <p className="text-sm font-medium text-gray-900">Arraste ou clique para fazer upload</p>
                 <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG, DOC — máx. 10MB cada</p>
@@ -840,7 +840,7 @@ export default function NovaAvaliacaoPage() {
               <div className="space-y-2">
                 {formData.documentos.map((f, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <FileText size={16} className="text-[#C49D5B]" />
+                    <FileText size={16} className="text-[#3B82F6]" />
                     <span className="text-sm text-gray-900 flex-1 truncate">{f.name}</span>
                     <span className="text-xs text-gray-500">{(f.size / 1024).toFixed(0)} KB</span>
                     <button type="button" onClick={() => setFormData(prev => ({ ...prev, documentos: prev.documentos.filter((_, j) => j !== i) }))}
@@ -890,7 +890,7 @@ export default function NovaAvaliacaoPage() {
                 <div><span className="text-gray-500">Cliente:</span><br /><span className="text-white">{formData.clienteNome || '—'}</span></div>
                 <div><span className="text-gray-500">Metodologia:</span><br /><span className="text-white">{METODOLOGIAS.find(m => m.value === formData.metodologia)?.label?.split(' ').slice(0, 3).join(' ') || '—'}</span></div>
                 <div><span className="text-gray-500">Comparáveis:</span><br /><span className={formData.comparaveis.length >= 3 ? 'text-emerald-400' : 'text-red-400'}>{formData.comparaveis.length} amostras</span></div>
-                <div><span className="text-gray-500">Honorários:</span><br /><span className="text-[#C49D5B] font-semibold">{formData.valorHonorarios ? formatCurrency(Number(formData.valorHonorarios)) : '—'}</span></div>
+                <div><span className="text-gray-500">Honorários:</span><br /><span className="text-[#3B82F6] font-semibold">{formData.valorHonorarios ? formatCurrency(Number(formData.valorHonorarios)) : '—'}</span></div>
               </div>
             </div>
           </div>
@@ -906,7 +906,7 @@ export default function NovaAvaliacaoPage() {
 
         {currentStep < 5 ? (
           <button type="button" onClick={handleNext}
-            className="flex items-center gap-2 h-10 px-6 bg-[#C49D5B] text-white rounded-xl text-sm font-semibold hover:bg-[#b08a4a] transition-colors">
+            className="flex items-center gap-2 h-10 px-6 bg-[#1A1A2E] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
             Próximo <ArrowRight size={18} />
           </button>
         ) : (

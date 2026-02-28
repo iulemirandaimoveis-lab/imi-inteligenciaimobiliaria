@@ -263,7 +263,7 @@ export default function AuditPage() {
             value={busca}
             onChange={e => setBusca(e.target.value)}
             placeholder="Buscar por usuário, ação, módulo..."
-            className="w-full h-11 pl-11 pr-4 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-accent-500"
+            className="w-full h-11 pl-11 pr-4 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-[#3B82F6]"
           />
         </div>
 
@@ -271,7 +271,7 @@ export default function AuditPage() {
         <select
           value={moduloFiltro}
           onChange={e => setModuloFiltro(e.target.value)}
-          className="h-11 px-4 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-accent-500 bg-white"
+          className="h-11 px-4 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#3B82F6] bg-white"
         >
           {MODULOS.map(m => (
             <option key={m} value={m}>
@@ -326,7 +326,7 @@ export default function AuditPage() {
                 <div key={log.id} className="grid grid-cols-12 gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center">
                   {/* Usuário */}
                   <div className="col-span-3 flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full text-[10px] font-bold flex items-center justify-center flex-shrink-0 ${log.usuario === 'Sistema' ? 'bg-gray-100 text-gray-600' : 'bg-accent-100 text-accent-700'
+                    <div className={`w-8 h-8 rounded-full text-[10px] font-bold flex items-center justify-center flex-shrink-0 ${log.usuario === 'Sistema' ? 'bg-gray-100 text-gray-600' : 'bg-accent-100 text-[#0F0F1E]'
                       }`}>
                       {getInitials(log.usuario)}
                     </div>

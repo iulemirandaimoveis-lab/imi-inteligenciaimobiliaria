@@ -351,7 +351,7 @@ export default function DashboardKPIs() {
                             className="rounded-xl p-4 flex items-center gap-3"
                             style={{
                                 background: alert.severity === 'high' ? 'var(--s-cancel-bg)' : alert.severity === 'medium' ? 'var(--s-warm-bg)' : 'var(--s-cold-bg)',
-                                border: `1px solid ${alert.severity === 'high' ? 'rgba(229,115,115,0.22)' : alert.severity === 'medium' ? 'rgba(196,157,91,0.22)' : 'rgba(123,158,196,0.22)'}`,
+                                border: `1px solid ${alert.severity === 'high' ? 'rgba(229,115,115,0.22)' : alert.severity === 'medium' ? 'rgba(26,26,46,0.22)' : 'rgba(123,158,196,0.22)'}`,
                             }}
                         >
                             <AlertCircle size={20} style={{
@@ -532,7 +532,7 @@ export default function DashboardKPIs() {
 
             {/* Strategic Insights - Refined & Clear */}
             <div className="bg-imi-950 rounded-[40px] p-10 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(196,157,91,0.1),transparent_70%)]" />
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(26,26,46,0.1),transparent_70%)]" />
 
                 <h3 className="text-xl font-bold text-white mb-10 relative z-10 flex items-center gap-3">
                     <Sparkles size={20} className="text-imi-500" />

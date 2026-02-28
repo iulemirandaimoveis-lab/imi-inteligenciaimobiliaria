@@ -22,9 +22,9 @@ const T = {
     text: 'var(--bo-text)',
     textSub: 'var(--bo-text-muted)',
     textDim: 'var(--bo-text-muted)',
-    gold: '#C49D5B',
+    gold: '#3B82F6',
     goldLight: '#D4AF70',
-    goldDim: 'rgba(196,157,91,0.60)',
+    goldDim: 'rgba(26,26,46,0.60)',
 }
 
 // ── Animated counter ──────────────────────────────────────────
@@ -63,30 +63,30 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
                     className="relative overflow-hidden rounded-2xl p-5 cursor-pointer transition-all duration-200 group"
                     style={{
                         background: 'rgba(26,30,42,0.70)',
-                        border: '1px solid rgba(196,157,91,0.18)',
+                        border: '1px solid rgba(26,26,46,0.18)',
                         backdropFilter: 'blur(16px)',
                         WebkitBackdropFilter: 'blur(16px)',
                         boxShadow: '0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset',
                     }}
                     onMouseEnter={e => {
-                        (e.currentTarget as HTMLElement).style.border = '1px solid rgba(196,157,91,0.35)'
-                            ; (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(196,157,91,0.18), 0 8px 32px rgba(196,157,91,0.08), 0 4px 24px rgba(0,0,0,0.32)'
+                        (e.currentTarget as HTMLElement).style.border = '1px solid rgba(26,26,46,0.35)'
+                            ; (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(26,26,46,0.18), 0 8px 32px rgba(26,26,46,0.08), 0 4px 24px rgba(0,0,0,0.32)'
                     }}
                     onMouseLeave={e => {
-                        (e.currentTarget as HTMLElement).style.border = '1px solid rgba(196,157,91,0.18)'
+                        (e.currentTarget as HTMLElement).style.border = '1px solid rgba(26,26,46,0.18)'
                             ; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset'
                     }}
                 >
                     {/* Subtle gold corner glow */}
                     <div
                         className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                        style={{ background: 'radial-gradient(circle, rgba(196,157,91,0.12) 0%, transparent 70%)' }}
+                        style={{ background: 'radial-gradient(circle, rgba(26,26,46,0.12) 0%, transparent 70%)' }}
                     />
 
                     <div className="flex items-start justify-between mb-4">
                         <div
                             className="w-10 h-10 rounded-xl flex items-center justify-center"
-                            style={{ background: 'rgba(196,157,91,0.12)' }}
+                            style={{ background: 'rgba(26,26,46,0.12)' }}
                         >
                             <Icon size={18} style={{ color: T.gold }} />
                         </div>
@@ -120,10 +120,10 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
 function StatusBadge({ status }: { status: string }) {
     const cfg: Record<string, { label: string; color: string; bg: string }> = {
         concluida: { label: 'Concluída', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-        em_andamento: { label: 'Em Andamento', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
+        em_andamento: { label: 'Em Andamento', color: '#3B82F6', bg: 'rgba(26,26,46,0.12)' },
         aguardando_docs: { label: 'Aguard. Docs', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
         hot: { label: 'Quente', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-        warm: { label: 'Morno', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
+        warm: { label: 'Morno', color: '#3B82F6', bg: 'rgba(26,26,46,0.12)' },
         cold: { label: 'Frio', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
     }
     const c = cfg[status] || cfg.cold
@@ -212,8 +212,8 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
                     style={{
-                        background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)',
-                        boxShadow: '0 2px 12px rgba(196,157,91,0.35)',
+                        background: '#1A1A2E',
+                        boxShadow: '0 2px 12px rgba(26,26,46,0.35)',
                     }}
                 >
                     <Plus size={16} />
@@ -258,8 +258,8 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                             <AreaChart data={CHART}>
                                 <defs>
                                     <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#C49D5B" stopOpacity={0.25} />
-                                        <stop offset="95%" stopColor="#C49D5B" stopOpacity={0.02} />
+                                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.25} />
+                                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.02} />
                                     </linearGradient>
                                 </defs>
                                 <XAxis
@@ -282,11 +282,11 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                                 <Area
                                     type="monotone"
                                     dataKey="r"
-                                    stroke="#C49D5B"
+                                    stroke="#3B82F6"
                                     strokeWidth={2}
                                     fill="url(#goldGrad)"
                                     dot={false}
-                                    activeDot={{ r: 4, fill: '#C49D5B', strokeWidth: 0 }}
+                                    activeDot={{ r: 4, fill: '#3B82F6', strokeWidth: 0 }}
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -316,8 +316,8 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <div
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all group-hover:bg-[rgba(196,157,91,0.18)]"
-                                        style={{ background: 'rgba(196,157,91,0.08)' }}
+                                        className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all group-hover:bg-[rgba(26,26,46,0.18)]"
+                                        style={{ background: 'rgba(26,26,46,0.08)' }}
                                     >
                                         <a.icon size={15} style={{ color: T.gold }} />
                                     </div>
@@ -366,7 +366,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                                 <div
                                     className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                                     style={{
-                                        background: 'rgba(196,157,91,0.15)',
+                                        background: 'rgba(26,26,46,0.15)',
                                         color: T.gold,
                                     }}
                                 >
@@ -415,7 +415,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                             >
                                 <div
                                     className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                                    style={{ background: 'rgba(196,157,91,0.08)' }}
+                                    style={{ background: 'rgba(26,26,46,0.08)' }}
                                 >
                                     <Scale size={14} style={{ color: T.gold }} />
                                 </div>

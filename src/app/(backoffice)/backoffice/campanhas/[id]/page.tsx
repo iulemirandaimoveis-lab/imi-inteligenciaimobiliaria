@@ -160,7 +160,7 @@ export default function CampanhaDetalhesPage() {
           </button>
           <button
             onClick={() => router.push(`/backoffice/campanhas/${params.id}/editar`)}
-            className="h-10 px-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2"
+            className="h-10 px-4 bg-[#16162A] text-white rounded-lg hover:bg-[#0F0F1E] transition-colors flex items-center gap-2"
           >
             <Edit size={16} />
             <span className="hidden sm:inline">Editar</span>
@@ -188,7 +188,7 @@ export default function CampanhaDetalhesPage() {
         </div>
         <div className="bg-white rounded-xl p-4 border">
           <p className="text-xs text-gray-600 mb-1">Leads</p>
-          <p className="text-2xl font-bold text-accent-700">{campanhaData.leads}</p>
+          <p className="text-2xl font-bold text-[#0F0F1E]">{campanhaData.leads}</p>
         </div>
         <div className="bg-white rounded-xl p-4 border">
           <p className="text-xs text-gray-600 mb-1">CPL</p>
@@ -213,13 +213,13 @@ export default function CampanhaDetalhesPage() {
               {formatPrice(campanhaData.spent)} de {formatPrice(campanhaData.budget)} ({progressPercent.toFixed(0)}%)
             </p>
           </div>
-          <p className="text-lg font-bold text-accent-700">
+          <p className="text-lg font-bold text-[#0F0F1E]">
             {formatPrice(campanhaData.budget - campanhaData.spent)} restante
           </p>
         </div>
         <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-accent-500'
+            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-[#1A1A2E]'
               }`}
             style={{ width: `${Math.min(progressPercent, 100)}%` }}
           />
@@ -233,7 +233,7 @@ export default function CampanhaDetalhesPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-accent-600 text-accent-600' : 'border-transparent text-gray-600'
+              className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-transparent text-gray-600'
                 }`}
             >
               {tab === 'overview' ? 'Visão Geral' : tab === 'metricas' ? 'Métricas' : 'Leads Gerados'}
@@ -287,7 +287,7 @@ export default function CampanhaDetalhesPage() {
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-accent-500 rounded-full transition-all"
+                      className="h-full bg-[#1A1A2E] rounded-full transition-all"
                       style={{ width: `${item.percentage}%` }}
                     />
                   </div>
@@ -306,7 +306,7 @@ export default function CampanhaDetalhesPage() {
                     <MapPin size={16} className="text-gray-600" />
                     <span className="text-sm font-medium text-gray-900">{item.city}</span>
                   </div>
-                  <span className="text-sm font-bold text-accent-700">{item.percentage}%</span>
+                  <span className="text-sm font-bold text-[#0F0F1E]">{item.percentage}%</span>
                 </div>
               ))}
             </div>

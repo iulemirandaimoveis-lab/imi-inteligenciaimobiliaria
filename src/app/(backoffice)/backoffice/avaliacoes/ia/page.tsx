@@ -513,7 +513,7 @@ export default function AvaliacaoIAPage() {
                         </button>
                         <button
                             onClick={handleSave}
-                            className="flex-1 h-11 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 flex items-center justify-center gap-2"
+                            className="flex-1 h-11 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] flex items-center justify-center gap-2"
                         >
                             <Save size={20} />
                             Salvar no Sistema
@@ -535,7 +535,7 @@ export default function AvaliacaoIAPage() {
                         </button>
                         <button
                             onClick={handleSave}
-                            className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700"
+                            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]"
                         >
                             <Save size={20} />
                             Salvar e Voltar

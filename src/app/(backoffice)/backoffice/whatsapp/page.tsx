@@ -206,7 +206,7 @@ export default function WhatsappPage() {
               placeholder="Buscar ou começar nova conversa"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 bg-gray-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-accent-500 transition-all font-medium"
+              className="w-full h-10 pl-10 pr-4 bg-gray-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-[#3B82F6] transition-all font-medium"
             />
           </div>
         </div>
@@ -216,11 +216,11 @@ export default function WhatsappPage() {
             <button
               key={conversa.id}
               onClick={() => setActiveConversation(conversa)}
-              className={`w-full flex items-center gap-3 p-4 hover:bg-white transition-all border-l-4 ${activeConversation.id === conversa.id ? 'bg-white border-accent-500' : 'border-transparent'
+              className={`w-full flex items-center gap-3 p-4 hover:bg-white transition-all border-l-4 ${activeConversation.id === conversa.id ? 'bg-white border-[#3B82F6]' : 'border-transparent'
                 }`}
             >
               <div className="relative flex-shrink-0">
-                <div className="w-12 h-12 bg-accent-100 rounded-2xl flex items-center justify-center text-accent-700 font-bold">
+                <div className="w-12 h-12 bg-accent-100 rounded-2xl flex items-center justify-center text-[#0F0F1E] font-bold">
                   {conversa.nome[0]}
                 </div>
                 {conversa.online && (
@@ -235,7 +235,7 @@ export default function WhatsappPage() {
                 <div className="flex justify-between items-center">
                   <p className="text-xs text-gray-500 truncate">{conversa.ultimaMensagem}</p>
                   {conversa.naoLidas > 0 && (
-                    <span className="bg-accent-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    <span className="bg-[#16162A] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
                       {conversa.naoLidas}
                     </span>
                   )}
@@ -254,7 +254,7 @@ export default function WhatsappPage() {
             <button className="md:hidden p-2 -ml-2 hover:bg-gray-100 rounded-xl">
               <ArrowLeft size={20} />
             </button>
-            <div className="w-10 h-10 bg-accent-100 rounded-xl flex items-center justify-center text-accent-700 font-bold">
+            <div className="w-10 h-10 bg-accent-100 rounded-xl flex items-center justify-center text-[#0F0F1E] font-bold">
               {activeConversation.nome[0]}
             </div>
             <div>
@@ -264,7 +264,7 @@ export default function WhatsappPage() {
                   {activeConversation.online ? 'Online agora' : 'Visto por último hoje'}
                 </span>
                 <span>•</span>
-                <span className="text-accent-600 px-1.5 py-0.5 bg-accent-50 rounded-md">
+                <span className="text-[#3B82F6] px-1.5 py-0.5 bg-accent-50 rounded-md">
                   {activeConversation.status}
                 </span>
               </div>
@@ -310,7 +310,7 @@ export default function WhatsappPage() {
             <div key={msg.id} className={`flex ${msg.eu ? 'justify-end' : 'justify-start'}`}>
               <div
                 className={`max-w-[75%] rounded-2xl px-4 py-2.5 shadow-sm relative group ${msg.eu
-                  ? 'bg-accent-600 text-white rounded-tr-none'
+                  ? 'bg-[#16162A] text-white rounded-tr-none'
                   : 'bg-white border border-gray-100 text-gray-900 rounded-tl-none'
                   }`}
               >
@@ -333,7 +333,7 @@ export default function WhatsappPage() {
           {(showTemplates || aiLoading) && (
             <div className="mb-4 flex flex-wrap gap-2 animate-in slide-in-from-bottom-2">
               {aiLoading ? (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-accent-50 text-accent-700 rounded-xl text-xs font-semibold border border-accent-100">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-accent-50 text-[#0F0F1E] rounded-xl text-xs font-semibold border border-accent-100">
                   <Loader2 size={14} className="animate-spin" />
                   IA formulando resposta estratégica...
                 </div>
@@ -343,7 +343,7 @@ export default function WhatsappPage() {
                     <button
                       key={tpl.id}
                       onClick={() => applyTemplate(tpl.text)}
-                      className="px-3 py-1.5 bg-accent-50 text-accent-700 rounded-xl text-xs font-semibold hover:bg-accent-100 transition-colors border border-accent-100"
+                      className="px-3 py-1.5 bg-accent-50 text-[#0F0F1E] rounded-xl text-xs font-semibold hover:bg-accent-100 transition-colors border border-accent-100"
                     >
                       {tpl.label}
                     </button>
@@ -370,7 +370,7 @@ export default function WhatsappPage() {
             <div className="flex gap-1 mb-1">
               <button
                 onClick={() => setShowTemplates(!showTemplates)}
-                className={`p-2.5 rounded-xl transition-all ${showTemplates ? 'bg-accent-600 text-white' : 'hover:bg-gray-100 text-gray-500'
+                className={`p-2.5 rounded-xl transition-all ${showTemplates ? 'bg-[#16162A] text-white' : 'hover:bg-gray-100 text-gray-500'
                   }`}
                 title="Templates & IA"
               >
@@ -390,14 +390,14 @@ export default function WhatsappPage() {
                 onChange={e => setNewMessage(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
                 placeholder="Digite uma mensagem..."
-                className="w-full h-11 py-3 px-4 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-accent-500 transition-all font-medium resize-none shadow-inner"
+                className="w-full h-11 py-3 px-4 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-[#3B82F6] transition-all font-medium resize-none shadow-inner"
               />
             </div>
 
             <button
               onClick={handleSend}
               disabled={!newMessage.trim()}
-              className="h-11 w-11 flex items-center justify-center bg-accent-600 text-white rounded-2xl hover:bg-accent-700 transition-all disabled:opacity-50 disabled:hover:bg-accent-600 shadow-md shadow-accent-200"
+              className="h-11 w-11 flex items-center justify-center bg-[#16162A] text-white rounded-2xl hover:bg-[#0F0F1E] transition-all disabled:opacity-50 disabled:hover:bg-[#16162A] shadow-md shadow-accent-200"
             >
               <Send size={18} />
             </button>
@@ -408,7 +408,7 @@ export default function WhatsappPage() {
       {/* ── Painel Direito: Info do Lead ────────────────────────────── */}
       <div className="hidden xl:flex w-72 border-l border-gray-100 flex-col bg-gray-50/30">
         <div className="p-6 text-center border-b border-gray-100 bg-white shadow-sm">
-          <div className="w-20 h-20 bg-accent-100 rounded-3xl mx-auto flex items-center justify-center text-accent-700 text-2xl font-bold mb-3 shadow-lg shadow-accent-100">
+          <div className="w-20 h-20 bg-accent-100 rounded-3xl mx-auto flex items-center justify-center text-[#0F0F1E] text-2xl font-bold mb-3 shadow-lg shadow-accent-100">
             {activeConversation.nome[0]}
           </div>
           <h3 className="font-bold text-gray-900">{activeConversation.nome}</h3>
@@ -437,7 +437,7 @@ export default function WhatsappPage() {
           <section>
             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Segmentação</h4>
             <div className="flex flex-wrap gap-1.5">
-              <span className="px-2 py-1 bg-accent-50 text-accent-700 rounded-lg text-[10px] font-bold border border-accent-100">Reserva Atlantis</span>
+              <span className="px-2 py-1 bg-accent-50 text-[#0F0F1E] rounded-lg text-[10px] font-bold border border-accent-100">Reserva Atlantis</span>
               <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-bold border border-indigo-100">Investidor</span>
               <span className="px-2 py-1 bg-green-50 text-green-700 rounded-lg text-[10px] font-bold border border-green-100">Alta Renda</span>
             </div>
@@ -446,7 +446,7 @@ export default function WhatsappPage() {
           <section>
             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Notas de Contexto</h4>
             <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-accent-500" />
+              <div className="absolute top-0 left-0 w-1 h-full bg-[#1A1A2E]" />
               <p className="text-[10px] text-gray-600 italic leading-relaxed font-medium">
                 "Busca rentabilidade anual superior a 15%. Interessada em unidades com vista mar definitiva em Boa Viagem."
               </p>

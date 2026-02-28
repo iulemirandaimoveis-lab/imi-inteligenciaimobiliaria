@@ -129,7 +129,7 @@ export default function AgendaPage() {
       reuniao: { label: 'Reunião', color: 'text-purple-700', bg: 'bg-purple-50', icon: Users },
       visita: { label: 'Visita', color: 'text-green-700', bg: 'bg-green-50', icon: MapPin },
       entrega: { label: 'Entrega', color: 'text-orange-700', bg: 'bg-orange-50', icon: FileText },
-      evento: { label: 'Evento', color: 'text-accent-700', bg: 'bg-accent-50', icon: Calendar },
+      evento: { label: 'Evento', color: 'text-[#0F0F1E]', bg: 'bg-accent-50', icon: Calendar },
     }
     return configs[tipo] || configs.reuniao
   }
@@ -174,7 +174,7 @@ export default function AgendaPage() {
             <button
               onClick={() => setVisualizacao('semana')}
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${visualizacao === 'semana'
-                  ? 'bg-accent-50 text-accent-700'
+                  ? 'bg-accent-50 text-[#0F0F1E]'
                   : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
@@ -183,7 +183,7 @@ export default function AgendaPage() {
             <button
               onClick={() => setVisualizacao('dia')}
               className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${visualizacao === 'dia'
-                  ? 'bg-accent-50 text-accent-700'
+                  ? 'bg-accent-50 text-[#0F0F1E]'
                   : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
@@ -192,7 +192,7 @@ export default function AgendaPage() {
           </div>
           <button
             onClick={() => router.push('/backoffice/agenda/novo')}
-            className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
+            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
           >
             <Plus size={20} />
             Novo Evento

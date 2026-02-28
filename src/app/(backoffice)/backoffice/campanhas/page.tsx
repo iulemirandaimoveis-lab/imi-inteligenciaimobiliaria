@@ -206,7 +206,7 @@ export default function CampanhasPage() {
                 </div>
                 <button
                     onClick={() => router.push('/backoffice/campanhas/nova')}
-                    className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-all"
+                    className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-all"
                 >
                     <Plus size={20} />
                     Nova Campanha
@@ -221,7 +221,7 @@ export default function CampanhasPage() {
                 </div>
                 <div className="bg-white rounded-xl p-4 border border-gray-100">
                     <p className="text-xs text-gray-600 mb-1">Investido</p>
-                    <p className="text-2xl font-bold text-accent-700">{formatPrice(totalStats.spent)}</p>
+                    <p className="text-2xl font-bold text-[#0F0F1E]">{formatPrice(totalStats.spent)}</p>
                 </div>
                 <div className="bg-white rounded-xl p-4 border border-gray-100">
                     <p className="text-xs text-gray-600 mb-1">Impressões</p>
@@ -285,13 +285,13 @@ export default function CampanhasPage() {
                             placeholder="Buscar campanhas..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                         />
                     </div>
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
                     >
                         <option value="all">Todos os status</option>
                         <option value="ativa">Ativa</option>
@@ -301,7 +301,7 @@ export default function CampanhasPage() {
                     <select
                         value={platformFilter}
                         onChange={(e) => setPlatformFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
                     >
                         <option value="all">Todas as plataformas</option>
                         <option value="Instagram">Instagram</option>
@@ -333,7 +333,7 @@ export default function CampanhasPage() {
                                 <div className="flex items-start justify-between mb-3">
                                     <div className="flex items-start gap-3">
                                         <div className="w-10 h-10 bg-accent-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <PlatformIcon size={20} className="text-accent-600" />
+                                            <PlatformIcon size={20} className="text-[#3B82F6]" />
                                         </div>
                                         <div>
                                             <h3 className="font-bold text-gray-900 mb-1">{campanha.name}</h3>
@@ -356,7 +356,7 @@ export default function CampanhasPage() {
                                     </div>
                                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                                         <div
-                                            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-accent-500'
+                                            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-[#1A1A2E]'
                                                 }`}
                                             style={{ width: `${Math.min(progressPercent, 100)}%` }}
                                         />
@@ -380,7 +380,7 @@ export default function CampanhasPage() {
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-600 mb-1">Leads</p>
-                                    <p className="text-lg font-bold text-accent-700">{campanha.leads}</p>
+                                    <p className="text-lg font-bold text-[#0F0F1E]">{campanha.leads}</p>
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-600 mb-1">Conversões</p>
@@ -434,7 +434,7 @@ export default function CampanhasPage() {
                     <p className="text-gray-600 mb-6">Tente ajustar os filtros ou criar uma nova campanha</p>
                     <button
                         onClick={() => router.push('/backoffice/campanhas/nova')}
-                        className="inline-flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700"
+                        className="inline-flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]"
                     >
                         <Plus size={20} />
                         Nova Campanha

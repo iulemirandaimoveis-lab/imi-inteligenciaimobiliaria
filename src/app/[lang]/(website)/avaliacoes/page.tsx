@@ -51,16 +51,16 @@ export default function AppraisalsPage() {
       {/* HERO */}
       <section className="relative bg-[#141420] overflow-hidden">
         <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#C49D5B]/[0.07] blur-[80px]" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#1A1A2E]/[0.07] blur-[80px]" />
 
         <div className="relative z-10 container-custom py-20 lg:py-28">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-px bg-[#C49D5B]" />
-              <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">CNAI 53290</span>
+              <div className="w-8 h-px bg-[#1A1A2E]" />
+              <span className="text-[#3B82F6] text-[11px] font-bold uppercase tracking-[0.25em]">CNAI 53290</span>
             </div>
             <h1 className="text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-              Avaliações <span className="text-[#C49D5B]">Imobiliárias</span>
+              Avaliações <span className="text-[#3B82F6]">Imobiliárias</span>
             </h1>
             <p className="text-[17px] lg:text-[19px] leading-relaxed font-light text-[#9CA3AF] max-w-2xl">
               Laudos técnicos com metodologia normativa <span className="text-white font-medium">NBR 14653</span>. Decisões seguras baseadas em análise profissional e independente.
@@ -68,7 +68,7 @@ export default function AppraisalsPage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-12 flex flex-wrap gap-x-10 gap-y-6">
               {[{ v: '+500', l: 'Laudos emitidos' }, { v: 'NBR', l: '14653 metodologia' }, { v: '72h', l: 'Prazo expresso' }].map((s, i) => (
                 <div key={i}>
-                  <div className="text-[30px] font-black text-[#C49D5B] leading-none mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.v}</div>
+                  <div className="text-[30px] font-black text-[#3B82F6] leading-none mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.v}</div>
                   <div className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#6C757D]">{s.l}</div>
                 </div>
               ))}
@@ -89,7 +89,7 @@ export default function AppraisalsPage() {
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[#F8F9FA] rounded-xl flex items-center justify-center">
-                  <item.icon className="w-5 h-5 text-[#C49D5B]" strokeWidth={1.5} />
+                  <item.icon className="w-5 h-5 text-[#3B82F6]" strokeWidth={1.5} />
                 </div>
                 <div>
                   <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-[#1A1A1A]">{item.t}</p>
@@ -105,14 +105,14 @@ export default function AppraisalsPage() {
       <section className="section-padding bg-white">
         <div className="container-custom">
           <div className="text-center mb-14">
-            <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Serviços</span>
+            <span className="text-[#3B82F6] text-[11px] font-bold uppercase tracking-[0.25em]">Serviços</span>
             <h2 className="text-[32px] lg:text-[44px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Tipos de Avaliação</h2>
             <p className="text-[#6C757D] text-lg max-w-xl mx-auto font-light">Serviços especializados para cada necessidade de mercado e conformidade legal</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {APPRAISAL_TYPES.map((item, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}
-                className="group bg-white border border-[#E9ECEF] rounded-2xl p-6 hover:border-[#C49D5B]/40 hover:shadow-[0_8px_32px_rgba(196,157,91,0.10)] transition-all duration-300">
+                className="group bg-white border border-[#E9ECEF] rounded-2xl p-6 hover:border-[#3B82F6]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.10)] transition-all duration-300">
                 <div className="flex items-start justify-between mb-5">
                   <div className="w-11 h-11 bg-[#1A1A1A] rounded-xl flex items-center justify-center">
                     <item.icon className="w-5 h-5 text-white" strokeWidth={1.5} />
@@ -124,7 +124,7 @@ export default function AppraisalsPage() {
                 <ul className="space-y-2">
                   {item.points.map((pt, j) => (
                     <li key={j} className="flex items-start gap-2 text-[12px] text-[#495057]">
-                      <CheckCircle className="w-3.5 h-3.5 text-[#C49D5B] flex-shrink-0 mt-0.5" strokeWidth={2} />{pt}
+                      <CheckCircle className="w-3.5 h-3.5 text-[#3B82F6] flex-shrink-0 mt-0.5" strokeWidth={2} />{pt}
                     </li>
                   ))}
                 </ul>
@@ -139,7 +139,7 @@ export default function AppraisalsPage() {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-14">
-              <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Processo</span>
+              <span className="text-[#3B82F6] text-[11px] font-bold uppercase tracking-[0.25em]">Processo</span>
               <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Nossa Metodologia</h2>
               <p className="text-[#6C757D] max-w-lg mx-auto font-light">Todas as avaliações seguem rigorosamente a <strong className="text-[#1A1A1A]">NBR 14653</strong> e as diretrizes do IBAPE.</p>
             </div>
@@ -163,7 +163,7 @@ export default function AppraisalsPage() {
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-14">
-              <span className="text-[#C49D5B] text-[11px] font-bold uppercase tracking-[0.25em]">Solicitar</span>
+              <span className="text-[#3B82F6] text-[11px] font-bold uppercase tracking-[0.25em]">Solicitar</span>
               <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Solicitar Avaliação Técnica</h2>
               <p className="text-[#6C757D] max-w-md mx-auto font-light">Preencha o formulário e retornaremos em até 24 horas com um orçamento detalhado.</p>
             </div>
@@ -177,7 +177,7 @@ export default function AppraisalsPage() {
         <div className="container-custom text-center">
           <h2 className="text-[28px] lg:text-[38px] font-black text-white mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Dúvidas sobre Avaliações?</h2>
           <p className="text-[#6C757D] text-lg mb-10 max-w-md mx-auto font-light">Nossa equipe técnica esclarece qualquer questão normativa ou processual.</p>
-          <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 h-16 px-12 text-lg font-bold bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#C49D5B] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(196,157,91,0.15)] rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(196,157,91,0.25)]">
+          <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 h-16 px-12 text-lg font-bold bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#3B82F6] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)]">
             <MessageCircle className="w-5 h-5 flex-shrink-0" />Falar com Especialista
           </a>
         </div>

@@ -119,7 +119,7 @@ export default function ProjetoDetalhePage() {
                     </a>
                     <button
                         onClick={() => router.push(`/backoffice/projetos/${params.id}/editar`)}
-                        className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
+                        className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
                     >
                         <Edit size={16} />
                         Editar
@@ -131,7 +131,7 @@ export default function ProjetoDetalhePage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white rounded-xl p-5 border">
                     <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">VGV</p>
-                    <p className="text-2xl font-bold text-accent-700">{formatCurrency(projetoData.vgv)}</p>
+                    <p className="text-2xl font-bold text-[#0F0F1E]">{formatCurrency(projetoData.vgv)}</p>
                 </div>
                 <div className="bg-white rounded-xl p-5 border">
                     <p className="text-xs text-green-600 uppercase tracking-wider mb-2">Captação</p>
@@ -155,7 +155,7 @@ export default function ProjetoDetalhePage() {
                     <span className="text-sm font-bold text-gray-900">{progressCaptacao.toFixed(0)}%</span>
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-accent-500 rounded-full transition-all" style={{ width: `${progressCaptacao}%` }} />
+                    <div className="h-full bg-[#1A1A2E] rounded-full transition-all" style={{ width: `${progressCaptacao}%` }} />
                 </div>
                 <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
                     <span>{formatCurrency(projetoData.captacaoAtual)} captados</span>
@@ -175,7 +175,7 @@ export default function ProjetoDetalhePage() {
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key as any)}
-                            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key ? 'border-accent-600 text-accent-600' : 'border-transparent text-gray-600 hover:text-gray-900'
+                            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-transparent text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             {tab.label}
@@ -233,7 +233,7 @@ export default function ProjetoDetalhePage() {
                         <div className="bg-white rounded-2xl p-6 border">
                             <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Documentos</h2>
                             <button className="flex items-center gap-3 w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm">
-                                <FileText size={16} className="text-accent-500" />
+                                <FileText size={16} className="text-[#3B82F6]" />
                                 <span>Pitch Deck v4</span>
                                 <ExternalLink size={14} className="text-gray-400 ml-auto" />
                             </button>
@@ -279,7 +279,7 @@ export default function ProjetoDetalhePage() {
                                 <p className="font-semibold text-gray-900">{inv.nome}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-lg font-bold text-accent-700">{formatCurrency(inv.alocacao)}</p>
+                                <p className="text-lg font-bold text-[#0F0F1E]">{formatCurrency(inv.alocacao)}</p>
                             </div>
                             <span className={`px-3 py-1 rounded-lg text-xs font-medium ${inv.status === 'confirmado' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
                                 }`}>
@@ -308,7 +308,7 @@ export default function ProjetoDetalhePage() {
                                     href={`https://${projetoData.website}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="h-11 px-5 bg-accent-600 text-white rounded-xl text-sm font-medium hover:bg-accent-700 transition-colors flex items-center gap-2"
+                                    className="h-11 px-5 bg-[#16162A] text-white rounded-xl text-sm font-medium hover:bg-[#0F0F1E] transition-colors flex items-center gap-2"
                                 >
                                     <Globe size={16} />
                                     Abrir

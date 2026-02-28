@@ -146,7 +146,7 @@ export default function FluxoCaixaPage() {
                     <select
                         value={periodoFilter}
                         onChange={e => setPeriodoFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                        className="h-11 px-4 border border-gray-200 rounded-xl bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                     >
                         <option value="jan26">Janeiro 2026</option>
                         <option value="fev26">Fevereiro 2026</option>
@@ -215,7 +215,7 @@ export default function FluxoCaixaPage() {
                             Saídas
                         </span>
                         <span className="flex items-center gap-1.5">
-                            <span className="w-3 h-3 rounded bg-accent-500 inline-block" />
+                            <span className="w-3 h-3 rounded bg-[#1A1A2E] inline-block" />
                             Saldo
                         </span>
                     </div>
@@ -241,7 +241,7 @@ export default function FluxoCaixaPage() {
                                 {/* Saldo */}
                                 <div className="flex-1 flex flex-col justify-end">
                                     <div
-                                        className={`rounded-t-sm transition-all ${m.saldo >= 0 ? 'bg-accent-500' : 'bg-red-600'}`}
+                                        className={`rounded-t-sm transition-all ${m.saldo >= 0 ? 'bg-[#1A1A2E]' : 'bg-red-600'}`}
                                         style={{ height: `${(Math.abs(m.saldo) / maxBarValue) * 100}%` }}
                                     />
                                 </div>

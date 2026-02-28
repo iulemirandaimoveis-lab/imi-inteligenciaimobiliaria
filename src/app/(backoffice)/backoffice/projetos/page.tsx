@@ -64,7 +64,7 @@ export default function ProjetosPage() {
           <h1 className="text-xl font-bold text-gray-900">Projetos & Empreendimentos</h1>
           <p className="text-xs text-gray-500 mt-0.5">Portfólio de desenvolvimentos ativos</p>
         </div>
-        <button className="flex items-center gap-2 h-9 px-4 bg-[#C49D5B] text-white rounded-xl text-sm font-semibold hover:bg-[#b08a4a] transition-colors">
+        <button className="flex items-center gap-2 h-9 px-4 bg-[#1A1A2E] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
           <Plus size={16} /> Novo Projeto
         </button>
       </div>
@@ -72,7 +72,7 @@ export default function ProjetosPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
         {[
-          { l: 'VGV Total Portfólio', v: fmtCurrency(totalVGV), icon: DollarSign, cls: 'text-[#C49D5B] bg-amber-50' },
+          { l: 'VGV Total Portfólio', v: fmtCurrency(totalVGV), icon: DollarSign, cls: 'text-[#3B82F6] bg-amber-50' },
           { l: 'Total de Unidades', v: totalUnidades, icon: Building2, cls: 'text-blue-600 bg-blue-50' },
           { l: 'Unidades Vendidas', v: totalVendidas, icon: Users, cls: 'text-emerald-600 bg-emerald-50' },
           { l: 'Taxa Média de Vendas', v: `${Math.round((totalVendidas / totalUnidades) * 100)}%`, icon: TrendingUp, cls: 'text-purple-600 bg-purple-50' },
@@ -139,7 +139,7 @@ export default function ProjetosPage() {
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all ${p.pct >= 75 ? 'bg-emerald-500' : p.pct >= 30 ? 'bg-[#C49D5B]' : 'bg-blue-400'}`}
+                      className={`h-full rounded-full transition-all ${p.pct >= 75 ? 'bg-emerald-500' : p.pct >= 30 ? 'bg-[#1A1A2E]' : 'bg-blue-400'}`}
                       style={{ width: `${p.pct}%` }}
                     />
                   </div>

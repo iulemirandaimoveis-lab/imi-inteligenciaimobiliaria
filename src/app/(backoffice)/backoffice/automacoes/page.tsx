@@ -163,7 +163,7 @@ export default function AutomacoesPage() {
                 </div>
                 <button
                     onClick={() => router.push('/backoffice/automacoes/nova')}
-                    className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
+                    className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
                 >
                     <Plus size={20} />
                     Nova Automação
@@ -204,13 +204,13 @@ export default function AutomacoesPage() {
                             placeholder="Buscar automações..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                         />
                     </div>
                     <select
                         value={categoriaFilter}
                         onChange={(e) => setCategoriaFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
                     >
                         <option value="all">Todas as categorias</option>
                         <option value="Leads">Leads</option>
@@ -335,7 +335,7 @@ export default function AutomacoesPage() {
                     <p className="text-gray-600 mb-6">Tente ajustar os filtros ou criar uma nova automação</p>
                     <button
                         onClick={() => router.push('/backoffice/automacoes/nova')}
-                        className="inline-flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700"
+                        className="inline-flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]"
                     >
                         <Plus size={20} />
                         Nova Automação

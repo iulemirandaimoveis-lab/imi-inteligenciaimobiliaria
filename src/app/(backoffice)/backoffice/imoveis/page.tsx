@@ -10,12 +10,12 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#C49D5B',
+    accent: '#3B82F6',
 }
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     disponivel: { label: 'Disponível', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    em_negociacao: { label: 'Negociação', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock },
+    em_negociacao: { label: 'Negociação', text: '#3B82F6', bg: 'rgba(26,26,46,0.12)', icon: Clock },
     reservado: { label: 'Reservado', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
     vendido: { label: 'Vendido', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
     lancamento: { label: 'Lançamento', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Tag },
@@ -84,9 +84,9 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
             >
                 {/* Abstract architectural lines decoration */}
                 <div className="absolute inset-0 overflow-hidden opacity-10">
-                    <div className="absolute top-4 left-4 w-16 h-16 border border-[#C49D5B] rounded-lg rotate-12" />
-                    <div className="absolute bottom-6 right-6 w-24 h-24 border border-[#C49D5B] rounded-xl -rotate-6" />
-                    <div className="absolute top-8 right-12 w-8 h-8 bg-[#C49D5B] rounded opacity-30" />
+                    <div className="absolute top-4 left-4 w-16 h-16 border border-[#3B82F6] rounded-lg rotate-12" />
+                    <div className="absolute bottom-6 right-6 w-24 h-24 border border-[#3B82F6] rounded-xl -rotate-6" />
+                    <div className="absolute top-8 right-12 w-8 h-8 bg-[#1A1A2E] rounded opacity-30" />
                 </div>
 
                 <div className="relative flex items-end justify-between w-full">
@@ -229,7 +229,7 @@ export default function ImoveisPage() {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/imoveis/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}
+                    style={{ background: '#1A1A2E', boxShadow: '0 2px 12px rgba(26,26,46,0.30)' }}
                 >
                     <Plus size={16} /> Novo Empreendimento
                 </motion.button>
@@ -249,7 +249,7 @@ export default function ImoveisPage() {
                             border: `1px solid ${T.borderGold}`,
                         }}
                     >
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'rgba(196,157,91,0.10)' }}>
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'rgba(26,26,46,0.10)' }}>
                             <s.icon size={16} style={{ color: T.gold }} />
                         </div>
                         <p className="text-xl font-bold" style={{ color: T.text }}>{s.value}</p>
@@ -286,7 +286,7 @@ export default function ImoveisPage() {
                                 onClick={() => setFilter(s)}
                                 className="px-3 h-10 rounded-xl text-xs font-semibold transition-all hidden sm:block"
                                 style={{
-                                    background: filter === s ? 'linear-gradient(135deg, #C49D5B, #8B5E1F)' : T.elevated,
+                                    background: filter === s ? '#1A1A2E' : T.elevated,
                                     color: filter === s ? 'white' : T.textDim,
                                     border: `1px solid ${filter === s ? T.borderGold : T.border}`,
                                 }}
@@ -303,7 +303,7 @@ export default function ImoveisPage() {
                                     onClick={() => setView(v)}
                                     className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
                                     style={{
-                                        background: view === v ? 'linear-gradient(135deg, #C49D5B, #8B5E1F)' : T.elevated,
+                                        background: view === v ? '#1A1A2E' : T.elevated,
                                         border: `1px solid ${view === v ? T.borderGold : T.border}`,
                                     }}
                                 >
@@ -343,7 +343,7 @@ export default function ImoveisPage() {
                                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
                                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}
                             >
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(196,157,91,0.08)' }}>
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(26,26,46,0.08)' }}>
                                     <Building2 size={20} style={{ color: T.gold }} />
                                 </div>
                                 <div className="flex-1 min-w-0">

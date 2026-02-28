@@ -147,7 +147,7 @@ export default function ImovelAnalyticsPage() {
         <select
           value={periodoFilter}
           onChange={(e) => setPeriodoFilter(e.target.value)}
-          className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
+          className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
         >
           <option value="7d">Últimos 7 dias</option>
           <option value="30d">Últimos 30 dias</option>
@@ -191,10 +191,10 @@ export default function ImovelAnalyticsPage() {
 
         <div className="bg-white rounded-xl p-4 border">
           <div className="flex items-center gap-2 mb-2">
-            <TrendingUp size={16} className="text-accent-600" />
+            <TrendingUp size={16} className="text-[#3B82F6]" />
             <p className="text-xs text-gray-600">Taxa Conversão</p>
           </div>
-          <p className="text-2xl font-bold text-accent-700">{analyticsData.kpis.taxaConversao}%</p>
+          <p className="text-2xl font-bold text-[#0F0F1E]">{analyticsData.kpis.taxaConversao}%</p>
         </div>
 
         <div className="bg-white rounded-xl p-4 border">
@@ -223,12 +223,12 @@ export default function ImovelAnalyticsPage() {
                   <div className="flex items-center gap-4 text-xs text-gray-600">
                     <span>{day.views} views</span>
                     <span>{day.clicks} clicks</span>
-                    <span className="font-medium text-accent-700">{day.leads} leads</span>
+                    <span className="font-medium text-[#0F0F1E]">{day.leads} leads</span>
                   </div>
                 </div>
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-accent-500 rounded-full transition-all"
+                    className="h-full bg-[#1A1A2E] rounded-full transition-all"
                     style={{ width: `${barWidth}%` }}
                   />
                 </div>
@@ -274,7 +274,7 @@ export default function ImovelAnalyticsPage() {
                   <MapPin size={16} className="text-gray-600" />
                   <span className="text-sm font-medium text-gray-900">{loc.city}</span>
                 </div>
-                <span className="text-sm font-bold text-accent-700">{loc.percentage}%</span>
+                <span className="text-sm font-bold text-[#0F0F1E]">{loc.percentage}%</span>
               </div>
             ))}
           </div>

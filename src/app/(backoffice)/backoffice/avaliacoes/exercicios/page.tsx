@@ -378,7 +378,7 @@ export default function ExerciciosPage() {
                 <div key={cat} className="flex items-center gap-3">
                   <span className="text-sm text-gray-600 w-32 truncate">{cat}</span>
                   <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#C49D5B] rounded-full transition-all" style={{ width: `${(data.corretas / data.total) * 100}%` }} />
+                    <div className="h-full bg-[#1A1A2E] rounded-full transition-all" style={{ width: `${(data.corretas / data.total) * 100}%` }} />
                   </div>
                   <span className="text-xs text-gray-500 w-12 text-right">{data.corretas}/{data.total}</span>
                 </div>
@@ -386,7 +386,7 @@ export default function ExerciciosPage() {
             </div>
           )}
 
-          <button onClick={startTreino} className="mt-6 w-full h-11 bg-[#C49D5B] text-white rounded-xl font-semibold hover:bg-[#b08a4a] transition-colors flex items-center justify-center gap-2">
+          <button onClick={startTreino} className="mt-6 w-full h-11 bg-[#1A1A2E] text-white rounded-xl font-semibold hover:bg-[#16162A] transition-colors flex items-center justify-center gap-2">
             <RefreshCw size={18} /> Treinar Novamente
           </button>
         </div>
@@ -417,7 +417,7 @@ export default function ExerciciosPage() {
 
         {/* Progress */}
         <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-          <div className="h-full bg-[#C49D5B] rounded-full transition-all" style={{ width: `${((currentIdx) / filtered.length) * 100}%` }} />
+          <div className="h-full bg-[#1A1A2E] rounded-full transition-all" style={{ width: `${((currentIdx) / filtered.length) * 100}%` }} />
         </div>
 
         <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
@@ -467,7 +467,7 @@ export default function ExerciciosPage() {
         </div>
 
         {revealed && (
-          <button onClick={handleNext} className="w-full h-11 bg-[#C49D5B] text-white rounded-xl font-semibold hover:bg-[#b08a4a] transition-colors flex items-center justify-center gap-2">
+          <button onClick={handleNext} className="w-full h-11 bg-[#1A1A2E] text-white rounded-xl font-semibold hover:bg-[#16162A] transition-colors flex items-center justify-center gap-2">
             {currentIdx < filtered.length - 1 ? <>Próxima <ChevronRight size={18} /></> : <>Ver Resultado <Trophy size={18} /></>}
           </button>
         )}
@@ -515,7 +515,7 @@ export default function ExerciciosPage() {
         <div className="flex flex-wrap gap-2">
           {['Todos', ...CATEGORIAS].map(cat => (
             <button key={cat} onClick={() => setSelectedCat(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedCat === cat ? 'bg-[#C49D5B] text-white border-[#C49D5B]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#C49D5B]'}`}>
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedCat === cat ? 'bg-[#1A1A2E] text-white border-[#3B82F6]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#3B82F6]'}`}>
               {cat}
             </button>
           ))}
@@ -532,7 +532,7 @@ export default function ExerciciosPage() {
         <div className="flex items-center justify-between pt-1">
           <p className="text-sm text-gray-500"><strong className="text-gray-900">{filtered.length}</strong> questões selecionadas</p>
           <button onClick={startTreino} disabled={filtered.length === 0}
-            className="flex items-center gap-2 h-9 px-5 bg-[#C49D5B] text-white rounded-xl text-sm font-semibold hover:bg-[#b08a4a] transition-colors disabled:opacity-40">
+            className="flex items-center gap-2 h-9 px-5 bg-[#1A1A2E] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors disabled:opacity-40">
             <Play size={15} /> Iniciar Treino
           </button>
         </div>

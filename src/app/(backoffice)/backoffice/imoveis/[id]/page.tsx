@@ -208,7 +208,7 @@ export default function ImovelDetalhesPage() {
           </button>
           <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
-            className="h-10 px-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center gap-2"
+            className="h-10 px-4 bg-[#16162A] text-white rounded-lg hover:bg-[#0F0F1E] transition-colors flex items-center gap-2"
           >
             <Edit size={16} />
             <span className="hidden sm:inline">Editar</span>
@@ -229,7 +229,7 @@ export default function ImovelDetalhesPage() {
           </span>
         </div>
         <div className="px-4 py-2 rounded-xl bg-accent-50 border border-accent-200">
-          <span className="text-sm font-medium text-accent-700">
+          <span className="text-sm font-medium text-[#0F0F1E]">
             {formatPrice(imovelData.minPrice)} - {formatPrice(imovelData.maxPrice)}
           </span>
         </div>
@@ -256,10 +256,10 @@ export default function ImovelDetalhesPage() {
 
         <div className="bg-white rounded-xl p-4 border border-gray-100">
           <div className="flex items-center gap-2 mb-2">
-            <Users size={16} className="text-accent-600" />
+            <Users size={16} className="text-[#3B82F6]" />
             <p className="text-xs text-gray-600">Leads</p>
           </div>
-          <p className="text-2xl font-bold text-accent-700">{imovelData.leads}</p>
+          <p className="text-2xl font-bold text-[#0F0F1E]">{imovelData.leads}</p>
           <p className="text-xs text-gray-500">{imovelData.conversions} conversões</p>
         </div>
 
@@ -294,7 +294,7 @@ export default function ImovelDetalhesPage() {
           <button
             onClick={() => setActiveTab('overview')}
             className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'overview'
-                ? 'border-accent-600 text-accent-600'
+                ? 'border-[#3B82F6] text-[#3B82F6]'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
           >
@@ -303,7 +303,7 @@ export default function ImovelDetalhesPage() {
           <button
             onClick={() => setActiveTab('sales')}
             className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'sales'
-                ? 'border-accent-600 text-accent-600'
+                ? 'border-[#3B82F6] text-[#3B82F6]'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
           >
@@ -312,7 +312,7 @@ export default function ImovelDetalhesPage() {
           <button
             onClick={() => setActiveTab('leads')}
             className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'leads'
-                ? 'border-accent-600 text-accent-600'
+                ? 'border-[#3B82F6] text-[#3B82F6]'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
               }`}
           >
@@ -413,7 +413,7 @@ export default function ImovelDetalhesPage() {
                   <div key={index} className="p-4 border border-gray-200 rounded-xl hover:border-accent-300 transition-colors">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="font-bold text-gray-900">{plan.name}</h3>
-                      <span className="text-2xl font-bold text-accent-700">
+                      <span className="text-2xl font-bold text-[#0F0F1E]">
                         {formatPrice(plan.price)}
                       </span>
                     </div>
@@ -456,14 +456,14 @@ export default function ImovelDetalhesPage() {
               <div className="space-y-3">
                 <a
                   href={`tel:${imovelData.developerPhone}`}
-                  className="flex items-center gap-3 text-sm text-gray-700 hover:text-accent-600 transition-colors"
+                  className="flex items-center gap-3 text-sm text-gray-700 hover:text-[#3B82F6] transition-colors"
                 >
                   <Phone size={16} />
                   {imovelData.developerPhone}
                 </a>
                 <a
                   href={`mailto:${imovelData.developerEmail}`}
-                  className="flex items-center gap-3 text-sm text-gray-700 hover:text-accent-600 transition-colors"
+                  className="flex items-center gap-3 text-sm text-gray-700 hover:text-[#3B82F6] transition-colors"
                 >
                   <Mail size={16} />
                   {imovelData.developerEmail}
@@ -493,7 +493,7 @@ export default function ImovelDetalhesPage() {
                   <p className="text-xs text-gray-600 mb-2">Progresso da Obra</p>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-accent-500 rounded-full transition-all duration-500"
+                      className="h-full bg-[#1A1A2E] rounded-full transition-all duration-500"
                       style={{ width: `${imovelData.completionProgress}%` }}
                     />
                   </div>
@@ -538,7 +538,7 @@ export default function ImovelDetalhesPage() {
                     </div>
                     <div className="h-8 bg-gray-100 rounded-lg overflow-hidden">
                       <div
-                        className="h-full bg-accent-500 rounded-lg transition-all duration-700"
+                        className="h-full bg-[#1A1A2E] rounded-lg transition-all duration-700"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
@@ -564,7 +564,7 @@ export default function ImovelDetalhesPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-accent-700">{convRate.toFixed(1)}%</p>
+                      <p className="text-2xl font-bold text-[#0F0F1E]">{convRate.toFixed(1)}%</p>
                       <p className="text-xs text-gray-500">taxa conversão</p>
                     </div>
                   </div>
@@ -585,7 +585,7 @@ export default function ImovelDetalhesPage() {
                 <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-accent-300 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-accent-50 rounded-lg flex items-center justify-center">
-                      <Calendar size={20} className="text-accent-600" />
+                      <Calendar size={20} className="text-[#3B82F6]" />
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">{visit.client}</p>

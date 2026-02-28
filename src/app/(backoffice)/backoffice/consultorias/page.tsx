@@ -95,7 +95,7 @@ export default function ConsultoriasPage() {
           <p className="text-xs text-gray-500 mt-0.5">Gestão de projetos e honorários</p>
         </div>
         <Link href="/backoffice/consultorias/nova"
-          className="flex items-center gap-2 h-9 px-4 bg-[#C49D5B] text-white rounded-xl text-sm font-semibold hover:bg-[#b08a4a] transition-colors">
+          className="flex items-center gap-2 h-9 px-4 bg-[#1A1A2E] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
           <Plus size={16} /> Nova Consultoria
         </Link>
       </div>
@@ -103,7 +103,7 @@ export default function ConsultoriasPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
         {[
-          { l: 'Total Portfólio', v: fmtCurrency(totalHonorarios), icon: DollarSign, cls: 'text-[#C49D5B] bg-amber-50' },
+          { l: 'Total Portfólio', v: fmtCurrency(totalHonorarios), icon: DollarSign, cls: 'text-[#3B82F6] bg-amber-50' },
           { l: 'Honorários Recebidos', v: fmtCurrency(recebido), icon: CheckCircle2, cls: 'text-emerald-600 bg-emerald-50' },
           { l: 'Em Andamento', v: emAndamento, icon: Clock, cls: 'text-blue-600 bg-blue-50' },
           { l: 'Propostas Abertas', v: propostas, icon: Briefcase, cls: 'text-purple-600 bg-purple-50' },
@@ -128,7 +128,7 @@ export default function ConsultoriasPage() {
           <input
             value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Buscar cliente, protocolo, cidade…"
-            className="w-full pl-9 pr-4 h-9 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-[#C49D5B]"
+            className="w-full pl-9 pr-4 h-9 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-[#3B82F6]"
           />
         </div>
         <div className="flex gap-2">
@@ -151,7 +151,7 @@ export default function ConsultoriasPage() {
             <Briefcase size={32} className="mx-auto text-gray-300 mb-3" />
             <p className="text-gray-500 text-sm">Nenhuma consultoria encontrada</p>
             <Link href="/backoffice/consultorias/nova"
-              className="mt-4 inline-flex items-center gap-2 text-sm text-[#C49D5B] font-medium hover:underline">
+              className="mt-4 inline-flex items-center gap-2 text-sm text-[#3B82F6] font-medium hover:underline">
               <Plus size={14} /> Criar nova consultoria
             </Link>
           </div>

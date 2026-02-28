@@ -14,13 +14,13 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#C49D5B',
+    gold: '#3B82F6',
 }
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     rascunho: { label: 'Rascunho', text: '#4E5669', bg: 'rgba(78,86,105,0.15)', icon: FileText },
     gerado: { label: 'Gerado', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
-    aguardando_assinatura: { label: 'Aguard. Assinatura', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock },
+    aguardando_assinatura: { label: 'Aguard. Assinatura', text: '#3B82F6', bg: 'rgba(26,26,46,0.12)', icon: Clock },
     assinado_parcial: { label: 'Parcialmente Assinado', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
     assinado: { label: 'Assinado', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
     cancelado: { label: 'Cancelado', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: X },
@@ -36,7 +36,7 @@ const CONTRATOS_MOCK: ContratoGerado[] = [
 const KPIS = [
     { label: 'Total', value: 4, icon: FileText, color: '#7B9EC4' },
     { label: 'Assinados', value: 2, icon: CheckCircle, color: '#6BB87B' },
-    { label: 'Aguard. Assinatura', value: 1, icon: Clock, color: '#C49D5B' },
+    { label: 'Aguard. Assinatura', value: 1, icon: Clock, color: '#3B82F6' },
     { label: 'Internacionais', value: 1, icon: Globe, color: '#E8A87C' },
 ]
 
@@ -81,7 +81,7 @@ export default function ContratosPage() {
                 <motion.button whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/contratos/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg,#C49D5B,#8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}>
+                    style={{ background: '#1A1A2E', boxShadow: '0 2px 12px rgba(26,26,46,0.30)' }}>
                     <Sparkles size={15} /> Novo Contrato
                 </motion.button>
             </motion.div>
@@ -114,7 +114,7 @@ export default function ContratosPage() {
                         onClick={() => setActiveTab(tab.key as any)}
                         className="flex items-center gap-2 px-4 h-10 rounded-xl text-sm font-semibold transition-all"
                         style={{
-                            background: activeTab === tab.key ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.surface,
+                            background: activeTab === tab.key ? '#1A1A2E' : T.surface,
                             color: activeTab === tab.key ? 'white' : T.textDim,
                             border: `1px solid ${activeTab === tab.key ? T.borderGold : T.border}`,
                         }}>
@@ -143,7 +143,7 @@ export default function ContratosPage() {
                                         <button key={s} onClick={() => setFilterStatus(s)}
                                             className="px-3 h-10 rounded-xl text-xs font-semibold flex-shrink-0"
                                             style={{
-                                                background: filterStatus === s ? 'linear-gradient(135deg,#C49D5B,#8B5E1F)' : T.elevated,
+                                                background: filterStatus === s ? '#1A1A2E' : T.elevated,
                                                 color: filterStatus === s ? 'white' : T.textDim,
                                                 border: `1px solid ${filterStatus === s ? T.borderGold : T.border}`,
                                             }}>
@@ -167,7 +167,7 @@ export default function ContratosPage() {
                                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
                                     <div className="flex items-center gap-3 p-4">
                                         <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                            style={{ background: 'rgba(196,157,91,0.10)' }}>
+                                            style={{ background: 'rgba(26,26,46,0.10)' }}>
                                             <FileSignature size={18} style={{ color: T.gold }} />
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -204,7 +204,7 @@ export default function ContratosPage() {
                                 <p className="text-sm mb-3">Nenhum contrato encontrado</p>
                                 <button onClick={() => router.push('/backoffice/contratos/novo')}
                                     className="text-xs font-semibold px-4 py-2 rounded-xl text-white"
-                                    style={{ background: 'linear-gradient(135deg,#C49D5B,#8B5E1F)' }}>
+                                    style={{ background: '#1A1A2E' }}>
                                     Gerar primeiro contrato
                                 </button>
                             </div>
@@ -227,9 +227,9 @@ export default function ContratosPage() {
                                                 transition={{ delay: i * 0.03 }}
                                                 onClick={() => router.push(`/backoffice/contratos/novo?modelo=${m.id}`)}
                                                 className="rounded-2xl p-4 cursor-pointer transition-all group"
-                                                style={{ background: m.id === 'modelo-personalizado' ? 'rgba(196,157,91,0.06)' : T.surface, border: `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}` }}
+                                                style={{ background: m.id === 'modelo-personalizado' ? 'rgba(26,26,46,0.06)' : T.surface, border: `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}` }}
                                                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}`; (e.currentTarget as HTMLElement).style.background = m.id === 'modelo-personalizado' ? 'rgba(196,157,91,0.06)' : T.surface }}>
+                                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}`; (e.currentTarget as HTMLElement).style.background = m.id === 'modelo-personalizado' ? 'rgba(26,26,46,0.06)' : T.surface }}>
                                                 <div className="flex items-start gap-3">
                                                     <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                                                         style={{ background: `${m.cor}18` }}>
@@ -238,7 +238,7 @@ export default function ContratosPage() {
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-1.5 mb-1">
                                                             <p className="text-xs font-semibold" style={{ color: T.text }}>{m.nome}</p>
-                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(196,157,91,0.15)', color: T.gold }}>✦</span>}
+                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(26,26,46,0.15)', color: T.gold }}>✦</span>}
                                                             {m.internacional && <Globe size={9} style={{ color: '#E8A87C' }} />}
                                                         </div>
                                                         <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>

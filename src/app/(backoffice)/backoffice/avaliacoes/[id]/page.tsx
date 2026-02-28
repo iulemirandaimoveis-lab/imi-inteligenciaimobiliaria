@@ -114,7 +114,7 @@ export default function AvaliacaoDetalhesPage() {
             <Download size={16} />
             Baixar PDF
           </button>
-          <button className="h-10 px-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 flex items-center gap-2">
+          <button className="h-10 px-4 bg-[#16162A] text-white rounded-lg hover:bg-[#0F0F1E] flex items-center gap-2">
             <Edit size={16} />
             Editar
           </button>
@@ -137,7 +137,7 @@ export default function AvaliacaoDetalhesPage() {
         </div>
         <div className="bg-white rounded-xl p-4 border">
           <p className="text-xs text-gray-600 mb-1">Confiança</p>
-          <p className="text-xl font-bold text-accent-700">{avaliacaoData.evaluation.confidenceLevel}</p>
+          <p className="text-xl font-bold text-[#0F0F1E]">{avaliacaoData.evaluation.confidenceLevel}</p>
         </div>
         <div className="bg-white rounded-xl p-4 border">
           <p className="text-xs text-gray-600 mb-1">Área</p>
@@ -156,7 +156,7 @@ export default function AvaliacaoDetalhesPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-4 px-2 text-sm font-medium border-b-2 ${activeTab === tab ? 'border-accent-600 text-accent-600' : 'border-transparent text-gray-600'
+              className={`pb-4 px-2 text-sm font-medium border-b-2 ${activeTab === tab ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-transparent text-gray-600'
                 }`}
             >
               {tab === 'overview' ? 'Visão Geral' : 'Comparáveis'}
@@ -226,13 +226,13 @@ export default function AvaliacaoDetalhesPage() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">E-mail</p>
-                  <a href={`mailto:${avaliacaoData.client.email}`} className="text-sm text-accent-600">
+                  <a href={`mailto:${avaliacaoData.client.email}`} className="text-sm text-[#3B82F6]">
                     {avaliacaoData.client.email}
                   </a>
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 mb-1">Telefone</p>
-                  <a href={`tel:${avaliacaoData.client.phone}`} className="text-sm text-accent-600">
+                  <a href={`tel:${avaliacaoData.client.phone}`} className="text-sm text-[#3B82F6]">
                     {avaliacaoData.client.phone}
                   </a>
                 </div>
@@ -278,7 +278,7 @@ export default function AvaliacaoDetalhesPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Avaliado</span>
-                  <span className="font-bold text-accent-700">{formatPrice(avaliacaoData.evaluation.estimatedValue)}</span>
+                  <span className="font-bold text-[#0F0F1E]">{formatPrice(avaliacaoData.evaluation.estimatedValue)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Máximo</span>

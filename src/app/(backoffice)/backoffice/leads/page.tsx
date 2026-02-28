@@ -14,7 +14,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#C49D5B',
+    gold: '#3B82F6',
 }
 
 // Fallback mock
@@ -48,12 +48,12 @@ interface Lead {
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
     hot: { label: 'Quente', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-    warm: { label: 'Morno', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
+    warm: { label: 'Morno', text: '#3B82F6', bg: 'rgba(26,26,46,0.12)' },
     cold: { label: 'Frio', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
 }
 
 const scoreColor = (s: number) =>
-    s >= 85 ? '#6BB87B' : s >= 70 ? '#C49D5B' : '#7B9EC4'
+    s >= 85 ? '#6BB87B' : s >= 70 ? '#3B82F6' : '#7B9EC4'
 
 const timeAgo = (d: string) => {
     const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
@@ -154,8 +154,8 @@ export default function LeadsPage() {
                 <motion.button
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/leads/novo')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #C49D5B, #8B5E1F)', boxShadow: '0 2px 12px rgba(196,157,91,0.30)' }}
+                    className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #3B82F6, #2563EB)', boxShadow: '0 2px 12px rgba(59,130,246,0.25)' }}
                 >
                     <Plus size={16} /> Novo Lead
                 </motion.button>
@@ -205,7 +205,7 @@ export default function LeadsPage() {
                                 className="px-3.5 h-10 rounded-xl text-xs font-semibold transition-all"
                                 style={{
                                     background: filter === s
-                                        ? (s === 'all' ? 'linear-gradient(135deg, #C49D5B, #8B5E1F)' : STATUS_CFG[s]?.bg || T.elevated)
+                                        ? (s === 'all' ? 'linear-gradient(135deg, #3B82F6, #2563EB)' : STATUS_CFG[s]?.bg || T.elevated)
                                         : T.elevated,
                                     color: filter === s
                                         ? (s === 'all' ? 'white' : STATUS_CFG[s]?.text || T.textSub)
@@ -249,7 +249,7 @@ export default function LeadsPage() {
                                 {/* Avatar */}
                                 <div
                                     className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                                    style={{ background: 'rgba(196,157,91,0.15)', color: T.gold }}
+                                    style={{ background: 'rgba(26,26,46,0.15)', color: T.gold }}
                                 >
                                     {lead.name.charAt(0)}
                                 </div>

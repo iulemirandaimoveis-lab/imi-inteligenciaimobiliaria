@@ -58,31 +58,51 @@ const utmMediums = [
   { value: 'post', label: 'Post' },
 ]
 
-// Mock existing links (depois virá do Supabase)
-const mockLinks = [
-  {
-    id: '1',
-    campaign_name: 'Instagram Stories - Setembro',
-    url: 'https://iulemirandaimoveis.com.br/pt/imoveis/reserva-atlantis?utm_source=instagram&utm_medium=story&utm_campaign=set-2024',
-    short_url: 'imi.co/ra-ig-set',
-    clicks: 847,
-    created_at: '2024-09-01',
-  },
-  {
-    id: '2',
-    campaign_name: 'Facebook Ads - Jardins',
-    url: 'https://iulemirandaimoveis.com.br/pt/imoveis/villa-jardins?utm_source=facebook&utm_medium=cpc&utm_campaign=fb-jardins',
-    short_url: 'imi.co/vj-fb',
-    clicks: 623,
-    created_at: '2024-08-28',
-  },
-]
+interface TrackedLink {
+  id: string
+  campaign_name: string
+  url: string
+  short_code: string | null
+  clicks: number
+  created_at: string
+  utm_source: string | null
+  utm_medium: string | null
+  development_id: string | null
+  is_active: boolean
+}
 
 export default function TrackingLinksPage() {
   const [showGenerator, setShowGenerator] = useState(false)
-  const [links, setLinks] = useState(mockLinks)
+  const [links, setLinks] = useState<TrackedLink[]>([])
+  const [loadingLinks, setLoadingLinks] = useState(true)
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const { developments } = useDevelopments()
+
+  // Fetch links from Supabase on mount
+  useEffect(() => {
+    async function fetchLinks() {
+      try {
+        const { data, error } = await supabase
+          .from('tracked_links')
+          .select('id, campaign_name, url, short_code, clicks, created_at, utm_source, utm_medium, development_id, is_active')
+          .order('created_at', { ascending: false })
+          .limit(50)
+
+        if (error) {
+          console.error('Error fetching tracked links:', error)
+          setLinks([])
+        } else {
+          setLinks(data || [])
+        }
+      } catch (err) {
+        console.error('Error:', err)
+        setLinks([])
+      } finally {
+        setLoadingLinks(false)
+      }
+    }
+    fetchLinks()
+  }, [])
 
   const devOptions = developments?.map((d: any) => ({
     value: d.id,
@@ -116,7 +136,7 @@ export default function TrackingLinksPage() {
     )
 
     // Normalizar slug do empreendimento
-    const devSlug = selectedDev?.slug || selectedDev?.name.toLowerCase().replace(/\s+/g, '-') || 'empreendimento'
+    const devSlug = selectedDev?.slug || selectedDev?.name?.toLowerCase().replace(/\s+/g, '-') || 'empreendimento'
     const baseUrl = `https://www.iulemirandaimoveis.com.br/pt/imoveis/${devSlug}`
 
     const params = new URLSearchParams()
@@ -127,6 +147,43 @@ export default function TrackingLinksPage() {
 
     const fullUrl = `${baseUrl}?${params.toString()}`
     setGeneratedLink(fullUrl)
+
+    // Save to Supabase
+    try {
+      const { data: newLink, error } = await supabase
+        .from('tracked_links')
+        .insert({
+          campaign_name: formData.campaign_name,
+          url: fullUrl,
+          development_id: formData.development_id || null,
+          utm_source: formData.utm_source || null,
+          utm_medium: formData.utm_medium || null,
+          utm_campaign: formData.utm_campaign || null,
+          utm_content: formData.utm_content || null,
+          custom_slug: formData.custom_slug || null,
+          utm_params: {
+            source: formData.utm_source,
+            medium: formData.utm_medium,
+            campaign: formData.utm_campaign,
+            content: formData.utm_content,
+          },
+          clicks: 0,
+          is_active: true,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error saving tracked link:', error)
+        toast.error('Link gerado mas houve erro ao salvar no banco.')
+      } else if (newLink) {
+        // Add to local list
+        setLinks(prev => [newLink, ...prev])
+        toast.success('Link UTM salvo com sucesso!')
+      }
+    } catch (err) {
+      console.error('Error saving link:', err)
+    }
 
     // Gerar QR Code
     try {
@@ -139,7 +196,7 @@ export default function TrackingLinksPage() {
         },
       })
       setQrCodeUrl(qr)
-      toast.success('Link UTM e QR Code gerados com sucesso!')
+      toast.success('QR Code gerado com sucesso!')
     } catch (error) {
       console.error('Erro ao gerar QR Code:', error)
       toast.error('Ocorreu um erro ao gerar o QR Code.')
@@ -311,7 +368,7 @@ export default function TrackingLinksPage() {
             <CardBody>
               <div className="space-y-6">
                 <div className="p-6 bg-imi-950 rounded-2xl border border-imi-800 shadow-inner overflow-hidden">
-                  <p className="text-[10px] font-black text-accent-500 uppercase tracking-widest mb-3">Target URL com UTM</p>
+                  <p className="text-[10px] font-black text-[#3B82F6] uppercase tracking-widest mb-3">Target URL com UTM</p>
                   <p className="text-sm text-white break-all font-mono leading-relaxed">
                     {generatedLink}
                   </p>
@@ -376,7 +433,11 @@ export default function TrackingLinksPage() {
           subtitle={`${links.length} URLs em circulação no ecossistema`}
         />
         <CardBody>
-          {links.length === 0 ? (
+          {loadingLinks ? (
+            <div className="py-12 text-center text-sm" style={{ color: 'var(--bo-text-muted, #999)' }}>
+              Carregando links...
+            </div>
+          ) : links.length === 0 ? (
             <EmptyState
               icon={Link2}
               title="Base de Links Vazia"
@@ -393,28 +454,35 @@ export default function TrackingLinksPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Identificador da Campanha</TableHead>
-                    <TableHead>Short Link</TableHead>
-                    <TableHead>Performance</TableHead>
-                    <TableHead>Data de Emissão</TableHead>
-                    <TableHead className="text-right">Ações de Gestão</TableHead>
+                    <TableHead>Campanha</TableHead>
+                    <TableHead>Codigo</TableHead>
+                    <TableHead>Cliques</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead className="text-right">Acoes</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {links.map((link) => (
                     <TableRow key={link.id} className="hover:bg-gray-50">
                       <TableCell>
-                        <span className="font-bold text-imi-900">
-                          {link.campaign_name}
-                        </span>
+                        <div>
+                          <span className="font-bold text-imi-900 block">
+                            {link.campaign_name}
+                          </span>
+                          {link.utm_source && (
+                            <span className="text-[10px] text-imi-400">
+                              {link.utm_source}{link.utm_medium ? ` / ${link.utm_medium}` : ''}
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
-                        <code className="text-xs font-black text-accent-700 bg-accent-50 px-2 py-1 rounded-md border border-accent-100">
-                          {link.short_url}
+                        <code className="text-xs font-black text-[#0F0F1E] bg-accent-50 px-2 py-1 rounded-md border border-accent-100">
+                          {link.short_code || link.id.slice(0, 8)}
                         </code>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="primary" size="sm" dot>{link.clicks} cliques</Badge>
+                        <Badge variant="primary" size="sm" dot>{link.clicks || 0} cliques</Badge>
                       </TableCell>
                       <TableCell>
                         <span className="text-xs font-medium text-imi-500">
@@ -442,12 +510,6 @@ export default function TrackingLinksPage() {
                             icon={<ExternalLink size={16} />}
                             onClick={() => window.open(link.url, '_blank')}
                             className="text-imi-400"
-                          />
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            icon={<Trash2 size={16} />}
-                            className="text-red-300 hover:text-red-500 hover:bg-red-50"
                           />
                         </div>
                       </TableCell>

@@ -83,7 +83,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                             className="flex items-center gap-2.5 sm:gap-3 group flex-shrink-0"
                         >
                             <span
-                                className="text-[20px] sm:text-[22px] lg:text-[24px] font-black tracking-tight text-[#1A1A1A] group-hover:text-[#C49D5B] transition-colors duration-200"
+                                className="text-[20px] sm:text-[22px] lg:text-[24px] font-black tracking-tight text-[#1A1A1A] group-hover:text-[#3B82F6] transition-colors duration-200"
                                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                             >
                                 IMI
@@ -117,7 +117,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         {active && (
                                             <motion.div
                                                 layoutId="nav-indicator"
-                                                className="absolute bottom-0.5 left-3 right-3 h-[2px] bg-[#C49D5B] rounded-full"
+                                                className="absolute bottom-0.5 left-3 right-3 h-[2px] bg-[#1A1A2E] rounded-full"
                                                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                                             />
                                         )}
@@ -134,7 +134,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         key={l.code}
                                         href={`/${l.code}`}
                                         className={`text-[11px] font-bold px-1.5 py-0.5 rounded transition-colors duration-150 ${lang === l.code
-                                            ? 'text-[#C49D5B]'
+                                            ? 'text-[#3B82F6]'
                                             : 'text-[#ADB5BD] hover:text-[#495057]'
                                             }`}
                                     >
@@ -146,7 +146,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                 href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 bg-[#1A1A1A] hover:bg-[#C49D5B] text-white text-[13px] font-semibold px-4 py-2.5 rounded-xl transition-all duration-200"
+                                className="flex items-center gap-2 bg-[#1A1A1A] hover:bg-[#1A1A2E] text-white text-[13px] font-semibold px-4 py-2.5 rounded-xl transition-all duration-200"
                             >
                                 <MessageCircle size={14} strokeWidth={2.5} />
                                 WhatsApp
@@ -228,7 +228,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                                     href={`/${lang}/${item.key}`}
                                                     onClick={() => setOpen(false)}
                                                     className={`flex items-center h-[54px] px-4 rounded-2xl text-[15px] font-semibold transition-all duration-150 ${active
-                                                        ? 'bg-[#F8F9FA] text-[#1A1A1A] border-l-[3px] border-[#C49D5B] pl-[13px]'
+                                                        ? 'bg-[#F8F9FA] text-[#1A1A1A] border-l-[3px] border-[#3B82F6] pl-[13px]'
                                                         : 'text-[#495057] hover:bg-[#F8F9FA] hover:text-[#1A1A1A]'
                                                         }`}
                                                 >
@@ -251,7 +251,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         onClick={() => setOpen(false)}
-                                        className="flex items-center justify-center gap-2.5 w-full bg-[#1A1A1A] hover:bg-[#C49D5B] text-white font-bold text-[15px] h-[54px] rounded-2xl transition-all duration-200 active:scale-[0.97] shadow-lg"
+                                        className="flex items-center justify-center gap-2.5 w-full bg-[#1A1A1A] hover:bg-[#1A1A2E] text-white font-bold text-[15px] h-[54px] rounded-2xl transition-all duration-200 active:scale-[0.97] shadow-lg"
                                     >
                                         <MessageCircle size={18} />
                                         Falar pelo WhatsApp
@@ -271,7 +271,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                             href={`/${l.code}`}
                                             onClick={() => setOpen(false)}
                                             className={`flex-1 h-11 flex items-center justify-center rounded-xl text-xl transition-all duration-150 ${lang === l.code
-                                                ? 'bg-[#1A1A1A] ring-2 ring-[#C49D5B] ring-offset-1'
+                                                ? 'bg-[#1A1A1A] ring-2 ring-[#3B82F6] ring-offset-1'
                                                 : 'bg-[#F8F9FA] border border-[#E9ECEF]'
                                                 }`}
                                         >
@@ -288,7 +288,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                     className="mt-6 p-5 bg-[#F8F9FA] rounded-2xl border border-black/[0.05]"
                                 >
                                     <p className="font-bold text-[#1A1A1A] text-[15px]">Iule Miranda</p>
-                                    <div className="h-[2px] w-8 bg-[#C49D5B] my-2 rounded-full" />
+                                    <div className="h-[2px] w-8 bg-[#1A1A2E] my-2 rounded-full" />
                                     <p className="text-[10px] text-[#ADB5BD] font-bold uppercase tracking-[0.2em]">
                                         CRECI 17933 · CNAI 53290
                                     </p>

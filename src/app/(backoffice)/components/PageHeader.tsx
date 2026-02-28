@@ -21,7 +21,7 @@ interface PageHeaderProps {
 }
 
 const badgeColors = {
-    gold: { bg: 'rgba(196,157,91,0.10)', text: 'var(--accent-700)', border: 'rgba(196,157,91,0.2)' },
+    gold: { bg: 'rgba(26,26,46,0.10)', text: 'var(--accent-700)', border: 'rgba(26,26,46,0.2)' },
     green: { bg: '#F0FDF4', text: '#15803D', border: '#BBF7D0' },
     blue: { bg: '#EFF6FF', text: '#1D4ED8', border: '#BFDBFE' },
     red: { bg: '#FEF2F2', text: '#DC2626', border: '#FECACA' },
@@ -139,7 +139,7 @@ export default function PageHeader({
                         transition={{ delay: 0.2, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                         className="mt-4 h-px"
                         style={{
-                            background: 'linear-gradient(90deg, rgba(196,157,91,0.5) 0%, rgba(196,157,91,0.15) 40%, transparent 100%)',
+                            background: 'linear-gradient(90deg, rgba(26,26,46,0.5) 0%, rgba(26,26,46,0.15) 40%, transparent 100%)',
                         }}
                     />
                 </div>

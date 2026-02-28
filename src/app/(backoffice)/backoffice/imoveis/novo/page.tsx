@@ -334,12 +334,12 @@ export default function NovoImovelPage() {
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isCompleted ? 'bg-green-500 text-white' :
-                    isActive ? 'bg-accent-500 text-white' :
+                    isActive ? 'bg-[#1A1A2E] text-white' :
                       'bg-gray-100 text-gray-400'
                     }`}>
                     {isCompleted ? <Check size={24} /> : <StepIcon size={24} />}
                   </div>
-                  <p className={`text-sm font-medium mt-2 ${isActive ? 'text-accent-700' : isCompleted ? 'text-green-700' : 'text-gray-500'
+                  <p className={`text-sm font-medium mt-2 ${isActive ? 'text-[#0F0F1E]' : isCompleted ? 'text-green-700' : 'text-gray-500'
                     }`}>
                     {step.label}
                   </p>
@@ -354,7 +354,7 @@ export default function NovoImovelPage() {
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className="h-full bg-accent-500 transition-all duration-300"
+            className="h-full bg-[#1A1A2E] transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -378,7 +378,7 @@ export default function NovoImovelPage() {
                 <button
                   type="button"
                   disabled={isParsingPdf}
-                  className="flex items-center gap-2 px-4 py-2 bg-accent-50 text-accent-700 hover:bg-accent-100 border border-accent-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-accent-50 text-[#0F0F1E] hover:bg-accent-100 border border-accent-200 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
                 >
                   {isParsingPdf ? (
                     <>
@@ -408,7 +408,7 @@ export default function NovoImovelPage() {
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     placeholder="Ex: Reserva Atlantis"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   />
                 </div>
@@ -428,7 +428,7 @@ export default function NovoImovelPage() {
                 <select
                   value={formData.type}
                   onChange={(e) => handleChange('type', e.target.value)}
-                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white ${errors.type ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white ${errors.type ? 'border-red-300 bg-red-50' : 'border-gray-200'
                     }`}
                 >
                   <option value="">Selecione...</option>
@@ -454,7 +454,7 @@ export default function NovoImovelPage() {
                   <select
                     value={formData.location}
                     onChange={(e) => handleChange('location', e.target.value)}
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white ${errors.location ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white ${errors.location ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   >
                     <option value="">Selecione...</option>
@@ -481,7 +481,7 @@ export default function NovoImovelPage() {
                   value={formData.address}
                   onChange={(e) => handleChange('address', e.target.value)}
                   placeholder="Ex: Av. Boa Viagem, 3500"
-                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.address ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.address ? 'border-red-300 bg-red-50' : 'border-gray-200'
                     }`}
                 />
                 {errors.address && (
@@ -502,7 +502,7 @@ export default function NovoImovelPage() {
                   <select
                     value={formData.developer}
                     onChange={(e) => handleChange('developer', e.target.value)}
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white ${errors.developer ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white ${errors.developer ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   >
                     <option value="">Selecione...</option>
@@ -540,7 +540,7 @@ export default function NovoImovelPage() {
                     value={formData.area}
                     onChange={(e) => handleChange('area', e.target.value)}
                     placeholder="95"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.area ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.area ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   />
                 </div>
@@ -564,7 +564,7 @@ export default function NovoImovelPage() {
                     value={formData.bedrooms}
                     onChange={(e) => handleChange('bedrooms', e.target.value)}
                     placeholder="3"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.bedrooms ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.bedrooms ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   />
                 </div>
@@ -588,7 +588,7 @@ export default function NovoImovelPage() {
                     value={formData.bathrooms}
                     onChange={(e) => handleChange('bathrooms', e.target.value)}
                     placeholder="2"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.bathrooms ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.bathrooms ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   />
                 </div>
@@ -612,7 +612,7 @@ export default function NovoImovelPage() {
                     value={formData.parking}
                     onChange={(e) => handleChange('parking', e.target.value)}
                     placeholder="2"
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                   />
                 </div>
               </div>
@@ -629,7 +629,7 @@ export default function NovoImovelPage() {
                     value={formData.floor}
                     onChange={(e) => handleChange('floor', e.target.value)}
                     placeholder="8º ao 24º"
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                   />
                 </div>
               </div>
@@ -647,7 +647,7 @@ export default function NovoImovelPage() {
                     type="button"
                     onClick={() => toggleFeature(feature)}
                     className={`h-10 px-4 rounded-lg text-sm font-medium transition-all ${formData.features.includes(feature)
-                      ? 'bg-accent-500 text-white'
+                      ? 'bg-[#1A1A2E] text-white'
                       : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
                       }`}
                   >
@@ -680,7 +680,7 @@ export default function NovoImovelPage() {
                     value={formData.priceMin}
                     onChange={(e) => handleChange('priceMin', e.target.value)}
                     placeholder="450000"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.priceMin ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.priceMin ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   />
                 </div>
@@ -709,7 +709,7 @@ export default function NovoImovelPage() {
                     value={formData.priceMax}
                     onChange={(e) => handleChange('priceMax', e.target.value)}
                     placeholder="680000"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.priceMax ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.priceMax ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   />
                 </div>
@@ -736,7 +736,7 @@ export default function NovoImovelPage() {
                   value={formData.pricePerSqm}
                   onChange={(e) => handleChange('pricePerSqm', e.target.value)}
                   placeholder="7200"
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                 />
                 {formData.pricePerSqm && (
                   <p className="text-xs text-gray-600 mt-1">
@@ -756,7 +756,7 @@ export default function NovoImovelPage() {
                     type="month"
                     value={formData.deliveryDate}
                     onChange={(e) => handleChange('deliveryDate', e.target.value)}
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                   />
                 </div>
               </div>
@@ -771,7 +771,7 @@ export default function NovoImovelPage() {
                   value={formData.totalUnits}
                   onChange={(e) => handleChange('totalUnits', e.target.value)}
                   placeholder="120"
-                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.totalUnits ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.totalUnits ? 'border-red-300 bg-red-50' : 'border-gray-200'
                     }`}
                 />
                 {errors.totalUnits && (
@@ -792,7 +792,7 @@ export default function NovoImovelPage() {
                   value={formData.availableUnits}
                   onChange={(e) => handleChange('availableUnits', e.target.value)}
                   placeholder="45"
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                 />
               </div>
             </div>
@@ -911,7 +911,7 @@ export default function NovoImovelPage() {
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
+            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
           >
             Próximo
             <ArrowRight size={20} />

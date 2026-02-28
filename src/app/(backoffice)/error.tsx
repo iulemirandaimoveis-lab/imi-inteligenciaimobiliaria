@@ -1,32 +1,77 @@
 'use client'
 
-export default function Error({ error }: { error: Error }) {
-    console.error('Backoffice error:', error)
+import { useEffect } from 'react'
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+
+export default function Error({
+    error,
+    reset,
+}: {
+    error: Error & { digest?: string }
+    reset: () => void
+}) {
+    useEffect(() => {
+        // Log error to console only in dev — never expose to user
+        if (process.env.NODE_ENV === 'development') {
+            console.error('Backoffice error:', error)
+        }
+    }, [error])
+
     return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center">
-            <div className="bg-red-50 p-4 rounded-full mb-4">
-                <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 py-12 text-center">
+            {/* Icon */}
+            <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+                style={{ background: 'rgba(229,115,115,0.10)' }}
+            >
+                <AlertTriangle size={28} style={{ color: '#E57373' }} />
             </div>
-            <h2 className="text-2xl font-bold text-imi-900 mb-2">Algo deu errado!</h2>
-            <p className="text-slate-600 mb-6 max-w-md">
-                Ocorreu um erro inesperado ao carregar esta página. Tente recarregar ou contate o suporte.
+
+            {/* Title */}
+            <h2 className="text-lg font-bold mb-2" style={{ color: 'var(--bo-text)' }}>
+                Erro ao carregar
+            </h2>
+
+            {/* Description — NO stack trace, NO technical details */}
+            <p className="text-sm mb-8 max-w-sm leading-relaxed" style={{ color: 'var(--bo-text-muted)' }}>
+                Ocorreu um erro inesperado. Tente recarregar a pagina.
+                Se o problema persistir, entre em contato com o suporte.
             </p>
 
-            <div className="bg-slate-50 p-4 rounded-lg text-left w-full max-w-2xl overflow-auto border border-slate-200 mb-6 max-h-60">
-                <p className="text-xs font-bold text-red-600 mb-2 font-mono">{error.name}: {error.message}</p>
-                <pre className="text-[10px] text-slate-500 font-mono whitespace-pre-wrap leading-relaxed">
-                    {error.stack}
-                </pre>
+            {/* Actions */}
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={reset}
+                    className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all active:scale-95"
+                    style={{
+                        background: 'linear-gradient(135deg, #3B82F6, #2563EB)',
+                        boxShadow: '0 2px 12px rgba(59,130,246,0.30)',
+                    }}
+                >
+                    <RefreshCw size={15} />
+                    Tentar novamente
+                </button>
+
+                <button
+                    onClick={() => (window.location.href = '/backoffice/dashboard')}
+                    className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-medium transition-all active:scale-95"
+                    style={{
+                        background: 'var(--bo-elevated)',
+                        border: '1px solid var(--bo-border)',
+                        color: 'var(--bo-text-muted)',
+                    }}
+                >
+                    <Home size={15} />
+                    Dashboard
+                </button>
             </div>
 
-            <button
-                onClick={() => window.location.reload()}
-                className="px-6 py-3 bg-imi-900 text-white rounded-xl font-bold hover:bg-imi-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
-            >
-                Tentar novamente
-            </button>
+            {/* Error digest for support — minimal, no stack */}
+            {error.digest && (
+                <p className="mt-6 text-[10px] font-mono" style={{ color: 'var(--bo-text-muted)', opacity: 0.5 }}>
+                    Ref: {error.digest}
+                </p>
+            )}
         </div>
     )
 }

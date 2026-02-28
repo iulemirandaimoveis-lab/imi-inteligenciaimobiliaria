@@ -147,7 +147,7 @@ export default function ConstrutoraDetalhesPage() {
 
         <button
           onClick={() => router.push(`/backoffice/construtoras/${params.id}/editar`)}
-          className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
+          className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
         >
           <Edit size={20} />
           Editar
@@ -185,7 +185,7 @@ export default function ConstrutoraDetalhesPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-accent-600 text-accent-600' : 'border-transparent text-gray-600'
+              className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-transparent text-gray-600'
                 }`}
             >
               {tab === 'overview' ? 'Visão Geral' : tab === 'empreendimentos' ? 'Empreendimentos' : 'Financeiro'}
@@ -306,7 +306,7 @@ export default function ConstrutoraDetalhesPage() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-600 mb-1">Preço Médio</p>
-                    <p className="text-lg font-bold text-accent-700">{formatPrice(emp.precoMedio)}</p>
+                    <p className="text-lg font-bold text-[#0F0F1E]">{formatPrice(emp.precoMedio)}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-600 mb-1">Entrega</p>

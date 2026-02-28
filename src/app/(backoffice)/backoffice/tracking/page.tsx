@@ -211,7 +211,7 @@ export default function TrackingDashboardPage() {
                   </div>
                   <div className="h-2 bg-imi-50 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-accent-500 transition-all duration-700 ease-smooth"
+                      className="h-full bg-[#1A1A2E] transition-all duration-700 ease-smooth"
                       style={{ width: `${item.percentage}%` }}
                     />
                   </div>
@@ -280,7 +280,7 @@ export default function TrackingDashboardPage() {
                   <div className="flex-1">
                     <div className="h-10 bg-imi-50 rounded-xl overflow-hidden relative border border-imi-100/50">
                       <div
-                        className="h-full bg-gradient-to-r from-accent-400 to-accent-600 transition-all duration-700 ease-smooth flex items-center justify-end pr-4"
+                        className="h-full bg-gradient-to-r from-accent-400 to-[#16162A] transition-all duration-700 ease-smooth flex items-center justify-end pr-4"
                         style={{ width: `${percentage}%` }}
                       >
                         <span className="text-xs font-black text-white drop-shadow-sm">
@@ -366,7 +366,7 @@ export default function TrackingDashboardPage() {
                 key={`${location.city}-${location.state}`}
                 className="flex items-center gap-4 bg-white p-4 rounded-2xl border border-imi-100 shadow-sm"
               >
-                <div className="w-10 h-10 rounded-xl bg-accent-100 text-accent-700 flex items-center justify-center text-sm font-black">
+                <div className="w-10 h-10 rounded-xl bg-accent-100 text-[#0F0F1E] flex items-center justify-center text-sm font-black">
                   #{index + 1}
                 </div>
                 <div className="flex-1 min-w-0">

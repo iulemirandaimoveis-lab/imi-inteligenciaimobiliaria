@@ -87,7 +87,7 @@ export default function NovoUsuarioPage() {
                                     required
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                                     placeholder="Nome do usuário"
                                 />
                             </div>
@@ -105,7 +105,7 @@ export default function NovoUsuarioPage() {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                                     placeholder="usuario@dominio.com"
                                 />
                             </div>
@@ -124,7 +124,7 @@ export default function NovoUsuarioPage() {
                                     minLength={6}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
+                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                                     placeholder="Mínimo 6 caracteres"
                                 />
                             </div>
@@ -141,7 +141,7 @@ export default function NovoUsuarioPage() {
                                     required
                                     value={role}
                                     onChange={(e) => setRole(e.target.value)}
-                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
+                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
                                 >
                                     <option value="ADMIN">Administrador (Acesso total)</option>
                                     <option value="EDITOR">Corretor / Editor (Gestão de leads/imóveis)</option>
@@ -163,7 +163,7 @@ export default function NovoUsuarioPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="px-6 h-11 bg-accent-600 text-white font-medium rounded-xl hover:bg-accent-700 transition-colors disabled:opacity-50"
+                            className="px-6 h-11 bg-[#16162A] text-white font-medium rounded-xl hover:bg-[#0F0F1E] transition-colors disabled:opacity-50"
                         >
                             {loading ? 'Adicionando...' : 'Criar Usuário'}
                         </button>

@@ -9,8 +9,8 @@ export function ForWhom() {
         {
             title: 'Perfil Ideal',
             icon: PlusCircle,
-            color: 'text-[#C49D5B]',
-            borderColor: 'border-[#C49D5B]/30',
+            color: 'text-[#3B82F6]',
+            borderColor: 'border-[#3B82F6]/30',
             bgColor: 'bg-[#141420]',
             items: [
                 { title: 'Capital Regularizado', desc: 'Mínimo de USD 100k disponíveis para investir.' },
@@ -69,7 +69,7 @@ export function ForWhom() {
                                     <li key={j} className="flex gap-4">
                                         <div className="mt-1 flex-shrink-0">
                                             {i === 0 ? (
-                                                <ShieldCheck className="w-5 h-5 text-[#C49D5B]" />
+                                                <ShieldCheck className="w-5 h-5 text-[#3B82F6]" />
                                             ) : (
                                                 <div className="w-5 h-px bg-white/20 mt-2.5" />
                                             )}

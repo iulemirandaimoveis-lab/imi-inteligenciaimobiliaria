@@ -88,7 +88,7 @@ export function MobileBottomNav() {
                 style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
                 <div
-                    className="mx-3 mb-3 rounded-2xl overflow-hidden transition-colors"
+                    className="mx-2 mb-2 rounded-xl overflow-hidden transition-colors"
                     style={{
                         background: 'var(--nav-bg)',
                         backdropFilter: 'blur(24px)',
@@ -97,14 +97,14 @@ export function MobileBottomNav() {
                         boxShadow: 'var(--bo-shadow)',
                     }}
                 >
-                    <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center justify-between px-2">
                         {MAIN.map(item => {
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
                                 <Link key={item.href} href={item.href} className="flex-1">
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="relative flex flex-col items-center justify-center py-3 w-full"
+                                        className="relative flex flex-col items-center justify-center py-2.5 w-full"
                                     >
                                         <AnimatePresence>
                                             {active && (
@@ -114,18 +114,18 @@ export function MobileBottomNav() {
                                                     animate={{ opacity: 1, scale: 1 }}
                                                     exit={{ opacity: 0, scale: 0.7 }}
                                                     transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-                                                    className="absolute inset-0 mx-1 rounded-xl"
+                                                    className="absolute inset-0 mx-1.5 rounded-lg"
                                                     style={{ background: 'var(--bo-active-bg)' }}
                                                 />
                                             )}
                                         </AnimatePresence>
                                         <item.icon
-                                            size={20}
+                                            size={18}
                                             className="relative transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="relative text-[9px] font-semibold mt-1 transition-colors duration-150"
+                                            className="relative text-[9px] font-medium mt-0.5 transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
@@ -139,7 +139,7 @@ export function MobileBottomNav() {
                         <motion.button
                             whileTap={{ scale: 0.85 }}
                             onClick={() => setOpen(!open)}
-                            className="relative flex-1 flex flex-col items-center justify-center py-3"
+                            className="relative flex-1 flex flex-col items-center justify-center py-2.5"
                         >
                             <AnimatePresence>
                                 {open && (
@@ -273,7 +273,7 @@ export function MobileBottomNav() {
                                                         <div
                                                             className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
                                                             style={{
-                                                                background: active ? 'rgba(196,157,91,0.15)' : 'var(--bo-icon-bg)',
+                                                                background: active ? 'rgba(26,26,46,0.15)' : 'var(--bo-icon-bg)',
                                                             }}
                                                         >
                                                             <item.icon size={15} />
