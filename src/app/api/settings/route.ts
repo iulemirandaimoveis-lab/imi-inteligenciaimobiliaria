@@ -2,16 +2,16 @@ import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
-)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
+function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
 
 // Default user_id for single-tenant settings (no auth required)
 const DEFAULT_USER_ID = '00000000-0000-0000-0000-000000000000'
 
 export async function GET() {
     try {
+        const supabase = getSupabase()
         // Try to fetch existing settings
         const { data: settings, error } = await supabase
             .from('settings')
@@ -53,6 +53,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
     try {
+        const supabase = getSupabase()
         const data = await request.json()
 
         const payload = {

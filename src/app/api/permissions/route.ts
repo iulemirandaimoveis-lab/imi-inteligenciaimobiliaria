@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
-)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
+function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
 
 // GET /api/permissions?role=admin  → returns all permissions for role
 // GET /api/permissions?role=agent&module=leads&action=create → checks specific
 export async function GET(request: Request) {
     try {
+        const supabase = getSupabase()
         const { searchParams } = new URL(request.url)
         const role = searchParams.get('role')
         const module = searchParams.get('module')
@@ -58,6 +58,7 @@ export async function GET(request: Request) {
 // PUT /api/permissions — update a permission
 export async function PUT(request: Request) {
     try {
+        const supabase = getSupabase()
         const body = await request.json()
         const { role, module, action, allowed } = body
 

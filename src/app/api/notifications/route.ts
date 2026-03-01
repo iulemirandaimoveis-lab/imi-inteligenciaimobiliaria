@@ -2,16 +2,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
-)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
+function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
 
 const DEFAULT_USER_ID = '00000000-0000-0000-0000-000000000000'
 
 // GET — list notifications
 export async function GET() {
     try {
+        const supabase = getSupabase()
         const { data, error } = await supabase
             .from('notifications')
             .select('*')
@@ -27,6 +27,7 @@ export async function GET() {
 // PUT — mark as read
 export async function PUT(req: NextRequest) {
     try {
+        const supabase = getSupabase()
         const body = await req.json()
         const { id, read_all } = body
 
@@ -54,6 +55,7 @@ export async function PUT(req: NextRequest) {
 // POST — create notification
 export async function POST(req: NextRequest) {
     try {
+        const supabase = getSupabase()
         const body = await req.json()
         const { type, title, message, data: extraData } = body
         if (!title) return NextResponse.json({ error: 'title é obrigatório' }, { status: 400 })
