@@ -250,7 +250,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                     </motion.div>
 
                     {mainGridDevelopments.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
                             {mainGridDevelopments.map((dev, index) => (
                                 <DevelopmentCard key={dev.id} development={dev} index={index} lang={lang} />
                             ))}
@@ -305,10 +305,10 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         </motion.p>
                         <motion.div variants={slideUp}>
                             <button
-                                className="inline-flex items-center gap-3 h-16 px-10 text-lg font-bold bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#334E68] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)]"
+                                className="inline-flex items-center gap-3 h-14 px-9 text-sm font-bold tracking-wide bg-[#102A43] text-white hover:bg-[#1A2F44] border border-[#1A2F44] hover:border-[#334E68]/50 rounded-xl transition-all duration-300 hover:-translate-y-0.5 shadow-[0_4px_20px_rgba(10,25,41,0.3)]"
                                 onClick={() => handleCTAClick('general')}
                             >
-                                <MessageCircle className="w-5 h-5 flex-shrink-0 text-white" />
+                                <MessageCircle className="w-4.5 h-4.5 flex-shrink-0 text-white/80" />
                                 Iniciar Consultoria
                             </button>
                         </motion.div>
