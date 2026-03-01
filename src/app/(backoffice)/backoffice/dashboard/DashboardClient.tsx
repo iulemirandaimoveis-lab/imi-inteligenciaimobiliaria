@@ -60,7 +60,7 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
         >
             <Link href={kpi.href}>
                 <div
-                    className="relative overflow-hidden rounded-2xl p-5 cursor-pointer transition-all duration-200 group"
+                    className="relative overflow-hidden rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-200 group"
                     style={{
                         background: 'var(--bo-elevated)',
                         border: '1px solid var(--bo-border-gold)',
@@ -223,7 +223,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
             </motion.div>
 
             {/* ── KPI Grid ─────────────────────────────────────── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                 {KPIS.map((kpi, i) => <KPICard key={kpi.label} kpi={kpi} index={i} />)}
             </div>
 

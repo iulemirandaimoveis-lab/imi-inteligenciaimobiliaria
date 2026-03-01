@@ -88,7 +88,6 @@
 /* ── MOBILE OVERFLOW & LAYOUT ─────────────────────────────── */
 @media (max-width: 640px) {
   .backoffice-root {
-    word-break: break-word;
     overflow-wrap: break-word;
   }
 
@@ -105,24 +104,29 @@
     font-size: 11px;
   }
 
-  /* Cards never exceed viewport */
+  /* Cards contained but allow text flow */
   .backoffice-root .rounded-2xl,
   .backoffice-root .rounded-xl {
     max-width: 100%;
-    overflow: hidden;
   }
 
-  /* Reduce heading sizes */
-  .backoffice-root h1 { font-size: 18px !important; line-height: 1.3 !important; }
-  .backoffice-root h2 { font-size: 16px !important; }
-  .backoffice-root h3 { font-size: 15px !important; }
+  /* Typography scale — refined */
+  .backoffice-root h1 { font-size: 20px !important; line-height: 1.3 !important; font-weight: 700 !important; }
+  .backoffice-root h2 { font-size: 17px !important; font-weight: 600 !important; }
+  .backoffice-root h3 { font-size: 15px !important; font-weight: 600 !important; }
+
+  /* Body text refinement */
+  .backoffice-root p,
+  .backoffice-root span {
+    line-height: 1.5;
+  }
 
   /* Tables scroll horizontally */
   .backoffice-root table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-  /* Grids collapse to single column on very small screens */
-  .backoffice-root .grid-cols-2 { grid-template-columns: 1fr !important; }
-  .backoffice-root .grid-cols-3 { grid-template-columns: 1fr !important; }
+  /* KPI stat grids stay 2-col on mobile for density */
+  .backoffice-root .grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
+  .backoffice-root .grid-cols-3 { grid-template-columns: repeat(2, 1fr) !important; }
   .backoffice-root .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
   .backoffice-root .grid-cols-5 { grid-template-columns: repeat(2, 1fr) !important; }
 
@@ -137,6 +141,12 @@
   .backoffice-root a[role="button"],
   .backoffice-root [type="button"] {
     min-height: 44px;
+  }
+
+  /* Small action icons inside cards: allow smaller touch targets */
+  .backoffice-root button[class*="w-8"],
+  .backoffice-root button[class*="w-7"] {
+    min-height: 36px;
   }
 
   /* Inputs: proper mobile sizing */
@@ -154,13 +164,36 @@
   }
 
   /* Badges/tags don't overflow */
-  .backoffice-root span[class*="rounded-full"],
-  .backoffice-root span[class*="rounded-md"] {
+  .backoffice-root span[class*="rounded-full"] {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
+    max-width: 150px;
   }
+
+  /* Filter pill buttons: prevent text wrapping */
+  .backoffice-root button[class*="rounded-xl"] {
+    white-space: nowrap;
+  }
+
+  /* Card sections: proper spacing */
+  .backoffice-root .space-y-5 > * + * { margin-top: 16px; }
+  .backoffice-root .space-y-4 > * + * { margin-top: 12px; }
+  .backoffice-root .space-y-3 > * + * { margin-top: 10px; }
+
+  /* Gap refinement for mobile density */
+  .backoffice-root .gap-6 { gap: 16px !important; }
+  .backoffice-root .gap-5 { gap: 14px !important; }
+  .backoffice-root .gap-4 { gap: 12px !important; }
+
+  /* Padding refinement */
+  .backoffice-root .p-6 { padding: 16px !important; }
+  .backoffice-root .p-5 { padding: 14px !important; }
+
+  /* Stat card compact */
+  .backoffice-root .stat-card { padding: 12px !important; }
+  .backoffice-root .stat-card .text-2xl { font-size: 22px !important; }
+  .backoffice-root .stat-card .text-xs { font-size: 11px !important; }
 }
 
 /* Tablet adjustments */

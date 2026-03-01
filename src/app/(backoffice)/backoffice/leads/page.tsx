@@ -215,12 +215,12 @@ export default function LeadsPage() {
                     </div>
 
                     {/* Filter tabs */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto flex-shrink-0">
+                    <div className="flex items-center gap-1.5 overflow-x-auto flex-shrink-0 pb-0.5">
                         {['all', 'hot', 'warm', 'cold'].map(s => (
                             <button
                                 key={s}
                                 onClick={() => setFilter(s)}
-                                className="px-3.5 h-10 rounded-xl text-xs font-semibold transition-all"
+                                className="px-3.5 h-10 rounded-xl text-xs font-semibold transition-all whitespace-nowrap"
                                 style={{
                                     background: filter === s
                                         ? (s === 'all' ? '#486581' : STATUS_CFG[s]?.bg || T.elevated)
@@ -285,14 +285,14 @@ export default function LeadsPage() {
                                             {sc.label}
                                         </span>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textDim }}>
-                                            <MapPin size={10} /> {lead.location}
+                                    <div className="flex items-center gap-2 overflow-hidden">
+                                        <span className="text-[11px] flex items-center gap-1 truncate" style={{ color: T.textDim }}>
+                                            <MapPin size={10} className="flex-shrink-0" /> <span className="truncate">{lead.location}</span>
                                         </span>
-                                        <span className="text-[11px]" style={{ color: T.textDim }}>
+                                        <span className="text-[11px] truncate hidden xs:inline" style={{ color: T.textDim }}>
                                             {lead.interest}
                                         </span>
-                                        <span className="text-[11px] hidden sm:block" style={{ color: T.textDim }}>
+                                        <span className="text-[11px] truncate hidden sm:inline" style={{ color: T.textDim }}>
                                             {lead.source}
                                         </span>
                                     </div>
