@@ -14,7 +14,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#3B82F6',
+    gold: '#486581',
 }
 
 // No fallback mock — real Supabase data only
@@ -36,12 +36,12 @@ interface Lead {
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
     hot: { label: 'Quente', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-    warm: { label: 'Morno', text: '#3B82F6', bg: 'rgba(26,26,46,0.12)' },
+    warm: { label: 'Morno', text: '#486581', bg: 'rgba(26,26,46,0.12)' },
     cold: { label: 'Frio', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
 }
 
 const scoreColor = (s: number) =>
-    s >= 85 ? '#6BB87B' : s >= 70 ? '#3B82F6' : '#7B9EC4'
+    s >= 85 ? '#6BB87B' : s >= 70 ? '#486581' : '#7B9EC4'
 
 const timeAgo = (d: string) => {
     const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
@@ -173,7 +173,7 @@ export default function LeadsPage() {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/leads/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#3B82F6', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
+                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Novo Lead
                 </motion.button>
@@ -223,7 +223,7 @@ export default function LeadsPage() {
                                 className="px-3.5 h-10 rounded-xl text-xs font-semibold transition-all"
                                 style={{
                                     background: filter === s
-                                        ? (s === 'all' ? '#3B82F6' : STATUS_CFG[s]?.bg || T.elevated)
+                                        ? (s === 'all' ? '#486581' : STATUS_CFG[s]?.bg || T.elevated)
                                         : T.elevated,
                                     color: filter === s
                                         ? (s === 'all' ? 'white' : STATUS_CFG[s]?.text || T.textSub)
@@ -362,7 +362,7 @@ export default function LeadsPage() {
                             whileTap={{ scale: 0.96 }}
                             onClick={() => router.push('/backoffice/leads/novo')}
                             className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
-                            style={{ background: '#3B82F6' }}
+                            style={{ background: '#486581' }}
                         >
                             <Plus size={14} /> Novo Lead
                         </motion.button>

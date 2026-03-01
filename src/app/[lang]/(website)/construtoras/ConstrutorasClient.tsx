@@ -29,7 +29,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
         <main className="bg-[#0D0F14] min-h-screen">
             {/* Hero */}
             <section className="bg-[#141420] text-white pt-24 pb-20 md:pt-32 md:pb-28 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/2 h-full bg-[#1A1A2E]/5 -skew-x-12 translate-x-1/2" />
+                <div className="absolute top-0 right-0 w-1/2 h-full bg-[#102A43]/5 -skew-x-12 translate-x-1/2" />
                 <div className="container-custom relative z-10">
                     <motion.div
                         initial="hidden"
@@ -38,11 +38,11 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         className="max-w-4xl"
                     >
                         <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-px bg-[#1A1A2E]" />
-                            <span className="text-[#3B82F6] font-bold uppercase tracking-[0.3em] text-xs">Parceiros</span>
+                            <div className="w-12 h-px bg-[#102A43]" />
+                            <span className="text-[#486581] font-bold uppercase tracking-[0.3em] text-xs">Parceiros</span>
                         </motion.div>
                         <motion.h1 variants={slideUp} className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight">
-                            Nossas <br /><span className="text-[#3B82F6] italic">Construtoras Parceiras</span>
+                            Nossas <br /><span className="text-[#486581] italic">Construtoras Parceiras</span>
                         </motion.h1>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl font-light leading-relaxed max-w-2xl">
                             Trabalhamos com as incorporadoras mais renomadas do mercado, garantindo qualidade construtiva e solidez nos investimentos.
@@ -60,7 +60,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         className="mb-10 flex flex-col md:flex-row md:items-center gap-3 md:justify-between"
                     >
                         <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-[#1A1A2E]" />
+                            <div className="w-2 h-2 rounded-full bg-[#102A43]" />
                             <span className="text-[#9CA3AF] font-bold uppercase tracking-widest text-xs">
                                 {developers.length} construtoras parceiras em nosso portfólio
                             </span>
@@ -75,7 +75,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: "-50px" }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className="group bg-[#141420] rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#3B82F6]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-500 flex flex-col h-full"
+                                className="group bg-[#141420] rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-500 flex flex-col h-full"
                             >
                                 {/* Logo Area - Fundo claro para preservar as cores originais das marcas parceiras */}
                                 <div className="relative aspect-[3/2] bg-white flex items-center justify-center p-8 border-b border-white/[0.05] shrink-0 overflow-hidden group-hover:opacity-100 opacity-90 transition-opacity duration-300">
@@ -106,13 +106,13 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
 
                                 {/* Conteúdo */}
                                 <div className="p-6 flex flex-col flex-1 relative z-10">
-                                    <h3 className="font-display font-bold text-xl text-white mb-2 group-hover:text-[#3B82F6] transition-colors">
+                                    <h3 className="font-display font-bold text-xl text-white mb-2 group-hover:text-[#486581] transition-colors">
                                         {dev.name}
                                     </h3>
 
                                     {(dev.city || dev.state) && (
                                         <div className="flex items-center gap-2 text-[#9CA3AF] text-sm mb-4">
-                                            <MapPin className="w-4 h-4 text-[#3B82F6]" />
+                                            <MapPin className="w-4 h-4 text-[#486581]" />
                                             <span>{[dev.city, dev.state].filter(Boolean).join(', ')}</span>
                                         </div>
                                     )}
@@ -158,7 +158,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         viewport={{ once: true }}
                     >
                         <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
-                            Representa uma <span className="text-[#3B82F6] italic">construtora?</span>
+                            Representa uma <span className="text-[#486581] italic">construtora?</span>
                         </h2>
                         <p className="text-[#9CA3AF] text-lg mb-8 max-w-xl mx-auto">
                             Estamos sempre em busca de novos parceiros para ampliar nosso portfólio.

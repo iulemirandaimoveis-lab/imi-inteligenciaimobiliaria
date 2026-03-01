@@ -15,7 +15,7 @@ const T = {
     textMuted: 'var(--bo-text-muted)',
     border: 'var(--bo-border)',
     hover: 'var(--bo-hover)',
-    accent: '#3B82F6',
+    accent: '#486581',
     accentBg: 'rgba(26,26,46,0.10)',
 }
 
@@ -135,7 +135,7 @@ export default function TrackingDashboardPage() {
                     {/* ── KPIs Row 1 ── */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                         {[
-                            { icon: Eye, label: 'Page Views', value: data.kpis.totalPageViews.toLocaleString('pt-BR'), color: '#60a5fa' },
+                            { icon: Eye, label: 'Page Views', value: data.kpis.totalPageViews.toLocaleString('pt-BR'), color: '#627D98' },
                             { icon: Users, label: 'Sessões', value: data.kpis.totalSessions.toLocaleString('pt-BR'), color: '#a78bfa' },
                             { icon: MousePointer, label: 'Cliques', value: data.kpis.totalClicks.toLocaleString('pt-BR'), color: '#f59e0b' },
                             { icon: TrendingUp, label: 'Leads', value: data.kpis.totalLeads.toLocaleString('pt-BR'), color: '#34d399' },
@@ -278,7 +278,7 @@ export default function TrackingDashboardPage() {
                                             <div className="h-1.5 rounded-full" style={{ background: T.hover }}>
                                                 <div
                                                     className="h-full rounded-full transition-all duration-700"
-                                                    style={{ width: `${item.percentage}%`, background: '#60a5fa' }}
+                                                    style={{ width: `${item.percentage}%`, background: '#627D98' }}
                                                 />
                                             </div>
                                         </div>

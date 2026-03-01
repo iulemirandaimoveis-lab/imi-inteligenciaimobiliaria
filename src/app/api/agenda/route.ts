@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         const { data, error } = await supabase.from('calendar_events').insert({
             title, description: description || null, event_type: event_type || 'reuniao',
             start_time, end_time: end_time || null, all_day: all_day || false,
-            location: location || null, color: color || '#3B82F6',
+            location: location || null, color: color || '#486581',
             related_type: related_type || null, related_id: related_id || null,
         }).select().single()
 

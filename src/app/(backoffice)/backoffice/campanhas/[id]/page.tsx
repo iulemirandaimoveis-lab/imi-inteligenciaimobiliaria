@@ -219,7 +219,7 @@ export default function CampanhaDetalhesPage() {
         </div>
         <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-[#1A1A2E]'
+            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-[#102A43]'
               }`}
             style={{ width: `${Math.min(progressPercent, 100)}%` }}
           />
@@ -233,7 +233,7 @@ export default function CampanhaDetalhesPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-transparent text-gray-600'
+              className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#334E68] text-[#486581]' : 'border-transparent text-gray-600'
                 }`}
             >
               {tab === 'overview' ? 'Visão Geral' : tab === 'metricas' ? 'Métricas' : 'Leads Gerados'}
@@ -287,7 +287,7 @@ export default function CampanhaDetalhesPage() {
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#1A1A2E] rounded-full transition-all"
+                      className="h-full bg-[#102A43] rounded-full transition-all"
                       style={{ width: `${item.percentage}%` }}
                     />
                   </div>

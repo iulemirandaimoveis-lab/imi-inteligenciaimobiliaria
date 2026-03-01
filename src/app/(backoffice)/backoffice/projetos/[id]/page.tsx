@@ -155,7 +155,7 @@ export default function ProjetoDetalhePage() {
                     <span className="text-sm font-bold text-gray-900">{progressCaptacao.toFixed(0)}%</span>
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#1A1A2E] rounded-full transition-all" style={{ width: `${progressCaptacao}%` }} />
+                    <div className="h-full bg-[#102A43] rounded-full transition-all" style={{ width: `${progressCaptacao}%` }} />
                 </div>
                 <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
                     <span>{formatCurrency(projetoData.captacaoAtual)} captados</span>
@@ -175,7 +175,7 @@ export default function ProjetoDetalhePage() {
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key as any)}
-                            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-transparent text-gray-600 hover:text-gray-900'
+                            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key ? 'border-[#334E68] text-[#486581]' : 'border-transparent text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             {tab.label}
@@ -233,7 +233,7 @@ export default function ProjetoDetalhePage() {
                         <div className="bg-white rounded-2xl p-6 border">
                             <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Documentos</h2>
                             <button className="flex items-center gap-3 w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm">
-                                <FileText size={16} className="text-[#3B82F6]" />
+                                <FileText size={16} className="text-[#486581]" />
                                 <span>Pitch Deck v4</span>
                                 <ExternalLink size={14} className="text-gray-400 ml-auto" />
                             </button>

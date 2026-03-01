@@ -9,9 +9,9 @@ const T = {
     card: 'bg-[#141420] border border-white/[.06] rounded-2xl',
     text: 'text-white',
     sub: 'text-white/50',
-    accent: '#3B82F6',
-    accentBg: 'bg-[#1A1A2E]',
-    input: 'bg-[#1a1a2e] border border-white/10 text-white placeholder:text-white/30 rounded-xl',
+    accent: '#486581',
+    accentBg: 'bg-[#102A43]',
+    input: 'bg-[#102A43] border border-white/10 text-white placeholder:text-white/30 rounded-xl',
 }
 
 interface Projeto {
@@ -34,7 +34,7 @@ interface Projeto {
 }
 
 const STATUS_CFG: Record<string, { l: string; color: string }> = {
-    estruturacao: { l: 'Estruturação', color: '#3B82F6' },
+    estruturacao: { l: 'Estruturação', color: '#486581' },
     lancamento: { l: 'Lançamento', color: '#10B981' },
     obras: { l: 'Em Obras', color: '#F59E0B' },
     pronto: { l: 'Pronto', color: '#22C55E' },
@@ -121,8 +121,8 @@ export default function ProjetosPage() {
                 {/* KPIs */}
                 <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
                     {[
-                        { l: 'VGV Total Portfólio', v: fmtCurrency(totalVGV), icon: DollarSign, color: '#3B82F6' },
-                        { l: 'Total de Unidades', v: totalUnidades, icon: Building2, color: '#3B82F6' },
+                        { l: 'VGV Total Portfólio', v: fmtCurrency(totalVGV), icon: DollarSign, color: '#486581' },
+                        { l: 'Total de Unidades', v: totalUnidades, icon: Building2, color: '#486581' },
                         { l: 'Unidades Vendidas', v: totalVendidas, icon: Users, color: '#10B981' },
                         { l: 'Taxa Média de Vendas', v: `${taxaMedia}%`, icon: TrendingUp, color: '#8B5CF6' },
                     ].map(kpi => {
@@ -145,7 +145,7 @@ export default function ProjetosPage() {
                     {['todos', 'estruturacao', 'lancamento', 'obras', 'pronto'].map(s => (
                         <button key={s} onClick={() => setFiltro(s)}
                             className={`h-8 px-3 rounded-xl text-xs font-medium whitespace-nowrap transition-colors border ${filtro === s
-                                ? 'bg-[#1A1A2E] text-white border-[#3B82F6]'
+                                ? 'bg-[#102A43] text-white border-[#334E68]'
                                 : 'bg-[#141420] text-white/50 border-white/10 hover:border-white/20'
                                 }`}>
                             {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.l || s}
@@ -155,7 +155,7 @@ export default function ProjetosPage() {
 
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-[#3B82F6]" size={32} />
+                        <Loader2 className="animate-spin text-[#486581]" size={32} />
                     </div>
                 ) : projetos.length === 0 ? (
                     <div className={`${T.card} p-12 text-center`}>
@@ -171,7 +171,7 @@ export default function ProjetosPage() {
                             return (
                                 <div key={p.id} className={`${T.card} overflow-hidden hover:border-white/10 transition-all`}>
                                     {/* Image placeholder */}
-                                    <div className="h-36 bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1a] flex items-center justify-center relative">
+                                    <div className="h-36 bg-gradient-to-br from-[#102A43] to-[#0f0f1a] flex items-center justify-center relative">
                                         {p.imagem_url ? (
                                             <img src={p.imagem_url} alt={p.nome} className="w-full h-full object-cover" />
                                         ) : (
@@ -214,7 +214,7 @@ export default function ProjetosPage() {
                                                 <div className="h-full rounded-full transition-all"
                                                     style={{
                                                         width: `${pct}%`,
-                                                        backgroundColor: pct >= 75 ? '#22C55E' : pct >= 30 ? '#3B82F6' : '#3B82F6',
+                                                        backgroundColor: pct >= 75 ? '#22C55E' : pct >= 30 ? '#486581' : '#486581',
                                                     }} />
                                             </div>
                                         </div>

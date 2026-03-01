@@ -191,7 +191,7 @@ export default function SimuladorCreditoPage() {
                                     type="number"
                                     value={propertyValue}
                                     onChange={(e) => setPropertyValue(Number(e.target.value))}
-                                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                 />
                             </div>
                         </div>
@@ -200,7 +200,7 @@ export default function SimuladorCreditoPage() {
                         <div>
                             <div className="flex items-center justify-between mb-2">
                                 <label className="text-sm font-medium text-gray-700">Entrada</label>
-                                <span className="text-sm font-bold text-[#3B82F6]">
+                                <span className="text-sm font-bold text-[#486581]">
                                     {downPaymentPercent.toFixed(1)}%
                                 </span>
                             </div>
@@ -210,7 +210,7 @@ export default function SimuladorCreditoPage() {
                                     type="number"
                                     value={downPayment}
                                     onChange={(e) => setDownPayment(Number(e.target.value))}
-                                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                 />
                             </div>
                             <input
@@ -220,7 +220,7 @@ export default function SimuladorCreditoPage() {
                                 step="1000"
                                 value={downPayment}
                                 onChange={(e) => setDownPayment(Number(e.target.value))}
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [#2563EB]"
+                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [#243B53]"
                             />
                         </div>
 
@@ -239,7 +239,7 @@ export default function SimuladorCreditoPage() {
                                 step="12"
                                 value={term}
                                 onChange={(e) => setTerm(Number(e.target.value))}
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [#2563EB]"
+                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [#243B53]"
                             />
                             <div className="flex justify-between text-xs text-gray-500 mt-1">
                                 <span>1 ano</span>
@@ -314,7 +314,7 @@ export default function SimuladorCreditoPage() {
                                         setInterestRate(bank.rate)
                                     }
                                 }}
-                                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                             >
                                 {bancos.map(bank => (
                                     <option key={bank.id} value={bank.id}>
@@ -329,7 +329,7 @@ export default function SimuladorCreditoPage() {
                 {/* RIGHT: Results */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Resumo Principal */}
-                    <div className="bg-gradient-to-br from-[#1A1A2E] to-[#16162A] rounded-2xl p-8 text-white">
+                    <div className="bg-gradient-to-br from-[#102A43] to-[#16162A] rounded-2xl p-8 text-white">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             <div>
                                 <p className="text-sm text-accent-100 mb-1">Parcela Mensal</p>
@@ -481,7 +481,7 @@ export default function SimuladorCreditoPage() {
                                     <div
                                         key={bank.id}
                                         className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${selectedBank.id === bank.id
-                                                ? 'border-[#3B82F6] bg-accent-50'
+                                                ? 'border-[#334E68] bg-accent-50'
                                                 : 'border-gray-100 hover:border-gray-200'
                                             }`}
                                         onClick={() => {

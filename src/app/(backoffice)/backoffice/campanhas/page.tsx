@@ -285,13 +285,13 @@ export default function CampanhasPage() {
                             placeholder="Buscar campanhas..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                         />
                     </div>
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                     >
                         <option value="all">Todos os status</option>
                         <option value="ativa">Ativa</option>
@@ -301,7 +301,7 @@ export default function CampanhasPage() {
                     <select
                         value={platformFilter}
                         onChange={(e) => setPlatformFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                     >
                         <option value="all">Todas as plataformas</option>
                         <option value="Instagram">Instagram</option>
@@ -333,7 +333,7 @@ export default function CampanhasPage() {
                                 <div className="flex items-start justify-between mb-3">
                                     <div className="flex items-start gap-3">
                                         <div className="w-10 h-10 bg-accent-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <PlatformIcon size={20} className="text-[#3B82F6]" />
+                                            <PlatformIcon size={20} className="text-[#486581]" />
                                         </div>
                                         <div>
                                             <h3 className="font-bold text-gray-900 mb-1">{campanha.name}</h3>
@@ -356,7 +356,7 @@ export default function CampanhasPage() {
                                     </div>
                                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                                         <div
-                                            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-[#1A1A2E]'
+                                            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-[#102A43]'
                                                 }`}
                                             style={{ width: `${Math.min(progressPercent, 100)}%` }}
                                         />

@@ -12,7 +12,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#3B82F6',
+    gold: '#486581',
 }
 
 interface Transaction {
@@ -149,7 +149,7 @@ export default function FinanceiroPage() {
                     { label: 'Receitas', value: totalReceitas, color: '#6BB87B', icon: ArrowUpCircle },
                     { label: 'Despesas', value: totalDespesas, color: '#E57373', icon: ArrowDownCircle },
                     { label: 'Saldo', value: saldo, color: saldo >= 0 ? '#6BB87B' : '#E57373', icon: saldo >= 0 ? TrendingUp : TrendingDown },
-                    { label: 'Pendentes', value: pendentes, color: '#3B82F6', icon: DollarSign, isCount: true },
+                    { label: 'Pendentes', value: pendentes, color: '#486581', icon: DollarSign, isCount: true },
                 ].map((kpi, i) => (
                     <motion.div key={kpi.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
                         className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
@@ -223,7 +223,7 @@ export default function FinanceiroPage() {
                                         </td>
                                         <td className="px-4 py-3">
                                             <span className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{
-                                                color: t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#3B82F6',
+                                                color: t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#486581',
                                                 background: t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(26,26,46,0.12)',
                                             }}>
                                                 {t.status === 'pago' ? 'Pago' : t.status === 'atrasado' ? 'Atrasado' : 'Pendente'}

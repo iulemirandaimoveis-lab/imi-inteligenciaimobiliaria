@@ -145,7 +145,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             <span className="text-4xl">🏗️</span>
                         </div>
                         <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">
-                            Portfólio em <span className="text-[#3B82F6] italic">Curadoria</span>
+                            Portfólio em <span className="text-[#486581] italic">Curadoria</span>
                         </h1>
                         <p className="text-[#9CA3AF] text-lg md:text-xl leading-relaxed mb-10 max-w-xl mx-auto">
                             Estamos selecionando tecnicamente os melhores ativos do mercado para compor este catálogo exclusivo.
@@ -153,7 +153,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             Aguarde novidades em breve ou fale conosco para oportunidades off-market.
                         </p>
                         <button
-                            className="inline-flex items-center gap-3 h-14 px-8 text-[13px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#3B82F6] rounded-xl transition-all duration-300 hover:-translate-y-1 mx-auto"
+                            className="inline-flex items-center gap-3 h-14 px-8 text-[13px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#334E68] rounded-xl transition-all duration-300 hover:-translate-y-1 mx-auto"
                             onClick={() => handleCTAClick('off-market')}
                         >
                             <MessageCircle className="w-5 h-5 flex-shrink-0" />
@@ -187,11 +187,11 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         className="max-w-4xl"
                     >
                         <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
-                            <div className="w-8 h-px bg-[#1A1A2E]" />
-                            <span className="text-[#3B82F6] font-bold uppercase tracking-[0.25em] text-[11px]">Portfólio 2026</span>
+                            <div className="w-8 h-px bg-[#102A43]" />
+                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Portfólio 2026</span>
                         </motion.div>
                         <motion.h1 variants={slideUp} className="text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                            Curadoria de <br /><span className="text-[#3B82F6] italic">Empreendimentos</span>
+                            Curadoria de <br /><span className="text-[#486581] italic">Empreendimentos</span>
                         </motion.h1>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl font-light leading-relaxed max-w-2xl">
                             Seleção técnica dos melhores ativos imobiliários. Do luxo absoluto à alta rentabilidade em compactos, nos principais hubs de valorização.
@@ -218,7 +218,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             viewport={{ once: true }}
                             className="flex items-center gap-4 mb-10"
                         >
-                            <span className="bg-[#1A1A2E]/20 text-[#3B82F6] px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px] border border-[#3B82F6]/30">
+                            <span className="bg-[#102A43]/20 text-[#486581] px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px] border border-[#334E68]/30">
                                 Pronta Entrega
                             </span>
                             <h2 className="font-display text-2xl md:text-3xl text-white font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Oportunidades Imediatas</h2>
@@ -242,7 +242,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         className="mb-10 flex items-center justify-between"
                     >
                         <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-[#1A1A2E]" />
+                            <div className="w-2 h-2 rounded-full bg-[#102A43]" />
                             <span className="text-[#9CA3AF] font-bold uppercase tracking-widest text-xs">
                                 {mainGridDevelopments.length} {mainGridDevelopments.length === 1 ? 'resultado' : 'resultados'} encontrados
                             </span>
@@ -262,7 +262,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             className="text-center py-24 bg-[#141420] rounded-3xl border border-dashed border-white/[0.1]"
                         >
                             <div className="w-20 h-20 bg-white/[0.05] rounded-full flex items-center justify-center mx-auto mb-6 shadow-soft">
-                                <Search className="w-8 h-8 text-[#3B82F6]" strokeWidth={1.5} />
+                                <Search className="w-8 h-8 text-[#486581]" strokeWidth={1.5} />
                             </div>
                             <h3 className="font-display text-2xl font-bold text-white mb-2">Nenhum ativo encontrado</h3>
                             <p className="text-[#9CA3AF] max-w-xs mx-auto mb-8">
@@ -289,7 +289,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
             {/* CTA Final */}
             <section className="bg-[#141420] text-white py-20 md:py-32 text-center relative overflow-hidden border-t border-white/[0.05]">
-                <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #3B82F6 0%, transparent 60%)', filter: 'blur(80px)' }} />
+                <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
                     <motion.div
                         initial="hidden"
@@ -298,14 +298,14 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         variants={staggerContainer}
                     >
                         <motion.h3 variants={slideUp} className="text-3xl md:text-5xl font-black mb-6 tracking-tight text-white mb-6" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                            Não encontrou o <span className="text-[#3B82F6] italic">imóvel ideal?</span>
+                            Não encontrou o <span className="text-[#486581] italic">imóvel ideal?</span>
                         </motion.h3>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
                             Nossa curadoria vai além do catálogo. Fale com nossos especialistas para uma prospecção off-market personalizada.
                         </motion.p>
                         <motion.div variants={slideUp}>
                             <button
-                                className="inline-flex items-center gap-3 h-16 px-10 text-lg font-bold bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#3B82F6] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)]"
+                                className="inline-flex items-center gap-3 h-16 px-10 text-lg font-bold bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#334E68] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)]"
                                 onClick={() => handleCTAClick('general')}
                             >
                                 <MessageCircle className="w-5 h-5 flex-shrink-0 text-white" />

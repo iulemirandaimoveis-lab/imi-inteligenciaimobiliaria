@@ -28,12 +28,12 @@ const T = {
   bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
   border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
   text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-  gold: '#3B82F6',
+  gold: '#486581',
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
   disponivel: { label: 'Disponível', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-  em_negociacao: { label: 'Negociação', color: '#3B82F6', bg: 'rgba(26,26,46,0.12)' },
+  em_negociacao: { label: 'Negociação', color: '#486581', bg: 'rgba(26,26,46,0.12)' },
   reservado: { label: 'Reservado', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
   vendido: { label: 'Vendido', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
   lancamento: { label: 'Lançamento', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },

@@ -141,7 +141,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'produto',
         icone: Star,
-        cor: 'text-[#3B82F6] bg-accent-50 border-accent-100',
+        cor: 'text-[#486581] bg-accent-50 border-accent-100',
         execucoes: 78,
     },
     {
@@ -273,7 +273,7 @@ export default function LeadRulesPage() {
                         onClick={() => setMostrarInativas(!mostrarInativas)}
                         className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
                     >
-                        {mostrarInativas ? <ToggleRight size={18} className="text-[#3B82F6]" /> : <ToggleLeft size={18} />}
+                        {mostrarInativas ? <ToggleRight size={18} className="text-[#486581]" /> : <ToggleLeft size={18} />}
                         Mostrar inativas
                     </button>
                 </div>
@@ -371,7 +371,7 @@ export default function LeadRulesPage() {
                     <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
                         <Settings size={40} className="mx-auto text-gray-200 mb-3" />
                         <p className="text-gray-500">Nenhuma regra encontrada</p>
-                        <button className="mt-3 text-sm text-[#3B82F6] hover:text-[#0F0F1E] font-medium">
+                        <button className="mt-3 text-sm text-[#486581] hover:text-[#0F0F1E] font-medium">
                             + Criar primeira regra
                         </button>
                     </div>

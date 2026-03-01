@@ -12,7 +12,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#3B82F6',
+    gold: '#486581',
 }
 
 const RELATORIOS = [
@@ -52,7 +52,7 @@ const CAT_MAP: Record<string, { label: string; text: string; bg: string }> = {
     avaliacoes: { label: 'Avaliações', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
     financeiro: { label: 'Financeiro', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
     crm: { label: 'CRM', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
-    imoveis: { label: 'Imóveis', text: '#3B82F6', bg: 'rgba(26,26,46,0.12)' },
+    imoveis: { label: 'Imóveis', text: '#486581', bg: 'rgba(26,26,46,0.12)' },
     consultorias: { label: 'Consultorias', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
 }
 
@@ -119,7 +119,7 @@ export default function RelatoriosPage() {
                             onClick={() => setCatAtiva(cat)}
                             className="px-3.5 h-10 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: catAtiva === cat ? '#3B82F6' : T.surface,
+                                background: catAtiva === cat ? '#486581' : T.surface,
                                 color: catAtiva === cat ? 'white' : T.textDim,
                                 border: `1px solid ${catAtiva === cat ? T.borderGold : T.border}`,
                                 whiteSpace: 'nowrap',
@@ -193,7 +193,7 @@ export default function RelatoriosPage() {
                                     style={{
                                         background: loading
                                             ? 'rgba(26,26,46,0.30)'
-                                            : '#3B82F6',
+                                            : '#486581',
                                         boxShadow: loading ? 'none' : '0 1px 2px rgba(0,0,0,0.1)',
                                         opacity: loading ? 0.7 : 1,
                                     }}

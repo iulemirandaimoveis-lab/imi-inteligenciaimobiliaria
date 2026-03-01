@@ -317,7 +317,7 @@ export default function CampanhaAnalyticsPage() {
                   cy="50"
                   r="40"
                   fill="none"
-                  stroke="#3b82f6"
+                  stroke="#486581"
                   strokeWidth="20"
                   strokeDasharray="251.2"
                   strokeDashoffset="0"

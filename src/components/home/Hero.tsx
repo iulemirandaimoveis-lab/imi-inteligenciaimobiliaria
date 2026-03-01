@@ -100,7 +100,7 @@ export default function Hero({ dict }: HeroProps) {
                 const Icon = t.icon
                 return (
                   <div key={t.text} className="flex items-center gap-1.5 bg-white/8 border border-white/10 rounded-full px-3 py-1">
-                    <Icon size={12} className="text-[#3B82F6]" />
+                    <Icon size={12} className="text-[#486581]" />
                     <span className="text-xs text-white/70 font-medium">{t.text}</span>
                   </div>
                 )
@@ -132,7 +132,7 @@ export default function Hero({ dict }: HeroProps) {
               <Link
                 href={`/${lang}/avaliacoes#form`}
                 className="group w-full sm:w-auto inline-flex flex-wrap text-center items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-14 h-auto rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #1A1A2E 0%, #2D2D4E 100%)', color: '#141420' }}
+                style={{ background: 'linear-gradient(135deg, #102A43 0%, #2D2D4E 100%)', color: '#141420' }}
               >
                 {dict.cta_appraisal || 'Solicitar Avaliação'}
                 <TrendingUp size={17} className="group-hover:translate-x-0.5 transition-transform shrink-0" />
@@ -160,7 +160,7 @@ export default function Hero({ dict }: HeroProps) {
           >
             {STATS.map(stat => (
               <div key={stat.label} className="flex flex-col items-center px-4 py-2 sm:py-0 text-center">
-                <span className="text-2xl sm:text-3xl font-bold" style={{ color: '#3B82F6' }}>
+                <span className="text-2xl sm:text-3xl font-bold" style={{ color: '#486581' }}>
                   <StatCounter to={stat.value} suffix={stat.suffix} />
                 </span>
                 <span className="text-xs text-white/50 mt-1 leading-snug">{stat.label}</span>

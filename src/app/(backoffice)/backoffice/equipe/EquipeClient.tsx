@@ -24,7 +24,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#3B82F6',
+    gold: '#486581',
 }
 
 type UserRole = 'admin' | 'manager' | 'agent' | 'viewer' | string
@@ -57,7 +57,7 @@ const ROLE_CFG: Record<UserRole | string, { label: string; color: string; bg: st
 const STATUS_CFG: Record<UserStatus | string, { label: string; color: string; bg: string; icon: any }> = {
     active: { label: 'Ativo', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
     inactive: { label: 'Inativo', color: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
-    pending: { label: 'Pendente', color: '#3B82F6', bg: 'rgba(26,26,46,0.12)', icon: Clock },
+    pending: { label: 'Pendente', color: '#486581', bg: 'rgba(26,26,46,0.12)', icon: Clock },
 }
 
 export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[] }) {
@@ -105,7 +105,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                 </div>
                 <motion.button whileTap={{ scale: 0.96 }}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#3B82F6', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                     <Plus size={16} /> Adicionar Membro
                 </motion.button>
             </motion.div>

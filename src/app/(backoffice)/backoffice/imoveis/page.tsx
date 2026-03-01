@@ -10,12 +10,12 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#3B82F6',
+    gold: '#486581',
 }
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     disponivel: { label: 'Disponível', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    em_negociacao: { label: 'Negociação', text: '#3B82F6', bg: 'rgba(26,26,46,0.12)', icon: Clock },
+    em_negociacao: { label: 'Negociação', text: '#486581', bg: 'rgba(26,26,46,0.12)', icon: Clock },
     reservado: { label: 'Reservado', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
     vendido: { label: 'Vendido', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
     lancamento: { label: 'Lançamento', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Tag },
@@ -79,9 +79,9 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                     <img src={imovel.image} alt={imovel.titulo} className="absolute inset-0 w-full h-full object-cover" />
                 ) : (
                     <div className="absolute inset-0 overflow-hidden opacity-10">
-                        <div className="absolute top-4 left-4 w-16 h-16 border border-[#3B82F6] rounded-lg rotate-12" />
-                        <div className="absolute bottom-6 right-6 w-24 h-24 border border-[#3B82F6] rounded-xl -rotate-6" />
-                        <div className="absolute top-8 right-12 w-8 h-8 bg-[#1A1A2E] rounded opacity-30" />
+                        <div className="absolute top-4 left-4 w-16 h-16 border border-[#334E68] rounded-lg rotate-12" />
+                        <div className="absolute bottom-6 right-6 w-24 h-24 border border-[#334E68] rounded-xl -rotate-6" />
+                        <div className="absolute top-8 right-12 w-8 h-8 bg-[#102A43] rounded opacity-30" />
                     </div>
                 )}
 
@@ -261,7 +261,7 @@ export default function ImoveisPage() {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/imoveis/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#3B82F6', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
+                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Novo Empreendimento
                 </motion.button>
@@ -330,7 +330,7 @@ export default function ImoveisPage() {
                                 onClick={() => setFilter(s)}
                                 className="px-3 h-10 rounded-xl text-xs font-semibold transition-all hidden sm:block"
                                 style={{
-                                    background: filter === s ? '#3B82F6' : T.elevated,
+                                    background: filter === s ? '#486581' : T.elevated,
                                     color: filter === s ? 'white' : T.textDim,
                                     border: `1px solid ${filter === s ? T.borderGold : T.border}`,
                                 }}
@@ -347,7 +347,7 @@ export default function ImoveisPage() {
                                     onClick={() => setView(v)}
                                     className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
                                     style={{
-                                        background: view === v ? '#3B82F6' : T.elevated,
+                                        background: view === v ? '#486581' : T.elevated,
                                         border: `1px solid ${view === v ? T.borderGold : T.border}`,
                                     }}
                                 >

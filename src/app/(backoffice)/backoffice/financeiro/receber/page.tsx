@@ -238,13 +238,13 @@ export default function ContasReceberPage() {
                             placeholder="Buscar por protocolo, cliente ou imóvel..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                         />
                     </div>
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                     >
                         <option value="all">Todos os status</option>
                         <option value="pendente">Pendente</option>
@@ -280,7 +280,7 @@ export default function ContasReceberPage() {
                                         <div className="flex items-start justify-between gap-4 mb-2">
                                             <div>
                                                 <div className="flex items-center gap-3 mb-1">
-                                                    <span className="text-sm font-bold text-[#3B82F6]">{conta.protocol}</span>
+                                                    <span className="text-sm font-bold text-[#486581]">{conta.protocol}</span>
                                                     <span className={`px-3 py-1 rounded-lg text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
                                                         {statusConfig.label}
                                                     </span>

@@ -47,11 +47,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         // Variants — institutional dark, NO gold
         const variants = {
             primary: `
-        bg-[#1A1A2E] text-white
+        bg-[#102A43] text-white
         hover:bg-[#16162A]
         shadow-[0_1px_3px_rgba(0,0,0,0.2),0_0_0_1px_rgba(255,255,255,0.05)_inset]
         hover:shadow-[0_2px_8px_rgba(0,0,0,0.3),0_0_0_1px_rgba(255,255,255,0.08)_inset]
-        dark:bg-white dark:text-[#1A1A2E]
+        dark:bg-white dark:text-[#102A43]
         dark:hover:bg-gray-100
         dark:shadow-[0_1px_3px_rgba(0,0,0,0.1)]
       `,

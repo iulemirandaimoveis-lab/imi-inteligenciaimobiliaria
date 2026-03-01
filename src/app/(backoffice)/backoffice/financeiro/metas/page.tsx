@@ -123,7 +123,7 @@ export default function MetasGamificationPage() {
                 <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="font-bold text-gray-900">Suas Conquistas</h3>
-                        <button className="text-[#3B82F6] text-sm font-medium hover:underline flex items-center gap-1">
+                        <button className="text-[#486581] text-sm font-medium hover:underline flex items-center gap-1">
                             Ver todas <ChevronRight size={14} />
                         </button>
                     </div>
@@ -150,7 +150,7 @@ export default function MetasGamificationPage() {
             <div>
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <Target size={20} className="text-[#3B82F6]" />
+                        <Target size={20} className="text-[#486581]" />
                         Metas de Performance
                     </h3>
                 </div>
@@ -162,7 +162,7 @@ export default function MetasGamificationPage() {
                         const daysLeft = calculateDaysLeft(meta.end_date)
 
                         return (
-                            <div key={meta.id} className={`bg-white rounded-2xl border transition-all hover:border-[#3B82F6]/30 hover:shadow-lg hover:shadow-[#3B82F6]/5 ${isAchieved ? 'border-emerald-100' : 'border-gray-100'}`}>
+                            <div key={meta.id} className={`bg-white rounded-2xl border transition-all hover:border-[#334E68]/30 hover:shadow-lg hover:shadow-[#334E68]/5 ${isAchieved ? 'border-emerald-100' : 'border-gray-100'}`}>
                                 <div className="p-6">
                                     <div className="flex items-start justify-between mb-4">
                                         <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${isAchieved ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'
@@ -216,7 +216,7 @@ export default function MetasGamificationPage() {
                                         <CalendarDays size={14} />
                                         <span>Até {new Date(meta.end_date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
                                     </div>
-                                    <button className="text-sm text-[#3B82F6] font-semibold hover:text-[#2563EB] transition-colors flex items-center gap-1">
+                                    <button className="text-sm text-[#486581] font-semibold hover:text-[#243B53] transition-colors flex items-center gap-1">
                                         Detalhes <ArrowRight size={14} />
                                     </button>
                                 </div>

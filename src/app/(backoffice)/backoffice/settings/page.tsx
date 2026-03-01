@@ -17,7 +17,7 @@ const T = {
   bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
   border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
   text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-  gold: '#3B82F6',
+  gold: '#486581',
 }
 
 interface SettingsData {
@@ -132,7 +132,7 @@ export default function SettingsPage() {
   }
 
   const toggleCheckedStyle = {
-    background: '#3B82F6',
+    background: '#486581',
   }
 
   const toggleUncheckedStyle = {
@@ -155,7 +155,7 @@ export default function SettingsPage() {
           onClick={handleSave}
           disabled={isSaving}
           className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
-          style={{ background: '#3B82F6', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
+          style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
         >
           {isSaving ? (
             <><Loader2 size={16} className="animate-spin" /> Salvando...</>

@@ -42,7 +42,7 @@ export function InvestmentSimulator() {
                 {/* Inputs */}
                 <div className="p-8 md:p-12 space-y-10">
                     <h3 className="text-2xl font-bold text-white font-display flex items-center gap-3">
-                        <TrendingUp className="w-6 h-6 text-[#3B82F6]" />
+                        <TrendingUp className="w-6 h-6 text-[#486581]" />
                         Configurar Cenário
                     </h3>
 
@@ -62,7 +62,7 @@ export function InvestmentSimulator() {
                                 step="50000"
                                 value={propertyValue}
                                 onChange={(e) => setPropertyValue(Number(e.target.value))}
-                                className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer [#3B82F6]"
+                                className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#486581]"
                             />
                         </div>
 
@@ -81,7 +81,7 @@ export function InvestmentSimulator() {
                                 step="5"
                                 value={downPaymentPercent}
                                 onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
-                                className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer [#3B82F6]"
+                                className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#486581]"
                             />
                             <div className="text-xs text-[#6B7280] font-medium">Equivalente a: ${(propertyValue * (downPaymentPercent / 100)).toLocaleString()}</div>
                         </div>
@@ -102,7 +102,7 @@ export function InvestmentSimulator() {
                                     step="0.25"
                                     value={interestRate}
                                     onChange={(e) => setInterestRate(Number(e.target.value))}
-                                    className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer [#3B82F6]"
+                                    className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#486581]"
                                 />
                             </div>
 
@@ -121,7 +121,7 @@ export function InvestmentSimulator() {
                                     step="0.5"
                                     value={rentalYield}
                                     onChange={(e) => setRentalYield(Number(e.target.value))}
-                                    className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer [#3B82F6]"
+                                    className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#486581]"
                                 />
                             </div>
                         </div>
@@ -130,12 +130,12 @@ export function InvestmentSimulator() {
 
                 {/* Result */}
                 <div className="bg-[#141420] border-l border-white/[0.05] p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#1A1A2E] opacity-5 rounded-full blur-3xl -mr-32 -mt-32" />
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#102A43] opacity-5 rounded-full blur-3xl -mr-32 -mt-32" />
 
                     <div className="relative z-10 space-y-12">
                         <div>
                             <p className="text-[#9CA3AF] text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <DollarSign className="w-4 h-4 text-[#3B82F6]" />
+                                <DollarSign className="w-4 h-4 text-[#486581]" />
                                 Fluxo de Caixa Mensal Limpo
                             </p>
                             <div className="flex items-baseline gap-2">
@@ -151,11 +151,11 @@ export function InvestmentSimulator() {
 
                         <div>
                             <p className="text-[#9CA3AF] text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <PieChart className="w-4 h-4 text-[#3B82F6]" />
+                                <PieChart className="w-4 h-4 text-[#486581]" />
                                 Retorno Cash-on-Cash
                             </p>
                             <div className="flex items-baseline gap-2">
-                                <span className={`text-5xl font-bold font-display ${cocReturn > 0 ? 'text-[#3B82F6]' : 'text-[#EF4444]'}`}>
+                                <span className={`text-5xl font-bold font-display ${cocReturn > 0 ? 'text-[#486581]' : 'text-[#EF4444]'}`}>
                                     {cocReturn.toFixed(1)}%
                                 </span>
                                 <span className="text-[#6B7280] font-medium">ao ano</span>
@@ -163,7 +163,7 @@ export function InvestmentSimulator() {
                         </div>
 
                         <div className="bg-white/5 border border-white/10 p-4 rounded-xl flex gap-3 text-xs text-[#9CA3AF] leading-relaxed">
-                            <Info className="w-4 h-4 text-[#3B82F6] flex-shrink-0" />
+                            <Info className="w-4 h-4 text-[#486581] flex-shrink-0" />
                             <p>
                                 Estimativa líquida após hipoteca, impostos, HOA e taxas de gestão. Calculado com base no capital inicial investido (entrada + custos de fechamento).
                             </p>
@@ -171,7 +171,7 @@ export function InvestmentSimulator() {
                     </div>
 
                     <div className="mt-12 relative z-10">
-                        <button className="w-full inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-xl border border-[#21263A] border-l-2 border-[#3B82F6] shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:bg-[#21263A] transition-all duration-300">
+                        <button className="w-full inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-xl border border-[#21263A] border-l-2 border-[#334E68] shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:bg-[#21263A] transition-all duration-300">
                             Receber Plano Detalhado
                         </button>
                     </div>

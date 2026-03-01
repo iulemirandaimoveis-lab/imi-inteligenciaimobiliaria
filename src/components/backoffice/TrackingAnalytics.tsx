@@ -21,7 +21,7 @@ import { TrendingUp, Users, Eye, Clock, MapPin, Smartphone } from 'lucide-react'
 
 const supabase = createClient()
 
-const COLORS = ['#3B82F6', '#7B9EC4', '#6BB87B', '#E8A87C', '#A89EC4', '#E57373']
+const COLORS = ['#486581', '#7B9EC4', '#6BB87B', '#E8A87C', '#A89EC4', '#E57373']
 
 interface TrackingAnalytics {
     totalClicks: number
@@ -327,7 +327,7 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                                     cursor={{ fill: 'rgba(255,255,255,0.04)' }}
                                     contentStyle={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '10px', color: 'var(--bo-text)' }}
                                 />
-                                <Bar dataKey="value" fill="#3B82F6" radius={[8, 8, 0, 0]} barSize={50} />
+                                <Bar dataKey="value" fill="#486581" radius={[8, 8, 0, 0]} barSize={50} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -349,7 +349,7 @@ export default function TrackingAnalytics({ developmentId }: { developmentId?: s
                             <Line
                                 type="monotone"
                                 dataKey="clicks"
-                                stroke="#3B82F6"
+                                stroke="#486581"
                                 strokeWidth={3}
                                 dot={{ r: 4, strokeWidth: 2, fill: 'var(--bo-surface)' }}
                                 activeDot={{ r: 6 }}

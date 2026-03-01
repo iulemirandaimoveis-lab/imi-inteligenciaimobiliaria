@@ -16,7 +16,7 @@ export function QualificationCTA() {
     return (
         <section className="relative py-24 bg-[#0D0F14] overflow-hidden border-t border-white/[0.05]">
             {/* Background Details */}
-            <div className="absolute top-0 right-0 w-1/3 h-full bg-[#1A1A2E]/5 -skew-x-12 translate-x-1/4 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-1/3 h-full bg-[#102A43]/5 -skew-x-12 translate-x-1/4 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-1/4 h-full bg-white/5 skew-x-12 -translate-x-1/4 pointer-events-none" />
 
             <div className="container-custom relative z-10">
@@ -32,15 +32,15 @@ export function QualificationCTA() {
                     <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6">
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="inline-flex items-center justify-center gap-3 h-14 sm:h-16 px-8 sm:px-12 text-[14px] sm:text-[16px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-2xl border border-[#21263A] border-l-4 border-[#3B82F6] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)] transition-all duration-300 w-full sm:w-auto"
+                            className="inline-flex items-center justify-center gap-3 h-14 sm:h-16 px-8 sm:px-12 text-[14px] sm:text-[16px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-2xl border border-[#21263A] border-l-4 border-[#334E68] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)] transition-all duration-300 w-full sm:w-auto"
                         >
-                            <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#3B82F6]" />
+                            <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#486581]" />
                             Agendar Sessão Gratuita
                         </button>
 
                         <a
                             href="#simulator"
-                            className="text-sm font-bold leading-6 text-[#DFE4E8] flex items-center gap-2 group hover:text-[#3B82F6] transition-colors"
+                            className="text-sm font-bold leading-6 text-[#DFE4E8] flex items-center gap-2 group hover:text-[#486581] transition-colors"
                         >
                             Refazer simulação de investimento
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -55,7 +55,7 @@ export function QualificationCTA() {
                             { label: 'Suporte VIP', value: '24/7' }
                         ].map((item, i) => (
                             <div key={i} className="text-center">
-                                <div className="text-xl font-bold text-[#3B82F6] mb-1">{item.value}</div>
+                                <div className="text-xl font-bold text-[#486581] mb-1">{item.value}</div>
                                 <div className="text-[10px] uppercase tracking-widest text-[#9CA3AF] font-bold">{item.label}</div>
                             </div>
                         ))}

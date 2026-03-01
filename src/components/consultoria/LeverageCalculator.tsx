@@ -33,7 +33,7 @@ export function LeverageCalculator() {
                         step="0.5"
                         value={appreciationRate}
                         onChange={(e) => setAppreciationRate(Number(e.target.value))}
-                        className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer [#3B82F6]"
+                        className="w-full h-2 bg-[#1A1E2A] rounded-lg appearance-none cursor-pointer accent-[#486581]"
                     />
                 </div>
 
@@ -45,18 +45,18 @@ export function LeverageCalculator() {
                     </div>
 
                     <div className="p-6 bg-[#1A1E2A] rounded-2xl border border-white/10 text-white relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#1A1A2E] opacity-10 rounded-full blur-2xl -mr-12 -mt-12" />
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#102A43] opacity-10 rounded-full blur-2xl -mr-12 -mt-12" />
                         <div className="relative z-10">
                             <div className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-4">Financiado (40% down)</div>
-                            <div className="text-3xl font-bold text-[#3B82F6] mb-1">{leveragedRoi.toFixed(0)}%</div>
+                            <div className="text-3xl font-bold text-[#486581] mb-1">{leveragedRoi.toFixed(0)}%</div>
                             <p className="text-[10px] text-[#9CA3AF] font-medium">ROI Alavancado em 5 Anos</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-[#1A1A2E]/5 border border-[#3B82F6]/10 p-4 rounded-xl">
+                <div className="bg-[#102A43]/5 border border-[#334E68]/10 p-4 rounded-xl">
                     <p className="text-xs text-[#E5E7EB] leading-relaxed font-medium">
-                        <span className="text-[#3B82F6] font-bold block mb-1">Insight Estratégico:</span>
+                        <span className="text-[#486581] font-bold block mb-1">Insight Estratégico:</span>
                         Ao usar o crédito bancário, você ganha a valorização sobre o valor TOTAL do imóvel, tendo investido apenas a entrada. Isso gera um efeito multiplicador no seu capital.
                     </p>
                 </div>

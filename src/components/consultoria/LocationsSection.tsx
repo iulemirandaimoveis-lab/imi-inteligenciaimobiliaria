@@ -49,7 +49,7 @@ export function LocationsSection() {
                         <motion.article
                             key={location.name}
                             variants={slideUp}
-                            className="flex flex-col bg-[#0D0F14] rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-white/[0.05] group hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] hover:border-[#3B82F6]/30 transition-all duration-500"
+                            className="flex flex-col bg-[#0D0F14] rounded-3xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)] border border-white/[0.05] group hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(26,26,46,0.15)] hover:border-[#334E68]/30 transition-all duration-500"
                         >
                             <div className="relative aspect-[4/3] overflow-hidden">
                                 <Image
@@ -60,7 +60,7 @@ export function LocationsSection() {
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#141420]/80 to-transparent opacity-80" />
                                 <div className="absolute bottom-6 left-6">
-                                    <span className="bg-[#1A1A2E] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
+                                    <span className="bg-[#102A43] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
                                         Internacional
                                     </span>
                                 </div>
@@ -75,7 +75,7 @@ export function LocationsSection() {
                                 </p>
                                 <div className="pt-6 border-t border-white/5">
                                     <span className="text-sm font-bold text-white flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-[#1A1A2E]" />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#102A43]" />
                                         {location.stats}
                                     </span>
                                 </div>

@@ -240,7 +240,7 @@ export default function EditarLeadPage() {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="text-center">
-                    <Loader2 size={48} className="text-[#3B82F6] animate-spin mx-auto mb-4" />
+                    <Loader2 size={48} className="text-[#486581] animate-spin mx-auto mb-4" />
                     <p className="text-gray-600">Carregando dados do lead...</p>
                 </div>
             </div>
@@ -298,7 +298,7 @@ export default function EditarLeadPage() {
                                         type="text"
                                         value={formData.name}
                                         onChange={(e) => handleChange('name', e.target.value)}
-                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
                                             }`}
                                     />
                                 </div>
@@ -321,7 +321,7 @@ export default function EditarLeadPage() {
                                         type="email"
                                         value={formData.email}
                                         onChange={(e) => handleChange('email', e.target.value)}
-                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
                                             }`}
                                     />
                                 </div>
@@ -345,7 +345,7 @@ export default function EditarLeadPage() {
                                         value={formData.phone}
                                         onChange={(e) => handleChange('phone', formatPhone(e.target.value))}
                                         maxLength={15}
-                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] ${errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
                                             }`}
                                     />
                                 </div>
@@ -369,7 +369,7 @@ export default function EditarLeadPage() {
                                         value={formData.cpf}
                                         onChange={(e) => handleChange('cpf', formatCPF(e.target.value))}
                                         maxLength={14}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                     />
                                 </div>
                             </div>
@@ -386,7 +386,7 @@ export default function EditarLeadPage() {
                                         value={formData.occupation}
                                         onChange={(e) => handleChange('occupation', e.target.value)}
                                         placeholder="Ex: Médica Cardiologista"
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                     />
                                 </div>
                             </div>
@@ -403,7 +403,7 @@ export default function EditarLeadPage() {
                                         value={formData.company}
                                         onChange={(e) => handleChange('company', e.target.value)}
                                         placeholder="Ex: Hospital Português"
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                     />
                                 </div>
                             </div>
@@ -416,7 +416,7 @@ export default function EditarLeadPage() {
                                 <select
                                     value={formData.maritalStatus}
                                     onChange={(e) => handleChange('maritalStatus', e.target.value)}
-                                    className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                                    className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                                 >
                                     <option value="">Selecione...</option>
                                     <option value="Solteiro(a)">Solteiro(a)</option>
@@ -438,7 +438,7 @@ export default function EditarLeadPage() {
                                         min="0"
                                         value={formData.children}
                                         onChange={(e) => handleChange('children', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                     />
                                 </div>
                             </div>
@@ -458,7 +458,7 @@ export default function EditarLeadPage() {
                                 <select
                                     value={formData.status}
                                     onChange={(e) => handleChange('status', e.target.value)}
-                                    className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                                    className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                                 >
                                     {statusOptions.map(status => (
                                         <option key={status.value} value={status.value}>{status.label}</option>
@@ -476,7 +476,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.origem}
                                         onChange={(e) => handleChange('origem', e.target.value)}
-                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white ${errors.origem ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white ${errors.origem ? 'border-red-300 bg-red-50' : 'border-gray-200'
                                             }`}
                                     >
                                         <option value="">Selecione...</option>
@@ -497,7 +497,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.interesse}
                                         onChange={(e) => handleChange('interesse', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                                     >
                                         <option value="">Selecione...</option>
                                         {tiposImovel.map(tipo => (
@@ -517,7 +517,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.localizacao}
                                         onChange={(e) => handleChange('localizacao', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                                     >
                                         <option value="">Selecione...</option>
                                         {localizacoes.map(loc => (
@@ -537,7 +537,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.orcamento}
                                         onChange={(e) => handleChange('orcamento', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                                     >
                                         <option value="">Selecione...</option>
                                         {faixasOrcamento.map(faixa => (
@@ -563,7 +563,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.preferredContact}
                                         onChange={(e) => handleChange('preferredContact', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                                     >
                                         <option value="">Selecione...</option>
                                         <option value="WhatsApp">WhatsApp</option>
@@ -582,7 +582,7 @@ export default function EditarLeadPage() {
                                     <select
                                         value={formData.bestTime}
                                         onChange={(e) => handleChange('bestTime', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                                     >
                                         <option value="">Selecione...</option>
                                         <option value="Manhã (8h-12h)">Manhã (8h-12h)</option>
@@ -603,7 +603,7 @@ export default function EditarLeadPage() {
                             onChange={(e) => handleChange('notes', e.target.value)}
                             placeholder="Adicione informações relevantes sobre o lead..."
                             rows={6}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] resize-none"
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] resize-none"
                         />
                     </div>
                 </div>

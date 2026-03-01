@@ -78,7 +78,7 @@ export default function CampanhasROIPage() {
         <select
           value={periodoFilter}
           onChange={(e) => setPeriodoFilter(e.target.value)}
-          className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+          className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
         >
           <option value="semana">Última Semana</option>
           <option value="mes">Último Mês</option>

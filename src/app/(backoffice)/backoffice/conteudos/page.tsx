@@ -265,7 +265,7 @@ export default function ConteudosPage() {
                         <TableRow key={item.id} className="hover:bg-imi-50/30 transition-colors">
                           <TableCell className="py-6">
                             <div className="flex items-center gap-4 group">
-                              <div className="p-2 rounded-lg bg-imi-50 group-hover:bg-[#1A1A2E] group-hover:text-white transition-colors">
+                              <div className="p-2 rounded-lg bg-imi-50 group-hover:bg-[#102A43] group-hover:text-white transition-colors">
                                 {item.author.startsWith('IA') ? <Sparkles size={16} /> : <FileText size={16} />}
                               </div>
                               <span className="font-black text-imi-950 uppercase tracking-tighter max-w-[300px] truncate block">
@@ -278,7 +278,7 @@ export default function ConteudosPage() {
                           </TableCell>
                           <TableCell className="py-6">
                             <div className="flex items-center gap-2">
-                              <PlatformIcon size={14} className="text-[#3B82F6]" />
+                              <PlatformIcon size={14} className="text-[#486581]" />
                               <span className="text-[10px] font-black uppercase tracking-widest text-imi-500">{item.platform}</span>
                             </div>
                           </TableCell>
@@ -299,7 +299,7 @@ export default function ConteudosPage() {
                           <TableCell className="py-6 text-center">
                             <div className="flex flex-col items-center gap-1">
                               <span className="text-xs font-black text-imi-950 leading-none">{item.engagement.views} <span className="text-[9px] font-bold text-imi-400 uppercase">Views</span></span>
-                              <span className="text-[9px] font-bold text-[#3B82F6] uppercase tracking-widest">
+                              <span className="text-[9px] font-bold text-[#486581] uppercase tracking-widest">
                                 {item.engagement.likes + item.engagement.shares} Engagem.
                               </span>
                             </div>
@@ -361,14 +361,14 @@ export default function ConteudosPage() {
                     `}
                   >
                     <div className="flex justify-between items-start mb-4">
-                      <span className={`text-sm font-black ${dayData ? 'text-[#3B82F6]' : 'text-imi-900'}`}>
+                      <span className={`text-sm font-black ${dayData ? 'text-[#486581]' : 'text-imi-900'}`}>
                         {index + 1}
                       </span>
-                      {dayData && <Zap size={14} className="text-[#3B82F6] animate-pulse" />}
+                      {dayData && <Zap size={14} className="text-[#486581] animate-pulse" />}
                     </div>
                     {dayData && (
                       <div className="space-y-3">
-                        <Badge variant="primary" size="sm" className="bg-[#1A1A2E] text-white font-black text-[8px] uppercase tracking-tighter">
+                        <Badge variant="primary" size="sm" className="bg-[#102A43] text-white font-black text-[8px] uppercase tracking-tighter">
                           {dayData.count} Operações
                         </Badge>
                         <div className="space-y-1">
@@ -402,7 +402,7 @@ export default function ConteudosPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <Sparkles size={20} className="text-[#3B82F6]" />
+                <Sparkles size={20} className="text-[#486581]" />
                 <h3 className="text-xl font-black text-white uppercase tracking-tighter">Content AI Strategist</h3>
               </div>
               <p className="text-sm font-medium text-imi-400">Gere conteúdo de alta conversão otimizado para Real Estate & Family Office.</p>

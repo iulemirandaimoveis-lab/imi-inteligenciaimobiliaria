@@ -62,7 +62,7 @@ export default function NovoProjetoPage() {
         router.push('/backoffice/projetos')
     }
 
-    const inputClass = "w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] text-sm bg-white"
+    const inputClass = "w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] text-sm bg-white"
     const labelClass = "block text-sm font-medium text-gray-700 mb-1.5"
 
     return (
@@ -123,7 +123,7 @@ export default function NovoProjetoPage() {
                         <div className="md:col-span-2">
                             <label className={labelClass}>Descrição</label>
                             <textarea
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] text-sm resize-none bg-white"
+                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] text-sm resize-none bg-white"
                                 rows={4}
                                 placeholder="Descreva o projeto, seu posicionamento e diferencial..."
                                 value={form.descricao}
@@ -211,7 +211,7 @@ export default function NovoProjetoPage() {
                         <div className="md:col-span-2">
                             <label className={labelClass}>Observações</label>
                             <textarea
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] text-sm resize-none bg-white"
+                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] text-sm resize-none bg-white"
                                 rows={3}
                                 placeholder="Notas adicionais sobre o cronograma..."
                                 value={form.observacoes}

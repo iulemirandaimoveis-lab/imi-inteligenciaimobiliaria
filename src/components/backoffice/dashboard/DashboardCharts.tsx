@@ -24,8 +24,8 @@ import Badge from '@/components/ui/Badge'
 const supabase = createClient()
 
 const COLORS = {
-    primary: '#3B82F6',
-    blue: '#3B82F6',
+    primary: '#486581',
+    blue: '#486581',
     green: '#10B981',
     purple: '#8B5CF6',
     orange: '#F59E0B',

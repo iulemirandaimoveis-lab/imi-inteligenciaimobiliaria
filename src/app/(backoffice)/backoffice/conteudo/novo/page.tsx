@@ -53,7 +53,7 @@ const TIPOS_CONTEUDO = [
   { id: 'instagram', label: 'Post Instagram', icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars', color: 'text-pink-600 bg-pink-50' },
   { id: 'linkedin', label: 'Post LinkedIn', icon: Linkedin, desc: 'Artigo ou post profissional', color: 'text-blue-700 bg-blue-50' },
   { id: 'facebook', label: 'Post Facebook', icon: Facebook, desc: 'Post com engajamento', color: 'text-indigo-600 bg-indigo-50' },
-  { id: 'landing', label: 'Landing Page Copy', icon: Globe, desc: 'Hero, benefícios, CTA', color: 'text-[#3B82F6] bg-accent-50' },
+  { id: 'landing', label: 'Landing Page Copy', icon: Globe, desc: 'Hero, benefícios, CTA', color: 'text-[#486581] bg-accent-50' },
 ]
 
 // ⚠️ NÃO MODIFICAR - Templates por tipo
@@ -348,16 +348,16 @@ export default function NovoConteudoPage() {
               value={contexto}
               onChange={e => setContexto(e.target.value)}
               placeholder="Ex: Lançamento Reserva Atlantis, foco em investidores, destacar valorização de 18% a.a. em Boa Viagem..."
-              className="w-full h-28 px-4 py-3 text-sm border border-gray-100 rounded-2xl text-gray-900 focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all resize-none bg-gray-50 font-medium placeholder:text-gray-400"
+              className="w-full h-28 px-4 py-3 text-sm border border-gray-100 rounded-2xl text-gray-900 focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all resize-none bg-gray-50 font-medium placeholder:text-gray-400"
             />
             <div className="flex items-center gap-2 mt-2 px-1">
-              <Info size={12} className="text-[#3B82F6]" />
+              <Info size={12} className="text-[#486581]" />
               <p className="text-[10px] text-gray-400 font-medium italic">Dados ricos geram roteiros melhores pela IA.</p>
             </div>
           </div>
 
           {/* Assistente IA */}
-          <div className="bg-gradient-to-br from-[#2563EB] to-[#0F0F1E] rounded-2xl p-5 shadow-lg shadow-blue-100 text-white">
+          <div className="bg-gradient-to-br from-[#243B53] to-[#0F0F1E] rounded-2xl p-5 shadow-lg shadow-blue-100 text-white">
             <div className="flex items-center justify-between mb-4">
               <label className="text-[10px] font-bold text-white/70 uppercase tracking-widest">
                 Multi-Model Assistant
@@ -414,7 +414,7 @@ export default function NovoConteudoPage() {
                       ? 'Ex: Oportunidade: Reserva Atlantis com 18% de valorização...'
                       : 'Ex: Guia definitivo para investir em Boa Viagem'
                   }
-                  className="w-full h-12 px-5 border border-gray-100 rounded-2xl text-base font-bold text-gray-900 focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all bg-gray-50/50"
+                  className="w-full h-12 px-5 border border-gray-100 rounded-2xl text-base font-bold text-gray-900 focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all bg-gray-50/50"
                 />
               </div>
 
@@ -425,7 +425,7 @@ export default function NovoConteudoPage() {
                     {[Bold, Italic, Link2, List, Quote, Image].map((Icon, i) => (
                       <button
                         key={i}
-                        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-400 hover:text-[#3B82F6] transition-all font-bold"
+                        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-400 hover:text-[#486581] transition-all font-bold"
                         title="Formatação"
                       >
                         <Icon size={16} />
@@ -469,8 +469,8 @@ export default function NovoConteudoPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-[#3B82F6] uppercase tracking-widest">
-                    <div className="w-2 h-2 bg-[#1A1A2E] rounded-full animate-pulse" />
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-[#486581] uppercase tracking-widest">
+                    <div className="w-2 h-2 bg-[#102A43] rounded-full animate-pulse" />
                     Backup Automático Ativo
                   </div>
                 </div>
@@ -498,7 +498,7 @@ export default function NovoConteudoPage() {
               </div>
 
               {titulo && (
-                <h1 className="text-3xl font-bold text-gray-900 mb-8 leading-tight tracking-tight border-l-4 border-[#3B82F6] pl-6">
+                <h1 className="text-3xl font-bold text-gray-900 mb-8 leading-tight tracking-tight border-l-4 border-[#334E68] pl-6">
                   {titulo}
                 </h1>
               )}
@@ -546,7 +546,7 @@ export default function NovoConteudoPage() {
               {aiPanel.loading ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-5">
                   <div className="relative">
-                    <Loader2 size={48} className="animate-spin text-[#3B82F6]" />
+                    <Loader2 size={48} className="animate-spin text-[#486581]" />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-2 h-2 bg-[#16162A] rounded-full" />
                     </div>

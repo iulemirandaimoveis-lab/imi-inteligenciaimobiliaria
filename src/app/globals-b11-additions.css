@@ -17,8 +17,8 @@
 
   /* Extended text tokens */
   --bo-text-tertiary:  #4E5669;
-  --bo-text-accent:    #3B82F6;
-  --bo-text-accent-dim:#2563EB;
+  --bo-text-accent:    #486581;
+  --bo-text-accent-dim:#334E68;
 
   /* Extended border tokens */
   --bo-border-subtle:  rgba(255,255,255,0.06);
@@ -26,8 +26,8 @@
 
   /* Navigation tokens */
   --nav-bg:        rgba(19,22,30,0.95);
-  --nav-border:    rgba(59,130,246,0.15);
-  --nav-active:    #3B82F6;
+  --nav-border:    rgba(51,78,104,0.15);
+  --nav-active:    #486581;
   --nav-inactive:  #4E5669;
 
   /* Status — unified palette */

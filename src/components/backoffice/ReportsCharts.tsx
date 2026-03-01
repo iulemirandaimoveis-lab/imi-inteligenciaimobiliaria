@@ -2,7 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
-const COLORS = ['#3B82F6', '#7B9EC4', '#6BB87B', '#E8A87C', '#A89EC4', '#E57373'];
+const COLORS = ['#486581', '#7B9EC4', '#6BB87B', '#E8A87C', '#A89EC4', '#E57373'];
 
 export default function ReportsCharts({ leadsData, consData }: { leadsData: any[], consData: any[] }) {
     return (
@@ -20,7 +20,7 @@ export default function ReportsCharts({ leadsData, consData }: { leadsData: any[
                                 <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} tick={{ fill: 'var(--bo-text-muted)' }} />
                                 <YAxis fontSize={12} tickLine={false} axisLine={false} tick={{ fill: 'var(--bo-text-muted)' }} />
                                 <Tooltip cursor={{ fill: 'rgba(255,255,255,0.04)' }} contentStyle={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', borderRadius: '10px', color: 'var(--bo-text)' }} />
-                                <Bar dataKey="count" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="count" fill="#486581" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     ) : (

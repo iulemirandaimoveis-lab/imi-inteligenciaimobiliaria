@@ -136,7 +136,7 @@ export default function MobileHeader() {
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
                         <span
                             className="text-lg font-bold tracking-tight"
-                            style={{ color: '#3B82F6', fontFamily: "'Playfair Display', Georgia, serif" }}
+                            style={{ color: '#486581', fontFamily: "'Playfair Display', Georgia, serif" }}
                         >
                             IMI
                         </span>
@@ -163,11 +163,11 @@ export default function MobileHeader() {
                             className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-all"
                             style={{ background: notifOpen ? 'var(--bo-elevated)' : 'transparent' }}
                         >
-                            <Bell size={18} style={{ color: notifOpen ? '#3B82F6' : 'var(--bo-text-muted)' }} />
+                            <Bell size={18} style={{ color: notifOpen ? '#486581' : 'var(--bo-text-muted)' }} />
                             {unreadCount > 0 && (
                                 <span
                                     className="absolute top-1 right-1 w-4 h-4 text-[9px] font-bold text-white rounded-full flex items-center justify-center"
-                                    style={{ background: '#3B82F6', boxShadow: '0 0 0 2px var(--bo-surface)' }}
+                                    style={{ background: '#486581', boxShadow: '0 0 0 2px var(--bo-surface)' }}
                                 >
                                     {unreadCount > 9 ? '9+' : unreadCount}
                                 </span>
@@ -216,7 +216,7 @@ export default function MobileHeader() {
                                         <button
                                             onClick={markAllRead}
                                             className="text-[11px] font-semibold"
-                                            style={{ color: '#3B82F6' }}
+                                            style={{ color: '#486581' }}
                                         >
                                             Marcar lidas
                                         </button>
@@ -240,7 +240,7 @@ export default function MobileHeader() {
                                     >
                                         <div
                                             className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                                            style={{ background: n.read ? 'transparent' : '#3B82F6' }}
+                                            style={{ background: n.read ? 'transparent' : '#486581' }}
                                         />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-semibold" style={{ color: 'var(--bo-text)' }}>
@@ -274,7 +274,7 @@ export default function MobileHeader() {
                                 <button
                                     onClick={() => { setNotifOpen(false); router.push('/backoffice/notificacoes') }}
                                     className="text-xs font-semibold flex items-center justify-center gap-1 mx-auto"
-                                    style={{ color: '#3B82F6' }}
+                                    style={{ color: '#486581' }}
                                 >
                                     Ver todas <ChevronRight size={12} />
                                 </button>

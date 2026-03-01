@@ -12,7 +12,7 @@ const T = {
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
     textTertiary: 'var(--bo-text-tertiary, var(--bo-text-muted))',
-    gold: '#3B82F6',
+    gold: '#486581',
     shadow: 'var(--bo-shadow)',
 }
 

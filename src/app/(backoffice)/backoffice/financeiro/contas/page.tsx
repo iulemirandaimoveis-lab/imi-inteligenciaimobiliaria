@@ -185,13 +185,13 @@ export default function ContasBancariasPage() {
                             placeholder="Buscar por banco ou conta..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                         />
                     </div>
                     <select
                         value={tipoFilter}
                         onChange={(e) => setTipoFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                     >
                         <option value="all">Todos os tipos</option>
                         <option value="Corrente">Corrente</option>
@@ -218,7 +218,7 @@ export default function ContasBancariasPage() {
                                 <div className="flex items-start gap-3">
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${conta.ativa ? 'bg-accent-50' : 'bg-gray-200'
                                         }`}>
-                                        <Building2 size={24} className={conta.ativa ? 'text-[#3B82F6]' : 'text-gray-500'} />
+                                        <Building2 size={24} className={conta.ativa ? 'text-[#486581]' : 'text-gray-500'} />
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-gray-900 mb-1">{conta.banco}</h3>

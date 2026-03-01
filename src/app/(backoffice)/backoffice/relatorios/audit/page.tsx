@@ -263,7 +263,7 @@ export default function AuditPage() {
             value={busca}
             onChange={e => setBusca(e.target.value)}
             placeholder="Buscar por usuário, ação, módulo..."
-            className="w-full h-11 pl-11 pr-4 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-[#3B82F6]"
+            className="w-full h-11 pl-11 pr-4 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-[#334E68]"
           />
         </div>
 
@@ -271,7 +271,7 @@ export default function AuditPage() {
         <select
           value={moduloFiltro}
           onChange={e => setModuloFiltro(e.target.value)}
-          className="h-11 px-4 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#3B82F6] bg-white"
+          className="h-11 px-4 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#334E68] bg-white"
         >
           {MODULOS.map(m => (
             <option key={m} value={m}>

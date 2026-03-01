@@ -28,7 +28,7 @@ const PROJETOS = [
       'Target: sovereign wealth funds e family offices',
     ],
     cor: 'from-[#141420] to-[#1e1e35]',
-    acento: '#3B82F6',
+    acento: '#486581',
     contato: true,
   },
   {
@@ -82,7 +82,7 @@ const PROJETOS = [
 ]
 
 const STATUS_CONFIG: Record<string, { dot: string; badge: string }> = {
-  'pre-lancamento': { dot: 'bg-[#1A1A2E]', badge: 'border-[#3B82F6]/40 text-[#3B82F6] bg-[#1A1A2E]/10' },
+  'pre-lancamento': { dot: 'bg-[#102A43]', badge: 'border-[#334E68]/40 text-[#486581] bg-[#102A43]/10' },
   lancamento: { dot: 'bg-emerald-400', badge: 'border-emerald-400/40 text-emerald-400 bg-emerald-400/10' },
   obras: { dot: 'bg-blue-400', badge: 'border-blue-400/40 text-blue-400 bg-blue-400/10' },
   pronto: { dot: 'bg-gray-400', badge: 'border-gray-400/40 text-gray-400 bg-gray-400/10' },
@@ -103,13 +103,13 @@ export default function ProjetosWebsitePage() {
         <div className="absolute inset-0 opacity-[0.03]"
           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '48px 48px' }} />
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-5"
-          style={{ background: 'linear-gradient(135deg, #3B82F6 0%, transparent 60%)' }} />
+          style={{ background: 'linear-gradient(135deg, #334E68 0%, transparent 60%)' }} />
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-px bg-[#1A1A2E]" />
-              <span className="text-[#3B82F6] text-xs font-bold uppercase tracking-[0.25em]">Portfólio</span>
+              <div className="w-10 h-px bg-[#102A43]" />
+              <span className="text-[#486581] text-xs font-bold uppercase tracking-[0.25em]">Portfólio</span>
             </div>
             <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight">
               Projetos & Empreendimentos
@@ -269,7 +269,7 @@ export default function ProjetosWebsitePage() {
                     </div>
 
                     <a href={`/${lang}/contato`}
-                      className="flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-[#3B82F6] hover:text-[#3B82F6] transition-all group-hover:border-gray-300">
+                      className="flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-[#334E68] hover:text-[#486581] transition-all group-hover:border-gray-300">
                       Solicitar informações <ArrowRight size={13} />
                     </a>
                   </div>
@@ -284,7 +284,7 @@ export default function ProjetosWebsitePage() {
       <section className="bg-[#141420] text-white py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-12">
-            <p className="text-[#3B82F6] text-xs font-bold uppercase tracking-[0.25em] mb-4">Para Investidores Institucionais</p>
+            <p className="text-[#486581] text-xs font-bold uppercase tracking-[0.25em] mb-4">Para Investidores Institucionais</p>
             <h2 className="font-display font-bold text-3xl lg:text-4xl mb-4">
               Acesso Privilegiado ao Pipeline IMI
             </h2>
@@ -301,9 +301,9 @@ export default function ProjetosWebsitePage() {
             ].map(item => {
               const Icon = item.icon
               return (
-                <div key={item.title} className="bg-white/5 border border-white/8 rounded-2xl p-7 hover:border-[#3B82F6]/30 transition-all">
-                  <div className="w-10 h-10 rounded-xl bg-[#1A1A2E]/10 flex items-center justify-center mb-5">
-                    <Icon size={18} className="text-[#3B82F6]" />
+                <div key={item.title} className="bg-white/5 border border-white/8 rounded-2xl p-7 hover:border-[#334E68]/30 transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-[#102A43]/10 flex items-center justify-center mb-5">
+                    <Icon size={18} className="text-[#486581]" />
                   </div>
                   <h3 className="font-semibold text-white mb-2">{item.title}</h3>
                   <p className="text-white/50 text-sm leading-relaxed">{item.desc}</p>
@@ -315,7 +315,7 @@ export default function ProjetosWebsitePage() {
           <div className="text-center mt-10">
             <a href={`/${lang}/contato`}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-sm transition-all hover:opacity-90"
-              style={{ background: '#3B82F6', color: '#141420' }}>
+              style={{ background: '#486581', color: '#141420' }}>
               Cadastrar como Investidor Qualificado <ArrowRight size={15} />
             </a>
           </div>

@@ -253,13 +253,13 @@ export default function ImoveisUnidadesPage() {
               placeholder="Buscar por código ou cliente..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+              className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
           >
             <option value="all">Todos os status</option>
             <option value="disponivel">Disponível</option>
@@ -269,7 +269,7 @@ export default function ImoveisUnidadesPage() {
           <select
             value={tipoFilter}
             onChange={(e) => setTipoFilter(e.target.value)}
-            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
           >
             <option value="all">Todos os tipos</option>
             <option value="Apartamento">Apartamento</option>
@@ -287,7 +287,7 @@ export default function ImoveisUnidadesPage() {
           return (
             <div
               key={unidade.id}
-              className={`bg-white rounded-xl p-4 border transition-all hover:shadow-lg cursor-pointer ${unidade.destaque ? 'ring-2 ring-[#3B82F6]' : ''
+              className={`bg-white rounded-xl p-4 border transition-all hover:shadow-lg cursor-pointer ${unidade.destaque ? 'ring-2 ring-[#334E68]' : ''
                 }`}
               onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades/${unidade.id}`)}
             >

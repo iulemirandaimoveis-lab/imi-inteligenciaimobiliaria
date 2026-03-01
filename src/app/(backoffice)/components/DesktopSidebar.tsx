@@ -239,7 +239,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 <motion.div
                     layoutId="sidebar-active"
                     className="absolute -left-[11px] top-1/2 w-[3px] h-4 rounded-full"
-                    style={{ background: '#3B82F6', transform: 'translateY(-50%)' }}
+                    style={{ background: '#486581', transform: 'translateY(-50%)' }}
                     transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                 />
             )}

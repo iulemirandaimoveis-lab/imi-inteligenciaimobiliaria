@@ -243,12 +243,12 @@ export default function EmailHonorariosPage() {
       <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <label className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-            <Mail size={15} className="text-[#3B82F6]" /> Cole o email aqui
+            <Mail size={15} className="text-[#486581]" /> Cole o email aqui
           </label>
           <div className="flex gap-2">
             {EXEMPLOS.map(ex => (
               <button key={ex.label} onClick={() => setEmailText(ex.conteudo)}
-                className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg hover:border-[#3B82F6] hover:text-[#3B82F6] transition-colors">
+                className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg hover:border-[#334E68] hover:text-[#486581] transition-colors">
                 {ex.label}
               </button>
             ))}
@@ -257,14 +257,14 @@ export default function EmailHonorariosPage() {
 
         <textarea value={emailText} onChange={e => setEmailText(e.target.value)}
           rows={7} placeholder="Cole aqui o conteúdo do email recebido do tribunal, banco ou cliente..."
-          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-[#3B82F6] resize-none" />
+          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-[#334E68] resize-none" />
 
         {error && (
           <p className="text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">{error}</p>
         )}
 
         <button onClick={analisar} disabled={!emailText.trim() || loading}
-          className="w-full flex items-center justify-center gap-2 h-11 bg-[#1A1A2E] text-white rounded-xl font-semibold hover:bg-[#16162A] transition-colors disabled:opacity-50">
+          className="w-full flex items-center justify-center gap-2 h-11 bg-[#102A43] text-white rounded-xl font-semibold hover:bg-[#16162A] transition-colors disabled:opacity-50">
           {loading
             ? <><Loader2 size={17} className="animate-spin" /> Analisando com IA…</>
             : <><Sparkles size={17} /> Analisar e Gerar Proposta</>}
@@ -277,7 +277,7 @@ export default function EmailHonorariosPage() {
           <div className="flex border-b border-gray-200">
             {(['analise', 'resposta'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#334E68] text-[#486581]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
                 {tab === 'analise' ? '📊 Análise do Email' : '✉ Rascunho de Resposta'}
               </button>
             ))}
@@ -334,7 +334,7 @@ export default function EmailHonorariosPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:divide-x divide-gray-100 p-4 text-center">
                   {[
                     { l: 'Mínimo', v: analysis.honorariosMin, cls: 'text-gray-700' },
-                    { l: 'Recomendado', v: analysis.honorariosRec, cls: 'text-[#3B82F6]' },
+                    { l: 'Recomendado', v: analysis.honorariosRec, cls: 'text-[#486581]' },
                     { l: 'Máximo', v: analysis.honorariosMax, cls: 'text-gray-700' },
                   ].map(h => (
                     <div key={h.l}>
@@ -347,7 +347,7 @@ export default function EmailHonorariosPage() {
 
               <div className="flex gap-3">
                 <button onClick={() => setActiveTab('resposta')}
-                  className="flex-1 h-10 bg-[#1A1A2E] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors flex items-center justify-center gap-2">
+                  className="flex-1 h-10 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors flex items-center justify-center gap-2">
                   <Mail size={15} /> Ver Rascunho
                 </button>
                 <button onClick={() => router.push('/backoffice/avaliacoes/nova')}
@@ -375,7 +375,7 @@ export default function EmailHonorariosPage() {
               </div>
               {editing
                 ? <textarea value={editedDraft} onChange={e => setEditedDraft(e.target.value)}
-                  rows={22} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-[#3B82F6] resize-none" />
+                  rows={22} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-[#334E68] resize-none" />
                 : <pre className="whitespace-pre-wrap text-sm text-gray-800 bg-gray-50 rounded-xl p-4 font-sans leading-relaxed">{editing ? editedDraft : draft}</pre>
               }
             </div>

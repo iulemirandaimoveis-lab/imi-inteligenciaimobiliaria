@@ -19,7 +19,7 @@ const T = {
     textMuted: 'var(--bo-text-muted)',
     border: 'var(--bo-border)',
     hover: 'var(--bo-hover)',
-    accent: '#3B82F6',
+    accent: '#486581',
     accentBg: 'rgba(26,26,46,0.10)',
 }
 

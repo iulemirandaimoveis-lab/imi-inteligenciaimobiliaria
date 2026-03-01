@@ -94,7 +94,7 @@ function SimuladorCredito() {
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
       <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-        <Calculator size={18} className="text-[#3B82F6]" /> Simulador de Crédito Imobiliário
+        <Calculator size={18} className="text-[#486581]" /> Simulador de Crédito Imobiliário
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -103,7 +103,7 @@ function SimuladorCredito() {
           <div className="relative">
             <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
             <input type="number" value={valorImovel} onChange={e => setValorImovel(Number(e.target.value))}
-              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]" />
+              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]" />
           </div>
         </div>
         <div>
@@ -111,13 +111,13 @@ function SimuladorCredito() {
           <div className="relative">
             <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
             <input type="number" value={entrada} onChange={e => setEntrada(Number(e.target.value))}
-              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]" />
+              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]" />
           </div>
         </div>
         <div>
           <label className="text-xs text-gray-500 block mb-1">Prazo (meses)</label>
           <select value={prazo} onChange={e => setPrazo(Number(e.target.value))}
-            className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white">
+            className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white">
             {[60, 120, 180, 240, 300, 360, 420].map(p => <option key={p} value={p}>{p} meses ({p / 12} anos)</option>)}
           </select>
         </div>
@@ -126,7 +126,7 @@ function SimuladorCredito() {
           <div className="relative">
             <Percent className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
             <input type="number" step="0.1" value={taxa} onChange={e => setTaxa(Number(e.target.value))}
-              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]" />
+              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]" />
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@ function SimuladorCredito() {
         {[
           { l: 'Valor Financiado', v: formatCurrency(valorFinanciado), c: 'text-gray-900' },
           { l: 'LTV', v: `${ltv.toFixed(0)}%`, c: ltv > 80 ? 'text-red-600' : 'text-emerald-600' },
-          { l: sistema === 'PRICE' ? 'Parcela Fixa' : '1ª Parcela', v: formatCurrency(primeiraParcela), c: 'text-[#3B82F6] font-bold text-base' },
+          { l: sistema === 'PRICE' ? 'Parcela Fixa' : '1ª Parcela', v: formatCurrency(primeiraParcela), c: 'text-[#486581] font-bold text-base' },
           { l: sistema === 'SAC' ? 'Última Parcela' : 'Total Juros', v: sistema === 'SAC' ? formatCurrency(ultimaParcela) : formatCurrency(totalJuros), c: 'text-gray-900' },
         ].map(item => (
           <div key={item.l} className="p-3 bg-gray-50 rounded-xl text-center">
@@ -165,7 +165,7 @@ function SimuladorCredito() {
       </div>
 
       <Link href="/backoffice/credito/novo"
-        className="flex items-center justify-center gap-2 h-10 w-full bg-[#1A1A2E] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
+        className="flex items-center justify-center gap-2 h-10 w-full bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
         Iniciar Processo de Crédito <ArrowRight size={16} />
       </Link>
     </div>
@@ -192,7 +192,7 @@ export default function CreditoPage() {
           <p className="text-xs text-gray-500 mt-0.5">Assessoria e simulações</p>
         </div>
         <Link href="/backoffice/credito/novo"
-          className="flex items-center gap-2 h-9 px-4 bg-[#1A1A2E] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
+          className="flex items-center gap-2 h-9 px-4 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
           <Plus size={16} /> Nova Operação
         </Link>
       </div>
@@ -200,7 +200,7 @@ export default function CreditoPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { l: 'Portfólio Total', v: formatCurrency(totalPortfolio), icon: DollarSign, c: 'text-[#3B82F6] bg-amber-50' },
+          { l: 'Portfólio Total', v: formatCurrency(totalPortfolio), icon: DollarSign, c: 'text-[#486581] bg-amber-50' },
           { l: 'Aprovados', v: aprovados, icon: CheckCircle, c: 'text-emerald-600 bg-emerald-50' },
           { l: 'Em Análise', v: OPERACOES.filter(o => o.status === 'analise').length, icon: Clock, c: 'text-blue-600 bg-blue-50' },
           { l: 'Documentação', v: OPERACOES.filter(o => o.status === 'documentacao').length, icon: AlertCircle, c: 'text-amber-600 bg-amber-50' },
@@ -222,7 +222,7 @@ export default function CreditoPage() {
       <div className="flex border-b border-gray-200">
         {[{ v: 'simulador', l: '🧮 Simulador' }, { v: 'operacoes', l: '📁 Operações' }].map(tab => (
           <button key={tab.v} onClick={() => setActiveTab(tab.v as any)}
-            className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.v ? 'border-[#3B82F6] text-[#3B82F6]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+            className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.v ? 'border-[#334E68] text-[#486581]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
             {tab.l}
           </button>
         ))}

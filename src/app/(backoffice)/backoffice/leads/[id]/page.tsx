@@ -196,7 +196,7 @@ export default function LeadDetailPage() {
             href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 h-11 bg-[#1A1A1A] hover:bg-[#1A1A2E] rounded-2xl text-[13px] font-semibold text-white transition-all duration-200"
+            className="flex items-center justify-center gap-2 h-11 bg-[#1A1A1A] hover:bg-[#102A43] rounded-2xl text-[13px] font-semibold text-white transition-all duration-200"
           >
             <MessageSquare size={15} />
             WhatsApp
@@ -212,10 +212,10 @@ export default function LeadDetailPage() {
         className="bg-[#1A1A1A] rounded-3xl p-6 mb-4 relative overflow-hidden"
       >
         {/* Glow */}
-        <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#1A1A2E]/20 rounded-full blur-2xl" />
+        <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#102A43]/20 rounded-full blur-2xl" />
 
         <div className="flex items-center gap-2 mb-3 relative z-10">
-          <Sparkles size={16} className="text-[#3B82F6]" />
+          <Sparkles size={16} className="text-[#486581]" />
           <h3 className="font-bold text-white text-[15px]">AI Insight Strategy</h3>
         </div>
         <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-4 relative z-10">
@@ -227,7 +227,7 @@ export default function LeadDetailPage() {
           </p>
           <div className="flex items-center justify-between">
             <span className="text-[13px] text-white">{lead.nextStep}</span>
-            <ChevronRight size={14} className="text-[#3B82F6] flex-shrink-0" />
+            <ChevronRight size={14} className="text-[#486581] flex-shrink-0" />
           </div>
         </div>
       </motion.div>
@@ -250,7 +250,7 @@ export default function LeadDetailPage() {
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
               className={`flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors ${activeTab === tab.key
-                  ? 'text-[#1A1A1A] border-b-2 border-[#3B82F6]'
+                  ? 'text-[#1A1A1A] border-b-2 border-[#334E68]'
                   : 'text-[#ADB5BD] hover:text-[#6C757D]'
                 }`}
             >
@@ -265,7 +265,7 @@ export default function LeadDetailPage() {
             <div className="space-y-1">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-[#1A1A1A] text-[14px]">Behavioral Timeline</h3>
-                <span className="text-[10px] font-bold text-[#3B82F6] bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                <span className="text-[10px] font-bold text-[#486581] bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
                   Live
                 </span>
               </div>
@@ -281,7 +281,7 @@ export default function LeadDetailPage() {
                           ? 'bg-[#1A1A1A] ring-4 ring-white shadow-md'
                           : 'bg-[#F8F9FA] border border-[#E9ECEF]'
                         }`}>
-                        <event.icon size={14} className={event.accent ? 'text-[#3B82F6]' : 'text-[#ADB5BD]'} />
+                        <event.icon size={14} className={event.accent ? 'text-[#486581]' : 'text-[#ADB5BD]'} />
                       </div>
 
                       {/* Content */}
@@ -310,7 +310,7 @@ export default function LeadDetailPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-[#1A1A1A] text-[14px]">Histórico de Contatos</h3>
-                <button className="text-[11px] font-bold text-[#3B82F6]">+ Registrar</button>
+                <button className="text-[11px] font-bold text-[#486581]">+ Registrar</button>
               </div>
               {lead.history.length > 0 ? (
                 <div className="space-y-3">
@@ -350,11 +350,11 @@ export default function LeadDetailPage() {
                   value={note}
                   onChange={e => setNote(e.target.value)}
                   placeholder="Adicionar nota..."
-                  className="flex-1 h-11 px-4 text-[13px] bg-[#F8F9FA] border border-[#E9ECEF] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/30 focus:border-[#3B82F6]"
+                  className="flex-1 h-11 px-4 text-[13px] bg-[#F8F9FA] border border-[#E9ECEF] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]/30 focus:border-[#334E68]"
                 />
                 <button
                   disabled={!note.trim()}
-                  className="w-11 h-11 bg-[#1A1A1A] disabled:opacity-40 text-white rounded-xl flex items-center justify-center transition-colors hover:bg-[#1A1A2E]"
+                  className="w-11 h-11 bg-[#1A1A1A] disabled:opacity-40 text-white rounded-xl flex items-center justify-center transition-colors hover:bg-[#102A43]"
                 >
                   <Send size={14} />
                 </button>

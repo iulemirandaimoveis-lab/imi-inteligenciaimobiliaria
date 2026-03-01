@@ -87,7 +87,7 @@ export default function NovoUsuarioPage() {
                                     required
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                     placeholder="Nome do usuário"
                                 />
                             </div>
@@ -105,7 +105,7 @@ export default function NovoUsuarioPage() {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                     placeholder="usuario@dominio.com"
                                 />
                             </div>
@@ -124,7 +124,7 @@ export default function NovoUsuarioPage() {
                                     minLength={6}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
+                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
                                     placeholder="Mínimo 6 caracteres"
                                 />
                             </div>
@@ -141,7 +141,7 @@ export default function NovoUsuarioPage() {
                                     required
                                     value={role}
                                     onChange={(e) => setRole(e.target.value)}
-                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3B82F6] bg-white"
+                                    className="pl-10 w-full h-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
                                 >
                                     <option value="ADMIN">Administrador (Acesso total)</option>
                                     <option value="EDITOR">Corretor / Editor (Gestão de leads/imóveis)</option>

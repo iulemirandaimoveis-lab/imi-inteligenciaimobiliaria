@@ -16,7 +16,7 @@ export async function GET(request: Request) {
         const offset = parseInt(searchParams.get('offset') || '0')
 
         let query = supabase
-            .from('activity_logs')
+            .from('audit_log')
             .select('*')
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1)
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 
         // Also get total count
         let countQuery = supabase
-            .from('activity_logs')
+            .from('audit_log')
             .select('id', { count: 'exact', head: true })
 
         if (entity_type) countQuery = countQuery.eq('entity_type', entity_type)
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
         }
 
         const { data, error } = await supabase
-            .from('activity_logs')
+            .from('audit_log')
             .insert({
                 user_id: user_id || null,
                 action,

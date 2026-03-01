@@ -149,7 +149,7 @@ export default function AutomacaoConteudoPage() {
                                 <div className="flex-1 bg-[#16162A] h-full rounded-full" />
                             </div>
                         </div>
-                        <p className="text-[10px] text-[#3B82F6] font-medium mt-2">Capacidade otimizada</p>
+                        <p className="text-[10px] text-[#486581] font-medium mt-2">Capacidade otimizada</p>
                     </div>
                     <div className="bg-white rounded-2xl p-5 border border-gray-100">
                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Posts Gerados</p>
@@ -193,7 +193,7 @@ export default function AutomacaoConteudoPage() {
                             value={busca}
                             onChange={e => setBusca(e.target.value)}
                             placeholder="Buscar pipeline de automação..."
-                            className="w-full h-11 pl-11 pr-4 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-[#3B82F6]"
+                            className="w-full h-11 pl-11 pr-4 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-[#334E68]"
                         />
                     </div>
                     <div className="flex items-center gap-3">
@@ -220,7 +220,7 @@ export default function AutomacaoConteudoPage() {
                                 <p className="text-sm text-gray-500 leading-relaxed max-w-xl">{fluxo.desc}</p>
                                 <div className="flex items-center gap-4 mt-3">
                                     <div className="flex items-center gap-1.5">
-                                        <Bot size={14} className="text-[#3B82F6]" />
+                                        <Bot size={14} className="text-[#486581]" />
                                         <span className="text-xs font-semibold text-gray-700">{fluxo.model}</span>
                                     </div>
                                     <div className="h-4 w-px bg-gray-200" />
@@ -236,7 +236,7 @@ export default function AutomacaoConteudoPage() {
                                     {fluxo.canais.map(canal => {
                                         const Icon = CANAL_ICONS[canal]
                                         return (
-                                            <div key={canal} className="w-8 h-8 rounded-full bg-white border-2 border-gray-50 flex items-center justify-center text-gray-600 hover:text-[#3B82F6] transition-colors shadow-sm" title={canal}>
+                                            <div key={canal} className="w-8 h-8 rounded-full bg-white border-2 border-gray-50 flex items-center justify-center text-gray-600 hover:text-[#486581] transition-colors shadow-sm" title={canal}>
                                                 <Icon size={14} />
                                             </div>
                                         )
@@ -269,7 +269,7 @@ export default function AutomacaoConteudoPage() {
                 </div>
 
                 <div className="p-4 bg-gray-50 border-t border-gray-100 text-center">
-                    <button className="text-xs font-bold text-gray-400 hover:text-[#3B82F6] uppercase tracking-widest transition-colors flex items-center gap-2 mx-auto">
+                    <button className="text-xs font-bold text-gray-400 hover:text-[#486581] uppercase tracking-widest transition-colors flex items-center gap-2 mx-auto">
                         Ver Logs de Automação Completos <ArrowRight size={14} />
                     </button>
                 </div>

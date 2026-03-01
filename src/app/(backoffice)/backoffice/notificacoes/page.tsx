@@ -11,7 +11,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#3B82F6',
+    gold: '#486581',
 }
 
 interface Notification {
@@ -29,7 +29,7 @@ const TYPE_ICONS: Record<string, any> = {
     alerta: AlertCircle, info: Info, sucesso: CheckCircle,
 }
 const TYPE_COLORS: Record<string, string> = {
-    lead: '#7B9EC4', imovel: '#6BB87B', financeiro: '#3B82F6', contrato: '#A89EC4',
+    lead: '#7B9EC4', imovel: '#6BB87B', financeiro: '#486581', contrato: '#A89EC4',
     alerta: '#E57373', info: '#7B9EC4', sucesso: '#6BB87B',
 }
 

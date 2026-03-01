@@ -13,12 +13,12 @@ const T = {
     surface: 'var(--bo-surface)', surfaceAlt: 'var(--bo-surface-alt)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
-    accent: '#3B82F6',
+    accent: '#486581',
 }
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
     concluida: { label: 'Concluída', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-    em_andamento: { label: 'Em Andamento', text: '#3B82F6', bg: 'rgba(26,26,46,0.12)' },
+    em_andamento: { label: 'Em Andamento', text: '#486581', bg: 'rgba(26,26,46,0.12)' },
     aguardando_docs: { label: 'Aguard. Docs', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
     cancelada: { label: 'Cancelada', text: '#E57373', bg: 'rgba(229,115,115,0.12)' },
 }
@@ -191,7 +191,7 @@ export default function AvaliacaoDetalhesPage() {
                 {data.valor_m2 && (
                     <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <p className="text-xs mb-1" style={{ color: T.textMuted }}>Preço/m²</p>
-                        <p className="text-xl font-bold" style={{ color: '#3B82F6' }}>{formatPrice(Number(data.valor_m2))}</p>
+                        <p className="text-xl font-bold" style={{ color: '#486581' }}>{formatPrice(Number(data.valor_m2))}</p>
                     </div>
                 )}
                 {data.area_privativa && (
@@ -206,7 +206,7 @@ export default function AvaliacaoDetalhesPage() {
                         <p className="text-xl font-bold" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
                         {data.honorarios_status && (
                             <p className="text-[10px] font-bold mt-1" style={{
-                                color: data.honorarios_status === 'pago' ? '#6BB87B' : data.honorarios_status === 'parcial' ? '#3B82F6' : '#E8A87C'
+                                color: data.honorarios_status === 'pago' ? '#6BB87B' : data.honorarios_status === 'parcial' ? '#486581' : '#E8A87C'
                             }}>
                                 {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
                             </p>
@@ -254,7 +254,7 @@ export default function AvaliacaoDetalhesPage() {
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
                                     {data.quartos != null && (
                                         <div className="text-center">
-                                            <Bed size={24} className="mx-auto mb-2" style={{ color: '#3B82F6' }} />
+                                            <Bed size={24} className="mx-auto mb-2" style={{ color: '#486581' }} />
                                             <p className="text-xl font-bold" style={{ color: T.text }}>{data.quartos}</p>
                                             <p className="text-xs" style={{ color: T.textMuted }}>Quartos</p>
                                         </div>
@@ -291,7 +291,7 @@ export default function AvaliacaoDetalhesPage() {
                                 <div className="flex flex-wrap gap-2">
                                     {caracteristicas.map((f: string, i: number) => (
                                         <span key={i} className="px-3 py-1.5 rounded-lg text-sm"
-                                            style={{ background: 'rgba(59,130,246,0.1)', color: '#3B82F6' }}>
+                                            style={{ background: 'rgba(59,130,246,0.1)', color: '#486581' }}>
                                             {f}
                                         </span>
                                     ))}

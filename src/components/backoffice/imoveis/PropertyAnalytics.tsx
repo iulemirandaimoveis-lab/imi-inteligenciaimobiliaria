@@ -49,8 +49,8 @@ export default function PropertyAnalytics({ propertyId }: PropertyAnalyticsProps
                         >
                             <defs>
                                 <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#1e3a8a" stopOpacity={0.8} />
-                                    <stop offset="95%" stopColor="#1e3a8a" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="#0A1929" stopOpacity={0.8} />
+                                    <stop offset="95%" stopColor="#0A1929" stopOpacity={0} />
                                 </linearGradient>
                                 <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
@@ -81,7 +81,7 @@ export default function PropertyAnalytics({ propertyId }: PropertyAnalyticsProps
                             <Area
                                 type="monotone"
                                 dataKey="views"
-                                stroke="#1e3a8a"
+                                stroke="#0A1929"
                                 fillOpacity={1}
                                 fill="url(#colorViews)"
                                 strokeWidth={3}

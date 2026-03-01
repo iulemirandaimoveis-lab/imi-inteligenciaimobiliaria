@@ -44,7 +44,7 @@ export default function Error({
                     onClick={reset}
                     className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all active:scale-95"
                     style={{
-                        background: 'linear-gradient(135deg, #3B82F6, #2563EB)',
+                        background: 'linear-gradient(135deg, #334E68, #243B53)',
                         boxShadow: '0 2px 12px rgba(59,130,246,0.30)',
                     }}
                 >

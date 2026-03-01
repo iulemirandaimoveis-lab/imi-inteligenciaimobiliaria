@@ -14,19 +14,19 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#3B82F6',
+    gold: '#486581',
 }
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     concluida: { label: 'Concluída', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    em_andamento: { label: 'Em Andamento', text: '#3B82F6', bg: 'rgba(26,26,46,0.12)', icon: Clock },
+    em_andamento: { label: 'Em Andamento', text: '#486581', bg: 'rgba(26,26,46,0.12)', icon: Clock },
     aguardando_docs: { label: 'Aguard. Docs', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
     cancelada: { label: 'Cancelada', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle },
 }
 
 const HONOR_CFG: Record<string, { label: string; text: string }> = {
     pago: { label: 'Pago', text: '#6BB87B' },
-    parcial: { label: 'Parcial', text: '#3B82F6' },
+    parcial: { label: 'Parcial', text: '#486581' },
     pendente: { label: 'Pendente', text: '#E8A87C' },
 }
 
@@ -69,7 +69,7 @@ export default function AvaliacoesPage() {
 
     const KPIS = [
         { label: 'Honorários Recebidos', value: fmt(honorariosPago), icon: DollarSign, color: '#6BB87B' },
-        { label: 'A Receber', value: fmt(honorariosPendente), icon: TrendingUp, color: '#3B82F6' },
+        { label: 'A Receber', value: fmt(honorariosPendente), icon: TrendingUp, color: '#486581' },
         { label: 'Em Andamento', value: emAndamento, icon: Clock, color: '#A89EC4' },
         { label: 'Concluídas', value: concluidas, icon: CheckCircle, color: '#6BB87B' },
     ]
@@ -96,7 +96,7 @@ export default function AvaliacoesPage() {
                 <motion.button whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#3B82F6', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                     <Plus size={16} /> Nova Avaliação
                 </motion.button>
             </motion.div>
@@ -162,7 +162,7 @@ export default function AvaliacoesPage() {
                         <button key={t.key} onClick={() => setTab(t.key)}
                             className="px-3.5 h-8 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: tab === t.key ? '#3B82F6' : T.elevated,
+                                background: tab === t.key ? '#486581' : T.elevated,
                                 color: tab === t.key ? 'white' : T.textDim,
                                 border: `1px solid ${tab === t.key ? T.borderGold : T.border}`,
                             }}>
@@ -267,7 +267,7 @@ export default function AvaliacoesPage() {
                             whileTap={{ scale: 0.96 }}
                             onClick={() => router.push('/backoffice/avaliacoes/nova')}
                             className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
-                            style={{ background: '#3B82F6' }}
+                            style={{ background: '#486581' }}
                         >
                             <Plus size={14} /> Nova Avaliação
                         </motion.button>

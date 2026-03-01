@@ -22,7 +22,7 @@ const T = {
     text: 'var(--bo-text)',
     textSub: 'var(--bo-text-muted)',
     textDim: 'var(--bo-text-muted)',
-    gold: '#3B82F6',
+    gold: '#486581',
     goldLight: '#D4AF70',
     goldDim: 'rgba(26,26,46,0.60)',
 }
@@ -120,10 +120,10 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
 function StatusBadge({ status }: { status: string }) {
     const cfg: Record<string, { label: string; color: string; bg: string }> = {
         concluida: { label: 'Concluída', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-        em_andamento: { label: 'Em Andamento', color: '#3B82F6', bg: 'rgba(26,26,46,0.12)' },
+        em_andamento: { label: 'Em Andamento', color: '#486581', bg: 'rgba(26,26,46,0.12)' },
         aguardando_docs: { label: 'Aguard. Docs', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
         hot: { label: 'Quente', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-        warm: { label: 'Morno', color: '#3B82F6', bg: 'rgba(26,26,46,0.12)' },
+        warm: { label: 'Morno', color: '#486581', bg: 'rgba(26,26,46,0.12)' },
         cold: { label: 'Frio', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
     }
     const c = cfg[status] || cfg.cold
@@ -212,7 +212,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
                     style={{
-                        background: '#3B82F6',
+                        background: '#486581',
                         boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
                     }}
                 >
@@ -258,8 +258,8 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                             <AreaChart data={CHART}>
                                 <defs>
                                     <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.25} />
-                                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.02} />
+                                        <stop offset="5%" stopColor="#486581" stopOpacity={0.25} />
+                                        <stop offset="95%" stopColor="#486581" stopOpacity={0.02} />
                                     </linearGradient>
                                 </defs>
                                 <XAxis
@@ -282,11 +282,11 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                                 <Area
                                     type="monotone"
                                     dataKey="r"
-                                    stroke="#3B82F6"
+                                    stroke="#486581"
                                     strokeWidth={2}
                                     fill="url(#goldGrad)"
                                     dot={false}
-                                    activeDot={{ r: 4, fill: '#3B82F6', strokeWidth: 0 }}
+                                    activeDot={{ r: 4, fill: '#486581', strokeWidth: 0 }}
                                 />
                             </AreaChart>
                         </ResponsiveContainer>

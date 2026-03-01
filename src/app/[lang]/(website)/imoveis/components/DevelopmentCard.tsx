@@ -17,7 +17,7 @@ interface DevelopmentCardProps {
 export default function DevelopmentCard({ development, index, lang }: DevelopmentCardProps) {
     const statusColors = {
         launch: 'bg-white/10 text-white backdrop-blur-md border border-white/20',
-        ready: 'bg-[#1A1A2E]/20 text-[#3B82F6] border border-[#3B82F6]/30 backdrop-blur-md',
+        ready: 'bg-[#102A43]/20 text-[#486581] border border-[#334E68]/30 backdrop-blur-md',
         under_construction: 'bg-blue-500/20 text-blue-300 border border-blue-500/30 backdrop-blur-md'
     };
 
@@ -42,7 +42,7 @@ export default function DevelopmentCard({ development, index, lang }: Developmen
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="group bg-[#141420] rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#3B82F6]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-500 flex flex-col h-full"
+            className="group bg-[#141420] rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-500 flex flex-col h-full"
         >
             {/* Imagem */}
             <Link href={`/${lang}/imoveis/${development.slug}`} className="block aspect-[16/11] relative bg-[#0D0F14] overflow-hidden">
@@ -95,7 +95,7 @@ export default function DevelopmentCard({ development, index, lang }: Developmen
             <div className="p-8 flex flex-col flex-grow">
                 <div className="flex justify-between items-start mb-4">
                     <Link href={`/${lang}/imoveis/${development.slug}`}>
-                        <h3 className="font-display font-bold text-xl text-white leading-tight group-hover:text-[#3B82F6] transition-colors">
+                        <h3 className="font-display font-bold text-xl text-white leading-tight group-hover:text-[#486581] transition-colors">
                             {development.name}
                         </h3>
                     </Link>
@@ -115,7 +115,7 @@ export default function DevelopmentCard({ development, index, lang }: Developmen
                 </div>
 
                 <div className="flex items-start gap-2 text-[#9CA3AF] text-sm mb-6 font-light">
-                    <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#3B82F6]" />
+                    <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#486581]" />
                     <span>{development.location.neighborhood}, {development.location.city}/{development.location.state}</span>
                 </div>
 
@@ -123,17 +123,17 @@ export default function DevelopmentCard({ development, index, lang }: Developmen
                 <div className="grid grid-cols-3 gap-4 py-6 border-y border-white/[0.05] mb-8">
                     {development.specs.bedroomsRange && (
                         <div className="flex flex-col gap-1">
-                            <Bed className="w-4 h-4 text-[#3B82F6]/70" />
+                            <Bed className="w-4 h-4 text-[#486581]/70" />
                             <span className="text-[10px] font-bold text-white uppercase tracking-wider">{development.specs.bedroomsRange} dorms</span>
                         </div>
                     )}
                     <div className="flex flex-col gap-1">
-                        <Maximize className="w-4 h-4 text-[#3B82F6]/70" />
+                        <Maximize className="w-4 h-4 text-[#486581]/70" />
                         <span className="text-[10px] font-bold text-white uppercase tracking-wider">{development.specs.areaRange}</span>
                     </div>
                     {development.specs.parkingRange && (
                         <div className="flex flex-col gap-1">
-                            <Car className="w-4 h-4 text-[#3B82F6]/70" />
+                            <Car className="w-4 h-4 text-[#486581]/70" />
                             <span className="text-[10px] font-bold text-white uppercase tracking-wider">{development.specs.parkingRange} vagas</span>
                         </div>
                     )}
@@ -150,7 +150,7 @@ export default function DevelopmentCard({ development, index, lang }: Developmen
                     </div>
                     <Link
                         href={`/${lang}/imoveis/${development.slug}`}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-2 rounded-xl text-[12px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white border border-[#21263A] hover:bg-[#21263A] hover:border-[#3B82F6]/50 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-2 rounded-xl text-[12px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white border border-[#21263A] hover:bg-[#21263A] hover:border-[#334E68]/50 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
                     >
                         Explorar
                     </Link>

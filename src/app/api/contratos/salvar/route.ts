@@ -27,11 +27,11 @@ function markdownToHtmlDoc(md: string, idioma = 'pt', numero: string, criadoPorN
 <head><meta charset="UTF-8"><title>${numero}</title>
 <style>
   body{font-family:'Georgia',serif;font-size:11pt;line-height:1.8;color:#1A1A1A;padding:48px;max-width:780px;margin:0 auto;direction:${dir}}
-  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-bottom:16px;border-bottom:2px solid #3B82F6}
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-bottom:16px;border-bottom:2px solid #334E68}
   .logo{font-size:24px;font-weight:900;color:#1A1A1A;letter-spacing:-1px}
   .meta{font-size:9pt;color:#888;text-align:right}
   h1{font-size:16pt;text-align:center;margin:32px 0 24px;color:#1A1A1A}
-  h2{font-size:13pt;color:#3B82F6;margin:28px 0 10px;border-bottom:1px solid #E8D5B0;padding-bottom:4px}
+  h2{font-size:13pt;color:#334E68;margin:28px 0 10px;border-bottom:1px solid #E8D5B0;padding-bottom:4px}
   h3{font-size:11pt;font-weight:bold;margin:16px 0 6px}
   p{margin:8px 0;text-align:justify}
   hr{border:none;border-top:1px solid #ddd;margin:20px 0}
