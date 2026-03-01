@@ -119,7 +119,7 @@ Os números:
 
 A combinação de demanda regional sólida, infraestrutura em expansão e base de preços ainda competitiva cria uma janela que gestores patrimoniais atentos já estão aproveitando.
 
-Esse é o repositório de dados que a IMI Atlantis compila para ajudar investidores institucionais a tomar decisões com base em evidência, não em intuição.
+Esse é o repositório de dados que a IMI compila para ajudar investidores institucionais a tomar decisões com base em evidência, não em intuição.
 
 → Qual é sua perspectiva sobre mercados imobiliários regionais em 2026?`,
   },
@@ -129,7 +129,7 @@ Esse é o repositório de dados que a IMI Atlantis compila para ajudar investido
 Invista com dados, não com achismos.
 
 ### Subtítulo
-A IMI Atlantis reúne análise de mercado, avaliações NBR 14653 e inteligência patrimonial para investidores institucionais no mercado imobiliário de Pernambuco.
+A IMI reúne análise de mercado, avaliações NBR 14653 e inteligência patrimonial para investidores institucionais no mercado imobiliário de Pernambuco.
 
 ### Benefícios
 • **Precisão avaliatória** — laudos baseados em metodologia NBR 14653
@@ -149,7 +149,7 @@ Solicitar apresentação exclusiva →`,
 
 Enquanto muitos investidores ainda olham apenas para São Paulo e Rio, Recife está entregando resultados consistentes com menor risco.
 
-A IMI Atlantis tem as análises e os imóveis certos para o seu perfil.
+A IMI tem as análises e os imóveis certos para o seu perfil.
 
 📲 Fale com um especialista: (81) 99900-0000`,
   },
@@ -347,7 +347,7 @@ export default function NovoConteudoPage() {
             <textarea
               value={contexto}
               onChange={e => setContexto(e.target.value)}
-              placeholder="Ex: Lançamento Reserva Atlantis, foco em investidores, destacar valorização de 18% a.a. em Boa Viagem..."
+              placeholder="Ex: Lançamento Reserva Imperial, foco em investidores, destacar valorização de 18% a.a. em Boa Viagem..."
               className="w-full h-28 px-4 py-3 text-sm border border-gray-100 rounded-2xl text-gray-900 focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all resize-none bg-gray-50 font-medium placeholder:text-gray-400"
             />
             <div className="flex items-center gap-2 mt-2 px-1">
@@ -411,7 +411,7 @@ export default function NovoConteudoPage() {
                   onChange={e => setTitulo(e.target.value)}
                   placeholder={
                     tipo === 'email'
-                      ? 'Ex: Oportunidade: Reserva Atlantis com 18% de valorização...'
+                      ? 'Ex: Oportunidade: Reserva Imperial com 18% de valorização...'
                       : 'Ex: Guia definitivo para investir em Boa Viagem'
                   }
                   className="w-full h-12 px-5 border border-gray-100 rounded-2xl text-base font-bold text-gray-900 focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all bg-gray-50/50"

@@ -119,7 +119,7 @@ export default function PropertyWizard({ onSubmit, isSubmitting }: PropertyWizar
                     {currentStep === 0 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <Input label="Nome do Empreendimento" {...register('name')} placeholder="Ex: Residencial Atlantis" error={errors.name?.message} />
+                                <Input label="Nome do Empreendimento" {...register('name')} placeholder="Ex: Residencial Horizonte" error={errors.name?.message} />
 
                                 <Select label="Construtora" {...register('developer_id')} error={errors.developer_id?.message}>
                                     <option value="">Selecione...</option>

@@ -23,23 +23,23 @@ const T = {
 
 /* ── Mock Data (unchanged) ──────────────────────────────────── */
 const CONVERSAS = [
-  { id: 1, nome: 'Maria Santos Silva', telefone: '+55 81 99876-5432', ultimaMensagem: 'Gostaria de agendar uma visita ao Reserva Atlantis', horario: '14:32', naoLidas: 2, online: true, empresa: 'Hospital Português', status: 'Interessada' },
+  { id: 1, nome: 'Maria Santos Silva', telefone: '+55 81 99876-5432', ultimaMensagem: 'Gostaria de agendar uma visita ao Reserva Imperial', horario: '14:32', naoLidas: 2, online: true, empresa: 'Hospital Português', status: 'Interessada' },
   { id: 2, nome: 'João Oliveira (Investidor)', telefone: '+55 81 98765-4321', ultimaMensagem: 'Como está o yield de locação em Boa Viagem?', horario: '11:05', naoLidas: 0, online: false, empresa: 'Family Office', status: 'Qualificado' },
-  { id: 3, nome: 'Ana Paula Ferreira', telefone: '+55 81 99123-4567', ultimaMensagem: 'Enviando o laudo da avaliação... 📎', horario: 'Ontem', naoLidas: 0, online: true, empresa: 'IMI Atlantis', status: 'Time' },
+  { id: 3, nome: 'Ana Paula Ferreira', telefone: '+55 81 99123-4567', ultimaMensagem: 'Enviando o laudo da avaliação... 📎', horario: 'Ontem', naoLidas: 0, online: true, empresa: 'IMI', status: 'Time' },
   { id: 4, nome: 'Carlos Eduardo', telefone: '+55 11 98888-7777', ultimaMensagem: 'Obrigado pelas fotos do Ocean Blue', horario: 'Ontem', naoLidas: 0, online: false, empresa: 'Prospecção SP', status: 'Frio' },
   { id: 5, nome: 'Ricardo Mendes', telefone: '+55 81 97777-6666', ultimaMensagem: 'Qual o valor do m² no Pina hoje?', horario: '18/02', naoLidas: 0, online: false, empresa: 'Construtora Moura Dubeux', status: 'Morno' },
 ]
 
 const MENSAGENS_INICIAIS = [
   { id: 1, texto: 'Olá Maria, bom dia! Como posso ajudar hoje?', eu: true, horario: '14:00', status: 'read' },
-  { id: 2, texto: 'Olá! Vi o anúncio do Reserva Atlantis no Instagram e fiquei interessada.', eu: false, horario: '14:15' },
+  { id: 2, texto: 'Olá! Vi o anúncio do Reserva Imperial no Instagram e fiquei interessada.', eu: false, horario: '14:15' },
   { id: 3, texto: 'Excelente escolha. É o produto com melhor performance em Boa Viagem hoje.', eu: true, horario: '14:20', status: 'read' },
   { id: 4, texto: 'Vocês têm unidades acima do 15º andar?', eu: false, horario: '14:30' },
-  { id: 5, texto: 'Gostaria de agendar uma visita ao Reserva Atlantis', eu: false, horario: '14:32' },
+  { id: 5, texto: 'Gostaria de agendar uma visita ao Reserva Imperial', eu: false, horario: '14:32' },
 ]
 
 const TEMPLATES_WHATSAPP = [
-  { id: 'visita', label: 'Agendar Visita', text: 'Olá [Nome], podemos agendar uma visita técnica para amanhã às 10h ou 15h? Estarei com o material completo do Reserva Atlantis.' },
+  { id: 'visita', label: 'Agendar Visita', text: 'Olá [Nome], podemos agendar uma visita técnica para amanhã às 10h ou 15h? Estarei com o material completo do Reserva Imperial.' },
   { id: 'laudo', label: 'Enviar Laudo', text: 'Segue em anexo o laudo de avaliação técnica conforme NBR 14653. Fico à disposição para dúvidas.' },
   { id: 'invest', label: 'Dados Investimento', text: 'O yield médio nesta região de Boa Viagem está em 0,72% a.m., com valorização histórica de 18% ao ano.' },
 ]
@@ -91,7 +91,7 @@ export default function WhatsappPage() {
           task_type: 'legenda',
           prompt: `Gere uma resposta curta (máx 2 parágrafos) para o cliente ${activeConversation.nome}.\nContexto da última mensagem dele: "${lastMsg}"`,
           platform: 'email',
-          context: `Empresa: IMI Atlantis. Mercado Imobiliário de Luxo em Recife.`
+          context: `Empresa: IMI. Mercado Imobiliário de Luxo em Recife.`
         })
       })
       const data = await res.json()
@@ -394,7 +394,7 @@ export default function WhatsappPage() {
               <h4 className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: T.textTertiary }}>Segmentação</h4>
               <div className="flex flex-wrap gap-1.5">
                 <span className="px-2 py-1 rounded-lg text-[10px] font-bold"
-                  style={{ background: 'rgba(26,26,46,0.10)', color: T.gold, border: `1px solid rgba(26,26,46,0.20)` }}>Reserva Atlantis</span>
+                  style={{ background: 'rgba(26,26,46,0.10)', color: T.gold, border: `1px solid rgba(26,26,46,0.20)` }}>Reserva Imperial</span>
                 <span className="px-2 py-1 rounded-lg text-[10px] font-bold"
                   style={{ background: 'var(--s-cold-bg)', color: 'var(--s-cold)', border: '1px solid rgba(123,158,196,0.20)' }}>Investidor</span>
                 <span className="px-2 py-1 rounded-lg text-[10px] font-bold"

@@ -26,7 +26,7 @@ const contasReceberData = [
         cpf: '123.456.789-00',
         email: 'maria.santos@gmail.com',
         phone: '(81) 99845-3421',
-        imovel: 'Reserva Atlantis Apto 802',
+        imovel: 'Reserva Imperial Apto 802',
         descricao: 'Primeira parcela de sinal',
         valor: 58000,
         vencimento: '2026-02-20',

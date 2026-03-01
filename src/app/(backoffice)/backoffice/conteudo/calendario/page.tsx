@@ -33,7 +33,7 @@ import {
 const CONTEUDOS_CALENDARIO = [
     {
         id: 1,
-        titulo: 'Reserva Atlantis — Lançamento Fase 2',
+        titulo: 'Reserva Imperial — Lançamento Fase 2',
         tipo: 'instagram',
         status: 'agendado',
         data: '2026-02-20',

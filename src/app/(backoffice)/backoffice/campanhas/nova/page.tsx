@@ -335,7 +335,7 @@ export default function NovaCampanhaPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
-                    placeholder="Ex: Lançamento Reserva Atlantis - Instagram"
+                    placeholder="Ex: Lançamento Reserva Imperial - Instagram"
                     className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   />
@@ -799,7 +799,7 @@ export default function NovaCampanhaPage() {
                       type="text"
                       value={formData.utmCampaign}
                       onChange={(e) => handleChange('utmCampaign', e.target.value)}
-                      placeholder="reserva-atlantis"
+                      placeholder="reserva-imperial"
                       className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>

@@ -31,7 +31,7 @@ const roiData = {
   topPerformers: [
     { name: 'Email Marketing Piedade', roi: 265625, revenue: 2125000, spent: 800 },
     { name: 'WhatsApp Business Pina', roi: 245000, revenue: 2940000, spent: 1200 },
-    { name: 'Lançamento Reserva Atlantis', roi: 243750, revenue: 7800000, spent: 3200 },
+    { name: 'Lançamento Reserva Imperial', roi: 243750, revenue: 7800000, spent: 3200 },
   ],
 
   // Bottom performers

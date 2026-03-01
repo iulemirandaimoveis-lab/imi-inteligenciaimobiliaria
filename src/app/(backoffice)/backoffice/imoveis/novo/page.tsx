@@ -509,7 +509,7 @@ export default function NovoImovelPage() {
                                     icon={Building2}
                                     value={formData.name}
                                     onChange={v => handleChange('name', v)}
-                                    placeholder="Ex: Reserva Atlantis"
+                                    placeholder="Ex: Reserva Imperial"
                                     error={errors.name}
                                 />
                             </div>

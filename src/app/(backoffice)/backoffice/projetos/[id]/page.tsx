@@ -21,7 +21,7 @@ import {
 // ⚠️ NÃO MODIFICAR - Dados mockados
 const projetoData = {
     id: 1,
-    nome: 'Reserva Atlantis',
+    nome: 'Reserva Imperial',
     tipo: 'Loteamento Premium Costeiro',
     localizacao: 'Litoral Norte PE — Catuama / Goiana',
     status: 'estruturacao',
@@ -65,8 +65,8 @@ const projetoData = {
         { nome: 'Azimuth Capital', pais: '🇧🇷', alocacao: 15000000, status: 'confirmado' },
     ],
 
-    website: 'reservaatlantis.com.br',
-    deck: 'IMI_ReservaAtlantis_PitchDeck_v4.pdf',
+    website: 'reservaimperial.com.br',
+    deck: 'IMI_ReservaImperial_PitchDeck_v4.pdf',
 }
 
 export default function ProjetoDetalhePage() {
@@ -317,7 +317,7 @@ export default function ProjetoDetalhePage() {
                         </div>
                         <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
                             <p className="text-sm text-blue-800">
-                                💡 A landing page do Reserva Atlantis é gerenciada separadamente. Para editar o conteúdo, acesse o CMS ou entre em contato com a equipe de desenvolvimento.
+                                💡 A landing page do Reserva Imperial é gerenciada separadamente. Para editar o conteúdo, acesse o CMS ou entre em contato com a equipe de desenvolvimento.
                             </p>
                         </div>
                     </div>

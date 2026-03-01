@@ -67,7 +67,7 @@ export default function ContactPage() {
         {
             icon: Phone,
             title: 'Telefone',
-            content: '+55 (81) 99723-0455',
+            content: '+55 (81) 9 9723-0455',
             link: 'tel:+5581997230455'
         },
         {
@@ -235,7 +235,7 @@ export default function ContactPage() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full h-14 rounded-xl bg-[#102A43] text-[#0D0F14] font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#16162A] transition-all disabled:opacity-50 shadow-[0_4px_14px_rgba(26,26,46,0.3)]"
+                                    className="w-full h-14 rounded-xl bg-[#102A43] text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#1A2F44] transition-all disabled:opacity-50 shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
                                 >
                                     {isSubmitting ? (
                                         <>

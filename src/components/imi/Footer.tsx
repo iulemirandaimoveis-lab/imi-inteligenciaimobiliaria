@@ -1,63 +1,137 @@
+import Link from 'next/link'
+import { Linkedin } from 'lucide-react'
+
+const NAV_COLS = [
+    {
+        title: 'Serviços',
+        links: [
+            { label: 'Avaliações', href: '/pt/avaliacoes' },
+            { label: 'Imóveis', href: '/pt/imoveis' },
+            { label: 'Consultoria', href: '/pt/consultoria' },
+            { label: 'Crédito', href: '/pt/credito' },
+            { label: 'Inteligência', href: '/pt/inteligencia' },
+        ],
+    },
+    {
+        title: 'Empresa',
+        links: [
+            { label: 'Sobre', href: '/pt/sobre' },
+            { label: 'Construtoras', href: '/pt/construtoras' },
+            { label: 'Contato', href: '/pt/contato' },
+        ],
+    },
+]
+
+const LANGUAGES = [
+    { code: 'pt', label: 'PT' },
+    { code: 'en', label: 'EN' },
+    { code: 'ja', label: 'JP' },
+    { code: 'ar', label: 'AR' },
+    { code: 'es', label: 'ES' },
+]
+
 export default function Footer() {
     return (
-        <footer className="bg-gradient-to-b from-[#141426] to-[#0e0e1a] text-white px-6 py-20">
-            <div className="max-w-7xl mx-auto">
+        <footer className="bg-[#0A0F18] text-white">
+            <div className="max-w-7xl mx-auto px-6">
 
-                <h2 className="text-3xl font-serif font-black mb-4">
-                    IMI – Inteligência Imobiliária
-                </h2>
+                {/* Main grid */}
+                <div className="py-16 grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
 
-                <p className="text-slate-400 max-w-md mb-12 text-sm leading-relaxed">
-                    Decisões imobiliárias baseadas em inteligência,
-                    método e segurança.
-                </p>
+                    {/* Brand col */}
+                    <div className="md:col-span-5">
+                        <div className="flex items-center gap-3 mb-5">
+                            <span
+                                className="text-2xl font-bold tracking-tight text-white"
+                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                            >
+                                IMI
+                            </span>
+                            <div className="h-5 w-px bg-white/15" />
+                            <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400 font-semibold leading-tight">
+                                Inteligência<br />Imobiliária
+                            </span>
+                        </div>
 
-                <div className="bg-[#1b1b2e] p-8 rounded-sm border-l-[6px] border-yellow-400 mb-16 shadow-xl">
-                    <strong className="text-xl block mb-1">Iule Miranda</strong>
-                    <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest">
-                        CRECI 17933 | CNAI 53290
-                    </span>
-                    <br /><br />
-                    <div className="space-y-3 text-slate-300 text-sm">
-                        <p className="flex items-center gap-3">iulemirandaimoveis@gmail.com</p>
-                        <p className="flex items-center gap-3">+55 81 99723-0455</p>
-                        <p className="flex items-center gap-3">LinkedIn</p>
+                        <p className="text-slate-400 text-sm leading-relaxed max-w-sm mb-6">
+                            Decisões imobiliárias baseadas em inteligência,
+                            método e segurança.
+                        </p>
+
+                        {/* Compact contact */}
+                        <div className="space-y-2 text-sm text-slate-400">
+                            <p className="font-semibold text-white text-base">Iule Miranda</p>
+                            <p className="text-[11px] text-[#627D98] font-bold uppercase tracking-widest">
+                                CRECI 17933 · CNAI 53290
+                            </p>
+                            <div className="pt-2 space-y-1.5">
+                                <a href="mailto:iulemirandaimoveis@gmail.com" className="block hover:text-white transition-colors">
+                                    iulemirandaimoveis@gmail.com
+                                </a>
+                                <a href="https://wa.me/5581997230455" className="block hover:text-white transition-colors">
+                                    +55 81 9 9723-0455
+                                </a>
+                            </div>
+                            <a
+                                href="https://www.linkedin.com/in/iule-miranda"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 mt-3 text-[#0077b5] hover:text-[#00a0dc] transition-colors text-sm font-medium"
+                            >
+                                <Linkedin className="w-4 h-4" />
+                                LinkedIn
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Nav cols */}
+                    {NAV_COLS.map((col) => (
+                        <div key={col.title} className="md:col-span-2">
+                            <h4 className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 mb-5">
+                                {col.title}
+                            </h4>
+                            <ul className="space-y-3">
+                                {col.links.map((link) => (
+                                    <li key={link.href}>
+                                        <Link
+                                            href={link.href}
+                                            className="text-sm text-slate-400 hover:text-white transition-colors"
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+
+                    {/* Language col */}
+                    <div className="md:col-span-3">
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 mb-5">
+                            Idioma
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                            {LANGUAGES.map((lang) => (
+                                <Link
+                                    key={lang.code}
+                                    href={`/${lang.code}`}
+                                    className="px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-widest text-slate-400 bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] hover:text-white transition-all first:text-white first:bg-[#102A43]/40 first:border-[#334E68]/30"
+                                >
+                                    {lang.label}
+                                </Link>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
-                    <div>
-                        <h4 className="font-bold mb-6 text-white uppercase text-xs tracking-widest">Avaliações</h4>
-                        <ul className="space-y-4 text-slate-400 text-sm">
-                            <li className="hover:text-white cursor-pointer transition-colors">Avaliações</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Imóveis</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Crédito</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Consultoria</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Inteligência</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Projetos</li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h4 className="font-bold mb-6 text-white uppercase text-xs tracking-widest">Empresa</h4>
-                        <ul className="space-y-4 text-slate-400 text-sm">
-                            <li className="hover:text-white cursor-pointer transition-colors">Sobre</li>
-                            <li className="hover:text-white cursor-pointer transition-colors">Contato</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6">
-                    <p className="text-[11px] text-slate-500 font-medium text-center md:text-left">
-                        © 2026 IMI – Inteligência Imobiliária. Todos direitos reservados.
+                {/* Bottom bar */}
+                <div className="py-6 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <p className="text-[11px] text-slate-600 font-medium">
+                        © 2026 IMI – Inteligência Imobiliária. Todos os direitos reservados.
                     </p>
-
-                    <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-[10px] font-bold tracking-[0.2em] text-slate-500 mt-2 sm:mt-0">
-                        <span className="text-yellow-400 cursor-pointer transition-colors px-2 py-1">PT</span>
-                        <span className="hover:text-slate-300 cursor-pointer transition-colors px-2 py-1">EN</span>
-                        <span className="hover:text-slate-300 cursor-pointer transition-colors px-2 py-1">JP</span>
-                        <span className="hover:text-slate-300 cursor-pointer transition-colors px-2 py-1">AR</span>
-                        <span className="hover:text-slate-300 cursor-pointer transition-colors px-2 py-1">ES</span>
+                    <div className="flex gap-6 text-[11px] text-slate-600">
+                        <Link href="/pt/termos" className="hover:text-slate-400 transition-colors">Termos</Link>
+                        <Link href="/pt/privacidade" className="hover:text-slate-400 transition-colors">Privacidade</Link>
                     </div>
                 </div>
 

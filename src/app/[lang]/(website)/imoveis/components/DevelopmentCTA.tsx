@@ -90,7 +90,7 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                     className="flex items-center justify-center gap-2 h-11 rounded-xl bg-gray-50 text-gray-500 text-xs font-semibold hover:bg-gray-100 transition-colors border border-gray-100"
                 >
                     <Phone className="w-3.5 h-3.5" />
-                    (81) 99723-0455
+                    (81) 9 9723-0455
                 </a>
             </div>
 

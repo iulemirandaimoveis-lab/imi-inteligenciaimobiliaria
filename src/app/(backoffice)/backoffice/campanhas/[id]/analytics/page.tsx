@@ -26,7 +26,7 @@ import {
 // Mock data (seria carregado do Supabase)
 const mockCampaignData = {
   id: 1,
-  name: 'Lançamento Reserva Atlantis - Instagram',
+  name: 'Lançamento Reserva Imperial - Instagram',
   status: 'active',
   channel: 'Instagram Ads',
   startDate: '2026-02-01',

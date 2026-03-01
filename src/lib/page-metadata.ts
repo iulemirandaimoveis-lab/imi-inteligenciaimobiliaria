@@ -62,7 +62,7 @@ export const PAGE_METADATA = {
   ),
   projetos: (lang: string) => meta(
     'Projetos & Empreendimentos',
-    'Portfólio de desenvolvimentos imobiliários de alto padrão. Reserva Atlantis e outros empreendimentos estruturados para investidores institucionais.',
+    'Portfólio de desenvolvimentos imobiliários de alto padrão. Empreendimentos estruturados para investidores institucionais.',
     `/${lang}/projetos`
   ),
   sobre: (lang: string) => meta(

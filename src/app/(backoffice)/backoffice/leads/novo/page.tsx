@@ -21,7 +21,7 @@ import {
 
 // ⚠️ Opções reais Recife
 const origens = [
-    'Site IMI Atlantis',
+    'Site IMI',
     'Instagram',
     'Facebook',
     'Google Ads',
@@ -94,7 +94,7 @@ export default function NovoLeadPage() {
         if (formData.phone && formData.phone.length >= 14) totalScore += 2
 
         // Origem qualificada: +1
-        if (['Site IMI Atlantis', 'Indicação', 'Google Ads'].includes(formData.origem)) totalScore += 1
+        if (['Site IMI', 'Indicação', 'Google Ads'].includes(formData.origem)) totalScore += 1
 
         // Interesse específico: +2
         if (formData.interesse) totalScore += 2
@@ -478,8 +478,8 @@ export default function NovoLeadPage() {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-600">Origem qualificada</span>
-                                    <span className={['Site IMI Atlantis', 'Indicação', 'Google Ads'].includes(formData.origem) ? 'text-green-600' : 'text-gray-400'}>
-                                        {['Site IMI Atlantis', 'Indicação', 'Google Ads'].includes(formData.origem) ? '+1' : '0'}
+                                    <span className={['Site IMI', 'Indicação', 'Google Ads'].includes(formData.origem) ? 'text-green-600' : 'text-gray-400'}>
+                                        {['Site IMI', 'Indicação', 'Google Ads'].includes(formData.origem) ? '+1' : '0'}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">

@@ -23,7 +23,7 @@ const NAV_ITEMS = [
 
 const LANGUAGES = [
     { code: 'pt', flag: '🇧🇷' },
-    { code: 'en', flag: '🇬🇧' },
+    { code: 'en', flag: '🇺🇸' },
     { code: 'ja', flag: '🇯🇵' },
     { code: 'ar', flag: '🇸🇦' },
     { code: 'es', flag: '🇪🇸' },

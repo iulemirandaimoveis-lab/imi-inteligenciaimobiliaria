@@ -1,5 +1,5 @@
 // src/lib/modelos-contratos.ts
-// ── 32 modelos de contratos IMI Atlantis ─────────────────────
+// ── 32 modelos de contratos IMI – Inteligência Imobiliária ─────────────────────
 
 import type { ModeloContrato } from '@/types/contratos'
 

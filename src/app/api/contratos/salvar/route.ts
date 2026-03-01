@@ -44,7 +44,7 @@ function markdownToHtmlDoc(md: string, idioma = 'pt', numero: string, criadoPorN
   <div class="meta"><div>Contrato: ${numero}</div><div>Emitido em: ${dataFmt}</div><div>Por: ${criadoPorNome}</div></div>
 </div>
 <div class="content"><p>${html}</p></div>
-<div class="footer">IMI Atlantis Platform · Documento gerado eletronicamente em ${new Date().toISOString()}</div>
+<div class="footer">IMI – Inteligência Imobiliária · Documento gerado eletronicamente em ${new Date().toISOString()}</div>
 </body></html>`
 }
 

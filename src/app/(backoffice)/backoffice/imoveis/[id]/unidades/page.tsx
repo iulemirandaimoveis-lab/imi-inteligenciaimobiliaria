@@ -25,7 +25,7 @@ import {
 const unidadesData = {
   empreendimento: {
     id: 1,
-    name: 'Reserva Atlantis',
+    name: 'Reserva Imperial',
     totalUnidades: 48,
     vendidas: 28,
     reservadas: 8,

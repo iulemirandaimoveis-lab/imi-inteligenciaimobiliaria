@@ -105,7 +105,7 @@ export default function NovoProjetoPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="md:col-span-2">
                             <label className={labelClass}>Nome do Projeto *</label>
-                            <input type="text" className={inputClass} placeholder="Ex: Reserva Atlantis" value={form.nome} onChange={e => updateField('nome', e.target.value)} />
+                            <input type="text" className={inputClass} placeholder="Ex: Reserva Imperial" value={form.nome} onChange={e => updateField('nome', e.target.value)} />
                         </div>
                         <div>
                             <label className={labelClass}>Tipo *</label>
@@ -142,7 +142,7 @@ export default function NovoProjetoPage() {
                             <label className={labelClass}>Website (opcional)</label>
                             <div className="relative">
                                 <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                                <input type="text" className={`${inputClass} pl-9`} placeholder="reservaatlantis.com.br" value={form.website} onChange={e => updateField('website', e.target.value)} />
+                                <input type="text" className={`${inputClass} pl-9`} placeholder="reservaimperial.com.br" value={form.website} onChange={e => updateField('website', e.target.value)} />
                             </div>
                         </div>
                     </div>

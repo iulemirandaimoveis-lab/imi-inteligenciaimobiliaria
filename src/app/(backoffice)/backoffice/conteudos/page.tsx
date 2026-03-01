@@ -51,7 +51,7 @@ const mockContent = [
   },
   {
     id: '2',
-    title: 'Tour Virtual: Reserva Atlantis',
+    title: 'Tour Virtual: Reserva Imperial',
     type: 'video',
     platform: 'instagram',
     status: 'scheduled',

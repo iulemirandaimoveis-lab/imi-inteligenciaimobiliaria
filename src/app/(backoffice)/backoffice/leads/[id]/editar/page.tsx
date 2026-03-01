@@ -25,7 +25,7 @@ import {
 
 // ⚠️ Opções reais Recife (mesmas do /novo)
 const origens = [
-    'Site IMI Atlantis',
+    'Site IMI',
     'Instagram',
     'Facebook',
     'Google Ads',
@@ -145,7 +145,7 @@ export default function EditarLeadPage() {
 
         if (formData.email && formData.email.includes('@')) totalScore += 2
         if (formData.phone && formData.phone.length >= 14) totalScore += 2
-        if (['Site IMI Atlantis', 'Indicação', 'Google Ads'].includes(formData.origem)) totalScore += 1
+        if (['Site IMI', 'Indicação', 'Google Ads'].includes(formData.origem)) totalScore += 1
         if (formData.interesse) totalScore += 2
         if (formData.localizacao && formData.localizacao !== 'Outro') totalScore += 1
 

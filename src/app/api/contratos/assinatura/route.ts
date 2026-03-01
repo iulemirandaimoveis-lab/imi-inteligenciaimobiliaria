@@ -162,7 +162,7 @@ class ClickSignProvider {
         locale: 'pt-BR',
         sequence_enabled: false,
         remind_interval: 3,
-        message: `Contrato IMI Atlantis ${numero} — revise e assine digitalmente.`,
+        message: `Contrato IMI ${numero} — revise e assine digitalmente.`,
       },
     })
 

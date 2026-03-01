@@ -23,7 +23,7 @@ import {
 // ⚠️ NÃO MODIFICAR - Dados da campanha mockados
 const campanhaData = {
   id: 1,
-  name: 'Lançamento Reserva Atlantis',
+  name: 'Lançamento Reserva Imperial',
   status: 'ativa',
   platform: 'Instagram',
   objective: 'Conversão',

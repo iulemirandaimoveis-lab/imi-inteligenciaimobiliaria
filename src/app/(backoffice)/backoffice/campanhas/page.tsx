@@ -27,7 +27,7 @@ import {
 const campanhasData = [
     {
         id: 1,
-        name: 'Lançamento Reserva Atlantis',
+        name: 'Lançamento Reserva Imperial',
         status: 'ativa',
         platform: 'Instagram',
         objective: 'Conversão',

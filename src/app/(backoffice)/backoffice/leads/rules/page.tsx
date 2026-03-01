@@ -134,9 +134,9 @@ const REGRAS_INICIAIS = [
     },
     {
         id: 9,
-        nome: 'Interesse em Reserva Atlantis',
+        nome: 'Interesse em Reserva Imperial',
         descricao: 'Lead demonstrou interesse no produto carro-chefe da IMI',
-        gatilho: 'UTM campaign contém "reserva-atlantis"',
+        gatilho: 'UTM campaign contém "reserva-imperial"',
         pontos: 20,
         ativa: true,
         categoria: 'produto',

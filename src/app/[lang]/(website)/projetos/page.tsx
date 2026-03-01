@@ -8,8 +8,8 @@ import { MapPin, ArrowRight, Building2, TrendingUp, Shield, Users } from 'lucide
 // ── Data ──────────────────────────────────────────────────────
 const PROJETOS = [
   {
-    id: 'reserva-atlantis',
-    nome: 'Reserva Atlantis',
+    id: 'reserva-imperial',
+    nome: 'Reserva Imperial',
     subtitulo: 'Um filme na forma de território.',
     tipo: 'Complexo Costeiro & Hoteleiro',
     status: 'pre-lancamento',
@@ -121,7 +121,7 @@ export default function ProjetosWebsitePage() {
         </div>
       </section>
 
-      {/* Projeto em destaque — Reserva Atlantis */}
+      {/* Projeto em destaque — Reserva Imperial */}
       <section className="py-16 lg:py-24 bg-[#F8F9FA]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}

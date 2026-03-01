@@ -9,7 +9,7 @@ export const maxDuration = 30
 // ── Templates multiidioma ──────────────────────────────────────
 const getTpl = (idioma: string) => ({
   pt: {
-    subject: (n: string, t: string) => `📄 Contrato ${n} — ${t} | IMI Atlantis`,
+    subject: (n: string, t: string) => `📄 Contrato ${n} — ${t} | IMI`,
     email: (n: string, t: string, url: string, by: string) => `
 <div style="font-family:sans-serif;max-width:580px;margin:0 auto">
   <div style="background:#102A43;padding:24px;border-radius:12px 12px 0 0;text-align:center">
@@ -36,7 +36,7 @@ const getTpl = (idioma: string) => ({
       `_IMI Inteligência Imobiliária_`,
   },
   en: {
-    subject: (n: string, t: string) => `📄 Contract ${n} — ${t} | IMI Atlantis`,
+    subject: (n: string, t: string) => `📄 Contract ${n} — ${t} | IMI`,
     email: (n: string, t: string, url: string, by: string) => `
 <div style="font-family:sans-serif;max-width:580px;margin:0 auto;background:#0F1117;padding:32px;border-radius:12px;color:#F0F2F5">
   <h2 style="color:#486581">IMI — Contract Ready</h2>
@@ -50,19 +50,19 @@ const getTpl = (idioma: string) => ({
       `_IMI Real Estate Intelligence_`,
   },
   es: {
-    subject: (n: string, t: string) => `📄 Contrato ${n} — ${t} | IMI Atlantis`,
+    subject: (n: string, t: string) => `📄 Contrato ${n} — ${t} | IMI`,
     email: (n: string, t: string, url: string, by: string) => `<div style="font-family:sans-serif;padding:24px;background:#0F1117;color:#F0F2F5;border-radius:12px"><h2 style="color:#486581">IMI — Contrato Listo</h2><p>Contrato <strong>${n}</strong> — ${t} preparado por ${by}.</p><a href="${url}" style="background:#102A43;color:white;padding:12px 28px;border-radius:8px;text-decoration:none">Ver y Firmar</a></div>`,
     whatsapp: (n: string, t: string, url: string, by: string) =>
       `📄 *IMI — Contrato Listo*\n\nContrato *${n}* — ${t} preparado por ${by}.\n\n🔗 Ver y firmar:\n${url}\n\n_IMI Inteligencia Inmobiliaria_`,
   },
   ar: {
-    subject: (n: string, t: string) => `📄 عقد ${n} — ${t} | IMI Atlantis`,
+    subject: (n: string, t: string) => `📄 عقد ${n} — ${t} | IMI`,
     email: (n: string, t: string, url: string, by: string) => `<div dir="rtl" style="font-family:sans-serif;padding:24px;background:#0F1117;color:#F0F2F5;border-radius:12px"><h2 style="color:#486581">IMI — العقد جاهز</h2><p>تم إعداد العقد <strong>${n}</strong> — ${t} بواسطة ${by}.</p><a href="${url}" style="background:#102A43;color:white;padding:12px 28px;border-radius:8px;text-decoration:none">عرض والتوقيع</a></div>`,
     whatsapp: (n: string, t: string, url: string, by: string) =>
       `📄 *IMI — العقد جاهز*\n\nتم إعداد العقد *${n}* — ${t} بواسطة ${by}.\n\n🔗 عرض والتوقيع:\n${url}\n\n_IMI للذكاء العقاري_`,
   },
   ja: {
-    subject: (n: string, t: string) => `📄 契約書 ${n} — ${t} | IMI Atlantis`,
+    subject: (n: string, t: string) => `📄 契約書 ${n} — ${t} | IMI`,
     email: (n: string, t: string, url: string, by: string) => `<div style="font-family:sans-serif;padding:24px;background:#0F1117;color:#F0F2F5;border-radius:12px"><h2 style="color:#486581">IMI — 契約書の準備完了</h2><p>契約書 <strong>${n}</strong> — ${t} が${by}によって作成されました。</p><a href="${url}" style="background:#102A43;color:white;padding:12px 28px;border-radius:8px;text-decoration:none">確認・署名する</a></div>`,
     whatsapp: (n: string, t: string, url: string, by: string) =>
       `📄 *IMI — 契約書が完成しました*\n\n契約書 *${n}* — ${t} が${by}によって作成されました。\n\n🔗 確認・署名:\n${url}\n\n_IMI 不動産インテリジェンス_`,
