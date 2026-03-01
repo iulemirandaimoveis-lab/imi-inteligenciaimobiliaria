@@ -3,11 +3,9 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Development } from '../types/development';
 import { formatCurrency as formatBRL } from '@/lib/utils';
 import Button from '@/components/ui/Button';
 import { MessageCircle, Info, Loader2 } from 'lucide-react';
-import Badge from '@/components/ui/Badge';
 
 interface DevelopmentUnitsProps {
     propertyId: string;
@@ -38,9 +36,9 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-                <Loader2 className="w-8 h-8 text-imi-400 animate-spin mb-4" />
-                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Sincronizando Inventário...</p>
+            <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                <Loader2 className="w-6 h-6 text-gray-300 animate-spin mb-3" />
+                <p className="text-gray-400 font-semibold text-xs uppercase tracking-widest">Carregando unidades...</p>
             </div>
         );
     }
@@ -51,61 +49,68 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
 
     const handleWhatsApp = (unit: any) => {
         const message = encodeURIComponent(
-            `Olá! Tenho interesse na unidade ${unit.unit_name} do empreendimento ${propertyName}. Gostaria de mais informações sobre o fluxo de investimento.`
+            `Olá! Tenho interesse na unidade ${unit.unit_name} do empreendimento ${propertyName}. Gostaria de mais informações.`
         );
         window.open(`https://wa.me/5581997230455?text=${message}`, '_blank');
     };
 
     return (
-        <section className="bg-white scroll-mt-32" id="inventory">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                <div className="max-w-2xl">
-                    <h2 className="font-display text-3xl md:text-4xl text-imi-900 mb-4 font-bold tracking-tight">Mapa de Disponibilidade</h2>
-                    <p className="text-imi-500 font-light text-lg">
-                        Seleção técnica de unidades com maior potencial de valorização e liquidez no ativo.
+        <div className="scroll-mt-32" id="inventory">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+                <div>
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-1 h-5 rounded-full bg-[#334E68]" />
+                        <h2
+                            className="text-xl text-gray-900 font-bold tracking-tight"
+                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        >
+                            Disponibilidade
+                        </h2>
+                    </div>
+                    <p className="text-gray-500 font-light text-[15px]">
+                        Unidades disponíveis para investimento neste empreendimento.
                     </p>
                 </div>
-                <div className="flex items-center gap-2 bg-imi-50 border border-imi-100 px-4 py-2 rounded-lg text-imi-500 text-[10px] font-black uppercase tracking-widest">
-                    <Info className="w-4 h-4 text-accent-600" />
-                    <span>Real-time Hub: {new Date().toLocaleDateString('pt-BR')}</span>
+                <div className="flex items-center gap-2 bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-lg text-gray-400 text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">
+                    <Info className="w-3.5 h-3.5 text-[#627D98]" />
+                    <span>{units.length} {units.length === 1 ? 'unidade' : 'unidades'}</span>
                 </div>
             </div>
 
-            {/* Tabela Desktop */}
-            <div className="hidden md:block overflow-hidden rounded-3xl border border-imi-100 shadow-soft">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-100">
                 <table className="w-full border-collapse">
                     <thead>
-                        <tr className="bg-slate-50/50 border-b border-imi-100">
-                            <th className="text-left p-6 font-black text-imi-400 text-[10px] uppercase tracking-widest">Unidade</th>
-                            <th className="text-left p-6 font-black text-imi-400 text-[10px] uppercase tracking-widest">Tipologia</th>
-                            <th className="text-left p-6 font-black text-imi-400 text-[10px] uppercase tracking-widest">Área Privativa</th>
-                            <th className="text-right p-6 font-black text-imi-400 text-[10px] uppercase tracking-widest">Investimento</th>
-                            <th className="text-center p-6 font-black text-imi-400 text-[10px] uppercase tracking-widest">Ação</th>
+                        <tr className="bg-gray-50/80 border-b border-gray-100">
+                            <th className="text-left p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Unidade</th>
+                            <th className="text-left p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Tipologia</th>
+                            <th className="text-left p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Área</th>
+                            <th className="text-right p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Valor</th>
+                            <th className="text-center p-4 font-bold text-gray-400 text-[10px] uppercase tracking-widest">Ação</th>
                         </tr>
                     </thead>
                     <tbody>
                         {unitsToShow.map((unit) => (
-                            <tr key={unit.id} className="border-b border-slate-50 hover:bg-slate-50/30 transition-colors group">
-                                <td className="p-6 font-bold text-imi-900">{unit.unit_name}</td>
-                                <td className="p-6">
-                                    <span className="text-[10px] font-black py-1 px-3 bg-white border border-slate-200 rounded text-slate-400 uppercase tracking-tighter">
-                                        {unit.unit_type === 'apartment' ? 'Apartamento' : unit.unit_type}
+                            <tr key={unit.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                                <td className="p-4 font-bold text-gray-900 text-sm">{unit.unit_name}</td>
+                                <td className="p-4">
+                                    <span className="text-[10px] font-bold py-0.5 px-2.5 bg-gray-50 border border-gray-100 rounded text-gray-400 uppercase tracking-wider">
+                                        {unit.unit_type === 'apartment' ? 'Apto' : unit.unit_type}
                                     </span>
                                 </td>
-                                <td className="p-6 text-imi-600 font-medium">{unit.area ? `${unit.area}m²` : '-'}</td>
-                                <td className="p-6 text-right font-bold text-imi-900 text-lg">
+                                <td className="p-4 text-gray-600 text-sm">{unit.area ? `${unit.area}m²` : '-'}</td>
+                                <td className="p-4 text-right font-bold text-gray-900">
                                     {unit.price ? formatBRL(unit.price) : 'Sob Consulta'}
                                 </td>
-                                <td className="p-6 text-center">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="h-10 text-[10px] px-6 uppercase tracking-widest font-black border-slate-200 hover:border-imi-900"
+                                <td className="p-4 text-center">
+                                    <button
                                         onClick={() => handleWhatsApp(unit)}
+                                        className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-gray-200 text-gray-500 hover:border-[#334E68] hover:text-gray-700 transition-colors"
                                     >
-                                        <MessageCircle className="w-3.5 h-3.5 mr-2" />
-                                        Protocolar Interesse
-                                    </Button>
+                                        <MessageCircle className="w-3 h-3" />
+                                        Consultar
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -113,37 +118,47 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
                 </table>
             </div>
 
-            {/* Mobile Cards ... (Omitted for brevity in this block, keeping it simple or I can add it back) */}
-            <div className="md:hidden space-y-4">
+            {/* Mobile Cards */}
+            <div className="md:hidden space-y-3">
                 {unitsToShow.map((unit) => (
-                    <div key={unit.id} className="bg-white border border-slate-100 rounded-3xl p-6 shadow-soft">
-                        <div className="flex justify-between items-center mb-6">
-                            <span className="text-lg font-bold text-imi-900">Unidade {unit.unit_name}</span>
-                            <span className="text-[10px] font-black px-2 py-1 bg-slate-50 text-slate-400 rounded uppercase tracking-widest">{unit.unit_type}</span>
+                    <div key={unit.id} className="bg-white border border-gray-100 rounded-xl p-4">
+                        <div className="flex justify-between items-center mb-3">
+                            <span className="font-bold text-gray-900">Unidade {unit.unit_name}</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 bg-gray-50 text-gray-400 rounded uppercase tracking-wider">
+                                {unit.unit_type === 'apartment' ? 'Apto' : unit.unit_type}
+                            </span>
                         </div>
                         <div className="flex justify-between items-end">
                             <div>
-                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">Valor do Ativo</p>
-                                <p className="text-xl font-bold text-imi-900">{unit.price ? formatBRL(unit.price) : 'Sob Consulta'}</p>
+                                {unit.area && (
+                                    <p className="text-xs text-gray-400 mb-0.5">{unit.area}m²</p>
+                                )}
+                                <p className="text-lg font-bold text-gray-900">
+                                    {unit.price ? formatBRL(unit.price) : 'Sob Consulta'}
+                                </p>
                             </div>
-                            <Button size="sm" onClick={() => handleWhatsApp(unit)}>Consultar</Button>
+                            <button
+                                onClick={() => handleWhatsApp(unit)}
+                                className="h-9 px-4 rounded-lg bg-[#102A43] text-white text-xs font-semibold hover:bg-[#1A2F44] transition-colors"
+                            >
+                                Consultar
+                            </button>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Botão Ver Mais */}
+            {/* Show More */}
             {units.length > 10 && !showAll && (
-                <div className="mt-12 text-center">
-                    <Button
-                        variant="ghost"
-                        className="text-imi-600 hover:text-imi-900 font-black text-[10px] uppercase tracking-[0.3em]"
+                <div className="mt-8 text-center">
+                    <button
+                        className="text-gray-500 hover:text-gray-800 font-bold text-[11px] uppercase tracking-[0.2em] transition-colors"
                         onClick={() => setShowAll(true)}
                     >
-                        Ver inventário completo ({units.length} ativos)
-                    </Button>
+                        Ver todas ({units.length} unidades)
+                    </button>
                 </div>
             )}
-        </section>
+        </div>
     );
 }
