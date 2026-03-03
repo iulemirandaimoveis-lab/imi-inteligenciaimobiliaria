@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { ButtonPrimary, ButtonGhost } from '@/components/website/Buttons';
 import { MessageCircle, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
@@ -30,21 +30,21 @@ export function QualificationCTA() {
                     </p>
 
                     <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6">
-                        <button
+                        <ButtonPrimary
+                            size="lg"
                             onClick={() => setIsModalOpen(true)}
-                            className="inline-flex items-center justify-center gap-3 h-14 sm:h-16 px-8 sm:px-12 text-[14px] sm:text-[16px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-2xl border border-[#21263A] border-l-4 border-[#334E68] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)] transition-all duration-300 w-full sm:w-auto"
+                            icon={<MessageCircle size={16} />}
                         >
-                            <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#486581]" />
                             Agendar Sessão Gratuita
-                        </button>
+                        </ButtonPrimary>
 
-                        <a
+                        <ButtonGhost
+                            dark
                             href="#simulator"
-                            className="text-sm font-bold leading-6 text-[#DFE4E8] flex items-center gap-2 group hover:text-[#486581] transition-colors"
+                            arrow
                         >
-                            Refazer simulação de investimento
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </a>
+                            Refazer simulação
+                        </ButtonGhost>
                     </div>
 
                     <div className="mt-12 pt-12 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-8">

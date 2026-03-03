@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { slideUp, staggerContainer } from '@/lib/animations'
 import { Building2, Banknote, TrendingUp, ShieldCheck, Clock, ChevronDown, ChevronUp, MessageCircle, Info } from 'lucide-react'
-import Button from '@/components/ui/Button'
+import { ButtonPrimary } from '@/components/website/Buttons'
 import { formatCurrency } from '@/lib/utils'
 import Image from 'next/image'
 import LeadCaptureModal from '@/app/[lang]/(website)/imoveis/components/LeadCaptureModal'
@@ -461,13 +461,13 @@ export default function CreditPage() {
                         <p className="text-[#9CA3AF] text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed relative z-10">
                             Fale agora com um especialista IMI e descubra qual a melhor alavancagem para o seu momento de investimento.
                         </p>
-                        <button
+                        <ButtonPrimary
+                            size="lg"
                             onClick={() => setIsModalOpen(true)}
-                            className="inline-flex items-center justify-center gap-3 h-14 sm:h-16 px-8 sm:px-12 text-[14px] sm:text-[16px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-2xl border border-[#21263A] border-l-4 border-[#334E68] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)] transition-all duration-300 relative z-10 w-full sm:w-auto"
+                            icon={<MessageCircle size={16} />}
                         >
-                            <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#486581]" />
                             Agendar Sessão de Crédito
-                        </button>
+                        </ButtonPrimary>
                     </div>
                 </div>
             </section>

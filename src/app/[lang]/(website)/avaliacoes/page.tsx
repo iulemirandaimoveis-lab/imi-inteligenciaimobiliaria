@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { ShieldCheck, Home, Landmark, Scale, Briefcase, MessageCircle, CheckCircle } from 'lucide-react'
 import AppraisalForm from '@/components/forms/AppraisalForm'
+import { ButtonPrimary } from '@/components/website/Buttons'
 
 const APPRAISAL_TYPES = [
   {
@@ -177,9 +178,9 @@ export default function AppraisalsPage() {
         <div className="container-custom text-center">
           <h2 className="text-[28px] lg:text-[38px] font-black text-white mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Dúvidas sobre Avaliações?</h2>
           <p className="text-[#6C757D] text-lg mb-10 max-w-md mx-auto font-light">Nossa equipe técnica esclarece qualquer questão normativa ou processual.</p>
-          <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 h-16 px-12 text-lg font-bold bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#334E68] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)]">
-            <MessageCircle className="w-5 h-5 flex-shrink-0" />Falar com Especialista
-          </a>
+          <ButtonPrimary href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" size="lg" icon={<MessageCircle size={16} />}>
+            Falar com Especialista
+          </ButtonPrimary>
         </div>
       </section>
     </>

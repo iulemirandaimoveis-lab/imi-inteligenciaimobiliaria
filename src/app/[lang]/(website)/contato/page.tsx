@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { slideUp, staggerContainer } from '@/lib/animations'
 import { MapPin, Phone, Mail, MessageCircle, Send, Loader2 } from 'lucide-react'
+import { ButtonPrimary } from '@/components/website/Buttons'
 import { getAttribution } from '@/lib/utils/attribution'
 
 export default function ContactPage() {
@@ -270,15 +271,15 @@ export default function ContactPage() {
                         <p className="text-[#9CA3AF] text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
                             Precisa de agilidade? Fale diretamente com nossa equipe técnica pelo WhatsApp.
                         </p>
-                        <a
+                        <ButtonPrimary
                             href="https://wa.me/5581997230455"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-3 h-16 px-10 text-lg font-bold bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#334E68] rounded-2xl transition-all duration-300 hover:-translate-y-1 shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)]"
+                            size="lg"
+                            icon={<MessageCircle size={16} />}
                         >
-                            <MessageCircle className="w-5 h-5 flex-shrink-0" />
                             Abrir Chat no WhatsApp
-                        </a>
+                        </ButtonPrimary>
                     </motion.div>
                 </div>
             </section>

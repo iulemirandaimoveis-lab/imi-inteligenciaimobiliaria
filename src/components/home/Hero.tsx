@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'next/navigation'
-import { BadgeCheck, Scale, FileText, TrendingUp } from 'lucide-react'
+import { BadgeCheck, Scale, FileText, TrendingUp, MessageCircle } from 'lucide-react'
+import { ButtonPrimary, ButtonGhost } from '@/components/website/Buttons'
 
 interface HeroProps {
   dict: {
@@ -127,23 +128,15 @@ export default function Hero({ dict }: HeroProps) {
             {/* CTAs */}
             <motion.div
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.55 } } }}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full"
+              className="flex flex-col sm:flex-row gap-3 w-full"
             >
-              <Link
-                href={`/${lang}/avaliacoes#form`}
-                className="group w-full sm:w-auto inline-flex flex-wrap text-center items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-14 h-auto rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #102A43 0%, #2D2D4E 100%)', color: '#141420' }}
-              >
+              <ButtonPrimary href={`/${lang}/avaliacoes#form`} size="lg" full className="sm:w-auto sm:flex-none">
                 {dict.cta_appraisal || 'Solicitar Avaliação'}
-                <TrendingUp size={17} className="group-hover:translate-x-0.5 transition-transform shrink-0" />
-              </Link>
+              </ButtonPrimary>
 
-              <button
-                onClick={handleWhatsApp}
-                className="inline-flex w-full sm:w-auto flex-wrap text-center items-center justify-center gap-2 px-6 sm:px-8 py-4 min-h-14 h-auto rounded-2xl font-semibold text-sm sm:text-base border border-white/20 text-white hover:bg-white/8 hover:border-white/30 transition-all duration-300 active:scale-95"
-              >
+              <ButtonGhost dark onClick={handleWhatsApp} size="lg" full className="sm:w-auto sm:flex-none" icon={<MessageCircle size={15} />} arrow={false}>
                 {dict.cta_whatsapp || 'Falar com especialista'}
-              </button>
+              </ButtonGhost>
             </motion.div>
           </motion.div>
         </div>

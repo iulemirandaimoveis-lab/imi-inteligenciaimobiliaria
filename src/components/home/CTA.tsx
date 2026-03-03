@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import LeadCaptureModal from '@/app/[lang]/(website)/imoveis/components/LeadCaptureModal'
-import Button from '@/components/ui/Button'
+import { ButtonPrimary } from '@/components/website/Buttons'
 
 interface CTAProps {
     dict: {
@@ -32,13 +32,12 @@ export default function CTA({ dict }: CTAProps) {
                 <p className="text-gray-400 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
                     {dict.final_cta_desc}
                 </p>
-                <Button
+                <ButtonPrimary
                     size="lg"
-                    className="h-16 px-12 text-lg font-bold bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#334E68] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)]"
                     onClick={() => setIsModalOpen(true)}
                 >
                     {dict.final_cta_btn}
-                </Button>
+                </ButtonPrimary>
             </div>
             <AnimatePresence>
                 {isModalOpen && (
