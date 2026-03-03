@@ -88,8 +88,8 @@ export default function Header({ lang, settings }: HeaderProps) {
                             >
                                 IMI
                             </span>
-                            <div className="h-4 w-px bg-black/15 hidden sm:block" />
-                            <span className="text-[9px] font-bold text-[#8A95A0] uppercase tracking-[0.18em] leading-[1.35] hidden sm:block">
+                            <div className="h-4 w-px bg-black/15" />
+                            <span className="text-[9px] font-bold text-[#8A95A0] uppercase tracking-[0.18em] leading-[1.35]">
                                 Inteligência<br />Imobiliária
                             </span>
                         </Link>

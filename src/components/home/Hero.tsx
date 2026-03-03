@@ -101,7 +101,7 @@ export default function Hero({ dict }: HeroProps) {
                 const Icon = t.icon
                 return (
                   <div key={t.text} className="flex items-center gap-1.5 bg-white/8 border border-white/10 rounded-full px-3 py-1">
-                    <Icon size={12} className="text-[#486581]" />
+                    <Icon size={12} className="text-white/70" />
                     <span className="text-xs text-white/70 font-medium">{t.text}</span>
                   </div>
                 )
@@ -111,8 +111,8 @@ export default function Hero({ dict }: HeroProps) {
             {/* Headline */}
             <motion.h1
               variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.65 } } }}
-              className="font-display font-bold text-white leading-[1.12] mb-6"
-              style={{ fontSize: 'clamp(2rem, 5vw, 3.75rem)' }}
+              className="font-display font-bold text-white leading-[1.12] mb-6 sm:mb-6"
+              style={{ fontSize: 'clamp(1.6rem, 5vw, 3.75rem)' }}
             >
               {dict.hero_title || 'Inteligência imobiliária\naonde o capital é\nalocado.'}
             </motion.h1>
@@ -120,7 +120,7 @@ export default function Hero({ dict }: HeroProps) {
             {/* Subtitle */}
             <motion.p
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
-              className="text-base sm:text-lg text-white/60 mb-10 max-w-lg font-light leading-relaxed"
+              className="hidden sm:block text-base sm:text-lg text-white/60 mb-10 max-w-lg font-light leading-relaxed"
             >
               {dict.hero_subtitle || 'Avaliações NBR 14653, consultoria patrimonial e acesso a oportunidades de alto padrão — Recife, Dubai e EUA.'}
             </motion.p>
