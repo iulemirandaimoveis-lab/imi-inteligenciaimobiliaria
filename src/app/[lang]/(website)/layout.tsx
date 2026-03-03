@@ -35,7 +35,7 @@ export default async function WebsiteLayout({
                 />
             </Suspense>
             <Header lang={lang} settings={settings} />
-            <main className="flex-grow pt-[68px] lg:pt-[76px]">{children}</main>
+            <main className="flex-grow pt-[60px] lg:pt-[68px]">{children}</main>
             <Footer lang={lang} settings={settings} />
         </div>
     )

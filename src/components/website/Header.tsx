@@ -75,7 +75,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                     }`}
             >
                 <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16 lg:h-[76px]">
+                    <div className="flex items-center justify-between h-[60px] lg:h-[68px]">
 
                         {/* Logo */}
                         <Link
@@ -89,14 +89,8 @@ export default function Header({ lang, settings }: HeaderProps) {
                                 IMI
                             </span>
                             <div className="h-4 w-px bg-black/15 hidden sm:block" />
-                            <span className="text-[10px] font-semibold text-[#6C757D] uppercase tracking-[0.16em] leading-[1.2] hidden sm:block">
-                                {settings?.companyName ? (
-                                    <>
-                                        {settings.companyName.split(' – ')[0]}<br />{settings.companyName.split(' – ')[1] || 'Imobiliária'}
-                                    </>
-                                ) : (
-                                    <>Inteligência<br />Imobiliária</>
-                                )}
+                            <span className="text-[9px] font-bold text-[#8A95A0] uppercase tracking-[0.18em] leading-[1.35] hidden sm:block">
+                                Inteligência<br />Imobiliária
                             </span>
                         </Link>
 
@@ -146,7 +140,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                 href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 bg-[#1A1A1A] hover:bg-[#102A43] text-white text-[13px] font-semibold px-4 py-2.5 rounded-xl transition-all duration-200"
+                                className="flex items-center gap-2 bg-[#102A43] hover:bg-[#0a1c2e] text-white text-[13px] font-semibold px-4 py-2 rounded-xl transition-all duration-200"
                             >
                                 <MessageCircle size={14} strokeWidth={2.5} />
                                 WhatsApp
@@ -251,7 +245,7 @@ export default function Header({ lang, settings }: HeaderProps) {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         onClick={() => setOpen(false)}
-                                        className="flex items-center justify-center gap-2.5 w-full bg-[#1A1A1A] hover:bg-[#102A43] text-white font-bold text-[15px] h-[54px] rounded-2xl transition-all duration-200 active:scale-[0.97] shadow-lg"
+                                        className="flex items-center justify-center gap-2.5 w-full bg-[#102A43] hover:bg-[#0a1c2e] text-white font-bold text-[15px] h-[52px] rounded-2xl transition-all duration-200 active:scale-[0.97] shadow-lg"
                                     >
                                         <MessageCircle size={18} />
                                         Falar pelo WhatsApp
