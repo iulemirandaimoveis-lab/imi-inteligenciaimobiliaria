@@ -67,7 +67,7 @@ export default function Hero({ dict }: HeroProps) {
       {/* Background image */}
       <div className="absolute inset-0">
         <div
-          className="absolute inset-0 bg-cover bg-[85%_top] sm:bg-[bottom_right] md:bg-[85%_center] bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-[center_top] sm:bg-[bottom_right] md:bg-[85%_center] bg-no-repeat"
           style={{ backgroundImage: "url('/hero-bg.jpg')" }}
         />
         {/* Dark overlay gradient - stronger on the left for text readibility */}
@@ -130,9 +130,9 @@ export default function Hero({ dict }: HeroProps) {
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.55 } } }}
               className="flex flex-col sm:flex-row gap-3 w-full"
             >
-              <ButtonPrimary href={`/${lang}/avaliacoes#form`} size="lg" full className="sm:w-auto sm:flex-none">
+              <ButtonGhost dark strong href={`/${lang}/avaliacoes#form`} size="lg" full className="sm:w-auto sm:flex-none">
                 {dict.cta_appraisal || 'Solicitar Avaliação'}
-              </ButtonPrimary>
+              </ButtonGhost>
 
               <ButtonGhost dark onClick={handleWhatsApp} size="lg" full className="sm:w-auto sm:flex-none" icon={<MessageCircle size={15} />} arrow={false}>
                 {dict.cta_whatsapp || 'Falar com especialista'}

@@ -78,19 +78,22 @@ export function ButtonPrimary({
 
 // ── Ghost: outlined ───────────────────────────────────────────────────────────
 interface GhostBtnProps extends BtnProps {
-    dark?: boolean  // true = white border/text for dark backgrounds
+    dark?: boolean    // true = white border/text for dark backgrounds
+    strong?: boolean  // with dark=true: brighter white border (50% vs 20%) for hero CTAs
 }
 
 export function ButtonGhost({
     children, href, onClick, icon, arrow = false,
-    full, size = 'md', dark = false, className = '', disabled, type = 'button', target, rel,
+    full, size = 'md', dark = false, strong = false, className = '', disabled, type = 'button', target, rel,
 }: GhostBtnProps) {
     const cls = [
         'group inline-flex items-center justify-center gap-2.5 rounded-[14px]',
         'font-bold uppercase whitespace-nowrap',
-        dark
-            ? 'border border-white/20 text-white hover:bg-white/[0.07] hover:border-white/30'
-            : 'border border-[#102A43]/25 text-[#102A43] hover:bg-[#102A43]/[0.05] hover:border-[#102A43]/40',
+        dark && strong
+            ? 'border border-white/50 text-white hover:bg-white/[0.08] hover:border-white/70'
+            : dark
+                ? 'border border-white/20 text-white hover:bg-white/[0.07] hover:border-white/30'
+                : 'border border-[#102A43]/25 text-[#102A43] hover:bg-[#102A43]/[0.05] hover:border-[#102A43]/40',
         'transition-all duration-200 active:scale-[0.97]',
         full ? 'w-full' : 'w-auto',
         sizes[size],

@@ -69,55 +69,55 @@ export default function Footer({ lang, settings }: FooterProps) {
                                 IMI
                             </span>
                             <span className="ml-2 text-[11px] font-semibold text-[#6C757D] uppercase tracking-[0.18em]">
-                                {settings?.companyName ? settings.companyName.split(' – ')[1] || 'Imobiliária' : 'Inteligência Imobiliária'}
+                                Inteligência Imobiliária
                             </span>
                         </Link>
 
-                        <p className="text-[#6C757D] text-sm leading-relaxed max-w-sm mb-8">
+                        <p className="text-[#6C757D] text-sm leading-relaxed max-w-sm mb-5 lg:mb-8">
                             Decisões imobiliárias baseadas em inteligência, método e segurança.
                             Transformamos incerteza em capital protegido.
                         </p>
 
                         {/* Credentials card */}
-                        <div className="border-l-[4px] border-[#334E68] bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-2xl p-6 lg:p-8 mb-8">
+                        <div className="border-l-[4px] border-[#334E68] bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-2xl p-4 lg:p-8 mb-6 lg:mb-8">
                             <p className="font-bold text-white text-[16px] mb-1">Iule Miranda</p>
-                            <p className="text-[#486581] text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
+                            <p className="text-[#486581] text-[10px] font-bold uppercase tracking-[0.2em] mb-4 lg:mb-6">
                                 CRECI 17933 | CNAI 53290
                             </p>
 
-                            <div className="space-y-4">
+                            <div className="space-y-2.5 sm:space-y-4">
                                 <a
                                     href={`mailto:${settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}`}
-                                    className="flex items-center gap-4 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-3 rounded-2xl group"
+                                    className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl group"
                                 >
-                                    <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
-                                        <Mail className="w-5 h-5" />
+                                    <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
+                                        <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium break-all">{settings?.companyEmail || 'contato@iulemirandaimoveis.com.br'}</span>
                                 </a>
 
                                 <a
                                     href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-4 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-3 rounded-2xl group"
+                                    className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl group"
                                 >
-                                    <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
-                                        <MessageCircle className="w-5 h-5" />
+                                    <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
+                                        <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium">{settings?.companyPhone || '+55 81 99723-0455'}</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium">{settings?.companyPhone || '+55 81 99723-0455'}</span>
                                 </a>
 
                                 <a
                                     href="https://www.linkedin.com/in/iule-miranda-imoveis"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-4 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-3 rounded-2xl group"
+                                    className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl group"
                                 >
-                                    <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
-                                        <Linkedin className="w-5 h-5" />
+                                    <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
+                                        <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium">LinkedIn</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium">LinkedIn</span>
                                 </a>
                             </div>
                         </div>
@@ -150,7 +150,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                 {/* ── Bottom bar ── */}
                 <div className="mt-16 pt-8 border-t border-white/[0.07] flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-[11px] text-[#495057] font-medium">
-                        © {year} {settings?.companyName || 'IMI – Inteligência Imobiliária'}. Todos os direitos reservados.
+                        © {year} IMI – Inteligência Imobiliária. Todos os direitos reservados.
                     </p>
 
                     <div className="flex items-center gap-3">
