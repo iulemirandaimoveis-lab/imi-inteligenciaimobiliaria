@@ -1,8 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimit, apiSuccess, apiError } from '@/lib/rate-limit'
+import { AppError, ValidationError } from '@/lib/errors'
 
 export async function POST(request: NextRequest) {
     try {
+        // Enforce Rate Limit: 3 requests per IP per minute
+        const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'anon'
+        const rl = rateLimit(ip, { limit: 3, windowMs: 60000 })
+
+        if (!rl.success) {
+            throw new AppError('Excesso de tentativas. Tente novamente em alguns minutos.', 429, 'RATE_LIMIT_EXCEEDED')
+        }
+
         const data = await request.json()
         const supabase = await createClient()
 
@@ -10,10 +20,7 @@ export async function POST(request: NextRequest) {
         const requiredFields = ['name', 'phone']
         for (const field of requiredFields) {
             if (!data[field]) {
-                return NextResponse.json(
-                    { error: `Campo obrigatório ausente: ${field}` },
-                    { status: 400 }
-                )
+                throw new ValidationError(`Campo obrigatório ausente: ${field}`)
             }
         }
 
@@ -29,19 +36,12 @@ export async function POST(request: NextRequest) {
         })
 
         if (error) {
-            console.error('Supabase insert error:', error)
-            return NextResponse.json({ error: error.message }, { status: 500 })
+            console.error('Supabase insert error (Contact):', error)
+            throw new AppError('Falha ao registrar lead no Supabase', 500, 'DATABASE_ERROR', error)
         }
 
-        return NextResponse.json(
-            { success: true, message: 'Mensagem recebida com sucesso' },
-            { status: 200 }
-        )
+        return apiSuccess({ message: 'Mensagem recebida com sucesso' }, 201)
     } catch (error) {
-        console.error('Error processing contact request:', error)
-        return NextResponse.json(
-            { error: 'Erro ao processar mensagem' },
-            { status: 500 }
-        )
+        return apiError(error)
     }
 }

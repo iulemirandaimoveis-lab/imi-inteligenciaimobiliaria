@@ -62,7 +62,7 @@ export default function NovoProjetoPage() {
         router.push('/backoffice/projetos')
     }
 
-    const inputClass = "w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] text-sm bg-white"
+    const inputClass = "w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm bg-white"
     const labelClass = "block text-sm font-medium text-gray-700 mb-1.5"
 
     return (
@@ -87,7 +87,7 @@ export default function NovoProjetoPage() {
                             <button
                                 key={i}
                                 onClick={() => setCurrentStep(i)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex-1 justify-center ${currentStep === i ? 'bg-accent-50 text-[#0F0F1E]' : i < currentStep ? 'text-green-700 bg-green-50' : 'text-gray-500'
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex-1 justify-center ${currentStep === i ? 'bg-accent-50 text-accent-700' : i < currentStep ? 'text-green-700 bg-green-50' : 'text-gray-500'
                                     }`}
                             >
                                 <StepIcon size={16} />
@@ -105,7 +105,7 @@ export default function NovoProjetoPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="md:col-span-2">
                             <label className={labelClass}>Nome do Projeto *</label>
-                            <input type="text" className={inputClass} placeholder="Ex: Reserva Imperial" value={form.nome} onChange={e => updateField('nome', e.target.value)} />
+                            <input type="text" className={inputClass} placeholder="Ex: Reserva Atlantis" value={form.nome} onChange={e => updateField('nome', e.target.value)} />
                         </div>
                         <div>
                             <label className={labelClass}>Tipo *</label>
@@ -123,7 +123,7 @@ export default function NovoProjetoPage() {
                         <div className="md:col-span-2">
                             <label className={labelClass}>Descrição</label>
                             <textarea
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] text-sm resize-none bg-white"
+                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm resize-none bg-white"
                                 rows={4}
                                 placeholder="Descreva o projeto, seu posicionamento e diferencial..."
                                 value={form.descricao}
@@ -142,7 +142,7 @@ export default function NovoProjetoPage() {
                             <label className={labelClass}>Website (opcional)</label>
                             <div className="relative">
                                 <Globe size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                                <input type="text" className={`${inputClass} pl-9`} placeholder="reservaimperial.com.br" value={form.website} onChange={e => updateField('website', e.target.value)} />
+                                <input type="text" className={`${inputClass} pl-9`} placeholder="reservaatlantis.com.br" value={form.website} onChange={e => updateField('website', e.target.value)} />
                             </div>
                         </div>
                     </div>
@@ -211,7 +211,7 @@ export default function NovoProjetoPage() {
                         <div className="md:col-span-2">
                             <label className={labelClass}>Observações</label>
                             <textarea
-                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] text-sm resize-none bg-white"
+                                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm resize-none bg-white"
                                 rows={3}
                                 placeholder="Notas adicionais sobre o cronograma..."
                                 value={form.observacoes}
@@ -235,7 +235,7 @@ export default function NovoProjetoPage() {
                 {currentStep < steps.length - 1 ? (
                     <button
                         onClick={() => setCurrentStep(currentStep + 1)}
-                        className="h-11 px-6 bg-[#16162A] text-white rounded-xl text-sm font-medium hover:bg-[#0F0F1E] transition-colors"
+                        className="h-11 px-6 bg-accent-600 text-white rounded-xl text-sm font-medium hover:bg-accent-700 transition-colors"
                     >
                         Próximo
                     </button>
@@ -243,7 +243,7 @@ export default function NovoProjetoPage() {
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl text-sm font-medium hover:bg-[#0F0F1E] transition-colors disabled:opacity-60"
+                        className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl text-sm font-medium hover:bg-accent-700 transition-colors disabled:opacity-60"
                     >
                         <ArrowLeft className="rotate-180" size={16} />
                         {isSubmitting ? 'Salvando...' : 'Salvar Projeto'}

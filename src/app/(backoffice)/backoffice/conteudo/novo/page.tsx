@@ -13,37 +13,16 @@
 
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import * as htmlToImage from 'html-to-image'
 import {
-  FileText,
-  Sparkles,
-  Save,
-  Eye,
-  ChevronDown,
-  Bold,
-  Italic,
-  Link2,
-  List,
-  Quote,
-  Image,
-  Loader2,
-  Check,
-  Copy,
-  RefreshCw,
-  ChevronRight,
-  Instagram,
-  Linkedin,
-  Mail,
-  Globe,
-  Hash,
-  AlignLeft,
-  Zap,
-  ArrowLeft,
-  Info,
-  Facebook,
-  Clock,
-  X,
+  FileText, Sparkles, Save, Eye, ChevronDown, Bold,
+  Italic, Link2, List, Quote, Image, Loader2, Check,
+  Copy, RefreshCw, ChevronRight, Instagram, Linkedin,
+  Mail, Globe, Hash, AlignLeft, Zap, ArrowLeft, Info,
+  Facebook, Clock, X, Download, MoreHorizontal, Heart,
+  MessageCircle, Share2, Bookmark
 } from 'lucide-react'
 
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
@@ -53,7 +32,7 @@ const TIPOS_CONTEUDO = [
   { id: 'instagram', label: 'Post Instagram', icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars', color: 'text-pink-600 bg-pink-50' },
   { id: 'linkedin', label: 'Post LinkedIn', icon: Linkedin, desc: 'Artigo ou post profissional', color: 'text-blue-700 bg-blue-50' },
   { id: 'facebook', label: 'Post Facebook', icon: Facebook, desc: 'Post com engajamento', color: 'text-indigo-600 bg-indigo-50' },
-  { id: 'landing', label: 'Landing Page Copy', icon: Globe, desc: 'Hero, benefícios, CTA', color: 'text-[#486581] bg-accent-50' },
+  { id: 'landing', label: 'Landing Page Copy', icon: Globe, desc: 'Hero, benefícios, CTA', color: 'text-accent-600 bg-accent-50' },
 ]
 
 // ⚠️ NÃO MODIFICAR - Templates por tipo
@@ -119,7 +98,7 @@ Os números:
 
 A combinação de demanda regional sólida, infraestrutura em expansão e base de preços ainda competitiva cria uma janela que gestores patrimoniais atentos já estão aproveitando.
 
-Esse é o repositório de dados que a IMI compila para ajudar investidores institucionais a tomar decisões com base em evidência, não em intuição.
+Esse é o repositório de dados que a IMI Atlantis compila para ajudar investidores institucionais a tomar decisões com base em evidência, não em intuição.
 
 → Qual é sua perspectiva sobre mercados imobiliários regionais em 2026?`,
   },
@@ -129,7 +108,7 @@ Esse é o repositório de dados que a IMI compila para ajudar investidores insti
 Invista com dados, não com achismos.
 
 ### Subtítulo
-A IMI reúne análise de mercado, avaliações NBR 14653 e inteligência patrimonial para investidores institucionais no mercado imobiliário de Pernambuco.
+A IMI Atlantis reúne análise de mercado, avaliações NBR 14653 e inteligência patrimonial para investidores institucionais no mercado imobiliário de Pernambuco.
 
 ### Benefícios
 • **Precisão avaliatória** — laudos baseados em metodologia NBR 14653
@@ -149,7 +128,7 @@ Solicitar apresentação exclusiva →`,
 
 Enquanto muitos investidores ainda olham apenas para São Paulo e Rio, Recife está entregando resultados consistentes com menor risco.
 
-A IMI tem as análises e os imóveis certos para o seu perfil.
+A IMI Atlantis tem as análises e os imóveis certos para o seu perfil.
 
 📲 Fale com um especialista: (81) 99900-0000`,
   },
@@ -189,6 +168,36 @@ export default function NovoConteudoPage() {
     field: '',
   })
   const [charCount, setCharCount] = useState(0)
+
+  const [isAutosaving, setIsAutosaving] = useState(false)
+  const [lastSavedTime, setLastSavedTime] = useState<string | null>(null)
+  const instaRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!titulo && !corpo) return
+    const t = setTimeout(() => {
+      setIsAutosaving(true)
+      console.log('Autosaving...', { titulo, corpo, tipo })
+      setTimeout(() => {
+        setIsAutosaving(false)
+        setLastSavedTime(new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }))
+      }, 1000)
+    }, 30000)
+    return () => clearTimeout(t)
+  }, [titulo, corpo, tipo])
+
+  const exportAsImage = async () => {
+    if (!instaRef.current) return
+    try {
+      const dataUrl = await htmlToImage.toPng(instaRef.current, { quality: 1, backgroundColor: '#ffffff' })
+      const link = document.createElement('a')
+      link.download = `post_${tipo}_${Date.now()}.png`
+      link.href = dataUrl
+      link.click()
+    } catch (err) {
+      console.error('Error exporting image', err)
+    }
+  }
 
   const tipoAtual = TIPOS_CONTEUDO.find(t => t.id === tipo) || TIPOS_CONTEUDO[0]
   const TipoIcon = tipoAtual.icon
@@ -235,12 +244,11 @@ export default function NovoConteudoPage() {
       if (data.success) {
         setAiPanel(p => ({ ...p, loading: false, result: data.result }))
       } else throw new Error(data.error)
-    } catch {
+    } catch (err: any) {
       setAiPanel(p => ({
         ...p,
         loading: false,
-        result:
-          'API não disponível. Configure as variáveis de ambiente:\n- ANTHROPIC_API_KEY\n- OPENAI_API_KEY\n- GOOGLE_AI_API_KEY',
+        result: err.message || 'Erro de comunicação com a IA. Tente novamente mais tarde.',
       }))
     }
   }
@@ -256,10 +264,36 @@ export default function NovoConteudoPage() {
   }
 
   const salvarConteudo = async () => {
-    setSalvo(true)
-    setTimeout(() => {
-      router.push('/backoffice/conteudos')
-    }, 1500)
+    try {
+      const res = await fetch('/api/conteudos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: titulo,
+          topic: contexto,
+          content_type: tipo,
+          base_copy: corpo,
+          status: 'draft',
+          scheduled_date: new Date().toISOString().split('T')[0]
+        })
+      });
+
+      if (res.ok) {
+        setSalvo(true)
+        setTimeout(() => {
+          router.push('/backoffice/conteudos')
+        }, 1500)
+      } else {
+        const errorData = await res.json()
+        console.error('Failed to save to Supabase:', errorData)
+        alert('Erro ao salvar conteúdo no sistema.');
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Erro de conexão com o sistema.');
+    }
   }
 
   const formatShortDate = () => {
@@ -295,7 +329,7 @@ export default function NovoConteudoPage() {
           <button
             onClick={salvarConteudo}
             disabled={!titulo || !corpo || salvo}
-            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl text-sm font-bold hover:bg-[#0F0F1E] disabled:opacity-50 transition-all shadow-lg shadow-blue-100"
+            className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl text-sm font-bold hover:bg-accent-700 disabled:opacity-50 transition-all shadow-lg shadow-accent-100"
           >
             {salvo ? <Check size={18} /> : <Save size={18} />}
             {salvo ? 'Salvo com Sucesso!' : 'Salvar no Sistema'}
@@ -331,7 +365,7 @@ export default function NovoConteudoPage() {
                       <p className="text-[10px] text-gray-500 font-medium mt-0.5">{t.desc}</p>
                     </div>
                     {tipo === t.id && (
-                      <div className="ml-auto w-2 h-2 bg-[#16162A] rounded-full" />
+                      <div className="ml-auto w-2 h-2 bg-accent-600 rounded-full" />
                     )}
                   </button>
                 )
@@ -347,17 +381,17 @@ export default function NovoConteudoPage() {
             <textarea
               value={contexto}
               onChange={e => setContexto(e.target.value)}
-              placeholder="Ex: Lançamento Reserva Imperial, foco em investidores, destacar valorização de 18% a.a. em Boa Viagem..."
-              className="w-full h-28 px-4 py-3 text-sm border border-gray-100 rounded-2xl text-gray-900 focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all resize-none bg-gray-50 font-medium placeholder:text-gray-400"
+              placeholder="Ex: Lançamento Reserva Atlantis, foco em investidores, destacar valorização de 18% a.a. em Boa Viagem..."
+              className="w-full h-28 px-4 py-3 text-sm border border-gray-100 rounded-2xl text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all resize-none bg-gray-50 font-medium placeholder:text-gray-400"
             />
             <div className="flex items-center gap-2 mt-2 px-1">
-              <Info size={12} className="text-[#486581]" />
+              <Info size={12} className="text-accent-500" />
               <p className="text-[10px] text-gray-400 font-medium italic">Dados ricos geram roteiros melhores pela IA.</p>
             </div>
           </div>
 
           {/* Assistente IA */}
-          <div className="bg-gradient-to-br from-[#243B53] to-[#0F0F1E] rounded-2xl p-5 shadow-lg shadow-blue-100 text-white">
+          <div className="bg-gradient-to-br from-accent-600 to-accent-700 rounded-2xl p-5 shadow-lg shadow-accent-100 text-white">
             <div className="flex items-center justify-between mb-4">
               <label className="text-[10px] font-bold text-white/70 uppercase tracking-widest">
                 Multi-Model Assistant
@@ -411,10 +445,10 @@ export default function NovoConteudoPage() {
                   onChange={e => setTitulo(e.target.value)}
                   placeholder={
                     tipo === 'email'
-                      ? 'Ex: Oportunidade: Reserva Imperial com 18% de valorização...'
+                      ? 'Ex: Oportunidade: Reserva Atlantis com 18% de valorização...'
                       : 'Ex: Guia definitivo para investir em Boa Viagem'
                   }
-                  className="w-full h-12 px-5 border border-gray-100 rounded-2xl text-base font-bold text-gray-900 focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all bg-gray-50/50"
+                  className="w-full h-12 px-5 border border-gray-100 rounded-2xl text-base font-bold text-gray-900 focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all bg-gray-50/50"
                 />
               </div>
 
@@ -425,7 +459,7 @@ export default function NovoConteudoPage() {
                     {[Bold, Italic, Link2, List, Quote, Image].map((Icon, i) => (
                       <button
                         key={i}
-                        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-400 hover:text-[#486581] transition-all font-bold"
+                        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-400 hover:text-accent-600 transition-all font-bold"
                         title="Formatação"
                       >
                         <Icon size={16} />
@@ -469,50 +503,74 @@ export default function NovoConteudoPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-[#486581] uppercase tracking-widest">
-                    <div className="w-2 h-2 bg-[#102A43] rounded-full animate-pulse" />
-                    Backup Automático Ativo
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-accent-600 uppercase tracking-widest">
+                    <div className={`w-2 h-2 bg-accent-500 rounded-full ${isAutosaving ? 'animate-pulse' : ''}`} />
+                    {isAutosaving ? 'Salvando Rascunho...' : lastSavedTime ? `Rascunho salvo às ${lastSavedTime}` : 'Autosave Ativo'}
                   </div>
                 </div>
               </div>
             </>
           ) : (
             /* ── Preview Mode ───────────────────────────────────────────── */
-            <div className="bg-white rounded-2xl border border-gray-100 p-10 shadow-lg min-h-[600px] relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-8 opacity-5">
-                <LogoIMI className="w-32" />
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-lg relative flex flex-col items-center">
+              <div className="w-full flex justify-end p-4 border-b border-gray-100 bg-gray-50/50 rounded-t-2xl">
+                <button onClick={exportAsImage} className="flex items-center gap-2 text-xs font-bold text-accent-600 bg-accent-50 hover:bg-accent-100 px-4 py-2 rounded-lg transition-colors">
+                  <Download size={14} /> Exportar como Imagem
+                </button>
               </div>
 
-              <div className="flex items-center gap-3 mb-8">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tipoAtual.color}`}>
-                  <TipoIcon size={20} />
-                </div>
-                <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Prévia do Canal</span>
-                  <span className="text-sm font-bold text-gray-900">{tipoAtual.label}</span>
-                </div>
-                <div className="ml-auto flex items-center gap-2">
-                  <Clock size={14} className="text-gray-400" />
-                  <span className="text-xs font-bold text-gray-500">{formatShortDate()}</span>
-                </div>
-              </div>
-
-              {titulo && (
-                <h1 className="text-3xl font-bold text-gray-900 mb-8 leading-tight tracking-tight border-l-4 border-[#334E68] pl-6">
-                  {titulo}
-                </h1>
-              )}
-
-              {corpo ? (
-                <div className="prose prose-sm max-w-none">
-                  <div className="text-base text-gray-800 whitespace-pre-wrap leading-relaxed font-sans space-y-4">
-                    {corpo}
+              {tipo === 'instagram' ? (
+                <div className="p-8 w-full max-w-md flex justify-center pb-12">
+                  <div ref={instaRef} className="bg-white border border-gray-200 rounded-[20px] overflow-hidden w-full shadow-sm max-w-[375px]">
+                    {/* header */}
+                    <div className="flex items-center gap-3 p-3 border-b border-gray-100">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 p-[2px]">
+                        <div className="w-full h-full bg-white rounded-full flex items-center justify-center border-2 border-white overflow-hidden text-[8px] font-black text-gray-800">IMI</div>
+                      </div>
+                      <div>
+                        <p className="text-[13px] font-bold leading-none">imi.atlantis</p>
+                        <p className="text-[11px] text-gray-500 mt-0.5">Recife, PE</p>
+                      </div>
+                      <MoreHorizontal className="ml-auto text-gray-400" size={16} />
+                    </div>
+                    {/* image placeholder */}
+                    <div className="aspect-[4/5] bg-gray-100 flex flex-col justify-center items-center text-gray-300 relative border-b border-gray-100">
+                      <Image size={48} className="opacity-20 mb-2" />
+                      <span className="text-xs font-bold tracking-widest uppercase opacity-40">Área Visual</span>
+                      {titulo && <div className="absolute bottom-4 left-4 right-4 bg-black/40 backdrop-blur-md text-white p-4 rounded-xl">
+                        <h2 className="text-base font-black leading-tight drop-shadow-md">{titulo}</h2>
+                      </div>}
+                    </div>
+                    {/* actions */}
+                    <div className="p-3">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <Heart size={22} className="text-gray-900" />
+                          <MessageCircle size={22} className="text-gray-900" />
+                          <Share2 size={22} className="text-gray-900" />
+                        </div>
+                        <Bookmark size={22} className="text-gray-900" />
+                      </div>
+                      <p className="text-[13px] text-gray-900 mb-1">Curtido por <span className="font-bold">investidor.pe</span> e <strong>outras pessoas</strong></p>
+                      <p className="text-[13px] text-gray-900 leading-snug whitespace-pre-wrap">
+                        <span className="font-bold mr-2">imi.atlantis</span>
+                        {corpo || 'Escreva algo na legenda...'}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-300">
-                  <AlignLeft size={64} className="mb-4 opacity-10" />
-                  <p className="font-bold uppercase tracking-widest text-sm">Sem conteúdo para exibir</p>
+                <div className="p-10 pb-16 w-full min-h-[500px] relative" ref={instaRef}>
+                  <div className="absolute top-0 right-0 p-8 opacity-5"><LogoIMI className="w-32" /></div>
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tipoAtual.color}`}><TipoIcon size={20} /></div>
+                    <div>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Prévia do Canal</span>
+                      <span className="text-sm font-bold text-gray-900">{tipoAtual.label}</span>
+                    </div>
+                  </div>
+                  {titulo && <h1 className="text-3xl font-bold text-gray-900 mb-8 leading-tight tracking-tight border-l-4 border-accent-500 pl-6">{titulo}</h1>}
+                  {corpo ? <div className="prose prose-sm max-w-none"><div className="text-base text-gray-800 whitespace-pre-wrap leading-relaxed font-sans space-y-4">{corpo}</div></div> : <div className="flex flex-col items-center justify-center py-20 text-gray-300"><AlignLeft size={64} className="mb-4 opacity-10" /><p className="font-bold uppercase tracking-widest text-sm">Sem conteúdo para exibir</p></div>}
                 </div>
               )}
             </div>
@@ -525,7 +583,7 @@ export default function NovoConteudoPage() {
         <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div className="bg-white rounded-3xl border border-gray-100 shadow-2xl w-full max-w-xl overflow-hidden scale-in-center">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 bg-[#16162A] text-white">
+            <div className="flex items-center justify-between p-6 bg-accent-600 text-white">
               <div className="flex items-center gap-3">
                 <Sparkles size={20} className="animate-pulse" />
                 <div>
@@ -546,9 +604,9 @@ export default function NovoConteudoPage() {
               {aiPanel.loading ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-5">
                   <div className="relative">
-                    <Loader2 size={48} className="animate-spin text-[#486581]" />
+                    <Loader2 size={48} className="animate-spin text-accent-600" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-2 h-2 bg-[#16162A] rounded-full" />
+                      <div className="w-2 h-2 bg-accent-600 rounded-full" />
                     </div>
                   </div>
                   <div className="text-center">
@@ -567,7 +625,7 @@ export default function NovoConteudoPage() {
                   <div className="flex flex-col sm:flex-row items-center gap-3 font-bold">
                     <button
                       onClick={() => aplicarSugestao(aiPanel.result)}
-                      className="flex items-center gap-2 h-12 px-6 bg-[#16162A] text-white rounded-2xl text-sm hover:bg-[#0F0F1E] w-full sm:flex-1 justify-center shadow-lg shadow-blue-100 transition-all"
+                      className="flex items-center gap-2 h-12 px-6 bg-accent-600 text-white rounded-2xl text-sm hover:bg-accent-700 w-full sm:flex-1 justify-center shadow-lg shadow-accent-100 transition-all"
                     >
                       <Check size={18} />
                       Aplicar no Texto

@@ -378,7 +378,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
     return NextResponse.json({
         status: 'ok',
-        description: 'IMI AI Router — Multi-model orchestration',
+        description: 'IMI Atlantis AI Router — Multi-model orchestration',
         models_available: ['claude-sonnet', 'claude-haiku', 'gpt-4o', 'gpt-4o-mini', 'gemini-pro', 'gemini-flash', 'kling'],
         task_types: Object.keys(MODEL_ROUTING),
         routing: MODEL_ROUTING,

@@ -43,7 +43,7 @@ function SearchBar() {
             style={{
                 background: 'var(--bo-surface)',
                 border: `1px solid ${focused ? 'var(--bo-border-gold)' : 'var(--bo-border)'}`,
-                boxShadow: focused ? '0 0 0 3px rgba(26,26,46,0.08)' : 'none',
+                boxShadow: focused ? '0 0 0 3px rgba(196,157,91,0.08)' : 'none',
             }}
         >
             <Search size={14} style={{ color: focused ? 'var(--accent-500)' : 'var(--bo-text-muted)' }} className="flex-shrink-0 transition-colors" />

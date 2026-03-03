@@ -134,14 +134,14 @@ const REGRAS_INICIAIS = [
     },
     {
         id: 9,
-        nome: 'Interesse em Reserva Imperial',
+        nome: 'Interesse em Reserva Atlantis',
         descricao: 'Lead demonstrou interesse no produto carro-chefe da IMI',
-        gatilho: 'UTM campaign contém "reserva-imperial"',
+        gatilho: 'UTM campaign contém "reserva-atlantis"',
         pontos: 20,
         ativa: true,
         categoria: 'produto',
         icone: Star,
-        cor: 'text-[#486581] bg-accent-50 border-accent-100',
+        cor: 'text-accent-600 bg-accent-50 border-accent-100',
         execucoes: 78,
     },
     {
@@ -214,7 +214,7 @@ export default function LeadRulesPage() {
                         Configure como leads são qualificados automaticamente
                     </p>
                 </div>
-                <button className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]">
+                <button className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700">
                     <Plus size={18} />
                     Nova Regra
                 </button>
@@ -225,7 +225,7 @@ export default function LeadRulesPage() {
                 {[
                     { label: 'Total de Regras', value: stats.total, color: 'text-gray-900' },
                     { label: 'Regras Ativas', value: stats.ativas, color: 'text-green-700' },
-                    { label: 'Score Máximo', value: `${stats.scoreMaximo} pts`, color: 'text-[#0F0F1E]' },
+                    { label: 'Score Máximo', value: `${stats.scoreMaximo} pts`, color: 'text-accent-700' },
                     { label: 'Execuções Totais', value: stats.execucoesTotais.toLocaleString('pt-BR'), color: 'text-blue-700' },
                 ].map(s => (
                     <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100">
@@ -273,7 +273,7 @@ export default function LeadRulesPage() {
                         onClick={() => setMostrarInativas(!mostrarInativas)}
                         className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
                     >
-                        {mostrarInativas ? <ToggleRight size={18} className="text-[#486581]" /> : <ToggleLeft size={18} />}
+                        {mostrarInativas ? <ToggleRight size={18} className="text-accent-600" /> : <ToggleLeft size={18} />}
                         Mostrar inativas
                     </button>
                 </div>
@@ -371,7 +371,7 @@ export default function LeadRulesPage() {
                     <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
                         <Settings size={40} className="mx-auto text-gray-200 mb-3" />
                         <p className="text-gray-500">Nenhuma regra encontrada</p>
-                        <button className="mt-3 text-sm text-[#486581] hover:text-[#0F0F1E] font-medium">
+                        <button className="mt-3 text-sm text-accent-600 hover:text-accent-700 font-medium">
                             + Criar primeira regra
                         </button>
                     </div>

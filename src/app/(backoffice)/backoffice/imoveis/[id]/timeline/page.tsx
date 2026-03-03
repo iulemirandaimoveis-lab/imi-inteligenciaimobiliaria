@@ -72,7 +72,7 @@ export default function PropertyTimelinePage() {
                             <span className="text-[10px] font-black text-imi-400 uppercase tracking-[0.3em]">Asset Lifecycle History</span>
                         </div>
                         <h1 className="text-4xl font-bold text-imi-900 font-display tracking-tight">
-                            Timeline: <span className="text-[#486581]">{property?.name}</span>
+                            Timeline: <span className="text-accent-500">{property?.name}</span>
                         </h1>
                     </div>
                 </div>

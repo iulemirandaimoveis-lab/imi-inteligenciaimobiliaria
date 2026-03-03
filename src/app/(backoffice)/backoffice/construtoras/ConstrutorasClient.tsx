@@ -76,7 +76,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                 </div>
                 <button
                     onClick={() => router.push('/backoffice/construtoras/nova')}
-                    className="flex items-center gap-2 h-11 px-6 bg-[#102A43] text-white rounded-xl font-medium hover:bg-[#16162A] transition-colors"
+                    className="flex items-center gap-2 h-11 px-6 bg-[#C49D5B] text-white rounded-xl font-medium hover:bg-[#b08a4a] transition-colors"
                 >
                     <Plus size={20} />
                     Nova Construtora
@@ -117,13 +117,13 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                             placeholder="Buscar pelo nome ou razão social..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all"
+                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C49D5B] focus:border-transparent transition-all"
                         />
                     </div>
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white transition-all"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C49D5B] bg-white transition-all"
                     >
                         <option value="all">Todos os status</option>
                         <option value="ativa">Ativa</option>
@@ -176,7 +176,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                             </div>
                             <div>
                                 <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Vendas</p>
-                                <p className="text-lg font-bold text-[#486581]">{construtora.unidadesVendidas || 0}</p>
+                                <p className="text-lg font-bold text-[#C49D5B]">{construtora.unidadesVendidas || 0}</p>
                             </div>
                             <div>
                                 <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">VGV / Receita</p>
@@ -241,7 +241,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                     <p className="text-xs text-gray-500 mb-6">Cadastre construtoras para que elas sejam exibidas na página pública de Empreendimentos.</p>
                     <button
                         onClick={() => router.push('/backoffice/construtoras/nova')}
-                        className="inline-flex items-center gap-2 h-10 px-5 bg-[#102A43] text-white rounded-xl text-sm font-medium hover:bg-[#16162A]"
+                        className="inline-flex items-center gap-2 h-10 px-5 bg-[#C49D5B] text-white rounded-xl text-sm font-medium hover:bg-[#b08a4a]"
                     >
                         <Plus size={16} />
                         Nova Construtora

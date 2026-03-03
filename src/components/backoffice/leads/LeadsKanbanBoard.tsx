@@ -95,7 +95,7 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
         >
             {/* Indicador de Status/Score lateral */}
             <div className={`absolute left-0 top-0 bottom-0 w-1 ${lead.score >= 80 ? 'bg-green-500' :
-                    lead.score >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                lead.score >= 50 ? 'bg-yellow-500' : 'bg-red-500'
                 }`} />
 
             {/* Header */}
@@ -104,8 +104,8 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
                     <h4 className="font-bold text-gray-900 dark:text-white truncate">{lead.name}</h4>
                     <div className="flex items-center gap-2 mt-1">
                         <div className={`flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${lead.score >= 80 ? 'bg-green-100 text-green-700' :
-                                lead.score >= 50 ? 'bg-yellow-100 text-yellow-700' :
-                                    'bg-red-100 text-red-700'
+                            lead.score >= 50 ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-red-100 text-red-700'
                             }`}>
                             <TrendingUp size={10} />
                             Score {lead.score}
@@ -277,7 +277,7 @@ export default function LeadsKanbanBoard() {
             console.error('Error loading leads:', error)
             toast.error('Erro ao carregar leads')
         } else {
-            setLeads(data || [])
+            setLeads((data as unknown as Lead[]) || [])
         }
         setLoading(false)
     }

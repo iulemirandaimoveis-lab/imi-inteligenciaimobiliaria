@@ -17,29 +17,29 @@ const T = {
   text: 'var(--bo-text)',
   textMuted: 'var(--bo-text-muted)',
   textTertiary: 'var(--bo-text-tertiary, var(--bo-text-muted))',
-  gold: '#486581',
+  gold: '#C49D5B',
   shadow: 'var(--bo-shadow)',
 }
 
 /* ── Mock Data (unchanged) ──────────────────────────────────── */
 const CONVERSAS = [
-  { id: 1, nome: 'Maria Santos Silva', telefone: '+55 81 99876-5432', ultimaMensagem: 'Gostaria de agendar uma visita ao Reserva Imperial', horario: '14:32', naoLidas: 2, online: true, empresa: 'Hospital Português', status: 'Interessada' },
+  { id: 1, nome: 'Maria Santos Silva', telefone: '+55 81 99876-5432', ultimaMensagem: 'Gostaria de agendar uma visita ao Reserva Atlantis', horario: '14:32', naoLidas: 2, online: true, empresa: 'Hospital Português', status: 'Interessada' },
   { id: 2, nome: 'João Oliveira (Investidor)', telefone: '+55 81 98765-4321', ultimaMensagem: 'Como está o yield de locação em Boa Viagem?', horario: '11:05', naoLidas: 0, online: false, empresa: 'Family Office', status: 'Qualificado' },
-  { id: 3, nome: 'Ana Paula Ferreira', telefone: '+55 81 99123-4567', ultimaMensagem: 'Enviando o laudo da avaliação... 📎', horario: 'Ontem', naoLidas: 0, online: true, empresa: 'IMI', status: 'Time' },
+  { id: 3, nome: 'Ana Paula Ferreira', telefone: '+55 81 99123-4567', ultimaMensagem: 'Enviando o laudo da avaliação... 📎', horario: 'Ontem', naoLidas: 0, online: true, empresa: 'IMI Atlantis', status: 'Time' },
   { id: 4, nome: 'Carlos Eduardo', telefone: '+55 11 98888-7777', ultimaMensagem: 'Obrigado pelas fotos do Ocean Blue', horario: 'Ontem', naoLidas: 0, online: false, empresa: 'Prospecção SP', status: 'Frio' },
   { id: 5, nome: 'Ricardo Mendes', telefone: '+55 81 97777-6666', ultimaMensagem: 'Qual o valor do m² no Pina hoje?', horario: '18/02', naoLidas: 0, online: false, empresa: 'Construtora Moura Dubeux', status: 'Morno' },
 ]
 
 const MENSAGENS_INICIAIS = [
   { id: 1, texto: 'Olá Maria, bom dia! Como posso ajudar hoje?', eu: true, horario: '14:00', status: 'read' },
-  { id: 2, texto: 'Olá! Vi o anúncio do Reserva Imperial no Instagram e fiquei interessada.', eu: false, horario: '14:15' },
+  { id: 2, texto: 'Olá! Vi o anúncio do Reserva Atlantis no Instagram e fiquei interessada.', eu: false, horario: '14:15' },
   { id: 3, texto: 'Excelente escolha. É o produto com melhor performance em Boa Viagem hoje.', eu: true, horario: '14:20', status: 'read' },
   { id: 4, texto: 'Vocês têm unidades acima do 15º andar?', eu: false, horario: '14:30' },
-  { id: 5, texto: 'Gostaria de agendar uma visita ao Reserva Imperial', eu: false, horario: '14:32' },
+  { id: 5, texto: 'Gostaria de agendar uma visita ao Reserva Atlantis', eu: false, horario: '14:32' },
 ]
 
 const TEMPLATES_WHATSAPP = [
-  { id: 'visita', label: 'Agendar Visita', text: 'Olá [Nome], podemos agendar uma visita técnica para amanhã às 10h ou 15h? Estarei com o material completo do Reserva Imperial.' },
+  { id: 'visita', label: 'Agendar Visita', text: 'Olá [Nome], podemos agendar uma visita técnica para amanhã às 10h ou 15h? Estarei com o material completo do Reserva Atlantis.' },
   { id: 'laudo', label: 'Enviar Laudo', text: 'Segue em anexo o laudo de avaliação técnica conforme NBR 14653. Fico à disposição para dúvidas.' },
   { id: 'invest', label: 'Dados Investimento', text: 'O yield médio nesta região de Boa Viagem está em 0,72% a.m., com valorização histórica de 18% ao ano.' },
 ]
@@ -91,7 +91,7 @@ export default function WhatsappPage() {
           task_type: 'legenda',
           prompt: `Gere uma resposta curta (máx 2 parágrafos) para o cliente ${activeConversation.nome}.\nContexto da última mensagem dele: "${lastMsg}"`,
           platform: 'email',
-          context: `Empresa: IMI. Mercado Imobiliário de Luxo em Recife.`
+          context: `Empresa: IMI Atlantis. Mercado Imobiliário de Luxo em Recife.`
         })
       })
       const data = await res.json()
@@ -175,7 +175,7 @@ export default function WhatsappPage() {
               >
                 <div className="relative flex-shrink-0">
                   <div className="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm"
-                    style={{ background: 'rgba(26,26,46,0.12)', color: T.gold }}>
+                    style={{ background: 'rgba(196,157,91,0.12)', color: T.gold }}>
                     {conversa.nome[0]}
                   </div>
                   {conversa.online && (
@@ -216,7 +216,7 @@ export default function WhatsappPage() {
               <ArrowLeft size={20} />
             </button>
             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0"
-              style={{ background: 'rgba(26,26,46,0.12)', color: T.gold }}>
+              style={{ background: 'rgba(196,157,91,0.12)', color: T.gold }}>
               {activeConversation.nome[0]}
             </div>
             <div className="min-w-0">
@@ -227,7 +227,7 @@ export default function WhatsappPage() {
                 </span>
                 <span>•</span>
                 <span className="px-1.5 py-0.5 rounded-md"
-                  style={{ background: 'rgba(26,26,46,0.10)', color: T.gold }}>{activeConversation.status}</span>
+                  style={{ background: 'rgba(196,157,91,0.10)', color: T.gold }}>{activeConversation.status}</span>
               </div>
             </div>
           </div>
@@ -252,7 +252,7 @@ export default function WhatsappPage() {
 
         {/* WhatsApp API Disclaimer */}
         <div className="px-3 sm:px-5 py-1.5 flex items-center gap-2 flex-shrink-0"
-          style={{ background: 'var(--s-warm-bg)', borderBottom: `1px solid rgba(26,26,46,0.15)` }}>
+          style={{ background: 'var(--s-warm-bg)', borderBottom: `1px solid rgba(196,157,91,0.15)` }}>
           <ShieldCheck size={13} style={{ color: 'var(--s-warm)' }} />
           <p className="text-[10px] font-medium" style={{ color: 'var(--s-warm)' }}>
             Integração oficial via <span className="font-bold">WhatsApp Business API</span>. Mensagens criptografadas.
@@ -274,7 +274,7 @@ export default function WhatsappPage() {
               <div
                 className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 ${msg.eu ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}
                 style={msg.eu
-                  ? { background: '#486581', color: '#fff' }
+                  ? { background: '#C49D5B', color: '#fff' }
                   : { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
                 }
               >
@@ -295,7 +295,7 @@ export default function WhatsappPage() {
             <div className="mb-3 flex flex-wrap gap-2">
               {aiLoading ? (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold"
-                  style={{ background: 'rgba(26,26,46,0.10)', color: T.gold, border: `1px solid rgba(26,26,46,0.20)` }}>
+                  style={{ background: 'rgba(196,157,91,0.10)', color: T.gold, border: `1px solid rgba(196,157,91,0.20)` }}>
                   <Loader2 size={14} className="animate-spin" /> IA formulando resposta...
                 </div>
               ) : (
@@ -303,7 +303,7 @@ export default function WhatsappPage() {
                   {TEMPLATES_WHATSAPP.map(tpl => (
                     <button key={tpl.id} onClick={() => applyTemplate(tpl.text)}
                       className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
-                      style={{ background: 'rgba(26,26,46,0.10)', color: T.gold, border: `1px solid rgba(26,26,46,0.20)` }}>
+                      style={{ background: 'rgba(196,157,91,0.10)', color: T.gold, border: `1px solid rgba(196,157,91,0.20)` }}>
                       {tpl.label}
                     </button>
                   ))}
@@ -349,7 +349,7 @@ export default function WhatsappPage() {
             </div>
             <button onClick={handleSend} disabled={!newMessage.trim()}
               className="h-11 w-11 flex items-center justify-center rounded-2xl transition-all disabled:opacity-40 flex-shrink-0"
-              style={{ background: '#486581', color: '#fff' }}>
+              style={{ background: '#C49D5B', color: '#fff' }}>
               <Send size={18} />
             </button>
           </div>
@@ -364,7 +364,7 @@ export default function WhatsappPage() {
             <button className="absolute right-2 top-2 p-1 rounded-lg lg:hidden" onClick={() => setShowInfo(false)}
               style={{ color: T.textMuted }}><X size={16} /></button>
             <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold mb-3"
-              style={{ background: 'rgba(26,26,46,0.12)', color: T.gold }}>
+              style={{ background: 'rgba(196,157,91,0.12)', color: T.gold }}>
               {activeConversation.nome[0]}
             </div>
             <h3 className="font-bold text-sm" style={{ color: T.text }}>{activeConversation.nome}</h3>
@@ -394,7 +394,7 @@ export default function WhatsappPage() {
               <h4 className="text-[10px] font-bold uppercase tracking-widest mb-2.5" style={{ color: T.textTertiary }}>Segmentação</h4>
               <div className="flex flex-wrap gap-1.5">
                 <span className="px-2 py-1 rounded-lg text-[10px] font-bold"
-                  style={{ background: 'rgba(26,26,46,0.10)', color: T.gold, border: `1px solid rgba(26,26,46,0.20)` }}>Reserva Imperial</span>
+                  style={{ background: 'rgba(196,157,91,0.10)', color: T.gold, border: `1px solid rgba(196,157,91,0.20)` }}>Reserva Atlantis</span>
                 <span className="px-2 py-1 rounded-lg text-[10px] font-bold"
                   style={{ background: 'var(--s-cold-bg)', color: 'var(--s-cold)', border: '1px solid rgba(123,158,196,0.20)' }}>Investidor</span>
                 <span className="px-2 py-1 rounded-lg text-[10px] font-bold"
@@ -416,7 +416,7 @@ export default function WhatsappPage() {
 
           <div className="p-4 flex-shrink-0" style={{ borderTop: `1px solid ${T.border}`, background: T.elevated }}>
             <button className="w-full h-10 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
-              style={{ background: '#486581', color: '#fff' }}>
+              style={{ background: '#C49D5B', color: '#fff' }}>
               Ver Ficha Completa →
             </button>
           </div>

@@ -12,7 +12,7 @@ const T = {
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
     textTertiary: 'var(--bo-text-tertiary, var(--bo-text-muted))',
-    gold: '#486581',
+    gold: '#C49D5B',
     shadow: 'var(--bo-shadow)',
 }
 
@@ -129,7 +129,7 @@ export default function OmniChannelPage() {
                     <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                             <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                                style={{ background: 'rgba(26,26,46,0.12)' }}>
+                                style={{ background: 'rgba(196,157,91,0.12)' }}>
                                 <Layers size={24} style={{ color: T.gold }} />
                             </div>
                             <div className="flex-1">

@@ -31,7 +31,7 @@ const roiData = {
   topPerformers: [
     { name: 'Email Marketing Piedade', roi: 265625, revenue: 2125000, spent: 800 },
     { name: 'WhatsApp Business Pina', roi: 245000, revenue: 2940000, spent: 1200 },
-    { name: 'Lançamento Reserva Imperial', roi: 243750, revenue: 7800000, spent: 3200 },
+    { name: 'Lançamento Reserva Atlantis', roi: 243750, revenue: 7800000, spent: 3200 },
   ],
 
   // Bottom performers
@@ -78,7 +78,7 @@ export default function CampanhasROIPage() {
         <select
           value={periodoFilter}
           onChange={(e) => setPeriodoFilter(e.target.value)}
-          className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+          className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
         >
           <option value="semana">Última Semana</option>
           <option value="mes">Último Mês</option>

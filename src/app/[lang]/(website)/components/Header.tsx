@@ -1,7 +1,6 @@
 'use client'
+import NewHeader from '@/components/website/Header'
 
-import NewHeader from '@/components/imi/Header'
-
-export default function Header() {
-    return <NewHeader />
+export default function Header({ lang }: { lang: string }) {
+    return <NewHeader lang={lang} />
 }

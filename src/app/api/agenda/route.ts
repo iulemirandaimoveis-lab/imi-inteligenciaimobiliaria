@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function GET(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const { searchParams } = new URL(req.url)
         const month = searchParams.get('month') // YYYY-MM
         const id = searchParams.get('id')
@@ -38,7 +38,6 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const body = await req.json()
         const { title, description, event_type, start_time, end_time, all_day, location, color, related_type, related_id } = body
         if (!title || !start_time) return NextResponse.json({ error: 'title e start_time são obrigatórios' }, { status: 400 })
@@ -46,7 +45,7 @@ export async function POST(req: NextRequest) {
         const { data, error } = await supabase.from('calendar_events').insert({
             title, description: description || null, event_type: event_type || 'reuniao',
             start_time, end_time: end_time || null, all_day: all_day || false,
-            location: location || null, color: color || '#486581',
+            location: location || null, color: color || '#C49D5B',
             related_type: related_type || null, related_id: related_id || null,
         }).select().single()
 
@@ -59,7 +58,6 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const body = await req.json()
         const { id, ...updates } = body
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
@@ -74,7 +72,6 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })

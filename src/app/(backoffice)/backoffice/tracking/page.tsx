@@ -15,8 +15,8 @@ const T = {
     textMuted: 'var(--bo-text-muted)',
     border: 'var(--bo-border)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
-    accentBg: 'rgba(26,26,46,0.10)',
+    accent: '#C49D5B',
+    accentBg: 'rgba(196,157,91,0.10)',
 }
 
 interface Analytics {
@@ -84,14 +84,14 @@ export default function TrackingDashboardPage() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => router.push('/backoffice/tracking/qr')}
-                        className="h-9 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 text-white transition-all"
+                        className="min-h-[44px] min-w-[44px] px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 text-white transition-all"
                         style={{ background: T.accent }}
                     >
                         <QrCode size={14} /> Novo QR Code
                     </button>
                     <button
                         onClick={() => router.push('/backoffice/tracking/links')}
-                        className="h-9 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all"
+                        className="min-h-[44px] min-w-[44px] px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     >
                         <Link2 size={14} /> Links
@@ -106,7 +106,7 @@ export default function TrackingDashboardPage() {
                         <button
                             key={range}
                             onClick={() => setTimeRange(range)}
-                            className="h-8 px-3 rounded-lg text-[11px] font-semibold transition-all"
+                            className="min-h-[44px] min-w-[44px] px-3 rounded-lg text-[11px] font-semibold flex items-center justify-center transition-all"
                             style={{
                                 background: timeRange === range ? T.accent : T.elevated,
                                 color: timeRange === range ? '#fff' : T.textMuted,
@@ -119,7 +119,7 @@ export default function TrackingDashboardPage() {
                 </div>
                 <button
                     onClick={load}
-                    className="h-8 w-8 rounded-lg flex items-center justify-center transition-all"
+                    className="min-h-[44px] min-w-[44px] rounded-lg flex items-center justify-center transition-all"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                 >
                     <RefreshCw size={13} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
@@ -135,7 +135,7 @@ export default function TrackingDashboardPage() {
                     {/* ── KPIs Row 1 ── */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                         {[
-                            { icon: Eye, label: 'Page Views', value: data.kpis.totalPageViews.toLocaleString('pt-BR'), color: '#627D98' },
+                            { icon: Eye, label: 'Page Views', value: data.kpis.totalPageViews.toLocaleString('pt-BR'), color: '#60a5fa' },
                             { icon: Users, label: 'Sessões', value: data.kpis.totalSessions.toLocaleString('pt-BR'), color: '#a78bfa' },
                             { icon: MousePointer, label: 'Cliques', value: data.kpis.totalClicks.toLocaleString('pt-BR'), color: '#f59e0b' },
                             { icon: TrendingUp, label: 'Leads', value: data.kpis.totalLeads.toLocaleString('pt-BR'), color: '#34d399' },
@@ -278,7 +278,7 @@ export default function TrackingDashboardPage() {
                                             <div className="h-1.5 rounded-full" style={{ background: T.hover }}>
                                                 <div
                                                     className="h-full rounded-full transition-all duration-700"
-                                                    style={{ width: `${item.percentage}%`, background: '#627D98' }}
+                                                    style={{ width: `${item.percentage}%`, background: '#60a5fa' }}
                                                 />
                                             </div>
                                         </div>

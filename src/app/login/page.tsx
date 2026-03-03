@@ -106,7 +106,7 @@ export default function LoginPage() {
 
                 {/* Footer Section */}
                 <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-8">
-                    <p className="text-xs text-gray-500 font-medium">© 2026 IMI – Inteligência Imobiliária</p>
+                    <p className="text-xs text-gray-500 font-medium">© 2026 IMI ATLANTIS. LUXURY REAL ESTATE HUB.</p>
                     <div className="flex gap-4">
                         <ShieldCheck size={16} className="text-gray-600" />
                     </div>

@@ -22,18 +22,19 @@ import {
   Star,
   Globe,
   FileText,
+  Printer,
 } from 'lucide-react'
 
 const T = {
   bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
   border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
   text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-  gold: '#486581',
+  gold: '#C49D5B',
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
   disponivel: { label: 'Disponível', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-  em_negociacao: { label: 'Negociação', color: '#486581', bg: 'rgba(26,26,46,0.12)' },
+  em_negociacao: { label: 'Negociação', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
   reservado: { label: 'Reservado', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
   vendido: { label: 'Vendido', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
   lancamento: { label: 'Lançamento', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
@@ -53,6 +54,8 @@ export default function ImovelDetalhesPage() {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
+  const [loadingLiquidez, setLoadingLiquidez] = useState(false)
+  const [liquidezScore, setLiquidezScore] = useState<any>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'info'>('overview')
 
   useEffect(() => {
@@ -62,6 +65,9 @@ export default function ImovelDetalhesPage() {
         if (!res.ok) throw new Error('Erro ao carregar')
         const d = await res.json()
         setData(d)
+        if (d?.specs?.liquidity_score) {
+          setLiquidezScore(d.specs.liquidity_score)
+        }
       } catch (err: any) {
         console.error(err)
         toast.error('Erro ao carregar empreendimento')
@@ -71,6 +77,25 @@ export default function ImovelDetalhesPage() {
     }
     if (params.id) fetchDevelopment()
   }, [params.id])
+
+  const calculateLiquidez = async () => {
+    try {
+      setLoadingLiquidez(true)
+      const res = await fetch('/api/imoveis/liquidity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: params.id })
+      })
+      if (!res.ok) throw new Error('Falha ao calcular')
+      const result = await res.json()
+      setLiquidezScore(result.data)
+      toast.success('Score calculado com sucesso pela IA!')
+    } catch (err: any) {
+      toast.error('Erro ao calcular IA: ' + err.message)
+    } finally {
+      setLoadingLiquidez(false)
+    }
+  }
 
   const handleDelete = async () => {
     if (!confirm('Tem certeza que deseja arquivar este empreendimento?')) return
@@ -159,6 +184,14 @@ export default function ImovelDetalhesPage() {
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => router.push(`/backoffice/imoveis/${params.id}/placa`)}
+            className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-semibold"
+            style={{ border: `1px solid ${T.gold}`, color: T.gold, background: 'rgba(196,157,91,0.08)' }}
+          >
+            <Printer size={16} />
+            <span className="hidden md:inline">Gerar Placa</span>
+          </button>
+          <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
             className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-semibold text-white"
             style={{ background: T.gold }}
@@ -193,7 +226,7 @@ export default function ImovelDetalhesPage() {
           </div>
         )}
         {(data.price_min || data.price_max) && (
-          <div className="px-4 py-2 rounded-xl" style={{ background: 'rgba(26,26,46,0.08)', border: `1px solid ${T.borderGold}` }}>
+          <div className="px-4 py-2 rounded-xl" style={{ background: 'rgba(196,157,91,0.08)', border: `1px solid ${T.borderGold}` }}>
             <span className="text-sm font-bold" style={{ color: T.gold }}>
               {data.price_min && data.price_max
                 ? `${formatPrice(data.price_min)} - ${formatPrice(data.price_max)}`
@@ -339,6 +372,61 @@ export default function ImovelDetalhesPage() {
                 {data.units_count && <div className="flex justify-between pt-3" style={{ borderTop: `1px solid ${T.border}` }}><span className="text-sm" style={{ color: T.textDim }}>Total Unidades</span><span className="text-sm font-bold" style={{ color: T.text }}>{data.units_count}</span></div>}
                 {data.available_units && <div className="flex justify-between"><span className="text-sm" style={{ color: T.textDim }}>Disponíveis</span><span className="text-sm font-bold" style={{ color: '#6BB87B' }}>{data.available_units}</span></div>}
               </div>
+            </div>
+
+            {/* AI SCORE DE LIQUIDEZ */}
+            <div className="rounded-2xl p-6 relative overflow-hidden group" style={{ background: T.surface, border: `1px solid ${T.gold}40` }}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#C49D5B]/20 to-transparent blur-2xl rounded-full" />
+              <div className="relative z-10 flex items-center justify-between mb-4">
+                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-2" style={{ color: T.gold }}>
+                  <Star size={14} /> IMI SCORE (IA)
+                </h3>
+                {!liquidezScore && (
+                  <button
+                    onClick={calculateLiquidez}
+                    disabled={loadingLiquidez}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-all flex items-center gap-2 hover:opacity-80"
+                    style={{ background: T.gold, color: '#fff' }}
+                  >
+                    {loadingLiquidez ? <Loader2 size={12} className="animate-spin" /> : <Star size={12} />}
+                    Calcular
+                  </button>
+                )}
+              </div>
+
+              {liquidezScore ? (
+                <div className="space-y-4 relative z-10">
+                  <div className="flex items-end gap-3">
+                    <span className="text-4xl font-bold leading-none" style={{ color: T.gold }}>
+                      {liquidezScore.score}
+                    </span>
+                    <span className="text-sm font-medium mb-1" style={{ color: T.textDim }}>/ 100 pt</span>
+                  </div>
+                  <p className="text-sm italic" style={{ color: T.textSub }}>
+                    "{liquidezScore.analysis}"
+                  </p>
+                  {liquidezScore.strengths?.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-xs font-bold mb-1" style={{ color: '#6BB87B' }}>Pontos Fortes:</p>
+                      <ul className="list-disc ml-4 text-xs space-y-0.5" style={{ color: T.textSub }}>
+                        {liquidezScore.strengths.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                  {liquidezScore.weaknesses?.length > 0 && (
+                    <div className="mt-3">
+                      <p className="text-xs font-bold mb-1" style={{ color: '#E8A87C' }}>Pontos de Atenção:</p>
+                      <ul className="list-disc ml-4 text-xs space-y-0.5" style={{ color: T.textSub }}>
+                        {liquidezScore.weaknesses.map((w: string, i: number) => <li key={i}>{w}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-sm opacity-80 mt-2 relative z-10" style={{ color: T.textSub }}>
+                  A Inteligência Artificial pode avaliar todas as métricas deste imóvel para estipular a probabilidade e velocidade de conversão em vendas.
+                </div>
+              )}
             </div>
 
             {/* Quick Links */}

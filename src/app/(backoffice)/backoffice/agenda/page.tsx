@@ -22,9 +22,9 @@ const T = {
     card: 'bg-[#141420] border border-white/[.06] rounded-2xl',
     text: 'text-white',
     sub: 'text-white/50',
-    accent: '#486581',
-    accentBg: 'bg-[#102A43]',
-    input: 'bg-[#102A43] border border-white/10 text-white placeholder:text-white/30 rounded-xl',
+    accent: '#C49D5B',
+    accentBg: 'bg-[#C49D5B]',
+    input: 'bg-[#1a1a2e] border border-white/10 text-white placeholder:text-white/30 rounded-xl',
     badge: (c: string) => `bg-${c}/10 text-${c}`,
 }
 
@@ -44,11 +44,11 @@ interface CalendarEvent {
 }
 
 const EVENT_TYPES: Record<string, { label: string; color: string; icon: any }> = {
-    vistoria: { label: 'Vistoria', color: '#486581', icon: Home },
+    vistoria: { label: 'Vistoria', color: '#3B82F6', icon: Home },
     reuniao: { label: 'Reunião', color: '#8B5CF6', icon: Users },
     visita: { label: 'Visita', color: '#10B981', icon: MapPin },
     entrega: { label: 'Entrega', color: '#F59E0B', icon: FileText },
-    evento: { label: 'Evento', color: '#486581', icon: Calendar },
+    evento: { label: 'Evento', color: '#C49D5B', icon: Calendar },
     outro: { label: 'Outro', color: '#6B7280', icon: Calendar },
 }
 
@@ -178,7 +178,7 @@ export default function AgendaPage() {
 
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-[#486581]" size={32} />
+                        <Loader2 className="animate-spin text-[#C49D5B]" size={32} />
                     </div>
                 ) : (
                     <>
@@ -204,8 +204,8 @@ export default function AgendaPage() {
                                     const isToday = dateStr === new Date().toISOString().split('T')[0]
                                     return (
                                         <div key={dayNum}
-                                            className={`min-h-[80px] sm:min-h-[100px] border-b border-r border-white/[.04] p-1.5 sm:p-2 ${isToday ? 'bg-[#102A43]/5' : ''}`}>
-                                            <span className={`text-xs font-bold ${isToday ? 'text-[#486581]' : 'text-white/60'}`}>
+                                            className={`min-h-[80px] sm:min-h-[100px] border-b border-r border-white/[.04] p-1.5 sm:p-2 ${isToday ? 'bg-[#C49D5B]/5' : ''}`}>
+                                            <span className={`text-xs font-bold ${isToday ? 'text-[#C49D5B]' : 'text-white/60'}`}>
                                                 {dayNum}
                                             </span>
                                             <div className="mt-1 space-y-0.5">

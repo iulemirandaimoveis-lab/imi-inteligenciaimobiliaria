@@ -139,7 +139,7 @@ export default function EditarCampanhaPage() {
     // TODO: Fetch from Supabase
     setTimeout(() => {
       setFormData({
-        name: 'Lançamento Reserva Imperial - Instagram',
+        name: 'Lançamento Reserva Atlantis - Instagram',
         objective: 'Geração de Leads',
         channel: 'instagram',
         startDate: '2026-02-01',
@@ -153,13 +153,13 @@ export default function EditarCampanhaPage() {
         location: ['Boa Viagem', 'Pina'],
         interests: ['Imóveis de Luxo', 'Apartamentos'],
         adTitle: 'Seu Apartamento dos Sonhos em Boa Viagem',
-        adDescription: 'Conheça o Reserva Imperial, o empreendimento mais completo da região. Vista mar, área de lazer completa e acabamento premium.',
+        adDescription: 'Conheça o Reserva Atlantis, o empreendimento mais completo da região. Vista mar, área de lazer completa e acabamento premium.',
         callToAction: 'Agende Visita',
-        landingPageUrl: 'https://iulemirandaimoveis.com.br/imoveis/reserva-imperial',
+        landingPageUrl: 'https://iulemirandaimoveis.com.br/imoveis/reserva-atlantis',
         images: [],
         utmSource: 'instagram',
         utmMedium: 'paid',
-        utmCampaign: 'reserva-imperial-fev',
+        utmCampaign: 'reserva-atlantis-fev',
       })
       setIsLoading(false)
     }, 500)
@@ -368,7 +368,7 @@ export default function EditarCampanhaPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
-                    placeholder="Ex: Lançamento Reserva Imperial - Instagram"
+                    placeholder="Ex: Lançamento Reserva Atlantis - Instagram"
                     className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
                       }`}
                   />
@@ -832,7 +832,7 @@ export default function EditarCampanhaPage() {
                       type="text"
                       value={formData.utmCampaign}
                       onChange={(e) => handleChange('utmCampaign', e.target.value)}
-                      placeholder="reserva-imperial"
+                      placeholder="reserva-atlantis"
                       className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>

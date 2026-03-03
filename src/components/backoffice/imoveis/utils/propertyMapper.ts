@@ -81,8 +81,10 @@ export function mapDbPropertyToDevelopment(dbProp: any): Development {
             gallery: gallery,
             videos: videos,
             floorPlans: floorPlans,
-            virtualTour: dbProp.virtual_tour_url,
-            brochure: dbProp.brochure_url
+            virtualTour: dbProp.virtual_tour_url
+        },
+        externalLinks: {
+            bookUrl: dbProp.brochure_url
         },
         units: [], // Units are loaded separately on detail view if needed
         tags: Array.isArray(dbProp.tags) ? dbProp.tags : [],

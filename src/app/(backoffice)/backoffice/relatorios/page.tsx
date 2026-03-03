@@ -12,7 +12,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: '#C49D5B',
 }
 
 const RELATORIOS = [
@@ -52,7 +52,7 @@ const CAT_MAP: Record<string, { label: string; text: string; bg: string }> = {
     avaliacoes: { label: 'Avaliações', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
     financeiro: { label: 'Financeiro', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
     crm: { label: 'CRM', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
-    imoveis: { label: 'Imóveis', text: '#486581', bg: 'rgba(26,26,46,0.12)' },
+    imoveis: { label: 'Imóveis', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
     consultorias: { label: 'Consultorias', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
 }
 
@@ -119,7 +119,7 @@ export default function RelatoriosPage() {
                             onClick={() => setCatAtiva(cat)}
                             className="px-3.5 h-10 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: catAtiva === cat ? '#486581' : T.surface,
+                                background: catAtiva === cat ? '#C49D5B' : T.surface,
                                 color: catAtiva === cat ? 'white' : T.textDim,
                                 border: `1px solid ${catAtiva === cat ? T.borderGold : T.border}`,
                                 whiteSpace: 'nowrap',
@@ -150,7 +150,7 @@ export default function RelatoriosPage() {
                             <div className="flex items-start gap-4">
                                 {/* Icon */}
                                 <div className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
-                                    style={{ background: cat?.bg || 'rgba(26,26,46,0.10)' }}>
+                                    style={{ background: cat?.bg || 'rgba(196,157,91,0.10)' }}>
                                     <r.icon size={20} style={{ color: cat?.text || T.gold }} />
                                 </div>
 
@@ -192,8 +192,8 @@ export default function RelatoriosPage() {
                                     className="flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white transition-all"
                                     style={{
                                         background: loading
-                                            ? 'rgba(26,26,46,0.30)'
-                                            : '#486581',
+                                            ? 'rgba(196,157,91,0.30)'
+                                            : '#C49D5B',
                                         boxShadow: loading ? 'none' : '0 1px 2px rgba(0,0,0,0.1)',
                                         opacity: loading ? 0.7 : 1,
                                     }}

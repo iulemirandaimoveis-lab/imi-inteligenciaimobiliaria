@@ -1,9 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
@@ -21,7 +22,6 @@ export async function GET(request: NextRequest) {
     const sinceISO = sinceDate.toISOString()
 
     try {
-        const supabase = getSupabase()
         // 1. Get development info
         const { data: development } = await supabase
             .from('developments')
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
         // 2. Get tracked links for this development
         const { data: trackedLinks } = await supabase
-            .from('tracking_links')
+            .from('tracked_links')
             .select('id, campaign_name, clicks, utm_params, created_at')
             .eq('development_id', developmentId)
 

@@ -114,7 +114,7 @@ export default function UsuariosPage() {
         </div>
         <button
           onClick={() => router.push('/backoffice/settings/usuarios/novo')}
-          className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
+          className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
         >
           <Plus size={20} />
           Novo Usuário
@@ -169,13 +169,13 @@ export default function UsuariosPage() {
                   placeholder="Buscar por nome ou email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                  className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
               </div>
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+                className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
               >
                 <option value="all">Todas as roles</option>
                 <option value="ADMIN">Admin</option>
@@ -187,7 +187,7 @@ export default function UsuariosPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+                className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
               >
                 <option value="all">Todos os status</option>
                 <option value="ativo">Ativo</option>
@@ -203,7 +203,7 @@ export default function UsuariosPage() {
                 <div key={user.id} className="p-6 hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-4">
                     {/* Avatar */}
-                    <div className="w-12 h-12 bg-[#102A43] rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                    <div className="w-12 h-12 bg-accent-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
                       {user.avatar}
                     </div>
 

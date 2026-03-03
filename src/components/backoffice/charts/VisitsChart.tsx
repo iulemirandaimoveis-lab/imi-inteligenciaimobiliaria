@@ -27,8 +27,8 @@ export default function VisitsChart() {
                 >
                     <defs>
                         <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#486581" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#486581" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#D4AF37" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" opacity={0.3} />
@@ -57,7 +57,7 @@ export default function VisitsChart() {
                     <Area
                         type="monotone"
                         dataKey="visits"
-                        stroke="#486581"
+                        stroke="#D4AF37"
                         strokeWidth={3}
                         fillOpacity={1}
                         fill="url(#colorVisits)"

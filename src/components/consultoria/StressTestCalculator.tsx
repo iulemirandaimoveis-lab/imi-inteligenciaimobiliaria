@@ -35,12 +35,12 @@ export function StressTestCalculator() {
                         step="5"
                         value={vacancyRate}
                         onChange={(e) => setVacancyRate(Number(e.target.value))}
-                        className={`w-full h-2 rounded-lg appearance-none cursor-pointer transition-colors duration-500 ${isSafe ? 'bg-[#1A1E2A] accent-[#486581]' : 'bg-[#EF4444]/20 accent-[#EF4444]'}`}
+                        className={`w-full h-2 rounded-lg appearance-none cursor-pointer transition-colors duration-500 ${isSafe ? 'bg-[#1A1E2A] accent-[#C49D5B]' : 'bg-[#EF4444]/20 accent-[#EF4444]'}`}
                     />
                 </div>
 
                 <div className={`p-8 rounded-2xl border-2 transition-all duration-500 flex flex-col items-center text-center ${isSafe ? 'bg-[#141420] border-white/[0.05]' : 'bg-[#EF4444]/10 border-[#EF4444]/30 shadow-lg shadow-[#EF4444]/10'}`}>
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 ${isSafe ? 'bg-[#1A1E2A] text-[#486581] border border-white/10' : 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/30'}`}>
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 ${isSafe ? 'bg-[#1A1E2A] text-[#C49D5B] border border-white/10' : 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/30'}`}>
                         {isSafe ? <CheckCircle2 className="w-8 h-8" /> : <AlertTriangle className="w-8 h-8 animate-pulse" />}
                     </div>
 

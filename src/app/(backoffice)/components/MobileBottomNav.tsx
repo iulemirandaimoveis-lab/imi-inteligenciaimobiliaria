@@ -6,9 +6,9 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     LayoutDashboard, Building2, Users, BarChart3, X,
-    FileText, DollarSign, Briefcase, BookOpen, Settings,
-    MessageSquare, Bell, Banknote, FolderOpen, MoreHorizontal,
-    Scale, CreditCard, FileStack, Layers, Target, Zap, Mail, FileSignature, LogOut,
+    FileText, Briefcase, BookOpen, Settings,
+    MessageSquare, Banknote, FolderOpen, MoreHorizontal,
+    Scale, CreditCard, FileStack, Layers, Zap, FileSignature, LogOut,
     Megaphone, BarChart2, Plug
 } from 'lucide-react'
 
@@ -21,41 +21,44 @@ const MAIN = [
 
 const GROUPS = [
     {
-        label: 'Operações',
+        label: 'Operações Imobiliárias',
         items: [
+            { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
+            { name: 'Construtoras', href: '/backoffice/construtoras', icon: Building2 },
+            { name: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
             { name: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale },
-            { name: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova', icon: FileText },
             { name: 'Contratos', href: '/backoffice/contratos', icon: FileSignature },
-            { name: 'Email + Honorários', href: '/backoffice/avaliacoes/email-honorarios', icon: Mail },
-            { name: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
-            { name: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
             { name: 'Consultoria', href: '/backoffice/consultorias', icon: Briefcase },
-            { name: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+            { name: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
         ],
     },
     {
-        label: 'Portfólio',
+        label: 'Comercial',
         items: [
-            { name: 'Portfólio', href: '/backoffice/imoveis', icon: Building2 },
-            { name: 'Construtoras', href: '/backoffice/construtoras', icon: Building2 },
-            { name: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
+            { name: 'Leads', href: '/backoffice/leads', icon: Users },
+            { name: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+            { name: 'Omni Channel', href: '/backoffice/omnichannel', icon: Layers },
+        ],
+    },
+    {
+        label: 'Financeiro',
+        items: [
             { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
         ],
     },
     {
-        label: 'Gestão',
+        label: 'Marketing & Growth',
         items: [
-            { name: 'Leads', href: '/backoffice/leads', icon: Users },
-            { name: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
+            { name: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
+            { name: 'Conteúdos', href: '/backoffice/conteudos', icon: FileText },
+            { name: 'Tracking', href: '/backoffice/tracking', icon: BarChart2 },
             { name: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
         ],
     },
     {
-        label: 'Marketing',
+        label: 'Relatórios',
         items: [
-            { name: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
-            { name: 'Conteúdo', href: '/backoffice/conteudos', icon: FileText },
-            { name: 'Tracking', href: '/backoffice/tracking', icon: BarChart2 },
+            { name: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
         ],
     },
     {
@@ -63,8 +66,8 @@ const GROUPS = [
         items: [
             { name: 'Equipe', href: '/backoffice/equipe', icon: Users },
             { name: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
-            { name: 'Configurações', href: '/backoffice/settings', icon: Settings },
             { name: 'Automações', href: '/backoffice/automacoes', icon: Zap },
+            { name: 'Configurações', href: '/backoffice/settings', icon: Settings },
         ],
     },
 ]
@@ -88,23 +91,25 @@ export function MobileBottomNav() {
                 style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
                 <div
-                    className="mx-2 mb-2 rounded-xl overflow-hidden transition-colors"
+                    className="mx-3 mb-3 rounded-2xl overflow-hidden transition-colors"
                     style={{
                         background: 'var(--nav-bg)',
                         backdropFilter: 'blur(24px)',
                         WebkitBackdropFilter: 'blur(24px)',
                         border: '1px solid var(--bo-border)',
                         boxShadow: 'var(--bo-shadow)',
+                        height: '60px',
                     }}
                 >
-                    <div className="flex items-center justify-between px-2">
+                    <div className="flex items-center justify-between px-1 h-full">
                         {MAIN.map(item => {
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
                                 <Link key={item.href} href={item.href} className="flex-1">
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="relative flex flex-col items-center justify-center py-2.5 w-full"
+                                        className="relative flex flex-col items-center justify-center w-full"
+                                        style={{ minHeight: '44px' }}
                                     >
                                         <AnimatePresence>
                                             {active && (
@@ -114,18 +119,18 @@ export function MobileBottomNav() {
                                                     animate={{ opacity: 1, scale: 1 }}
                                                     exit={{ opacity: 0, scale: 0.7 }}
                                                     transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-                                                    className="absolute inset-0 mx-1.5 rounded-lg"
+                                                    className="absolute inset-0 mx-1 rounded-xl"
                                                     style={{ background: 'var(--bo-active-bg)' }}
                                                 />
                                             )}
                                         </AnimatePresence>
                                         <item.icon
-                                            size={18}
+                                            size={20}
                                             className="relative transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="relative text-[9px] font-medium mt-0.5 transition-colors duration-150"
+                                            className="relative text-[10px] font-semibold mt-0.5 transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
@@ -139,7 +144,8 @@ export function MobileBottomNav() {
                         <motion.button
                             whileTap={{ scale: 0.85 }}
                             onClick={() => setOpen(!open)}
-                            className="relative flex-1 flex flex-col items-center justify-center py-2.5"
+                            className="relative flex-1 flex flex-col items-center justify-center"
+                            style={{ minHeight: '44px' }}
                         >
                             <AnimatePresence>
                                 {open && (
@@ -163,7 +169,7 @@ export function MobileBottomNav() {
                                 }
                             </motion.span>
                             <span
-                                className="relative text-[9px] font-semibold mt-1 transition-colors"
+                                className="relative text-[10px] font-semibold mt-0.5 transition-colors"
                                 style={{ color: open ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                             >
                                 Menu
@@ -184,7 +190,7 @@ export function MobileBottomNav() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
                             className="lg:hidden fixed inset-0 z-40"
-                            style={{ background: 'rgba(7,9,13,0.75)', backdropFilter: 'blur(6px)' }}
+                            style={{ background: 'var(--backdrop-bg, rgba(0,0,0,0.4))', backdropFilter: 'blur(6px)' }}
                             onClick={() => setOpen(false)}
                         />
 
@@ -237,11 +243,11 @@ export function MobileBottomNav() {
                             </div>
 
                             {/* Groups */}
-                            <div className="overflow-y-auto flex-1 pb-[calc(88px+env(safe-area-inset-bottom))]">
+                            <div className="overflow-y-auto flex-1 pb-[calc(80px+env(safe-area-inset-bottom))]">
                                 {GROUPS.map((group, gi) => (
                                     <div key={group.label} className="pt-4">
                                         <p
-                                            className="px-6 pb-2 text-[9px] font-bold uppercase tracking-[0.12em]"
+                                            className="px-6 pb-2 text-[10px] font-bold uppercase tracking-[0.12em]"
                                             style={{ color: 'var(--bo-text-muted)' }}
                                         >
                                             {group.label}
@@ -258,8 +264,9 @@ export function MobileBottomNav() {
                                                     <Link
                                                         href={item.href}
                                                         onClick={() => setOpen(false)}
-                                                        className="flex items-center gap-4 px-5 py-3 mx-2 rounded-xl transition-all"
+                                                        className="flex items-center gap-4 px-5 mx-2 rounded-xl transition-all"
                                                         style={{
+                                                            minHeight: '44px',
                                                             background: active ? 'var(--bo-active-bg)' : 'transparent',
                                                             color: active ? 'var(--nav-active)' : 'var(--bo-text-muted)',
                                                         }}
@@ -273,7 +280,7 @@ export function MobileBottomNav() {
                                                         <div
                                                             className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors"
                                                             style={{
-                                                                background: active ? 'rgba(26,26,46,0.15)' : 'var(--bo-icon-bg)',
+                                                                background: active ? 'rgba(196,157,91,0.15)' : 'var(--bo-icon-bg)',
                                                             }}
                                                         >
                                                             <item.icon size={15} />

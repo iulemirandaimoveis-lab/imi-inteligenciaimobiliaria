@@ -144,7 +144,7 @@ export default function ContasBancariasPage() {
                 </div>
                 <button
                     onClick={() => router.push('/backoffice/financeiro/contas/nova')}
-                    className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
+                    className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
                 >
                     <Plus size={20} />
                     Nova Conta
@@ -185,13 +185,13 @@ export default function ContasBancariasPage() {
                             placeholder="Buscar por banco ou conta..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                         />
                     </div>
                     <select
                         value={tipoFilter}
                         onChange={(e) => setTipoFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
                     >
                         <option value="all">Todos os tipos</option>
                         <option value="Corrente">Corrente</option>
@@ -218,7 +218,7 @@ export default function ContasBancariasPage() {
                                 <div className="flex items-start gap-3">
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${conta.ativa ? 'bg-accent-50' : 'bg-gray-200'
                                         }`}>
-                                        <Building2 size={24} className={conta.ativa ? 'text-[#486581]' : 'text-gray-500'} />
+                                        <Building2 size={24} className={conta.ativa ? 'text-accent-600' : 'text-gray-500'} />
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-gray-900 mb-1">{conta.banco}</h3>
@@ -317,7 +317,7 @@ export default function ContasBancariasPage() {
                     <p className="text-gray-600 mb-6">Tente ajustar os filtros ou adicionar uma nova conta</p>
                     <button
                         onClick={() => router.push('/backoffice/financeiro/contas/nova')}
-                        className="inline-flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]"
+                        className="inline-flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700"
                     >
                         <Plus size={20} />
                         Nova Conta

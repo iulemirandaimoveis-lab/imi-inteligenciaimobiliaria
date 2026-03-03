@@ -100,7 +100,7 @@ function generateLocalContractMarkdown(
   md += `______________________________________________________________\n`
   md += `**${contratado.nome || contratado.razao_social || 'PARTE B'}**\n\n`
   
-  md += `\n\n---\n*Desenvolvido e gerado via plataforma IMI – Inteligência Imobiliária por ${criadoPorNome} em ${dataAtual}. Modelo base: ${modelo.nome} (${idiomaInfo.label})*`
+  md += `\n\n---\n*Desenvolvido e gerado via plataforma IMI Atlantis por ${criadoPorNome} em ${dataAtual}. Modelo base: ${modelo.nome} (${idiomaInfo.label})*`
   
   return md
 }
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
       contratante,
       contratado,
       dados_contrato,
-      criado_por_nome || 'IMI – Inteligência Imobiliária',
+      criado_por_nome || 'IMI Atlantis',
       notas_adicionais
     )
 

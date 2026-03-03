@@ -11,7 +11,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: '#C49D5B',
 }
 
 interface AnalyticsData {
@@ -78,10 +78,10 @@ export default function ImovelAnalyticsPage() {
 
     const KPI_CARDS = [
         { label: 'Total Cliques', value: kpis.totalClicks.toLocaleString('pt-BR'), icon: MousePointer, color: '#A89EC4' },
-        { label: 'Links Ativos', value: kpis.trackedLinksCount, icon: Link2, color: '#486581' },
+        { label: 'Links Ativos', value: kpis.trackedLinksCount, icon: Link2, color: '#C49D5B' },
         { label: 'Leads Gerados', value: kpis.totalLeads, icon: Users, color: '#E8A87C' },
         { label: 'Conversões', value: kpis.convertedLeads, icon: Target, color: '#6BB87B' },
-        { label: 'Taxa Conversão', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: '#486581' },
+        { label: 'Taxa Conversão', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: '#C49D5B' },
         { label: 'Eventos', value: kpis.totalEvents, icon: BarChart3, color: '#A89EC4' },
     ]
 

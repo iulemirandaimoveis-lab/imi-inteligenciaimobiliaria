@@ -17,7 +17,7 @@ interface DevelopmentCardProps {
 export default function DevelopmentCard({ development, index, lang }: DevelopmentCardProps) {
     const statusColors = {
         launch: 'bg-white/10 text-white backdrop-blur-md border border-white/20',
-        ready: 'bg-[#102A43]/20 text-[#486581] border border-[#334E68]/30 backdrop-blur-md',
+        ready: 'bg-[#C49D5B]/20 text-[#C49D5B] border border-[#C49D5B]/30 backdrop-blur-md',
         under_construction: 'bg-blue-500/20 text-blue-300 border border-blue-500/30 backdrop-blur-md'
     };
 
@@ -41,18 +41,17 @@ export default function DevelopmentCard({ development, index, lang }: Developmen
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: index * 0.08 }}
-            className="group bg-[#141420] rounded-2xl md:rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#334E68]/30 transition-all duration-500 flex flex-col h-full"
+            transition={{ duration: 0.5, delay: index * 0.1 }}
+            className="group bg-[#141420] rounded-3xl overflow-hidden border border-white/[0.05] hover:border-[#C49D5B]/40 hover:shadow-[0_8px_32px_rgba(196,157,91,0.15)] transition-all duration-500 flex flex-col h-full"
         >
-            {/* Imagem — dominant, cinematic aspect */}
-            <Link href={`/${lang}/imoveis/${development.slug}`} className="block aspect-[4/3] relative bg-[#0D0F14] overflow-hidden">
+            {/* Imagem */}
+            <Link href={`/${lang}/imoveis/${development.slug}`} className="block aspect-[16/11] relative bg-[#0D0F14] overflow-hidden">
                 {development.images.main ? (
                     <Image
                         src={development.images.main}
                         alt={development.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-[800ms] ease-out"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-[#1A1E2A] via-[#141420] to-[#0D0F14] flex flex-col items-center justify-center p-8">
@@ -69,107 +68,89 @@ export default function DevelopmentCard({ development, index, lang }: Developmen
                                 </div>
                             </div>
                         ) : (
-                            <Building2 className="w-14 h-14 text-white/15 mb-3" strokeWidth={1} />
+                            <Building2 className="w-16 h-16 text-white/20 mb-3" strokeWidth={1} />
                         )}
-                        <span className="text-[10px] text-[#9CA3AF]/60 font-bold px-4 text-center uppercase tracking-[0.2em] leading-relaxed">
+                        <span className="text-[10px] text-[#9CA3AF] font-bold px-4 text-center uppercase tracking-[0.2em] leading-relaxed">
                             {development.name}
                         </span>
                     </div>
                 )}
 
-                {/* Overlay — subtle gradient only at bottom for legibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#141420]/80 via-transparent to-transparent" />
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#141420] via-[#141420]/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
-                {/* Status + Location badges */}
-                <div className="absolute top-4 left-4 flex items-center gap-1.5">
-                    <span className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] rounded-lg ${statusColors[development.status]}`}>
+                {/* Badges Frontais */}
+                <div className="absolute top-5 left-5 flex flex-col gap-2">
+                    <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest rounded-md ${statusColors[development.status]}`}>
                         {statusLabels[development.status]}
                     </span>
-                </div>
-                <div className="absolute top-4 right-4">
-                    <span className="inline-flex items-center px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] rounded-lg bg-black/40 text-white/80 backdrop-blur-sm border border-white/10">
-                        <MapPin size={9} className="mr-1 opacity-60" />
+                    <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest rounded-md bg-white/10 text-white backdrop-blur-md border border-white/20 capitalize">
+                        <MapPin size={10} className="mr-1" />
                         {regionLabels[development.region] || development.region || 'Internacional'}
                     </span>
                 </div>
-
-                {/* Bottom image overlay: price preview on hover (desktop) */}
-                <div className="absolute bottom-0 inset-x-0 p-5 hidden md:flex items-end justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <p className="text-white/90 text-xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                        {development.name}
-                    </p>
-                </div>
             </Link>
 
-            {/* Content — refined spacing */}
-            <div className="p-5 md:p-6 flex flex-col flex-grow">
-                {/* Title + Developer */}
-                <div className="flex justify-between items-start gap-3 mb-3">
-                    <Link href={`/${lang}/imoveis/${development.slug}`} className="flex-1 min-w-0">
-                        <h3 className="font-bold text-lg text-white leading-snug group-hover:text-[#829AB1] transition-colors duration-300" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            {/* Conteúdo */}
+            <div className="p-8 flex flex-col flex-grow">
+                <div className="flex justify-between items-start mb-4">
+                    <Link href={`/${lang}/imoveis/${development.slug}`}>
+                        <h3 className="font-display font-bold text-xl text-white leading-tight group-hover:text-[#C49D5B] transition-colors">
                             {development.name}
                         </h3>
                     </Link>
                     {development.developerLogo && (
-                        <div className="relative w-12 h-8 flex-shrink-0 bg-white rounded-md p-1 flex items-center justify-center opacity-60 group-hover:opacity-100 transition-opacity">
+                        <div className="relative w-14 h-9 md:w-16 md:h-10 flex-shrink-0 bg-white rounded-lg p-1.5 border border-white/10 flex items-center justify-center">
                             <div className="relative w-full h-full">
                                 <Image
                                     src={development.developerLogo}
                                     alt={development.developer}
                                     fill
-                                    className="object-contain"
-                                    sizes="48px"
+                                    className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                                    sizes="64px"
                                 />
                             </div>
                         </div>
                     )}
                 </div>
 
-                {/* Location */}
-                <div className="flex items-center gap-1.5 text-[#9CA3AF] text-[13px] mb-5 font-light">
-                    <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-[#627D98]" />
-                    <span className="truncate">{development.location.neighborhood}, {development.location.city}/{development.location.state}</span>
+                <div className="flex items-start gap-2 text-[#9CA3AF] text-sm mb-6 font-light">
+                    <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#C49D5B]" />
+                    <span>{development.location.neighborhood}, {development.location.city}/{development.location.state}</span>
                 </div>
 
-                {/* Specs — horizontal chips */}
-                <div className="flex items-center gap-3 py-4 border-t border-white/[0.05] mb-5">
+                {/* Specs Grid */}
+                <div className="grid grid-cols-3 gap-4 py-6 border-y border-white/[0.05] mb-8">
                     {development.specs.bedroomsRange && (
-                        <div className="flex items-center gap-1.5">
-                            <Bed className="w-3.5 h-3.5 text-[#627D98]/60" />
-                            <span className="text-[11px] font-semibold text-white/80">{development.specs.bedroomsRange}</span>
+                        <div className="flex flex-col gap-1">
+                            <Bed className="w-4 h-4 text-[#C49D5B]/70" />
+                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">{development.specs.bedroomsRange} dorms</span>
                         </div>
                     )}
-                    <div className="w-px h-3 bg-white/10" />
-                    <div className="flex items-center gap-1.5">
-                        <Maximize className="w-3.5 h-3.5 text-[#627D98]/60" />
-                        <span className="text-[11px] font-semibold text-white/80">{development.specs.areaRange}</span>
+                    <div className="flex flex-col gap-1">
+                        <Maximize className="w-4 h-4 text-[#C49D5B]/70" />
+                        <span className="text-[10px] font-bold text-white uppercase tracking-wider">{development.specs.areaRange}</span>
                     </div>
                     {development.specs.parkingRange && (
-                        <>
-                            <div className="w-px h-3 bg-white/10" />
-                            <div className="flex items-center gap-1.5">
-                                <Car className="w-3.5 h-3.5 text-[#627D98]/60" />
-                                <span className="text-[11px] font-semibold text-white/80">{development.specs.parkingRange}</span>
-                            </div>
-                        </>
+                        <div className="flex flex-col gap-1">
+                            <Car className="w-4 h-4 text-[#C49D5B]/70" />
+                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">{development.specs.parkingRange} vagas</span>
+                        </div>
                     )}
                 </div>
 
-                {/* Price + CTA — elegant bottom row */}
-                <div className="flex items-end justify-between mt-auto pt-1">
+                {/* Preço e CTA */}
+                <div className="flex items-center justify-between mt-auto">
                     <div>
-                        <p className="text-[9px] text-[#627D98] mb-0.5 uppercase tracking-[0.15em] font-semibold">Investimento de</p>
-                        <p className="text-[22px] font-bold text-white tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                            <span className="text-[11px] mr-0.5 font-sans text-[#627D98] font-medium">R$</span>
-                            {development.priceRange.min >= 1000000
-                                ? `${(development.priceRange.min / 1000000).toFixed(1).replace('.0', '')}M`
-                                : development.priceRange.min.toLocaleString('pt-BR')
-                            }
+                        <p className="text-[10px] text-[#6C757D] mb-1 uppercase tracking-widest font-bold">Investimento de</p>
+                        <p className="text-2xl font-bold text-white font-display">
+                            <span className="text-xs mr-1 font-sans text-[#6C757D]">R$</span>
+                            {development.priceRange.min.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                         </p>
                     </div>
                     <Link
                         href={`/${lang}/imoveis/${development.slug}`}
-                        className="inline-flex items-center justify-center h-10 px-5 rounded-xl text-[11px] font-bold uppercase tracking-[0.1em] bg-[#102A43] text-white/90 hover:bg-[#1A2F44] transition-all duration-300 border border-[#1A2F44] hover:border-[#334E68]/50"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-2 rounded-xl text-[12px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white border border-[#21263A] hover:bg-[#21263A] hover:border-[#C49D5B]/50 transition-all shadow-[0_4px_12px_rgba(0,0,0,0.2)]"
                     >
                         Explorar
                     </Link>

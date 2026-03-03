@@ -14,7 +14,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: '#C49D5B',
 }
 
 // No fallback mock — real Supabase data only
@@ -36,12 +36,12 @@ interface Lead {
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
     hot: { label: 'Quente', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-    warm: { label: 'Morno', text: '#486581', bg: 'rgba(26,26,46,0.12)' },
+    warm: { label: 'Morno', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
     cold: { label: 'Frio', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
 }
 
 const scoreColor = (s: number) =>
-    s >= 85 ? '#6BB87B' : s >= 70 ? '#486581' : '#7B9EC4'
+    s >= 85 ? '#6BB87B' : s >= 70 ? '#C49D5B' : '#7B9EC4'
 
 const timeAgo = (d: string) => {
     const diff = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
@@ -172,8 +172,8 @@ export default function LeadsPage() {
                 <motion.button
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/leads/novo')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
+                    className="flex items-center gap-2 min-h-[44px] min-w-[44px] px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Novo Lead
                 </motion.button>
@@ -215,15 +215,15 @@ export default function LeadsPage() {
                     </div>
 
                     {/* Filter tabs */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto flex-shrink-0 pb-0.5">
+                    <div className="flex items-center gap-1.5 overflow-x-auto flex-shrink-0">
                         {['all', 'hot', 'warm', 'cold'].map(s => (
                             <button
                                 key={s}
                                 onClick={() => setFilter(s)}
-                                className="px-3.5 h-10 rounded-xl text-xs font-semibold transition-all whitespace-nowrap"
+                                className="px-3.5 min-h-[44px] min-w-[44px] rounded-xl text-xs font-semibold transition-all"
                                 style={{
                                     background: filter === s
-                                        ? (s === 'all' ? '#486581' : STATUS_CFG[s]?.bg || T.elevated)
+                                        ? (s === 'all' ? '#C49D5B' : STATUS_CFG[s]?.bg || T.elevated)
                                         : T.elevated,
                                     color: filter === s
                                         ? (s === 'all' ? 'white' : STATUS_CFG[s]?.text || T.textSub)
@@ -267,7 +267,7 @@ export default function LeadsPage() {
                                 {/* Avatar */}
                                 <div
                                     className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                                    style={{ background: 'rgba(26,26,46,0.15)', color: T.gold }}
+                                    style={{ background: 'rgba(196,157,91,0.15)', color: T.gold }}
                                 >
                                     {lead.name.charAt(0)}
                                 </div>
@@ -285,14 +285,14 @@ export default function LeadsPage() {
                                             {sc.label}
                                         </span>
                                     </div>
-                                    <div className="flex items-center gap-2 overflow-hidden">
-                                        <span className="text-[11px] flex items-center gap-1 truncate" style={{ color: T.textDim }}>
-                                            <MapPin size={10} className="flex-shrink-0" /> <span className="truncate">{lead.location}</span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textDim }}>
+                                            <MapPin size={10} /> {lead.location}
                                         </span>
-                                        <span className="text-[11px] truncate hidden xs:inline" style={{ color: T.textDim }}>
+                                        <span className="text-[11px]" style={{ color: T.textDim }}>
                                             {lead.interest}
                                         </span>
-                                        <span className="text-[11px] truncate hidden sm:inline" style={{ color: T.textDim }}>
+                                        <span className="text-[11px] hidden sm:block" style={{ color: T.textDim }}>
                                             {lead.source}
                                         </span>
                                     </div>
@@ -319,7 +319,7 @@ export default function LeadsPage() {
                                     <motion.button
                                         whileTap={{ scale: 0.9 }}
                                         onClick={e => { e.stopPropagation(); window.location.href = `tel:${lead.phone}` }}
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
+                                        className="min-w-[44px] min-h-[44px] rounded-xl flex items-center justify-center transition-all"
                                         style={{ background: 'transparent' }}
                                         onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
                                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
@@ -329,7 +329,7 @@ export default function LeadsPage() {
                                     <motion.button
                                         whileTap={{ scale: 0.9 }}
                                         onClick={e => { e.stopPropagation(); window.location.href = `mailto:${lead.email}` }}
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
+                                        className="min-w-[44px] min-h-[44px] rounded-xl flex items-center justify-center transition-all"
                                         style={{ background: 'transparent' }}
                                         onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
                                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
@@ -361,8 +361,8 @@ export default function LeadsPage() {
                         <motion.button
                             whileTap={{ scale: 0.96 }}
                             onClick={() => router.push('/backoffice/leads/novo')}
-                            className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
-                            style={{ background: '#486581' }}
+                            className="mt-4 flex items-center justify-center gap-2 min-h-[44px] min-w-[44px] px-4 rounded-xl text-xs font-semibold text-white"
+                            style={{ background: '#C49D5B' }}
                         >
                             <Plus size={14} /> Novo Lead
                         </motion.button>

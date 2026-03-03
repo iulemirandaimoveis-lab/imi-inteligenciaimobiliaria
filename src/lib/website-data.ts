@@ -4,8 +4,8 @@ import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
 
 // Use direct supabase-js client for public data fetching
 // This avoids issues with cookies and server context in Next.js 14
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 export async function getDevelopments(): Promise<Development[]> {

@@ -2,14 +2,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 // GET — list automation workflows
 export async function GET(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
         const active = searchParams.get('active') // 'true' or 'false'
@@ -43,7 +43,6 @@ export async function GET(req: NextRequest) {
 // POST — create workflow
 export async function POST(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const body = await req.json()
         const { name, description, trigger_type, config, is_active } = body
 
@@ -72,7 +71,6 @@ export async function POST(req: NextRequest) {
 // PUT — update workflow
 export async function PUT(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const body = await req.json()
         const { id, ...updates } = body
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
@@ -96,7 +94,6 @@ export async function PUT(req: NextRequest) {
 // DELETE — remove workflow
 export async function DELETE(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })

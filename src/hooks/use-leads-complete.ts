@@ -114,7 +114,7 @@ export function useLeads(filters: LeadFilters = {}) {
 
             if (error) throw error
 
-            return { data: data as Lead[], count }
+            return { data: data as unknown as Lead[], count }
         }
     )
 
@@ -146,7 +146,7 @@ export function useLead(id: string | null) {
                 .single()
 
             if (error) throw error
-            return data as Lead
+            return data as unknown as Lead
         }
     )
 

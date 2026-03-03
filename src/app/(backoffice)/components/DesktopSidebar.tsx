@@ -168,7 +168,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     {item.badge && (
                         <span
                             className="text-[10px] px-1.5 py-0.5 rounded-full font-bold text-white"
-                            style={{ background: 'rgba(26,26,46,0.60)' }}
+                            style={{ background: 'rgba(196,157,91,0.60)' }}
                         >
                             {item.badge}
                         </span>
@@ -219,7 +219,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     ? 'linear-gradient(135deg, var(--accent-500), var(--accent-600))'
                     : 'transparent',
                 fontWeight: isActive ? 600 : 400,
-                boxShadow: isActive ? '0 2px 12px rgba(26,26,46,0.25)' : 'none',
+                boxShadow: isActive ? '0 2px 12px rgba(196,157,91,0.25)' : 'none',
             }}
             onMouseEnter={e => {
                 if (!isActive) {
@@ -239,7 +239,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 <motion.div
                     layoutId="sidebar-active"
                     className="absolute -left-[11px] top-1/2 w-[3px] h-4 rounded-full"
-                    style={{ background: '#486581', transform: 'translateY(-50%)' }}
+                    style={{ background: '#C49D5B', transform: 'translateY(-50%)' }}
                     transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                 />
             )}
@@ -248,7 +248,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             {item.badge && (
                 <span
                     className="text-[10px] px-1.5 py-0.5 rounded-full font-bold text-white"
-                    style={{ background: 'rgba(26,26,46,0.60)' }}
+                    style={{ background: 'rgba(196,157,91,0.60)' }}
                 >
                     {item.badge}
                 </span>
@@ -270,7 +270,7 @@ export function DesktopSidebar() {
             <div
                 className="absolute top-0 right-0 w-32 h-48 pointer-events-none"
                 style={{
-                    background: 'radial-gradient(ellipse at top right, rgba(26,26,46,0.06) 0%, transparent 70%)',
+                    background: 'radial-gradient(ellipse at top right, rgba(196,157,91,0.06) 0%, transparent 70%)',
                 }}
             />
             {/* Logo */}

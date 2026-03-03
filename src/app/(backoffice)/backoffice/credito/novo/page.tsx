@@ -172,7 +172,7 @@ export default function CreditoNovoPage() {
                       ${currentStep > step.id
                                                 ? 'bg-green-500 text-white rotate-[360deg]'
                                                 : currentStep === step.id
-                                                    ? 'bg-[#102A43] text-white scale-110 shadow-glow'
+                                                    ? 'bg-accent-500 text-white scale-110 shadow-glow'
                                                     : 'bg-white text-imi-300 border border-imi-100'
                                             }
                     `}
@@ -451,7 +451,7 @@ export default function CreditoNovoPage() {
 
                             <div className="p-8 bg-imi-950 rounded-2xl border border-imi-800 shadow-elevated">
                                 <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-[#102A43]/20 flex items-center justify-center shrink-0">
+                                    <div className="w-10 h-10 rounded-xl bg-accent-500/20 flex items-center justify-center shrink-0">
                                         <Check size={20} className="text-accent-400" />
                                     </div>
                                     <div>
@@ -461,19 +461,19 @@ export default function CreditoNovoPage() {
                                         </p>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2">
                                             <div className="flex items-center gap-2 text-xs text-imi-400">
-                                                <span className="w-1 h-1 bg-[#102A43] rounded-full"></span>
+                                                <span className="w-1 h-1 bg-accent-500 rounded-full"></span>
                                                 Documentos de Identidade (RG/CNH)
                                             </div>
                                             <div className="flex items-center gap-2 text-xs text-imi-400">
-                                                <span className="w-1 h-1 bg-[#102A43] rounded-full"></span>
+                                                <span className="w-1 h-1 bg-accent-500 rounded-full"></span>
                                                 Comprovante de Residência Atualizado
                                             </div>
                                             <div className="flex items-center gap-2 text-xs text-imi-400">
-                                                <span className="w-1 h-1 bg-[#102A43] rounded-full"></span>
+                                                <span className="w-1 h-1 bg-accent-500 rounded-full"></span>
                                                 Holerites / DECORE (Últimos 3 meses)
                                             </div>
                                             <div className="flex items-center gap-2 text-xs text-imi-400">
-                                                <span className="w-1 h-1 bg-[#102A43] rounded-full"></span>
+                                                <span className="w-1 h-1 bg-accent-500 rounded-full"></span>
                                                 IRPF Completo com Recibo de Entrega
                                             </div>
                                         </div>

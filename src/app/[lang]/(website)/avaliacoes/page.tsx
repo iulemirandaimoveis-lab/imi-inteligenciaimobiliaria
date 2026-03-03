@@ -1,187 +1,296 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ShieldCheck, Home, Landmark, Scale, Briefcase, MessageCircle, CheckCircle } from 'lucide-react'
-import AppraisalForm from '@/components/forms/AppraisalForm'
+import Link from 'next/link'
+import { ShieldCheck, Home, Landmark, Scale, Briefcase, MessageCircle, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react'
+
+// Utilities for animations from HomeClient
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] }
+  }
+}
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2 }
+  }
+}
 
 const APPRAISAL_TYPES = [
   {
     icon: Home,
     title: 'Venda e Compra',
     tag: 'Mais Solicitado',
-    tagColor: 'bg-amber-50 text-amber-700',
-    description: 'Avaliação técnica para precificação estratégica. Análise profunda de mercado e comparativos para determinar o valor justo do ativo.',
+    description: 'Avaliação técnica para precificação estratégica. Análise profunda de mercado e comparativos.',
     points: ['Relatório comparativo de mercado', 'Análise de depreciação', 'Valor de liquidação forçada'],
   },
   {
     icon: Landmark,
     title: 'Garantia Bancária',
     tag: 'Financiamentos',
-    tagColor: 'bg-blue-50 text-blue-600',
-    description: 'Laudos técnicos aceitos por Caixa, Bradesco, Itaú e Santander. Conformidade total com as exigências bancárias.',
-    points: ['Aceito por todos os grandes bancos', 'Formato PTAM', 'Prazo expresso disponível'],
+    description: 'Laudos técnicos aceitos por Caixa, Bradesco, Itaú e Santander. Conformidade total.',
+    points: ['Aceito por grandes bancos', 'Formato PTAM', 'Prazo expresso disponível'],
   },
   {
     icon: Scale,
     title: 'Judicial / Extrajudicial',
     tag: 'Perícia Técnica',
-    tagColor: 'bg-purple-50 text-purple-600',
-    description: 'Perícia técnica para processos judiciais, inventários, partilhas e arbitragens. Fundamentação normativa para uso legal.',
-    points: ['Habilitado junto ao TJPE', 'Assistência técnica judicial', 'Laudo pericial fundamentado'],
+    description: 'Perícia técnica para processos judiciais, inventários, partilhas e arbitragens.',
+    points: ['Habilitado junto ao TJPE', 'Assistência técnica', 'Laudo pericial fundamentado'],
   },
   {
     icon: Briefcase,
-    title: 'Patrimonial / Empresarial',
+    title: 'Patrimonial',
     tag: 'Corporativo',
-    tagColor: 'bg-emerald-50 text-emerald-600',
-    description: 'Avaliação de portfólio imobiliário para fins contábeis, IFRS, fiscais ou reestruturação estratégica.',
-    points: ['Conformidade IFRS 13', 'Múltiplos ativos simultâneos', 'Relatório executivo incluso'],
+    description: 'Avaliação de portfólio imobiliário para fins contábeis, IFRS ou fiscais.',
+    points: ['Conformidade IFRS 13', 'Múltiplos ativos', 'Relatório executivo incluso'],
   },
 ]
 
 const PROCESS = [
-  { n: '01', title: 'Vistoria Técnica', desc: 'Inspeção presencial com levantamento fotográfico, medições e análise das condições físicas do imóvel.' },
-  { n: '02', title: 'Pesquisa de Mercado', desc: 'Coleta e tratamento estatístico de dados comparativos conforme metodologia NBR 14653.' },
-  { n: '03', title: 'Laudo Técnico', desc: 'Emissão do documento final com valor conclusivo, fundamentação e ART do responsável técnico.' },
+  { n: '01', title: 'Vistoria Técnica', desc: 'Inspeção presencial estrutural, levantamento fotográfico e medições.' },
+  { n: '02', title: 'Pesquisa NBR 14653', desc: 'Coleta de dados de mercado para tratamento estrito conforme a norma.' },
+  { n: '03', title: 'Emissão de Laudo', desc: 'Parecer técnico mercadológico válido nos mais altos tribunais do Brasil.' },
 ]
+
+const FAQS = [
+  { q: "Qual o prazo para um laudo?", a: "O prazo médio é de 5 a 7 dias úteis após a vistoria técnica, dependendo da complexidade do ativo." },
+  { q: "O laudo IMI é aceito em juízo?", a: "Sim, os laudos seguem as diretrizes do IBAPE e a NBR 14653, com o avaliador possuindo registro CNAI (53290), tornando os laudos aceitos nacionalmente." },
+  { q: "Como a vistoria é feita?", a: "Realizada presencialmente, envolve medição a laser, captação fotográfica de alta resolução e análise de conservação." }
+]
+
+function FAQItem({ q, a }: { q: string, a: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="border-b border-white/10">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full py-6 flex justify-between items-center text-left hover:text-white/80 transition-colors"
+      >
+        <span className="text-lg font-light tracking-wide">{q}</span>
+        {open ? <ChevronUp size={20} className="text-white/50" /> : <ChevronDown size={20} className="text-white/50" />}
+      </button>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          className="pb-6"
+        >
+          <p className="text-white/50 font-light leading-relaxed">{a}</p>
+        </motion.div>
+      )}
+    </div>
+  )
+}
 
 export default function AppraisalsPage() {
   return (
-    <>
-      {/* HERO */}
-      <section className="relative bg-[#141420] overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#102A43]/[0.07] blur-[80px]" />
+    <div className="bg-black text-white min-h-screen selection:bg-white selection:text-black">
 
-        <div className="relative z-10 container-custom py-20 lg:py-28">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-px bg-[#102A43]" />
-              <span className="text-[#486581] text-[11px] font-bold uppercase tracking-[0.25em]">CNAI 53290</span>
-            </div>
-            <h1 className="text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-              Avaliações <span className="text-[#486581]">Imobiliárias</span>
-            </h1>
-            <p className="text-[17px] lg:text-[19px] leading-relaxed font-light text-[#9CA3AF] max-w-2xl">
-              Laudos técnicos com metodologia normativa <span className="text-white font-medium">NBR 14653</span>. Decisões seguras baseadas em análise profissional e independente.
-            </p>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-12 flex flex-wrap gap-x-10 gap-y-6">
-              {[{ v: '+500', l: 'Laudos emitidos' }, { v: 'NBR', l: '14653 metodologia' }, { v: '72h', l: 'Prazo expresso' }].map((s, i) => (
-                <div key={i}>
-                  <div className="text-[30px] font-black text-[#486581] leading-none mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.v}</div>
-                  <div className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#6C757D]">{s.l}</div>
-                </div>
-              ))}
-            </motion.div>
+      {/* 1. HERO SECTION */}
+      <section className="relative h-[80svh] min-h-[600px] flex flex-col justify-center items-center text-center px-6 overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 60%)' }} />
+
+        <motion.div
+          className="relative z-10 max-w-4xl mx-auto"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
+          <motion.span variants={fadeInUp} className="text-white/50 tracking-widest uppercase text-xs mb-6 block">
+            Serviços Especializados
+          </motion.span>
+          <motion.h1
+            variants={fadeInUp}
+            className="text-5xl md:text-7xl lg:text-8xl tracking-tight leading-[1.1] mb-6"
+            style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}
+          >
+            Avaliações Técnicas
+          </motion.h1>
+          <motion.p
+            variants={fadeInUp}
+            className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-12 font-light"
+          >
+            Laudos rigorosos fundamentados na norma NBR 14653. <br /> Precisão, método e aceitação judicial.
+          </motion.p>
+          <motion.div variants={fadeInUp} className="flex justify-center">
+            <a href="#contato" className="px-8 py-4 bg-white text-black text-sm tracking-widest uppercase font-semibold hover:bg-white/90 transition-colors">
+              Solicitar Orçamento
+            </a>
           </motion.div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
+        </motion.div>
       </section>
 
-      {/* CERTIFICAÇÃO */}
-      <section className="bg-white py-8 border-b border-[#F1F3F5]">
-        <div className="container-custom">
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
-            {[
-              { icon: ShieldCheck, t: 'Avaliador Certificado', s: 'CNAI Nº 53290 — COFECI' },
-              { icon: Scale, t: 'Habilitado TJPE', s: 'Perito judicial credenciado' },
-              { icon: Landmark, t: 'Aceito em Bancos', s: 'Caixa, Bradesco, Itaú, Santander' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F8F9FA] rounded-xl flex items-center justify-center">
-                  <item.icon className="w-5 h-5 text-[#486581]" strokeWidth={1.5} />
-                </div>
-                <div>
-                  <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-[#1A1A1A]">{item.t}</p>
-                  <p className="text-[11px] text-[#6C757D]">{item.s}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* 2. DIFERENCIAIS (3-4 CARDS) */}
+      <section className="py-32 px-6 bg-white text-black">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="mb-20"
+          >
+            <h2 className="text-3xl md:text-5xl" style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}>
+              Atuação Técnica
+            </h2>
+          </motion.div>
 
-      {/* TIPOS */}
-      <section className="section-padding bg-white">
-        <div className="container-custom">
-          <div className="text-center mb-14">
-            <span className="text-[#486581] text-[11px] font-bold uppercase tracking-[0.25em]">Serviços</span>
-            <h2 className="text-[32px] lg:text-[44px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Tipos de Avaliação</h2>
-            <p className="text-[#6C757D] text-lg max-w-xl mx-auto font-light">Serviços especializados para cada necessidade de mercado e conformidade legal</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12"
+          >
             {APPRAISAL_TYPES.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}
-                className="group bg-white border border-[#E9ECEF] rounded-2xl p-6 hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.10)] transition-all duration-300">
-                <div className="flex items-start justify-between mb-5">
-                  <div className="w-11 h-11 bg-[#1A1A1A] rounded-xl flex items-center justify-center">
-                    <item.icon className="w-5 h-5 text-white" strokeWidth={1.5} />
-                  </div>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${item.tagColor}`}>{item.tag}</span>
+              <motion.div key={i} variants={fadeInUp} className="group cursor-default border-t border-black/10 pt-8">
+                <div className="mb-6 opacity-40 group-hover:opacity-100 transition-opacity duration-700">
+                  <item.icon size={32} />
                 </div>
-                <h3 className="text-[15px] font-bold text-[#1A1A1A] mb-2">{item.title}</h3>
-                <p className="text-[13px] text-[#6C757D] leading-relaxed mb-5">{item.description}</p>
-                <ul className="space-y-2">
+                <h3 className="text-xl mb-4" style={{ fontFamily: 'Georgia, serif' }}>{item.title}</h3>
+                <p className="text-black/60 font-light leading-relaxed text-sm mb-6">
+                  {item.description}
+                </p>
+                <ul className="space-y-3">
                   {item.points.map((pt, j) => (
-                    <li key={j} className="flex items-start gap-2 text-[12px] text-[#495057]">
-                      <CheckCircle className="w-3.5 h-3.5 text-[#486581] flex-shrink-0 mt-0.5" strokeWidth={2} />{pt}
+                    <li key={j} className="flex items-start gap-2 text-xs text-black/50 font-light">
+                      <span className="text-black/30 mt-0.5">•</span> {pt}
                     </li>
                   ))}
                 </ul>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* METODOLOGIA */}
-      <section className="section-padding bg-[#F8F9FA]">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-14">
-              <span className="text-[#486581] text-[11px] font-bold uppercase tracking-[0.25em]">Processo</span>
-              <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Nossa Metodologia</h2>
-              <p className="text-[#6C757D] max-w-lg mx-auto font-light">Todas as avaliações seguem rigorosamente a <strong className="text-[#1A1A1A]">NBR 14653</strong> e as diretrizes do IBAPE.</p>
-            </div>
-            <div className="grid lg:grid-cols-3 gap-8">
-              {PROCESS.map((step, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }} className="flex gap-4 lg:flex-col lg:gap-3">
-                  <div className="w-11 h-11 flex-shrink-0 bg-[#1A1A1A] text-white rounded-full flex items-center justify-center text-[12px] font-black">{step.n}</div>
-                  <div>
-                    <h3 className="font-bold text-[#1A1A1A] mb-1.5">{step.title}</h3>
-                    <p className="text-[13px] text-[#6C757D] leading-relaxed">{step.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+      {/* 3. PROCESSO / MÉTODO */}
+      <section className="py-32 px-6 bg-black text-white">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="mb-20 md:text-center max-w-3xl mx-auto"
+          >
+            <h2 className="text-3xl md:text-5xl mb-6" style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}>
+              Processo Rigoroso
+            </h2>
+            <p className="text-white/50 text-lg font-light">
+              Nossa estrutura metodológica de 3 passos para laudos inquestionáveis.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-3 gap-16"
+          >
+            {PROCESS.map((step, i) => (
+              <motion.div key={i} variants={fadeInUp} className="relative border-t border-white/10 pt-8">
+                <span className="absolute top-0 right-0 -translate-y-1/2 text-8xl font-bold text-white/5 font-sans">
+                  {step.n}
+                </span>
+                <h3 className="text-xl mb-4" style={{ fontFamily: 'Georgia, serif' }}>{step.title}</h3>
+                <p className="text-white/50 font-light leading-relaxed text-sm">
+                  {step.desc}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* FORM */}
-      <section className="section-padding bg-white" id="form">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-14">
-              <span className="text-[#486581] text-[11px] font-bold uppercase tracking-[0.25em]">Solicitar</span>
-              <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Solicitar Avaliação Técnica</h2>
-              <p className="text-[#6C757D] max-w-md mx-auto font-light">Preencha o formulário e retornaremos em até 24 horas com um orçamento detalhado.</p>
-            </div>
-            <AppraisalForm />
-          </div>
+      {/* 4. FAQ */}
+      <section className="py-32 px-6 bg-white text-black">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="mb-16"
+          >
+            <h2 className="text-3xl md:text-5xl" style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}>
+              FAQ
+            </h2>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="space-y-2 border-t border-black/10"
+          >
+            {FAQS.map((faq, idx) => (
+              <div key={idx} className="border-b border-black/10">
+                <details className="group">
+                  <summary className="flex cursor-pointer list-none items-center justify-between py-6 font-medium text-lg">
+                    <span className="font-light tracking-wide">{faq.q}</span>
+                    <span className="transition group-open:rotate-180">
+                      <ChevronDown size={20} className="text-black/50" />
+                    </span>
+                  </summary>
+                  <p className="pb-6 text-black/60 font-light leading-relaxed">
+                    {faq.a}
+                  </p>
+                </details>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-[#141420] section-padding">
-        <div className="container-custom text-center">
-          <h2 className="text-[28px] lg:text-[38px] font-black text-white mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Dúvidas sobre Avaliações?</h2>
-          <p className="text-[#6C757D] text-lg mb-10 max-w-md mx-auto font-light">Nossa equipe técnica esclarece qualquer questão normativa ou processual.</p>
-          <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 h-16 px-12 text-lg font-bold bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#334E68] border-r-4 border-r-[#E53935] shadow-[0_8px_32px_rgba(26,26,46,0.15)] rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)]">
-            <MessageCircle className="w-5 h-5 flex-shrink-0" />Falar com Especialista
-          </a>
-        </div>
+      {/* 5. CTA INLINE / FORMULÁRIO */}
+      <section id="contato" className="py-40 px-6 bg-black text-white text-center border-t border-white/10">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+          className="max-w-3xl mx-auto"
+        >
+          <h2 className="text-4xl md:text-6xl mb-8" style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}>
+            Inicie sua solicitação.
+          </h2>
+          <p className="text-white/50 font-light text-lg mb-12 max-w-xl mx-auto">
+            Preencha os dados abaixo ou fale pelo WhatsApp com nossa equipe técnica para um orçamento rápido.
+          </p>
+
+          <form className="space-y-6 max-w-md mx-auto text-left" onSubmit={(e) => e.preventDefault()}>
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-white/50 mb-2">Nome Completo</label>
+              <input type="text" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors" />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-white/50 mb-2">Email</label>
+              <input type="email" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors" />
+            </div>
+            <div>
+              <label className="block text-xs uppercase tracking-widest text-white/50 mb-2">Detalhes do Imóvel</label>
+              <textarea rows={3} className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors resize-none"></textarea>
+            </div>
+            <button type="button" className="w-full py-4 mt-8 bg-white text-black text-sm tracking-widest uppercase font-semibold hover:bg-white/90 transition-colors">
+              Enviar Solicitação
+            </button>
+          </form>
+
+        </motion.div>
       </section>
-    </>
+
+    </div>
   )
 }

@@ -100,7 +100,7 @@ export default function TrackingLinkModal({ property, onClose }: TrackingLinkMod
                         </div>
                         <div>
                             <h2 className="text-lg font-black text-imi-900 uppercase tracking-tight leading-none mb-1 font-display">Gerador de Links</h2>
-                            <p className="text-xs text-imi-400 font-bold uppercase tracking-widest">{property.title || (property as any).name}</p>
+                            <p className="text-xs text-imi-400 font-bold uppercase tracking-widest">{(property as any).title || property.name}</p>
                         </div>
                     </div>
                     <button

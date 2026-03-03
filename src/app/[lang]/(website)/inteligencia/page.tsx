@@ -1,268 +1,254 @@
 'use client'
 
-import React from 'react'
 import { motion } from 'framer-motion'
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    BarChart,
-    Bar
-} from 'recharts'
-import { fadeIn, slideUp, staggerContainer } from '@/lib/animations'
-import { Calculator, BarChart3, TrendingUp, Map, ArrowUpRight, MessageCircle } from 'lucide-react'
-import Button from '@/components/ui/Button'
+import { LineChart, Map, TrendingUp, BarChart3, ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react'
 
-const marketData = [
-    { month: 'Jul', value: 8900 },
-    { month: 'Ago', value: 9100 },
-    { month: 'Set', value: 9250 },
-    { month: 'Out', value: 9400 },
-    { month: 'Nov', value: 9650 },
-    { month: 'Dez', value: 9850 },
+const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] }
+    }
+}
+
+const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.2 }
+    }
+}
+
+const INTELLIGENCE_TYPES = [
+    {
+        icon: LineChart,
+        title: 'Análise Quantitativa',
+        description: 'Processamento de big data imobiliário para identificar micro-tendências antes que se tornem óbvias.',
+    },
+    {
+        icon: Map,
+        title: 'Mapeamento de Eixos',
+        description: 'Identificação de vetores de crescimento urbano e zonas de alta valorização estrutural.',
+    },
+    {
+        icon: TrendingUp,
+        title: 'Relatórios de Absorção',
+        description: 'Estudo profundo sobre a liquidez de tipologias específicas em praças selecionadas.',
+    },
+    {
+        icon: BarChart3,
+        title: 'Estudos de Viabilidade',
+        description: 'Para incorporadores: análise completa de EVTE (Estudo de Viabilidade Técnico-Econômica).',
+    },
 ]
 
-const neighborhoodData = [
-    { name: 'Cabo Branco', value: 15200 },
-    { name: 'Altiplano', value: 10800 },
-    { name: 'Bessa', value: 11500 },
-    { name: 'J. Oceania', value: 9800 },
-    { name: 'Manaíra', value: 8600 },
+const PROCESS = [
+    { n: '01', title: 'Coleta Proprietary', desc: 'Extração de dados transacionais reais de nossa base, cruzados com indicadores macroeconômicos.' },
+    { n: '02', title: 'Mineração de Dados', desc: 'Tratamento estatístico rigoroso, isolando ruídos e identificando o valor intrínseco do metro quadrado.' },
+    { n: '03', title: 'Dossiê Estratégico', desc: 'Entrega do report final com direcionamento claro: comprar, vender, manter ou desenvolver.' },
+]
+
+const FAQS = [
+    { q: "Para quem é o serviço de inteligência?", a: "Investidores institucionais, family offices, incorporadoras e investidores profissionais que necessitam de embasamento estatístico pré-alocação." },
+    { q: "Os dados são regionais ou nacionais?", a: "Possuímos mapeamento de eixos em nível nacional, com foco especial nas praças de altíssima liquidez e yield estabilizado." },
+    { q: "Qual o formato das entregas?", a: "Dossiês executivos contendo sumário de viabilidade, gráficos de absorção térmica e planilhas de stress test." }
 ]
 
 export default function MarketIntelligencePage() {
     return (
-        <>
-            {/* HERO */}
-            <section className="bg-imi-900 text-white section-padding relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-accent-500/5 -skew-x-12 translate-x-1/4" />
-                <div className="container-custom relative z-10">
-                    <div className="max-w-3xl">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-px bg-accent-500" />
-                            <span className="text-accent-500 font-semibold uppercase tracking-[0.2em] text-xs">Market Intelligence</span>
-                        </div>
-                        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-                            Inteligência de Mercado
-                        </h1>
-                        <p className="text-imi-300 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
-                            Dados precisos, tendências e análises exclusivas para fundamentar seus investimentos no mercado imobiliário.
-                        </p>
-                    </div>
-                </div>
+        <div className="bg-black text-white min-h-screen selection:bg-white selection:text-black">
+
+            {/* 1. HERO SECTION */}
+            <section className="relative h-[80svh] min-h-[600px] flex flex-col justify-center items-center text-center px-6 overflow-hidden">
+                <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 60%)' }} />
+
+                <motion.div
+                    className="relative z-10 max-w-4xl mx-auto"
+                    initial="hidden"
+                    animate="visible"
+                    variants={staggerContainer}
+                >
+                    <motion.span variants={fadeInUp} className="text-white/50 tracking-widest uppercase text-xs mb-6 block">
+                        Serviços Especializados
+                    </motion.span>
+                    <motion.h1
+                        variants={fadeInUp}
+                        className="text-5xl md:text-7xl lg:text-8xl tracking-tight leading-[1.1] mb-6"
+                        style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}
+                    >
+                        Inteligência de Mercado
+                    </motion.h1>
+                    <motion.p
+                        variants={fadeInUp}
+                        className="text-lg md:text-xl text-white/50 max-w-2xl mx-auto mb-12 font-light"
+                    >
+                        Decisões baseadas em estatística, não em feeling. <br /> Big data aplicado a ativos reais.
+                    </motion.p>
+                    <motion.div variants={fadeInUp} className="flex justify-center">
+                        <a href="#contato" className="px-8 py-4 bg-white text-black text-sm tracking-widest uppercase font-semibold hover:bg-white/90 transition-colors">
+                            Solicitar Dossiê
+                        </a>
+                    </motion.div>
+                </motion.div>
             </section>
 
-            {/* STATS */}
-            <section className="section-padding bg-imi-50">
-                <div className="container-custom">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 -mt-24 relative z-20">
-                        {[
-                            {
-                                label: 'Valorização (12m)',
-                                value: '+15.2%',
-                                detail: 'Análise de Alto Padrão',
-                                icon: ArrowUpRight,
-                                color: 'text-green-600'
-                            },
-                            {
-                                label: 'Liquidez Média',
-                                value: '60 Dias',
-                                detail: 'Ativos Premium',
-                                icon: TrendingUp,
-                                color: 'text-imi-900'
-                            },
-                            {
-                                label: 'Custo Médio m²',
-                                value: 'R$ 9.850',
-                                detail: 'Regiões de Orla',
-                                icon: Map,
-                                color: 'text-imi-900'
-                            }
-                        ].map((stat, i) => (
-                            <motion.div
-                                key={i}
-                                variants={slideUp}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="bg-white p-8 rounded-2xl border border-imi-100 shadow-soft"
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-sm font-bold text-imi-400 uppercase tracking-wider">{stat.label}</h3>
-                                    <stat.icon className="w-5 h-5 text-accent-500" />
+            {/* 2. DIFERENCIAIS (3-4 CARDS) */}
+            <section className="py-32 px-6 bg-white text-black">
+                <div className="max-w-7xl mx-auto">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={fadeInUp}
+                        className="mb-20"
+                    >
+                        <h2 className="text-3xl md:text-5xl" style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}>
+                            Vantagem Analítica
+                        </h2>
+                    </motion.div>
+
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={staggerContainer}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12"
+                    >
+                        {INTELLIGENCE_TYPES.map((item, i) => (
+                            <motion.div key={i} variants={fadeInUp} className="group cursor-default border-t border-black/10 pt-8">
+                                <div className="mb-6 opacity-40 group-hover:opacity-100 transition-opacity duration-700">
+                                    <item.icon size={32} />
                                 </div>
-                                <div className="flex items-baseline gap-2">
-                                    <span className={`text-4xl font-bold font-display ${stat.color}`}>{stat.value}</span>
-                                </div>
-                                <p className="text-xs text-imi-400 mt-2 font-medium">{stat.detail}</p>
+                                <h3 className="text-xl mb-4" style={{ fontFamily: 'Georgia, serif' }}>{item.title}</h3>
+                                <p className="text-black/60 font-light leading-relaxed text-sm">
+                                    {item.description}
+                                </p>
                             </motion.div>
                         ))}
-                    </div>
-
-                    {/* GRÁFICOS */}
-                    <div className="grid lg:grid-cols-2 gap-8 mt-16">
-                        <motion.div
-                            variants={fadeIn}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            className="bg-white p-8 rounded-2xl border border-imi-100 shadow-soft"
-                        >
-                            <h3 className="text-xl font-bold text-imi-900 mb-8 font-display flex items-center gap-3">
-                                <TrendingUp className="w-5 h-5 text-accent-500" />
-                                Tendência de Preço (R$/m²)
-                            </h3>
-                            <div className="h-[350px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={marketData}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                        <XAxis
-                                            dataKey="month"
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fill: '#6B83A0', fontSize: 12 }}
-                                        />
-                                        <YAxis
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fill: '#6B83A0', fontSize: 12 }}
-                                            domain={['dataMin - 500', 'dataMax + 500']}
-                                        />
-                                        <Tooltip
-                                            contentStyle={{
-                                                borderRadius: '12px',
-                                                border: 'none',
-                                                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                                                padding: '12px'
-                                            }}
-                                        />
-                                        <Line
-                                            type="monotone"
-                                            dataKey="value"
-                                            stroke="#23232D"
-                                            strokeWidth={4}
-                                            dot={{ r: 6, fill: '#23232D', strokeWidth: 2, stroke: '#fff' }}
-                                            activeDot={{ r: 8, fill: '#486581' }}
-                                        />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            variants={fadeIn}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            className="bg-white p-8 rounded-2xl border border-imi-100 shadow-soft"
-                        >
-                            <h3 className="text-xl font-bold text-imi-900 mb-8 font-display flex items-center gap-3">
-                                <Map className="w-5 h-5 text-accent-500" />
-                                Valorização por Bairro (R$/m²)
-                            </h3>
-                            <div className="h-[350px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={neighborhoodData} layout="vertical">
-                                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" />
-                                        <XAxis type="number" hide />
-                                        <YAxis
-                                            dataKey="name"
-                                            type="category"
-                                            width={100}
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fill: '#23232D', fontWeight: 500 }}
-                                        />
-                                        <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
-                                        <Bar dataKey="value" fill="#23232D" radius={[0, 8, 8, 0]} barSize={32}>
-                                            {neighborhoodData.map((_entry, index) => (
-                                                <rect key={index} fill={index === 0 ? '#486581' : '#23232D'} />
-                                            ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </motion.div>
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* TOOLS */}
-            <section className="section-padding">
-                <div className="container-custom">
-                    <h2 className="font-display text-3xl md:text-4xl font-bold text-imi-900 mb-12 text-center">
-                        Ferramentas de Análise
-                    </h2>
+            {/* 3. PROCESSO / MÉTODO */}
+            <section className="py-32 px-6 bg-black text-white">
+                <div className="max-w-7xl mx-auto">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={fadeInUp}
+                        className="mb-20 md:text-center max-w-3xl mx-auto"
+                    >
+                        <h2 className="text-3xl md:text-5xl mb-6" style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}>
+                            O Motor de Decisão
+                        </h2>
+                        <p className="text-white/50 text-lg font-light">
+                            Transformamos centenas de variáveis macroeconômicas em diretrizes claras de investimento.
+                        </p>
+                    </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            {
-                                icon: Calculator,
-                                title: 'Calculadora de Valuation',
-                                href: '/avaliacoes',
-                                desc: 'Estime o valor real de mercado com base em dados técnicos e transações recentes processadas por IA.'
-                            },
-                            {
-                                icon: BarChart3,
-                                title: 'Comparador de Bairros',
-                                href: '#',
-                                desc: 'Análise comparativa de ROI, liquidez e potencial de valorização entre as principais regiões.'
-                            },
-                            {
-                                icon: TrendingUp,
-                                title: 'Simulador de Retorno',
-                                href: '/consultoria',
-                                desc: 'Calcule o rendimento potencial do seu investimento considerando aluguel e valorização.'
-                            }
-                        ].map((tool, i) => (
-                            <a href={tool.href} key={i} className="group">
-                                <motion.div
-                                    variants={slideUp}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}
-                                    className="h-full p-8 rounded-2xl bg-white border border-imi-100 shadow-soft hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300"
-                                >
-                                    <div className="w-14 h-14 bg-imi-900/10 text-imi-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-imi-900 group-hover:text-white transition-all duration-300">
-                                        <tool.icon className="w-6 h-6" strokeWidth={1.5} />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-imi-900 mb-4 font-display">
-                                        {tool.title}
-                                    </h3>
-                                    <p className="text-imi-500 text-sm leading-relaxed mb-6">
-                                        {tool.desc}
-                                    </p>
-                                    <span className="text-sm font-bold text-imi-900 flex items-center gap-2">
-                                        Acessar Ferramenta
-                                        <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                    </span>
-                                </motion.div>
-                            </a>
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={staggerContainer}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-16"
+                    >
+                        {PROCESS.map((step, i) => (
+                            <motion.div key={i} variants={fadeInUp} className="relative border-t border-white/10 pt-8">
+                                <span className="absolute top-0 right-0 -translate-y-1/2 text-8xl font-bold text-white/5 font-sans">
+                                    {step.n}
+                                </span>
+                                <h3 className="text-xl mb-4" style={{ fontFamily: 'Georgia, serif' }}>{step.title}</h3>
+                                <p className="text-white/50 font-light leading-relaxed text-sm">
+                                    {step.desc}
+                                </p>
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* CTA FINAL */}
-            <section className="bg-imi-900 text-white section-padding text-center relative overflow-hidden">
-                <div className="container-custom relative z-10">
-                    <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-                        Análise Personalizada?
-                    </h2>
-                    <p className="text-imi-300 text-lg mb-10 max-w-2xl mx-auto font-light">
-                        Precisa de um estudo de viabilidade ou dossiê completo de mercado para seu próximo projeto?
-                    </p>
-                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="btn btn-primary bg-white text-imi-900 border border-imi-200 hover:bg-imi-50 h-14 px-10 inline-flex items-center text-lg shadow-md font-bold uppercase tracking-wider">
-                        <MessageCircle className="w-5 h-5 flex-shrink-0 mr-3" />
-                        Solicitar Estudo de Mercado
-                    </a>
+            {/* 4. FAQ */}
+            <section className="py-32 px-6 bg-white text-black">
+                <div className="max-w-4xl mx-auto">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={fadeInUp}
+                        className="mb-16"
+                    >
+                        <h2 className="text-3xl md:text-5xl" style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}>
+                            FAQ
+                        </h2>
+                    </motion.div>
+
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={fadeInUp}
+                        className="space-y-2 border-t border-black/10"
+                    >
+                        {FAQS.map((faq, idx) => (
+                            <div key={idx} className="border-b border-black/10">
+                                <details className="group">
+                                    <summary className="flex cursor-pointer list-none items-center justify-between py-6 font-medium text-lg">
+                                        <span className="font-light tracking-wide">{faq.q}</span>
+                                        <span className="transition group-open:rotate-180">
+                                            <ChevronDown size={20} className="text-black/50" />
+                                        </span>
+                                    </summary>
+                                    <p className="pb-6 text-black/60 font-light leading-relaxed">
+                                        {faq.a}
+                                    </p>
+                                </details>
+                            </div>
+                        ))}
+                    </motion.div>
                 </div>
             </section>
-        </>
+
+            {/* 5. CTA INLINE / FORMULÁRIO */}
+            <section id="contato" className="py-40 px-6 bg-black text-white text-center border-t border-white/10">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={fadeInUp}
+                    className="max-w-3xl mx-auto"
+                >
+                    <h2 className="text-4xl md:text-6xl mb-8" style={{ fontFamily: 'Georgia, serif', fontWeight: 300 }}>
+                        Acesse o Alpha.
+                    </h2>
+                    <p className="text-white/50 font-light text-lg mb-12 max-w-xl mx-auto">
+                        Agende uma reunião técnica para entender como nossos dados podem direcionar seu próximo ciclo de alocação.
+                    </p>
+
+                    <form className="space-y-6 max-w-md mx-auto text-left" onSubmit={(e) => e.preventDefault()}>
+                        <div>
+                            <label className="block text-xs uppercase tracking-widest text-white/50 mb-2">Empresa / Fundo</label>
+                            <input type="text" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors" />
+                        </div>
+                        <div>
+                            <label className="block text-xs uppercase tracking-widest text-white/50 mb-2">Email Corporativo</label>
+                            <input type="email" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors" />
+                        </div>
+                        <div>
+                            <label className="block text-xs uppercase tracking-widest text-white/50 mb-2">Objetivo do Estudo</label>
+                            <input type="text" className="w-full bg-transparent border-b border-white/20 pb-2 text-white outline-none focus:border-white transition-colors" />
+                        </div>
+                        <button type="button" className="w-full py-4 mt-8 bg-white text-black text-sm tracking-widest uppercase font-semibold hover:bg-white/90 transition-colors">
+                            Falar com Equipe de Dados
+                        </button>
+                    </form>
+
+                </motion.div>
+            </section>
+
+        </div>
     )
 }

@@ -22,9 +22,9 @@ const T = {
     text: 'var(--bo-text)',
     textSub: 'var(--bo-text-muted)',
     textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: '#C49D5B',
     goldLight: '#D4AF70',
-    goldDim: 'rgba(26,26,46,0.60)',
+    goldDim: 'rgba(196,157,91,0.60)',
 }
 
 // ── Animated counter ──────────────────────────────────────────
@@ -44,11 +44,6 @@ function AnimNum({ value, prefix = '', suffix = '', decimals = 0 }: {
     return <span ref={ref}>{prefix}0{suffix}</span>
 }
 
-const CHART = [
-    { mes: 'Set', r: 12 }, { mes: 'Out', r: 14 }, { mes: 'Nov', r: 11 },
-    { mes: 'Dez', r: 18 }, { mes: 'Jan', r: 21 }, { mes: 'Fev', r: 24 },
-]
-
 // ── Glass KPI Card ─────────────────────────────────────────────
 function KPICard({ kpi, index }: { kpi: any; index: number }) {
     const Icon = kpi.icon
@@ -60,7 +55,7 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
         >
             <Link href={kpi.href}>
                 <div
-                    className="relative overflow-hidden rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-200 group"
+                    className="relative overflow-hidden rounded-2xl p-5 cursor-pointer transition-all duration-200 group"
                     style={{
                         background: 'var(--bo-elevated)',
                         border: '1px solid var(--bo-border-gold)',
@@ -69,7 +64,7 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
                         boxShadow: 'var(--bo-shadow)',
                     }}
                     onMouseEnter={e => {
-                        (e.currentTarget as HTMLElement).style.border = '1px solid rgba(26,26,46,0.35)'
+                        (e.currentTarget as HTMLElement).style.border = '1px solid rgba(196,157,91,0.35)'
                             ; (e.currentTarget as HTMLElement).style.boxShadow = 'var(--bo-shadow-elevated)'
                     }}
                     onMouseLeave={e => {
@@ -80,13 +75,13 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
                     {/* Subtle gold corner glow */}
                     <div
                         className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                        style={{ background: 'radial-gradient(circle, rgba(26,26,46,0.12) 0%, transparent 70%)' }}
+                        style={{ background: 'radial-gradient(circle, rgba(196,157,91,0.12) 0%, transparent 70%)' }}
                     />
 
                     <div className="flex items-start justify-between mb-4">
                         <div
                             className="w-10 h-10 rounded-xl flex items-center justify-center"
-                            style={{ background: 'rgba(26,26,46,0.12)' }}
+                            style={{ background: 'rgba(196,157,91,0.12)' }}
                         >
                             <Icon size={18} style={{ color: T.gold }} />
                         </div>
@@ -120,10 +115,10 @@ function KPICard({ kpi, index }: { kpi: any; index: number }) {
 function StatusBadge({ status }: { status: string }) {
     const cfg: Record<string, { label: string; color: string; bg: string }> = {
         concluida: { label: 'Concluída', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-        em_andamento: { label: 'Em Andamento', color: '#486581', bg: 'rgba(26,26,46,0.12)' },
+        em_andamento: { label: 'Em Andamento', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
         aguardando_docs: { label: 'Aguard. Docs', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
         hot: { label: 'Quente', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-        warm: { label: 'Morno', color: '#486581', bg: 'rgba(26,26,46,0.12)' },
+        warm: { label: 'Morno', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)' },
         cold: { label: 'Frio', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
     }
     const c = cfg[status] || cfg.cold
@@ -143,32 +138,33 @@ interface Props {
     recentLeads: any[]
     recentAvaliacoes: any[]
     imoveisCount: number
+    chartData?: any[]
 }
 
-export default function DashboardClient({ stats, avStats, recentLeads, recentAvaliacoes, imoveisCount }: Props) {
+export default function DashboardClient({ stats, avStats, recentLeads, recentAvaliacoes, imoveisCount, chartData }: Props) {
     const router = useRouter()
     const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
     const KPIS = [
         {
             label: 'Receita do Mês', icon: Banknote,
-            value: fmt(stats.receita_mes || 24500),
-            delta: '18%', up: true,
+            value: fmt(stats.receita_mes || 0),
+            delta: '0%', up: true,
             sub: 'vs. mês anterior',
             href: '/backoffice/financeiro',
         },
         {
             label: 'Leads Ativos', icon: Users,
-            value: stats.total_leads || 127,
-            delta: `+${stats.leads_today || 4} hoje`, up: true,
+            value: stats.total_leads || 0,
+            delta: `+${stats.leads_today || 0} hoje`, up: true,
             sub: 'no pipeline',
             href: '/backoffice/leads',
         },
         {
             label: 'Honorários a Receber', icon: Scale,
-            value: fmt(avStats.honorarios_pendentes || 7500),
+            value: fmt(avStats.honorarios_pendentes || 0),
             delta: null, up: null,
-            sub: `${avStats.em_andamento || 2} laudos em andamento`,
+            sub: `${avStats.em_andamento || 0} laudos em andamento`,
             href: '/backoffice/avaliacoes',
         },
         {
@@ -210,9 +206,9 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                 <motion.button
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    className="flex items-center justify-center gap-2 min-h-[44px] min-w-[44px] px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
                     style={{
-                        background: '#486581',
+                        background: '#C49D5B',
                         boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
                     }}
                 >
@@ -223,7 +219,7 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
             </motion.div>
 
             {/* ── KPI Grid ─────────────────────────────────────── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
                 {KPIS.map((kpi, i) => <KPICard key={kpi.label} kpi={kpi} index={i} />)}
             </div>
 
@@ -255,11 +251,11 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                     </div>
                     <div style={{ height: 140 }}>
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={CHART}>
+                            <AreaChart data={chartData || []}>
                                 <defs>
                                     <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#486581" stopOpacity={0.25} />
-                                        <stop offset="95%" stopColor="#486581" stopOpacity={0.02} />
+                                        <stop offset="5%" stopColor="#C49D5B" stopOpacity={0.25} />
+                                        <stop offset="95%" stopColor="#C49D5B" stopOpacity={0.02} />
                                     </linearGradient>
                                 </defs>
                                 <XAxis
@@ -277,16 +273,16 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                                         fontSize: 11,
                                         boxShadow: 'var(--bo-shadow-elevated)',
                                     }}
-                                    formatter={(v: any) => [`R$ ${v}k`, 'Receita']}
+                                    formatter={(v: any) => [`${formatCurrency(v)}`, 'Receita']}
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="r"
-                                    stroke="#486581"
+                                    dataKey="honorarios"
+                                    stroke="#C49D5B"
                                     strokeWidth={2}
                                     fill="url(#goldGrad)"
                                     dot={false}
-                                    activeDot={{ r: 4, fill: '#486581', strokeWidth: 0 }}
+                                    activeDot={{ r: 4, fill: '#C49D5B', strokeWidth: 0 }}
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -316,8 +312,8 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <div
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all group-hover:bg-[rgba(26,26,46,0.18)]"
-                                        style={{ background: 'rgba(26,26,46,0.08)' }}
+                                        className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all group-hover:bg-[rgba(196,157,91,0.18)]"
+                                        style={{ background: 'rgba(196,157,91,0.08)' }}
                                     >
                                         <a.icon size={15} style={{ color: T.gold }} />
                                     </div>
@@ -351,11 +347,11 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                         </Link>
                     </div>
                     <div className="divide-y" style={{ borderColor: 'var(--bo-border)' }}>
-                        {(recentLeads.length > 0 ? recentLeads : [
-                            { id: 1, name: 'Maria Santos Silva', source: 'Instagram', status: 'hot', interest: 'Apt 3Q', created_at: new Date().toISOString() },
-                            { id: 2, name: 'João Pedro Almeida', source: 'Google', status: 'warm', interest: 'Casa 4Q', created_at: new Date().toISOString() },
-                            { id: 3, name: 'Ana Carolina Ferreira', source: 'Site', status: 'cold', interest: 'Apt 2Q', created_at: new Date().toISOString() },
-                        ]).slice(0, 4).map((lead: any, i) => (
+                        {recentLeads.length === 0 ? (
+                            <div className="px-5 py-8 text-center" style={{ color: T.textDim }}>
+                                <p className="text-xs font-medium">Nenhum lead recebido ainda.</p>
+                            </div>
+                        ) : recentLeads.slice(0, 4).map((lead: any, i) => (
                             <div
                                 key={lead.id}
                                 className="flex items-center gap-3 px-5 py-3.5 cursor-pointer transition-all"
@@ -366,19 +362,19 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                                 <div
                                     className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                                     style={{
-                                        background: 'rgba(26,26,46,0.15)',
+                                        background: 'rgba(196,157,91,0.15)',
                                         color: T.gold,
                                     }}
                                 >
-                                    {lead.name?.charAt(0).toUpperCase()}
+                                    {lead.name?.charAt(0).toUpperCase() || '?'}
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-xs font-semibold truncate" style={{ color: T.text }}>{lead.name}</p>
                                     <p className="text-[11px] truncate" style={{ color: T.textDim }}>
-                                        {lead.source} · {lead.interest}
+                                        {lead.source || 'Lead'} · {lead.interest_type || 'Geral'}
                                     </p>
                                 </div>
-                                <StatusBadge status={lead.status} />
+                                <StatusBadge status={lead.status || 'new'} />
                             </div>
                         ))}
                     </div>
@@ -402,11 +398,11 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                         </Link>
                     </div>
                     <div className="divide-y" style={{ borderColor: 'var(--bo-border)' }}>
-                        {(recentAvaliacoes.length > 0 ? recentAvaliacoes : [
-                            { id: 1, protocolo: 'AVL-2026-001', cliente_nome: 'Banco BTG', tipo_imovel: 'Apartamento', bairro: 'Boa Viagem', status: 'concluida', honorarios: 3500 },
-                            { id: 2, protocolo: 'AVL-2026-002', cliente_nome: 'Roberto Mendes', tipo_imovel: 'Casa', bairro: 'Graças', status: 'em_andamento', honorarios: 4200 },
-                            { id: 3, protocolo: 'AVL-2026-003', cliente_nome: 'Ana Ferreira', tipo_imovel: 'Apartamento', bairro: 'Pina', status: 'aguardando_docs', honorarios: 2800 },
-                        ]).slice(0, 4).map((av: any) => (
+                        {recentAvaliacoes.length === 0 ? (
+                            <div className="px-5 py-8 text-center" style={{ color: T.textDim }}>
+                                <p className="text-xs font-medium">Nenhuma avaliação recente.</p>
+                            </div>
+                        ) : recentAvaliacoes.slice(0, 4).map((av: any) => (
                             <div
                                 key={av.id}
                                 className="flex items-center gap-3 px-5 py-3.5 cursor-pointer transition-all"
@@ -415,23 +411,23 @@ export default function DashboardClient({ stats, avStats, recentLeads, recentAva
                             >
                                 <div
                                     className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                                    style={{ background: 'rgba(26,26,46,0.08)' }}
+                                    style={{ background: 'rgba(196,157,91,0.08)' }}
                                 >
                                     <Scale size={14} style={{ color: T.gold }} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-xs font-semibold truncate" style={{ color: T.text }}>
-                                        {av.protocolo}
+                                        {av.protocolo || 'AVL-XXXX'}
                                     </p>
                                     <p className="text-[11px] truncate" style={{ color: T.textDim }}>
-                                        {av.tipo_imovel} · {av.bairro}
+                                        {av.tipo_imovel || 'Imóvel'} · {av.bairro || 'Sem registro'}
                                     </p>
                                 </div>
                                 <div className="text-right flex-shrink-0">
                                     <p className="text-xs font-semibold" style={{ color: T.gold }}>
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(av.honorarios || 0)}
                                     </p>
-                                    <StatusBadge status={av.status} />
+                                    <StatusBadge status={av.status || 'new'} />
                                 </div>
                             </div>
                         ))}

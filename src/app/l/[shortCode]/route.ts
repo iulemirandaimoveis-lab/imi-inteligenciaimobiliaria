@@ -81,40 +81,43 @@ export async function GET(
     if (reqMedium) utms.medium = reqMedium
     if (reqCampaign) utms.campaign = reqCampaign
 
-    // 6. Log tracking event (non-blocking — don't await to avoid delaying redirect)
-    supabase
-        .from('link_events')
-        .insert({
-            tracked_link_id: link.id,
-            event_type: 'click',
-            device_type: deviceType,
-            browser,
-            os,
-            ip_address: ip,
-            referrer: referer,
-            utm_params: utms,
-            metadata: {
-                user_agent: userAgent.substring(0, 500),
-                short_code: shortCode,
-            },
-            created_at: new Date().toISOString()
-        })
-        .then(() => {})
-        .catch((err: any) => console.error('Tracking event error:', err))
+        // 6. Log tracking event (non-blocking)
+        ; (async () => {
+            try {
+                await supabase.from('link_events').insert({
+                    tracked_link_id: link.id,
+                    event_type: 'click',
+                    device_type: deviceType,
+                    browser,
+                    os,
+                    ip_address: ip,
+                    referrer: referer,
+                    utm_params: utms,
+                    metadata: {
+                        user_agent: userAgent.substring(0, 500),
+                        short_code: shortCode,
+                    },
+                    created_at: new Date().toISOString()
+                })
+            } catch (err: any) {
+                console.error('Tracking event error:', err)
+            }
+        })();
 
     // 7. Increment click count (non-blocking)
-    supabase
-        .rpc('increment_link_clicks', { link_id: link.id })
-        .then(() => {})
-        .catch(() => {
-            // Fallback: manual increment if RPC doesn't exist
-            supabase
-                .from('tracked_links')
-                .update({ clicks: (link.clicks || 0) + 1 })
-                .eq('id', link.id)
-                .then(() => {})
-                .catch((err: any) => console.error('Click increment error:', err))
-        })
+    ; (async () => {
+        try {
+            const { error: rpcError } = await supabase.rpc('increment_link_clicks', { link_id: link.id })
+            if (rpcError) throw rpcError
+        } catch {
+            try {
+                // Fallback: manual increment if RPC doesn't exist
+                await supabase.from('tracked_links').update({ clicks: (link.clicks || 0) + 1 }).eq('id', link.id)
+            } catch (err: any) {
+                console.error('Click increment error:', err)
+            }
+        }
+    })();
 
     // 8. Build final redirect URL with UTM passthrough
     let finalUrl = targetUrl
@@ -125,7 +128,7 @@ export async function GET(
         if (reqMedium) redirectUrl.searchParams.set('utm_medium', reqMedium)
         if (reqCampaign) redirectUrl.searchParams.set('utm_campaign', reqCampaign)
         finalUrl = redirectUrl.toString()
-    } catch {}
+    } catch { }
 
     // 9. Redirect with attribution cookie
     const response = NextResponse.redirect(new URL(finalUrl))

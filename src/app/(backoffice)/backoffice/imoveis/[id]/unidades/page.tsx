@@ -25,7 +25,7 @@ import {
 const unidadesData = {
   empreendimento: {
     id: 1,
-    name: 'Reserva Imperial',
+    name: 'Reserva Atlantis',
     totalUnidades: 48,
     vendidas: 28,
     reservadas: 8,
@@ -209,7 +209,7 @@ export default function ImoveisUnidadesPage() {
           </button>
           <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades/nova`)}
-            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
+            className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
           >
             <Plus size={20} />
             <span className="hidden sm:inline">Nova Unidade</span>
@@ -253,13 +253,13 @@ export default function ImoveisUnidadesPage() {
               placeholder="Buscar por código ou cliente..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+              className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
           >
             <option value="all">Todos os status</option>
             <option value="disponivel">Disponível</option>
@@ -269,7 +269,7 @@ export default function ImoveisUnidadesPage() {
           <select
             value={tipoFilter}
             onChange={(e) => setTipoFilter(e.target.value)}
-            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
           >
             <option value="all">Todos os tipos</option>
             <option value="Apartamento">Apartamento</option>
@@ -287,7 +287,7 @@ export default function ImoveisUnidadesPage() {
           return (
             <div
               key={unidade.id}
-              className={`bg-white rounded-xl p-4 border transition-all hover:shadow-lg cursor-pointer ${unidade.destaque ? 'ring-2 ring-[#334E68]' : ''
+              className={`bg-white rounded-xl p-4 border transition-all hover:shadow-lg cursor-pointer ${unidade.destaque ? 'ring-2 ring-accent-500' : ''
                 }`}
               onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades/${unidade.id}`)}
             >
@@ -297,7 +297,7 @@ export default function ImoveisUnidadesPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-bold text-gray-900">{unidade.codigo}</h3>
                     {unidade.destaque && (
-                      <span className="px-2 py-0.5 bg-accent-50 text-[#0F0F1E] text-xs font-medium rounded">
+                      <span className="px-2 py-0.5 bg-accent-50 text-accent-700 text-xs font-medium rounded">
                         Destaque
                       </span>
                     )}
@@ -385,7 +385,7 @@ export default function ImoveisUnidadesPage() {
           <p className="text-gray-600 mb-6">Tente ajustar os filtros ou adicionar uma nova unidade</p>
           <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades/nova`)}
-            className="inline-flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]"
+            className="inline-flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700"
           >
             <Plus size={20} />
             Nova Unidade

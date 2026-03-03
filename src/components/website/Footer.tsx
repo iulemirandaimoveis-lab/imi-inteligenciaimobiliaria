@@ -54,7 +54,7 @@ export default function Footer({ lang, settings }: FooterProps) {
     return (
         <footer className="bg-[#141420] text-white">
             {/* Gold accent line */}
-            <div className="h-px bg-gradient-to-r from-transparent via-[#334E68]/50 to-transparent" />
+            <div className="h-px bg-gradient-to-r from-transparent via-[#C49D5B]/50 to-transparent" />
 
             <div className="max-w-[1280px] mx-auto px-6 lg:px-8 py-16 lg:py-20">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
@@ -63,7 +63,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                     <div className="lg:col-span-5 overflow-hidden">
                         <Link href={`/${lang}`} className="inline-block group mb-8">
                             <span
-                                className="text-[28px] font-black tracking-tight text-white group-hover:text-[#486581] transition-colors duration-200"
+                                className="text-[28px] font-black tracking-tight text-white group-hover:text-[#C49D5B] transition-colors duration-200"
                                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                             >
                                 IMI
@@ -79,9 +79,9 @@ export default function Footer({ lang, settings }: FooterProps) {
                         </p>
 
                         {/* Credentials card */}
-                        <div className="border-l-[4px] border-[#334E68] bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-2xl p-6 lg:p-8 mb-8">
+                        <div className="border-l-[4px] border-[#C49D5B] bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-2xl p-6 lg:p-8 mb-8">
                             <p className="font-bold text-white text-[16px] mb-1">Iule Miranda</p>
-                            <p className="text-[#486581] text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
+                            <p className="text-[#C49D5B] text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
                                 CRECI 17933 | CNAI 53290
                             </p>
 
@@ -90,7 +90,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     href={`mailto:${settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}`}
                                     className="flex items-center gap-4 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-3 rounded-2xl group"
                                 >
-                                    <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
+                                    <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#C49D5B] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <Mail className="w-5 h-5" />
                                     </div>
                                     <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
@@ -114,7 +114,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-4 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-3 rounded-2xl group"
                                 >
-                                    <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
+                                    <div className="w-12 h-12 bg-[#1A1E2A] rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#3B82F6] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <Linkedin className="w-5 h-5" />
                                     </div>
                                     <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[13px] sm:text-sm font-medium">LinkedIn</span>
@@ -124,10 +124,10 @@ export default function Footer({ lang, settings }: FooterProps) {
                     </div>
 
                     {/* ── Nav cols ── */}
-                    <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8 lg:gap-10">
+                    <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-10">
                         {NAV_COLS.map((col) => (
                             <div key={col.title}>
-                                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#486581] mb-5">
+                                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C49D5B] mb-5">
                                     {col.title}
                                 </h4>
                                 <ul className="space-y-3">
@@ -159,7 +159,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                 {i > 0 && <span className="text-[#2D2D3A] text-[10px]">|</span>}
                                 <Link
                                     href={`/${l.code}`}
-                                    className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-150 ${lang === l.code ? 'text-[#486581]' : 'text-[#495057] hover:text-white'
+                                    className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-150 ${lang === l.code ? 'text-[#C49D5B]' : 'text-[#495057] hover:text-white'
                                         }`}
                                 >
                                     {l.label}

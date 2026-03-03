@@ -2,98 +2,82 @@
 
 import { motion } from 'framer-motion'
 import { slideUp, staggerContainer } from '@/lib/animations'
-import { Target, Shield, Globe, TrendingUp, Linkedin, MessageCircle } from 'lucide-react'
+import { Target, Users, Award, TrendingUp, Linkedin, MessageCircle } from 'lucide-react'
+import Button from '@/components/ui/Button'
 import Image from 'next/image'
-import Link from 'next/link'
-
-const values = [
-    {
-        icon: Target,
-        title: 'Missão',
-        description: 'Fornecer inteligência imobiliária de alta qualidade, capacitando clientes a tomar decisões informadas e estratégicas.',
-    },
-    {
-        icon: TrendingUp,
-        title: 'Visão',
-        description: 'Ser referência nacional em inteligência imobiliária, reconhecidos pela excelência técnica, inovação e compromisso com resultados.',
-    },
-    {
-        icon: Shield,
-        title: 'Excelência',
-        description: 'Compromisso inabalável com os mais altos padrões técnicos e metodológicos em todas as nossas entregas.',
-    },
-    {
-        icon: Globe,
-        title: 'Relacionamento',
-        description: 'Construir parcerias duradouras baseadas em confiança, transparência e resultados consistentes.',
-    },
-]
-
-const stats = [
-    { number: '15+', label: 'Anos de Experiência' },
-    { number: '500+', label: 'Projetos Realizados' },
-    { number: 'R$ 200M+', label: 'em Ativos Avaliados' },
-    { number: '98%', label: 'Satisfação dos Clientes' },
-]
 
 export default function AboutPage() {
+    const values = [
+        {
+            icon: Target,
+            title: 'Missão',
+            description: 'Fornecer inteligência imobiliária de alta qualidade, capacitando clientes a tomar decisões informadas e estratégicas no mercado imobiliário.'
+        },
+        {
+            icon: TrendingUp,
+            title: 'Visão',
+            description: 'Ser referência nacional em inteligência imobiliária, reconhecidos pela excelência técnica, inovação e compromisso com resultados.'
+        },
+        {
+            icon: Award,
+            title: 'Excelência',
+            description: 'Compromisso inabalável com os mais altos padrões técnicos e metodológicos em todas as nossas entregas.'
+        },
+        {
+            icon: Users,
+            title: 'Relacionamento',
+            description: 'Construir parcerias duradouras baseadas em confiança, transparência e resultados consistentes para nossos clientes.'
+        }
+    ]
+
+    const stats = [
+        { number: '15+', label: 'Anos de Experiência' },
+        { number: '500+', label: 'Projetos Realizados' },
+        { number: 'R$ 200M+', label: 'em Ativos Avaliados' },
+        { number: '98%', label: 'Satisfação dos Clientes' }
+    ]
+
     return (
-        <main className="bg-[#0D0F14]">
+        <>
             {/* HERO */}
-            <section className="relative bg-[#141420] text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-[#102A43]/5 -skew-x-12 translate-x-1/4" />
+            <section className="bg-imi-900 text-white section-padding relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-1/3 h-full bg-accent-500/5 -skew-x-12 translate-x-1/4" />
                 <div className="container-custom relative z-10">
-                    <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={staggerContainer}
-                        className="max-w-4xl"
-                    >
-                        <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-px bg-[#102A43]" />
-                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Quem Somos</span>
-                        </motion.div>
-                        <motion.h1
-                            variants={slideUp}
-                            className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white"
-                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                        >
-                            IMI – Inteligência <br /><span className="text-[#486581] italic">Imobiliária</span>
-                        </motion.h1>
-                        <motion.div variants={slideUp} className="space-y-5 text-[#9CA3AF] text-lg sm:text-xl font-light leading-relaxed max-w-3xl">
+                    <div className="max-w-4xl">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-12 h-px bg-accent-500" />
+                            <span className="text-accent-500 font-semibold uppercase tracking-[0.2em] text-xs">Quem Somos</span>
+                        </div>
+                        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight">
+                            Sobre
+                        </h1>
+                        <div className="space-y-6 text-imi-200 text-lg md:text-xl font-light leading-relaxed">
                             <p>
-                                Empresa de posicionamento técnico e institucional, especializada em <strong className="text-white font-medium">avaliações imobiliárias</strong>, perícias judiciais e extrajudiciais, corretagem estratégica e consultoria no Brasil e mercados internacionais selecionados.
+                                A <strong className="text-white font-semibold">Iule Miranda Imóveis (IMI)</strong> é uma empresa imobiliária de posicionamento técnico e institucional, especializada em avaliações imobiliárias, perícias judiciais e extrajudiciais, corretagem estratégica e consultoria imobiliária no Brasil e em mercados internacionais selecionados.
                             </p>
-                            <p className="text-[#627D98] font-medium text-base">
-                                Prioridade técnica antes do viés comercial — segurança, clareza e consistência em decisões imobiliárias de médio e longo prazo.
+                            <p>
+                                À frente da IMI está <strong className="text-white font-semibold">Iule Miranda</strong>, corretor de imóveis, perito judicial e extrajudicial, avaliador imobiliário e empresário, com atuação focada em inteligência imobiliária, estruturação patrimonial e tomada de decisão baseada em análise técnica e estratégica.
                             </p>
-                        </motion.div>
-                    </motion.div>
+                            <p className="text-accent-400 font-medium">
+                                A IMI atua com prioridade técnica antes do viés comercial, oferecendo segurança, clareza e consistência em decisões imobiliárias de médio e longo prazo.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             {/* VALORES */}
-            <section className="py-16 md:py-24">
+            <section className="section-padding">
                 <div className="container-custom">
-                    <div className="text-center mb-14">
-                        <div className="flex items-center justify-center gap-3 mb-5">
-                            <div className="w-8 h-px bg-[#334E68]" />
-                            <span className="text-[#627D98] font-bold uppercase tracking-[0.25em] text-[11px]">Princípios</span>
-                            <div className="w-8 h-px bg-[#334E68]" />
-                        </div>
-                        <h2
-                            className="text-3xl sm:text-4xl font-bold text-white mb-4"
-                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                        >
-                            Nossos Valores
-                        </h2>
-                        <p className="text-[#9CA3AF] text-lg font-light max-w-2xl mx-auto">
-                            Princípios que guiam cada decisão e relacionamento com nossos clientes
-                        </p>
-                    </div>
+                    <h2 className="font-display text-3xl md:text-4xl font-bold text-imi-900 mb-4 text-center">
+                        Nossos Valores
+                    </h2>
+                    <p className="text-imi-500 text-lg max-w-2xl mx-auto text-center mb-12">
+                        Princípios que guiam cada decisão e relacionamento com nossos clientes
+                    </p>
 
                     <motion.div
-                        className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+                        className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
                         variants={staggerContainer}
                         initial="hidden"
                         whileInView="visible"
@@ -103,18 +87,15 @@ export default function AboutPage() {
                             <motion.div
                                 key={index}
                                 variants={slideUp}
-                                className="p-8 rounded-2xl bg-[#141420] border border-white/[0.05] transition-all duration-300 group hover:border-[#334E68]/30 hover:shadow-[0_8px_32px_rgba(26,26,46,0.1)]"
+                                className="p-8 rounded-xl bg-white border border-imi-100 shadow-soft hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1"
                             >
-                                <div className="w-12 h-12 bg-[#1A1E2A] text-[#627D98] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-white/[0.05]">
+                                <div className="w-12 h-12 bg-imi-900/10 text-imi-900 rounded-xl flex items-center justify-center mb-6">
                                     <item.icon className="w-5 h-5" strokeWidth={1.5} />
                                 </div>
-                                <h3
-                                    className="text-xl font-bold text-white mb-3"
-                                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                                >
+                                <h3 className="text-xl font-bold text-imi-900 mb-3 font-display">
                                     {item.title}
                                 </h3>
-                                <p className="text-[#9CA3AF] leading-relaxed text-sm">
+                                <p className="text-imi-500 leading-relaxed text-sm">
                                     {item.description}
                                 </p>
                             </motion.div>
@@ -124,11 +105,11 @@ export default function AboutPage() {
             </section>
 
             {/* FUNDADOR */}
-            <section className="py-16 md:py-24 border-t border-white/[0.05]">
+            <section className="section-padding bg-imi-50">
                 <div className="container-custom">
-                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                    <div className="grid lg:grid-cols-2 gap-12 items-center">
                         <motion.div
-                            className="relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/[0.05]"
+                            className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-elevated"
                             variants={slideUp}
                             initial="hidden"
                             whileInView="visible"
@@ -140,7 +121,6 @@ export default function AboutPage() {
                                 fill
                                 className="object-cover object-top"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0F14]/60 via-transparent to-transparent" />
                         </motion.div>
 
                         <motion.div
@@ -149,25 +129,21 @@ export default function AboutPage() {
                             whileInView="visible"
                             viewport={{ once: true }}
                         >
-                            <div className="flex items-center gap-3 mb-5">
-                                <div className="w-8 h-px bg-[#334E68]" />
-                                <span className="text-[#627D98] font-bold uppercase tracking-[0.25em] text-[11px]">Fundador</span>
-                            </div>
-                            <h2
-                                className="text-3xl sm:text-4xl font-bold text-white mb-6"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                            >
+                            <h2 className="font-display text-3xl md:text-4xl font-bold text-imi-900 mb-6">
                                 Iule Miranda
                             </h2>
-                            <div className="space-y-4 text-[#9CA3AF] leading-relaxed text-[15px]">
+                            <div className="space-y-4 text-imi-500 leading-relaxed">
                                 <p>
-                                    Corretor de imóveis, <strong className="text-white font-medium">perito judicial e extrajudicial</strong>, avaliador imobiliário e empresário, com atuação focada em inteligência imobiliária, estruturação patrimonial e tomada de decisão baseada em análise técnica.
+                                    <strong className="text-imi-900">Iule Miranda</strong> é corretor de imóveis, perito judicial e extrajudicial, avaliador imobiliário e empresário, com atuação focada em inteligência imobiliária, estruturação patrimonial e tomada de decisão baseada em análise técnica e estratégica.
                                 </p>
                                 <p>
-                                    Formação técnica sólida com mais de 15 anos de experiência no mercado imobiliário brasileiro e internacional, com foco em avaliações patrimoniais, perícias e consultoria para investimentos de médio e alto padrão.
+                                    Formação técnica sólida com mais de 15 anos de experiência no mercado imobiliário brasileiro e internacional, com foco em avaliações patrimoniais, perícias judiciais e extrajudiciais, e consultoria para investimentos de médio e alto padrão.
                                 </p>
                                 <p>
                                     Atuação destacada no mercado do Nordeste e assessoria especializada para investidores brasileiros em mercados internacionais selecionados, incluindo Estados Unidos e Emirados Árabes Unidos.
+                                </p>
+                                <p className="text-imi-900 font-medium">
+                                    A IMI atua com prioridade técnica antes do viés comercial, oferecendo segurança, clareza e consistência em decisões imobiliárias de médio e longo prazo.
                                 </p>
                             </div>
                             <div className="mt-8">
@@ -175,10 +151,10 @@ export default function AboutPage() {
                                     href="https://www.linkedin.com/in/iule-miranda"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center justify-center gap-3 px-8 h-12 rounded-xl bg-[#0077b5] text-white font-semibold text-sm transition-all duration-300 hover:bg-[#005e8e] shadow-lg shadow-[#0077b5]/20"
+                                    className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-[#0077b5] text-white font-medium transition-all duration-300 border border-[#0077b5] hover:bg-white hover:text-[#0077b5] shadow-lg shadow-[#0077b5]/20 group"
                                 >
-                                    <Linkedin className="w-4 h-4" strokeWidth={2} />
-                                    Conectar no LinkedIn
+                                    <Linkedin className="w-5 h-5 transition-transform group-hover:scale-110" strokeWidth={2} />
+                                    <span>Conectar no LinkedIn</span>
                                 </a>
                             </div>
                         </motion.div>
@@ -187,10 +163,10 @@ export default function AboutPage() {
             </section>
 
             {/* NÚMEROS */}
-            <section className="py-16 md:py-24 border-t border-white/[0.05]">
+            <section className="section-padding">
                 <div className="container-custom">
                     <motion.div
-                        className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12"
+                        className="grid md:grid-cols-4 gap-8 text-center"
                         variants={staggerContainer}
                         initial="hidden"
                         whileInView="visible"
@@ -200,15 +176,14 @@ export default function AboutPage() {
                             <motion.div
                                 key={index}
                                 variants={slideUp}
-                                className="text-center"
                             >
-                                <div
-                                    className="text-4xl md:text-5xl font-bold text-white mb-2"
-                                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                                >
+                                <div className="w-12 h-12 bg-imi-900 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-4">
+                                    {index + 1}
+                                </div>
+                                <div className="font-display text-4xl font-bold text-imi-900 mb-2">
                                     {stat.number}
                                 </div>
-                                <div className="text-sm text-[#627D98] font-medium">
+                                <div className="text-imi-500">
                                     {stat.label}
                                 </div>
                             </motion.div>
@@ -217,44 +192,23 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* CTA */}
-            <section className="bg-[#141420] text-white py-20 md:py-28 text-center relative overflow-hidden border-t border-white/[0.05]">
-                <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
+            {/* CTA FINAL */}
+            <section className="bg-imi-900 text-white section-padding text-center relative overflow-hidden">
                 <div className="container-custom relative z-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <h2
-                            className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight"
-                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                        >
-                            Vamos <span className="text-[#486581] italic">Conversar?</span>
-                        </h2>
-                        <p className="text-[#9CA3AF] text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
-                            Conte-nos sobre seu projeto e descubra como podemos ajudar você a alcançar seus objetivos.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link
-                                href="/pt/contato"
-                                className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold bg-[#102A43] text-white hover:bg-[#1A2F44] rounded-xl transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#102A43]/30"
-                            >
-                                <MessageCircle className="w-4 h-4" />
-                                Entrar em Contato
-                            </Link>
-                            <a
-                                href="https://wa.me/5581997230455"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold border border-white/10 text-slate-300 hover:bg-white/[0.04] hover:text-white rounded-xl transition-all duration-300"
-                            >
-                                WhatsApp Direto
-                            </a>
-                        </div>
-                    </motion.div>
+                    <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
+                        Vamos Conversar?
+                    </h2>
+                    <p className="text-imi-300 text-lg mb-10 max-w-2xl mx-auto font-light">
+                        Conte-nos sobre seu projeto e descubra como podemos ajudar você a alcançar seus objetivos.
+                    </p>
+                    <Button asChild size="lg" className="bg-white text-imi-900 hover:bg-imi-50">
+                        <a href="/contato">
+                            <MessageCircle className="w-5 h-5 mr-3" />
+                            Entrar em Contato
+                        </a>
+                    </Button>
                 </div>
             </section>
-        </main>
+        </>
     )
 }

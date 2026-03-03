@@ -10,74 +10,93 @@ interface DevelopmentDetailsProps {
 }
 
 export default function DevelopmentDetails({ development }: DevelopmentDetailsProps) {
-    const specs = [
-        { icon: Maximize, label: 'Área', value: development.specs.areaRange },
-        { icon: Bed, label: 'Quartos', value: development.specs.bedroomsRange },
-        { icon: Bath, label: 'Banheiros', value: development.specs.bathroomsRange || '-' },
-        { icon: Car, label: 'Vagas', value: development.specs.parkingRange || '-' },
-    ];
-
     return (
-        <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-        >
-            {/* Description */}
-            <motion.div variants={slideUp} className="mb-10">
-                <h2
-                    className="text-2xl md:text-3xl text-gray-900 mb-5 font-bold tracking-tight"
-                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+        <section className="section-padding bg-white">
+            <div className="container-custom">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={staggerContainer}
+                    className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20"
                 >
-                    Sobre o empreendimento
-                </h2>
-                <p className="text-gray-500 leading-relaxed text-[15px] md:text-base font-light max-w-2xl">
-                    {development.description}
-                </p>
-            </motion.div>
-
-            {/* Specs Grid */}
-            <motion.div variants={slideUp} className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-12">
-                {specs.map((spec, idx) => (
-                    <div key={idx} className="bg-[#F8FAFB] rounded-xl p-4 border border-gray-100">
-                        <spec.icon className="w-5 h-5 text-[#627D98] mb-2.5" strokeWidth={1.5} />
-                        <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold mb-0.5">{spec.label}</p>
-                        <p className="text-gray-900 font-bold text-lg">{spec.value}</p>
-                    </div>
-                ))}
-            </motion.div>
-
-            {/* Features */}
-            {development.features && development.features.length > 0 && (
-                <motion.div variants={slideUp}>
-                    <h3
-                        className="text-xl text-gray-900 mb-5 font-bold tracking-tight"
-                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                    >
-                        Diferenciais e Lazer
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
-                        {development.features.map((feature, idx) => (
-                            <div key={idx} className="flex items-center gap-3 group">
-                                <div className="w-5 h-5 rounded-full bg-[#102A43]/8 flex items-center justify-center flex-shrink-0">
-                                    <Check className="w-3 h-3 text-[#486581]" />
-                                </div>
-                                <span className="text-gray-600 text-sm">{feature}</span>
+                    {/* Coluna Esquerda - Texto */}
+                    <div className="lg:col-span-7">
+                        <motion.div variants={slideUp} className="mb-12">
+                            <h2 className="font-display text-3xl md:text-4xl text-imi-900 mb-6 font-bold">Sobre o empreendimento</h2>
+                            <div className="prose prosebg-imi-50 max-w-none text-imi-600 leading-relaxed text-lg font-light">
+                                {development.description}
                             </div>
-                        ))}
+                        </motion.div>
+
+                        <motion.div variants={slideUp}>
+                            <h3 className="font-display text-2xl text-imi-900 mb-6 font-bold">Diferenciais e Lazer</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                                {development.features.map((feature, idx) => (
+                                    <div key={idx} className="flex items-center gap-3 group">
+                                        <div className="w-6 h-6 rounded-full bg-imi-50 border border-imi-100 flex items-center justify-center group-hover:bg-accent-500 group-hover:border-accent-500 transition-colors">
+                                            <Check className="w-3.5 h-3.5 text-imi-400 group-hover:text-white transition-colors" />
+                                        </div>
+                                        <span className="text-imi-600 text-sm whitespace-nowrap overflow-hidden text-ellipsis">{feature}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* Coluna Direita - Specs Card */}
+                    <div className="lg:col-span-5">
+                        <motion.div
+                            variants={slideUp}
+                            className="sticky top-32 bg-imi-50 rounded-2xl p-8 border border-imi-100 shadow-soft"
+                        >
+                            <h3 className="font-display text-xl text-imi-900 mb-8 font-bold border-b border-imi-200 pb-4 uppercase tracking-wider text-sm">Resumo do Ativo</h3>
+
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between pb-4 border-b border-imi-200/50">
+                                    <div className="flex items-center gap-3">
+                                        <Maximize className="w-5 h-5 text-accent-600" />
+                                        <span className="text-imi-500 font-medium">Área Privativa</span>
+                                    </div>
+                                    <span className="text-imi-900 font-bold">{development.specs.areaRange}</span>
+                                </div>
+
+                                <div className="flex items-center justify-between pb-4 border-b border-imi-200/50">
+                                    <div className="flex items-center gap-3">
+                                        <Bed className="w-5 h-5 text-accent-600" />
+                                        <span className="text-imi-500 font-medium">Quartos/Suítes</span>
+                                    </div>
+                                    <span className="text-imi-900 font-bold">{development.specs.bedroomsRange}</span>
+                                </div>
+
+                                <div className="flex items-center justify-between pb-4 border-b border-imi-200/50">
+                                    <div className="flex items-center gap-3">
+                                        <Bath className="w-5 h-5 text-accent-600" />
+                                        <span className="text-imi-500 font-medium">Banheiros</span>
+                                    </div>
+                                    <span className="text-imi-900 font-bold">{development.specs.bathroomsRange || '-'}</span>
+                                </div>
+
+                                <div className="flex items-center justify-between pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <Car className="w-5 h-5 text-accent-600" />
+                                        <span className="text-imi-500 font-medium">Vagas</span>
+                                    </div>
+                                    <span className="text-imi-900 font-bold">{development.specs.parkingRange || '-'}</span>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 pt-8 border-t border-imi-200">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-2 h-2 rounded-full bg-accent-500" />
+                                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-imi-400">Incorporação</span>
+                                </div>
+                                <p className="text-imi-900 font-bold">{development.developer}</p>
+                            </div>
+                        </motion.div>
                     </div>
                 </motion.div>
-            )}
-
-            {/* Developer */}
-            <motion.div variants={slideUp} className="mt-10 pt-8 border-t border-gray-100">
-                <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-[#334E68]" />
-                    <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Incorporação</span>
-                </div>
-                <p className="text-gray-900 font-bold mt-1.5">{development.developer}</p>
-            </motion.div>
-        </motion.div>
+            </div>
+        </section>
     );
 }

@@ -63,7 +63,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
         </div>
         <div className="flex gap-2">
           <Link href="/backoffice/imoveis/novo"
-            className="flex items-center gap-2 h-9 px-4 bg-[#102A43] text-white rounded-xl text-sm font-semibold shadow-sm hover:shadow-md hover:bg-[#16162A] transition-all">
+            className="flex items-center gap-2 h-9 px-4 bg-[#C49D5B] text-white rounded-xl text-sm font-semibold shadow-sm hover:shadow-md hover:bg-[#b08a4a] transition-all">
             <Plus size={16} /> Novo Empreendimento
           </Link>
         </div>
@@ -72,7 +72,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { l: 'VGV Global (Est.)', v: formatCurrency(totalValor), icon: DollarSign, c: 'text-[#486581] bg-[#102A43]/10' },
+          { l: 'VGV Global (Est.)', v: formatCurrency(totalValor), icon: DollarSign, c: 'text-[#C49D5B] bg-[#C49D5B]/10' },
           { l: 'Lançamentos', v: developments.filter(i => i.status === 'launch').length, icon: Activity, c: 'text-blue-600 bg-blue-50' },
           { l: 'Em Destaque (Premium)', v: developments.filter(i => i.isHighlighted).length, icon: Star, c: 'text-amber-500 bg-amber-50' },
           { l: 'Prontos / Disponíveis', v: developments.filter(i => i.status === 'ready').length, icon: CheckCircle, c: 'text-emerald-600 bg-emerald-50' },
@@ -97,11 +97,11 @@ export default function ImoveisClient({ developments }: { developments: Developm
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Buscar construtora, ativo, bairro..."
-              className="w-full h-10 pl-9 pr-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all" />
+              className="w-full h-10 pl-9 pr-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#C49D5B] focus:border-transparent transition-all" />
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
             <button onClick={() => setShowFilters(!showFilters)}
-              className={`flex-1 sm:flex-none flex justify-center items-center gap-2 h-10 px-4 border rounded-xl text-sm font-medium transition-colors ${showFilters ? 'border-[#334E68] text-[#486581] bg-[#102A43]/5' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+              className={`flex-1 sm:flex-none flex justify-center items-center gap-2 h-10 px-4 border rounded-xl text-sm font-medium transition-colors ${showFilters ? 'border-[#C49D5B] text-[#C49D5B] bg-[#C49D5B]/5' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
               <SlidersHorizontal size={16} /> Filtros
             </button>
             <div className="flex border border-gray-200 rounded-xl overflow-hidden shrink-0">
@@ -123,7 +123,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-semibold">R$</span>
                 <input type="number" value={precoMin} onChange={e => setPrecoMin(e.target.value)} placeholder="0"
-                  className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#334E68] focus:outline-none" />
+                  className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#C49D5B] focus:outline-none" />
               </div>
             </div>
             <div>
@@ -131,12 +131,12 @@ export default function ImoveisClient({ developments }: { developments: Developm
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-semibold">R$</span>
                 <input type="number" value={precoMax} onChange={e => setPrecoMax(e.target.value)} placeholder="Sem limite"
-                  className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#334E68] focus:outline-none" />
+                  className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#C49D5B] focus:outline-none" />
               </div>
             </div>
             <div>
               <label className="text-xs text-gray-500 block mb-1 font-medium">Status de Obra</label>
-              <select value={status} onChange={e => setStatus(e.target.value)} className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#334E68] focus:outline-none bg-white">
+              <select value={status} onChange={e => setStatus(e.target.value)} className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#C49D5B] focus:outline-none bg-white">
                 <option value="todos">Todos</option>
                 <option value="launch">Lançamento</option>
                 <option value="under_construction">Em Construção</option>
@@ -194,7 +194,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
                   <p className="text-[10px] text-gray-400 font-mono mb-1 uppercase tracking-wider">{im.slug.slice(0, 15)}</p>
                   <h3 className="font-bold text-gray-900 text-sm leading-tight mb-2 line-clamp-2">{im.name}</h3>
                   <p className="text-xs text-gray-500 flex items-center gap-1.5 mb-3">
-                    <MapPin size={12} className="text-[#486581]" /> <span className="truncate">{im.location.neighborhood}, {im.location.city}</span>
+                    <MapPin size={12} className="text-[#C49D5B]" /> <span className="truncate">{im.location.neighborhood}, {im.location.city}</span>
                   </p>
 
                   <div className="flex items-center gap-3 text-xs text-gray-600 mb-4 bg-gray-50 p-2 rounded-lg">
@@ -211,7 +211,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
                     </div>
                     <div className="flex gap-1.5">
                       <Link href={`/imoveis/${im.slug}`} target="_blank"
-                        className="w-8 h-8 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center hover:bg-[#102A43] hover:text-white transition-colors">
+                        className="w-8 h-8 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center hover:bg-[#C49D5B] hover:text-white transition-colors">
                         <ExternalLink size={14} />
                       </Link>
                     </div>
@@ -244,7 +244,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${Stt.color}`}>{Stt.label}</span>
-                    <span className="text-xs font-medium text-[#486581] bg-[#102A43]/10 px-2 py-0.5 rounded-full truncate max-w-[150px]">{im.developer}</span>
+                    <span className="text-xs font-medium text-[#C49D5B] bg-[#C49D5B]/10 px-2 py-0.5 rounded-full truncate max-w-[150px]">{im.developer}</span>
                   </div>
                   <p className="text-sm font-bold text-gray-900 truncate mb-1">{im.name}</p>
                   <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">

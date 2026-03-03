@@ -119,29 +119,42 @@ export default function PropertyWizard({ onSubmit, isSubmitting }: PropertyWizar
                     {currentStep === 0 && (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <Input label="Nome do Empreendimento" {...register('name')} placeholder="Ex: Residencial Horizonte" error={errors.name?.message} />
+                                <Input label="Nome do Empreendimento" {...register('name')} placeholder="Ex: Residencial Atlantis" error={errors.name?.message} />
 
-                                <Select label="Construtora" {...register('developer_id')} error={errors.developer_id?.message}>
-                                    <option value="">Selecione...</option>
-                                    {developers?.map(dev => (
-                                        <option key={dev.id} value={dev.id}>{dev.name}</option>
-                                    ))}
-                                </Select>
+                                <Select
+                                    label="Construtora"
+                                    {...register('developer_id')}
+                                    error={errors.developer_id?.message}
+                                    options={[
+                                        { value: '', label: 'Selecione...' },
+                                        ...(developers?.map(dev => ({ value: dev.id, label: dev.name })) || [])
+                                    ]}
+                                />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <Select label="Tipo" {...register('property_type')} error={errors.property_type?.message}>
-                                    <option value="apartment">Apartamento</option>
-                                    <option value="house">Casa</option>
-                                    <option value="commercial">Comercial</option>
-                                    <option value="land">Terreno</option>
-                                </Select>
+                                <Select
+                                    label="Tipo"
+                                    {...register('property_type')}
+                                    error={errors.property_type?.message}
+                                    options={[
+                                        { value: 'apartment', label: 'Apartamento' },
+                                        { value: 'house', label: 'Casa' },
+                                        { value: 'commercial', label: 'Comercial' },
+                                        { value: 'land', label: 'Terreno' }
+                                    ]}
+                                />
 
-                                <Select label="Status da Obra" {...register('status')} error={errors.status?.message}>
-                                    <option value="launch">Lançamento</option>
-                                    <option value="under_construction">Em Obras</option>
-                                    <option value="ready">Pronto</option>
-                                </Select>
+                                <Select
+                                    label="Status da Obra"
+                                    {...register('status')}
+                                    error={errors.status?.message}
+                                    options={[
+                                        { value: 'launch', label: 'Lançamento' },
+                                        { value: 'under_construction', label: 'Em Obras' },
+                                        { value: 'ready', label: 'Pronto' }
+                                    ]}
+                                />
 
                                 <Input label="Preço Base (R$)" type="number" {...register('price_min')} placeholder="0,00" error={errors.price_min?.message} />
                             </div>
@@ -198,7 +211,7 @@ export default function PropertyWizard({ onSubmit, isSubmitting }: PropertyWizar
                             Próximo
                         </Button>
                     ) : (
-                        <Button type="submit" isLoading={isSubmitting} icon={<Save size={18} />}>
+                        <Button type="submit" loading={isSubmitting} icon={<Save size={18} />}>
                             Finalizar Cadastro
                         </Button>
                     )}

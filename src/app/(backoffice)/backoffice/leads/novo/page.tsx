@@ -21,7 +21,7 @@ import {
 
 // ⚠️ Opções reais Recife
 const origens = [
-    'Site IMI',
+    'Site IMI Atlantis',
     'Instagram',
     'Facebook',
     'Google Ads',
@@ -94,7 +94,7 @@ export default function NovoLeadPage() {
         if (formData.phone && formData.phone.length >= 14) totalScore += 2
 
         // Origem qualificada: +1
-        if (['Site IMI', 'Indicação', 'Google Ads'].includes(formData.origem)) totalScore += 1
+        if (['Site IMI Atlantis', 'Indicação', 'Google Ads'].includes(formData.origem)) totalScore += 1
 
         // Interesse específico: +2
         if (formData.interesse) totalScore += 2
@@ -257,7 +257,7 @@ export default function NovoLeadPage() {
                                         value={formData.name}
                                         onChange={(e) => handleChange('name', e.target.value)}
                                         placeholder="Ex: Maria Santos Silva"
-                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
                                             }`}
                                     />
                                 </div>
@@ -281,7 +281,7 @@ export default function NovoLeadPage() {
                                         value={formData.email}
                                         onChange={(e) => handleChange('email', e.target.value)}
                                         placeholder="email@exemplo.com"
-                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
                                             }`}
                                     />
                                 </div>
@@ -306,7 +306,7 @@ export default function NovoLeadPage() {
                                         onChange={(e) => handleChange('phone', formatPhone(e.target.value))}
                                         placeholder="(81) 99999-9999"
                                         maxLength={15}
-                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
                                             }`}
                                     />
                                 </div>
@@ -331,7 +331,7 @@ export default function NovoLeadPage() {
                                         onChange={(e) => handleChange('cpf', formatCPF(e.target.value))}
                                         placeholder="000.000.000-00"
                                         maxLength={14}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                                     />
                                 </div>
                             </div>
@@ -353,7 +353,7 @@ export default function NovoLeadPage() {
                                     <select
                                         value={formData.origem}
                                         onChange={(e) => handleChange('origem', e.target.value)}
-                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white ${errors.origem ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white ${errors.origem ? 'border-red-300 bg-red-50' : 'border-gray-200'
                                             }`}
                                     >
                                         <option value="">Selecione...</option>
@@ -380,7 +380,7 @@ export default function NovoLeadPage() {
                                     <select
                                         value={formData.interesse}
                                         onChange={(e) => handleChange('interesse', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
                                     >
                                         <option value="">Selecione...</option>
                                         {tiposImovel.map(tipo => (
@@ -400,7 +400,7 @@ export default function NovoLeadPage() {
                                     <select
                                         value={formData.localizacao}
                                         onChange={(e) => handleChange('localizacao', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
                                     >
                                         <option value="">Selecione...</option>
                                         {localizacoes.map(loc => (
@@ -420,7 +420,7 @@ export default function NovoLeadPage() {
                                     <select
                                         value={formData.orcamento}
                                         onChange={(e) => handleChange('orcamento', e.target.value)}
-                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+                                        className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 bg-white"
                                     >
                                         <option value="">Selecione...</option>
                                         {faixasOrcamento.map(faixa => (
@@ -440,7 +440,7 @@ export default function NovoLeadPage() {
                             onChange={(e) => handleChange('notes', e.target.value)}
                             placeholder="Adicione informações relevantes sobre o lead..."
                             rows={6}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] resize-none"
+                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
                         />
                     </div>
                 </div>
@@ -478,8 +478,8 @@ export default function NovoLeadPage() {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-600">Origem qualificada</span>
-                                    <span className={['Site IMI', 'Indicação', 'Google Ads'].includes(formData.origem) ? 'text-green-600' : 'text-gray-400'}>
-                                        {['Site IMI', 'Indicação', 'Google Ads'].includes(formData.origem) ? '+1' : '0'}
+                                    <span className={['Site IMI Atlantis', 'Indicação', 'Google Ads'].includes(formData.origem) ? 'text-green-600' : 'text-gray-400'}>
+                                        {['Site IMI Atlantis', 'Indicação', 'Google Ads'].includes(formData.origem) ? '+1' : '0'}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
@@ -521,7 +521,7 @@ export default function NovoLeadPage() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full h-11 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full h-11 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? (
                                     <>

@@ -33,7 +33,7 @@ import {
 const CONTEUDOS_CALENDARIO = [
     {
         id: 1,
-        titulo: 'Reserva Imperial — Lançamento Fase 2',
+        titulo: 'Reserva Atlantis — Lançamento Fase 2',
         tipo: 'instagram',
         status: 'agendado',
         data: '2026-02-20',
@@ -128,7 +128,7 @@ const TIPO_CONFIG: Record<string, { icon: any; label: string; color: string; bg:
     linkedin: { icon: Linkedin, label: 'LinkedIn', color: 'text-blue-700', bg: 'bg-blue-50 border-blue-100' },
     facebook: { icon: Facebook, label: 'Facebook', color: 'text-blue-600', bg: 'bg-blue-50 border-blue-100' },
     email: { icon: Mail, label: 'E-mail', color: 'text-green-600', bg: 'bg-green-50 border-green-100' },
-    blog: { icon: Globe, label: 'Blog', color: 'text-[#486581]', bg: 'bg-accent-50 border-accent-100' },
+    blog: { icon: Globe, label: 'Blog', color: 'text-accent-600', bg: 'bg-accent-50 border-accent-100' },
     youtube: { icon: Youtube, label: 'YouTube', color: 'text-red-600', bg: 'bg-red-50 border-red-100' },
 }
 
@@ -226,7 +226,7 @@ export default function CalendarioPage() {
                     </div>
                     <button
                         onClick={() => router.push('/backoffice/conteudo/novo')}
-                        className="flex items-center gap-2 h-10 px-4 bg-[#16162A] text-white rounded-xl text-sm font-medium hover:bg-[#0F0F1E]"
+                        className="flex items-center gap-2 h-10 px-4 bg-accent-600 text-white rounded-xl text-sm font-medium hover:bg-accent-700"
                     >
                         <Plus size={16} />
                         Novo
@@ -318,9 +318,9 @@ export default function CalendarioPage() {
                                         key={dia}
                                         onClick={() => setDiaSelecionado(isSelecionado ? null : dia)}
                                         className={`relative aspect-square p-1 rounded-xl text-sm transition-all ${isSelecionado
-                                            ? 'bg-[#16162A] text-white'
+                                            ? 'bg-accent-600 text-white'
                                             : isHoje
-                                                ? 'bg-accent-50 border border-accent-200 text-[#0F0F1E] font-bold'
+                                                ? 'bg-accent-50 border border-accent-200 text-accent-700 font-bold'
                                                 : conteudosDia.length > 0
                                                     ? 'hover:bg-gray-50 text-gray-900'
                                                     : 'hover:bg-gray-50 text-gray-500'
@@ -357,7 +357,7 @@ export default function CalendarioPage() {
                                     </h3>
                                     <button
                                         onClick={() => router.push('/backoffice/conteudo/novo')}
-                                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-accent-50 text-[#486581] hover:bg-accent-100"
+                                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-accent-50 text-accent-600 hover:bg-accent-100"
                                     >
                                         <Plus size={14} />
                                     </button>
@@ -368,7 +368,7 @@ export default function CalendarioPage() {
                                         <p className="text-sm text-gray-400">Nenhum conteúdo neste dia</p>
                                         <button
                                             onClick={() => router.push('/backoffice/conteudo/novo')}
-                                            className="mt-3 text-xs text-[#486581] hover:text-[#0F0F1E] font-medium"
+                                            className="mt-3 text-xs text-accent-600 hover:text-accent-700 font-medium"
                                         >
                                             + Adicionar conteúdo
                                         </button>

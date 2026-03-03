@@ -39,7 +39,7 @@ export default async function BackofficeConstrutorasPage() {
     is_active: dev.is_active,
     logo_url: dev.logo_url,
     // Contagem de empreendimentos ativos baseada na real relation do banco de dados
-    empreendimentosAtivos: Array.isArray(dev.developments) ? dev.developments.length : dev.developments?.[0]?.count || 0,
+    empreendimentosAtivos: Array.isArray(dev.developments) ? dev.developments.length : (dev.developments as any)?.[0]?.count || 0,
     unidadesVendidas: 0, // Placeholder
     receitaTotal: 0, // Placeholder
     rating: 4.8,

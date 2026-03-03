@@ -1,5 +1,5 @@
 // src/lib/integracoes-registry.ts
-// ── Registro completo de integrações IMI ─────────────
+// ── Registro completo de integrações IMI Atlantis ─────────────
 // Adicione novas integrações aqui. O hub lê este arquivo.
 
 import type { Integracao } from '@/types/contratos'
@@ -370,7 +370,7 @@ export const INTEGRACOES: Integracao[] = [
   {
     id: 'n8n',
     nome: 'n8n (Automações)',
-    descricao: 'Plataforma de automação open-source. Conecta IMI a qualquer serviço externo via webhooks e fluxos visuais.',
+    descricao: 'Plataforma de automação open-source. Conecta IMI Atlantis a qualquer serviço externo via webhooks e fluxos visuais.',
     categoria: 'crm',
     icon: 'Zap',
     cor: '#FF6D5A',

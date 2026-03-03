@@ -14,19 +14,19 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: '#C49D5B',
 }
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     concluida: { label: 'Concluída', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    em_andamento: { label: 'Em Andamento', text: '#486581', bg: 'rgba(26,26,46,0.12)', icon: Clock },
+    em_andamento: { label: 'Em Andamento', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock },
     aguardando_docs: { label: 'Aguard. Docs', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
     cancelada: { label: 'Cancelada', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle },
 }
 
 const HONOR_CFG: Record<string, { label: string; text: string }> = {
     pago: { label: 'Pago', text: '#6BB87B' },
-    parcial: { label: 'Parcial', text: '#486581' },
+    parcial: { label: 'Parcial', text: '#C49D5B' },
     pendente: { label: 'Pendente', text: '#E8A87C' },
 }
 
@@ -69,7 +69,7 @@ export default function AvaliacoesPage() {
 
     const KPIS = [
         { label: 'Honorários Recebidos', value: fmt(honorariosPago), icon: DollarSign, color: '#6BB87B' },
-        { label: 'A Receber', value: fmt(honorariosPendente), icon: TrendingUp, color: '#486581' },
+        { label: 'A Receber', value: fmt(honorariosPendente), icon: TrendingUp, color: '#C49D5B' },
         { label: 'Em Andamento', value: emAndamento, icon: Clock, color: '#A89EC4' },
         { label: 'Concluídas', value: concluidas, icon: CheckCircle, color: '#6BB87B' },
     ]
@@ -95,8 +95,8 @@ export default function AvaliacoesPage() {
                 </div>
                 <motion.button whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                    className="flex items-center justify-center gap-2 min-h-[44px] min-w-[44px] px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                     <Plus size={16} /> Nova Avaliação
                 </motion.button>
             </motion.div>
@@ -130,7 +130,7 @@ export default function AvaliacoesPage() {
                             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
                             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
                             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                                style={{ background: 'rgba(26,26,46,0.10)' }}>
+                                style={{ background: 'rgba(196,157,91,0.10)' }}>
                                 <a.icon size={15} style={{ color: T.gold }} />
                             </div>
                             <span className="text-xs font-medium" style={{ color: T.textSub }}>{a.label}</span>
@@ -160,9 +160,9 @@ export default function AvaliacoesPage() {
                         { key: 'concluida', label: 'Concluídas' },
                     ].map(t => (
                         <button key={t.key} onClick={() => setTab(t.key)}
-                            className="px-3.5 h-8 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
+                            className="px-3.5 min-h-[44px] min-w-[44px] rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: tab === t.key ? '#486581' : T.elevated,
+                                background: tab === t.key ? '#C49D5B' : T.elevated,
                                 color: tab === t.key ? 'white' : T.textDim,
                                 border: `1px solid ${tab === t.key ? T.borderGold : T.border}`,
                             }}>
@@ -266,8 +266,8 @@ export default function AvaliacoesPage() {
                         <motion.button
                             whileTap={{ scale: 0.96 }}
                             onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                            className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
-                            style={{ background: '#486581' }}
+                            className="mt-4 flex items-center justify-center gap-2 min-h-[44px] min-w-[44px] px-4 rounded-xl text-xs font-semibold text-white"
+                            style={{ background: '#C49D5B' }}
                         >
                             <Plus size={14} /> Nova Avaliação
                         </motion.button>

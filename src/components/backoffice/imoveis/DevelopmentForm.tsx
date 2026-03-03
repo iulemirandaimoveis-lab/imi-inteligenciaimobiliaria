@@ -163,7 +163,7 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Nome do Empreendimento</label>
-                                <Input {...register('name')} placeholder="Ex: Residencial Horizonte" error={errors.name?.message} className="h-14 rounded-xl" />
+                                <Input {...register('name')} placeholder="Ex: Residencial Atlantis" error={errors.name?.message} className="h-14 rounded-xl" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-black text-imi-400 uppercase tracking-widest">Tipo</label>

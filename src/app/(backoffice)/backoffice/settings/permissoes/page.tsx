@@ -158,7 +158,7 @@ export default function PermissoesPage() {
             </button>
             <button
               onClick={() => setHasChanges(false)}
-              className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
+              className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors"
             >
               <Save size={20} />
               Salvar Alterações
@@ -202,7 +202,7 @@ export default function PermissoesPage() {
                   key={role.id}
                   onClick={() => setSelectedRole(role)}
                   className={`w-full text-left p-3 rounded-xl transition-all ${selectedRole.id === role.id
-                      ? 'bg-accent-50 border-2 border-[#334E68]'
+                      ? 'bg-accent-50 border-2 border-accent-500'
                       : 'border border-gray-200 hover:border-accent-300'
                     }`}
                 >
@@ -225,7 +225,7 @@ export default function PermissoesPage() {
             {/* Header */}
             <div className="p-6 border-b bg-gray-50">
               <div className="flex items-center gap-3 mb-2">
-                <Shield size={24} className="text-[#486581]" />
+                <Shield size={24} className="text-accent-600" />
                 <h2 className="text-lg font-bold text-gray-900">{selectedRole.name}</h2>
                 <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getRoleColor(selectedRole.color)}`}>
                   {selectedRole.usuarios} usuários

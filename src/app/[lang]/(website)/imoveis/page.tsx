@@ -1,7 +1,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import ImoveisClient from './ImoveisClient'
-import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
+import { mapDbPropertyToDevelopment } from '@/components/backoffice/imoveis/utils/propertyMapper'
 
 // Forcing dynamic for real-time updates from Backoffice
 export const dynamic = 'force-dynamic'
@@ -27,7 +27,7 @@ export default async function ImoveisPage({ params }: { params: { lang: string }
         console.error('Falha na integração com Supabase:', error.message)
     }
 
-    const developments = (data || []).map(mapDbPropertyToDevelopment)
+    const developments = (data || []).map(mapDbPropertyToDevelopment) as any
 
     return (
         <ImoveisClient

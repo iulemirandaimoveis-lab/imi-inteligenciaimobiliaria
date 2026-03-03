@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function GET(request: Request) {
-    const supabase = getSupabase()
     try {
         const { searchParams } = new URL(request.url)
         const entity_type = searchParams.get('entity_type')
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
         const offset = parseInt(searchParams.get('offset') || '0')
 
         let query = supabase
-            .from('audit_log')
+            .from('activity_logs')
             .select('*')
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1)
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 
         // Also get total count
         let countQuery = supabase
-            .from('audit_log')
+            .from('activity_logs')
             .select('id', { count: 'exact', head: true })
 
         if (entity_type) countQuery = countQuery.eq('entity_type', entity_type)
@@ -55,7 +55,6 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
     try {
-        const supabase = getSupabase()
         const body = await request.json()
         const { user_id, action, entity_type, entity_id, old_data, new_data, ip_address, user_agent } = body
 
@@ -64,7 +63,7 @@ export async function POST(request: Request) {
         }
 
         const { data, error } = await supabase
-            .from('audit_log')
+            .from('activity_logs')
             .insert({
                 user_id: user_id || null,
                 action,

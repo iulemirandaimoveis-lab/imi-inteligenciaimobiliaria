@@ -1,5 +1,5 @@
 // src/lib/modelos-contratos.ts
-// ── 32 modelos de contratos IMI – Inteligência Imobiliária ─────────────────────
+// ── 32 modelos de contratos IMI Atlantis ─────────────────────
 
 import type { ModeloContrato } from '@/types/contratos'
 
@@ -127,7 +127,7 @@ export const MODELOS_CONTRATOS: ModeloContrato[] = [
     id: 'captacao-venda', categoria: 'captacao', popular: true,
     nome: 'Captação com Exclusividade — Venda', nome_en: 'Exclusive Listing Agreement',
     descricao: 'Autorização exclusiva para intermediação de venda. Inclui comissão, estratégia de divulgação e prazo de carência.',
-    jurisdicao: 'BR', idiomas: ['pt', 'en', 'es'], icon: 'Target', cor: '#486581',
+    jurisdicao: 'BR', idiomas: ['pt', 'en', 'es'], icon: 'Target', cor: '#C49D5B',
     tags: ['captação', 'exclusividade', 'CRECI', 'comissão'],
     campos: [
       { key: 'imovel_descricao', label: 'Imóvel captado', tipo: 'textarea', required: true, section: 'objeto', width: 'full' },
@@ -144,7 +144,7 @@ export const MODELOS_CONTRATOS: ModeloContrato[] = [
     id: 'captacao-locacao', categoria: 'captacao',
     nome: 'Captação com Exclusividade — Locação', nome_en: 'Exclusive Rental Listing',
     descricao: 'Autorização exclusiva para intermediação de locação com taxa de administração e gestão.',
-    jurisdicao: 'BR', idiomas: ['pt', 'en'], icon: 'Target', cor: '#486581',
+    jurisdicao: 'BR', idiomas: ['pt', 'en'], icon: 'Target', cor: '#C49D5B',
     tags: ['captação', 'locação', 'administração'],
     campos: [
       { key: 'imovel_descricao', label: 'Imóvel', tipo: 'textarea', required: true, section: 'objeto', width: 'full' },
@@ -214,7 +214,7 @@ export const MODELOS_CONTRATOS: ModeloContrato[] = [
     id: 'consultoria-estrategica', categoria: 'consultoria', popular: true, internacional: true,
     nome: 'Consultoria Estratégica Imobiliária', nome_en: 'Real Estate Strategic Advisory Agreement',
     descricao: 'Prestação de consultoria para fundos, investidores e incorporadoras. Inclui escopo, deliverables, NDA e honorários.',
-    jurisdicao: 'BR', idiomas: ['pt', 'en', 'ar'], icon: 'Briefcase', cor: '#486581',
+    jurisdicao: 'BR', idiomas: ['pt', 'en', 'ar'], icon: 'Briefcase', cor: '#C49D5B',
     tags: ['consultoria', 'estratégica', 'fundos', 'NDA'],
     campos: [
       { key: 'escopo_descricao', label: 'Escopo dos serviços', tipo: 'textarea', required: true, section: 'objeto', width: 'full' },
@@ -230,7 +230,7 @@ export const MODELOS_CONTRATOS: ModeloContrato[] = [
     id: 'due-diligence', categoria: 'consultoria', internacional: true,
     nome: 'Due Diligence Imobiliária', nome_en: 'Real Estate Due Diligence Agreement',
     descricao: 'Due diligence técnica, jurídica e mercadológica de ativos para fundos e investidores.',
-    jurisdicao: 'BR', idiomas: ['pt', 'en', 'ar', 'ja'], icon: 'Search', cor: '#486581',
+    jurisdicao: 'BR', idiomas: ['pt', 'en', 'ar', 'ja'], icon: 'Search', cor: '#C49D5B',
     tags: ['due diligence', 'fundos', 'análise', 'SWF'],
     campos: [
       { key: 'ativo_descricao', label: 'Ativo(s) objeto da due diligence', tipo: 'textarea', required: true, section: 'objeto', width: 'full' },
@@ -246,7 +246,7 @@ export const MODELOS_CONTRATOS: ModeloContrato[] = [
     id: 'gestao-patrimonial', categoria: 'gestao_patrimonial', internacional: true,
     nome: 'Gestão Patrimonial Imobiliária', nome_en: 'Real Estate Wealth Management Agreement',
     descricao: 'Gestão profissional de portfólio imobiliário para family offices e alta renda. Política de investimentos e relatórios.',
-    jurisdicao: 'BR', idiomas: ['pt', 'en', 'ar'], icon: 'TrendingUp', cor: '#486581',
+    jurisdicao: 'BR', idiomas: ['pt', 'en', 'ar'], icon: 'TrendingUp', cor: '#C49D5B',
     tags: ['wealth management', 'family office', 'portfólio'],
     campos: [
       { key: 'portfolio_descricao', label: 'Composição inicial do portfólio', tipo: 'textarea', required: true, section: 'objeto', width: 'full' },
@@ -264,7 +264,7 @@ export const MODELOS_CONTRATOS: ModeloContrato[] = [
     id: 'swf-agreement', categoria: 'fundo_investimento', popular: true, internacional: true,
     nome: 'Sovereign Wealth Fund Advisory', nome_en: 'Sovereign Wealth Fund Real Estate Advisory',
     descricao: 'Assessoria para fundos soberanos em investimentos imobiliários no Brasil. NDA reforçado, jurisdição internacional e compliance OCDE.',
-    jurisdicao: 'INTL', idiomas: ['en', 'ar', 'pt'], icon: 'Landmark', cor: '#486581',
+    jurisdicao: 'INTL', idiomas: ['en', 'ar', 'pt'], icon: 'Landmark', cor: '#C49D5B',
     tags: ['SWF', 'sovereign fund', 'OCDE', 'advisory', 'NDA'],
     campos: [
       { key: 'fund_name', label: 'Fund name / entity', tipo: 'text', required: true, section: 'objeto', width: 'full' },
@@ -379,7 +379,7 @@ export const MODELOS_CONTRATOS: ModeloContrato[] = [
     id: 'modelo-personalizado', categoria: 'outros',
     nome: '+ Criar Modelo Personalizado', nome_en: 'Custom Contract',
     descricao: 'Descreva o contrato que precisa e a IA gera um modelo completo adequado ao seu contexto.',
-    jurisdicao: 'BR', idiomas: ['pt', 'en', 'es', 'ar', 'ja'], icon: 'Sparkles', cor: '#486581',
+    jurisdicao: 'BR', idiomas: ['pt', 'en', 'es', 'ar', 'ja'], icon: 'Sparkles', cor: '#C49D5B',
     tags: ['personalizado', 'custom', 'qualquer'],
     campos: [
       { key: 'tipo_contrato', label: 'Que tipo de contrato você precisa?', tipo: 'text', required: true, section: 'objeto', width: 'full', placeholder: 'Ex: Comodato, cessão de direitos, staging imobiliário...' },

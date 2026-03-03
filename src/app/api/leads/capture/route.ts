@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 const DEFAULT_USER_ID = '00000000-0000-0000-0000-000000000000'
 
 export async function POST(request: NextRequest) {
     try {
-        const supabase = getSupabase()
         const body = await request.json()
         const {
             name, email, phone, interest, development_id,
@@ -49,33 +49,39 @@ export async function POST(request: NextRequest) {
 
         // 2. Link session to lead if sessionId provided
         if (sessionId) {
-            supabase
-                .from('tracking_sessions')
-                .update({ lead_id: lead.id })
-                .eq('session_id', sessionId)
-                .then(() => { })
-                .catch(() => { })
+            ; (async () => {
+                try {
+                    await supabase
+                        .from('tracking_sessions')
+                        .update({ lead_id: lead.id })
+                        .eq('session_id', sessionId)
+                } catch { }
+            })();
         }
 
         // 3. Create notification for new lead
         const devName = development_id ? '(imóvel vinculado)' : ''
-        supabase
-            .from('notifications')
-            .insert({
-                user_id: DEFAULT_USER_ID,
-                type: 'new_lead',
-                title: `📩 Novo lead: ${name}`,
-                message: `${email || phone} — Origem: ${attribution?.source || 'site direto'} ${devName}`.trim(),
-                data: {
-                    lead_id: lead.id,
-                    source: attribution?.source || 'direct',
-                    campaign: attribution?.campaign || null,
-                    session_id: sessionId || null,
-                },
-                read: false,
-            })
-            .then(() => { })
-            .catch((err: any) => console.error('Notification error:', err))
+            ; (async () => {
+                try {
+                    await supabase
+                        .from('notifications')
+                        .insert({
+                            user_id: DEFAULT_USER_ID,
+                            type: 'new_lead',
+                            title: `📩 Novo lead: ${name}`,
+                            message: `${email || phone} — Origem: ${attribution?.source || 'site direto'} ${devName}`.trim(),
+                            data: {
+                                lead_id: lead.id,
+                                source: attribution?.source || 'direct',
+                                campaign: attribution?.campaign || null,
+                                session_id: sessionId || null,
+                            },
+                            read: false,
+                        })
+                } catch (err: any) {
+                    console.error('Notification error:', err)
+                }
+            })();
 
         // 4. AI qualification (non-blocking, soft fail)
         try {

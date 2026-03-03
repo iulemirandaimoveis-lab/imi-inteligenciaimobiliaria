@@ -70,7 +70,7 @@ const T = {
   surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
   border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
   text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-  gold: '#486581',
+  gold: '#C49D5B',
 }
 
 export default function EditarImovelPage() {
@@ -373,7 +373,7 @@ export default function EditarImovelPage() {
               <div className="md:col-span-2">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input type="checkbox" checked={formData.is_highlighted} onChange={e => handleChange('is_highlighted', e.target.checked)}
-                    className="w-5 h-5 rounded accent-[#334E68]" />
+                    className="w-5 h-5 rounded accent-[#C49D5B]" />
                   <span className="text-sm font-medium" style={{ color: T.text }}>Destaque na página inicial</span>
                 </label>
               </div>

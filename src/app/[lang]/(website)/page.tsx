@@ -1,11 +1,10 @@
-
 import { getDictionary } from '@/lib/dictionaries'
 import Hero from '@/components/home/Hero'
 import Services from '@/components/home/Services'
 import Method from '@/components/home/Method'
 import CTA from '@/components/home/CTA'
 
-export default async function HomePage({ params }: { params: { lang: 'pt' | 'en' | 'ja' } }) {
+export default async function HomePage({ params }: { params: { lang: 'pt' | 'en' | 'ja' | 'ar' | 'es' } }) {
     const dict = await getDictionary(params.lang)
 
     return (
@@ -17,3 +16,4 @@ export default async function HomePage({ params }: { params: { lang: 'pt' | 'en'
         </div>
     )
 }
+

@@ -12,7 +12,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: '#C49D5B',
 }
 
 interface Transaction {
@@ -137,7 +137,7 @@ export default function FinanceiroPage() {
                     <p className="text-sm mt-0.5" style={{ color: T.textDim }}>Gestão de receitas, despesas e fluxo de caixa</p>
                 </div>
                 <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowForm(true)}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    className="flex items-center gap-2 min-h-[44px] min-w-[44px] px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
                     style={{ background: T.gold, boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                     <Plus size={16} /> Novo Lançamento
                 </motion.button>
@@ -149,7 +149,7 @@ export default function FinanceiroPage() {
                     { label: 'Receitas', value: totalReceitas, color: '#6BB87B', icon: ArrowUpCircle },
                     { label: 'Despesas', value: totalDespesas, color: '#E57373', icon: ArrowDownCircle },
                     { label: 'Saldo', value: saldo, color: saldo >= 0 ? '#6BB87B' : '#E57373', icon: saldo >= 0 ? TrendingUp : TrendingDown },
-                    { label: 'Pendentes', value: pendentes, color: '#486581', icon: DollarSign, isCount: true },
+                    { label: 'Pendentes', value: pendentes, color: '#C49D5B', icon: DollarSign, isCount: true },
                 ].map((kpi, i) => (
                     <motion.div key={kpi.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
                         className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
@@ -171,7 +171,7 @@ export default function FinanceiroPage() {
                     <div className="flex items-center gap-1.5 overflow-x-auto">
                         {(['todos', 'receita', 'despesa'] as const).map(f => (
                             <button key={f} onClick={() => setTipoFilter(f)}
-                                className="px-3.5 h-9 rounded-xl text-xs font-semibold transition-all flex-shrink-0"
+                                className="px-3.5 min-h-[44px] min-w-[44px] rounded-xl text-xs font-semibold transition-all flex-shrink-0"
                                 style={{
                                     background: tipoFilter === f ? (f === 'receita' ? 'rgba(107,184,123,0.15)' : f === 'despesa' ? 'rgba(229,115,115,0.15)' : T.gold) : T.elevated,
                                     color: tipoFilter === f ? (f === 'receita' ? '#6BB87B' : f === 'despesa' ? '#E57373' : 'white') : T.textDim,
@@ -190,79 +190,120 @@ export default function FinanceiroPage() {
                         <p className="text-xs mt-1" style={{ color: T.textDim }}>Clique em "Novo Lançamento" para começar</p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Data</th>
-                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Descrição</th>
-                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider hidden sm:table-cell" style={{ color: T.textDim }}>Categoria</th>
-                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Status</th>
-                                    <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Valor</th>
-                                    <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filtered.map(t => (
-                                    <tr key={t.id} className="transition-colors" style={{ borderBottom: `1px solid ${T.border}` }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                                        <td className="px-4 py-3 text-xs" style={{ color: T.textSub }}>
-                                            {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : '—'}
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <div className="flex items-center gap-2">
-                                                {t.type === 'receita'
-                                                    ? <ArrowUpCircle size={14} className="flex-shrink-0" style={{ color: '#6BB87B' }} />
-                                                    : <ArrowDownCircle size={14} className="flex-shrink-0" style={{ color: '#E57373' }} />}
-                                                <span className="text-xs font-medium truncate max-w-[200px]" style={{ color: T.text }}>{t.description}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 hidden sm:table-cell">
-                                            <span className="text-[10px] font-semibold px-2 py-1 rounded-lg" style={{ background: T.elevated, color: T.textSub }}>{t.category}</span>
-                                        </td>
-                                        <td className="px-4 py-3">
+                    <div>
+                        {/* Mobile view */}
+                        <div className="lg:hidden divide-y" style={{ borderColor: T.border }}>
+                            {filtered.map(t => (
+                                <div key={t.id} className="p-4" style={{ background: T.surface }}>
+                                    <div className="flex items-start justify-between mb-3">
+                                        <div className="flex items-center gap-2">
+                                            {t.type === 'receita'
+                                                ? <ArrowUpCircle size={16} style={{ color: '#6BB87B' }} />
+                                                : <ArrowDownCircle size={16} style={{ color: '#E57373' }} />}
+                                            <span className="text-sm font-semibold" style={{ color: T.text }}>{t.description}</span>
+                                        </div>
+                                        <span className={`text-sm font-bold flex-shrink-0`} style={{ color: t.type === 'receita' ? '#6BB87B' : '#E57373' }}>
+                                            {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-xs mt-2">
+                                        <span style={{ color: T.textSub }}>
+                                            {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR') : 'Sem data'}
+                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="px-2 py-1 rounded-lg text-[10px] font-semibold" style={{ background: T.elevated, color: T.textSub }}>{t.category}</span>
                                             <span className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{
-                                                color: t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#486581',
-                                                background: t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(26,26,46,0.12)',
+                                                color: t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#C49D5B',
+                                                background: t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(196,157,91,0.12)',
                                             }}>
                                                 {t.status === 'pago' ? 'Pago' : t.status === 'atrasado' ? 'Atrasado' : 'Pendente'}
                                             </span>
-                                        </td>
-                                        <td className={`px-4 py-3 text-right text-xs font-bold`} style={{ color: t.type === 'receita' ? '#6BB87B' : '#E57373' }}>
-                                            {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
-                                            {t.status === 'pendente' && (
-                                                <button onClick={() => markPaid(t.id)} className="text-[10px] font-semibold px-2 py-1 rounded-lg transition-all"
-                                                    style={{ color: '#6BB87B', background: 'rgba(107,184,123,0.08)' }}>
-                                                    <CheckCircle size={12} className="inline mr-1" />Pagar
-                                                </button>
-                                            )}
-                                        </td>
+                                        </div>
+                                    </div>
+                                    {t.status === 'pendente' && (
+                                        <button onClick={() => markPaid(t.id)} className="w-full mt-3 min-h-[44px] rounded-lg text-xs font-semibold transition-all"
+                                            style={{ color: '#6BB87B', background: 'rgba(107,184,123,0.08)' }}>
+                                            <CheckCircle size={14} className="inline mr-1" /> Marcar como Pago
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        {/* Desktop view */}
+                        <div className="hidden lg:block overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Data</th>
+                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Descrição</th>
+                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider hidden sm:table-cell" style={{ color: T.textDim }}>Categoria</th>
+                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Status</th>
+                                        <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Valor</th>
+                                        <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}></th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {filtered.map(t => (
+                                        <tr key={t.id} className="transition-colors" style={{ borderBottom: `1px solid ${T.border}` }}
+                                            onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
+                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                                            <td className="px-4 py-3 text-xs" style={{ color: T.textSub }}>
+                                                {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : '—'}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center gap-2">
+                                                    {t.type === 'receita'
+                                                        ? <ArrowUpCircle size={14} className="flex-shrink-0" style={{ color: '#6BB87B' }} />
+                                                        : <ArrowDownCircle size={14} className="flex-shrink-0" style={{ color: '#E57373' }} />}
+                                                    <span className="text-xs font-medium truncate max-w-[200px]" style={{ color: T.text }}>{t.description}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 hidden sm:table-cell">
+                                                <span className="text-[10px] font-semibold px-2 py-1 rounded-lg" style={{ background: T.elevated, color: T.textSub }}>{t.category}</span>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <span className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{
+                                                    color: t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#C49D5B',
+                                                    background: t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(196,157,91,0.12)',
+                                                }}>
+                                                    {t.status === 'pago' ? 'Pago' : t.status === 'atrasado' ? 'Atrasado' : 'Pendente'}
+                                                </span>
+                                            </td>
+                                            <td className={`px-4 py-3 text-right text-xs font-bold`} style={{ color: t.type === 'receita' ? '#6BB87B' : '#E57373' }}>
+                                                {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                {t.status === 'pendente' && (
+                                                    <button onClick={() => markPaid(t.id)} className="text-[10px] font-semibold px-2 py-1 rounded-lg transition-all min-h-[44px] min-w-[44px]"
+                                                        style={{ color: '#6BB87B', background: 'rgba(107,184,123,0.08)' }}>
+                                                        <CheckCircle size={12} className="inline mr-1" />Pagar
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
             </div>
 
             {/* New Transaction Modal */}
             {showForm && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)' }}>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 lg:p-0" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)' }}>
                     <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
-                        className="w-full max-w-lg rounded-2xl p-6 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <div className="flex items-center justify-between">
+                        className="w-full max-w-[95vw] max-h-[90vh] overflow-y-auto lg:max-w-lg rounded-2xl p-6 space-y-4 shadow-xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-center justify-between sticky top-0 bg-[var(--bo-surface)] z-10 pb-2">
                             <h3 className="text-sm font-bold" style={{ color: T.text }}>Novo Lançamento</h3>
-                            <button onClick={() => setShowForm(false)}><X size={18} style={{ color: T.textDim }} /></button>
+                            <button onClick={() => setShowForm(false)} className="min-w-[44px] min-h-[44px] flex items-center justify-center -mr-3"><X size={18} style={{ color: T.textDim }} /></button>
                         </div>
 
                         {/* Type toggle */}
                         <div className="flex gap-2">
                             {(['receita', 'despesa'] as const).map(t => (
                                 <button key={t} onClick={() => setForm(f => ({ ...f, type: t }))}
-                                    className="flex-1 h-10 rounded-xl text-xs font-semibold transition-all"
+                                    className="flex-1 min-h-[44px] min-w-[44px] rounded-xl text-xs font-semibold transition-all"
                                     style={{
                                         background: form.type === t ? (t === 'receita' ? 'rgba(107,184,123,0.15)' : 'rgba(229,115,115,0.15)') : T.elevated,
                                         color: form.type === t ? (t === 'receita' ? '#6BB87B' : '#E57373') : T.textDim,
@@ -273,8 +314,8 @@ export default function FinanceiroPage() {
                             ))}
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div className="sm:col-span-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="md:col-span-2">
                                 <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Descrição *</label>
                                 <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                                     placeholder="Ex: Comissão Venda Apt 905" className="w-full h-10 px-3 rounded-xl text-sm outline-none"
@@ -313,7 +354,7 @@ export default function FinanceiroPage() {
                                     <option value="dinheiro">Dinheiro</option>
                                 </select>
                             </div>
-                            <div className="sm:col-span-2">
+                            <div className="md:col-span-2">
                                 <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Observações</label>
                                 <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                                     rows={2} placeholder="Notas adicionais..." className="w-full px-3 py-2 rounded-xl text-sm outline-none resize-none"
@@ -322,10 +363,10 @@ export default function FinanceiroPage() {
                         </div>
 
                         <div className="flex gap-3 pt-2">
-                            <button onClick={() => setShowForm(false)} className="flex-1 h-10 rounded-xl text-sm font-semibold"
+                            <button onClick={() => setShowForm(false)} className="flex-1 min-h-[44px] min-w-[44px] rounded-xl text-sm font-semibold"
                                 style={{ background: T.elevated, color: T.textSub, border: `1px solid ${T.border}` }}>Cancelar</button>
                             <button onClick={handleSubmit} disabled={saving}
-                                className="flex-1 h-10 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2"
+                                className="flex-1 min-h-[44px] min-w-[44px] rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2"
                                 style={{ background: T.gold }}>
                                 {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
                                 {saving ? 'Salvando...' : 'Salvar'}

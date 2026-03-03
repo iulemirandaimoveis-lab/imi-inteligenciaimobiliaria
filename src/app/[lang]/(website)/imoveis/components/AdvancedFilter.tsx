@@ -113,7 +113,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                             onClick={() => setIsMobileOpen(true)}
                             className="lg:hidden flex items-center gap-2 bg-[#1A1E2A] text-white px-5 py-3.5 rounded-lg font-bold text-sm shadow-md w-full justify-center active:bg-[#21263A] border border-[#21263A] transition-colors"
                         >
-                            <SlidersHorizontal className="w-5 h-5 text-[#486581]" />
+                            <SlidersHorizontal className="w-5 h-5 text-[#C49D5B]" />
                             Filtrar Imóveis
                         </motion.button>
 
@@ -152,7 +152,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                 )}
                                             >
                                                 {loc}
-                                                {filters.location === loc && <Check className="w-4 h-4 text-[#486581]" />}
+                                                {filters.location === loc && <Check className="w-4 h-4 text-[#C49D5B]" />}
                                             </button>
                                         ))}
                                     </motion.div>
@@ -191,7 +191,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                     )}
                                                 >
                                                     {hood}
-                                                    {filters.neighborhood === hood && <Check className="w-4 h-4 text-[#486581]" />}
+                                                    {filters.neighborhood === hood && <Check className="w-4 h-4 text-[#C49D5B]" />}
                                                 </button>
                                             ))}
                                         </motion.div>
@@ -231,7 +231,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                     )}
                                                 >
                                                     {opt.label}
-                                                    {isSelected && <Check className="w-4 h-4 text-[#486581]" />}
+                                                    {isSelected && <Check className="w-4 h-4 text-[#C49D5B]" />}
                                                 </button>
                                             );
                                         })}
@@ -265,7 +265,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                 )}
                                             >
                                                 {num}+ Quartos
-                                                {filters.bedrooms === num && <Check className="w-4 h-4 text-[#486581]" />}
+                                                {filters.bedrooms === num && <Check className="w-4 h-4 text-[#C49D5B]" />}
                                             </button>
                                         ))}
                                     </motion.div>
@@ -355,7 +355,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                             className={cn(
                                                 "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
                                                 !mobileFilters.location
-                                                    ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                    ? "bg-[#C49D5B]/10 border-[#C49D5B]/50 text-[#C49D5B] shadow-sm"
                                                     : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                             )}
                                         >
@@ -368,7 +368,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                 className={cn(
                                                     "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
                                                     mobileFilters.location === loc
-                                                        ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                        ? "bg-[#C49D5B]/10 border-[#C49D5B]/50 text-[#C49D5B] shadow-sm"
                                                         : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                                 )}
                                             >
@@ -388,7 +388,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                 className={cn(
                                                     "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
                                                     !mobileFilters.neighborhood
-                                                        ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                        ? "bg-[#C49D5B]/10 border-[#C49D5B]/50 text-[#C49D5B] shadow-sm"
                                                         : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                                 )}
                                             >
@@ -401,7 +401,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                     className={cn(
                                                         "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
                                                         mobileFilters.neighborhood === hood
-                                                            ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                            ? "bg-[#C49D5B]/10 border-[#C49D5B]/50 text-[#C49D5B] shadow-sm"
                                                             : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                                     )}
                                                 >
@@ -430,12 +430,12 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                     className={cn(
                                                         "px-4 py-3 rounded-lg text-[13px] font-semibold border text-left flex justify-between items-center transition-all",
                                                         isSelected
-                                                            ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                            ? "bg-[#C49D5B]/10 border-[#C49D5B]/50 text-[#C49D5B] shadow-sm"
                                                             : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                                     )}
                                                 >
                                                     {opt.label}
-                                                    {isSelected && <Check className="w-4 h-4 text-[#486581]" />}
+                                                    {isSelected && <Check className="w-4 h-4 text-[#C49D5B]" />}
                                                 </button>
                                             );
                                         })}
@@ -451,7 +451,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                             className={cn(
                                                 "py-3 rounded-lg text-[13px] font-semibold border justify-center flex transition-all",
                                                 !mobileFilters.bedrooms
-                                                    ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                    ? "bg-[#C49D5B]/10 border-[#C49D5B]/50 text-[#C49D5B] shadow-sm"
                                                     : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                             )}
                                         >
@@ -464,7 +464,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                 className={cn(
                                                     "py-3 rounded-lg text-[13px] font-semibold border justify-center flex transition-all text-center",
                                                     mobileFilters.bedrooms === num
-                                                        ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                        ? "bg-[#C49D5B]/10 border-[#C49D5B]/50 text-[#C49D5B] shadow-sm"
                                                         : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                                 )}
                                             >
@@ -492,7 +492,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                                     className={cn(
                                                         "px-4 py-3 rounded-lg text-[13px] font-semibold border text-left transition-all",
                                                         isActive
-                                                            ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                            ? "bg-[#C49D5B]/10 border-[#C49D5B]/50 text-[#C49D5B] shadow-sm"
                                                             : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                                     )}
                                                 >
@@ -515,7 +515,7 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                         Limpar
                                     </Button>
                                     <Button
-                                        className="flex-[2] justify-center bg-[#102A43] text-[#141420] hover:bg-[#16162A] h-[50px] rounded-lg font-bold shadow-[0_4px_14px_rgba(26,26,46,0.4)]"
+                                        className="flex-[2] justify-center bg-[#C49D5B] text-[#141420] hover:bg-[#D4A96A] h-[50px] rounded-lg font-bold shadow-[0_4px_14px_rgba(196,157,91,0.4)]"
                                         onClick={applyMobileFilters}
                                     >
                                         Ver Resultados
@@ -546,9 +546,9 @@ function FilterButton({ label, icon: Icon, active, hasValue, onClick }: FilterBu
             className={cn(
                 "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300",
                 active
-                    ? "bg-[#21263A] border-[#21263A] border-l-2 border-l-[#334E68] text-white"
+                    ? "bg-[#21263A] border-[#21263A] border-l-2 border-l-[#C49D5B] text-white"
                     : hasValue
-                        ? "bg-[#102A43]/10 border-[#334E68]/30 text-[#486581]"
+                        ? "bg-[#C49D5B]/10 border-[#C49D5B]/30 text-[#C49D5B]"
                         : "bg-white/5 border-white/10 text-[#9CA3AF] hover:bg-white/10 hover:border-white/20 hover:text-white"
             )}
         >

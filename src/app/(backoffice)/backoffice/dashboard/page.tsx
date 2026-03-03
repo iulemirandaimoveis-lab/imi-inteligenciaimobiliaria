@@ -33,7 +33,7 @@ export default async function DashboardPage() {
     .select('*', { count: 'exact', head: true })
     .gte('created_at', today.toISOString())
 
-  // Busca avaliacoes para calcular honorarios
+  // Busca avaliacoes para calcular honorarios globais
   const { data: avaliacoesParaHonorarios } = await supabase
     .from('avaliacoes')
     .select('status, honorarios')
@@ -44,16 +44,16 @@ export default async function DashboardPage() {
   let andamento = 0;
 
   if (avaliacoesParaHonorarios) {
-      for (const av of avaliacoesParaHonorarios) {
-          if (av.status === 'concluida') {
-              honorariosRecebidos += Number(av.honorarios || 0);
-              concluidas++;
-          } else if (av.status === 'pgto_pendente') {
-              honorariosPendentes += Number(av.honorarios || 0);
-          } else if (av.status === 'em_andamento') {
-              andamento++;
-          }
+    for (const av of avaliacoesParaHonorarios) {
+      if (av.status === 'concluida') {
+        honorariosRecebidos += Number(av.honorarios || 0);
+        concluidas++;
+      } else if (av.status === 'pgto_pendente') {
+        honorariosPendentes += Number(av.honorarios || 0);
+      } else if (av.status === 'em_andamento') {
+        andamento++;
       }
+    }
   }
 
   const stats = {
@@ -61,8 +61,8 @@ export default async function DashboardPage() {
     leads_today: leadsTodayCount || 0,
     total_avaliacoes: avCount || 0,
     total_imoveis: imoveisCount || 0,
-    conversion_rate: 0, // Placeholder real
-    receita_mes: honorariosRecebidos, // Baseado nas avaliações
+    conversion_rate: 0,
+    receita_mes: honorariosRecebidos,
   }
 
   const avStatsData = {
@@ -74,6 +74,38 @@ export default async function DashboardPage() {
     honorarios_pendentes: honorariosPendentes,
   }
 
+  // Montar Dados do Grafico (Ultimos 6 meses)
+  const chartData = []
+  const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date()
+    d.setMonth(d.getMonth() - i)
+    const mLabel = monthNames[d.getMonth()]
+
+    const startOfMonth = new Date(d.getFullYear(), d.getMonth(), 1).toISOString()
+    const endOfMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59).toISOString()
+
+    const { count: leadsMes } = await supabase.from('leads')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', startOfMonth)
+      .lte('created_at', endOfMonth)
+
+    const { data: avaliacoesMes } = await supabase.from('avaliacoes')
+      .select('honorarios')
+      .gte('created_at', startOfMonth)
+      .lte('created_at', endOfMonth)
+      .eq('status', 'concluida')
+
+    const honorarios = avaliacoesMes ? avaliacoesMes.reduce((s, a) => s + Number(a.honorarios || 0), 0) : 0
+
+    chartData.push({
+      mes: mLabel,
+      leads: leadsMes || 0,
+      honorarios: honorarios
+    })
+  }
+
   return (
     <DashboardClient
       stats={stats}
@@ -81,6 +113,7 @@ export default async function DashboardPage() {
       recentLeads={recentLeads || []}
       recentAvaliacoes={recentAvaliacoes || []}
       imoveisCount={imoveisCount || 0}
+      chartData={chartData}
     />
   )
 }

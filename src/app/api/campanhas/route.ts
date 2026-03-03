@@ -1,12 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest } from 'next/server'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function GET() {
-    const supabase = getSupabase()
     const { data, error } = await supabase
         .from('ads_campaigns')
         .select('*')
@@ -17,7 +17,6 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-    const supabase = getSupabase()
     const body = await request.json()
 
     const { data, error } = await supabase
@@ -41,7 +40,6 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-    const supabase = getSupabase()
     const body = await request.json()
     const { id, ...updates } = body
     if (!id) return Response.json({ error: 'ID obrigatório' }, { status: 400 })

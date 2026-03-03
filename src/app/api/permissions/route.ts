@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 // GET /api/permissions?role=admin  → returns all permissions for role
 // GET /api/permissions?role=agent&module=leads&action=create → checks specific
 export async function GET(request: Request) {
     try {
-        const supabase = getSupabase()
         const { searchParams } = new URL(request.url)
         const role = searchParams.get('role')
-        const module = searchParams.get('module')
+        const moduleName = searchParams.get('module')
         const action = searchParams.get('action')
 
         if (!role) {
@@ -27,13 +27,13 @@ export async function GET(request: Request) {
             return NextResponse.json(data || [])
         }
 
-        if (module && action) {
+        if (moduleName && action) {
             // Check specific permission
             const { data } = await supabase
                 .from('role_permissions')
                 .select('allowed')
                 .eq('role', role)
-                .eq('module', module)
+                .eq('module', moduleName)
                 .eq('action', action)
                 .single()
 
@@ -58,11 +58,10 @@ export async function GET(request: Request) {
 // PUT /api/permissions — update a permission
 export async function PUT(request: Request) {
     try {
-        const supabase = getSupabase()
         const body = await request.json()
-        const { role, module, action, allowed } = body
+        const { role, module: moduleName, action, allowed } = body
 
-        if (!role || !module || !action || typeof allowed !== 'boolean') {
+        if (!role || !moduleName || !action || typeof allowed !== 'boolean') {
             return NextResponse.json({ error: 'role, module, action, allowed required' }, { status: 400 })
         }
 
@@ -70,7 +69,7 @@ export async function PUT(request: Request) {
             .from('role_permissions')
             .upsert({
                 role,
-                module,
+                module: moduleName,
                 action,
                 allowed,
             }, { onConflict: 'role,module,action' })

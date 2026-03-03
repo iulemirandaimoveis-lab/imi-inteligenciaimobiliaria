@@ -2,14 +2,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 // GET — list projetos (with optional filters)
 export async function GET(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const { searchParams } = new URL(req.url)
         const status = searchParams.get('status')
         const id = searchParams.get('id')
@@ -42,7 +42,6 @@ export async function GET(req: NextRequest) {
 // POST — create projeto
 export async function POST(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const body = await req.json()
         const { nome, tipo, descricao, cidade, estado, status, fase, unidades, unidades_vendidas, area_total_m2, vgv, imagem_url, latitude, longitude, data_lancamento, data_entrega_prev } = body
 
@@ -81,7 +80,6 @@ export async function POST(req: NextRequest) {
 // PUT — update projeto
 export async function PUT(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const body = await req.json()
         const { id, ...updates } = body
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
@@ -105,7 +103,6 @@ export async function PUT(req: NextRequest) {
 // DELETE — remove projeto
 export async function DELETE(req: NextRequest) {
     try {
-        const supabase = getSupabase()
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })

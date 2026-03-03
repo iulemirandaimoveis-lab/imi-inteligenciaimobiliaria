@@ -23,7 +23,7 @@ const NAV_ITEMS = [
 
 const LANGUAGES = [
     { code: 'pt', flag: '🇧🇷' },
-    { code: 'en', flag: '🇺🇸' },
+    { code: 'en', flag: '🇬🇧' },
     { code: 'ja', flag: '🇯🇵' },
     { code: 'ar', flag: '🇸🇦' },
     { code: 'es', flag: '🇪🇸' },
@@ -82,7 +82,7 @@ export default function Drawer({ open, setOpen }: Props) {
                                         href={href}
                                         onClick={() => setOpen(false)}
                                         className={`block py-3 px-4 rounded-xl text-[16px] font-bold transition-all ${isActive
-                                                ? 'bg-neutral-100 text-black border-l-[3px] border-[#334E68] pl-[13px]'
+                                                ? 'bg-neutral-100 text-black border-l-[3px] border-[#C49D5B] pl-[13px]'
                                                 : 'text-neutral-600 hover:bg-neutral-50 hover:text-black'
                                             }`}
                                     >
@@ -114,7 +114,7 @@ export default function Drawer({ open, setOpen }: Props) {
                                     href={newPath}
                                     onClick={() => setOpen(false)}
                                     className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl transition-all ${isActive
-                                            ? 'bg-[#1e1e2f] border-2 border-[#334E68] shadow-sm'
+                                            ? 'bg-[#1e1e2f] border-2 border-[#C49D5B] shadow-sm'
                                             : 'bg-neutral-50 border border-neutral-200 opacity-50 hover:opacity-100'
                                         }`}
                                 >
@@ -129,7 +129,7 @@ export default function Drawer({ open, setOpen }: Props) {
                 <div className="p-4 bg-neutral-50 border-t border-neutral-100">
                     <div className="bg-white rounded-2xl p-5 text-center shadow-sm border border-neutral-100">
                         <p className="font-black text-base text-neutral-900">Iule Miranda</p>
-                        <div className="h-0.5 w-8 bg-[#102A43] mx-auto my-2 rounded-full" />
+                        <div className="h-0.5 w-8 bg-[#C49D5B] mx-auto my-2 rounded-full" />
                         <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
                             CRECI 17933 | CNAI 53290
                         </p>

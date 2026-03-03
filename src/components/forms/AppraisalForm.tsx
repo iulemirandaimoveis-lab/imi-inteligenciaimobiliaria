@@ -168,7 +168,7 @@ export default function AppraisalForm() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full h-16 bg-[#1A1E2A] text-white rounded-2xl font-bold text-lg hover:bg-[#21263A] transition-all duration-300 disabled:opacity-50 shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:shadow-[0_12px_40px_rgba(26,26,46,0.25)] border border-[#21263A] border-l-4 border-l-[#334E68] border-r-4 border-r-[#E53935] flex items-center justify-center hover:-translate-y-1"
+                        className="w-full h-16 bg-[#1A1E2A] text-white rounded-2xl font-bold text-lg hover:bg-[#21263A] transition-all duration-300 disabled:opacity-50 shadow-[0_8px_32px_rgba(196,157,91,0.15)] hover:shadow-[0_12px_40px_rgba(196,157,91,0.25)] border border-[#21263A] border-l-4 border-l-[#C49D5B] border-r-4 border-r-[#E53935] flex items-center justify-center hover:-translate-y-1"
                     >
                         {isSubmitting ? 'Enviando...' : 'Solicitar Avaliação'}
                     </button>

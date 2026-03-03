@@ -10,6 +10,23 @@ import {
     BedDouble, Bath, Car, Maximize, Globe, Flag,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent
+} from '@dnd-kit/core'
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    rectSortingStrategy,
+    useSortable
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 const supabase = createClient()
 
@@ -21,9 +38,9 @@ const T = {
     textMuted: 'var(--bo-text-muted)',
     border: 'var(--bo-border)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
-    accentBg: 'rgba(26,26,46,0.10)',
-    accentHover: 'rgba(26,26,46,0.18)',
+    accent: '#C49D5B',
+    accentBg: 'rgba(196,157,91,0.10)',
+    accentHover: 'rgba(196,157,91,0.18)',
     error: '#f87171',
     errorBg: 'rgba(248,113,113,0.08)',
     success: '#34d399',
@@ -178,6 +195,53 @@ function Select({
     )
 }
 
+function SortableImagePreview({ id, file, onRemove }: { id: string; file: File; onRemove: () => void }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id })
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 10 : 1
+    }
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+            className="relative group rounded-xl overflow-hidden cursor-move border-[1px] hover:border-[#C49D5B]/50 transition-all border-transparent"
+        >
+            <img
+                src={URL.createObjectURL(file)}
+                alt="Preview"
+                className="w-full h-28 object-cover rounded-xl"
+            />
+            <button
+                type="button"
+                onClick={(e) => {
+                    e.stopPropagation()
+                    onRemove()
+                }}
+                className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 text-white hover:bg-red-500"
+            >
+                <X size={14} />
+            </button>
+            <div className="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] font-bold px-1.5 py-0.5 rounded backdrop-blur-sm pointer-events-none">
+                {parseInt(id) + 1}
+            </div>
+        </div>
+    )
+}
+
 /* ───────── Main Page ───────── */
 export default function NovoImovelPage() {
     const router = useRouter()
@@ -247,6 +311,27 @@ export default function NovoImovelPage() {
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) setFormData(prev => ({ ...prev, logo: file }))
+    }
+
+    // Drag and drop sensors
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates
+        })
+    )
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event
+        if (over && active.id !== over.id) {
+            const oldIndex = parseInt(active.id as string)
+            const newIndex = parseInt(over.id as string)
+
+            setFormData(prev => ({
+                ...prev,
+                images: arrayMove(prev.images, oldIndex, newIndex)
+            }))
+        }
     }
 
     /* ─── PDF Auto-fill ─── */
@@ -509,7 +594,7 @@ export default function NovoImovelPage() {
                                     icon={Building2}
                                     value={formData.name}
                                     onChange={v => handleChange('name', v)}
-                                    placeholder="Ex: Reserva Imperial"
+                                    placeholder="Ex: Reserva Atlantis"
                                     error={errors.name}
                                 />
                             </div>
@@ -825,24 +910,33 @@ export default function NovoImovelPage() {
                             </label>
 
                             {formData.images.length > 0 && (
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                                    {formData.images.map((file, i) => (
-                                        <div key={i} className="relative group rounded-xl overflow-hidden">
-                                            <img
-                                                src={URL.createObjectURL(file)}
-                                                alt={`Preview ${i + 1}`}
-                                                className="w-full h-28 object-cover"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => removeImage(i)}
-                                                className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                style={{ background: T.error }}
-                                            >
-                                                <X size={12} className="text-white" />
-                                            </button>
-                                        </div>
-                                    ))}
+                                <div className="mt-4">
+                                    <DndContext
+                                        sensors={sensors}
+                                        collisionDetection={closestCenter}
+                                        onDragEnd={handleDragEnd}
+                                    >
+                                        <SortableContext
+                                            items={formData.images.map((_, i) => i.toString())}
+                                            strategy={rectSortingStrategy}
+                                        >
+                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                                {formData.images.map((file, i) => (
+                                                    <SortableImagePreview
+                                                        key={i}
+                                                        id={i.toString()}
+                                                        file={file}
+                                                        onRemove={() => removeImage(i)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </SortableContext>
+                                    </DndContext>
+                                    {formData.images.length > 1 && (
+                                        <p className="text-xs text-center mt-3" style={{ color: T.textMuted }}>
+                                            Arraste as imagens para reordenar (A primeira será a capa).
+                                        </p>
+                                    )}
                                 </div>
                             )}
                         </div>

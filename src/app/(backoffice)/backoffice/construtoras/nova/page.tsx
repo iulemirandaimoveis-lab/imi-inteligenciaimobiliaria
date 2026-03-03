@@ -238,7 +238,7 @@ export default function NovaConstrutora() {
         {/* Dados da Empresa */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100">
           <div className="flex items-center gap-2 mb-6">
-            <Building2 size={20} className="text-[#486581]" />
+            <Building2 size={20} className="text-accent-600" />
             <h2 className="text-lg font-bold text-gray-900">Dados da Empresa</h2>
           </div>
 
@@ -252,7 +252,7 @@ export default function NovaConstrutora() {
                 name="razaoSocial"
                 value={formData.razaoSocial}
                 onChange={handleChange}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.razaoSocial ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.razaoSocial ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="Ex: Construtora Central LTDA"
               />
@@ -270,7 +270,7 @@ export default function NovaConstrutora() {
                 name="nomeFantasia"
                 value={formData.nomeFantasia}
                 onChange={handleChange}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.nomeFantasia ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.nomeFantasia ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="Ex: Central Empreendimentos"
               />
@@ -291,7 +291,7 @@ export default function NovaConstrutora() {
                   const formatted = formatCNPJ(e.target.value)
                   setFormData(prev => ({ ...prev, cnpj: formatted }))
                 }}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.cnpj ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.cnpj ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="00.000.000/0000-00"
                 maxLength={18}
@@ -310,7 +310,7 @@ export default function NovaConstrutora() {
                 name="inscricaoEstadual"
                 value={formData.inscricaoEstadual}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="000.000.000.000"
               />
             </div>
@@ -324,7 +324,7 @@ export default function NovaConstrutora() {
                 name="inscricaoMunicipal"
                 value={formData.inscricaoMunicipal}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="000000-0"
               />
             </div>
@@ -334,7 +334,7 @@ export default function NovaConstrutora() {
         {/* Endereço */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100">
           <div className="flex items-center gap-2 mb-6">
-            <MapPin size={20} className="text-[#486581]" />
+            <MapPin size={20} className="text-accent-600" />
             <h2 className="text-lg font-bold text-gray-900">Endereço</h2>
           </div>
 
@@ -351,7 +351,7 @@ export default function NovaConstrutora() {
                   const formatted = formatCEP(e.target.value)
                   setFormData(prev => ({ ...prev, cep: formatted }))
                 }}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.cep ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.cep ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="00000-000"
                 maxLength={9}
@@ -370,7 +370,7 @@ export default function NovaConstrutora() {
                 name="logradouro"
                 value={formData.logradouro}
                 onChange={handleChange}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.logradouro ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.logradouro ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="Ex: Av. Boa Viagem"
               />
@@ -388,7 +388,7 @@ export default function NovaConstrutora() {
                 name="numero"
                 value={formData.numero}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="Ex: 4000"
               />
             </div>
@@ -402,7 +402,7 @@ export default function NovaConstrutora() {
                 name="complemento"
                 value={formData.complemento}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="Ex: Sala 201"
               />
             </div>
@@ -416,7 +416,7 @@ export default function NovaConstrutora() {
                 name="bairro"
                 value={formData.bairro}
                 onChange={handleChange}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.bairro ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.bairro ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="Ex: Boa Viagem"
               />
@@ -434,7 +434,7 @@ export default function NovaConstrutora() {
                 name="cidade"
                 value={formData.cidade}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
               />
             </div>
 
@@ -447,7 +447,7 @@ export default function NovaConstrutora() {
                 name="estado"
                 value={formData.estado}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 maxLength={2}
               />
             </div>
@@ -460,7 +460,7 @@ export default function NovaConstrutora() {
                 name="pais"
                 value={formData.pais}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
               />
             </div>
           </div>
@@ -469,7 +469,7 @@ export default function NovaConstrutora() {
         {/* Contatos */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100">
           <div className="flex items-center gap-2 mb-6">
-            <Phone size={20} className="text-[#486581]" />
+            <Phone size={20} className="text-accent-600" />
             <h2 className="text-lg font-bold text-gray-900">Contatos</h2>
           </div>
 
@@ -486,7 +486,7 @@ export default function NovaConstrutora() {
                   const formatted = formatPhone(e.target.value)
                   setFormData(prev => ({ ...prev, telefone: formatted }))
                 }}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.telefone ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.telefone ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="(81) 3456-7890"
                 maxLength={15}
@@ -508,7 +508,7 @@ export default function NovaConstrutora() {
                   const formatted = formatPhone(e.target.value)
                   setFormData(prev => ({ ...prev, celular: formatted }))
                 }}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="(81) 99876-5432"
                 maxLength={15}
               />
@@ -523,7 +523,7 @@ export default function NovaConstrutora() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.email ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.email ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="contato@construtora.com.br"
               />
@@ -541,7 +541,7 @@ export default function NovaConstrutora() {
                 name="website"
                 value={formData.website}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="https://www.construtora.com.br"
               />
             </div>
@@ -551,7 +551,7 @@ export default function NovaConstrutora() {
         {/* Responsável */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100">
           <div className="flex items-center gap-2 mb-6">
-            <User size={20} className="text-[#486581]" />
+            <User size={20} className="text-accent-600" />
             <h2 className="text-lg font-bold text-gray-900">Responsável</h2>
           </div>
 
@@ -565,7 +565,7 @@ export default function NovaConstrutora() {
                 name="nomeResponsavel"
                 value={formData.nomeResponsavel}
                 onChange={handleChange}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.nomeResponsavel ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.nomeResponsavel ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="Ex: Carlos Mendonça"
               />
@@ -583,7 +583,7 @@ export default function NovaConstrutora() {
                 name="cargoResponsavel"
                 value={formData.cargoResponsavel}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="Ex: Diretor Comercial"
               />
             </div>
@@ -597,7 +597,7 @@ export default function NovaConstrutora() {
                 name="emailResponsavel"
                 value={formData.emailResponsavel}
                 onChange={handleChange}
-                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500"
                 placeholder="carlos@construtora.com.br"
               />
             </div>
@@ -614,7 +614,7 @@ export default function NovaConstrutora() {
                   const formatted = formatPhone(e.target.value)
                   setFormData(prev => ({ ...prev, telefoneResponsavel: formatted }))
                 }}
-                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] ${errors.telefoneResponsavel ? 'border-red-500' : 'border-gray-200'
+                className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 ${errors.telefoneResponsavel ? 'border-red-500' : 'border-gray-200'
                   }`}
                 placeholder="(81) 99876-5432"
                 maxLength={15}
@@ -629,7 +629,7 @@ export default function NovaConstrutora() {
         {/* Observações */}
         <div className="bg-white rounded-2xl p-6 border border-gray-100">
           <div className="flex items-center gap-2 mb-6">
-            <FileText size={20} className="text-[#486581]" />
+            <FileText size={20} className="text-accent-600" />
             <h2 className="text-lg font-bold text-gray-900">Observações</h2>
           </div>
 
@@ -638,7 +638,7 @@ export default function NovaConstrutora() {
             value={formData.observacoes}
             onChange={handleChange}
             rows={4}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] resize-none"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500 resize-none"
             placeholder="Informações adicionais sobre a construtora..."
           />
         </div>
@@ -655,7 +655,7 @@ export default function NovaConstrutora() {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 h-11 px-6 bg-accent-600 text-white rounded-xl font-medium hover:bg-accent-700 transition-colors disabled:opacity-50"
           >
             {loading ? (
               <>

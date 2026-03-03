@@ -4,67 +4,22 @@ import { logAudit, getRequestMeta } from '@/lib/governance'
 
 export async function GET() {
     try {
-        const supabase = await createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-
-        if (!user) {
-            return NextResponse.json([], { status: 200 });
-        }
-
-        const { data: leads, error } = await supabase
+        const supabase = await createClient()
+        const { data, error } = await supabase
             .from('leads')
-            .select('id, name, email, phone, source, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, utm_source')
+            .select('*')
             .order('created_at', { ascending: false })
-            .limit(100);
 
         if (error) {
-            console.error('Error fetching leads:', error);
-            // Return empty array instead of error — frontend expects array
-            return NextResponse.json([], { status: 200 });
+            console.error('Error fetching leads:', error)
+            return NextResponse.json([], { status: 200 })
         }
 
-        // Map to the format the frontend expects
-        const formatted = (leads || []).map((l: any) => ({
-            id: l.id,
-            name: l.name || 'Sem nome',
-            email: l.email || '',
-            phone: l.phone || '',
-            score: l.score || l.ai_score || 50,
-            status: mapStatus(l.status),
-            source: l.source || l.utm_source || 'Site',
-            interest: l.interest_type || '-',
-            city: l.interest_location || '',
-            budget: formatBudget(l.budget_min, l.budget_max),
-            created_at: l.created_at || new Date().toISOString(),
-            updated_at: l.updated_at || l.created_at || new Date().toISOString(),
-        }));
-
-        return NextResponse.json(formatted);
+        return NextResponse.json(data || [])
     } catch (error) {
-        console.error('Error in GET /api/leads:', error);
-        return NextResponse.json([], { status: 200 });
+        console.error('Error in GET /api/leads:', error)
+        return NextResponse.json([], { status: 200 })
     }
-}
-
-function mapStatus(status: string | null): string {
-    if (!status) return 'warm';
-    const s = status.toLowerCase();
-    if (['hot', 'quente', 'qualified'].includes(s)) return 'hot';
-    if (['cold', 'frio', 'lost', 'inactive'].includes(s)) return 'cold';
-    return 'warm';
-}
-
-function formatBudget(min: number | null, max: number | null): string {
-    if (!min && !max) return 'N/A';
-    const fmt = (v: number) => {
-        if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
-        if (v >= 1000) return `${Math.round(v / 1000)}k`;
-        return String(v);
-    };
-    if (min && max) return `${fmt(min)}–${fmt(max)}`;
-    if (min) return `A partir de ${fmt(min)}`;
-    if (max) return `Até ${fmt(max)}`;
-    return 'N/A';
 }
 
 export async function POST(request: Request) {

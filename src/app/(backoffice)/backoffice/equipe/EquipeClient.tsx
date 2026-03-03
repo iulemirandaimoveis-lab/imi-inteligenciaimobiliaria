@@ -24,7 +24,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: '#C49D5B',
 }
 
 type UserRole = 'admin' | 'manager' | 'agent' | 'viewer' | string
@@ -57,7 +57,7 @@ const ROLE_CFG: Record<UserRole | string, { label: string; color: string; bg: st
 const STATUS_CFG: Record<UserStatus | string, { label: string; color: string; bg: string; icon: any }> = {
     active: { label: 'Ativo', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
     inactive: { label: 'Inativo', color: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
-    pending: { label: 'Pendente', color: '#486581', bg: 'rgba(26,26,46,0.12)', icon: Clock },
+    pending: { label: 'Pendente', color: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock },
 }
 
 export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[] }) {
@@ -105,7 +105,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                 </div>
                 <motion.button whileTap={{ scale: 0.96 }}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                     <Plus size={16} /> Adicionar Membro
                 </motion.button>
             </motion.div>
@@ -178,7 +178,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                             <div className="flex items-center gap-3">
                                 {/* Avatar */}
                                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 uppercase"
-                                    style={{ background: 'rgba(26,26,46,0.15)', color: T.gold }}>
+                                    style={{ background: 'rgba(196,157,91,0.15)', color: T.gold }}>
                                     {member.name ? member.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 'U'}
                                 </div>
 

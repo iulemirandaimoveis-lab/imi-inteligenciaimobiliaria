@@ -8,7 +8,7 @@ export async function GET() {
         service: 'imi-backoffice',
         version: '2.3',
         timestamp: new Date().toISOString(),
-        repo: 'imi-inteligencia-imobiliaria',
+        repo: 'imi-atlantis',
         check: 'OK'
     })
 }

@@ -44,7 +44,7 @@ function getAttribution() {
     }
 }
 
-/* Extract development slug from path like /pt/imoveis/reserva-imperial */
+/* Extract development slug from path like /pt/imoveis/reserva-atlantis */
 function extractDevSlug(path: string): string | null {
     const match = path.match(/\/imoveis\/([^\/\?]+)/)
     return match ? match[1] : null

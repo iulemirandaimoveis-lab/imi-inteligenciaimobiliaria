@@ -10,12 +10,12 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: '#C49D5B',
 }
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     disponivel: { label: 'Disponível', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    em_negociacao: { label: 'Negociação', text: '#486581', bg: 'rgba(26,26,46,0.12)', icon: Clock },
+    em_negociacao: { label: 'Negociação', text: '#C49D5B', bg: 'rgba(196,157,91,0.12)', icon: Clock },
     reservado: { label: 'Reservado', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
     vendido: { label: 'Vendido', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
     lancamento: { label: 'Lançamento', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Tag },
@@ -52,94 +52,94 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
     const SIcon = s.icon
     return (
         <Link href={`/backoffice/imoveis/${imovel.id}`}>
-        <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.04, duration: 0.35 }}
-            className="rounded-2xl overflow-hidden cursor-pointer group transition-all"
-            style={{ background: T.surface, border: `1px solid ${T.border}` }}
-            onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`
-                    ; (e.currentTarget as HTMLElement).style.background = T.elevated
-            }}
-            onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`
-                    ; (e.currentTarget as HTMLElement).style.background = T.surface
-            }}
-        >
-            {/* Image */}
-            <div
-                className="relative h-36 flex items-end p-3"
-                style={{
-                    background: imovel.image ? undefined : `linear-gradient(160deg, var(--bo-elevated) 0%, var(--bo-surface) 100%)`,
-                    borderBottom: `1px solid ${T.border}`,
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.04, duration: 0.35 }}
+                className="rounded-2xl overflow-hidden cursor-pointer group transition-all"
+                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                onMouseEnter={e => {
+                    (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`
+                        ; (e.currentTarget as HTMLElement).style.background = T.elevated
+                }}
+                onMouseLeave={e => {
+                    (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`
+                        ; (e.currentTarget as HTMLElement).style.background = T.surface
                 }}
             >
-                {imovel.image ? (
-                    <img src={imovel.image} alt={imovel.titulo} className="absolute inset-0 w-full h-full object-cover" />
-                ) : (
-                    <div className="absolute inset-0 overflow-hidden opacity-10">
-                        <div className="absolute top-4 left-4 w-16 h-16 border border-[#334E68] rounded-lg rotate-12" />
-                        <div className="absolute bottom-6 right-6 w-24 h-24 border border-[#334E68] rounded-xl -rotate-6" />
-                        <div className="absolute top-8 right-12 w-8 h-8 bg-[#102A43] rounded opacity-30" />
-                    </div>
-                )}
-
-                <div className="relative flex items-end justify-between w-full">
-                    <span
-                        className="text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1"
-                        style={{ color: s.text, background: s.bg, border: `1px solid ${s.text}22` }}
-                    >
-                        <SIcon size={9} /> {s.label}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                        {imovel.destaque && (
-                            <Star size={14} style={{ fill: T.gold, color: T.gold }} />
-                        )}
-                        <span className="text-[10px] font-medium" style={{ color: T.textDim }}>
-                            {imovel.visitas} views
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-4">
-                <p className="text-[10px] font-mono mb-1" style={{ color: T.textDim }}>{imovel.codigo}</p>
-                <p className="text-sm font-semibold mb-1 line-clamp-1" style={{ color: T.text }}>
-                    {imovel.titulo}
-                </p>
-                <p className="text-xs flex items-center gap-1 mb-3" style={{ color: T.textDim }}>
-                    <MapPin size={10} /> {imovel.bairro}
-                </p>
-
-                {/* Specs */}
-                {imovel.quartos > 0 && (
-                    <div className="flex items-center gap-3 mb-3">
-                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
-                            <Bed size={11} /> {imovel.quartos}q
-                        </span>
-                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
-                            <Bath size={11} /> {imovel.banheiros}b
-                        </span>
-                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
-                            <Ruler size={11} /> {imovel.area.toLocaleString('pt-BR')}m²
-                        </span>
-                    </div>
-                )}
-
-                <div className="flex items-center justify-between">
-                    <p className="text-base font-bold" style={{ color: T.gold }}>
-                        {fmtPreco(imovel.preco, imovel.tipo)}
-                    </p>
-                    {imovel.construtora && (
-                        <p className="text-[10px] truncate max-w-[100px]" style={{ color: T.textDim }}>
-                            {imovel.construtora}
-                        </p>
+                {/* Image */}
+                <div
+                    className="relative h-36 flex items-end p-3"
+                    style={{
+                        background: imovel.image ? undefined : `linear-gradient(160deg, var(--bo-elevated) 0%, var(--bo-surface) 100%)`,
+                        borderBottom: `1px solid ${T.border}`,
+                    }}
+                >
+                    {imovel.image ? (
+                        <img src={imovel.image} alt={imovel.titulo} className="absolute inset-0 w-full h-full object-cover" />
+                    ) : (
+                        <div className="absolute inset-0 overflow-hidden opacity-10">
+                            <div className="absolute top-4 left-4 w-16 h-16 border border-[#C49D5B] rounded-lg rotate-12" />
+                            <div className="absolute bottom-6 right-6 w-24 h-24 border border-[#C49D5B] rounded-xl -rotate-6" />
+                            <div className="absolute top-8 right-12 w-8 h-8 bg-[#C49D5B] rounded opacity-30" />
+                        </div>
                     )}
+
+                    <div className="relative flex items-end justify-between w-full">
+                        <span
+                            className="text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1"
+                            style={{ color: s.text, background: s.bg, border: `1px solid ${s.text}22` }}
+                        >
+                            <SIcon size={9} /> {s.label}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                            {imovel.destaque && (
+                                <Star size={14} style={{ fill: T.gold, color: T.gold }} />
+                            )}
+                            <span className="text-[10px] font-medium" style={{ color: T.textDim }}>
+                                {imovel.visitas} views
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </motion.div>
+
+                {/* Content */}
+                <div className="p-4">
+                    <p className="text-[10px] font-mono mb-1" style={{ color: T.textDim }}>{imovel.codigo}</p>
+                    <p className="text-sm font-semibold mb-1 line-clamp-1" style={{ color: T.text }}>
+                        {imovel.titulo}
+                    </p>
+                    <p className="text-xs flex items-center gap-1 mb-3" style={{ color: T.textDim }}>
+                        <MapPin size={10} /> {imovel.bairro}
+                    </p>
+
+                    {/* Specs */}
+                    {imovel.quartos > 0 && (
+                        <div className="flex items-center gap-3 mb-3">
+                            <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
+                                <Bed size={11} /> {imovel.quartos}q
+                            </span>
+                            <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
+                                <Bath size={11} /> {imovel.banheiros}b
+                            </span>
+                            <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
+                                <Ruler size={11} /> {imovel.area.toLocaleString('pt-BR')}m²
+                            </span>
+                        </div>
+                    )}
+
+                    <div className="flex items-center justify-between">
+                        <p className="text-base font-bold" style={{ color: T.gold }}>
+                            {fmtPreco(imovel.preco, imovel.tipo)}
+                        </p>
+                        {imovel.construtora && (
+                            <p className="text-[10px] truncate max-w-[100px]" style={{ color: T.textDim }}>
+                                {imovel.construtora}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </motion.div>
         </Link>
     )
 }
@@ -260,8 +260,8 @@ export default function ImoveisPage() {
                 <motion.button
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/imoveis/novo')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
+                    className="flex items-center justify-center gap-2 min-h-[44px] min-w-[44px] px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: '#C49D5B', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Novo Empreendimento
                 </motion.button>
@@ -281,7 +281,7 @@ export default function ImoveisPage() {
                             border: `1px solid ${T.borderGold}`,
                         }}
                     >
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'rgba(26,26,46,0.10)' }}>
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'rgba(196,157,91,0.10)' }}>
                             <s.icon size={16} style={{ color: T.gold }} />
                         </div>
                         <p className="text-xl font-bold" style={{ color: T.text }}>{s.value}</p>
@@ -315,7 +315,7 @@ export default function ImoveisPage() {
                         <select
                             value={filter}
                             onChange={e => setFilter(e.target.value)}
-                            className="sm:hidden h-10 px-3 rounded-xl text-xs font-semibold outline-none"
+                            className="sm:hidden min-h-[44px] min-w-[44px] px-3 rounded-xl text-xs font-semibold outline-none"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                         >
                             <option value="all">Todos</option>
@@ -328,9 +328,9 @@ export default function ImoveisPage() {
                             <button
                                 key={s}
                                 onClick={() => setFilter(s)}
-                                className="px-3 h-10 rounded-xl text-xs font-semibold transition-all hidden sm:block"
+                                className="px-3 min-h-[44px] min-w-[44px] rounded-xl text-xs font-semibold transition-all hidden sm:block"
                                 style={{
-                                    background: filter === s ? '#486581' : T.elevated,
+                                    background: filter === s ? '#C49D5B' : T.elevated,
                                     color: filter === s ? 'white' : T.textDim,
                                     border: `1px solid ${filter === s ? T.borderGold : T.border}`,
                                 }}
@@ -345,9 +345,9 @@ export default function ImoveisPage() {
                                 <button
                                     key={v}
                                     onClick={() => setView(v)}
-                                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
+                                    className="min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center transition-all"
                                     style={{
-                                        background: view === v ? '#486581' : T.elevated,
+                                        background: view === v ? '#C49D5B' : T.elevated,
                                         border: `1px solid ${view === v ? T.borderGold : T.border}`,
                                     }}
                                 >
@@ -378,34 +378,34 @@ export default function ImoveisPage() {
                         const s = STATUS_MAP[im.status] || STATUS_MAP.disponivel
                         return (
                             <Link key={im.id} href={`/backoffice/imoveis/${im.id}`}>
-                            <motion.div
-                                initial={{ opacity: 0, x: -8 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: i * 0.03 }}
-                                className="flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all"
-                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}
-                            >
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(26,26,46,0.08)' }}>
-                                    <Building2 size={20} style={{ color: T.gold }} />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                        <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
-                                        {im.destaque && <Star size={12} style={{ fill: T.gold, color: T.gold, flexShrink: 0 }} />}
+                                <motion.div
+                                    initial={{ opacity: 0, x: -8 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.03 }}
+                                    className="flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all"
+                                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
+                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}
+                                >
+                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(196,157,91,0.08)' }}>
+                                        <Building2 size={20} style={{ color: T.gold }} />
                                     </div>
-                                    <p className="text-xs" style={{ color: T.textDim }}>{im.codigo} · {im.bairro} · {im.area.toLocaleString('pt-BR')}m²</p>
-                                </div>
-                                <div className="flex items-center gap-4 flex-shrink-0">
-                                    <span className="text-[10px] font-bold px-2 py-1 rounded-full" style={{ color: s.text, background: s.bg }}>
-                                        {s.label}
-                                    </span>
-                                    <p className="text-sm font-bold hidden sm:block" style={{ color: T.gold }}>
-                                        {fmtPreco(im.preco, im.tipo)}
-                                    </p>
-                                </div>
-                            </motion.div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-0.5">
+                                            <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
+                                            {im.destaque && <Star size={12} style={{ fill: T.gold, color: T.gold, flexShrink: 0 }} />}
+                                        </div>
+                                        <p className="text-xs" style={{ color: T.textDim }}>{im.codigo} · {im.bairro} · {im.area.toLocaleString('pt-BR')}m²</p>
+                                    </div>
+                                    <div className="flex items-center gap-4 flex-shrink-0">
+                                        <span className="text-[10px] font-bold px-2 py-1 rounded-full" style={{ color: s.text, background: s.bg }}>
+                                            {s.label}
+                                        </span>
+                                        <p className="text-sm font-bold hidden sm:block" style={{ color: T.gold }}>
+                                            {fmtPreco(im.preco, im.tipo)}
+                                        </p>
+                                    </div>
+                                </motion.div>
                             </Link>
                         )
                     })}

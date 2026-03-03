@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import PageHeader from '../../components/PageHeader'
 import { Button } from '@/components/ui/Button'
@@ -37,73 +37,43 @@ import {
   Zap
 } from 'lucide-react'
 
-// Mock data
-const mockContent = [
-  {
-    id: '1',
-    title: 'Guia Completo: Investir em Imóveis na Boa Viagem',
-    type: 'blog',
-    platform: 'website',
-    status: 'published',
-    scheduled_date: '2024-02-10',
-    author: 'IA + Ana Paula',
-    engagement: { views: 1247, likes: 89, shares: 23 },
-  },
-  {
-    id: '2',
-    title: 'Tour Virtual: Reserva Imperial',
-    type: 'video',
-    platform: 'instagram',
-    status: 'scheduled',
-    scheduled_date: '2024-02-15',
-    author: 'IA + Carlos Silva',
-    engagement: { views: 0, likes: 0, shares: 0 },
-  },
-  {
-    id: '3',
-    title: 'Newsletter Fevereiro: Mercado Imobiliário PE',
-    type: 'email',
-    platform: 'email',
-    status: 'draft',
-    scheduled_date: '2024-02-20',
-    author: 'IA',
-    engagement: { views: 0, likes: 0, shares: 0 },
-  },
-  {
-    id: '4',
-    title: 'Post LinkedIn: Family Office Internacional',
-    type: 'social',
-    platform: 'linkedin',
-    status: 'published',
-    scheduled_date: '2024-02-08',
-    author: 'IA + Marina Costa',
-    engagement: { views: 3420, likes: 156, shares: 34 },
-  },
-]
-
-// Calendar view data
-const mockCalendar = [
-  { date: '2024-02-15', count: 3, items: ['Instagram Post', 'Blog Article', 'Email'] },
-  { date: '2024-02-16', count: 1, items: ['Facebook Ad'] },
-  { date: '2024-02-18', count: 2, items: ['LinkedIn Post', 'Newsletter'] },
-  { date: '2024-02-20', count: 4, items: ['Blog', 'Instagram', 'Twitter', 'Email'] },
-  { date: '2024-02-22', count: 1, items: ['YouTube Video'] },
-]
-
 export default function ConteudosPage() {
   const router = useRouter()
-  const [content, setContent] = useState(mockContent)
+  const [content, setContent] = useState<any[]>([])
   const [view, setView] = useState<'list' | 'calendar'>('list')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadContent() {
+      try {
+        const res = await fetch('/api/conteudos')
+        if (res.ok) {
+          const data = await res.json()
+          setContent(data)
+        }
+      } catch (err) {
+        console.error('Falha ao carregar conteúdos', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadContent()
+  }, [])
+
+  const getEngagement = (item: any) => {
+    if (item.performance_metrics) return item.performance_metrics;
+    return { views: 0, likes: 0, shares: 0 }
+  }
 
   const stats = {
     total: content.length,
     published: content.filter((c) => c.status === 'published').length,
     scheduled: content.filter((c) => c.status === 'scheduled').length,
     draft: content.filter((c) => c.status === 'draft').length,
-    totalViews: content.reduce((acc, c) => acc + c.engagement.views, 0),
+    totalViews: content.reduce((acc, c) => acc + (getEngagement(c).views || 0), 0),
     totalEngagement: content.reduce(
-      (acc, c) => acc + c.engagement.likes + c.engagement.shares,
+      (acc, c) => acc + (getEngagement(c).likes || 0) + (getEngagement(c).shares || 0),
       0
     ),
   }
@@ -112,6 +82,19 @@ export default function ConteudosPage() {
     if (statusFilter === 'all') return true
     return item.status === statusFilter
   })
+
+  // Group items by date for the calendar view
+  let mockCalendar: { date: string, count: number, items: string[] }[] = [];
+  const calendarGroups: Record<string, string[]> = {}
+  content.forEach(item => {
+    if (item.scheduled_date) {
+      if (!calendarGroups[item.scheduled_date]) calendarGroups[item.scheduled_date] = [];
+      calendarGroups[item.scheduled_date].push(item.content_type || 'Artigo')
+    }
+  })
+  mockCalendar = Object.entries(calendarGroups).map(([date, items]) => ({
+    date, count: items.length, items
+  }))
 
   const getStatusConfig = (status: string) => {
     const configs: Record<string, { variant: any; label: string; icon: any }> = {
@@ -265,21 +248,21 @@ export default function ConteudosPage() {
                         <TableRow key={item.id} className="hover:bg-imi-50/30 transition-colors">
                           <TableCell className="py-6">
                             <div className="flex items-center gap-4 group">
-                              <div className="p-2 rounded-lg bg-imi-50 group-hover:bg-[#102A43] group-hover:text-white transition-colors">
-                                {item.author.startsWith('IA') ? <Sparkles size={16} /> : <FileText size={16} />}
+                              <div className="p-2 rounded-lg bg-imi-50 group-hover:bg-accent-500 group-hover:text-white transition-colors">
+                                <Sparkles size={16} />
                               </div>
                               <span className="font-black text-imi-950 uppercase tracking-tighter max-w-[300px] truncate block">
-                                {item.title}
+                                {item.title || 'Sem título'}
                               </span>
                             </div>
                           </TableCell>
                           <TableCell className="py-6">
-                            <Badge variant="neutral" size="sm" className="bg-imi-50 px-2 font-black uppercase text-[9px]">{item.type}</Badge>
+                            <Badge variant="neutral" size="sm" className="bg-imi-50 px-2 font-black uppercase text-[9px]">{item.content_type || 'blog'}</Badge>
                           </TableCell>
                           <TableCell className="py-6">
                             <div className="flex items-center gap-2">
-                              <PlatformIcon size={14} className="text-[#486581]" />
-                              <span className="text-[10px] font-black uppercase tracking-widest text-imi-500">{item.platform}</span>
+                              <PlatformIcon size={14} className="text-accent-600" />
+                              <span className="text-[10px] font-black uppercase tracking-widest text-imi-500">{item.content_type || 'website'}</span>
                             </div>
                           </TableCell>
                           <TableCell className="py-6">
@@ -293,14 +276,14 @@ export default function ConteudosPage() {
                           </TableCell>
                           <TableCell className="py-6 text-center">
                             <span className="text-[10px] font-black text-imi-400">
-                              {new Date(item.scheduled_date).toLocaleDateString('pt-BR')}
+                              {item.scheduled_date ? new Date(item.scheduled_date).toLocaleDateString('pt-BR') : '—'}
                             </span>
                           </TableCell>
                           <TableCell className="py-6 text-center">
                             <div className="flex flex-col items-center gap-1">
-                              <span className="text-xs font-black text-imi-950 leading-none">{item.engagement.views} <span className="text-[9px] font-bold text-imi-400 uppercase">Views</span></span>
-                              <span className="text-[9px] font-bold text-[#486581] uppercase tracking-widest">
-                                {item.engagement.likes + item.engagement.shares} Engagem.
+                              <span className="text-xs font-black text-imi-950 leading-none">{getEngagement(item).views || 0} <span className="text-[9px] font-bold text-imi-400 uppercase">Views</span></span>
+                              <span className="text-[9px] font-bold text-accent-600 uppercase tracking-widest">
+                                {(getEngagement(item).likes || 0) + (getEngagement(item).shares || 0)} Engagem.
                               </span>
                             </div>
                           </TableCell>
@@ -313,7 +296,7 @@ export default function ConteudosPage() {
                                 router.push(`/backoffice/conteudos/${item.id}`)
                               }
                             >
-                              Dashboard
+                              Ver
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -361,14 +344,14 @@ export default function ConteudosPage() {
                     `}
                   >
                     <div className="flex justify-between items-start mb-4">
-                      <span className={`text-sm font-black ${dayData ? 'text-[#486581]' : 'text-imi-900'}`}>
+                      <span className={`text-sm font-black ${dayData ? 'text-accent-600' : 'text-imi-900'}`}>
                         {index + 1}
                       </span>
-                      {dayData && <Zap size={14} className="text-[#486581] animate-pulse" />}
+                      {dayData && <Zap size={14} className="text-accent-500 animate-pulse" />}
                     </div>
                     {dayData && (
                       <div className="space-y-3">
-                        <Badge variant="primary" size="sm" className="bg-[#102A43] text-white font-black text-[8px] uppercase tracking-tighter">
+                        <Badge variant="primary" size="sm" className="bg-accent-500 text-white font-black text-[8px] uppercase tracking-tighter">
                           {dayData.count} Operações
                         </Badge>
                         <div className="space-y-1">
@@ -382,7 +365,7 @@ export default function ConteudosPage() {
                           ))}
                         </div>
                         {dayData.count > 2 && (
-                          <div className="text-[8px] font-black text-[#0F0F1E] bg-accent-100/50 px-2 py-0.5 rounded-full inline-block">
+                          <div className="text-[8px] font-black text-accent-700 bg-accent-100/50 px-2 py-0.5 rounded-full inline-block">
                             + {dayData.count - 2} Items
                           </div>
                         )}
@@ -402,7 +385,7 @@ export default function ConteudosPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <Sparkles size={20} className="text-[#486581]" />
+                <Sparkles size={20} className="text-accent-500" />
                 <h3 className="text-xl font-black text-white uppercase tracking-tighter">Content AI Strategist</h3>
               </div>
               <p className="text-sm font-medium text-imi-400">Gere conteúdo de alta conversão otimizado para Real Estate & Family Office.</p>

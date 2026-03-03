@@ -24,9 +24,9 @@ const T = {
     card: 'bg-[#141420] border border-white/[.06] rounded-2xl',
     text: 'text-white',
     sub: 'text-white/50',
-    accent: '#486581',
-    accentBg: 'bg-[#102A43]',
-    input: 'bg-[#102A43] border border-white/10 text-white placeholder:text-white/30 rounded-xl',
+    accent: '#C49D5B',
+    accentBg: 'bg-[#C49D5B]',
+    input: 'bg-[#1a1a2e] border border-white/10 text-white placeholder:text-white/30 rounded-xl',
 }
 
 interface Workflow {
@@ -53,12 +53,12 @@ const TRIGGER_ICONS: Record<string, any> = {
 }
 
 const TRIGGER_COLORS: Record<string, string> = {
-    new_lead: '#486581',
+    new_lead: '#3B82F6',
     follow_up: '#8B5CF6',
     schedule: '#F59E0B',
     team: '#10B981',
     report: '#EF4444',
-    pipeline: '#486581',
+    pipeline: '#C49D5B',
     manual: '#6B7280',
 }
 
@@ -166,7 +166,7 @@ export default function AutomacoesPage() {
                 {/* Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
-                        { l: 'Total', v: stats.total, color: '#486581' },
+                        { l: 'Total', v: stats.total, color: '#C49D5B' },
                         { l: 'Ativas', v: stats.ativas, color: '#22C55E' },
                         { l: 'Pausadas', v: stats.pausadas, color: '#F59E0B' },
                         { l: 'Execuções Total', v: stats.execucoesTotal, color: '#8B5CF6' },
@@ -190,7 +190,7 @@ export default function AutomacoesPage() {
 
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-[#486581]" size={32} />
+                        <Loader2 className="animate-spin text-[#C49D5B]" size={32} />
                     </div>
                 ) : filtered.length === 0 ? (
                     <div className={`${T.card} p-12 text-center`}>

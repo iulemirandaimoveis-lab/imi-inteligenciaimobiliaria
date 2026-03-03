@@ -1,45 +1,62 @@
 /* ============================================================
-   B11 — BACKOFFICE DARK CONTEXT OVERRIDES
-   Scoped to .backoffice-root — applies dark surfaces
-   regardless of .dark class for the backoffice layout.
+   B11 — BACKOFFICE CONTEXT OVERRIDES
+   Scoped to .backoffice-root — dark AND light mode aware.
+   Uses --bo-* CSS vars (light defined in :root, dark in .dark)
    ============================================================ */
 
-/* ── BACKOFFICE ROOT CONTEXT ───────────────────────────────── */
+/* ── BACKOFFICE ROOT CONTEXT (both themes) ─────────────────── */
 .backoffice-root {
   /* Mobile overflow guard */
   overflow-x: hidden;
   max-width: 100vw;
 
-  /* Surface overrides — force institutional dark palette */
+  /* Surface overrides */
   --surface-0: var(--bo-surface);
   --surface-1: var(--bo-elevated);
-  --surface-2: #21263A;
 
-  /* Extended text tokens */
-  --bo-text-tertiary:  #4E5669;
-  --bo-text-accent:    #486581;
-  --bo-text-accent-dim:#334E68;
-
-  /* Extended border tokens */
-  --bo-border-subtle:  rgba(255,255,255,0.06);
-  --bo-border-strong:  rgba(255,255,255,0.18);
-
-  /* Navigation tokens */
-  --nav-bg:        rgba(19,22,30,0.95);
-  --nav-border:    rgba(51,78,104,0.15);
-  --nav-active:    #486581;
-  --nav-inactive:  #4E5669;
-
-  /* Status — unified palette */
+  /* Status — unified palette (same both themes) */
   --s-hot:    #E8A87C;  --s-hot-bg:    rgba(232,168,124,0.12);
-  --s-warm:   #F59E0B;  --s-warm-bg:   rgba(245,158,11,0.12);
+  --s-warm:   #C49D5B;  --s-warm-bg:   rgba(196,157,91,0.12);
   --s-cold:   #7B9EC4;  --s-cold-bg:   rgba(123,158,196,0.12);
   --s-done:   #6BB87B;  --s-done-bg:   rgba(107,184,123,0.12);
   --s-pend:   #A89EC4;  --s-pend-bg:   rgba(168,158,196,0.12);
   --s-cancel: #E57373;  --s-cancel-bg: rgba(229,115,115,0.12);
+
+  /* Gold accent tokens (same both themes) */
+  --bo-text-gold:      #C49D5B;
+  --bo-text-gold-dim:  #8A6D3F;
+
+  /* Navigation tokens — nav always dark */
+  --nav-active:    #C49D5B;
+
+  /* Page background */
+  background-color: var(--bo-surface);
+  color: var(--bo-text);
 }
 
-/* ── BACKOFFICE INPUT DARK ─────────────────────────────────── */
+/* ── LIGHT-MODE tokens ──────────────────────────────────────── */
+.backoffice-root {
+  --surface-2: #F1F3F5;
+  --bo-text-tertiary:  #9CA3AF;
+  --bo-border-subtle:  rgba(0,0,0,0.04);
+  --bo-border-strong:  rgba(0,0,0,0.12);
+  --nav-bg:        rgba(255,255,255,0.95);
+  --nav-border:    rgba(0,0,0,0.06);
+  --nav-inactive:  #9CA3AF;
+}
+
+/* ── DARK-MODE tokens ───────────────────────────────────────── */
+.dark .backoffice-root {
+  --surface-2: #21263A;
+  --bo-text-tertiary:  #4E5669;
+  --bo-border-subtle:  rgba(255,255,255,0.06);
+  --bo-border-strong:  rgba(255,255,255,0.18);
+  --nav-bg:        rgba(19,22,30,0.95);
+  --nav-border:    rgba(196,157,91,0.15);
+  --nav-inactive:  #4E5669;
+}
+
+/* ── BACKOFFICE INPUT ────────────────────────────────────────── */
 .backoffice-root input,
 .backoffice-root textarea,
 .backoffice-root select {
@@ -53,22 +70,32 @@
   color: var(--bo-text-muted);
 }
 
-/* ── GLASS CARD UTILITY ─────────────────────────────────────── */
-.glass-card {
-  background: rgba(26,30,42,0.70);
-  border: 1px solid rgba(255,255,255,0.08);
+/* ── GLASS CARD UTILITY ──────────────────────────────────────── */
+.backoffice-root .glass-card {
+  background: var(--bo-elevated);
+  border: 1px solid var(--bo-border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
+  box-shadow: var(--bo-shadow);
   border-radius: 16px;
 }
 
-.glass-card:hover {
+.dark .backoffice-root .glass-card {
+  background: rgba(26,30,42,0.70);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
+}
+
+.backoffice-root .glass-card:hover {
+  border-color: var(--bo-border-strong);
+}
+
+.dark .backoffice-root .glass-card:hover {
   border-color: rgba(255,255,255,0.14);
   box-shadow: 0 8px 32px rgba(0,0,0,0.36), 0 1px 0 rgba(255,255,255,0.06) inset;
 }
 
-/* ── STATUS BADGE UTILITY ─────────────────────────────────── */
+/* ── STATUS BADGE UTILITY ────────────────────────────────────── */
 .badge-hot     { color: var(--s-hot);    background: var(--s-hot-bg);    }
 .badge-warm    { color: var(--s-warm);   background: var(--s-warm-bg);   }
 .badge-cold    { color: var(--s-cold);   background: var(--s-cold-bg);   }
@@ -76,148 +103,854 @@
 .badge-pend    { color: var(--s-pend);   background: var(--s-pend-bg);   }
 .badge-cancel  { color: var(--s-cancel); background: var(--s-cancel-bg); }
 
-/* ── MOBILE-FIRST UX FIXES ─────────────────────────────────── */
-
-/* Bottom nav safe area */
+/* ── BOTTOM NAV SAFE AREA ─────────────────────────────────────── */
 @media (max-width: 1023px) {
   .backoffice-root main {
-    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
   }
 }
 
-/* ── MOBILE OVERFLOW & LAYOUT ─────────────────────────────── */
-@media (max-width: 640px) {
-  .backoffice-root {
-    overflow-wrap: break-word;
-  }
-
-  /* Tighter safe padding */
-  .backoffice-root main > div {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  /* Force truncation on long strings */
-  .backoffice-root code,
-  .backoffice-root .font-mono {
-    word-break: break-all;
-    font-size: 11px;
-  }
-
-  /* Cards contained but allow text flow */
-  .backoffice-root .rounded-2xl,
-  .backoffice-root .rounded-xl {
-    max-width: 100%;
-  }
-
-  /* Typography scale — refined */
-  .backoffice-root h1 { font-size: 20px !important; line-height: 1.3 !important; font-weight: 700 !important; }
-  .backoffice-root h2 { font-size: 17px !important; font-weight: 600 !important; }
-  .backoffice-root h3 { font-size: 15px !important; font-weight: 600 !important; }
-
-  /* Body text refinement */
-  .backoffice-root p,
-  .backoffice-root span {
-    line-height: 1.5;
-  }
-
-  /* Tables scroll horizontally */
-  .backoffice-root table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-  /* KPI stat grids stay 2-col on mobile for density */
-  .backoffice-root .grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
-  .backoffice-root .grid-cols-3 { grid-template-columns: repeat(2, 1fr) !important; }
-  .backoffice-root .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
-  .backoffice-root .grid-cols-5 { grid-template-columns: repeat(2, 1fr) !important; }
-
-  /* Flex wrapping for stats/filters */
-  .backoffice-root .flex.items-center.justify-between {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  /* Buttons: 44px min touch target (Apple HIG) */
-  .backoffice-root button,
-  .backoffice-root a[role="button"],
-  .backoffice-root [type="button"] {
-    min-height: 44px;
-  }
-
-  /* Small action icons inside cards: allow smaller touch targets */
-  .backoffice-root button[class*="w-8"],
-  .backoffice-root button[class*="w-7"] {
-    min-height: 36px;
-  }
-
-  /* Inputs: proper mobile sizing */
-  .backoffice-root input,
-  .backoffice-root select,
-  .backoffice-root textarea {
-    font-size: 16px !important; /* Prevents iOS zoom */
-    min-height: 44px;
-  }
-
-  /* Images contained */
-  .backoffice-root img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  /* Badges/tags don't overflow */
-  .backoffice-root span[class*="rounded-full"] {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 150px;
-  }
-
-  /* Filter pill buttons: prevent text wrapping */
-  .backoffice-root button[class*="rounded-xl"] {
-    white-space: nowrap;
-  }
-
-  /* Card sections: proper spacing */
-  .backoffice-root .space-y-5 > * + * { margin-top: 16px; }
-  .backoffice-root .space-y-4 > * + * { margin-top: 12px; }
-  .backoffice-root .space-y-3 > * + * { margin-top: 10px; }
-
-  /* Gap refinement for mobile density */
-  .backoffice-root .gap-6 { gap: 16px !important; }
-  .backoffice-root .gap-5 { gap: 14px !important; }
-  .backoffice-root .gap-4 { gap: 12px !important; }
-
-  /* Padding refinement */
-  .backoffice-root .p-6 { padding: 16px !important; }
-  .backoffice-root .p-5 { padding: 14px !important; }
-
-  /* Stat card compact */
-  .backoffice-root .stat-card { padding: 12px !important; }
-  .backoffice-root .stat-card .text-2xl { font-size: 22px !important; }
-  .backoffice-root .stat-card .text-xs { font-size: 11px !important; }
-}
-
-/* Tablet adjustments */
-@media (min-width: 641px) and (max-width: 1023px) {
-  .backoffice-root .grid-cols-5 { grid-template-columns: repeat(3, 1fr) !important; }
-  .backoffice-root .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
-}
-
-/* ── RECHARTS DARK THEME ──────────────────────────────────── */
+/* ── RECHARTS THEME ───────────────────────────────────────────── */
 .backoffice-root .recharts-cartesian-axis-tick-value {
   fill: var(--bo-text-muted);
 }
 
 .backoffice-root .recharts-tooltip-wrapper .recharts-default-tooltip {
   background: var(--bo-elevated) !important;
-  border: 1px solid var(--bo-border) !important;
+  border: 1px solid var(--bo-border-gold) !important;
   border-radius: 10px !important;
 }
 
-/* ── SCROLLBAR DARK ──────────────────────────────────────── */
+.backoffice-root .recharts-cartesian-grid-horizontal line,
+.backoffice-root .recharts-cartesian-grid-vertical line {
+  stroke: var(--bo-border) !important;
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────────── */
 .backoffice-root ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
+  background: var(--bo-hover);
 }
 
 .backoffice-root ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.14);
+  background: var(--bo-border-strong);
+}
+
+
+/* ============================================================
+   EXECUÇÃO 2+3 — UNIFIED DESIGN SYSTEM OVERRIDES
+   Converts ALL hardcoded Tailwind color classes to CSS vars
+   within .backoffice-root scope. Works in both light & dark.
+   ============================================================ */
+
+/* ── SURFACES / BACKGROUNDS ──────────────────────────────────── */
+.backoffice-root .bg-white {
+  background-color: var(--bo-elevated) !important;
+}
+
+.backoffice-root .bg-gray-50 {
+  background-color: var(--bo-surface) !important;
+}
+
+.backoffice-root .bg-gray-100 {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .bg-gray-200 {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .bg-gray-800 {
+  background-color: var(--bo-elevated) !important;
+}
+
+/* Filter buttons (active state with bg-gray-900) */
+.backoffice-root .bg-gray-900 {
+  background-color: var(--accent-600) !important;
+}
+
+.backoffice-root .text-gray-900.bg-gray-900 {
+  color: #fff !important;
+}
+
+/* ── TEXT COLORS ──────────────────────────────────────────────── */
+.backoffice-root .text-gray-900 {
+  color: var(--bo-text) !important;
+}
+
+.backoffice-root .text-gray-800 {
+  color: var(--bo-text) !important;
+}
+
+.backoffice-root .text-gray-700 {
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root .text-gray-600 {
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root .text-gray-500 {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+.backoffice-root .text-gray-400 {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+/* ── BORDER COLORS ───────────────────────────────────────────── */
+.backoffice-root .border-gray-100 {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .border-gray-200 {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .border-gray-300 {
+  border-color: var(--bo-border-strong, var(--bo-border)) !important;
+}
+
+.backoffice-root .border {
+  border-color: var(--bo-border);
+}
+
+.backoffice-root .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .border-b.border-gray-100,
+.backoffice-root .border-t.border-gray-100 {
+  border-color: var(--bo-border) !important;
+}
+
+/* ── HOVER STATES ────────────────────────────────────────────── */
+.backoffice-root .hover\:bg-gray-50:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .hover\:bg-gray-100:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+/* ── SEMANTIC COLOR OVERRIDES ────────────────────────────────── */
+/* Green → done status */
+.backoffice-root .bg-green-50,
+.backoffice-root .bg-green-100 {
+  background-color: var(--s-done-bg) !important;
+}
+
+.backoffice-root .text-green-600,
+.backoffice-root .text-green-700,
+.backoffice-root .text-green-900 {
+  color: var(--s-done) !important;
+}
+
+.backoffice-root .border-green-200 {
+  border-color: rgba(107,184,123,0.20) !important;
+}
+
+/* Red → cancel status */
+.backoffice-root .bg-red-50 {
+  background-color: var(--s-cancel-bg) !important;
+}
+
+.backoffice-root .text-red-600,
+.backoffice-root .text-red-700,
+.backoffice-root .text-red-900 {
+  color: var(--s-cancel) !important;
+}
+
+.backoffice-root .border-red-200 {
+  border-color: rgba(229,115,115,0.20) !important;
+}
+
+/* Orange → hot status */
+.backoffice-root .bg-orange-50 {
+  background-color: var(--s-hot-bg) !important;
+}
+
+.backoffice-root .text-orange-600,
+.backoffice-root .text-orange-700,
+.backoffice-root .text-orange-900 {
+  color: var(--s-hot) !important;
+}
+
+.backoffice-root .border-orange-200 {
+  border-color: rgba(232,168,124,0.20) !important;
+}
+
+/* Blue → cold status */
+.backoffice-root .bg-blue-50 {
+  background-color: var(--s-cold-bg) !important;
+}
+
+.backoffice-root .text-blue-600,
+.backoffice-root .text-blue-700,
+.backoffice-root .text-blue-900 {
+  color: var(--s-cold) !important;
+}
+
+.backoffice-root .border-blue-200 {
+  border-color: rgba(123,158,196,0.20) !important;
+}
+
+/* Purple → pend status */
+.backoffice-root .bg-purple-50 {
+  background-color: var(--s-pend-bg) !important;
+}
+
+.backoffice-root .text-purple-600,
+.backoffice-root .text-purple-700,
+.backoffice-root .text-purple-900 {
+  color: var(--s-pend) !important;
+}
+
+.backoffice-root .border-purple-200 {
+  border-color: rgba(168,158,196,0.20) !important;
+}
+
+/* Emerald → done status */
+.backoffice-root .text-emerald-600,
+.backoffice-root .text-emerald-700 {
+  color: var(--s-done) !important;
+}
+
+.backoffice-root .bg-emerald-50 {
+  background-color: var(--s-done-bg) !important;
+}
+
+/* Amber/Yellow → warm status */
+.backoffice-root .text-amber-600,
+.backoffice-root .text-amber-700,
+.backoffice-root .text-yellow-600,
+.backoffice-root .text-yellow-700 {
+  color: var(--s-warm) !important;
+}
+
+.backoffice-root .bg-amber-50,
+.backoffice-root .bg-yellow-50 {
+  background-color: var(--s-warm-bg) !important;
+}
+
+/* Accent gold */
+.backoffice-root .bg-accent-50 {
+  background-color: rgba(196,157,91,0.08) !important;
+}
+
+.backoffice-root .text-accent-700 {
+  color: var(--bo-text-gold, #C49D5B) !important;
+}
+
+/* ── SHADOW OVERRIDES ────────────────────────────────────────── */
+.backoffice-root .shadow-lg {
+  box-shadow: var(--bo-shadow) !important;
+}
+
+.backoffice-root .hover\:shadow-lg:hover {
+  box-shadow: var(--bo-shadow-elevated) !important;
+}
+
+/* ── TABLE OVERRIDES ─────────────────────────────────────────── */
+.backoffice-root table {
+  border-collapse: collapse;
+}
+
+.backoffice-root thead {
+  background-color: var(--bo-surface) !important;
+}
+
+.backoffice-root thead th {
+  color: var(--bo-text-muted) !important;
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root tbody tr {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root tbody tr:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root tbody td {
+  color: var(--bo-text) !important;
+}
+
+/* ── RING / FOCUS OVERRIDES ──────────────────────────────────── */
+.backoffice-root .focus\:ring-accent-500:focus,
+.backoffice-root .focus\:ring-2:focus {
+  --tw-ring-color: rgba(196,157,91,0.40);
+}
+
+.backoffice-root .focus\:ring-accent-500:focus {
+  --tw-ring-color: rgba(196,157,91,0.40) !important;
+}
+
+.backoffice-root .focus\:border-accent-500:focus {
+  border-color: var(--bo-border-gold) !important;
+}
+
+/* ── BUTTON OVERRIDES ────────────────────────────────────────── */
+.backoffice-root button.border-gray-200,
+.backoffice-root a.border-gray-200 {
+  border-color: var(--bo-border) !important;
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root button.border-gray-200:hover,
+.backoffice-root a.border-gray-200:hover {
+  background-color: var(--bo-hover) !important;
+  color: var(--bo-text) !important;
+}
+
+/* ── IMI-* TAILWIND CLASS OVERRIDES ──────────────────────────── */
+.backoffice-root .text-imi-900 {
+  color: var(--bo-text) !important;
+}
+
+.backoffice-root .text-imi-800 {
+  color: var(--bo-text) !important;
+}
+
+.backoffice-root .text-imi-700 {
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root .text-imi-600 {
+  color: var(--bo-text-muted) !important;
+}
+
+.backoffice-root .text-imi-500 {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+.backoffice-root .text-imi-400 {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+.backoffice-root .bg-imi-50 {
+  background-color: var(--bo-surface) !important;
+}
+
+.backoffice-root .bg-imi-100 {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .border-imi-100 {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .border-imi-200 {
+  border-color: var(--bo-border) !important;
+}
+
+/* ── ADDITIONAL CARD PATTERN OVERRIDES ────────────────────────── */
+.backoffice-root [class*="rounded-2xl"][class*="border"] {
+  border-color: var(--bo-border);
+}
+
+/* ── PLACEHOLDER TEXT ─────────────────────────────────────────── */
+.backoffice-root .placeholder\:text-gray-400::placeholder {
+  color: var(--bo-text-tertiary, var(--bo-text-muted)) !important;
+}
+
+/* ── PAGE BACKGROUND ──────────────────────────────────────────── */
+.backoffice-root main {
+  background-color: var(--bo-surface);
+}
+
+/* ── IMI DIVIDE/HOVER OVERRIDES ───────────────────────────────── */
+.backoffice-root .divide-imi-50 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .divide-imi-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--bo-border) !important;
+}
+
+.backoffice-root .hover\:bg-imi-50:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .hover\:bg-imi-100:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .hover\:bg-imi-200:hover {
+  background-color: var(--bo-hover) !important;
+}
+
+.backoffice-root .hover\:border-imi-200:hover,
+.backoffice-root .hover\:border-imi-300:hover {
+  border-color: var(--bo-border-strong, var(--bo-border)) !important;
+}
+
+.backoffice-root .hover\:text-imi-900:hover,
+.backoffice-root .hover\:text-imi-600:hover {
+  color: var(--bo-text) !important;
+}
+
+/* ── SELECT OPTION FIX ────────────────────────────────────────── */
+.backoffice-root select option {
+  background-color: var(--bo-elevated);
+  color: var(--bo-text);
+}
+
+/* ── DISABLED STATE OVERRIDES ─────────────────────────────────── */
+.backoffice-root .disabled\:bg-imi-50:disabled,
+.backoffice-root .disabled\:bg-white:disabled {
+  background-color: var(--bo-surface) !important;
+  opacity: 0.5;
+}
+
+/* ── LINK COLORS ──────────────────────────────────────────────── */
+.backoffice-root a.text-accent-600,
+.backoffice-root .text-accent-600 {
+  color: var(--bo-text-gold, #C49D5B);
+}
+
+/* ============================================================
+   SPRINT 4 — PREMIUM VISUAL IDENTITY
+   Unified interaction system, glassmorphism, micro-interactions,
+   loading skeletons, and decorative accents.
+   ============================================================ */
+
+/* ── SIDEBAR PREMIUM POLISH ──────────────────────────────────── */
+
+/* Sidebar glass overlay */
+.backoffice-root ~ aside,
+aside[style*="sidebar-bg"] {
+  background: var(--sidebar-bg);
+}
+
+/* Sidebar nav item smooth transitions */
+.backoffice-root aside nav a,
+.backoffice-root aside nav button {
+  transition: all 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+/* Active sidebar item glow */
+.backoffice-root aside nav a[style*="gradient"] {
+  transition: all 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.backoffice-root aside nav a[style*="gradient"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 16px rgba(196,157,91,0.15);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+}
+
+.backoffice-root aside nav a[style*="gradient"]:hover::after {
+  opacity: 1;
+}
+
+/* Sidebar section labels — subtle gold underline */
+.backoffice-root aside nav p[class*="uppercase"] {
+  position: relative;
+  padding-bottom: 6px;
+}
+
+.backoffice-root aside nav p[class*="uppercase"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  width: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(196,157,91,0.40), transparent);
+}
+
+/* ── UNIFIED CARD HOVER SYSTEM ───────────────────────────────── */
+
+/* All rounded-2xl bordered elements get premium hover */
+.backoffice-root [class*="rounded-2xl"] {
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms cubic-bezier(0.22, 1, 0.36, 1), background 200ms ease;
+}
+
+/* Interactive card lift on hover — applied via data attr or group */
+.backoffice-root .group:hover > [class*="rounded-2xl"],
+.backoffice-root [class*="rounded-2xl"][class*="cursor-pointer"]:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--bo-shadow-elevated);
+}
+
+/* ── GLASS KPI CARD ENHANCED ─────────────────────────────────── */
+
+.backoffice-root .glass-card,
+.backoffice-root [style*="border-gold"][class*="rounded-2xl"] {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gold shimmer on glass cards — subtle sweep */
+.backoffice-root .glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(196,157,91,0.04) 45%,
+    rgba(196,157,91,0.08) 50%,
+    rgba(196,157,91,0.04) 55%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: none;
+}
+
+.backoffice-root .glass-card:hover::before {
+  animation: card-shimmer 0.8s ease-out forwards;
+}
+
+@keyframes card-shimmer {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* ── ROW / LIST ITEM HOVER ───────────────────────────────────── */
+
+/* Table rows get a subtle gold left accent on hover */
+.backoffice-root tbody tr {
+  position: relative;
+  transition: background-color 150ms ease, transform 100ms ease;
+}
+
+.backoffice-root tbody tr::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 2px;
+  background: var(--accent-500);
+  border-radius: 0 2px 2px 0;
+  opacity: 0;
+  transform: scaleY(0);
+  transition: opacity 200ms ease, transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.backoffice-root tbody tr:hover::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+/* ── STATUS BADGE PREMIUM ────────────────────────────────────── */
+
+.badge-hot, .badge-warm, .badge-cold,
+.badge-done, .badge-pend, .badge-cancel {
+  border-radius: 9999px;
+  padding: 2px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.badge-hot:hover, .badge-warm:hover, .badge-cold:hover,
+.badge-done:hover, .badge-pend:hover, .badge-cancel:hover {
+  transform: scale(1.04);
+}
+
+/* ── PRIMARY BUTTON GLOW ─────────────────────────────────────── */
+
+.backoffice-root button[style*="C49D5B"],
+.backoffice-root button[style*="accent-500"] {
+  position: relative;
+  transition: transform 100ms ease, box-shadow 200ms ease;
+}
+
+.backoffice-root button[style*="C49D5B"]:hover,
+.backoffice-root button[style*="accent-500"]:hover {
+  box-shadow: 0 4px 16px rgba(196,157,91,0.30), 0 0 0 1px rgba(196,157,91,0.10);
+}
+
+.backoffice-root button[style*="C49D5B"]:active,
+.backoffice-root button[style*="accent-500"]:active {
+  transform: scale(0.97);
+}
+
+/* ── PAGE HEADER DECORATION ──────────────────────────────────── */
+
+/* Gold accent line under page titles */
+.backoffice-root h1 {
+  position: relative;
+}
+
+.backoffice-root h1::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 2px;
+  margin-top: 8px;
+  background: linear-gradient(90deg, var(--accent-500), transparent);
+  border-radius: 2px;
+}
+
+/* ── EMPTY STATE ─────────────────────────────────────────────── */
+
+.backoffice-root .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.backoffice-root .empty-state-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  background: rgba(196,157,91,0.08);
+  border: 1px solid rgba(196,157,91,0.15);
+  color: var(--accent-500);
+  animation: float 4s ease-in-out infinite;
+}
+
+.backoffice-root .empty-state-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--bo-text);
+  margin-bottom: 4px;
+}
+
+.backoffice-root .empty-state-desc {
+  font-size: 13px;
+  color: var(--bo-text-muted);
+  max-width: 280px;
+}
+
+/* ── LOADING SKELETON SYSTEM ─────────────────────────────────── */
+
+@keyframes skeleton-pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.6; }
+}
+
+.backoffice-root .skeleton {
+  background: var(--bo-hover);
+  border-radius: 8px;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.backoffice-root .skeleton-card {
+  background: var(--bo-elevated);
+  border: 1px solid var(--bo-border);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.backoffice-root .skeleton-text {
+  height: 12px;
+  background: var(--bo-hover);
+  border-radius: 6px;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.backoffice-root .skeleton-text.lg {
+  height: 20px;
+}
+
+.backoffice-root .skeleton-circle {
+  border-radius: 50%;
+  background: var(--bo-hover);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── STAT CARD WITH GOLD ACCENT LINE ─────────────────────────── */
+
+.backoffice-root .stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.backoffice-root .stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-500), rgba(196,157,91,0.30), transparent);
+}
+
+/* ── SEARCH INPUT FOCUS GLOW ─────────────────────────────────── */
+
+.backoffice-root input[type="text"]:focus,
+.backoffice-root input[type="search"]:focus,
+.backoffice-root input[type="email"]:focus,
+.backoffice-root input[type="number"]:focus,
+.backoffice-root textarea:focus,
+.backoffice-root select:focus {
+  border-color: var(--bo-border-gold) !important;
+  box-shadow: 0 0 0 3px rgba(196,157,91,0.08);
+  outline: none;
+}
+
+/* ── SMOOTH PAGE TRANSITIONS ─────────────────────────────────── */
+
+.backoffice-root main > div {
+  animation: page-enter 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── TOOLTIP / POPOVER PREMIUM ───────────────────────────────── */
+
+.backoffice-root [class*="absolute"][class*="rounded-2xl"][class*="z-20"] {
+  animation: dropdown-enter 160ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes dropdown-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── PREMIUM SCROLLBAR ───────────────────────────────────────── */
+
+.backoffice-root ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.backoffice-root ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.backoffice-root ::-webkit-scrollbar-thumb {
+  background: rgba(196,157,91,0.20);
+  border-radius: 10px;
+}
+
+.backoffice-root ::-webkit-scrollbar-thumb:hover {
+  background: rgba(196,157,91,0.40);
+}
+
+/* ── DECORATIVE CORNER ACCENT ────────────────────────────────── */
+
+/* Subtle corner glow on main content area */
+.backoffice-root main::before {
+  content: '';
+  position: fixed;
+  top: 64px;
+  left: 240px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(196,157,91,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (max-width: 1023px) {
+  .backoffice-root main::before {
+    left: 0;
+    top: 56px;
+  }
+}
+
+/* ── NOTIFICATION DOT PULSE ──────────────────────────────────── */
+
+.backoffice-root [class*="absolute"][class*="rounded-full"][style*="accent-500"] {
+  animation: notif-pulse 2s ease-in-out infinite;
+}
+
+@keyframes notif-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(196,157,91,0); }
+  50% { box-shadow: 0 0 0 4px rgba(196,157,91,0.15); }
+}
+
+/* ── STAR/DESTAQUE GLOW ──────────────────────────────────────── */
+
+.backoffice-root svg[style*="fill: rgb(196, 157, 91)"],
+.backoffice-root svg[style*="fill: #C49D5B"] {
+  filter: drop-shadow(0 0 4px rgba(196,157,91,0.40));
+}
+
+/* ── TAB / FILTER BUTTON ACTIVE INDICATOR ────────────────────── */
+
+.backoffice-root button[style*="C49D5B"][class*="rounded-xl"] {
+  position: relative;
+}
+
+/* ── RESPONSIVE TABLE SCROLL HINT ────────────────────────────── */
+
+@media (max-width: 768px) {
+  .backoffice-root .overflow-x-auto {
+    position: relative;
+  }
+
+  .backoffice-root .overflow-x-auto::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 32px;
+    background: linear-gradient(90deg, transparent, var(--bo-surface));
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* ── LOADING SPINNER GOLD ────────────────────────────────────── */
+
+.backoffice-root svg[class*="animate-spin"],
+.backoffice-root .animate-spin {
+  color: var(--accent-500) !important;
+}
+
+/* ── FOCUS VISIBLE — GOLD RING ───────────────────────────────── */
+
+.backoffice-root *:focus-visible {
+  outline: 2px solid rgba(196,157,91,0.50);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ── SMOOTH DARK SHIMMER FOR SKELETON CARDS ──────────────────── */
+
+.dark .backoffice-root .skeleton,
+.dark .backoffice-root .skeleton-text {
+  background: rgba(255,255,255,0.04);
+}
+
+.dark .backoffice-root .skeleton-card {
+  background: rgba(26,30,42,0.50);
+  border-color: rgba(255,255,255,0.06);
 }
