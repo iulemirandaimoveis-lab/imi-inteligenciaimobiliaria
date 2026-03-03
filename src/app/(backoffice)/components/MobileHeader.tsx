@@ -132,17 +132,17 @@ export default function MobileHeader() {
                 }}
             >
                 <div className="flex items-center justify-between h-14 px-4">
-                    {/* Left: Title */}
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    {/* Left: Brand (matches desktop sidebar) */}
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
                         <span
-                            className="text-lg font-bold tracking-tight"
-                            style={{ color: '#486581', fontFamily: "'Playfair Display', Georgia, serif" }}
+                            className="text-xl font-bold tracking-tight text-white"
+                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                         >
                             IMI
                         </span>
-                        <div className="h-4 w-px" style={{ background: 'var(--bo-border)' }} />
-                        <span className="text-sm font-semibold truncate" style={{ color: 'var(--bo-text)' }}>
-                            {title}
+                        <div className="h-5 w-px bg-white/20" />
+                        <span className="text-[9px] font-semibold uppercase tracking-[0.15em] leading-[1.2]" style={{ color: 'var(--bo-text-muted)' }}>
+                            Inteligência<br />Imobiliária
                         </span>
                     </div>
 

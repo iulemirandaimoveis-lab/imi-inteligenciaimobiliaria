@@ -6,65 +6,88 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     LayoutDashboard, Building2, Users, BarChart3, X,
-    FileText, DollarSign, Briefcase, BookOpen, Settings,
-    MessageSquare, Bell, Banknote, FolderOpen, MoreHorizontal,
+    FileText, Briefcase, BookOpen, Settings,
+    MessageSquare, Banknote, FolderOpen, MoreHorizontal,
     Scale, CreditCard, FileStack, Layers, Target, Zap, Mail, FileSignature, LogOut,
-    Megaphone, BarChart2, Plug
+    Megaphone, BarChart2, Plug, TrendingUp, TrendingDown, CalendarDays,
+    QrCode, Sparkles, Building
 } from 'lucide-react'
 
 const MAIN = [
     { name: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
-    { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
     { name: 'Leads', href: '/backoffice/leads', icon: Users },
-    { name: 'Relatórios', href: '/backoffice/relatorios', icon: BarChart3 },
+    { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
+    { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
 ]
 
 const GROUPS = [
     {
-        label: 'Operações',
+        label: 'Visão Executiva',
         items: [
-            { name: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale },
-            { name: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova', icon: FileText },
-            { name: 'Contratos', href: '/backoffice/contratos', icon: FileSignature },
-            { name: 'Email + Honorários', href: '/backoffice/avaliacoes/email-honorarios', icon: Mail },
-            { name: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
-            { name: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
-            { name: 'Consultoria', href: '/backoffice/consultorias', icon: Briefcase },
+            { name: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
+            { name: 'Metas & Performance', href: '/backoffice/financeiro/metas', icon: Target },
+            { name: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
+        ],
+    },
+    {
+        label: 'Captação',
+        items: [
+            { name: 'Leads', href: '/backoffice/leads', icon: Users },
+            { name: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
+            { name: 'QR Tracking', href: '/backoffice/tracking/qr', icon: QrCode },
+            { name: 'Omni Channel', href: '/backoffice/omnichannel', icon: Layers },
             { name: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+        ],
+    },
+    {
+        label: 'Conversão',
+        items: [
+            { name: 'Pipeline', href: '/backoffice/leads/pipeline', icon: TrendingUp },
+            { name: 'Simulações', href: '/backoffice/credito/simulador', icon: CreditCard },
+            { name: 'Agenda', href: '/backoffice/agenda', icon: CalendarDays },
         ],
     },
     {
         label: 'Portfólio',
         items: [
-            { name: 'Portfólio', href: '/backoffice/imoveis', icon: Building2 },
-            { name: 'Construtoras', href: '/backoffice/construtoras', icon: Building2 },
+            { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
+            { name: 'Construtoras', href: '/backoffice/construtoras', icon: Building },
             { name: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
-            { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
+            { name: 'Publicações', href: '/backoffice/conteudos', icon: FileText },
         ],
     },
     {
-        label: 'Gestão',
+        label: 'Operação',
         items: [
-            { name: 'Leads', href: '/backoffice/leads', icon: Users },
-            { name: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
+            { name: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale },
+            { name: 'Contratos', href: '/backoffice/contratos', icon: FileSignature },
+            { name: 'Consultoria', href: '/backoffice/consultorias', icon: Briefcase },
+            { name: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
+        ],
+    },
+    {
+        label: 'Financeiro',
+        items: [
+            { name: 'Visão Geral', href: '/backoffice/financeiro', icon: Banknote },
+            { name: 'A Receber', href: '/backoffice/financeiro/receber', icon: TrendingUp },
+            { name: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: TrendingDown },
+        ],
+    },
+    {
+        label: 'Crescimento',
+        items: [
+            { name: 'Automações', href: '/backoffice/automacoes', icon: Zap },
             { name: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
+            { name: 'Analytics', href: '/backoffice/tracking', icon: BarChart2 },
+            { name: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles },
         ],
     },
     {
-        label: 'Marketing',
-        items: [
-            { name: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
-            { name: 'Conteúdo', href: '/backoffice/conteudos', icon: FileText },
-            { name: 'Tracking', href: '/backoffice/tracking', icon: BarChart2 },
-        ],
-    },
-    {
-        label: 'Sistema',
+        label: 'Configurações',
         items: [
             { name: 'Equipe', href: '/backoffice/equipe', icon: Users },
             { name: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
             { name: 'Configurações', href: '/backoffice/settings', icon: Settings },
-            { name: 'Automações', href: '/backoffice/automacoes', icon: Zap },
         ],
     },
 ]

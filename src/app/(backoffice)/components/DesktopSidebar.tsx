@@ -5,9 +5,9 @@ import Link from 'next/link'
 import {
     LayoutDashboard, Building2, FileText, Users, Scale,
     Settings, ChevronDown, ChevronRight, LogOut,
-    BookOpen, BarChart2,
-    Zap, CreditCard, Briefcase,
-    FileStack, FolderOpen, Banknote,
+    BookOpen, BarChart2, Target, TrendingUp, TrendingDown,
+    Zap, CreditCard, Briefcase, CalendarDays, QrCode, Sparkles,
+    FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug
 } from 'lucide-react'
 import { useState } from 'react'
@@ -28,13 +28,39 @@ interface NavSection {
 
 const SECTIONS: NavSection[] = [
     {
-        label: 'Painel',
+        label: 'Visão Executiva',
         items: [
             { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
+            { label: 'Metas & Performance', href: '/backoffice/financeiro/metas', icon: Target },
+            { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
         ]
     },
     {
-        label: 'Operações Imobiliárias',
+        label: 'Captação',
+        items: [
+            {
+                label: 'Leads', icon: Users,
+                children: [
+                    { label: 'Todos os Leads', href: '/backoffice/leads', icon: Users },
+                    { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: Users },
+                ]
+            },
+            { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
+            { label: 'QR Tracking', href: '/backoffice/tracking/qr', icon: QrCode },
+            { label: 'Omni Channel', href: '/backoffice/omnichannel', icon: Layers },
+            { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+        ]
+    },
+    {
+        label: 'Conversão',
+        items: [
+            { label: 'Pipeline', href: '/backoffice/leads/pipeline', icon: TrendingUp },
+            { label: 'Simulações', href: '/backoffice/credito/simulador', icon: CreditCard },
+            { label: 'Agenda', href: '/backoffice/agenda', icon: CalendarDays },
+        ]
+    },
+    {
+        label: 'Portfólio',
         items: [
             {
                 label: 'Imóveis', icon: Building2,
@@ -43,8 +69,14 @@ const SECTIONS: NavSection[] = [
                     { label: 'Novo Imóvel', href: '/backoffice/imoveis/novo', icon: Building2 },
                 ]
             },
-            { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building2 },
+            { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building },
             { label: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
+            { label: 'Publicações', href: '/backoffice/conteudos', icon: FileText },
+        ]
+    },
+    {
+        label: 'Operação',
+        items: [
             {
                 label: 'Avaliações', icon: Scale,
                 children: [
@@ -78,61 +110,28 @@ const SECTIONS: NavSection[] = [
         ]
     },
     {
-        label: 'Comercial',
-        items: [
-            {
-                label: 'Leads', icon: Users,
-                children: [
-                    { label: 'Pipeline', href: '/backoffice/leads', icon: Users },
-                    { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: Users },
-                ]
-            },
-            { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
-            { label: 'Omni Channel', href: '/backoffice/omnichannel', icon: Layers },
-        ]
-    },
-    {
         label: 'Financeiro',
         items: [
-            {
-                label: 'Financeiro', icon: Banknote,
-                children: [
-                    { label: 'Visão Geral', href: '/backoffice/financeiro', icon: Banknote },
-                    { label: 'A Receber', href: '/backoffice/financeiro/receber', icon: Banknote },
-                    { label: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: Banknote },
-                    { label: 'Metas', href: '/backoffice/financeiro/metas', icon: Banknote },
-                ]
-            },
+            { label: 'Visão Geral', href: '/backoffice/financeiro', icon: Banknote },
+            { label: 'A Receber', href: '/backoffice/financeiro/receber', icon: TrendingUp },
+            { label: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: TrendingDown },
+            { label: 'Metas', href: '/backoffice/financeiro/metas', icon: Target },
         ]
     },
     {
-        label: 'Marketing & Growth',
+        label: 'Crescimento',
         items: [
-            { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
-            { label: 'Conteúdos', href: '/backoffice/conteudos', icon: FileText },
-            {
-                label: 'Tracking', icon: BarChart2,
-                children: [
-                    { label: 'Analytics', href: '/backoffice/tracking', icon: BarChart2 },
-                    { label: 'QR Code', href: '/backoffice/tracking/qr', icon: BarChart2 },
-                    { label: 'Links', href: '/backoffice/tracking/links', icon: BarChart2 },
-                ]
-            },
+            { label: 'Automações', href: '/backoffice/automacoes', icon: Zap },
             { label: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
+            { label: 'Analytics', href: '/backoffice/tracking', icon: BarChart2 },
+            { label: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles },
         ]
     },
     {
-        label: 'Relatórios',
-        items: [
-            { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
-        ]
-    },
-    {
-        label: 'Sistema',
+        label: 'Configurações',
         items: [
             { label: 'Equipe', href: '/backoffice/equipe', icon: Users },
             { label: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
-            { label: 'Automações', href: '/backoffice/automacoes', icon: Zap },
             { label: 'Configurações', href: '/backoffice/settings', icon: Settings },
         ]
     },
