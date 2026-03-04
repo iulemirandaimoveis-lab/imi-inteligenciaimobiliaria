@@ -420,7 +420,7 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
 
                 <MediaUploader
                     label="Imagem Principal (Thumbnail)"
-                    value={watch('image')}
+                    value={watch('image') ?? ''}
                     onChange={(url) => setValue('image', url as string)}
                     folder="properties/thumbnails"
                 />

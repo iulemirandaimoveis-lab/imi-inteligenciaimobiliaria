@@ -116,7 +116,7 @@ export default function TrackingLinkModal({ property, onClose }: TrackingLinkMod
                                 value={campaign}
                                 onChange={(e) => setCampaign(e.target.value)}
                                 placeholder="Ex: instagram-ads-fevereiro"
-                                helpText="Evite espaços ou caracteres especiais."
+                                hint="Evite espaços ou caracteres especiais."
                             />
 
                             <div className="grid md:grid-cols-2 gap-6">

@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import { Upload, X, Image as ImageIcon, FileText, Video, Link as LinkIcon } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import { uploadFile, deleteFile } from '@/lib/supabase/storage'
+import { uploadFile, deleteFile } from '@/lib/supabase-storage'
 
 interface MediaUploaderProps {
     propertyId: string
@@ -57,7 +57,7 @@ export default function MediaUploader({
                 const timestamp = Date.now()
                 const fileName = `${propertyId}/${type}/${timestamp}-${file.name.replace(/\s+/g, '-')}`
 
-                const { url, error } = await uploadFile('developments', fileName, file)
+                const { url, error } = await uploadFile(file, 'media', `developments/${propertyId}/${type}`)
 
                 if (error) throw error
                 if (url) uploadedUrls.push(url)
@@ -88,7 +88,7 @@ export default function MediaUploader({
 
         try {
             const path = url.split('/').pop()
-            if (path) await deleteFile('developments', `${propertyId}/${type}/${path}`)
+            if (path) await deleteFile(`${propertyId}/${type}/${path}`, 'media')
 
             const currentList = type === 'images' ? images : floorPlans
             const newList = currentList.filter(img => img !== url)

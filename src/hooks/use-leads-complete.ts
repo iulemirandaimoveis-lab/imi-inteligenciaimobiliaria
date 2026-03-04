@@ -51,7 +51,7 @@ export function useLeads(filters: LeadFilters = {}) {
     const { data, error, mutate: revalidate } = useSWR(
         ['leads', JSON.stringify(filters)],
         async () => {
-            let query = supabase
+            let query = (supabase as any)
                 .from('leads')
                 .select(`
           *,
@@ -134,7 +134,7 @@ export function useLead(id: string | null) {
     const { data, error, mutate: revalidate } = useSWR(
         id ? ['lead', id] : null,
         async () => {
-            const { data, error } = await supabase
+            const { data, error } = await (supabase as any)
                 .from('leads')
                 .select(`
           *,

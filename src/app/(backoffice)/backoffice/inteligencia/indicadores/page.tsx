@@ -34,7 +34,7 @@ export default function IndicadoresPage() {
     const [editForm, setEditForm] = useState<Partial<Indicator>>({})
     const [saving, setSaving] = useState(false)
     const [addingNew, setAddingNew] = useState(false)
-    const [newForm, setNewForm] = useState({ metric_name: '', value: '', unit: '', category: '', description: '', trend: 'stable' as const, sort_order: 0 })
+    const [newForm, setNewForm] = useState<{ metric_name: string; value: string; unit: string; category: string; description: string; trend: 'up' | 'down' | 'stable'; sort_order: number }>({ metric_name: '', value: '', unit: '', category: '', description: '', trend: 'stable', sort_order: 0 })
 
     async function load() {
         setLoading(true)

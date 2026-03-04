@@ -49,17 +49,15 @@ export async function POST(request: NextRequest) {
 
         // 2. Link session to lead if sessionId provided
         if (sessionId) {
-            supabase
+            void supabase
                 .from('tracking_sessions')
                 .update({ lead_id: lead.id })
                 .eq('session_id', sessionId)
-                .then(() => { })
-                .catch(() => { })
         }
 
         // 3. Create notification for new lead
         const devName = development_id ? '(imóvel vinculado)' : ''
-        supabase
+        void supabase
             .from('notifications')
             .insert({
                 user_id: DEFAULT_USER_ID,
@@ -74,8 +72,6 @@ export async function POST(request: NextRequest) {
                 },
                 read: false,
             })
-            .then(() => { })
-            .catch((err: any) => console.error('Notification error:', err))
 
         // 4. AI qualification (non-blocking, soft fail)
         try {

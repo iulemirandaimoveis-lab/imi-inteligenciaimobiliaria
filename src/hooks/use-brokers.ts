@@ -1,6 +1,5 @@
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
-import { v4 as uuidv4 } from 'uuid'
 
 const supabase = createClient()
 

@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { X, Upload, Loader2, Image as ImageIcon } from 'lucide-react';
-import { storageService } from '@/lib/supabase-storage';
+import { uploadMultipleFiles, deleteFile } from '@/lib/supabase-storage';
 import Image from 'next/image';
 
 interface PropertyImageUploadProps {
@@ -35,10 +35,8 @@ export function PropertyImageUpload({
 
         try {
             // Upload para Supabase Storage
-            const uploadedUrls = await storageService.uploadPropertyImages(
-                acceptedFiles,
-                propertyId
-            );
+            const results = await uploadMultipleFiles(acceptedFiles, 'media', `properties/${propertyId}`);
+            const uploadedUrls = results.map(r => r.url);
 
             const newImages = [...images, ...uploadedUrls];
             setImages(newImages);
@@ -64,7 +62,8 @@ export function PropertyImageUpload({
     const handleRemove = async (url: string, index: number) => {
         try {
             // Deletar do Supabase
-            await storageService.deletePropertyImage(url);
+            const path = url.split('/media/')[1];
+            if (path) await deleteFile(path, 'media');
 
             // Atualizar estado
             const newImages = images.filter((_, i) => i !== index);

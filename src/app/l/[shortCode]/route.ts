@@ -82,7 +82,7 @@ export async function GET(
     if (reqCampaign) utms.campaign = reqCampaign
 
     // 6. Log tracking event (non-blocking — don't await to avoid delaying redirect)
-    supabase
+    void supabase
         .from('link_events')
         .insert({
             tracked_link_id: link.id,
@@ -99,22 +99,10 @@ export async function GET(
             },
             created_at: new Date().toISOString()
         })
-        .then(() => {})
-        .catch((err: any) => console.error('Tracking event error:', err))
 
     // 7. Increment click count (non-blocking)
-    supabase
+    void supabase
         .rpc('increment_link_clicks', { link_id: link.id })
-        .then(() => {})
-        .catch(() => {
-            // Fallback: manual increment if RPC doesn't exist
-            supabase
-                .from('tracked_links')
-                .update({ clicks: (link.clicks || 0) + 1 })
-                .eq('id', link.id)
-                .then(() => {})
-                .catch((err: any) => console.error('Click increment error:', err))
-        })
 
     // 8. Build final redirect URL with UTM passthrough
     let finalUrl = targetUrl

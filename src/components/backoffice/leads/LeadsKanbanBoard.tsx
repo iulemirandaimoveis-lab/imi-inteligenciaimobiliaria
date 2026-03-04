@@ -264,7 +264,7 @@ export default function LeadsKanbanBoard() {
 
     const loadLeads = async () => {
         setLoading(true)
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
             .from('leads')
             .select(`
         *,
