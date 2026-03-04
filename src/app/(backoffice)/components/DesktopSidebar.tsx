@@ -8,7 +8,8 @@ import {
     BookOpen, BarChart2, Target, TrendingUp, TrendingDown,
     Zap, CreditCard, Briefcase, CalendarDays, QrCode, Sparkles,
     FileStack, FolderOpen, Banknote, Building,
-    FileSignature, Layers, MessageSquare, Megaphone, Plug
+    FileSignature, Layers, MessageSquare, Megaphone, Plug,
+    Brain, BarChart3, LineChart
 } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -72,6 +73,15 @@ const SECTIONS: NavSection[] = [
             { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building },
             { label: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
             { label: 'Publicações', href: '/backoffice/conteudos', icon: FileText },
+        ]
+    },
+    {
+        label: 'Inteligência',
+        items: [
+            { label: 'Ebooks', href: '/backoffice/inteligencia/ebooks', icon: BookOpen },
+            { label: 'Relatórios', href: '/backoffice/inteligencia/relatorios', icon: FileStack },
+            { label: 'Indicadores', href: '/backoffice/inteligencia/indicadores', icon: LineChart },
+            { label: 'Índices IMI', href: '/backoffice/inteligencia/indices', icon: Brain },
         ]
     },
     {

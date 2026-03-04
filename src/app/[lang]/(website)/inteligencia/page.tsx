@@ -1,268 +1,177 @@
-'use client'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { BarChart3, TrendingUp, Map, FileText, ArrowUpRight, Brain, Database, LineChart } from 'lucide-react'
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    BarChart,
-    Bar
-} from 'recharts'
-import { fadeIn, slideUp, staggerContainer } from '@/lib/animations'
-import { Calculator, BarChart3, TrendingUp, Map, ArrowUpRight, MessageCircle } from 'lucide-react'
-import Button from '@/components/ui/Button'
+export const metadata: Metadata = {
+    title: 'Inteligência de Mercado | IMI — Iule Miranda Imóveis',
+    description: 'Centro de inteligência imobiliária da IMI. Dashboards, índices de mercado, mapa de calor e relatórios técnicos para fundamentar seus investimentos.',
+}
 
-const marketData = [
-    { month: 'Jul', value: 8900 },
-    { month: 'Ago', value: 9100 },
-    { month: 'Set', value: 9250 },
-    { month: 'Out', value: 9400 },
-    { month: 'Nov', value: 9650 },
-    { month: 'Dez', value: 9850 },
+const SECTIONS = [
+    {
+        href: 'inteligencia/dashboard',
+        icon: BarChart3,
+        label: 'Dashboard',
+        description: 'KPIs e indicadores de mercado atualizados — liquidez, valorização, custo médio m², tendências macro.',
+        tag: 'Dados ao Vivo',
+        tagColor: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
+    },
+    {
+        href: 'inteligencia/indices',
+        icon: TrendingUp,
+        label: 'Índices IMI',
+        description: 'O Índice Imobiliário IMI — metodologia proprietária de precificação e tendência para João Pessoa e regiões monitoradas.',
+        tag: 'Metodologia Própria',
+        tagColor: 'text-[#86A8C8] bg-[#86A8C8]/10 border-[#86A8C8]/20',
+    },
+    {
+        href: 'inteligencia/mapa',
+        icon: Map,
+        label: 'Mapa de Calor',
+        description: 'Visualização geográfica de valorização, densidade de oferta e liquidez por bairro e região.',
+        tag: 'Em Breve',
+        tagColor: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
+    },
+    {
+        href: 'inteligencia/relatorios',
+        icon: FileText,
+        label: 'Relatórios',
+        description: 'Estudos técnicos de mercado, dossiês de bairro e análises comparativas para download.',
+        tag: 'PDF & Exclusivos',
+        tagColor: 'text-purple-400 bg-purple-400/10 border-purple-400/20',
+    },
 ]
 
-const neighborhoodData = [
-    { name: 'Cabo Branco', value: 15200 },
-    { name: 'Altiplano', value: 10800 },
-    { name: 'Bessa', value: 11500 },
-    { name: 'J. Oceania', value: 9800 },
-    { name: 'Manaíra', value: 8600 },
+const PILLARS = [
+    {
+        icon: Database,
+        title: 'Dados Primários',
+        description: 'Transações reais, visitas técnicas e coleta direta de campo — não dependemos apenas de portais.',
+    },
+    {
+        icon: Brain,
+        title: 'Metodologia NBR',
+        description: 'Toda análise respeita a norma ABNT NBR 14653 para avaliação e tratamento estatístico.',
+    },
+    {
+        icon: LineChart,
+        title: 'Atualização Contínua',
+        description: 'Indicadores revisados mensalmente com cruzamento de dados macro e microrregionais.',
+    },
 ]
 
-export default function MarketIntelligencePage() {
+export default function InteligenciaPage({ params }: { params: { lang: string } }) {
+    const { lang } = params
+
     return (
-        <>
+        <main className="bg-[#0D0F14] min-h-screen">
             {/* HERO */}
-            <section className="bg-imi-900 text-white section-padding relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-accent-500/5 -skew-x-12 translate-x-1/4" />
+            <section className="relative bg-[#0D1117] text-white pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
+                <div className="absolute top-0 right-0 w-1/2 h-full opacity-[0.03]"
+                    style={{ backgroundImage: 'radial-gradient(circle at 80% 50%, #334E68 0%, transparent 60%)' }} />
+                <div className="absolute inset-0 opacity-[0.03]"
+                    style={{ backgroundImage: 'linear-gradient(rgba(72,101,129,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(72,101,129,0.4) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
                 <div className="container-custom relative z-10">
-                    <div className="max-w-3xl">
+                    <div className="max-w-4xl">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-px bg-accent-500" />
-                            <span className="text-accent-500 font-semibold uppercase tracking-[0.2em] text-xs">Market Intelligence</span>
+                            <div className="w-12 h-px bg-[#334E68]" />
+                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Market Intelligence</span>
                         </div>
-                        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
-                            Inteligência de Mercado
+                        <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
+                            Centro de <br /><span className="text-[#486581] italic">Inteligência</span> Imobiliária
                         </h1>
-                        <p className="text-imi-300 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
-                            Dados precisos, tendências e análises exclusivas para fundamentar seus investimentos no mercado imobiliário.
+                        <p className="text-[#9CA3AF] text-lg sm:text-xl font-light leading-relaxed max-w-2xl">
+                            Dados precisos, índices proprietários e análises técnicas para fundamentar decisões de investimento com profundidade que portais não oferecem.
                         </p>
                     </div>
                 </div>
             </section>
 
-            {/* STATS */}
-            <section className="section-padding bg-imi-50">
+            {/* SEÇÕES */}
+            <section className="py-16 md:py-24">
                 <div className="container-custom">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 -mt-24 relative z-20">
-                        {[
-                            {
-                                label: 'Valorização (12m)',
-                                value: '+15.2%',
-                                detail: 'Análise de Alto Padrão',
-                                icon: ArrowUpRight,
-                                color: 'text-green-600'
-                            },
-                            {
-                                label: 'Liquidez Média',
-                                value: '60 Dias',
-                                detail: 'Ativos Premium',
-                                icon: TrendingUp,
-                                color: 'text-imi-900'
-                            },
-                            {
-                                label: 'Custo Médio m²',
-                                value: 'R$ 9.850',
-                                detail: 'Regiões de Orla',
-                                icon: Map,
-                                color: 'text-imi-900'
-                            }
-                        ].map((stat, i) => (
-                            <motion.div
-                                key={i}
-                                variants={slideUp}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="bg-white p-8 rounded-2xl border border-imi-100 shadow-soft"
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {SECTIONS.map((s) => (
+                            <Link
+                                key={s.href}
+                                href={`/${lang}/${s.href}`}
+                                className="group block p-8 sm:p-10 rounded-3xl bg-[#141420] border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-300"
                             >
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-sm font-bold text-imi-400 uppercase tracking-wider">{stat.label}</h3>
-                                    <stat.icon className="w-5 h-5 text-accent-500" />
-                                </div>
-                                <div className="flex items-baseline gap-2">
-                                    <span className={`text-4xl font-bold font-display ${stat.color}`}>{stat.value}</span>
-                                </div>
-                                <p className="text-xs text-imi-400 mt-2 font-medium">{stat.detail}</p>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {/* GRÁFICOS */}
-                    <div className="grid lg:grid-cols-2 gap-8 mt-16">
-                        <motion.div
-                            variants={fadeIn}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            className="bg-white p-8 rounded-2xl border border-imi-100 shadow-soft"
-                        >
-                            <h3 className="text-xl font-bold text-imi-900 mb-8 font-display flex items-center gap-3">
-                                <TrendingUp className="w-5 h-5 text-accent-500" />
-                                Tendência de Preço (R$/m²)
-                            </h3>
-                            <div className="h-[350px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={marketData}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                        <XAxis
-                                            dataKey="month"
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fill: '#6B83A0', fontSize: 12 }}
-                                        />
-                                        <YAxis
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fill: '#6B83A0', fontSize: 12 }}
-                                            domain={['dataMin - 500', 'dataMax + 500']}
-                                        />
-                                        <Tooltip
-                                            contentStyle={{
-                                                borderRadius: '12px',
-                                                border: 'none',
-                                                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                                                padding: '12px'
-                                            }}
-                                        />
-                                        <Line
-                                            type="monotone"
-                                            dataKey="value"
-                                            stroke="#23232D"
-                                            strokeWidth={4}
-                                            dot={{ r: 6, fill: '#23232D', strokeWidth: 2, stroke: '#fff' }}
-                                            activeDot={{ r: 8, fill: '#486581' }}
-                                        />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            variants={fadeIn}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            className="bg-white p-8 rounded-2xl border border-imi-100 shadow-soft"
-                        >
-                            <h3 className="text-xl font-bold text-imi-900 mb-8 font-display flex items-center gap-3">
-                                <Map className="w-5 h-5 text-accent-500" />
-                                Valorização por Bairro (R$/m²)
-                            </h3>
-                            <div className="h-[350px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={neighborhoodData} layout="vertical">
-                                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" />
-                                        <XAxis type="number" hide />
-                                        <YAxis
-                                            dataKey="name"
-                                            type="category"
-                                            width={100}
-                                            axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fill: '#23232D', fontWeight: 500 }}
-                                        />
-                                        <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
-                                        <Bar dataKey="value" fill="#23232D" radius={[0, 8, 8, 0]} barSize={32}>
-                                            {neighborhoodData.map((_entry, index) => (
-                                                <rect key={index} fill={index === 0 ? '#486581' : '#23232D'} />
-                                            ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
-            </section>
-
-            {/* TOOLS */}
-            <section className="section-padding">
-                <div className="container-custom">
-                    <h2 className="font-display text-3xl md:text-4xl font-bold text-imi-900 mb-12 text-center">
-                        Ferramentas de Análise
-                    </h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            {
-                                icon: Calculator,
-                                title: 'Calculadora de Valuation',
-                                href: '/avaliacoes',
-                                desc: 'Estime o valor real de mercado com base em dados técnicos e transações recentes processadas por IA.'
-                            },
-                            {
-                                icon: BarChart3,
-                                title: 'Comparador de Bairros',
-                                href: '#',
-                                desc: 'Análise comparativa de ROI, liquidez e potencial de valorização entre as principais regiões.'
-                            },
-                            {
-                                icon: TrendingUp,
-                                title: 'Simulador de Retorno',
-                                href: '/consultoria',
-                                desc: 'Calcule o rendimento potencial do seu investimento considerando aluguel e valorização.'
-                            }
-                        ].map((tool, i) => (
-                            <a href={tool.href} key={i} className="group">
-                                <motion.div
-                                    variants={slideUp}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}
-                                    className="h-full p-8 rounded-2xl bg-white border border-imi-100 shadow-soft hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300"
-                                >
-                                    <div className="w-14 h-14 bg-imi-900/10 text-imi-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-imi-900 group-hover:text-white transition-all duration-300">
-                                        <tool.icon className="w-6 h-6" strokeWidth={1.5} />
+                                <div className="flex items-start justify-between mb-8">
+                                    <div className="w-14 h-14 bg-[#1A1E2A] text-[#486581] rounded-2xl flex items-center justify-center border border-white/[0.05] group-hover:scale-110 transition-transform">
+                                        <s.icon className="w-6 h-6" strokeWidth={1.5} />
                                     </div>
-                                    <h3 className="text-xl font-bold text-imi-900 mb-4 font-display">
-                                        {tool.title}
-                                    </h3>
-                                    <p className="text-imi-500 text-sm leading-relaxed mb-6">
-                                        {tool.desc}
-                                    </p>
-                                    <span className="text-sm font-bold text-imi-900 flex items-center gap-2">
-                                        Acessar Ferramenta
-                                        <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                    <span className={`text-[10px] font-bold uppercase tracking-[0.15em] px-2.5 py-1 rounded-full border ${s.tagColor}`}>
+                                        {s.tag}
                                     </span>
-                                </motion.div>
-                            </a>
+                                </div>
+                                <h2 className="font-display text-2xl font-bold text-white mb-3 group-hover:text-[#86A8C8] transition-colors">
+                                    {s.label}
+                                </h2>
+                                <p className="text-[#9CA3AF] text-sm leading-relaxed mb-6 font-light">
+                                    {s.description}
+                                </p>
+                                <span className="flex items-center gap-2 text-[#486581] text-sm font-semibold">
+                                    Acessar
+                                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                </span>
+                            </Link>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* CTA FINAL */}
-            <section className="bg-imi-900 text-white section-padding text-center relative overflow-hidden">
+            {/* PILARES */}
+            <section className="py-16 md:py-24 border-t border-white/[0.05]">
+                <div className="container-custom">
+                    <div className="text-center mb-14">
+                        <div className="flex items-center justify-center gap-3 mb-4">
+                            <div className="w-8 h-px bg-[#334E68]" />
+                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Nossa Metodologia</span>
+                            <div className="w-8 h-px bg-[#334E68]" />
+                        </div>
+                        <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
+                            Inteligência com <span className="text-[#486581] italic">Rigor Técnico</span>
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        {PILLARS.map((p, i) => (
+                            <div
+                                key={i}
+                                className="p-8 rounded-3xl bg-[#141420] border border-white/[0.05] text-center"
+                            >
+                                <div className="w-14 h-14 bg-[#1A1E2A] text-[#486581] rounded-2xl flex items-center justify-center mb-6 mx-auto border border-white/[0.05]">
+                                    <p.icon className="w-6 h-6" strokeWidth={1.5} />
+                                </div>
+                                <h3 className="font-display text-lg font-bold text-white mb-3">{p.title}</h3>
+                                <p className="text-[#9CA3AF] text-sm leading-relaxed font-light">{p.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* CTA */}
+            <section className="bg-[#141420] text-white py-20 md:py-28 text-center relative overflow-hidden border-t border-white/[0.05]">
+                <div className="absolute inset-0 opacity-[0.05]"
+                    style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
-                    <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
-                        Análise Personalizada?
+                    <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight">
+                        Precisa de uma <span className="text-[#486581] italic">Análise Personalizada</span>?
                     </h2>
-                    <p className="text-imi-300 text-lg mb-10 max-w-2xl mx-auto font-light">
-                        Precisa de um estudo de viabilidade ou dossiê completo de mercado para seu próximo projeto?
+                    <p className="text-[#9CA3AF] text-lg mb-10 max-w-xl mx-auto font-light leading-relaxed">
+                        Dossiê de bairro, estudo de viabilidade ou laudo técnico — nossa equipe entrega com metodologia ABNT e dados exclusivos.
                     </p>
-                    <a href="https://wa.me/5581997230455" target="_blank" rel="noopener noreferrer" className="btn btn-primary bg-white text-imi-900 border border-imi-200 hover:bg-imi-50 h-14 px-10 inline-flex items-center text-lg shadow-md font-bold uppercase tracking-wider">
-                        <MessageCircle className="w-5 h-5 flex-shrink-0 mr-3" />
+                    <a
+                        href="https://wa.me/5581997230455"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-3 h-14 px-10 rounded-xl bg-[#102A43] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#1A3F5C] transition-all shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
+                    >
                         Solicitar Estudo de Mercado
                     </a>
                 </div>
             </section>
-        </>
+        </main>
     )
 }
