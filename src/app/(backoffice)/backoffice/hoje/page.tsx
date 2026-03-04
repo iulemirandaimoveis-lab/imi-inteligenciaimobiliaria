@@ -7,7 +7,7 @@ import {
     Sun, Moon, Plus, Users, CalendarDays,
     Phone, MessageCircle, ChevronRight,
     Flame, Clock, ArrowRight, Building2, Zap,
-    Sparkles, TrendingUp,
+    Sparkles, TrendingUp, Scale,
 } from 'lucide-react'
 
 // ── Design tokens ───────────────────────────────────────────────
@@ -87,9 +87,10 @@ export default function HojePage() {
     const warmCount = leads.filter(l => l.status === 'warm').length
 
     const QUICK_ACTIONS = [
-        { label: 'Novo Lead', icon: Users, href: '/backoffice/leads/novo', color: '#486581' },
+        { label: 'Novo Lead', icon: Users, href: '/backoffice/leads/novo', color: '#E8A87C' },
         { label: 'Evento', icon: CalendarDays, href: '/backoffice/agenda', color: '#8B5CF6' },
         { label: 'WhatsApp', icon: MessageCircle, href: '/backoffice/whatsapp', color: '#25D366' },
+        { label: 'Avaliação', icon: Scale, href: '/backoffice/avaliacoes/nova', color: '#6BB87B' },
     ]
 
     if (loading) {
@@ -97,8 +98,8 @@ export default function HojePage() {
             <div className="space-y-4 max-w-2xl mx-auto">
                 <div className="skeleton h-6 w-40 rounded-xl" />
                 <div className="skeleton h-4 w-56 rounded-xl" />
-                <div className="grid grid-cols-3 gap-2">
-                    {[0, 1, 2].map(i => <div key={i} className="skeleton-card h-20 rounded-2xl" />)}
+                <div className="grid grid-cols-2 gap-2">
+                    {[0, 1, 2, 3].map(i => <div key={i} className="skeleton-card h-20 rounded-2xl" />)}
                 </div>
                 <div className="skeleton-card h-36 rounded-2xl" />
                 <div className="skeleton-card h-48 rounded-2xl" />
@@ -115,18 +116,20 @@ export default function HojePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
             >
-                <div className="flex items-center gap-2 mb-0.5">
-                    <GreetIcon size={16} style={{ color: '#E8A87C' }} />
-                    <p className="text-sm font-medium" style={{ color: T.textSub }}>
-                        {greetText}, Iule
-                    </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-[13px] font-medium" style={{ color: T.textSub }}>
+                            {greetText}, Iule
+                        </p>
+                        <h1
+                            className="text-[22px] font-bold capitalize leading-tight"
+                            style={{ color: T.text }}
+                        >
+                            {todayLabel()}
+                        </h1>
+                    </div>
+                    <GreetIcon size={28} style={{ color: '#E8A87C', opacity: 0.6 }} />
                 </div>
-                <h1
-                    className="text-xl font-bold capitalize"
-                    style={{ color: T.text }}
-                >
-                    {todayLabel()}
-                </h1>
             </motion.div>
 
             {/* ── Quick Actions ─────────────────────────── */}
@@ -134,7 +137,7 @@ export default function HojePage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05 }}
-                className="grid grid-cols-3 gap-2"
+                className="grid grid-cols-2 gap-2"
             >
                 {QUICK_ACTIONS.map((a, i) => (
                     <motion.button

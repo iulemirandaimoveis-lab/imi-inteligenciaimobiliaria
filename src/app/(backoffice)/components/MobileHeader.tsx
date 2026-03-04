@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Bell, X, ChevronRight } from 'lucide-react'
+import { Search, Bell, X, ChevronRight, ChevronLeft } from 'lucide-react'
+import Link from 'next/link'
 
 interface Notification {
     id: string
@@ -21,13 +22,18 @@ const PAGE_TITLES: Record<string, string> = {
     '/backoffice/imoveis/novo': 'Novo Imóvel',
     '/backoffice/leads': 'Leads',
     '/backoffice/leads/novo': 'Novo Lead',
+    '/backoffice/leads/pipeline': 'Pipeline',
     '/backoffice/avaliacoes': 'Avaliações',
     '/backoffice/avaliacoes/nova': 'Nova Avaliação',
     '/backoffice/construtoras': 'Construtoras',
     '/backoffice/contratos': 'Contratos',
     '/backoffice/contratos/novo': 'Novo Contrato',
     '/backoffice/financeiro': 'Financeiro',
+    '/backoffice/financeiro/metas': 'Metas',
+    '/backoffice/financeiro/receber': 'A Receber',
+    '/backoffice/financeiro/pagar': 'A Pagar',
     '/backoffice/tracking': 'Tracking',
+    '/backoffice/tracking/qr': 'QR Tracking',
     '/backoffice/equipe': 'Equipe',
     '/backoffice/settings': 'Configurações',
     '/backoffice/relatorios': 'Relatórios',
@@ -40,6 +46,7 @@ const PAGE_TITLES: Record<string, string> = {
     '/backoffice/campanhas': 'Campanhas',
     '/backoffice/playbooks': 'Playbooks',
     '/backoffice/credito': 'Crédito',
+    '/backoffice/credito/simulador': 'Simulador',
     '/backoffice/consultorias': 'Consultorias',
     '/backoffice/conteudos': 'Conteúdos',
     '/backoffice/agenda': 'Agenda',
@@ -75,6 +82,10 @@ export default function MobileHeader() {
     const panelRef = useRef<HTMLDivElement>(null)
 
     const title = getPageTitle(pathname)
+
+    // Sub-page detection: ['backoffice', 'leads', '123'] → length 3 → sub-page
+    const segments = pathname?.split('/').filter(Boolean) || []
+    const isSubPage = segments.length > 2
 
     // Fetch notifications
     useEffect(() => {
@@ -132,23 +143,53 @@ export default function MobileHeader() {
                     borderBottom: '1px solid var(--bo-border)',
                 }}
             >
-                <div className="flex items-center justify-between h-14 px-4">
-                    {/* Left: Brand (matches desktop sidebar) */}
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <span
-                            className="text-xl font-bold tracking-tight text-white"
-                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                        >
-                            IMI
-                        </span>
-                        <div className="h-5 w-px bg-white/20" />
-                        <span className="text-[11px] font-medium uppercase tracking-[0.12em] leading-[1.2]" style={{ color: 'var(--bo-text-muted)' }}>
-                            Inteligência<br />Imobiliária
-                        </span>
+                <div className="relative flex items-center h-14 px-2">
+                    {/* Left: back button or app icon */}
+                    <div className="w-12 flex items-center justify-center flex-shrink-0">
+                        {isSubPage ? (
+                            <motion.button
+                                whileTap={{ scale: 0.88 }}
+                                onClick={() => router.back()}
+                                className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                                style={{ background: 'var(--bo-elevated)' }}
+                            >
+                                <ChevronLeft size={20} style={{ color: 'var(--bo-text)' }} />
+                            </motion.button>
+                        ) : (
+                            <Link
+                                href="/backoffice/hoje"
+                                className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                                style={{ background: 'var(--bo-elevated)' }}
+                            >
+                                <span
+                                    className="text-base font-bold"
+                                    style={{ color: 'var(--nav-active)', fontFamily: "'Playfair Display', Georgia, serif" }}
+                                >
+                                    ◆
+                                </span>
+                            </Link>
+                        )}
+                    </div>
+
+                    {/* Center: page title — absolute so it's truly centered */}
+                    <div className="absolute inset-x-0 flex items-center justify-center pointer-events-none">
+                        <AnimatePresence mode="wait">
+                            <motion.span
+                                key={title}
+                                initial={{ opacity: 0, y: 4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -4 }}
+                                transition={{ duration: 0.18 }}
+                                className="text-[15px] font-semibold tracking-[-0.01em]"
+                                style={{ color: 'var(--bo-text)' }}
+                            >
+                                {title}
+                            </motion.span>
+                        </AnimatePresence>
                     </div>
 
                     {/* Right: Actions */}
-                    <div className="flex items-center gap-1">
+                    <div className="ml-auto flex items-center gap-1 flex-shrink-0">
                         {/* Search */}
                         <button
                             onClick={triggerSearch}

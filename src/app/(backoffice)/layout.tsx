@@ -30,7 +30,7 @@ export default async function BackofficeLayout({
 
             {/* Main Content — pt-14 on mobile for MobileHeader, lg:pt-16 for DesktopHeader */}
             <main className="pt-14 lg:pt-16 lg:pl-60 min-h-screen">
-                <div className="p-4 pb-24 lg:p-6 lg:pb-6">
+                <div className="p-4 pb-28 lg:p-6 lg:pb-6">
                     {children}
                 </div>
             </main>
