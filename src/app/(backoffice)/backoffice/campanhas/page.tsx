@@ -22,24 +22,24 @@ const T = {
 
 export interface Campaign {
     id: string
-    slug: string
     name: string
-    campaign_type: string
+    objective: string | null
+    channel: string
     status: string
-    development_id: string | null
     start_date: string | null
     end_date: string | null
     budget: number | null
+    daily_budget: number | null
     spent: number
     impressions: number
     clicks: number
-    leads_count: number
+    leads: number
     conversions: number
-    cpl: number
-    cpc: number
+    cost_per_lead: number | null
     ctr: number
-    conversion_rate: number
-    description: string | null
+    roi: number | null
+    utm_source: string | null
+    utm_campaign: string | null
     created_at: string
 }
 
@@ -57,7 +57,7 @@ function useCampanhas(filters: { search?: string; status?: string; type?: string
             query = query.eq('status', filters.status)
         }
         if (filters.type && filters.type !== 'all') {
-            query = query.eq('campaign_type', filters.type)
+            query = query.eq('channel', filters.type)
         }
 
         const { data, error } = await query
@@ -68,8 +68,8 @@ function useCampanhas(filters: { search?: string; status?: string; type?: string
 
 const TYPE_MAP: Record<string, { label: string; icon: any }> = {
     google_ads: { label: 'Google Ads', icon: Globe },
-    facebook_ads: { label: 'Facebook', icon: Facebook },
-    instagram_ads: { label: 'Instagram', icon: Instagram },
+    facebook: { label: 'Facebook', icon: Facebook },
+    instagram: { label: 'Instagram', icon: Instagram },
     email: { label: 'Email', icon: Mail },
     whatsapp: { label: 'WhatsApp', icon: MessageSquare },
     sms: { label: 'SMS', icon: MessageSquare },
@@ -108,11 +108,11 @@ export default function CampanhasPage() {
     })
 
     const totalBudget = campanhas?.reduce((s, c) => s + (c.budget || 0), 0) || 0
-    const totalSpent = campanhas?.reduce((s, c) => s + c.spent, 0) || 0
-    const totalLeads = campanhas?.reduce((s, c) => s + c.leads_count, 0) || 0
-    const totalConversions = campanhas?.reduce((s, c) => s + c.conversions, 0) || 0
+    const totalSpent = campanhas?.reduce((s, c) => s + (c.spent || 0), 0) || 0
+    const totalLeads = campanhas?.reduce((s, c) => s + (c.leads || 0), 0) || 0
+    const totalConversions = campanhas?.reduce((s, c) => s + (c.conversions || 0), 0) || 0
     const avgCTR = campanhas?.length
-        ? (campanhas.reduce((s, c) => s + c.ctr, 0) / campanhas.length).toFixed(2)
+        ? (campanhas.reduce((s, c) => s + (c.ctr || 0), 0) / campanhas.length).toFixed(2)
         : '0.00'
 
     return (
@@ -184,8 +184,8 @@ export default function CampanhasPage() {
                     className="h-10 px-3 rounded-xl text-sm outline-none"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
                     <option value="all">Todas as plataformas</option>
-                    <option value="instagram_ads">Instagram</option>
-                    <option value="facebook_ads">Facebook</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="facebook">Facebook</option>
                     <option value="google_ads">Google Ads</option>
                     <option value="email">Email</option>
                     <option value="whatsapp">WhatsApp</option>
@@ -207,7 +207,7 @@ export default function CampanhasPage() {
             {!isLoading && campanhas && campanhas.length > 0 && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {campanhas.map((c, i) => {
-                        const type = TYPE_MAP[c.campaign_type] || TYPE_MAP.other
+                        const type = TYPE_MAP[c.channel] || TYPE_MAP.other
                         const status = STATUS_MAP[c.status] || STATUS_MAP.draft
                         const TypeIcon = type.icon
                         const StatusIcon = status.icon
@@ -268,10 +268,10 @@ export default function CampanhasPage() {
                                     {[
                                         { label: 'Impressões', value: fmt(c.impressions), color: T.textSub },
                                         { label: 'Cliques', value: fmt(c.clicks), color: '#7BA3C2' },
-                                        { label: 'CTR', value: `${c.ctr?.toFixed(1) ?? '0.0'}%`, color: '#A89EC4' },
-                                        { label: 'Leads', value: String(c.leads_count), color: T.gold },
-                                        { label: 'Conversões', value: String(c.conversions), color: '#4CAF7D' },
-                                        { label: 'CPL', value: formatBRL(c.cpl), color: '#E8A87C' },
+                                        { label: 'CTR', value: `${Number(c.ctr ?? 0).toFixed(1)}%`, color: '#A89EC4' },
+                                        { label: 'Leads', value: String(c.leads || 0), color: T.gold },
+                                        { label: 'Conversões', value: String(c.conversions || 0), color: '#4CAF7D' },
+                                        { label: 'CPL', value: formatBRL(c.cost_per_lead), color: '#E8A87C' },
                                     ].map((m, j) => (
                                         <div key={j}>
                                             <p className="text-[10px] mb-0.5" style={{ color: T.textDim }}>{m.label}</p>
