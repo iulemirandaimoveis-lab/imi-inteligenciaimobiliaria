@@ -168,7 +168,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
     return (
         <main className="bg-[#0D0F14] min-h-screen">
             {/* Premium Hero */}
-            <section className="relative bg-[#141420] pt-24 pb-20 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
+            <section className="relative bg-[#141420] pt-20 pb-14 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
                 {/* Gold glow orb */}
                 <div
                     className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full pointer-events-none"
@@ -190,7 +190,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             <div className="w-8 h-px bg-[#102A43]" />
                             <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Portfólio 2026</span>
                         </motion.div>
-                        <motion.h1 variants={slideUp} className="text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        <motion.h1 variants={slideUp} className="text-[32px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                             Curadoria de <br /><span className="text-[#486581] italic">Empreendimentos</span>
                         </motion.h1>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl font-light leading-relaxed max-w-2xl">

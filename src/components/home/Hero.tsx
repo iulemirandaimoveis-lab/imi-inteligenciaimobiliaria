@@ -120,7 +120,7 @@ export default function Hero({ dict }: HeroProps) {
             {/* Subtitle */}
             <motion.p
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
-              className="hidden sm:block text-base sm:text-lg text-white/60 mb-10 max-w-lg font-light leading-relaxed"
+              className="text-sm sm:text-lg text-white/60 mb-8 sm:mb-10 max-w-lg font-light leading-relaxed"
             >
               {dict.hero_subtitle || 'Avaliações NBR 14653, consultoria patrimonial e acesso a oportunidades de alto padrão — Recife, Dubai e EUA.'}
             </motion.p>
@@ -149,14 +149,14 @@ export default function Hero({ dict }: HeroProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="grid grid-cols-2 sm:grid-cols-4 py-6 gap-0 divide-x divide-white/8"
+            className="grid grid-cols-2 sm:grid-cols-4 py-4 sm:py-6 gap-0 divide-x divide-white/8"
           >
             {STATS.map(stat => (
-              <div key={stat.label} className="flex flex-col items-center px-4 py-2 sm:py-0 text-center">
-                <span className="text-2xl sm:text-3xl font-bold" style={{ color: '#486581' }}>
+              <div key={stat.label} className="flex flex-col items-center px-3 sm:px-4 py-2 sm:py-0 text-center">
+                <span className="text-xl sm:text-3xl font-bold" style={{ color: '#486581' }}>
                   <StatCounter to={stat.value} suffix={stat.suffix} />
                 </span>
-                <span className="text-xs text-white/50 mt-1 leading-snug">{stat.label}</span>
+                <span className="text-[10px] sm:text-xs text-white/50 mt-0.5 leading-snug">{stat.label}</span>
               </div>
             ))}
           </motion.div>
