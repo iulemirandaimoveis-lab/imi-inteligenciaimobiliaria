@@ -1,242 +1,323 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import {
-    Target,
-    Trophy,
-    TrendingUp,
-    Clock,
-    Plus,
-    Flame,
-    Award,
-    Star,
-    ChevronRight,
-    ArrowRight,
-    CircleCheck,
-    CalendarDays,
-    BarChart
+    Target, TrendingUp, DollarSign, Scale, Plus,
+    ChevronRight, Loader2, CheckCircle, Pencil, Save, X,
 } from 'lucide-react'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
-// Mock Data
-const METAS_ATUAIS = [
-    {
-        id: '1',
-        title: 'Meta de VGC - Q1 2026',
-        metric: 'vendas_vgc',
-        target_value: 2000000,
-        current_value: 850000,
-        start_date: '2026-01-01',
-        end_date: '2026-03-31',
-        status: 'in_progress',
-        color: 'blue'
-    },
-    {
-        id: '2',
-        title: 'Captação de Imóveis Alto Padrão',
-        metric: 'imoveis_captados',
-        target_value: 15,
-        current_value: 8,
-        start_date: '2026-02-01',
-        end_date: '2026-02-28',
-        status: 'in_progress',
-        color: 'amber'
-    },
-    {
-        id: '3',
-        title: 'Conversão de Leads (Investidores)',
-        metric: 'leads_convertidos',
-        target_value: 5,
-        current_value: 5,
-        start_date: '2026-01-15',
-        end_date: '2026-02-15',
-        status: 'achieved',
-        color: 'emerald'
-    }
-]
+const T = {
+    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
+    gold: '#486581',
+}
 
-const HISTORICO_CONQUISTAS = [
-    { id: 1, title: 'Top Captador Janeiro', date: '31 Jan 2026', icon: Trophy, color: 'text-amber-500', bg: 'bg-amber-100' },
-    { id: 2, title: 'Venda Expressa (<10 dias)', date: '15 Jan 2026', icon: Flame, color: 'text-orange-500', bg: 'bg-orange-100' },
-    { id: 3, title: 'Corretor Estrela 2025', date: '31 Dez 2025', icon: Star, color: 'text-blue-500', bg: 'bg-blue-100' }
-]
+const fmt = (v: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
-export default function MetasGamificationPage() {
-    const formatValue = (metric: string, value: number) => {
-        if (metric === 'vendas_vgc' || metric === 'comissoes') {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value)
+const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+
+function getMonthKey(offset = 0) {
+    const d = new Date()
+    d.setMonth(d.getMonth() + offset)
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
+function monthLabel(key: string) {
+    const [y, m] = key.split('-')
+    return `${MONTHS[parseInt(m) - 1]} ${y}`
+}
+
+function ProgressBar({ pct, color }: { pct: number; color: string }) {
+    const clamped = Math.min(pct, 100)
+    return (
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${clamped}%` }}
+                transition={{ duration: 0.7, ease: 'easeOut' }}
+                className="h-full rounded-full"
+                style={{ background: color }}
+            />
+        </div>
+    )
+}
+
+export default function MetasPage() {
+    const [loading, setLoading] = useState(true)
+    const [goals, setGoals]   = useState<any[]>([])
+    const [actuals, setActuals] = useState<{ revenue: number; avaliacoes: number }>({ revenue: 0, avaliacoes: 0 })
+    const [editing, setEditing] = useState(false)
+    const [saving, setSaving]   = useState(false)
+    const currentMonth = getMonthKey(0)
+
+    // Edit form state
+    const [form, setForm] = useState({ target_revenue: '', target_avaliacoes: '' })
+
+    const loadData = async () => {
+        setLoading(true)
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) { setLoading(false); return }
+
+        // Load goals for last 6 months
+        const monthsBack = Array.from({ length: 6 }, (_, i) => getMonthKey(-i))
+        const { data: goalsData } = await supabase
+            .from('financial_goals')
+            .select('*')
+            .eq('user_id', user.id)
+            .in('month', monthsBack)
+            .order('month', { ascending: false })
+
+        setGoals(goalsData || [])
+
+        // Load actual transactions for current month
+        const [y, m] = currentMonth.split('-')
+        const start = `${y}-${m}-01`
+        const lastDay = new Date(parseInt(y), parseInt(m), 0).getDate()
+        const end = `${y}-${m}-${String(lastDay).padStart(2, '0')}`
+
+        const { data: txs } = await supabase
+            .from('transactions')
+            .select('type, amount, category')
+            .eq('user_id', user.id)
+            .in('status', ['pago', 'pendente'])
+            .gte('date', start)
+            .lte('date', end)
+
+        const revenue = (txs || []).filter((t: any) => t.type === 'receita').reduce((s: number, t: any) => s + Number(t.amount), 0)
+        const avals = (txs || []).filter((t: any) => t.category?.toLowerCase().includes('honorário') || t.category?.toLowerCase().includes('avaliação')).length
+
+        setActuals({ revenue, avaliacoes: avals })
+
+        // Pre-fill form with current month goal
+        const currentGoal = (goalsData || []).find((g: any) => g.month === currentMonth)
+        if (currentGoal) {
+            setForm({ target_revenue: String(currentGoal.target_revenue || ''), target_avaliacoes: String(currentGoal.target_avaliacoes || '') })
         }
-        return value.toString()
+
+        setLoading(false)
     }
 
-    const calculateDaysLeft = (endDate: string) => {
-        const end = new Date(endDate).getTime()
-        const now = new Date('2026-02-20').getTime() // Fixed to mockup current date
-        const diff = Math.ceil((end - now) / (1000 * 3600 * 24))
-        return diff > 0 ? diff : 0
+    useEffect(() => { loadData() }, [])
+
+    const saveGoal = async () => {
+        setSaving(true)
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) { setSaving(false); return }
+
+        const payload = {
+            user_id: user.id,
+            month: currentMonth,
+            target_revenue: parseFloat(form.target_revenue) || 0,
+            target_avaliacoes: parseInt(form.target_avaliacoes) || 0,
+        }
+
+        const existing = goals.find(g => g.month === currentMonth)
+        if (existing) {
+            await supabase.from('financial_goals').update(payload).eq('id', existing.id)
+        } else {
+            await supabase.from('financial_goals').insert(payload)
+        }
+
+        toast.success('Meta salva com sucesso')
+        setEditing(false)
+        loadData()
+        setSaving(false)
     }
+
+    const currentGoal = goals.find(g => g.month === currentMonth)
+    const revTarget  = currentGoal?.target_revenue || 0
+    const avalTarget = currentGoal?.target_avaliacoes || 0
+    const revPct     = revTarget > 0 ? Math.round((actuals.revenue / revTarget) * 100) : 0
+    const avalPct    = avalTarget > 0 ? Math.round((actuals.avaliacoes / avalTarget) * 100) : 0
 
     return (
-        <div className="space-y-6 pb-20">
+        <div className="space-y-6 max-w-5xl mx-auto">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Metas & Performance</h1>
-                    <p className="text-sm text-gray-600 mt-1">Acompanhe seus objetivos e conquistas gamificadas.</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textSub }}>
+                            Financeiro
+                        </Link>
+                        <ChevronRight size={12} style={{ color: T.textSub }} />
+                        <span className="text-xs font-medium" style={{ color: T.text }}>Metas</span>
+                    </div>
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Metas & Performance</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textSub }}>{monthLabel(currentMonth)}</p>
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors self-start sm:self-auto">
-                    <Plus size={16} />
-                    Nova Meta
+                <button
+                    onClick={() => setEditing(!editing)}
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all"
+                    style={{ background: editing ? 'rgba(229,115,115,0.2)' : T.gold, color: editing ? '#E57373' : 'white' }}
+                >
+                    {editing ? <><X size={15} /> Cancelar</> : <><Pencil size={15} /> Editar Metas</>}
                 </button>
-            </div>
+            </motion.div>
 
-            {/* Top Stats / Gamification Banner */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-8 opacity-10">
-                        <Trophy size={120} />
-                    </div>
-                    <div className="relative z-10">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-xs font-semibold mb-6">
-                            <Flame size={14} className="text-orange-400" />
-                            <span className="text-orange-50">Nível 12 • Corretor Sênior</span>
-                        </div>
-                        <h2 className="text-3xl font-bold mb-2">Continue o ótimo trabalho!</h2>
-                        <p className="text-gray-300 max-w-md text-sm leading-relaxed mb-8">
-                            Você está a apenas 2 captações exclusivas de alcançar a sua meta mensal e desbloquear o selo "Top Captador".
-                        </p>
-
-                        <div className="flex items-center gap-6">
-                            <div>
-                                <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">XP Atual</p>
-                                <p className="text-2xl font-bold">14.500 <span className="text-sm font-normal text-gray-400">/ 15.000</span></p>
-                            </div>
-                            <div className="flex-1 max-w-xs">
-                                <div className="h-2 w-full bg-gray-700/50 rounded-full overflow-hidden">
-                                    <div className="h-full bg-gradient-to-r from-amber-400 to-orange-500 w-[90%] rounded-full shadow-[0_0_10px_rgba(251,146,60,0.5)]"></div>
-                                </div>
-                                <p className="text-xs text-gray-400 mt-2">500 XP para o próximo nível</p>
-                            </div>
-                        </div>
-                    </div>
+            {loading ? (
+                <div className="flex items-center justify-center py-20">
+                    <Loader2 className="animate-spin" size={22} style={{ color: T.gold }} />
                 </div>
-
-                <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-bold text-gray-900">Suas Conquistas</h3>
-                        <button className="text-[#486581] text-sm font-medium hover:underline flex items-center gap-1">
-                            Ver todas <ChevronRight size={14} />
-                        </button>
-                    </div>
-                    <div className="space-y-4 flex-1">
-                        {HISTORICO_CONQUISTAS.map(conquista => {
-                            const Icon = conquista.icon
-                            return (
-                                <div key={conquista.id} className="flex items-center gap-4">
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${conquista.bg} ${conquista.color}`}>
-                                        <Icon size={18} />
+            ) : (
+                <>
+                    {/* Current Month Progress */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                        {/* Receita */}
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                            className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
+                            <div className="flex items-start justify-between mb-4">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <DollarSign size={15} style={{ color: '#6BB87B' }} />
+                                        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textSub }}>Receita do Mês</span>
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-gray-900">{conquista.title}</p>
-                                        <p className="text-xs text-gray-500">{conquista.date}</p>
-                                    </div>
+                                    <p className="text-2xl font-bold" style={{ color: T.text }}>{fmt(actuals.revenue)}</p>
                                 </div>
-                            )
-                        })}
-                    </div>
-                </div>
-            </div>
-
-            {/* Metas em Andamento */}
-            <div>
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <Target size={20} className="text-[#486581]" />
-                        Metas de Performance
-                    </h3>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {METAS_ATUAIS.map(meta => {
-                        const isAchieved = meta.current_value >= meta.target_value
-                        const progress = Math.min(100, (meta.current_value / meta.target_value) * 100)
-                        const daysLeft = calculateDaysLeft(meta.end_date)
-
-                        return (
-                            <div key={meta.id} className={`bg-white rounded-2xl border transition-all hover:border-[#334E68]/30 hover:shadow-lg hover:shadow-[#334E68]/5 ${isAchieved ? 'border-emerald-100' : 'border-gray-100'}`}>
-                                <div className="p-6">
-                                    <div className="flex items-start justify-between mb-4">
-                                        <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${isAchieved ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'
-                                            }`}>
-                                            {isAchieved ? 'Atingida' : 'Em Andamento'}
+                                {revPct >= 100 && (
+                                    <div className="w-8 h-8 rounded-full flex items-center justify-center"
+                                        style={{ background: 'rgba(107,184,123,0.15)' }}>
+                                        <CheckCircle size={16} style={{ color: '#6BB87B' }} />
+                                    </div>
+                                )}
+                            </div>
+                            {editing ? (
+                                <div className="space-y-2">
+                                    <label className="text-[11px] font-semibold" style={{ color: T.textSub }}>Meta de Receita (R$)</label>
+                                    <input
+                                        type="number"
+                                        value={form.target_revenue}
+                                        onChange={e => setForm(f => ({ ...f, target_revenue: e.target.value }))}
+                                        placeholder="Ex: 50000"
+                                        className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                        style={{ background: T.surface, border: `1px solid ${T.borderGold}`, color: T.text }}
+                                    />
+                                </div>
+                            ) : (
+                                <>
+                                    <ProgressBar pct={revPct} color={revPct >= 100 ? '#6BB87B' : revPct >= 60 ? '#486581' : '#E8A87C'} />
+                                    <div className="flex items-center justify-between mt-2">
+                                        <span className="text-xs" style={{ color: T.textSub }}>
+                                            Meta: {revTarget > 0 ? fmt(revTarget) : 'não definida'}
                                         </span>
-                                        {!isAchieved && (
-                                            <div className="flex items-center gap-1 text-xs font-semibold text-orange-500 bg-orange-50 px-2 py-1 rounded-md">
-                                                <Clock size={12} />
-                                                {daysLeft} dias
-                                            </div>
-                                        )}
-                                        {isAchieved && (
-                                            <div className="flex items-center gap-1 text-xs font-semibold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md">
-                                                <CircleCheck size={12} />
-                                                Concluída
-                                            </div>
-                                        )}
+                                        <span className="text-xs font-bold" style={{ color: revPct >= 100 ? '#6BB87B' : T.textSub }}>
+                                            {revTarget > 0 ? `${revPct}%` : '—'}
+                                        </span>
                                     </div>
+                                </>
+                            )}
+                        </motion.div>
 
-                                    <h4 className="text-base font-bold text-gray-900 mb-6">{meta.title}</h4>
-
-                                    <div className="space-y-2">
-                                        <div className="flex items-end justify-between">
-                                            <div>
-                                                <p className="text-[11px] text-gray-500 font-medium uppercase tracking-wider mb-1">Progresso</p>
-                                                <p className="text-xl font-bold text-gray-900">
-                                                    {formatValue(meta.metric, meta.current_value)}
-                                                </p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-[11px] text-gray-500 font-medium uppercase tracking-wider mb-1">Meta</p>
-                                                <p className="text-sm font-semibold text-gray-500">
-                                                    {formatValue(meta.metric, meta.target_value)}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                                            <div
-                                                className={`h-full rounded-full transition-all duration-1000 ${isAchieved ? 'bg-emerald-500' : meta.color === 'blue' ? 'bg-blue-500' : 'bg-amber-500'}`}
-                                                style={{ width: `${progress}%` }}
-                                            />
-                                        </div>
-                                        <p className="text-xs text-gray-500 text-right font-medium">{progress.toFixed(1)}%</p>
+                        {/* Avaliações */}
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+                            className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
+                            <div className="flex items-start justify-between mb-4">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <Scale size={15} style={{ color: '#486581' }} />
+                                        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textSub }}>Avaliações/Honorários</span>
                                     </div>
+                                    <p className="text-2xl font-bold" style={{ color: T.text }}>{actuals.avaliacoes}</p>
                                 </div>
-
-                                <div className="border-t border-gray-50 bg-gray-50/50 p-4 rounded-b-2xl flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                                        <CalendarDays size={14} />
-                                        <span>Até {new Date(meta.end_date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
+                                {avalPct >= 100 && (
+                                    <div className="w-8 h-8 rounded-full flex items-center justify-center"
+                                        style={{ background: 'rgba(107,184,123,0.15)' }}>
+                                        <CheckCircle size={16} style={{ color: '#6BB87B' }} />
                                     </div>
-                                    <button className="text-sm text-[#486581] font-semibold hover:text-[#243B53] transition-colors flex items-center gap-1">
-                                        Detalhes <ArrowRight size={14} />
-                                    </button>
-                                </div>
+                                )}
                             </div>
-                        )
-                    })}
-                </div>
-            </div>
+                            {editing ? (
+                                <div className="space-y-2">
+                                    <label className="text-[11px] font-semibold" style={{ color: T.textSub }}>Meta de Avaliações/Honorários</label>
+                                    <input
+                                        type="number"
+                                        value={form.target_avaliacoes}
+                                        onChange={e => setForm(f => ({ ...f, target_avaliacoes: e.target.value }))}
+                                        placeholder="Ex: 5"
+                                        className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                        style={{ background: T.surface, border: `1px solid ${T.borderGold}`, color: T.text }}
+                                    />
+                                </div>
+                            ) : (
+                                <>
+                                    <ProgressBar pct={avalPct} color={avalPct >= 100 ? '#6BB87B' : avalPct >= 60 ? '#486581' : '#E8A87C'} />
+                                    <div className="flex items-center justify-between mt-2">
+                                        <span className="text-xs" style={{ color: T.textSub }}>
+                                            Meta: {avalTarget > 0 ? `${avalTarget} lançamentos` : 'não definida'}
+                                        </span>
+                                        <span className="text-xs font-bold" style={{ color: avalPct >= 100 ? '#6BB87B' : T.textSub }}>
+                                            {avalTarget > 0 ? `${avalPct}%` : '—'}
+                                        </span>
+                                    </div>
+                                </>
+                            )}
+                        </motion.div>
+                    </div>
 
-            {/* Insights / Dicas Gamificadas */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6 relative overflow-hidden flex items-center gap-6">
-                <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 z-10">
-                    <BarChart size={24} />
-                </div>
-                <div className="z-10">
-                    <h4 className="text-base font-bold text-gray-900 mb-1">Dica de Performance IMI</h4>
-                    <p className="text-sm text-gray-600">Com base nos seus dados das últimas semanas, sugerimos focar em ligações Follow-Up hoje. Corretores que ligam até as 10h têm 30% a mais de chance de agendar uma visita.</p>
-                </div>
-            </div>
+                    {/* Save button when editing */}
+                    {editing && (
+                        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                            <button onClick={saveGoal} disabled={saving}
+                                className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white transition-all"
+                                style={{ background: '#6BB87B', opacity: saving ? 0.7 : 1 }}>
+                                {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+                                {saving ? 'Salvando...' : 'Salvar Metas'}
+                            </button>
+                        </motion.div>
+                    )}
 
+                    {/* Historical goals */}
+                    {goals.filter(g => g.month !== currentMonth).length > 0 && (
+                        <div>
+                            <h2 className="text-sm font-bold mb-3" style={{ color: T.textSub }}>Histórico de Metas</h2>
+                            <div className="space-y-2">
+                                {goals.filter(g => g.month !== currentMonth).map((g, i) => {
+                                    const rPct = g.target_revenue > 0 ? Math.min(100, Math.round((0 / g.target_revenue) * 100)) : 0
+                                    return (
+                                        <motion.div key={g.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}
+                                            className="flex items-center gap-4 p-4 rounded-2xl"
+                                            style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                style={{ background: T.elevated }}>
+                                                <Target size={16} style={{ color: T.gold }} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold" style={{ color: T.text }}>{monthLabel(g.month)}</p>
+                                                <p className="text-[11px]" style={{ color: T.textSub }}>
+                                                    Meta receita: {g.target_revenue > 0 ? fmt(g.target_revenue) : '—'} ·
+                                                    Meta avaliações: {g.target_avaliacoes || '—'}
+                                                </p>
+                                            </div>
+                                            <TrendingUp size={14} style={{ color: T.textSub }} />
+                                        </motion.div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Empty state */}
+                    {!currentGoal && !editing && (
+                        <div className="rounded-2xl p-10 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <Target size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textSub }} />
+                            <p className="text-sm font-semibold mb-1" style={{ color: T.textSub }}>Metas não definidas para {monthLabel(currentMonth)}</p>
+                            <p className="text-xs mb-4" style={{ color: T.textSub }}>Defina sua meta de receita e avaliações para acompanhar o progresso</p>
+                            <button onClick={() => setEditing(true)}
+                                className="inline-flex items-center gap-2 h-9 px-5 rounded-xl text-xs font-semibold text-white"
+                                style={{ background: T.gold }}>
+                                <Plus size={13} /> Definir Metas
+                            </button>
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     )
 }

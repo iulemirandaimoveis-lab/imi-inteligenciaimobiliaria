@@ -1,387 +1,212 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import {
-    Plus,
-    Search,
-    CheckCircle,
-    Clock,
-    AlertCircle,
-    Calendar,
-    Building2,
-    FileText,
-    Mail,
-    Download,
-    XCircle,
+    TrendingDown, Plus, Search, CheckCircle, Clock, AlertCircle,
+    ArrowDownCircle, Loader2, ChevronRight,
 } from 'lucide-react'
+import Link from 'next/link'
+import { toast } from 'sonner'
 
-// ⚠️ NÃO MODIFICAR - Contas a pagar mockadas
-const contasPagarData = [
-    {
-        id: 1,
-        protocol: 'PAG-2026-001',
-        fornecedor: 'Construtora Central',
-        cnpj: '12.345.678/0001-99',
-        email: 'financeiro@construtoracentral.com.br',
-        categoria: 'Obra',
-        descricao: 'Pagamento etapa 3 - Villa Jardins',
-        valor: 145000,
-        vencimento: '2026-02-18',
-        dataCriacao: '2026-02-08',
-        status: 'pendente',
-        formaPagamento: 'Transferência',
-        contaBancaria: 'BB - 3456-7',
-        observacoes: 'Aguardando medição final do engenheiro',
-    },
-    {
-        id: 2,
-        protocol: 'PAG-2026-002',
-        fornecedor: 'Meta Ads',
-        cnpj: '98.765.432/0001-11',
-        email: 'invoices@meta.com',
-        categoria: 'Marketing',
-        descricao: 'Campanhas Instagram - Fevereiro',
-        valor: 5000,
-        vencimento: '2026-02-20',
-        dataCriacao: '2026-02-05',
-        status: 'pendente',
-        formaPagamento: 'Cartão de Crédito',
-        contaBancaria: 'Santander - 4567',
-        observacoes: null,
-    },
-    {
-        id: 3,
-        protocol: 'PAG-2026-003',
-        fornecedor: 'Google Ads',
-        cnpj: '11.222.333/0001-44',
-        email: 'payments@google.com',
-        categoria: 'Marketing',
-        descricao: 'Anúncios Google - Fevereiro',
-        valor: 3000,
-        vencimento: '2026-02-22',
-        dataCriacao: '2026-02-01',
-        status: 'pago',
-        formaPagamento: 'Cartão de Crédito',
-        contaBancaria: 'Santander - 4567',
-        observacoes: null,
-        dataPagamento: '2026-02-20',
-    },
-    {
-        id: 4,
-        protocol: 'PAG-2026-004',
-        fornecedor: 'Supabase Inc',
-        cnpj: '44.555.666/0001-77',
-        email: 'billing@supabase.com',
-        categoria: 'Infraestrutura',
-        descricao: 'Plano Pro - Fevereiro',
-        valor: 125,
-        vencimento: '2026-02-15',
-        dataCriacao: '2026-02-01',
-        status: 'pago',
-        formaPagamento: 'Cartão de Crédito',
-        contaBancaria: 'Santander - 4567',
-        observacoes: 'Pagamento automático',
-        dataPagamento: '2026-02-15',
-    },
-    {
-        id: 5,
-        protocol: 'PAG-2026-005',
-        fornecedor: 'Vercel Inc',
-        cnpj: '77.888.999/0001-00',
-        email: 'billing@vercel.com',
-        categoria: 'Infraestrutura',
-        descricao: 'Plano Pro - Fevereiro',
-        valor: 180,
-        vencimento: '2026-02-15',
-        dataCriacao: '2026-02-01',
-        status: 'pago',
-        formaPagamento: 'Cartão de Crédito',
-        contaBancaria: 'Santander - 4567',
-        observacoes: 'Pagamento automático',
-        dataPagamento: '2026-02-15',
-    },
-    {
-        id: 6,
-        protocol: 'PAG-2026-006',
-        fornecedor: 'Energia Celpe',
-        cnpj: '55.666.777/0001-88',
-        email: null,
-        categoria: 'Operacional',
-        descricao: 'Conta de luz - Janeiro',
-        valor: 850,
-        vencimento: '2026-02-10',
-        dataCriacao: '2026-02-01',
-        status: 'atrasado',
-        formaPagamento: 'Boleto',
-        contaBancaria: 'BB - 3456-7',
-        observacoes: 'Aguardando aprovação pagamento',
-    },
-    {
-        id: 7,
-        protocol: 'PAG-2026-007',
-        fornecedor: 'Equipe IMI',
-        cnpj: null,
-        email: null,
-        categoria: 'Pessoal',
-        descricao: 'Folha de pagamento - Fevereiro',
-        valor: 85000,
-        vencimento: '2026-02-28',
-        dataCriacao: '2026-02-15',
-        status: 'pendente',
-        formaPagamento: 'Transferência',
-        contaBancaria: 'BB - 3456-7',
-        observacoes: '5 colaboradores',
-    },
-]
+const T = {
+    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
+    gold: '#486581',
+}
 
-export default function ContasPagarPage() {
-    const router = useRouter()
-    const [searchTerm, setSearchTerm] = useState('')
-    const [statusFilter, setStatusFilter] = useState('all')
+const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
+    pago:     { label: 'Pago',      text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
+    pendente: { label: 'Pendente',  text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Clock },
+    atrasado: { label: 'Atrasado',  text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle },
+    cancelado:{ label: 'Cancelado', text: '#627D98', bg: 'rgba(98,125,152,0.12)',  icon: AlertCircle },
+}
 
-    const filteredContas = contasPagarData.filter(conta => {
-        const matchesSearch =
-            conta.protocol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            conta.fornecedor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            conta.descricao.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesStatus = statusFilter === 'all' || conta.status === statusFilter
-        return matchesSearch && matchesStatus
-    })
+const fmt = (v: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
-    const stats = {
-        total: contasPagarData.length,
-        pendentes: contasPagarData.filter(c => c.status === 'pendente').length,
-        atrasados: contasPagarData.filter(c => c.status === 'atrasado').length,
-        pagos: contasPagarData.filter(c => c.status === 'pago').length,
-        valorTotal: contasPagarData.reduce((acc, c) => acc + c.valor, 0),
-        valorPendente: contasPagarData.filter(c => c.status !== 'pago').reduce((acc, c) => acc + c.valor, 0),
+const fmtDate = (d: string | null) =>
+    d ? new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—'
+
+export default function PagarPage() {
+    const [transactions, setTransactions] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+    const [search, setSearch] = useState('')
+    const [statusFilter, setStatusFilter] = useState('todos')
+
+    const load = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch('/api/financeiro?type=despesa')
+            if (res.ok) setTransactions(await res.json())
+        } catch { /* graceful */ }
+        setLoading(false)
     }
 
-    const getStatusConfig = (status: string) => {
-        const configs: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-            pendente: { label: 'Pendente', color: 'text-orange-700', bg: 'bg-orange-50', icon: Clock },
-            atrasado: { label: 'Atrasado', color: 'text-red-700', bg: 'bg-red-50', icon: AlertCircle },
-            pago: { label: 'Pago', color: 'text-green-700', bg: 'bg-green-50', icon: CheckCircle },
-            cancelado: { label: 'Cancelado', color: 'text-gray-700', bg: 'bg-gray-50', icon: XCircle },
-        }
-        return configs[status] || configs.pendente
+    useEffect(() => { load() }, [])
+
+    const markPaid = async (id: string) => {
+        try {
+            const res = await fetch('/api/financeiro', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status: 'pago' }),
+            })
+            if (res.ok) { toast.success('Marcado como pago'); load() }
+            else toast.error('Erro ao atualizar')
+        } catch { toast.error('Erro de conexão') }
     }
 
-    const getCategoriaColor = (categoria: string) => {
-        const colors: Record<string, string> = {
-            'Obra': 'bg-blue-50 text-blue-700',
-            'Marketing': 'bg-purple-50 text-purple-700',
-            'Infraestrutura': 'bg-green-50 text-green-700',
-            'Operacional': 'bg-orange-50 text-orange-700',
-            'Pessoal': 'bg-accent-50 text-[#0F0F1E]',
-        }
-        return colors[categoria] || 'bg-gray-50 text-gray-700'
-    }
+    const filtered = transactions.filter(t =>
+        t.status !== 'cancelado' &&
+        (statusFilter === 'todos' || t.status === statusFilter) &&
+        (!search || t.description?.toLowerCase().includes(search.toLowerCase()) || t.category?.toLowerCase().includes(search.toLowerCase()))
+    )
 
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-            minimumFractionDigits: 2,
-        }).format(price)
-    }
-
-    const getDaysUntil = (dateStr: string) => {
-        const today = new Date()
-        const target = new Date(dateStr)
-        const diffTime = target.getTime() - today.getTime()
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-
-        if (diffDays < 0) return `${Math.abs(diffDays)} dias atrás`
-        if (diffDays === 0) return 'Hoje'
-        if (diffDays === 1) return 'Amanhã'
-        return `em ${diffDays} dias`
-    }
+    const totalPendente = transactions.filter(t => t.status === 'pendente').reduce((s, t) => s + Number(t.amount), 0)
+    const totalPago     = transactions.filter(t => t.status === 'pago').reduce((s, t) => s + Number(t.amount), 0)
+    const countAtrasado = transactions.filter(t => t.status === 'atrasado').length
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Contas a Pagar</h1>
-                    <p className="text-sm text-gray-600 mt-1">Gerencie pagamentos e despesas</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textSub }}>
+                            Financeiro
+                        </Link>
+                        <ChevronRight size={12} style={{ color: T.textSub }} />
+                        <span className="text-xs font-medium" style={{ color: T.text }}>A Pagar</span>
+                    </div>
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Contas a Pagar</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textSub }}>Despesas operacionais, marketing e custos fixos</p>
                 </div>
-                <div className="flex gap-3">
-                    <button className="flex items-center gap-2 h-11 px-6 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors">
-                        <Download size={20} />
-                        Exportar
-                    </button>
-                    <button
-                        onClick={() => router.push('/backoffice/financeiro/pagar/novo')}
-                        className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
-                    >
-                        <Plus size={20} />
-                        Nova Despesa
-                    </button>
-                </div>
+                <Link
+                    href="/backoffice/financeiro"
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: T.gold }}
+                >
+                    <Plus size={15} /> Novo Lançamento
+                </Link>
+            </motion.div>
+
+            {/* KPIs */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {[
+                    { label: 'A Pagar',   value: fmt(totalPendente), color: '#E8A87C', icon: Clock },
+                    { label: 'Já Pago',   value: fmt(totalPago),     color: '#6BB87B', icon: CheckCircle },
+                    { label: 'Atrasados', value: String(countAtrasado), color: '#E57373', icon: AlertCircle },
+                ].map((k, i) => (
+                    <motion.div key={k.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                        className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
+                        <div className="flex items-center justify-between mb-2">
+                            <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: k.color }}>{k.label}</p>
+                            <k.icon size={15} style={{ color: k.color }} />
+                        </div>
+                        <p className="text-xl font-bold" style={{ color: T.text }}>{k.value}</p>
+                    </motion.div>
+                ))}
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Total</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-orange-600 mb-1">Pendentes</p>
-                    <p className="text-2xl font-bold text-orange-700">{stats.pendentes}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-red-600 mb-1">Atrasados</p>
-                    <p className="text-2xl font-bold text-red-700">{stats.atrasados}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-green-600 mb-1">Pagos</p>
-                    <p className="text-2xl font-bold text-green-700">{stats.pagos}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Valor Total</p>
-                    <p className="text-xl font-bold text-gray-900">{formatPrice(stats.valorTotal)}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-red-600 mb-1">A Pagar</p>
-                    <p className="text-xl font-bold text-red-700">{formatPrice(stats.valorPendente)}</p>
-                </div>
-            </div>
-
-            {/* Filtros */}
-            <div className="bg-white rounded-xl p-4 border border-gray-100">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                        <input
-                            type="text"
-                            placeholder="Buscar por protocolo, fornecedor ou descrição..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+            {/* Filters */}
+            <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-1">
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textSub }} />
+                        <input type="text" placeholder="Buscar por descrição ou categoria..."
+                            value={search} onChange={e => setSearch(e.target.value)}
+                            className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                            onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
+                            onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
                         />
                     </div>
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
-                    >
-                        <option value="all">Todos os status</option>
-                        <option value="pendente">Pendente</option>
-                        <option value="atrasado">Atrasado</option>
-                        <option value="pago">Pago</option>
-                    </select>
+                    <div className="flex gap-2 overflow-x-auto">
+                        {['todos', 'pendente', 'atrasado', 'pago'].map(s => (
+                            <button key={s} onClick={() => setStatusFilter(s)}
+                                className="px-3.5 h-10 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
+                                style={{
+                                    background: statusFilter === s ? T.gold : T.elevated,
+                                    color: statusFilter === s ? 'white' : T.textSub,
+                                    border: `1px solid ${statusFilter === s ? T.borderGold : T.border}`,
+                                }}>
+                                {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.label || s}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {/* Lista */}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-                <div className="divide-y divide-gray-100">
-                    {filteredContas.map((conta) => {
-                        const statusConfig = getStatusConfig(conta.status)
-                        const StatusIcon = statusConfig.icon
-                        const isPago = conta.status === 'pago'
-
+            {/* List */}
+            {loading ? (
+                <div className="flex items-center justify-center py-20">
+                    <Loader2 className="animate-spin" size={22} style={{ color: T.gold }} />
+                </div>
+            ) : filtered.length === 0 ? (
+                <div className="rounded-2xl p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <TrendingDown size={36} className="mx-auto mb-4 opacity-20" style={{ color: T.textSub }} />
+                    <p className="text-sm font-semibold mb-1" style={{ color: T.textSub }}>
+                        {transactions.length === 0 ? 'Nenhuma despesa cadastrada' : 'Nenhum resultado para o filtro'}
+                    </p>
+                    <p className="text-xs mb-4" style={{ color: T.textSub }}>
+                        Registre despesas e contas a pagar no módulo Financeiro
+                    </p>
+                    <Link href="/backoffice/financeiro"
+                        className="inline-flex items-center gap-2 h-9 px-5 rounded-xl text-xs font-semibold text-white"
+                        style={{ background: T.gold }}>
+                        <Plus size={14} /> Novo Lançamento
+                    </Link>
+                </div>
+            ) : (
+                <div className="space-y-2">
+                    {filtered.map((t, i) => {
+                        const sc = STATUS_CFG[t.status] || STATUS_CFG.pendente
+                        const Icon = sc.icon
+                        const isOverdue = t.status === 'pendente' && t.due_date && new Date(t.due_date) < new Date()
                         return (
-                            <div
-                                key={conta.id}
-                                className={`p-6 hover:bg-gray-50 transition-colors cursor-pointer ${isPago ? 'opacity-60' : ''
-                                    }`}
-                                onClick={() => router.push(`/backoffice/financeiro/pagar/${conta.id}`)}
-                            >
-                                <div className="flex items-start gap-4">
-                                    {/* Icon */}
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${statusConfig.bg}`}>
-                                        <StatusIcon size={24} className={statusConfig.color} />
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-start justify-between gap-4 mb-2">
-                                            <div>
-                                                <div className="flex items-center gap-3 mb-1">
-                                                    <span className="text-sm font-bold text-[#486581]">{conta.protocol}</span>
-                                                    <span className={`px-3 py-1 rounded-lg text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
-                                                        {statusConfig.label}
-                                                    </span>
-                                                    <span className={`px-2 py-1 rounded text-xs font-medium ${getCategoriaColor(conta.categoria)}`}>
-                                                        {conta.categoria}
-                                                    </span>
-                                                </div>
-                                                <h3 className="font-semibold text-gray-900 mb-1">{conta.fornecedor}</h3>
-                                                {conta.cnpj && (
-                                                    <p className="text-xs text-gray-500 mb-1">CNPJ: {conta.cnpj}</p>
-                                                )}
-                                                <p className="text-sm text-gray-600">{conta.descricao}</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className={`text-2xl font-bold mb-1 ${isPago ? 'text-gray-500' : 'text-gray-900'}`}>
-                                                    {formatPrice(conta.valor)}
-                                                </p>
-                                                <p className="text-xs text-gray-500">{conta.formaPagamento}</p>
-                                                <p className="text-xs text-gray-500">{conta.contaBancaria}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-                                            <span className="flex items-center gap-1">
-                                                <Calendar size={14} />
-                                                Vencimento: {new Date(conta.vencimento).toLocaleDateString('pt-BR')}
-                                            </span>
-                                            {isPago ? (
-                                                <span className="flex items-center gap-1 text-green-600 font-medium">
-                                                    <CheckCircle size={14} />
-                                                    Pago em {new Date(conta.dataPagamento!).toLocaleDateString('pt-BR')}
-                                                </span>
-                                            ) : (
-                                                <span className={`flex items-center gap-1 font-medium ${conta.status === 'atrasado' ? 'text-red-600' : 'text-orange-600'
-                                                    }`}>
-                                                    <Clock size={14} />
-                                                    {getDaysUntil(conta.vencimento)}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        {conta.observacoes && (
-                                            <p className="text-sm text-gray-600 italic bg-gray-50 p-2 rounded mt-2">
-                                                {conta.observacoes}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    {/* Actions */}
-                                    {!isPago && (
-                                        <div className="flex flex-col gap-2 flex-shrink-0">
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    // Marcar como pago
-                                                }}
-                                                className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
-                                            >
-                                                Marcar Pago
-                                            </button>
-                                            {conta.email && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        window.location.href = `mailto:${conta.email}`
-                                                    }}
-                                                    className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                                                >
-                                                    <Mail size={16} className="text-gray-600 mx-auto" />
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
+                            <motion.div key={t.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.03 }}
+                                className="flex items-center gap-3 sm:gap-4 p-4 rounded-2xl transition-all"
+                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    style={{ background: 'rgba(229,115,115,0.10)' }}>
+                                    <ArrowDownCircle size={18} style={{ color: '#E57373' }} />
                                 </div>
-                            </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{t.description}</p>
+                                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                        <span className="text-[10px] font-medium" style={{ color: T.textSub }}>{t.category}</span>
+                                        <span className="text-[10px]" style={{ color: T.textSub }}>·</span>
+                                        <span className="text-[10px]" style={{ color: isOverdue ? '#E57373' : T.textSub }}>
+                                            Vence {fmtDate(t.due_date)}
+                                        </span>
+                                        <span
+                                            className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                            style={{ color: isOverdue ? '#E57373' : sc.text, background: isOverdue ? 'rgba(229,115,115,0.12)' : sc.bg }}>
+                                            <Icon size={9} /> {isOverdue ? 'Atrasado' : sc.label}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="text-right flex-shrink-0">
+                                    <p className="text-base font-bold" style={{ color: '#E57373' }}>−{fmt(Number(t.amount))}</p>
+                                </div>
+                                {t.status === 'pendente' && (
+                                    <button onClick={() => markPaid(t.id)}
+                                        title="Marcar como pago"
+                                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all hover:scale-105"
+                                        style={{ background: 'rgba(107,184,123,0.10)' }}>
+                                        <CheckCircle size={17} style={{ color: '#6BB87B' }} />
+                                    </button>
+                                )}
+                            </motion.div>
                         )
                     })}
                 </div>
-            </div>
+            )}
         </div>
     )
 }

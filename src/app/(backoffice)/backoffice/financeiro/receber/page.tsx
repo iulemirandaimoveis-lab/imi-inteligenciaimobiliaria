@@ -1,354 +1,212 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import {
-    Plus,
-    Search,
-    CheckCircle,
-    Clock,
-    AlertCircle,
-    Calendar,
-    User,
-    Building2,
-    Mail,
-    Phone,
-    Download,
-    Filter,
+    TrendingUp, Plus, Search, CheckCircle, Clock, AlertCircle,
+    ArrowUpCircle, Loader2, ChevronRight,
 } from 'lucide-react'
+import Link from 'next/link'
+import { toast } from 'sonner'
 
-// ⚠️ NÃO MODIFICAR - Contas a receber mockadas
-const contasReceberData = [
-    {
-        id: 1,
-        protocol: 'REC-2026-001',
-        cliente: 'Maria Santos Silva',
-        cpf: '123.456.789-00',
-        email: 'maria.santos@gmail.com',
-        phone: '(81) 99845-3421',
-        imovel: 'Reserva Imperial Apto 802',
-        descricao: 'Primeira parcela de sinal',
-        valor: 58000,
-        vencimento: '2026-02-20',
-        dataCriacao: '2026-02-10',
-        status: 'pendente',
-        categoria: 'Sinal',
-        formaPagamento: 'Transferência',
-        observacoes: 'Cliente confirmou transferência para dia 20',
-    },
-    {
-        id: 2,
-        protocol: 'REC-2026-002',
-        cliente: 'João Pedro Almeida',
-        cpf: '234.567.890-11',
-        email: 'joao.almeida@hotmail.com',
-        phone: '(81) 98732-1098',
-        imovel: 'Villa Jardins Casa 12',
-        descricao: 'Parcela 2/10 da entrada',
-        valor: 85000,
-        vencimento: '2026-02-22',
-        dataCriacao: '2026-02-05',
-        status: 'pendente',
-        categoria: 'Entrada',
-        formaPagamento: 'TED',
-        observacoes: null,
-    },
-    {
-        id: 3,
-        protocol: 'REC-2026-003',
-        cliente: 'Ana Carolina Ferreira',
-        cpf: '345.678.901-22',
-        email: 'anacarolina.f@outlook.com',
-        phone: '(81) 99234-5678',
-        imovel: 'Smart Pina Apto 304',
-        descricao: 'Pagamento integral',
-        valor: 42000,
-        vencimento: '2026-02-25',
-        dataCriacao: '2026-02-12',
-        status: 'atrasado',
-        categoria: 'À Vista',
-        formaPagamento: 'PIX',
-        observacoes: 'Cliente solicitou prorrogação para dia 28',
-    },
-    {
-        id: 4,
-        protocol: 'REC-2026-004',
-        cliente: 'Roberto Carlos Mendes',
-        cpf: '456.789.012-33',
-        email: 'roberto.mendes@empresarial.com.br',
-        phone: '(81) 98123-4567',
-        imovel: 'Ocean Blue Cobertura',
-        descricao: 'Segunda parcela entrada',
-        valor: 185000,
-        vencimento: '2026-02-28',
-        dataCriacao: '2026-02-08',
-        status: 'pendente',
-        categoria: 'Entrada',
-        formaPagamento: 'Cheque',
-        observacoes: 'Cheque depositado, aguardando compensação',
-    },
-    {
-        id: 5,
-        protocol: 'REC-2026-005',
-        cliente: 'Patricia Lima Costa',
-        cpf: '567.890.123-44',
-        email: 'patricia.lima@gmail.com',
-        phone: '(81) 99876-5432',
-        imovel: 'Península Gardens Casa 8',
-        descricao: 'Primeira parcela',
-        valor: 120000,
-        vencimento: '2026-02-15',
-        dataCriacao: '2026-02-01',
-        status: 'recebido',
-        categoria: 'Entrada',
-        formaPagamento: 'Transferência',
-        observacoes: null,
-        dataRecebimento: '2026-02-14',
-    },
-    {
-        id: 6,
-        protocol: 'REC-2026-006',
-        cliente: 'Fernando Augusto Silva',
-        cpf: '678.901.234-55',
-        email: 'fernando.augusto@email.com',
-        phone: '(81) 99123-4567',
-        imovel: 'Candeias Park Apto 501',
-        descricao: 'Pagamento final',
-        valor: 28000,
-        vencimento: '2026-02-18',
-        dataCriacao: '2026-02-10',
-        status: 'recebido',
-        categoria: 'Final',
-        formaPagamento: 'PIX',
-        observacoes: null,
-        dataRecebimento: '2026-02-17',
-    },
-]
+const T = {
+    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
+    gold: '#486581',
+}
 
-export default function ContasReceberPage() {
-    const router = useRouter()
-    const [searchTerm, setSearchTerm] = useState('')
-    const [statusFilter, setStatusFilter] = useState('all')
+const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
+    pago:     { label: 'Recebido',  text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
+    pendente: { label: 'Pendente',  text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Clock },
+    atrasado: { label: 'Atrasado',  text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle },
+    cancelado:{ label: 'Cancelado', text: '#627D98', bg: 'rgba(98,125,152,0.12)',  icon: AlertCircle },
+}
 
-    const filteredContas = contasReceberData.filter(conta => {
-        const matchesSearch =
-            conta.protocol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            conta.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            conta.imovel.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesStatus = statusFilter === 'all' || conta.status === statusFilter
-        return matchesSearch && matchesStatus
-    })
+const fmt = (v: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
-    const stats = {
-        total: contasReceberData.length,
-        pendentes: contasReceberData.filter(c => c.status === 'pendente').length,
-        atrasados: contasReceberData.filter(c => c.status === 'atrasado').length,
-        recebidos: contasReceberData.filter(c => c.status === 'recebido').length,
-        valorTotal: contasReceberData.reduce((acc, c) => acc + c.valor, 0),
-        valorPendente: contasReceberData.filter(c => c.status !== 'recebido').reduce((acc, c) => acc + c.valor, 0),
+const fmtDate = (d: string | null) =>
+    d ? new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—'
+
+export default function ReceberPage() {
+    const [transactions, setTransactions] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+    const [search, setSearch] = useState('')
+    const [statusFilter, setStatusFilter] = useState('todos')
+
+    const load = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch('/api/financeiro?type=receita')
+            if (res.ok) setTransactions(await res.json())
+        } catch { /* graceful */ }
+        setLoading(false)
     }
 
-    const getStatusConfig = (status: string) => {
-        const configs: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-            pendente: { label: 'Pendente', color: 'text-orange-700', bg: 'bg-orange-50', icon: Clock },
-            atrasado: { label: 'Atrasado', color: 'text-red-700', bg: 'bg-red-50', icon: AlertCircle },
-            recebido: { label: 'Recebido', color: 'text-green-700', bg: 'bg-green-50', icon: CheckCircle },
-        }
-        return configs[status] || configs.pendente
+    useEffect(() => { load() }, [])
+
+    const markReceived = async (id: string) => {
+        try {
+            const res = await fetch('/api/financeiro', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status: 'pago' }),
+            })
+            if (res.ok) { toast.success('Marcado como recebido'); load() }
+            else toast.error('Erro ao atualizar')
+        } catch { toast.error('Erro de conexão') }
     }
 
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-            minimumFractionDigits: 0,
-        }).format(price)
-    }
+    const filtered = transactions.filter(t =>
+        t.status !== 'cancelado' &&
+        (statusFilter === 'todos' || t.status === statusFilter) &&
+        (!search || t.description?.toLowerCase().includes(search.toLowerCase()) || t.category?.toLowerCase().includes(search.toLowerCase()))
+    )
 
-    const getDaysUntil = (dateStr: string) => {
-        const today = new Date()
-        const target = new Date(dateStr)
-        const diffTime = target.getTime() - today.getTime()
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-
-        if (diffDays < 0) return `${Math.abs(diffDays)} dias atrás`
-        if (diffDays === 0) return 'Hoje'
-        if (diffDays === 1) return 'Amanhã'
-        return `em ${diffDays} dias`
-    }
+    const totalPendente = transactions.filter(t => t.status === 'pendente').reduce((s, t) => s + Number(t.amount), 0)
+    const totalRecebido = transactions.filter(t => t.status === 'pago').reduce((s, t) => s + Number(t.amount), 0)
+    const countAtrasado = transactions.filter(t => t.status === 'atrasado').length
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Contas a Receber</h1>
-                    <p className="text-sm text-gray-600 mt-1">Gerencie recebimentos e cobranças</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textSub }}>
+                            Financeiro
+                        </Link>
+                        <ChevronRight size={12} style={{ color: T.textSub }} />
+                        <span className="text-xs font-medium" style={{ color: T.text }}>A Receber</span>
+                    </div>
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Contas a Receber</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textSub }}>Honorários, comissões e receitas pendentes</p>
                 </div>
-                <div className="flex gap-3">
-                    <button className="flex items-center gap-2 h-11 px-6 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors">
-                        <Download size={20} />
-                        Exportar
-                    </button>
-                    <button
-                        onClick={() => router.push('/backoffice/financeiro/receber/novo')}
-                        className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
-                    >
-                        <Plus size={20} />
-                        Nova Cobrança
-                    </button>
-                </div>
+                <Link
+                    href="/backoffice/financeiro"
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: T.gold }}
+                >
+                    <Plus size={15} /> Novo Lançamento
+                </Link>
+            </motion.div>
+
+            {/* KPIs */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {[
+                    { label: 'A Receber', value: fmt(totalPendente), color: '#E8A87C', icon: Clock },
+                    { label: 'Já Recebido', value: fmt(totalRecebido), color: '#6BB87B', icon: CheckCircle },
+                    { label: 'Atrasados', value: String(countAtrasado), color: '#E57373', icon: AlertCircle },
+                ].map((k, i) => (
+                    <motion.div key={k.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                        className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
+                        <div className="flex items-center justify-between mb-2">
+                            <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: k.color }}>{k.label}</p>
+                            <k.icon size={15} style={{ color: k.color }} />
+                        </div>
+                        <p className="text-xl font-bold" style={{ color: T.text }}>{k.value}</p>
+                    </motion.div>
+                ))}
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Total</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-orange-600 mb-1">Pendentes</p>
-                    <p className="text-2xl font-bold text-orange-700">{stats.pendentes}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-red-600 mb-1">Atrasados</p>
-                    <p className="text-2xl font-bold text-red-700">{stats.atrasados}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-green-600 mb-1">Recebidos</p>
-                    <p className="text-2xl font-bold text-green-700">{stats.recebidos}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Valor Total</p>
-                    <p className="text-xl font-bold text-gray-900">{formatPrice(stats.valorTotal)}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-orange-600 mb-1">A Receber</p>
-                    <p className="text-xl font-bold text-orange-700">{formatPrice(stats.valorPendente)}</p>
-                </div>
-            </div>
-
-            {/* Filtros */}
-            <div className="bg-white rounded-xl p-4 border border-gray-100">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                        <input
-                            type="text"
-                            placeholder="Buscar por protocolo, cliente ou imóvel..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+            {/* Filters */}
+            <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="relative flex-1">
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textSub }} />
+                        <input type="text" placeholder="Buscar por descrição ou categoria..."
+                            value={search} onChange={e => setSearch(e.target.value)}
+                            className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                            onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
+                            onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
                         />
                     </div>
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
-                    >
-                        <option value="all">Todos os status</option>
-                        <option value="pendente">Pendente</option>
-                        <option value="atrasado">Atrasado</option>
-                        <option value="recebido">Recebido</option>
-                    </select>
+                    <div className="flex gap-2 overflow-x-auto">
+                        {['todos', 'pendente', 'atrasado', 'pago'].map(s => (
+                            <button key={s} onClick={() => setStatusFilter(s)}
+                                className="px-3.5 h-10 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
+                                style={{
+                                    background: statusFilter === s ? T.gold : T.elevated,
+                                    color: statusFilter === s ? 'white' : T.textSub,
+                                    border: `1px solid ${statusFilter === s ? T.borderGold : T.border}`,
+                                }}>
+                                {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.label || s}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {/* Lista */}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-                <div className="divide-y divide-gray-100">
-                    {filteredContas.map((conta) => {
-                        const statusConfig = getStatusConfig(conta.status)
-                        const StatusIcon = statusConfig.icon
-                        const isAtrasado = conta.status === 'atrasado'
-                        const isRecebido = conta.status === 'recebido'
-
+            {/* List */}
+            {loading ? (
+                <div className="flex items-center justify-center py-20">
+                    <Loader2 className="animate-spin" size={22} style={{ color: T.gold }} />
+                </div>
+            ) : filtered.length === 0 ? (
+                <div className="rounded-2xl p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <TrendingUp size={36} className="mx-auto mb-4 opacity-20" style={{ color: T.textSub }} />
+                    <p className="text-sm font-semibold mb-1" style={{ color: T.textSub }}>
+                        {transactions.length === 0 ? 'Nenhuma receita cadastrada' : 'Nenhum resultado para o filtro'}
+                    </p>
+                    <p className="text-xs mb-4" style={{ color: T.textSub }}>
+                        Registre honorários e comissões no módulo Financeiro
+                    </p>
+                    <Link href="/backoffice/financeiro"
+                        className="inline-flex items-center gap-2 h-9 px-5 rounded-xl text-xs font-semibold text-white"
+                        style={{ background: T.gold }}>
+                        <Plus size={14} /> Novo Lançamento
+                    </Link>
+                </div>
+            ) : (
+                <div className="space-y-2">
+                    {filtered.map((t, i) => {
+                        const sc = STATUS_CFG[t.status] || STATUS_CFG.pendente
+                        const Icon = sc.icon
+                        const isOverdue = t.status === 'pendente' && t.due_date && new Date(t.due_date) < new Date()
                         return (
-                            <div
-                                key={conta.id}
-                                className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
-                                onClick={() => router.push(`/backoffice/financeiro/receber/${conta.id}`)}
-                            >
-                                <div className="flex items-start gap-4">
-                                    {/* Icon */}
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${statusConfig.bg}`}>
-                                        <StatusIcon size={24} className={statusConfig.color} />
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-start justify-between gap-4 mb-2">
-                                            <div>
-                                                <div className="flex items-center gap-3 mb-1">
-                                                    <span className="text-sm font-bold text-[#486581]">{conta.protocol}</span>
-                                                    <span className={`px-3 py-1 rounded-lg text-xs font-medium ${statusConfig.bg} ${statusConfig.color}`}>
-                                                        {statusConfig.label}
-                                                    </span>
-                                                    <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium">
-                                                        {conta.categoria}
-                                                    </span>
-                                                </div>
-                                                <h3 className="font-semibold text-gray-900 mb-1">{conta.cliente}</h3>
-                                                <p className="text-sm text-gray-600">{conta.imovel}</p>
-                                                <p className="text-sm text-gray-600">{conta.descricao}</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-2xl font-bold text-gray-900 mb-1">
-                                                    {formatPrice(conta.valor)}
-                                                </p>
-                                                <p className="text-xs text-gray-500">{conta.formaPagamento}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
-                                            <span className="flex items-center gap-1">
-                                                <Calendar size={14} />
-                                                Vencimento: {new Date(conta.vencimento).toLocaleDateString('pt-BR')}
-                                            </span>
-                                            <span className={`flex items-center gap-1 font-medium ${isAtrasado ? 'text-red-600' : isRecebido ? 'text-green-600' : 'text-orange-600'
-                                                }`}>
-                                                <Clock size={14} />
-                                                {isRecebido
-                                                    ? `Recebido em ${new Date(conta.dataRecebimento!).toLocaleDateString('pt-BR')}`
-                                                    : getDaysUntil(conta.vencimento)
-                                                }
-                                            </span>
-                                        </div>
-
-                                        {conta.observacoes && (
-                                            <p className="text-sm text-gray-600 italic bg-gray-50 p-2 rounded">
-                                                {conta.observacoes}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    {/* Actions */}
-                                    <div className="flex items-center gap-2 flex-shrink-0">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                window.location.href = `mailto:${conta.email}`
-                                            }}
-                                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                                        >
-                                            <Mail size={16} className="text-gray-600" />
-                                        </button>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                window.location.href = `https://wa.me/55${conta.phone.replace(/\D/g, '')}`
-                                            }}
-                                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                                        >
-                                            <Phone size={16} className="text-gray-600" />
-                                        </button>
+                            <motion.div key={t.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.03 }}
+                                className="flex items-center gap-3 sm:gap-4 p-4 rounded-2xl transition-all"
+                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    style={{ background: 'rgba(107,184,123,0.10)' }}>
+                                    <ArrowUpCircle size={18} style={{ color: '#6BB87B' }} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{t.description}</p>
+                                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                        <span className="text-[10px] font-medium" style={{ color: T.textSub }}>{t.category}</span>
+                                        <span className="text-[10px]" style={{ color: T.textSub }}>·</span>
+                                        <span className="text-[10px]" style={{ color: isOverdue ? '#E57373' : T.textSub }}>
+                                            Vence {fmtDate(t.due_date)}
+                                        </span>
+                                        <span
+                                            className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                            style={{ color: isOverdue ? '#E57373' : sc.text, background: isOverdue ? 'rgba(229,115,115,0.12)' : sc.bg }}>
+                                            <Icon size={9} /> {isOverdue ? 'Atrasado' : sc.label}
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
+                                <div className="text-right flex-shrink-0">
+                                    <p className="text-base font-bold" style={{ color: '#6BB87B' }}>{fmt(Number(t.amount))}</p>
+                                </div>
+                                {t.status === 'pendente' && (
+                                    <button onClick={() => markReceived(t.id)}
+                                        title="Marcar como recebido"
+                                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all hover:scale-105"
+                                        style={{ background: 'rgba(107,184,123,0.10)' }}>
+                                        <CheckCircle size={17} style={{ color: '#6BB87B' }} />
+                                    </button>
+                                )}
+                            </motion.div>
                         )
                     })}
                 </div>
-            </div>
+            )}
         </div>
     )
 }
