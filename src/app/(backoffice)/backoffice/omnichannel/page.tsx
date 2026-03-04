@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Layers, MessageSquare, Mail, Phone, Instagram, ExternalLink, Settings, RefreshCw } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Layers, MessageSquare, Mail, Phone, Instagram, ExternalLink, RefreshCw } from 'lucide-react'
 
 const T = {
     surface: 'var(--bo-surface)',
@@ -29,8 +29,23 @@ const CHATWOOT_URL = process.env.NEXT_PUBLIC_CHATWOOT_URL || ''
 export default function OmniChannelPage() {
     const [activeView, setActiveView] = useState<'overview' | 'chatwoot'>('overview')
     const [iframeKey, setIframeKey] = useState(0)
+    const [realStats, setRealStats] = useState({ hoje: 0, pendentes: 0 })
 
     const hasChatwoot = !!CHATWOOT_URL
+
+    useEffect(() => {
+        // Fetch real lead stats for the summary cards
+        fetch('/api/leads')
+            .then(r => r.json())
+            .then((data: any[]) => {
+                if (!Array.isArray(data)) return
+                const today = new Date().toDateString()
+                const hoje = data.filter(l => new Date(l.created_at || '').toDateString() === today).length
+                const pendentes = data.filter(l => l.status === 'new' || l.status === 'warm' || !l.status).length
+                setRealStats({ hoje, pendentes: Math.min(pendentes, 99) })
+            })
+            .catch(() => {})
+    }, [])
 
     return (
         <div className="space-y-5">
@@ -172,10 +187,10 @@ export default function OmniChannelPage() {
                     {/* Stats Summary */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {[
-                            { label: 'Conversas Hoje', value: '24', color: T.gold },
-                            { label: 'Tempo Médio', value: '3min', color: 'var(--s-cold)' },
-                            { label: 'Satisfação', value: '94%', color: 'var(--s-done)' },
-                            { label: 'Pendentes', value: '5', color: 'var(--s-hot)' },
+                            { label: 'Leads Hoje', value: String(realStats.hoje), color: T.gold },
+                            { label: 'Tempo Médio', value: '—', color: 'var(--s-cold)' },
+                            { label: 'Satisfação', value: '—', color: 'var(--s-done)' },
+                            { label: 'Pendentes', value: String(realStats.pendentes), color: 'var(--s-hot)' },
                         ].map(stat => (
                             <div key={stat.label} className="rounded-xl p-4"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
