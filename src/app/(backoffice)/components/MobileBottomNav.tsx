@@ -1,8 +1,9 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     LayoutDashboard, Building2, Users, BarChart3, X,
@@ -94,6 +95,7 @@ const GROUPS = [
 
 export function MobileBottomNav() {
     const pathname = usePathname()
+    const router = useRouter()
     const [open, setOpen] = useState(false)
 
     useEffect(() => {
@@ -329,7 +331,9 @@ export function MobileBottomNav() {
                                             whileTap={{ scale: 0.9 }}
                                             onClick={async () => {
                                                 setOpen(false)
-                                                window.location.href = '/login'
+                                                const supabase = createClient()
+                                                await supabase.auth.signOut()
+                                                router.push('/login')
                                             }}
                                             className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
                                             style={{ background: 'var(--s-cancel-bg)' }}

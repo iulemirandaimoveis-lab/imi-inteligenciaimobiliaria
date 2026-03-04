@@ -11,8 +11,10 @@ import {
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
     Brain, BarChart3, LineChart
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import { createClient } from '@/lib/supabase/client'
 
 interface NavItem {
     label: string
@@ -271,6 +273,13 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
 }
 
 export function DesktopSidebar() {
+    const router = useRouter()
+    const handleSignOut = useCallback(async () => {
+        const supabase = createClient()
+        await supabase.auth.signOut()
+        router.push('/login')
+    }, [router])
+
     return (
         <aside
             className="hidden lg:flex flex-col w-60 h-screen fixed left-0 top-0 z-40"
@@ -327,27 +336,38 @@ export function DesktopSidebar() {
                 className="px-2.5 py-3 flex-shrink-0"
                 style={{ borderTop: '1px solid var(--sidebar-border)' }}
             >
-                <div
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer group transition-all"
-                    style={{ background: 'var(--bo-icon-bg)' }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--sidebar-hover)')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'var(--bo-icon-bg)')}
-                >
+                <div className="flex items-center gap-2">
                     <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-white"
-                        style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl flex-1 min-w-0"
+                        style={{ background: 'var(--bo-icon-bg)' }}
                     >
-                        IM
+                        <div
+                            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-white"
+                            style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}
+                        >
+                            IM
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold truncate" style={{ color: 'var(--bo-text)' }}>Iule Miranda</p>
+                            <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>CTO · CRECI 17933</p>
+                        </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold truncate" style={{ color: 'var(--bo-text)' }}>Iule Miranda</p>
-                        <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>CTO · CRECI 17933</p>
-                    </div>
-                    <LogOut
-                        size={14}
-                        className="transition-colors"
-                        style={{ color: 'var(--bo-text-muted)' }}
-                    />
+                    <button
+                        onClick={handleSignOut}
+                        title="Sair"
+                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                        style={{ background: 'var(--bo-icon-bg)', color: 'var(--bo-text-muted)' }}
+                        onMouseEnter={e => {
+                            e.currentTarget.style.background = 'var(--s-cancel-bg)'
+                            e.currentTarget.style.color = 'var(--s-cancel)'
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.background = 'var(--bo-icon-bg)'
+                            e.currentTarget.style.color = 'var(--bo-text-muted)'
+                        }}
+                    >
+                        <LogOut size={14} />
+                    </button>
                 </div>
             </div>
         </aside>
