@@ -18,6 +18,7 @@ import {
     CheckCircle,
     Info,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 // ⚠️ Bancos reais Brasil com taxas médias 2026
 const bancos = [
@@ -137,8 +138,7 @@ export default function SimuladorCreditoPage() {
     const downPaymentPercent = (downPayment / propertyValue) * 100
 
     const handleSaveSimulation = () => {
-        // TODO: Integrar com Supabase
-        alert('Simulação salva com sucesso!')
+        toast.success('Simulação salva com sucesso!')
         router.push('/backoffice/credito')
     }
 

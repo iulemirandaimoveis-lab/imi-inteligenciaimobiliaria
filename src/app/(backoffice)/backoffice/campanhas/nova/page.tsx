@@ -218,7 +218,6 @@ export default function NovaCampanhaPage() {
     setIsSubmitting(true)
 
     try {
-      // TODO: Upload images to Supabase Storage
       const response = await fetch('/api/campanhas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

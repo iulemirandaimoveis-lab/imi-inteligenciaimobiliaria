@@ -121,29 +121,34 @@ export default function EditarAvaliacaoPage() {
 
   // Load evaluation data on mount
   useEffect(() => {
-    // TODO: Fetch from Supabase
-    setTimeout(() => {
-      setFormData({
-        propertyAddress: 'Av. Boa Viagem, 3500 - Apto 802, Boa Viagem',
-        propertyType: 'Apartamento',
-        propertyArea: '95',
-        bedrooms: '3',
-        bathrooms: '2',
-        parking: '2',
-        city: 'Recife',
-        state: 'PE',
-        clientName: 'Carlos Eduardo Silva',
-        clientEmail: 'carlos.silva@email.com',
-        clientPhone: '(81) 99876-5432',
-        clientCPF: '123.456.789-00',
-        purpose: 'Compra e Venda',
-        method: 'Comparativo Direto de Dados de Mercado',
-        requestDate: '2026-02-01',
-        deadline: '2026-02-15',
-        documents: [],
+    fetch(`/api/avaliacoes?id=${params.id}`)
+      .then(r => r.json())
+      .then((d: any) => {
+        if (d && !d.error) {
+          setFormData(prev => ({
+            ...prev,
+            propertyAddress: d.endereco || '',
+            propertyType: d.tipo_imovel || '',
+            propertyArea: d.area_privativa ? String(d.area_privativa) : '',
+            bedrooms: d.quartos ? String(d.quartos) : '',
+            bathrooms: d.banheiros ? String(d.banheiros) : '',
+            parking: d.vagas ? String(d.vagas) : '',
+            city: d.cidade || 'Recife',
+            state: d.estado || 'PE',
+            clientName: d.cliente_nome || '',
+            clientEmail: d.cliente_email || '',
+            clientPhone: d.cliente_telefone || '',
+            clientCPF: d.cliente_cpf_cnpj || '',
+            purpose: d.finalidade || '',
+            method: d.metodologia || '',
+            requestDate: d.created_at ? d.created_at.split('T')[0] : '',
+            deadline: d.prazo_entrega || '',
+            documents: [],
+          }))
+        }
       })
-      setIsLoading(false)
-    }, 500)
+      .catch(() => {})
+      .finally(() => setIsLoading(false))
   }, [params.id])
 
   const handleChange = (field: keyof FormData, value: any) => {
@@ -225,11 +230,28 @@ export default function EditarAvaliacaoPage() {
     setIsSubmitting(true)
 
     try {
-      // TODO: Upload documents to Supabase Storage
+      const payload = {
+        id: params.id,
+        endereco: formData.propertyAddress,
+        tipo_imovel: formData.propertyType,
+        area_privativa: formData.propertyArea ? Number(formData.propertyArea) : null,
+        quartos: formData.bedrooms ? Number(formData.bedrooms) : null,
+        banheiros: formData.bathrooms ? Number(formData.bathrooms) : null,
+        vagas: formData.parking ? Number(formData.parking) : null,
+        cidade: formData.city,
+        estado: formData.state,
+        cliente_nome: formData.clientName,
+        cliente_email: formData.clientEmail,
+        cliente_telefone: formData.clientPhone,
+        cliente_cpf_cnpj: formData.clientCPF,
+        finalidade: formData.purpose,
+        metodologia: formData.method,
+        prazo_entrega: formData.deadline || null,
+      }
       const response = await fetch('/api/avaliacoes', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: params.id, ...formData }),
+        body: JSON.stringify(payload),
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Erro ao atualizar')

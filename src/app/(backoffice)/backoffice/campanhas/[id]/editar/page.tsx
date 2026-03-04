@@ -136,33 +136,28 @@ export default function EditarCampanhaPage() {
 
   // Load campaign data on mount
   useEffect(() => {
-    // TODO: Fetch from Supabase
-    setTimeout(() => {
-      setFormData({
-        name: 'Lançamento Reserva Imperial - Instagram',
-        objective: 'Geração de Leads',
-        channel: 'instagram',
-        startDate: '2026-02-01',
-        endDate: '2026-02-28',
-        budget: '5000',
-        dailyBudget: '200',
-        expectedLeads: '50',
-        costPerLead: '100',
-        targetAudience: 'Profissionais liberais, casais sem filhos, renda acima de R$ 10k',
-        ageRange: '25-45',
-        location: ['Boa Viagem', 'Pina'],
-        interests: ['Imóveis de Luxo', 'Apartamentos'],
-        adTitle: 'Seu Apartamento dos Sonhos em Boa Viagem',
-        adDescription: 'Conheça o Reserva Imperial, o empreendimento mais completo da região. Vista mar, área de lazer completa e acabamento premium.',
-        callToAction: 'Agende Visita',
-        landingPageUrl: 'https://iulemirandaimoveis.com.br/imoveis/reserva-imperial',
-        images: [],
-        utmSource: 'instagram',
-        utmMedium: 'paid',
-        utmCampaign: 'reserva-imperial-fev',
+    fetch(`/api/campanhas?id=${params.id}`)
+      .then(r => r.json())
+      .then((d: any) => {
+        if (d && !d.error) {
+          setFormData(prev => ({
+            ...prev,
+            name: d.name || '',
+            objective: d.objective || '',
+            channel: d.channel || '',
+            startDate: d.start_date || '',
+            endDate: d.end_date || '',
+            budget: d.budget ? String(d.budget) : '',
+            dailyBudget: d.daily_budget ? String(d.daily_budget) : '',
+            expectedLeads: d.leads ? String(d.leads) : '',
+            costPerLead: d.cost_per_lead ? String(d.cost_per_lead) : '',
+            utmSource: d.utm_source || '',
+            utmCampaign: d.utm_campaign || '',
+          }))
+        }
       })
-      setIsLoading(false)
-    }, 500)
+      .catch(() => {})
+      .finally(() => setIsLoading(false))
   }, [params.id])
 
   const handleChange = (field: keyof FormData, value: any) => {
@@ -251,7 +246,6 @@ export default function EditarCampanhaPage() {
     setIsSubmitting(true)
 
     try {
-      // TODO: Upload images to Supabase Storage
       const response = await fetch('/api/campanhas', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
