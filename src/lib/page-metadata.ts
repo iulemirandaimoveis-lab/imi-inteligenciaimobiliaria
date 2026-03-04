@@ -80,4 +80,9 @@ export const PAGE_METADATA = {
     'Análises, indicadores e dados do mercado imobiliário de Recife e região. Atualização mensal com metodologia FIPE ZAP.',
     `/${lang}/inteligencia`
   ),
+  construtoras: (lang: string) => meta(
+    'Construtoras Parceiras — Incorporadoras de Alto Padrão',
+    'Portfólio de incorporadoras parceiras da IMI. Empreendimentos de alto padrão no Brasil e no exterior com curadoria técnica e garantia de qualidade.',
+    `/${lang}/construtoras`
+  ),
 } as const
