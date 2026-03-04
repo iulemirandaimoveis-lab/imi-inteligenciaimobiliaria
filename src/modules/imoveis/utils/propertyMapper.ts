@@ -1,6 +1,21 @@
 
 import { Development } from '@/app/[lang]/(website)/imoveis/types/development';
 
+function toYoutubeEmbed(url: string): string | null {
+    if (!url) return null;
+    const patterns = [
+        /youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+        /youtu\.be\/([a-zA-Z0-9_-]+)/,
+        /youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]+)/,
+    ];
+    for (const r of patterns) {
+        const m = url.match(r);
+        if (m) return `https://www.youtube.com/embed/${m[1]}`;
+    }
+    return null;
+}
+
 export function mapDbPropertyToDevelopment(dbProp: any): Development {
     // Determine status from status_commercial
     const status = (dbProp.status === 'ready' || dbProp.status_commercial === 'ready') ? 'ready' : (dbProp.status || 'launch');
@@ -13,9 +28,13 @@ export function mapDbPropertyToDevelopment(dbProp: any): Development {
         ? imagesJson.gallery
         : (Array.isArray(dbProp.gallery_images) ? dbProp.gallery_images : []);
 
-    const videos = Array.isArray(imagesJson.videos)
+    const baseVideos = Array.isArray(imagesJson.videos)
         ? imagesJson.videos
         : (Array.isArray(dbProp.videos) ? dbProp.videos : []);
+    const videoEmbed = dbProp.video_url ? toYoutubeEmbed(dbProp.video_url) : null;
+    const videos = videoEmbed && !baseVideos.includes(videoEmbed)
+        ? [...baseVideos, videoEmbed]
+        : baseVideos;
 
     const floorPlans = Array.isArray(imagesJson.floorPlans)
         ? imagesJson.floorPlans

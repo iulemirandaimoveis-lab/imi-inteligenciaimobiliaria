@@ -66,6 +66,7 @@ export async function POST(req: Request) {
             priceMin, priceMax, pricePerSqm, totalUnits, availableUnits, deliveryDate,
             description, city, state, country, slug,
             images, gallery_images, floor_plans, brochure_url, image,
+            video_url, video_short_url,
             status_comercial, is_highlighted, featured,
         } = body
 
@@ -113,6 +114,8 @@ export async function POST(req: Request) {
             gallery_images: gallery_images || [],
             floor_plans: floor_plans || [],
             brochure_url: brochure_url || null,
+            video_url: video_url || null,
+            video_short_url: video_short_url || null,
         }
 
         const { data, error } = await supabase

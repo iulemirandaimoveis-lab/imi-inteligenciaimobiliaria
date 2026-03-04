@@ -43,6 +43,7 @@ export interface DevelopmentImages {
     videos: string[];                    // URLs de vídeo (YouTube/Vimeo embed)
     floorPlans: string[];                // Plantas baixas
     virtualTour?: string;                // Link para tour virtual
+    brochure?: string;                   // URL do brochure/book PDF
 }
 
 export interface DevelopmentExternalLinks {

@@ -7,8 +7,29 @@ import {
     ArrowLeft, ArrowRight, Building2, MapPin, Ruler, Home,
     DollarSign, Image as ImageIcon, Upload, Check, Calendar,
     Briefcase, X, Save, Loader2, AlertCircle, Sparkles,
-    BedDouble, Bath, Car, Maximize, Globe, Flag,
+    BedDouble, Bath, Car, Maximize, Globe, Flag, Star, FileText,
+    Play, Link as LinkIcon, Cloud, CloudOff,
 } from 'lucide-react'
+
+/* ── YouTube helpers ── */
+function getYoutubeId(url: string): string | null {
+    const regexps = [
+        /youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+        /youtu\.be\/([a-zA-Z0-9_-]+)/,
+        /youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]+)/,
+    ]
+    for (const r of regexps) {
+        const m = url.match(r)
+        if (m) return m[1]
+    }
+    return null
+}
+
+function getYoutubeEmbedUrl(url: string): string | null {
+    const id = getYoutubeId(url)
+    return id ? `https://www.youtube.com/embed/${id}` : null
+}
 import { createClient } from '@/lib/supabase/client'
 
 const supabase = createClient()
@@ -70,6 +91,10 @@ interface FormData {
     // Step 4: Mídia
     images: File[]
     logo: File | null
+    floorPlans: File[]
+    brochure: File | null
+    videoUrl: string
+    videoShort: string
 }
 
 const tiposImovel = [
@@ -197,7 +222,11 @@ export default function NovoImovelPage() {
         totalUnits: '', availableUnits: '', deliveryDate: '',
         description: '',
         images: [], logo: null,
+        floorPlans: [], brochure: null,
+        videoUrl: '', videoShort: '',
     })
+    const [draftSaved, setDraftSaved] = useState(false)
+    const [hasDraft, setHasDraft] = useState(false)
 
     /* Load developers from Supabase */
     useEffect(() => {
@@ -249,6 +278,60 @@ export default function NovoImovelPage() {
         if (file) setFormData(prev => ({ ...prev, logo: file }))
     }
 
+    const handleFloorPlanUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || [])
+        setFormData(prev => ({ ...prev, floorPlans: [...prev.floorPlans, ...files] }))
+    }
+
+    const removeFloorPlan = (index: number) => {
+        setFormData(prev => ({ ...prev, floorPlans: prev.floorPlans.filter((_, i) => i !== index) }))
+    }
+
+    const handleBrochureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (file) setFormData(prev => ({ ...prev, brochure: file }))
+    }
+
+    const setMainImage = (index: number) => {
+        setFormData(prev => {
+            const imgs = [...prev.images]
+            const [main] = imgs.splice(index, 1)
+            return { ...prev, images: [main, ...imgs] }
+        })
+    }
+
+    /* ─── Auto-save draft (text fields only) ─── */
+    useEffect(() => {
+        const existing = localStorage.getItem('imi-draft-imovel')
+        if (existing) setHasDraft(true)
+    }, [])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const draft = {
+                name: formData.name, type: formData.type,
+                country: formData.country, state: formData.state,
+                city: formData.city, neighborhood: formData.neighborhood,
+                address: formData.address,
+                developer_id: formData.developer_id, developer: formData.developer,
+                area: formData.area, bedrooms: formData.bedrooms,
+                bathrooms: formData.bathrooms, parking: formData.parking, floor: formData.floor,
+                features: formData.features,
+                priceMin: formData.priceMin, priceMax: formData.priceMax,
+                pricePerSqm: formData.pricePerSqm, totalUnits: formData.totalUnits,
+                availableUnits: formData.availableUnits, deliveryDate: formData.deliveryDate,
+                description: formData.description,
+                videoUrl: formData.videoUrl, videoShort: formData.videoShort,
+            }
+            if (Object.values(draft).some(v => v && v !== 'Brasil' && (typeof v === 'string' ? v.trim() : v.length > 0))) {
+                localStorage.setItem('imi-draft-imovel', JSON.stringify(draft))
+                setDraftSaved(true)
+                setTimeout(() => setDraftSaved(false), 2000)
+            }
+        }, 3000)
+        return () => clearTimeout(timer)
+    }, [formData])
+
     /* ─── PDF Auto-fill ─── */
     const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -281,6 +364,23 @@ export default function NovoImovelPage() {
         } finally {
             setIsParsingPdf(false)
         }
+    }
+
+    /* ─── Draft restore ─── */
+    const restoreDraft = () => {
+        const raw = localStorage.getItem('imi-draft-imovel')
+        if (!raw) return
+        try {
+            const draft = JSON.parse(raw)
+            setFormData(prev => ({ ...prev, ...draft }))
+            setHasDraft(false)
+            toast.success('Rascunho restaurado!')
+        } catch { }
+    }
+
+    const discardDraft = () => {
+        localStorage.removeItem('imi-draft-imovel')
+        setHasDraft(false)
     }
 
     /* ─── Validation ─── */
@@ -316,14 +416,29 @@ export default function NovoImovelPage() {
         if (!validateStep(currentStep)) return
         setIsSubmitting(true)
         try {
+            const { uploadMultipleFiles, uploadFile } = await import('@/lib/supabase-storage')
+
             let imageUrls: string[] = []
             if (formData.images.length > 0) {
-                toast.info(`Enviando ${formData.images.length} imagem(ns)...`)
-                const { uploadMultipleFiles } = await import('@/lib/supabase-storage')
-                const results = await uploadMultipleFiles(formData.images, 'developments', 'new')
+                toast.info(`Enviando ${formData.images.length} foto(s)...`)
+                const results = await uploadMultipleFiles(formData.images, 'developments', 'gallery')
                 imageUrls = results.filter(r => !r.error).map(r => r.url)
                 const fails = results.filter(r => r.error).length
-                if (fails > 0) toast.warning(`${fails} imagem(ns) falharam`)
+                if (fails > 0) toast.warning(`${fails} foto(s) falharam`)
+            }
+
+            let floorPlanUrls: string[] = []
+            if (formData.floorPlans.length > 0) {
+                toast.info(`Enviando ${formData.floorPlans.length} planta(s)...`)
+                const results = await uploadMultipleFiles(formData.floorPlans, 'developments', 'plantas')
+                floorPlanUrls = results.filter(r => !r.error).map(r => r.url)
+            }
+
+            let brochureUrl: string | null = null
+            if (formData.brochure) {
+                toast.info('Enviando brochure...')
+                const result = await uploadFile(formData.brochure, 'media', 'developments/brochures')
+                if (!result.error) brochureUrl = result.url
             }
 
             const payload = {
@@ -351,6 +466,10 @@ export default function NovoImovelPage() {
                 description: formData.description,
                 gallery_images: imageUrls,
                 image: imageUrls[0] || null,
+                floor_plans: floorPlanUrls,
+                brochure_url: brochureUrl,
+                video_url: formData.videoUrl || null,
+                video_short_url: formData.videoShort || null,
             }
 
             const res = await fetch('/api/developments', {
@@ -364,6 +483,7 @@ export default function NovoImovelPage() {
                 throw new Error(errData.error || 'Erro ao salvar')
             }
 
+            localStorage.removeItem('imi-draft-imovel')
             toast.success('Empreendimento cadastrado com sucesso!')
             router.push('/backoffice/imoveis')
         } catch (err: any) {
@@ -391,6 +511,37 @@ export default function NovoImovelPage() {
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
+            {/* ── Draft restore banner ── */}
+            {hasDraft && (
+                <div
+                    className="flex items-center justify-between px-5 py-3 rounded-2xl"
+                    style={{ background: T.accentBg, border: `1px solid ${T.accent}40` }}
+                >
+                    <div className="flex items-center gap-2">
+                        <Cloud size={16} style={{ color: T.accent }} />
+                        <span className="text-sm font-medium" style={{ color: T.text }}>
+                            Você tem um rascunho não enviado.
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={restoreDraft}
+                            className="text-xs font-bold px-3 py-1.5 rounded-lg"
+                            style={{ background: T.accent, color: 'white' }}
+                        >
+                            Restaurar
+                        </button>
+                        <button
+                            onClick={discardDraft}
+                            className="text-xs font-medium"
+                            style={{ color: T.textMuted }}
+                        >
+                            Descartar
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* ── Header ── */}
             <div className="flex items-center gap-4">
                 <button
@@ -793,33 +944,39 @@ export default function NovoImovelPage() {
 
                 {/* ── STEP 4: Mídia ── */}
                 {currentStep === 4 && (
-                    <div className="space-y-6">
-                        <h2 className="text-base font-bold mb-2" style={{ color: T.text }}>
-                            Imagens e Logo
-                        </h2>
+                    <div className="space-y-8">
+                        <div className="flex items-center justify-between mb-2">
+                            <h2 className="text-base font-bold" style={{ color: T.text }}>
+                                Mídia do Empreendimento
+                            </h2>
+                            {/* Auto-save indicator */}
+                            <div className="flex items-center gap-1.5 text-[11px]" style={{ color: draftSaved ? T.success : T.textMuted }}>
+                                {draftSaved ? <><Cloud size={13} /> Salvo</> : <><CloudOff size={13} /> Rascunho automático</>}
+                            </div>
+                        </div>
 
-                        {/* Upload Imagens */}
+                        {/* ── Fotos ── */}
                         <div>
-                            <Label>Fotos do Empreendimento</Label>
+                            <div className="flex items-center justify-between mb-2">
+                                <Label>Fotos do Empreendimento</Label>
+                                {formData.images.length > 0 && (
+                                    <span className="text-[11px]" style={{ color: T.textMuted }}>
+                                        ★ = imagem de capa
+                                    </span>
+                                )}
+                            </div>
                             <label className="block cursor-pointer">
-                                <input
-                                    type="file" multiple accept="image/*"
-                                    onChange={handleImageUpload}
-                                    className="hidden"
-                                />
+                                <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
                                 <div
-                                    className="rounded-2xl p-8 text-center transition-all hover:opacity-80"
-                                    style={{
-                                        border: `2px dashed ${T.border}`,
-                                        background: T.surface,
-                                    }}
+                                    className="rounded-2xl p-7 text-center transition-all hover:opacity-80"
+                                    style={{ border: `2px dashed ${T.border}`, background: T.surface }}
                                 >
-                                    <Upload size={36} className="mx-auto mb-3" style={{ color: T.textMuted }} />
+                                    <Upload size={32} className="mx-auto mb-2" style={{ color: T.textMuted }} />
                                     <p className="text-sm font-semibold" style={{ color: T.text }}>
-                                        Clique para fazer upload
+                                        Clique para adicionar fotos
                                     </p>
                                     <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                                        PNG, JPG até 10MB (mínimo 5 fotos recomendado)
+                                        PNG, JPG, WebP — mínimo 5 fotos recomendado
                                     </p>
                                 </div>
                             </label>
@@ -830,42 +987,183 @@ export default function NovoImovelPage() {
                                         <div key={i} className="relative group rounded-xl overflow-hidden">
                                             <img
                                                 src={URL.createObjectURL(file)}
-                                                alt={`Preview ${i + 1}`}
+                                                alt={`Foto ${i + 1}`}
                                                 className="w-full h-28 object-cover"
                                             />
+                                            {/* Star = main image */}
+                                            <button
+                                                type="button"
+                                                onClick={() => setMainImage(i)}
+                                                className="absolute top-2 left-2 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                                                style={{ background: i === 0 ? '#f59e0b' : 'rgba(0,0,0,0.5)' }}
+                                                title={i === 0 ? 'Capa atual' : 'Definir como capa'}
+                                            >
+                                                <Star size={11} fill={i === 0 ? 'white' : 'none'} className="text-white" />
+                                            </button>
+                                            {/* Delete */}
                                             <button
                                                 type="button"
                                                 onClick={() => removeImage(i)}
                                                 className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                                 style={{ background: T.error }}
                                             >
-                                                <X size={12} className="text-white" />
+                                                <X size={11} className="text-white" />
                                             </button>
+                                            {i === 0 && (
+                                                <div className="absolute bottom-0 inset-x-0 text-[10px] font-bold text-center py-0.5"
+                                                    style={{ background: 'rgba(245,158,11,0.85)', color: 'white' }}>
+                                                    CAPA
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </div>
 
-                        {/* Upload Logo */}
+                        {/* ── Vídeo YouTube ── */}
+                        <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
+                            <Label>Vídeo Principal (YouTube)</Label>
+                            <Input
+                                icon={Play}
+                                value={formData.videoUrl}
+                                onChange={v => handleChange('videoUrl', v)}
+                                placeholder="https://youtube.com/watch?v=... ou youtu.be/..."
+                            />
+                            {formData.videoUrl && getYoutubeEmbedUrl(formData.videoUrl) && (
+                                <div className="mt-3 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                                    <iframe
+                                        src={getYoutubeEmbedUrl(formData.videoUrl)!}
+                                        className="w-full h-full"
+                                        allowFullScreen
+                                        title="Preview vídeo"
+                                    />
+                                </div>
+                            )}
+                            {formData.videoUrl && !getYoutubeEmbedUrl(formData.videoUrl) && (
+                                <p className="mt-1.5 text-xs flex items-center gap-1" style={{ color: T.error }}>
+                                    <AlertCircle size={12} /> URL do YouTube inválida
+                                </p>
+                            )}
+                        </div>
+
+                        {/* ── Short / Reels ── */}
                         <div>
-                            <Label>Logo da Construtora</Label>
+                            <Label>Short / Reels (YouTube Shorts)</Label>
+                            <Input
+                                icon={LinkIcon}
+                                value={formData.videoShort}
+                                onChange={v => handleChange('videoShort', v)}
+                                placeholder="https://youtube.com/shorts/..."
+                            />
+                        </div>
+
+                        {/* ── Plantas ── */}
+                        <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
+                            <Label>Plantas do Imóvel</Label>
+                            <label className="block cursor-pointer">
+                                <input type="file" multiple accept="image/*" onChange={handleFloorPlanUpload} className="hidden" />
+                                <div
+                                    className="rounded-xl p-6 text-center transition-all hover:opacity-80"
+                                    style={{ border: `2px dashed ${T.border}`, background: T.surface }}
+                                >
+                                    <ImageIcon size={28} className="mx-auto mb-2" style={{ color: T.textMuted }} />
+                                    <p className="text-sm font-semibold" style={{ color: T.text }}>
+                                        Adicionar plantas
+                                    </p>
+                                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
+                                        PNG, JPG — planta tipo, cobertura, subsolo
+                                    </p>
+                                </div>
+                            </label>
+                            {formData.floorPlans.length > 0 && (
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
+                                    {formData.floorPlans.map((file, i) => (
+                                        <div key={i} className="relative group rounded-xl overflow-hidden">
+                                            <img
+                                                src={URL.createObjectURL(file)}
+                                                alt={`Planta ${i + 1}`}
+                                                className="w-full h-28 object-cover"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeFloorPlan(i)}
+                                                className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                style={{ background: T.error }}
+                                            >
+                                                <X size={11} className="text-white" />
+                                            </button>
+                                            <div className="absolute bottom-0 inset-x-0 text-[10px] font-bold text-center py-0.5 truncate px-2"
+                                                style={{ background: 'rgba(0,0,0,0.6)', color: 'white' }}>
+                                                {file.name}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* ── Brochure PDF ── */}
+                        <div>
+                            <Label>Brochure / Material Digital (PDF)</Label>
+                            <label className="block cursor-pointer">
+                                <input type="file" accept=".pdf,image/*" onChange={handleBrochureUpload} className="hidden" />
+                                <div
+                                    className="rounded-xl p-5 transition-all hover:opacity-80"
+                                    style={{ border: `2px dashed ${T.border}`, background: T.surface }}
+                                >
+                                    {formData.brochure ? (
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                style={{ background: T.accentBg }}>
+                                                <FileText size={20} style={{ color: T.accent }} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold truncate" style={{ color: T.text }}>
+                                                    {formData.brochure.name}
+                                                </p>
+                                                <p className="text-xs" style={{ color: T.textMuted }}>
+                                                    {(formData.brochure.size / 1024 / 1024).toFixed(1)} MB
+                                                </p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={e => { e.preventDefault(); handleChange('brochure', null) }}
+                                                className="text-xs font-semibold flex-shrink-0"
+                                                style={{ color: T.error }}
+                                            >
+                                                Remover
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-3">
+                                            <FileText size={24} style={{ color: T.textMuted }} />
+                                            <div>
+                                                <p className="text-sm font-semibold" style={{ color: T.text }}>
+                                                    Clique para adicionar brochure
+                                                </p>
+                                                <p className="text-xs" style={{ color: T.textMuted }}>
+                                                    PDF, PNG — será disponibilizado no site
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </label>
+                        </div>
+
+                        {/* ── Logo da Construtora ── */}
+                        <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
+                            <Label>Logo da Construtora (sobreposto ao imóvel)</Label>
                             <label className="block cursor-pointer">
                                 <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
                                 <div
-                                    className="rounded-xl p-6 text-center transition-all hover:opacity-80"
-                                    style={{
-                                        border: `2px dashed ${T.border}`,
-                                        background: T.surface,
-                                    }}
+                                    className="rounded-xl p-5 text-center transition-all hover:opacity-80"
+                                    style={{ border: `2px dashed ${T.border}`, background: T.surface }}
                                 >
                                     {formData.logo ? (
                                         <div className="flex items-center justify-center gap-4">
-                                            <img
-                                                src={URL.createObjectURL(formData.logo)}
-                                                alt="Logo"
-                                                className="h-16 object-contain"
-                                            />
+                                            <img src={URL.createObjectURL(formData.logo)} alt="Logo" className="h-14 object-contain" />
                                             <button
                                                 type="button"
                                                 onClick={e => { e.preventDefault(); handleChange('logo', null) }}
@@ -877,9 +1175,9 @@ export default function NovoImovelPage() {
                                         </div>
                                     ) : (
                                         <>
-                                            <ImageIcon size={28} className="mx-auto mb-2" style={{ color: T.textMuted }} />
+                                            <ImageIcon size={24} className="mx-auto mb-1.5" style={{ color: T.textMuted }} />
                                             <p className="text-xs" style={{ color: T.textMuted }}>
-                                                Clique para upload do logo
+                                                Upload do logo da construtora
                                             </p>
                                         </>
                                     )}

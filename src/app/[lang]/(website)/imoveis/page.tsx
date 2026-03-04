@@ -6,22 +6,35 @@ import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapp
 // Forcing dynamic for real-time updates from Backoffice
 export const dynamic = 'force-dynamic'
 
-export default async function ImoveisPage({ params }: { params: { lang: string } }) {
+export default async function ImoveisPage({
+    params,
+    searchParams,
+}: {
+    params: { lang: string }
+    searchParams: { construtora?: string }
+}) {
     const supabase = await createClient()
 
-    // Fetch developments with developer info
-    const { data, error } = await supabase
+    let query = supabase
         .from('developments')
-        .select(`
-            *,
-            developers (
-                name,
-                logo_url
-            )
-        `)
-        .eq('status_commercial', 'published') // Somente os publicados
+        .select(`*, developers(id, name, slug, logo_url)`)
+        .eq('status_commercial', 'published')
         .order('is_highlighted', { ascending: false })
         .order('created_at', { ascending: false })
+
+    // Filter by construtora slug if provided
+    if (searchParams.construtora) {
+        const { data: dev } = await supabase
+            .from('developers')
+            .select('id')
+            .eq('slug', searchParams.construtora)
+            .single()
+        if (dev?.id) {
+            query = query.eq('developer_id', dev.id)
+        }
+    }
+
+    const { data, error } = await query
 
     if (error) {
         console.error('Falha na integração com Supabase:', error.message)

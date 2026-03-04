@@ -27,19 +27,19 @@ export async function POST(request: NextRequest) {
         }
 
         // Valida tipo de arquivo
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf', 'video/mp4', 'video/quicktime']
         if (!allowedTypes.includes(file.type)) {
             return NextResponse.json(
-                { success: false, error: 'Tipo de arquivo não permitido. Use JPG, PNG ou WebP' },
+                { success: false, error: 'Tipo não permitido. Use JPG, PNG, WebP, PDF ou MP4' },
                 { status: 400 }
             )
         }
 
-        // Valida tamanho (máx 5MB)
-        const maxSize = 5 * 1024 * 1024 // 5MB
+        // Valida tamanho (máx 50MB)
+        const maxSize = 50 * 1024 * 1024 // 50MB
         if (file.size > maxSize) {
             return NextResponse.json(
-                { success: false, error: 'Arquivo muito grande. Máximo 5MB' },
+                { success: false, error: 'Arquivo muito grande. Máximo 50MB' },
                 { status: 400 }
             )
         }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
         // Upload para Supabase
         const { data, error } = await supabaseAdmin.storage
-            .from('property-images')
+            .from('media')
             .upload(fileName, buffer, {
                 contentType: file.type,
                 cacheControl: '3600',
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
         // Gera URL pública
         const { data: publicData } = supabaseAdmin.storage
-            .from('property-images')
+            .from('media')
             .getPublicUrl(fileName)
 
         return NextResponse.json({
@@ -111,7 +111,7 @@ export async function DELETE(request: NextRequest) {
         }
 
         const { error } = await supabaseAdmin.storage
-            .from('property-images')
+            .from('media')
             .remove([fileName])
 
         if (error) {

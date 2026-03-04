@@ -55,10 +55,11 @@ interface FormData {
   existingLogo: string
   status: string
   is_highlighted: boolean
+  videoUrl: string
+  videoShort: string
 }
 
-const tiposImovel = ['Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft', 'Terreno', 'Comercial', 'Empreendimento']
-const localizacoes = ['Boa Viagem', 'Pina', 'Piedade', 'Setúbal', 'Candeias', 'Imbiribeira', 'Ipsep', 'Recife Antigo', 'Ponta de Pedra', 'Casa Forte', 'Espinheiro', 'Graças', 'Derby', 'Aflitos']
+const tiposImovel = ['Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft', 'Terreno', 'Comercial', 'Empreendimento', 'Flat', 'Penthouse', 'Villa']
 const statusOptions = ['disponivel', 'em_negociacao', 'reservado', 'vendido', 'lancamento']
 const featuresOptions = [
   'Piscina', 'Academia', 'Salão de festas', 'Churrasqueira', 'Playground', 'Quadra esportiva',
@@ -87,6 +88,7 @@ export default function EditarImovelPage() {
     priceMin: '', priceMax: '', pricePerSqm: '', totalUnits: '', availableUnits: '', deliveryDate: '',
     images: [], existingImages: [], logo: null, existingLogo: '',
     status: 'disponivel', is_highlighted: false,
+    videoUrl: '', videoShort: '',
   })
 
   // Load real data from Supabase
@@ -126,6 +128,8 @@ export default function EditarImovelPage() {
           existingLogo: d.developers?.logo_url || d.developer_logo || '',
           status: d.status || 'disponivel',
           is_highlighted: !!d.is_highlighted,
+          videoUrl: d.video_url || '',
+          videoShort: d.video_short_url || '',
         })
       } catch (err: any) {
         console.error(err)
@@ -228,6 +232,8 @@ export default function EditarImovelPage() {
         is_highlighted: formData.is_highlighted,
         gallery_images: allImages,
         image: allImages[0] || null,
+        video_url: formData.videoUrl || null,
+        video_short_url: formData.videoShort || null,
       }
 
       // 4. PUT to API
@@ -351,11 +357,8 @@ export default function EditarImovelPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Bairro</label>
-                <select value={formData.location} onChange={e => handleChange('location', e.target.value)} className={inputStyle} style={inputBg}>
-                  <option value="">Selecione...</option>
-                  {localizacoes.map(loc => <option key={loc} value={loc}>{loc}</option>)}
-                </select>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Bairro / Região</label>
+                <input type="text" value={formData.location} onChange={e => handleChange('location', e.target.value)} placeholder="Boa Viagem, Brickell, Downtown..." className={inputStyle} style={inputBg} />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Construtora</label>
@@ -456,7 +459,21 @@ export default function EditarImovelPage() {
         {/* Step 4 */}
         {currentStep === 4 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold" style={{ color: T.text }}>Imagens</h2>
+            <h2 className="text-xl font-bold" style={{ color: T.text }}>Mídia</h2>
+
+            {/* Video URLs */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>URL do Vídeo Principal (YouTube)</label>
+                <input type="url" value={formData.videoUrl} onChange={e => handleChange('videoUrl', e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..." className={inputStyle} style={inputBg} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>URL do Short / Reels</label>
+                <input type="url" value={formData.videoShort} onChange={e => handleChange('videoShort', e.target.value)}
+                  placeholder="https://www.youtube.com/shorts/..." className={inputStyle} style={inputBg} />
+              </div>
+            </div>
             {formData.existingImages.length > 0 && (
               <div>
                 <label className="block text-sm font-medium mb-3" style={{ color: T.textSub }}>Imagens Atuais ({formData.existingImages.length})</label>

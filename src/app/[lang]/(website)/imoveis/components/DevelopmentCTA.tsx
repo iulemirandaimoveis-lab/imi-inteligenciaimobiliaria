@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Development } from '../types/development';
-import { MessageCircle, FileText, Building2, MapPin, Calendar, Phone } from 'lucide-react';
+import { MessageCircle, FileText, Building2, MapPin, Calendar, Phone, Download } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import LeadCaptureModal from './LeadCaptureModal';
 
@@ -81,6 +81,18 @@ export default function DevelopmentCTA({ development }: DevelopmentCTAProps) {
                             <FileText className="w-4 h-4 text-[#627D98]" />
                             Solicitar Tabela
                         </button>
+
+                        {development.images.brochure && (
+                            <a
+                                href={development.images.brochure}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full flex items-center justify-center gap-2.5 h-12 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+                            >
+                                <Download className="w-4 h-4 text-[#627D98]" />
+                                Baixar Material
+                            </a>
+                        )}
                     </div>
                 </div>
 
