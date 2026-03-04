@@ -11,14 +11,16 @@ import {
     MessageSquare, Banknote, FolderOpen, MoreHorizontal,
     Scale, CreditCard, FileStack, Layers, Target, Zap, FileSignature, LogOut,
     Megaphone, BarChart2, Plug, TrendingUp, TrendingDown, CalendarDays,
-    QrCode, Sparkles, Building, Search
+    QrCode, Sparkles, Building, Search, Sun
 } from 'lucide-react'
 
+// ── Task-based navigation (Sprint 27) ───────────────────────────
+// Corretor workflow: Hoje → plan day | Clientes → leads | Imóveis → portfolio | Agenda → schedule
 const MAIN = [
-    { name: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
-    { name: 'Leads', href: '/backoffice/leads', icon: Users },
+    { name: 'Hoje', href: '/backoffice/hoje', icon: Sun },
+    { name: 'Clientes', href: '/backoffice/leads', icon: Users },
     { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
-    { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
+    { name: 'Agenda', href: '/backoffice/agenda', icon: CalendarDays },
 ]
 
 const GROUPS = [
@@ -210,7 +212,7 @@ export function MobileBottomNav() {
                                 className="relative text-[10px] font-semibold mt-1 transition-colors"
                                 style={{ color: open ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                             >
-                                Menu
+                                Mais
                             </span>
                         </motion.button>
                     </div>

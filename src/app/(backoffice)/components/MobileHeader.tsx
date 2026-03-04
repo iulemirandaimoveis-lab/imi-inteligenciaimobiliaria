@@ -15,6 +15,7 @@ interface Notification {
 }
 
 const PAGE_TITLES: Record<string, string> = {
+    '/backoffice/hoje': 'Hoje',
     '/backoffice/dashboard': 'Dashboard',
     '/backoffice/imoveis': 'Imóveis',
     '/backoffice/imoveis/novo': 'Novo Imóvel',
