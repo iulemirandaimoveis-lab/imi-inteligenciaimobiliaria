@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 import { nanoid } from 'nanoid'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
+function getSupabase() {
+    return createClient(supabaseUrl, serviceRoleKey, {
+        auth: { autoRefreshToken: false, persistSession: false }
+    })
+}
 
 export const runtime = 'nodejs';
 
@@ -53,7 +61,7 @@ export async function POST(request: NextRequest) {
         const buffer = Buffer.from(arrayBuffer)
 
         // Upload para Supabase
-        const { data, error } = await supabaseAdmin.storage
+        const { data, error } = await getSupabase().storage
             .from('media')
             .upload(fileName, buffer, {
                 contentType: file.type,
@@ -70,7 +78,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Gera URL pública
-        const { data: publicData } = supabaseAdmin.storage
+        const { data: publicData } = getSupabase().storage
             .from('media')
             .getPublicUrl(fileName)
 
@@ -110,7 +118,7 @@ export async function DELETE(request: NextRequest) {
             )
         }
 
-        const { error } = await supabaseAdmin.storage
+        const { error } = await getSupabase().storage
             .from('media')
             .remove([fileName])
 

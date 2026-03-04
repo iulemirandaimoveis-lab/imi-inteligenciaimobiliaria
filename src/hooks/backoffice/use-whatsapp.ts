@@ -5,7 +5,9 @@
 // ============================================
 
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
+
+const supabase = createClient()
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 
 export interface WhatsappConversation {

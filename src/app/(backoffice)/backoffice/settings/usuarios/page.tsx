@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 import {
   Plus,
   Search,
@@ -17,6 +17,8 @@ import {
   Trash2,
   MoreVertical,
 } from 'lucide-react'
+
+const supabase = createClient()
 
 export default function UsuariosPage() {
   const router = useRouter()

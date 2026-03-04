@@ -5,11 +5,9 @@ import { useState, useRef } from 'react'
 import { ArrowUpTrayIcon, XMarkIcon, PhotoIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 
-// Use createClientComponentClient for client-side uploads which handles session automatically
-// const supabase = createClientComponentClient() 
-// We can also use the manual client from lib if auth-helpers are not fully set up, but let's try standard first.
-// Actually, looking at previous files, user uses manual client. Let's stick to consistent pattern.
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
+
+const supabase = createClient()
 
 interface ImageUploadProps {
     images: { url: string; alt: string }[]
