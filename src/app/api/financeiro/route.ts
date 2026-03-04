@@ -2,16 +2,21 @@
 // ── Financial Transactions CRUD ─────────────────────────────
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+async function getAuthenticatedSupabase() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { supabase: null, user: null }
+    return { supabase, user }
+}
 
 // GET — list transactions (with optional filters)
 export async function GET(req: NextRequest) {
     try {
-        const supabase = getSupabase()
+        const { supabase, user } = await getAuthenticatedSupabase()
+        if (!supabase || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
         const { searchParams } = new URL(req.url)
         const type = searchParams.get('type') // 'receita' or 'despesa'
         const status = searchParams.get('status')
@@ -56,7 +61,9 @@ export async function GET(req: NextRequest) {
 // POST — create transaction
 export async function POST(req: NextRequest) {
     try {
-        const supabase = getSupabase()
+        const { supabase, user } = await getAuthenticatedSupabase()
+        if (!supabase || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
         const body = await req.json()
         const { type, category, description, amount, due_date, status, payment_method, reference_type, reference_id, notes } = body
 
@@ -68,7 +75,7 @@ export async function POST(req: NextRequest) {
             .from('financial_transactions')
             .insert({
                 type,
-                category: category || 'outros',
+                category: category || 'Outros',
                 description,
                 amount,
                 due_date: due_date || null,
@@ -77,6 +84,7 @@ export async function POST(req: NextRequest) {
                 reference_type: reference_type || null,
                 reference_id: reference_id || null,
                 notes: notes || null,
+                created_by: user.id,
             })
             .select()
             .single()
@@ -92,7 +100,9 @@ export async function POST(req: NextRequest) {
 // PUT — update transaction
 export async function PUT(req: NextRequest) {
     try {
-        const supabase = getSupabase()
+        const { supabase, user } = await getAuthenticatedSupabase()
+        if (!supabase || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
         const body = await req.json()
         const { id, ...updates } = body
 
@@ -118,7 +128,9 @@ export async function PUT(req: NextRequest) {
 // DELETE — soft delete (set status to cancelado)
 export async function DELETE(req: NextRequest) {
     try {
-        const supabase = getSupabase()
+        const { supabase, user } = await getAuthenticatedSupabase()
+        if (!supabase || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
