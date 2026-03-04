@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import {
     ArrowLeft,
     User,
@@ -165,6 +166,8 @@ export default function NovoLeadPage() {
         setIsSubmitting(true)
 
         try {
+            const orcamentoFaixa = faixasOrcamento.find(f => f.label === formData.orcamento)
+
             const res = await fetch('/api/leads', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -173,8 +176,12 @@ export default function NovoLeadPage() {
                     email: formData.email,
                     phone: formData.phone,
                     source: formData.origem,
-                    // Additional fields not yet supported directly in API but can be mapped
-                    // The API `/api/leads` requires `name, email, phone, source`
+                    interesse: formData.interesse,
+                    localizacao: formData.localizacao,
+                    budget_min: orcamentoFaixa?.min ?? null,
+                    budget_max: orcamentoFaixa?.max != null && orcamentoFaixa.max < 999999999 ? orcamentoFaixa.max : null,
+                    notes: formData.notes,
+                    ai_score: score,
                 })
             })
 
@@ -183,11 +190,11 @@ export default function NovoLeadPage() {
                 throw new Error(errData.error || 'Falha ao salvar lead')
             }
 
-            alert(`Lead criado com sucesso!\nScore: ${score}/20\nStatus: ${score >= 15 ? 'Quente' : score >= 10 ? 'Morno' : 'Frio'}`)
+            toast.success(`Lead criado! Score: ${score}/20 — ${getScoreLabel()}`)
             router.push('/backoffice/leads')
         } catch (e: any) {
             console.error(e)
-            alert('Não foi possível cadastrar o lead. ' + e.message)
+            toast.error('Não foi possível cadastrar o lead. ' + e.message)
         } finally {
             setIsSubmitting(false)
         }

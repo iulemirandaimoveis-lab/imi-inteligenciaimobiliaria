@@ -79,11 +79,16 @@ export async function POST(request: Request) {
                 name: body.name,
                 email: body.email,
                 phone: body.phone,
-                source: body.source || 'website',
+                source: body.source || body.origem || 'website',
                 status: body.status || 'new',
                 ai_score: body.ai_score || 0,
                 ai_priority: body.ai_priority || 'medium',
                 development_id: body.development_id || null,
+                interest_type: body.interest_type || body.interesse || null,
+                interest_location: body.interest_location || body.localizacao || null,
+                budget_min: body.budget_min != null ? body.budget_min : null,
+                budget_max: body.budget_max != null && body.budget_max < 999999999 ? body.budget_max : null,
+                notes: body.notes || null,
             })
             .select()
             .single()
