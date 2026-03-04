@@ -141,7 +141,7 @@ export default function MobileHeader() {
                             IMI
                         </span>
                         <div className="h-5 w-px bg-white/20" />
-                        <span className="text-[9px] font-semibold uppercase tracking-[0.15em] leading-[1.2]" style={{ color: 'var(--bo-text-muted)' }}>
+                        <span className="text-[11px] font-medium uppercase tracking-[0.12em] leading-[1.2]" style={{ color: 'var(--bo-text-muted)' }}>
                             Inteligência<br />Imobiliária
                         </span>
                     </div>

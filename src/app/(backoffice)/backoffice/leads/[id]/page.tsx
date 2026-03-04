@@ -11,35 +11,48 @@ import {
 } from 'lucide-react'
 import { useLead } from '@/hooks/use-leads-complete'
 
+// ── Dark theme tokens ──────────────────────────────────────────
+const T = {
+  bg: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  surface: 'var(--bo-surface)',
+  border: 'var(--bo-border)',
+  borderGold: 'var(--bo-border-gold)',
+  text: 'var(--bo-text)',
+  textSub: 'var(--bo-text-muted)',
+  gold: '#486581',
+  iconBg: 'var(--bo-icon-bg)',
+}
+
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-  hot:       { label: 'Quente',     color: 'text-red-600',    bg: 'bg-red-50 border-red-200',       dot: 'bg-red-500' },
-  warm:      { label: 'Morno',      color: 'text-orange-600', bg: 'bg-orange-50 border-orange-200', dot: 'bg-orange-500' },
-  cold:      { label: 'Frio',       color: 'text-blue-600',   bg: 'bg-blue-50 border-blue-200',     dot: 'bg-blue-500' },
-  qualified: { label: 'Qualificado',color: 'text-green-600',  bg: 'bg-green-50 border-green-200',   dot: 'bg-green-500' },
-  new:       { label: 'Novo',       color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200', dot: 'bg-purple-500' },
-  contacted: { label: 'Contactado', color: 'text-sky-600',    bg: 'bg-sky-50 border-sky-200',       dot: 'bg-sky-500' },
-  proposal:  { label: 'Proposta',   color: 'text-indigo-600', bg: 'bg-indigo-50 border-indigo-200', dot: 'bg-indigo-500' },
-  won:       { label: 'Ganho',      color: 'text-emerald-600',bg: 'bg-emerald-50 border-emerald-200',dot: 'bg-emerald-500' },
-  lost:      { label: 'Perdido',    color: 'text-gray-500',   bg: 'bg-gray-100 border-gray-200',    dot: 'bg-gray-400' },
+  hot:       { label: 'Quente',      color: '#E8A87C', bg: 'rgba(232,168,124,0.12)', dot: '#E8A87C' },
+  warm:      { label: 'Morno',       color: '#7EC8A4', bg: 'rgba(126,200,164,0.12)', dot: '#7EC8A4' },
+  cold:      { label: 'Frio',        color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', dot: '#7B9EC4' },
+  qualified: { label: 'Qualificado', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', dot: '#6BB87B' },
+  new:       { label: 'Novo',        color: '#9B8EC4', bg: 'rgba(155,142,196,0.12)', dot: '#9B8EC4' },
+  contacted: { label: 'Contactado',  color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', dot: '#7B9EC4' },
+  proposal:  { label: 'Proposta',    color: '#486581', bg: 'rgba(72,101,129,0.15)',  dot: '#486581' },
+  won:       { label: 'Ganho',       color: '#6BB87B', bg: 'rgba(107,184,123,0.15)', dot: '#6BB87B' },
+  lost:      { label: 'Perdido',     color: '#7B8794', bg: 'rgba(123,135,148,0.12)', dot: '#7B8794' },
 }
 
 function ScoreRing({ score }: { score: number }) {
   const r = 20, c = 2 * Math.PI * r
   const fill = (score / 100) * c
-  const color = score >= 85 ? '#22c55e' : score >= 70 ? '#f97316' : '#94a3b8'
+  const color = score >= 85 ? '#6BB87B' : score >= 70 ? '#E8A87C' : '#7B9EC4'
 
   return (
     <div className="relative w-16 h-16 flex-shrink-0">
       <svg className="w-full h-full -rotate-90" viewBox="0 0 48 48">
-        <circle cx="24" cy="24" r={r} strokeWidth="4" stroke="#F1F3F5" fill="none" />
+        <circle cx="24" cy="24" r={r} strokeWidth="4" stroke="var(--bo-border)" fill="none" />
         <circle cx="24" cy="24" r={r} strokeWidth="4" stroke={color} fill="none"
           strokeDasharray={`${fill} ${c}`} strokeLinecap="round"
           style={{ transition: 'stroke-dasharray 0.6s ease' }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-[13px] font-black text-[#1A1A1A] leading-none">{score}</span>
-        <span className="text-[8px] text-[#ADB5BD] font-bold uppercase">score</span>
+        <span className="text-[13px] font-black leading-none" style={{ color: T.text }}>{score}</span>
+        <span className="text-[9px] font-bold uppercase" style={{ color: T.textSub }}>score</span>
       </div>
     </div>
   )
@@ -48,28 +61,28 @@ function ScoreRing({ score }: { score: number }) {
 function LoadingSkeleton() {
   return (
     <div className="max-w-2xl mx-auto pb-20 animate-pulse">
-      <div className="h-8 w-24 bg-gray-200 rounded-lg mb-6" />
-      <div className="bg-white rounded-3xl border border-[#E9ECEF] p-6 mb-4">
+      <div className="h-8 w-24 rounded-lg mb-6" style={{ background: 'var(--bo-elevated)' }} />
+      <div className="rounded-3xl p-6 mb-4" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
         <div className="flex items-start gap-4 mb-5">
-          <div className="w-14 h-14 rounded-2xl bg-gray-200 flex-shrink-0" />
+          <div className="w-14 h-14 rounded-2xl flex-shrink-0" style={{ background: 'var(--bo-border)' }} />
           <div className="flex-1 space-y-2">
-            <div className="h-5 w-40 bg-gray-200 rounded" />
-            <div className="h-4 w-24 bg-gray-100 rounded" />
+            <div className="h-5 w-40 rounded" style={{ background: 'var(--bo-border)' }} />
+            <div className="h-4 w-24 rounded" style={{ background: 'var(--bo-icon-bg)' }} />
           </div>
-          <div className="w-16 h-16 rounded-full bg-gray-200" />
+          <div className="w-16 h-16 rounded-full" style={{ background: 'var(--bo-border)' }} />
         </div>
         <div className="grid grid-cols-2 gap-2 mb-5">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className={`h-4 bg-gray-100 rounded ${i === 4 ? 'col-span-2' : ''}`} />
+            <div key={i} className={`h-4 rounded ${i === 4 ? 'col-span-2' : ''}`} style={{ background: 'var(--bo-icon-bg)' }} />
           ))}
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="h-11 bg-gray-100 rounded-2xl" />
-          <div className="h-11 bg-gray-200 rounded-2xl" />
+          <div className="h-11 rounded-2xl" style={{ background: 'var(--bo-icon-bg)' }} />
+          <div className="h-11 rounded-2xl" style={{ background: 'var(--bo-border)' }} />
         </div>
       </div>
-      <div className="bg-gray-800 rounded-3xl h-36 mb-4" />
-      <div className="bg-white rounded-3xl border border-[#E9ECEF] h-48" />
+      <div className="rounded-3xl h-36 mb-4" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }} />
+      <div className="rounded-3xl h-48" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }} />
     </div>
   )
 }
@@ -112,15 +125,16 @@ export default function LeadDetailPage() {
       <div className="max-w-2xl mx-auto pb-20">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-[#6C757D] hover:text-[#1A1A1A] transition-colors font-medium text-sm mb-6"
+          className="flex items-center gap-2 font-medium text-sm mb-6 transition-colors"
+          style={{ color: T.textSub }}
         >
           <ArrowLeft size={16} />
           Leads
         </button>
-        <div className="bg-white rounded-3xl border border-[#E9ECEF] p-12 text-center">
-          <AlertCircle size={32} className="mx-auto mb-3 text-gray-300" />
-          <p className="text-[15px] font-semibold text-[#1A1A1A] mb-1">Lead não encontrado</p>
-          <p className="text-[13px] text-[#ADB5BD]">O lead solicitado não existe ou foi removido.</p>
+        <div className="rounded-3xl p-12 text-center" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+          <AlertCircle size={32} className="mx-auto mb-3" style={{ color: T.textSub, opacity: 0.4 }} />
+          <p className="text-[15px] font-semibold mb-1" style={{ color: T.text }}>Lead não encontrado</p>
+          <p className="text-[13px]" style={{ color: T.textSub }}>O lead solicitado não existe ou foi removido.</p>
         </div>
       </div>
     )
@@ -155,17 +169,24 @@ export default function LeadDetailPage() {
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-[#6C757D] hover:text-[#1A1A1A] transition-colors font-medium text-sm"
+          className="flex items-center gap-2 font-medium text-sm transition-colors"
+          style={{ color: T.textSub }}
         >
           <ArrowLeft size={16} />
           Leads
         </button>
         <div className="flex items-center gap-2">
-          <button className="w-9 h-9 rounded-xl border border-[#E9ECEF] hover:bg-[#F8F9FA] flex items-center justify-center transition-colors">
-            <Edit size={15} className="text-[#6C757D]" />
+          <button
+            className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
+            style={{ border: `1px solid ${T.border}`, background: 'transparent' }}
+          >
+            <Edit size={15} style={{ color: T.textSub }} />
           </button>
-          <button className="w-9 h-9 rounded-xl border border-[#E9ECEF] hover:bg-[#F8F9FA] flex items-center justify-center transition-colors">
-            <MoreVertical size={15} className="text-[#6C757D]" />
+          <button
+            className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
+            style={{ border: `1px solid ${T.border}`, background: 'transparent' }}
+          >
+            <MoreVertical size={15} style={{ color: T.textSub }} />
           </button>
         </div>
       </div>
@@ -175,24 +196,31 @@ export default function LeadDetailPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="bg-white rounded-3xl border border-[#E9ECEF] p-6 mb-4 shadow-sm"
+        className="rounded-3xl p-6 mb-4"
+        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
       >
         <div className="flex items-start gap-4 mb-5">
           {/* Avatar */}
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1A1A1A] to-[#495057] flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-lg font-bold flex-shrink-0"
+            style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}
+          >
             {initials}
           </div>
 
           {/* Info */}
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold text-[#1A1A1A] mb-0.5 truncate">{lead.name}</h1>
+            <h1 className="text-lg font-bold mb-0.5 truncate" style={{ color: T.text }}>{lead.name}</h1>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${status.bg} ${status.color}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+              <span
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold"
+                style={{ color: status.color, background: status.bg }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: status.dot }} />
                 {status.label}
               </span>
               {lead.source && (
-                <span className="text-[11px] text-[#ADB5BD]">via {lead.source}</span>
+                <span className="text-[11px]" style={{ color: T.textSub }}>via {lead.source}</span>
               )}
             </div>
           </div>
@@ -204,33 +232,33 @@ export default function LeadDetailPage() {
         {/* Contact info grid */}
         <div className="grid grid-cols-2 gap-2 mb-5">
           {lead.email && (
-            <div className="flex items-center gap-2 text-sm text-[#495057]">
-              <Mail size={13} className="text-[#ADB5BD] flex-shrink-0" />
-              <span className="truncate text-[12px]">{lead.email}</span>
+            <div className="flex items-center gap-2">
+              <Mail size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
+              <span className="truncate text-[12px]" style={{ color: T.textSub }}>{lead.email}</span>
             </div>
           )}
           {lead.phone && (
-            <div className="flex items-center gap-2 text-sm text-[#495057]">
-              <Phone size={13} className="text-[#ADB5BD] flex-shrink-0" />
-              <span className="text-[12px]">{lead.phone}</span>
+            <div className="flex items-center gap-2">
+              <Phone size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
+              <span className="text-[12px]" style={{ color: T.textSub }}>{lead.phone}</span>
             </div>
           )}
           {devName && (
             <div className="flex items-center gap-2">
-              <Building2 size={13} className="text-[#ADB5BD] flex-shrink-0" />
-              <span className="text-[12px] text-[#495057]">{devName}</span>
+              <Building2 size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
+              <span className="text-[12px]" style={{ color: T.textSub }}>{devName}</span>
             </div>
           )}
           {lead.interest && (
             <div className="flex items-center gap-2">
-              <MapPin size={13} className="text-[#ADB5BD] flex-shrink-0" />
-              <span className="text-[12px] text-[#495057]">{lead.interest}</span>
+              <MapPin size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
+              <span className="text-[12px]" style={{ color: T.textSub }}>{lead.interest}</span>
             </div>
           )}
           {lead.capital && (
             <div className="flex items-center gap-2 col-span-2">
-              <DollarSign size={13} className="text-[#ADB5BD] flex-shrink-0" />
-              <span className="text-[12px] font-semibold text-[#1A1A1A]">{formatCapital(lead.capital)}</span>
+              <DollarSign size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
+              <span className="text-[12px] font-semibold" style={{ color: T.text }}>{formatCapital(lead.capital)}</span>
             </div>
           )}
         </div>
@@ -239,7 +267,11 @@ export default function LeadDetailPage() {
         {lead.tags && lead.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-5">
             {lead.tags.map((tag, i) => (
-              <span key={i} className="px-2 py-0.5 bg-[#F8F9FA] border border-[#E9ECEF] rounded-full text-[10px] font-medium text-[#495057]">
+              <span
+                key={i}
+                className="px-2 py-0.5 rounded-full text-[11px] font-medium"
+                style={{ background: T.iconBg, border: `1px solid ${T.border}`, color: T.textSub }}
+              >
                 {tag}
               </span>
             ))}
@@ -247,7 +279,7 @@ export default function LeadDetailPage() {
         )}
 
         {/* Meta */}
-        <div className="flex items-center gap-4 text-[11px] text-[#ADB5BD] mb-5">
+        <div className="flex items-center gap-4 text-[11px] mb-5" style={{ color: T.textSub }}>
           <span>Criado {getTimeAgo(lead.created_at)}</span>
           {lead.last_interaction_at && (
             <>
@@ -257,22 +289,24 @@ export default function LeadDetailPage() {
           )}
         </div>
 
-        {/* Action buttons */}
+        {/* ── Action buttons — primary CTAs for field use ── */}
         <div className="grid grid-cols-2 gap-3">
           <a
             href={`tel:${lead.phone}`}
-            className="flex items-center justify-center gap-2 h-11 bg-[#F8F9FA] border border-[#E9ECEF] rounded-2xl text-[13px] font-semibold text-[#1A1A1A] hover:bg-[#E9ECEF] transition-colors"
+            className="flex items-center justify-center gap-2 h-12 rounded-2xl text-[14px] font-semibold transition-all"
+            style={{ background: T.iconBg, border: `1px solid ${T.border}`, color: T.text }}
           >
-            <Phone size={15} />
+            <Phone size={16} />
             Ligar
           </a>
           <a
             href={`https://wa.me/55${(lead.phone ?? '').replace(/\D/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 h-11 bg-[#1A1A1A] hover:bg-[#102A43] rounded-2xl text-[13px] font-semibold text-white transition-all duration-200"
+            className="flex items-center justify-center gap-2 h-12 rounded-2xl text-[14px] font-semibold text-white transition-all"
+            style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}
           >
-            <MessageSquare size={15} />
+            <MessageSquare size={16} />
             WhatsApp
           </a>
         </div>
@@ -283,14 +317,15 @@ export default function LeadDetailPage() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 0.35 }}
-        className="bg-[#1A1A1A] rounded-3xl p-6 mb-4 relative overflow-hidden"
+        className="rounded-3xl p-6 mb-4 relative overflow-hidden"
+        style={{ background: 'var(--bo-elevated)', border: `1px solid ${T.borderGold}` }}
       >
-        <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#102A43]/20 rounded-full blur-2xl" />
+        <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full blur-2xl" style={{ background: 'rgba(72,101,129,0.15)' }} />
         <div className="flex items-center gap-2 mb-3 relative z-10">
-          <Sparkles size={16} className="text-[#486581]" />
-          <h3 className="font-bold text-white text-[15px]">AI Insight Strategy</h3>
+          <Sparkles size={16} style={{ color: T.gold }} />
+          <h3 className="font-bold text-[15px]" style={{ color: T.text }}>AI Insight Strategy</h3>
         </div>
-        <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-4 relative z-10">
+        <p className="text-[13px] leading-relaxed mb-4 relative z-10" style={{ color: T.textSub }}>
           {lead.score >= 85
             ? `${lead.name} tem score alto (${lead.score}). Abordagem proativa recomendada — alta probabilidade de conversão.`
             : lead.score >= 70
@@ -300,12 +335,15 @@ export default function LeadDetailPage() {
           {devName ? ` Interesse principal: ${devName}.` : ''}
           {lead.capital ? ` Capital declarado: ${formatCapital(lead.capital)}.` : ''}
         </p>
-        <div className="bg-white/[0.07] rounded-2xl border border-white/10 p-4 relative z-10">
-          <p className="text-[10px] uppercase font-bold text-[#6C757D] mb-1.5 tracking-widest">
+        <div
+          className="rounded-2xl p-4 relative z-10"
+          style={{ background: 'var(--bo-icon-bg)', border: `1px solid ${T.border}` }}
+        >
+          <p className="text-[10px] uppercase font-bold mb-1.5 tracking-widest" style={{ color: T.textSub }}>
             Próxima Ação Sugerida
           </p>
           <div className="flex items-center justify-between">
-            <span className="text-[13px] text-white">
+            <span className="text-[13px]" style={{ color: T.text }}>
               {lead.status === 'new' || lead.status === 'cold'
                 ? 'Entrar em contato e qualificar necessidade'
                 : lead.status === 'contacted' || lead.status === 'warm'
@@ -317,7 +355,7 @@ export default function LeadDetailPage() {
                 : 'Atualizar status do lead'
               }
             </span>
-            <ChevronRight size={14} className="text-[#486581] flex-shrink-0" />
+            <ChevronRight size={14} style={{ color: T.gold }} className="flex-shrink-0" />
           </div>
         </div>
       </motion.div>
@@ -327,9 +365,11 @@ export default function LeadDetailPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.18 }}
-        className="bg-white rounded-3xl border border-[#E9ECEF] overflow-hidden shadow-sm"
+        className="rounded-3xl overflow-hidden"
+        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
       >
-        <div className="flex border-b border-[#E9ECEF]">
+        {/* Tab bar */}
+        <div className="flex" style={{ borderBottom: `1px solid ${T.border}` }}>
           {[
             { key: 'timeline', label: 'Timeline' },
             { key: 'history', label: 'Histórico' },
@@ -338,10 +378,11 @@ export default function LeadDetailPage() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors ${activeTab === tab.key
-                  ? 'text-[#1A1A1A] border-b-2 border-[#334E68]'
-                  : 'text-[#ADB5BD] hover:text-[#6C757D]'
-                }`}
+              className="flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors"
+              style={{
+                color: activeTab === tab.key ? T.text : T.textSub,
+                borderBottom: activeTab === tab.key ? `2px solid ${T.gold}` : '2px solid transparent',
+              }}
             >
               {tab.label}
             </button>
@@ -353,34 +394,43 @@ export default function LeadDetailPage() {
           {activeTab === 'timeline' && (
             <div className="space-y-1">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-[#1A1A1A] text-[14px]">Eventos do Lead</h3>
-                <span className="text-[10px] font-bold text-[#486581] bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
+                <h3 className="font-bold text-[14px]" style={{ color: T.text }}>Eventos do Lead</h3>
+                <span
+                  className="text-[10px] font-bold px-2.5 py-1 rounded-full"
+                  style={{ color: T.gold, background: 'rgba(72,101,129,0.12)', border: `1px solid rgba(72,101,129,0.2)` }}
+                >
                   {timeline.length} evento{timeline.length !== 1 ? 's' : ''}
                 </span>
               </div>
 
               {timeline.length > 0 ? (
                 <div className="relative">
-                  <div className="absolute left-5 top-0 bottom-0 w-px bg-[#E9ECEF]" />
+                  <div className="absolute left-5 top-0 bottom-0 w-px" style={{ background: T.border }} />
                   <div className="space-y-4">
                     {timeline.map((event, i) => (
                       <div key={i} className="flex gap-4 relative">
-                        <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${event.accent
-                            ? 'bg-[#1A1A1A] ring-4 ring-white shadow-md'
-                            : 'bg-[#F8F9FA] border border-[#E9ECEF]'
-                          }`}>
-                          <event.icon size={14} className={event.accent ? 'text-[#486581]' : 'text-[#ADB5BD]'} />
+                        <div
+                          className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                          style={event.accent
+                            ? { background: 'var(--bo-elevated)', border: `2px solid ${T.gold}` }
+                            : { background: T.iconBg, border: `1px solid ${T.border}` }
+                          }
+                        >
+                          <event.icon size={14} style={{ color: event.accent ? T.gold : T.textSub }} />
                         </div>
-                        <div className={`flex-1 bg-[#F8F9FA] border border-[#E9ECEF] rounded-2xl p-3.5 ${i > 0 ? 'opacity-80' : ''}`}>
+                        <div
+                          className={`flex-1 rounded-2xl p-3.5 ${i > 0 ? 'opacity-75' : ''}`}
+                          style={{ background: T.iconBg, border: `1px solid ${T.border}` }}
+                        >
                           <div className="flex items-start justify-between gap-2 mb-0.5">
-                            <h4 className="font-semibold text-[13px] text-[#1A1A1A]">{event.label}</h4>
-                            <span className="text-[10px] text-[#ADB5BD] flex-shrink-0">{event.time}</span>
+                            <h4 className="font-semibold text-[13px]" style={{ color: T.text }}>{event.label}</h4>
+                            <span className="text-[10px] flex-shrink-0" style={{ color: T.textSub }}>{event.time}</span>
                           </div>
                           {event.detail && (
-                            <p className="text-[11px] text-[#6C757D]">{event.detail}</p>
+                            <p className="text-[11px]" style={{ color: T.textSub }}>{event.detail}</p>
                           )}
                           {event.accent && (
-                            <div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold text-emerald-600">
+                            <div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold" style={{ color: '#6BB87B' }}>
                               <TrendingUp size={10} />
                               Evento mais recente
                             </div>
@@ -391,7 +441,7 @@ export default function LeadDetailPage() {
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8 text-[#ADB5BD]">
+                <div className="text-center py-8" style={{ color: T.textSub }}>
                   <Eye size={28} className="mx-auto mb-2 opacity-40" />
                   <p className="text-[13px]">Nenhum evento registrado</p>
                 </div>
@@ -403,10 +453,10 @@ export default function LeadDetailPage() {
           {activeTab === 'history' && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-[#1A1A1A] text-[14px]">Histórico de Contatos</h3>
-                <button className="text-[11px] font-bold text-[#486581]">+ Registrar</button>
+                <h3 className="font-bold text-[14px]" style={{ color: T.text }}>Histórico de Contatos</h3>
+                <button className="text-[11px] font-bold" style={{ color: T.gold }}>+ Registrar</button>
               </div>
-              <div className="text-center py-8 text-[#ADB5BD]">
+              <div className="text-center py-8" style={{ color: T.textSub }}>
                 <Clock size={28} className="mx-auto mb-2 opacity-40" />
                 <p className="text-[13px]">Nenhum contato registrado ainda</p>
                 <p className="text-[11px] mt-1">Use o botão acima para registrar um contato</p>
@@ -418,11 +468,17 @@ export default function LeadDetailPage() {
           {activeTab === 'notes' && (
             <div>
               {lead.message ? (
-                <div className="bg-[#F8F9FA] rounded-2xl border border-[#E9ECEF] p-4 mb-4">
-                  <p className="text-[13px] text-[#495057] leading-relaxed">{lead.message}</p>
+                <div
+                  className="rounded-2xl p-4 mb-4"
+                  style={{ background: T.iconBg, border: `1px solid ${T.border}` }}
+                >
+                  <p className="text-[13px] leading-relaxed" style={{ color: T.textSub }}>{lead.message}</p>
                 </div>
               ) : (
-                <div className="bg-[#F8F9FA] rounded-2xl border border-[#E9ECEF] p-4 mb-4 text-center text-[#ADB5BD]">
+                <div
+                  className="rounded-2xl p-4 mb-4 text-center"
+                  style={{ background: T.iconBg, border: `1px solid ${T.border}`, color: T.textSub }}
+                >
                   <FileText size={20} className="mx-auto mb-1 opacity-40" />
                   <p className="text-[12px]">Nenhuma mensagem do lead</p>
                 </div>
@@ -433,11 +489,17 @@ export default function LeadDetailPage() {
                   value={note}
                   onChange={e => setNote(e.target.value)}
                   placeholder="Adicionar observação..."
-                  className="flex-1 h-11 px-4 text-[13px] bg-[#F8F9FA] border border-[#E9ECEF] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]/30 focus:border-[#334E68]"
+                  className="flex-1 h-11 px-4 text-[13px] rounded-xl outline-none placeholder:opacity-40"
+                  style={{
+                    background: T.iconBg,
+                    border: `1px solid ${T.border}`,
+                    color: T.text,
+                  }}
                 />
                 <button
                   disabled={!note.trim()}
-                  className="w-11 h-11 bg-[#1A1A1A] disabled:opacity-40 text-white rounded-xl flex items-center justify-center transition-colors hover:bg-[#102A43]"
+                  className="w-11 h-11 text-white rounded-xl flex items-center justify-center transition-colors disabled:opacity-40"
+                  style={{ background: T.gold }}
                 >
                   <Send size={14} />
                 </button>
