@@ -227,6 +227,7 @@ export default function NovoImovelPage() {
     })
     const [draftSaved, setDraftSaved] = useState(false)
     const [hasDraft, setHasDraft] = useState(false)
+    const [aiGenerating, setAiGenerating] = useState(false)
 
     /* Load developers from Supabase */
     useEffect(() => {
@@ -290,6 +291,45 @@ export default function NovoImovelPage() {
     const handleBrochureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) setFormData(prev => ({ ...prev, brochure: file }))
+    }
+
+    const generateDescription = async () => {
+        if (!formData.name && !formData.type) {
+            toast.error('Preencha nome e tipo antes de gerar')
+            return
+        }
+        setAiGenerating(true)
+        try {
+            const res = await fetch('/api/ai/generate-description', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.name,
+                    type: formData.type,
+                    neighborhood: formData.neighborhood,
+                    city: formData.city,
+                    state: formData.state,
+                    area: formData.area,
+                    bedrooms: formData.bedrooms,
+                    bathrooms: formData.bathrooms,
+                    parking: formData.parking,
+                    features: formData.features,
+                    priceMin: formData.priceMin,
+                    deliveryDate: formData.deliveryDate,
+                }),
+            })
+            const data = await res.json()
+            if (data.description) {
+                handleChange('description', data.description)
+                toast.success('Descrição gerada com IA!')
+            } else {
+                toast.error(data.error || 'Erro ao gerar descrição')
+            }
+        } catch {
+            toast.error('Erro de conexão')
+        } finally {
+            setAiGenerating(false)
+        }
     }
 
     const setMainImage = (index: number) => {
@@ -925,12 +965,26 @@ export default function NovoImovelPage() {
 
                         {/* Description */}
                         <div className="pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
-                            <Label>Descrição do Empreendimento</Label>
+                            <div className="flex items-center justify-between mb-2">
+                                <Label>Descrição do Empreendimento</Label>
+                                <button
+                                    type="button"
+                                    onClick={generateDescription}
+                                    disabled={aiGenerating}
+                                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold transition-all disabled:opacity-60"
+                                    style={{ background: T.accentBg, color: T.accent, border: `1px solid ${T.accent}40` }}
+                                >
+                                    {aiGenerating
+                                        ? <Loader2 size={12} className="animate-spin" />
+                                        : <Sparkles size={12} />}
+                                    {aiGenerating ? 'Gerando...' : 'Gerar com IA'}
+                                </button>
+                            </div>
                             <textarea
                                 value={formData.description}
                                 onChange={e => handleChange('description', e.target.value)}
-                                placeholder="Descreva o empreendimento, diferenciais, localização estratégica..."
-                                rows={4}
+                                placeholder="Descreva o empreendimento, ou clique em 'Gerar com IA' para criar automaticamente..."
+                                rows={5}
                                 className="w-full rounded-xl text-sm outline-none resize-none p-4"
                                 style={{
                                     background: T.surface,

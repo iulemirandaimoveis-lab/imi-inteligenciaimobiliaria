@@ -41,11 +41,15 @@ export default async function BackofficeLayout({
                 position="top-right"
                 richColors
                 closeButton
+                theme="dark"
+                offset={72}
                 toastOptions={{
+                    duration: 4000,
                     style: {
                         background: 'var(--bo-elevated)',
                         border: '1px solid var(--bo-border-gold)',
                         color: 'var(--bo-text)',
+                        fontSize: '13px',
                     },
                 }}
             />

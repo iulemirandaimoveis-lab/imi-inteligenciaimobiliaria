@@ -125,7 +125,43 @@ export default function FinanceiroPage() {
     const pendentes = transactions.filter(t => t.status === 'pendente').length
 
     if (loading) {
-        return <div className="flex items-center justify-center h-64"><Loader2 size={24} className="animate-spin" style={{ color: T.gold }} /></div>
+        return (
+            <div className="space-y-5 max-w-7xl mx-auto">
+                {/* Header skeleton */}
+                <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                        <div className="h-6 w-32 rounded-lg animate-pulse" style={{ background: T.elevated }} />
+                        <div className="h-4 w-56 rounded-lg animate-pulse" style={{ background: T.elevated }} />
+                    </div>
+                    <div className="h-10 w-36 rounded-xl animate-pulse" style={{ background: T.elevated }} />
+                </div>
+                {/* KPI skeletons */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[0,1,2,3].map(i => (
+                        <div key={i} className="rounded-2xl p-4 space-y-3 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <div className="h-3 w-16 rounded" style={{ background: T.surface }} />
+                            <div className="h-6 w-24 rounded" style={{ background: T.surface }} />
+                        </div>
+                    ))}
+                </div>
+                {/* Table skeleton */}
+                <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="p-4" style={{ borderBottom: `1px solid ${T.border}` }}>
+                        <div className="h-4 w-32 rounded animate-pulse" style={{ background: T.elevated }} />
+                    </div>
+                    <div className="divide-y" style={{ borderColor: T.border }}>
+                        {[0,1,2,3,4].map(i => (
+                            <div key={i} className="flex items-center gap-4 p-4 animate-pulse">
+                                <div className="h-4 w-12 rounded" style={{ background: T.elevated }} />
+                                <div className="h-4 flex-1 rounded" style={{ background: T.elevated }} />
+                                <div className="h-4 w-20 rounded" style={{ background: T.elevated }} />
+                                <div className="h-4 w-24 rounded" style={{ background: T.elevated }} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -185,66 +221,115 @@ export default function FinanceiroPage() {
 
                 {filtered.length === 0 ? (
                     <div className="p-12 text-center">
-                        <DollarSign size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textDim }} />
+                        <DollarSign size={40} className="mx-auto mb-4 opacity-20" style={{ color: T.textDim }} />
                         <p className="text-sm font-semibold" style={{ color: T.textSub }}>Nenhum lançamento encontrado</p>
-                        <p className="text-xs mt-1" style={{ color: T.textDim }}>Clique em "Novo Lançamento" para começar</p>
+                        <p className="text-xs mt-1 mb-4" style={{ color: T.textDim }}>Registre receitas e despesas para controlar seu fluxo de caixa</p>
+                        <button onClick={() => setShowForm(true)}
+                            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
+                            style={{ background: T.gold }}>
+                            <Plus size={16} /> Novo Lançamento
+                        </button>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Data</th>
-                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Descrição</th>
-                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider hidden sm:table-cell" style={{ color: T.textDim }}>Categoria</th>
-                                    <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Status</th>
-                                    <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Valor</th>
-                                    <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filtered.map(t => (
-                                    <tr key={t.id} className="transition-colors" style={{ borderBottom: `1px solid ${T.border}` }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                                        <td className="px-4 py-3 text-xs" style={{ color: T.textSub }}>
-                                            {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : '—'}
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <div className="flex items-center gap-2">
-                                                {t.type === 'receita'
-                                                    ? <ArrowUpCircle size={14} className="flex-shrink-0" style={{ color: '#6BB87B' }} />
-                                                    : <ArrowDownCircle size={14} className="flex-shrink-0" style={{ color: '#E57373' }} />}
-                                                <span className="text-xs font-medium truncate max-w-[200px]" style={{ color: T.text }}>{t.description}</span>
+                    <>
+                        {/* Mobile: card list */}
+                        <div className="sm:hidden">
+                            {filtered.map(t => {
+                                const statusColor = t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#486581'
+                                const statusBg = t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(72,101,129,0.12)'
+                                const statusLabel = t.status === 'pago' ? 'Pago' : t.status === 'atrasado' ? 'Atrasado' : 'Pendente'
+                                return (
+                                    <div key={t.id} className="flex items-center gap-3 px-4 py-3.5" style={{ borderBottom: `1px solid ${T.border}` }}>
+                                        <div className="flex-shrink-0">
+                                            {t.type === 'receita'
+                                                ? <ArrowUpCircle size={22} style={{ color: '#6BB87B' }} />
+                                                : <ArrowDownCircle size={22} style={{ color: '#E57373' }} />}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-medium truncate" style={{ color: T.text }}>{t.description}</p>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <span className="text-[10px]" style={{ color: T.textDim }}>
+                                                    {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : '—'}
+                                                </span>
+                                                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ color: statusColor, background: statusBg }}>
+                                                    {statusLabel}
+                                                </span>
                                             </div>
-                                        </td>
-                                        <td className="px-4 py-3 hidden sm:table-cell">
-                                            <span className="text-[10px] font-semibold px-2 py-1 rounded-lg" style={{ background: T.elevated, color: T.textSub }}>{t.category}</span>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <span className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{
-                                                color: t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#486581',
-                                                background: t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(26,26,46,0.12)',
-                                            }}>
-                                                {t.status === 'pago' ? 'Pago' : t.status === 'atrasado' ? 'Atrasado' : 'Pendente'}
-                                            </span>
-                                        </td>
-                                        <td className={`px-4 py-3 text-right text-xs font-bold`} style={{ color: t.type === 'receita' ? '#6BB87B' : '#E57373' }}>
-                                            {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
+                                        </div>
+                                        <div className="flex items-center gap-2 flex-shrink-0">
+                                            <p className="text-sm font-bold" style={{ color: t.type === 'receita' ? '#6BB87B' : '#E57373' }}>
+                                                {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
+                                            </p>
                                             {t.status === 'pendente' && (
-                                                <button onClick={() => markPaid(t.id)} className="text-[10px] font-semibold px-2 py-1 rounded-lg transition-all"
-                                                    style={{ color: '#6BB87B', background: 'rgba(107,184,123,0.08)' }}>
-                                                    <CheckCircle size={12} className="inline mr-1" />Pagar
+                                                <button onClick={() => markPaid(t.id)}
+                                                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                    style={{ background: 'rgba(107,184,123,0.10)' }}>
+                                                    <CheckCircle size={18} style={{ color: '#6BB87B' }} />
                                                 </button>
                                             )}
-                                        </td>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        {/* Desktop: table */}
+                        <div className="hidden sm:block overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Data</th>
+                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Descrição</th>
+                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Categoria</th>
+                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Status</th>
+                                        <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Valor</th>
+                                        <th className="px-4 py-3" />
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {filtered.map(t => (
+                                        <tr key={t.id} className="transition-colors" style={{ borderBottom: `1px solid ${T.border}` }}
+                                            onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
+                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                                            <td className="px-4 py-3 text-xs" style={{ color: T.textSub }}>
+                                                {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : '—'}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center gap-2">
+                                                    {t.type === 'receita'
+                                                        ? <ArrowUpCircle size={14} className="flex-shrink-0" style={{ color: '#6BB87B' }} />
+                                                        : <ArrowDownCircle size={14} className="flex-shrink-0" style={{ color: '#E57373' }} />}
+                                                    <span className="text-xs font-medium truncate max-w-[200px]" style={{ color: T.text }}>{t.description}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <span className="text-[10px] font-semibold px-2 py-1 rounded-lg" style={{ background: T.elevated, color: T.textSub }}>{t.category}</span>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <span className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{
+                                                    color: t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#486581',
+                                                    background: t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(72,101,129,0.12)',
+                                                }}>
+                                                    {t.status === 'pago' ? 'Pago' : t.status === 'atrasado' ? 'Atrasado' : 'Pendente'}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 text-right text-xs font-bold" style={{ color: t.type === 'receita' ? '#6BB87B' : '#E57373' }}>
+                                                {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                {t.status === 'pendente' && (
+                                                    <button onClick={() => markPaid(t.id)} className="text-[10px] font-semibold px-2 py-1 rounded-lg transition-all"
+                                                        style={{ color: '#6BB87B', background: 'rgba(107,184,123,0.08)' }}>
+                                                        <CheckCircle size={12} className="inline mr-1" />Pagar
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
                 )}
             </div>
 
@@ -277,19 +362,19 @@ export default function FinanceiroPage() {
                             <div className="sm:col-span-2">
                                 <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Descrição *</label>
                                 <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                                    placeholder="Ex: Comissão Venda Apt 905" className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    placeholder="Ex: Comissão Venda Apt 905" className="w-full h-12 px-3 rounded-xl text-sm outline-none"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
                             </div>
                             <div>
                                 <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Valor (R$) *</label>
                                 <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
-                                    placeholder="0.00" className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    placeholder="0.00" className="w-full h-12 px-3 rounded-xl text-sm outline-none"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
                             </div>
                             <div>
                                 <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Categoria</label>
                                 <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                                    className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    className="w-full h-12 px-3 rounded-xl text-sm outline-none"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                                     {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
                                 </select>
@@ -297,13 +382,13 @@ export default function FinanceiroPage() {
                             <div>
                                 <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Data de Vencimento</label>
                                 <input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))}
-                                    className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    className="w-full h-12 px-3 rounded-xl text-sm outline-none"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
                             </div>
                             <div>
                                 <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Método de Pagamento</label>
                                 <select value={form.payment_method} onChange={e => setForm(f => ({ ...f, payment_method: e.target.value }))}
-                                    className="w-full h-10 px-3 rounded-xl text-sm outline-none"
+                                    className="w-full h-12 px-3 rounded-xl text-sm outline-none"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                                     <option value="">Não informado</option>
                                     <option value="pix">PIX</option>
@@ -322,10 +407,10 @@ export default function FinanceiroPage() {
                         </div>
 
                         <div className="flex gap-3 pt-2">
-                            <button onClick={() => setShowForm(false)} className="flex-1 h-10 rounded-xl text-sm font-semibold"
+                            <button onClick={() => setShowForm(false)} className="flex-1 h-12 rounded-xl text-sm font-semibold"
                                 style={{ background: T.elevated, color: T.textSub, border: `1px solid ${T.border}` }}>Cancelar</button>
                             <button onClick={handleSubmit} disabled={saving}
-                                className="flex-1 h-10 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2"
+                                className="flex-1 h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2"
                                 style={{ background: T.gold }}>
                                 {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
                                 {saving ? 'Salvando...' : 'Salvar'}

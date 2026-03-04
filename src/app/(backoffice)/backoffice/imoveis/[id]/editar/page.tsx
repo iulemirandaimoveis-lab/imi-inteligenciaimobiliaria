@@ -24,6 +24,7 @@ import {
   Bath,
   Car,
   Maximize,
+  Sparkles,
 } from 'lucide-react'
 import { uploadFile, uploadMultipleFiles } from '@/lib/supabase-storage'
 
@@ -81,6 +82,7 @@ export default function EditarImovelPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [aiGenerating, setAiGenerating] = useState(false)
 
   const [formData, setFormData] = useState<FormData>({
     name: '', type: '', location: '', address: '', developer: '', developer_id: '', description: '',
@@ -140,6 +142,32 @@ export default function EditarImovelPage() {
     }
     if (params.id) loadData()
   }, [params.id])
+
+  const generateDescription = async () => {
+    setAiGenerating(true)
+    try {
+      const res = await fetch('/api/ai/generate-description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name, type: formData.type,
+          neighborhood: formData.location,
+          area: formData.area, bedrooms: formData.bedrooms,
+          bathrooms: formData.bathrooms, parking: formData.parking,
+          features: formData.features,
+          priceMin: formData.priceMin, deliveryDate: formData.deliveryDate,
+        }),
+      })
+      const data = await res.json()
+      if (data.description) {
+        setFormData(prev => ({ ...prev, description: data.description }))
+        toast.success('Descrição gerada com IA!')
+      } else {
+        toast.error(data.error || 'Erro ao gerar')
+      }
+    } catch { toast.error('Erro de conexão') }
+    finally { setAiGenerating(false) }
+  }
 
   const handleChange = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -369,7 +397,15 @@ export default function EditarImovelPage() {
                 <input type="text" value={formData.address} onChange={e => handleChange('address', e.target.value)} className={inputStyle} style={inputBg} />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Descrição</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium" style={{ color: T.textSub }}>Descrição</label>
+                  <button type="button" onClick={generateDescription} disabled={aiGenerating}
+                    className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-60"
+                    style={{ background: 'rgba(72,101,129,0.12)', color: T.gold, border: '1px solid rgba(72,101,129,0.3)' }}>
+                    {aiGenerating ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
+                    {aiGenerating ? 'Gerando...' : 'Gerar com IA'}
+                  </button>
+                </div>
                 <textarea value={formData.description} onChange={e => handleChange('description', e.target.value)}
                   rows={4} className="w-full px-4 py-3 rounded-xl text-sm outline-none resize-none" style={inputBg} />
               </div>
