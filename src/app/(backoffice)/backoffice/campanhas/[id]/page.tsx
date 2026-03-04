@@ -1,379 +1,295 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import {
-  ArrowLeft,
-  Target,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  MousePointer,
-  DollarSign,
-  Eye,
-  Edit,
-  Play,
-  Pause,
-  Copy,
-  Download,
-  Calendar,
-  MapPin,
+    ArrowLeft, Target, TrendingUp, TrendingDown, Users,
+    DollarSign, Eye, Edit, Play, Pause, BarChart3,
+    Instagram, Facebook, Globe, Mail, MessageSquare,
+    Loader2, ChevronRight, Link as LinkIcon,
 } from 'lucide-react'
+import Link from 'next/link'
 
-// ⚠️ NÃO MODIFICAR - Dados da campanha mockados
-const campanhaData = {
-  id: 1,
-  name: 'Lançamento Reserva Imperial',
-  status: 'ativa',
-  platform: 'Instagram',
-  objective: 'Conversão',
-  startDate: '2026-02-01',
-  endDate: '2026-02-29',
-  budget: 5000,
-  spent: 3200,
-
-  // KPIs principais
-  impressions: 45000,
-  clicks: 1350,
-  ctr: 3.0,
-  cpc: 2.37,
-  leads: 67,
-  cpl: 47.76,
-  conversions: 12,
-  cpa: 266.67,
-  revenue: 7800000,
-  roi: 243750,
-
-  // Performance temporal (últimos 14 dias)
-  performanceTemporal: [
-    { date: '2026-02-05', impressions: 2800, clicks: 84, leads: 4, conversions: 1 },
-    { date: '2026-02-06', impressions: 3100, clicks: 93, leads: 5, conversions: 1 },
-    { date: '2026-02-07', impressions: 2950, clicks: 89, leads: 4, conversions: 0 },
-    { date: '2026-02-08', impressions: 3400, clicks: 102, leads: 6, conversions: 1 },
-    { date: '2026-02-09', impressions: 3200, clicks: 96, leads: 5, conversions: 1 },
-    { date: '2026-02-10', impressions: 3600, clicks: 108, leads: 7, conversions: 1 },
-    { date: '2026-02-11', impressions: 3300, clicks: 99, leads: 5, conversions: 1 },
-    { date: '2026-02-12', impressions: 3800, clicks: 114, leads: 8, conversions: 2 },
-    { date: '2026-02-13', impressions: 3500, clicks: 105, leads: 6, conversions: 1 },
-    { date: '2026-02-14', impressions: 3700, clicks: 111, leads: 7, conversions: 1 },
-  ],
-
-  // Funil de conversão
-  funnel: [
-    { stage: 'Impressões', count: 45000, percentage: 100 },
-    { stage: 'Cliques', count: 1350, percentage: 3.0 },
-    { stage: 'Leads', count: 67, percentage: 4.96 },
-    { stage: 'Conversões', count: 12, percentage: 17.9 },
-  ],
-
-  // Demographics
-  demographics: {
-    age: [
-      { range: '25-34', percentage: 38 },
-      { range: '35-44', percentage: 32 },
-      { range: '45-54', percentage: 18 },
-      { range: '18-24', percentage: 8 },
-      { range: '55+', percentage: 4 },
-    ],
-    gender: [
-      { label: 'Feminino', percentage: 56 },
-      { label: 'Masculino', percentage: 44 },
-    ],
-    location: [
-      { city: 'Boa Viagem', percentage: 42 },
-      { city: 'Pina', percentage: 24 },
-      { city: 'Piedade', percentage: 18 },
-      { city: 'Setúbal', percentage: 10 },
-      { city: 'Outros', percentage: 6 },
-    ],
-  },
-
-  // Leads gerados
-  leadsGerados: [
-    { id: 1, name: 'Maria Santos Silva', score: 92, status: 'convertido', date: '2026-02-12' },
-    { id: 2, name: 'João Pedro Almeida', score: 85, status: 'negociacao', date: '2026-02-11' },
-    { id: 3, name: 'Ana Carolina Ferreira', score: 78, status: 'qualificado', date: '2026-02-10' },
-    { id: 4, name: 'Roberto Carlos Mendes', score: 88, status: 'convertido', date: '2026-02-14' },
-  ],
-
-  // Comparação com média
-  mediaCampanhas: {
-    ctr: 2.1,
-    cpc: 3.2,
-    cpl: 65.0,
-    conversionRate: 12.5,
-    roi: 180000,
-  },
+const T = {
+    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
+    gold: '#486581',
 }
 
+const TYPE_MAP: Record<string, { label: string; icon: any }> = {
+    google_ads: { label: 'Google Ads', icon: Globe },
+    facebook: { label: 'Facebook', icon: Facebook },
+    instagram: { label: 'Instagram', icon: Instagram },
+    email: { label: 'Email', icon: Mail },
+    whatsapp: { label: 'WhatsApp', icon: MessageSquare },
+    sms: { label: 'SMS', icon: MessageSquare },
+    organic: { label: 'Orgânico', icon: TrendingUp },
+    referral: { label: 'Indicação', icon: Users },
+    event: { label: 'Evento', icon: Target },
+    other: { label: 'Outro', icon: BarChart3 },
+}
+
+const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
+    active: { label: 'Ativa', color: '#4CAF7D', bg: 'rgba(76,175,125,0.10)' },
+    paused: { label: 'Pausada', color: '#E8A87C', bg: 'rgba(232,168,124,0.10)' },
+    completed: { label: 'Concluída', color: '#7B9EC4', bg: 'rgba(123,158,196,0.10)' },
+    draft: { label: 'Rascunho', color: '#A89EC4', bg: 'rgba(168,158,196,0.10)' },
+    archived: { label: 'Arquivada', color: '#6B7280', bg: 'rgba(107,114,128,0.10)' },
+}
+
+const fmtBRL = (v: number | null | undefined) => {
+    if (v == null) return '—'
+    if (v >= 1000000) return `R$ ${(v / 1000000).toFixed(1)}M`
+    if (v >= 1000) return `R$ ${(v / 1000).toFixed(1)}k`
+    return `R$ ${v.toFixed(2)}`
+}
+
+const fmtN = (v: number | null | undefined) =>
+    v == null ? '—' : v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v)
+
 export default function CampanhaDetalhesPage() {
-  const router = useRouter()
-  const params = useParams()
-  const [activeTab, setActiveTab] = useState<'overview' | 'metricas' | 'leads'>('overview')
+    const router = useRouter()
+    const params = useParams()
+    const id = params.id as string
 
-  const formatPrice = (price: number) => {
-    if (price >= 1000000) return `R$ ${(price / 1000000).toFixed(1)}M`
-    if (price >= 1000) return `R$ ${(price / 1000).toFixed(1)}k`
-    return `R$ ${price.toFixed(2)}`
-  }
+    const [campanha, setCampanha] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [activeTab, setActiveTab] = useState<'overview' | 'metricas'>('overview')
 
-  const progressPercent = (campanhaData.spent / campanhaData.budget) * 100
+    useEffect(() => {
+        fetch(`/api/campanhas?id=${id}`)
+            .then(r => r.json())
+            .then(data => {
+                if (!data.error) setCampanha(data)
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false))
+    }, [id])
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-4">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition-colors flex-shrink-0"
-          >
-            <ArrowLeft size={20} />
-          </button>
-
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-gray-900">{campanhaData.name}</h1>
-              <span className={`px-3 py-1 rounded-lg text-xs font-medium ${campanhaData.status === 'ativa' ? 'bg-green-50 text-green-700' : 'bg-gray-50 text-gray-700'
-                }`}>
-                {campanhaData.status === 'ativa' ? 'Ativa' : 'Pausada'}
-              </span>
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-24">
+                <Loader2 className="animate-spin" size={22} style={{ color: T.gold }} />
             </div>
-            <div className="flex items-center gap-4 text-sm text-gray-600">
-              <span>{campanhaData.platform}</span>
-              <span>•</span>
-              <span>{campanhaData.objective}</span>
-              <span>•</span>
-              <span>{new Date(campanhaData.startDate).toLocaleDateString('pt-BR')} - {new Date(campanhaData.endDate).toLocaleDateString('pt-BR')}</span>
+        )
+    }
+
+    if (!campanha) {
+        return (
+            <div className="rounded-2xl p-16 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <Target size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textSub }} />
+                <p className="text-sm font-semibold" style={{ color: T.textSub }}>Campanha não encontrada</p>
+                <Link href="/backoffice/campanhas" className="text-xs mt-2 inline-block hover:underline" style={{ color: T.gold }}>
+                    Voltar às campanhas
+                </Link>
             </div>
-          </div>
-        </div>
+        )
+    }
 
-        <div className="flex items-center gap-2">
-          <button className="h-10 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
-            <Download size={16} />
-            <span className="hidden sm:inline">Exportar</span>
-          </button>
-          <button className="h-10 px-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2">
-            <Copy size={16} />
-            <span className="hidden sm:inline">Duplicar</span>
-          </button>
-          <button
-            onClick={() => router.push(`/backoffice/campanhas/${params.id}/editar`)}
-            className="h-10 px-4 bg-[#16162A] text-white rounded-lg hover:bg-[#0F0F1E] transition-colors flex items-center gap-2"
-          >
-            <Edit size={16} />
-            <span className="hidden sm:inline">Editar</span>
-          </button>
-        </div>
-      </div>
+    const type = TYPE_MAP[campanha.channel] || TYPE_MAP.other
+    const status = STATUS_MAP[campanha.status] || STATUS_MAP.draft
+    const TypeIcon = type.icon
+    const progressPct = campanha.budget ? Math.min((campanha.spent / campanha.budget) * 100, 100) : 0
 
-      {/* KPIs Principais */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Impressões</p>
-          <p className="text-2xl font-bold text-gray-900">{campanhaData.impressions.toLocaleString('pt-BR')}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Cliques</p>
-          <p className="text-2xl font-bold text-blue-700">{campanhaData.clicks.toLocaleString('pt-BR')}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">CTR</p>
-          <p className="text-2xl font-bold text-purple-700">{campanhaData.ctr.toFixed(1)}%</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">CPC</p>
-          <p className="text-2xl font-bold text-gray-900">{formatPrice(campanhaData.cpc)}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Leads</p>
-          <p className="text-2xl font-bold text-[#0F0F1E]">{campanhaData.leads}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">CPL</p>
-          <p className="text-2xl font-bold text-orange-700">{formatPrice(campanhaData.cpl)}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Conversões</p>
-          <p className="text-2xl font-bold text-green-700">{campanhaData.conversions}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">ROI</p>
-          <p className="text-2xl font-bold text-green-700">{campanhaData.roi.toLocaleString('pt-BR')}%</p>
-        </div>
-      </div>
+    // Computed funnel from real data
+    const funnel = [
+        { stage: 'Impressões', count: campanha.impressions || 0 },
+        { stage: 'Cliques', count: campanha.clicks || 0 },
+        { stage: 'Leads', count: campanha.leads || 0 },
+        { stage: 'Conversões', count: campanha.conversions || 0 },
+    ]
+    const maxFunnel = funnel[0].count || 1
 
-      {/* Budget Progress */}
-      <div className="bg-white rounded-xl p-6 border">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <p className="text-sm font-medium text-gray-900">Orçamento</p>
-            <p className="text-xs text-gray-600">
-              {formatPrice(campanhaData.spent)} de {formatPrice(campanhaData.budget)} ({progressPercent.toFixed(0)}%)
-            </p>
-          </div>
-          <p className="text-lg font-bold text-[#0F0F1E]">
-            {formatPrice(campanhaData.budget - campanhaData.spent)} restante
-          </p>
-        </div>
-        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-[#102A43]'
-              }`}
-            style={{ width: `${Math.min(progressPercent, 100)}%` }}
-          />
-        </div>
-      </div>
+    const KPIS = [
+        { label: 'Impressões', value: fmtN(campanha.impressions), color: T.textSub },
+        { label: 'Cliques', value: fmtN(campanha.clicks), color: '#7BA3C2' },
+        { label: 'CTR', value: campanha.ctr != null ? `${Number(campanha.ctr).toFixed(1)}%` : '—', color: '#A89EC4' },
+        { label: 'Leads', value: fmtN(campanha.leads), color: T.gold },
+        { label: 'Conversões', value: fmtN(campanha.conversions), color: '#4CAF7D' },
+        { label: 'CPL', value: fmtBRL(campanha.cost_per_lead), color: '#E8A87C' },
+        { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: '#6BB87B' },
+        { label: 'Orçamento', value: fmtBRL(campanha.budget), color: T.text },
+    ]
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <div className="flex gap-6">
-          {['overview', 'metricas', 'leads'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab as any)}
-              className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#334E68] text-[#486581]' : 'border-transparent text-gray-600'
-                }`}
-            >
-              {tab === 'overview' ? 'Visão Geral' : tab === 'metricas' ? 'Métricas' : 'Leads Gerados'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Funil de Conversão */}
-          <div className="bg-white rounded-2xl p-6 border">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">Funil de Conversão</h2>
-            <div className="space-y-4">
-              {campanhaData.funnel.map((stage, idx) => (
-                <div key={idx}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-900">{stage.stage}</span>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-gray-900">{stage.count.toLocaleString('pt-BR')}</p>
-                      {idx > 0 && (
-                        <p className="text-xs text-gray-600">{stage.percentage.toFixed(1)}% conversão</p>
-                      )}
+    return (
+        <div className="space-y-6 max-w-5xl mx-auto">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Link href="/backoffice/campanhas" className="text-xs font-medium hover:underline" style={{ color: T.textSub }}>
+                            Campanhas
+                        </Link>
+                        <ChevronRight size={12} style={{ color: T.textSub }} />
+                        <span className="text-xs font-medium" style={{ color: T.text }}>{campanha.name}</span>
                     </div>
-                  </div>
-                  <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${idx === 0 ? 'bg-blue-500' :
-                          idx === 1 ? 'bg-purple-500' :
-                            idx === 2 ? 'bg-orange-500' :
-                              'bg-green-500'
-                        }`}
-                      style={{ width: `${stage.percentage}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Demographics - Idade */}
-          <div className="bg-white rounded-2xl p-6 border">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">Idade do Público</h2>
-            <div className="space-y-4">
-              {campanhaData.demographics.age.map((item, idx) => (
-                <div key={idx}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-900">{item.range}</span>
-                    <span className="text-sm font-bold text-gray-900">{item.percentage}%</span>
-                  </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[#102A43] rounded-full transition-all"
-                      style={{ width: `${item.percentage}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Demographics - Localização */}
-          <div className="bg-white rounded-2xl p-6 border">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">Top Localizações</h2>
-            <div className="space-y-3">
-              {campanhaData.demographics.location.map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <MapPin size={16} className="text-gray-600" />
-                    <span className="text-sm font-medium text-gray-900">{item.city}</span>
-                  </div>
-                  <span className="text-sm font-bold text-[#0F0F1E]">{item.percentage}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Comparação com Média */}
-          <div className="bg-white rounded-2xl p-6 border">
-            <h2 className="text-lg font-bold text-gray-900 mb-6">vs Média das Campanhas</h2>
-            <div className="space-y-4">
-              {[
-                { metric: 'CTR', value: campanhaData.ctr, avg: campanhaData.mediaCampanhas.ctr, suffix: '%' },
-                { metric: 'CPC', value: campanhaData.cpc, avg: campanhaData.mediaCampanhas.cpc, suffix: '', isPrice: true },
-                { metric: 'CPL', value: campanhaData.cpl, avg: campanhaData.mediaCampanhas.cpl, suffix: '', isPrice: true },
-                { metric: 'Conversão', value: (campanhaData.conversions / campanhaData.leads) * 100, avg: campanhaData.mediaCampanhas.conversionRate, suffix: '%' },
-              ].map((item, idx) => {
-                const better = item.metric === 'CPC' || item.metric === 'CPL' ? item.value < item.avg : item.value > item.avg
-
-                return (
-                  <div key={idx} className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900">{item.metric}</span>
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm text-gray-600">
-                        Média: {item.isPrice ? formatPrice(item.avg) : item.avg.toFixed(1) + item.suffix}
-                      </span>
-                      <span className={`text-sm font-bold flex items-center gap-1 ${better ? 'text-green-600' : 'text-red-600'}`}>
-                        {better ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                        {item.isPrice ? formatPrice(item.value) : item.value.toFixed(1) + item.suffix}
-                      </span>
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                            style={{ background: 'rgba(72,101,129,0.12)' }}>
+                            <TypeIcon size={16} style={{ color: T.gold }} />
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-bold leading-tight" style={{ color: T.text }}>{campanha.name}</h1>
+                            <p className="text-xs mt-0.5" style={{ color: T.textSub }}>
+                                {type.label}
+                                {campanha.objective && <> · {campanha.objective}</>}
+                                {campanha.start_date && <> · {new Date(campanha.start_date).toLocaleDateString('pt-BR')}</>}
+                                {campanha.end_date && <> – {new Date(campanha.end_date).toLocaleDateString('pt-BR')}</>}
+                            </p>
+                        </div>
                     </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'leads' && (
-        <div className="bg-white rounded-xl border">
-          <div className="p-6 border-b">
-            <h2 className="text-lg font-bold text-gray-900">Leads Gerados ({campanhaData.leadsGerados.length})</h2>
-          </div>
-          <div className="divide-y">
-            {campanhaData.leadsGerados.map(lead => (
-              <div key={lead.id} className="p-6 hover:bg-gray-50 cursor-pointer" onClick={() => router.push(`/backoffice/leads/${lead.id}`)}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-gray-900 mb-1">{lead.name}</p>
-                    <p className="text-sm text-gray-600">{new Date(lead.date).toLocaleDateString('pt-BR')}</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">Score: {lead.score}</p>
-                      <span className={`text-xs px-2 py-1 rounded ${lead.status === 'convertido' ? 'bg-green-50 text-green-700' :
-                          lead.status === 'negociacao' ? 'bg-orange-50 text-orange-700' :
-                            'bg-blue-50 text-blue-700'
-                        }`}>
-                        {lead.status}
-                      </span>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-lg"
+                        style={{ color: status.color, background: status.bg }}>
+                        {status.label}
+                    </span>
+                    <button
+                        onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
+                        className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-sm font-semibold text-white"
+                        style={{ background: T.gold }}>
+                        <Edit size={14} /> Editar
+                    </button>
+                </div>
+            </div>
+
+            {/* KPI grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+                {KPIS.map((kpi, i) => (
+                    <div key={i} className="rounded-2xl p-4"
+                        style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: T.textSub }}>{kpi.label}</p>
+                        <p className="text-lg font-bold" style={{ color: kpi.color }}>{kpi.value}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Budget progress */}
+            {campanha.budget > 0 && (
+                <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="flex items-center justify-between mb-3">
+                        <div>
+                            <p className="text-sm font-semibold" style={{ color: T.text }}>Orçamento utilizado</p>
+                            <p className="text-xs" style={{ color: T.textSub }}>
+                                {fmtBRL(campanha.spent)} de {fmtBRL(campanha.budget)} ({progressPct.toFixed(0)}%)
+                            </p>
+                        </div>
+                        <p className="text-sm font-bold" style={{ color: T.text }}>
+                            {fmtBRL((campanha.budget || 0) - (campanha.spent || 0))} restante
+                        </p>
+                    </div>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                        <div className="h-full rounded-full transition-all"
+                            style={{
+                                width: `${progressPct}%`,
+                                background: progressPct > 90 ? '#E87C7C' : progressPct > 70 ? '#E8A87C' : T.gold,
+                            }} />
+                    </div>
+                </div>
+            )}
+
+            {/* UTM info if present */}
+            {(campanha.utm_source || campanha.utm_campaign) && (
+                <div className="rounded-2xl p-4 flex items-center gap-3"
+                    style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <LinkIcon size={14} style={{ color: T.textSub }} />
+                    <p className="text-xs" style={{ color: T.textSub }}>
+                        {campanha.utm_source && <><span className="font-semibold">UTM Source:</span> {campanha.utm_source} </>}
+                        {campanha.utm_campaign && <><span className="font-semibold">· Campaign:</span> {campanha.utm_campaign}</>}
+                    </p>
+                </div>
+            )}
+
+            {/* Tabs */}
+            <div className="flex gap-6 border-b" style={{ borderColor: T.border }}>
+                {(['overview', 'metricas'] as const).map(tab => (
+                    <button key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className="pb-3 px-1 text-sm font-medium border-b-2 transition-colors"
+                        style={{
+                            borderColor: activeTab === tab ? T.gold : 'transparent',
+                            color: activeTab === tab ? T.gold : T.textSub,
+                        }}>
+                        {tab === 'overview' ? 'Visão Geral' : 'Métricas'}
+                    </button>
+                ))}
+            </div>
+
+            {/* Overview tab */}
+            {activeTab === 'overview' && (
+                <div className="grid md:grid-cols-2 gap-4">
+                    {/* Conversion funnel */}
+                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Funil de Conversão</h2>
+                        <div className="space-y-4">
+                            {funnel.map((stage, idx) => {
+                                const pct = maxFunnel > 0 ? (stage.count / maxFunnel) * 100 : 0
+                                const COLORS = [T.gold, '#7BA3C2', '#A89EC4', '#4CAF7D']
+                                return (
+                                    <div key={idx}>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <span className="text-xs font-medium" style={{ color: T.text }}>{stage.stage}</span>
+                                            <span className="text-xs font-bold" style={{ color: T.textSub }}>
+                                                {fmtN(stage.count)}
+                                            </span>
+                                        </div>
+                                        <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                                            <div className="h-full rounded-full"
+                                                style={{ width: `${pct}%`, background: COLORS[idx] }} />
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Campaign info */}
+                    <div className="rounded-2xl p-6 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <h2 className="text-sm font-bold" style={{ color: T.text }}>Detalhes da Campanha</h2>
+                        {[
+                            { label: 'Canal', value: type.label },
+                            { label: 'Status', value: status.label },
+                            { label: 'Objetivo', value: campanha.objective || '—' },
+                            { label: 'Orçamento diário', value: fmtBRL(campanha.daily_budget) },
+                            { label: 'Início', value: campanha.start_date ? new Date(campanha.start_date).toLocaleDateString('pt-BR') : '—' },
+                            { label: 'Fim', value: campanha.end_date ? new Date(campanha.end_date).toLocaleDateString('pt-BR') : '—' },
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-center justify-between">
+                                <span className="text-xs" style={{ color: T.textSub }}>{item.label}</span>
+                                <span className="text-xs font-semibold" style={{ color: T.text }}>{item.value}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Métricas tab */}
+            {activeTab === 'metricas' && (
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Métricas Detalhadas</h2>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                        {[
+                            { label: 'Impressões totais', value: fmtN(campanha.impressions) },
+                            { label: 'Cliques totais', value: fmtN(campanha.clicks) },
+                            { label: 'CTR (Click-through rate)', value: campanha.ctr != null ? `${Number(campanha.ctr).toFixed(2)}%` : '—' },
+                            { label: 'Leads gerados', value: fmtN(campanha.leads) },
+                            { label: 'Conversões', value: fmtN(campanha.conversions) },
+                            { label: 'CPL (Custo por lead)', value: fmtBRL(campanha.cost_per_lead) },
+                            { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—' },
+                            { label: 'Total investido', value: fmtBRL(campanha.spent) },
+                            { label: 'Orçamento total', value: fmtBRL(campanha.budget) },
+                            { label: 'Taxa de conversão', value: campanha.leads > 0 ? `${((campanha.conversions / campanha.leads) * 100).toFixed(1)}%` : '—' },
+                        ].map((item, i) => (
+                            <div key={i} className="flex items-center justify-between p-3 rounded-xl"
+                                style={{ background: T.elevated }}>
+                                <span className="text-xs" style={{ color: T.textSub }}>{item.label}</span>
+                                <span className="text-sm font-bold" style={{ color: T.text }}>{item.value}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  )
+    )
 }

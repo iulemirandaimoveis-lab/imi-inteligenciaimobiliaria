@@ -5,10 +5,23 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
 function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     const supabase = getSupabase()
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (id) {
+        const { data, error } = await supabase
+            .from('campaigns')
+            .select('*')
+            .eq('id', id)
+            .single()
+        if (error) return Response.json({ error: error.message }, { status: 404 })
+        return Response.json(data)
+    }
+
     const { data, error } = await supabase
-        .from('ads_campaigns')
+        .from('campaigns')
         .select('*')
         .order('created_at', { ascending: false })
 
@@ -21,17 +34,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     const { data, error } = await supabase
-        .from('ads_campaigns')
+        .from('campaigns')
         .insert({
-            name: body.name || body.nome,
-            platform: body.platform || body.plataforma,
+            name: body.name,
+            channel: body.channel || body.platform,
             status: body.status || 'draft',
-            budget: body.budget || body.orcamento,
-            start_date: body.start_date || body.dataInicio,
-            end_date: body.end_date || body.dataFim,
-            objective: body.objective || body.objetivo,
-            target_audience: body.target_audience || body.publicoAlvo,
-            ad_content: body.ad_content || body.conteudo,
+            budget: body.budget,
+            daily_budget: body.daily_budget,
+            start_date: body.start_date,
+            end_date: body.end_date,
+            objective: body.objective,
+            utm_source: body.utm_source,
+            utm_campaign: body.utm_campaign,
         })
         .select()
         .single()
@@ -47,7 +61,7 @@ export async function PUT(request: NextRequest) {
     if (!id) return Response.json({ error: 'ID obrigatório' }, { status: 400 })
 
     const { data, error } = await supabase
-        .from('ads_campaigns')
+        .from('campaigns')
         .update(updates)
         .eq('id', id)
         .select()
