@@ -25,8 +25,32 @@ import {
   Car,
   Maximize,
   Sparkles,
+  Star,
+  Play,
+  Link as LinkIcon,
+  FileText,
 } from 'lucide-react'
 import { uploadFile, uploadMultipleFiles } from '@/lib/supabase-storage'
+
+/* ── YouTube helpers ── */
+function getYoutubeId(url: string): string | null {
+  const regexps = [
+    /youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+    /youtu\.be\/([a-zA-Z0-9_-]+)/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]+)/,
+  ]
+  for (const r of regexps) {
+    const m = url.match(r)
+    if (m) return m[1]
+  }
+  return null
+}
+
+function getYoutubeEmbedUrl(url: string): string | null {
+  const id = getYoutubeId(url)
+  return id ? `https://www.youtube.com/embed/${id}` : null
+}
 
 type Step = 1 | 2 | 3 | 4
 
@@ -52,15 +76,27 @@ interface FormData {
   deliveryDate: string
   images: File[]
   existingImages: string[]
+  existingFloorPlans: string[]
+  floorPlans: File[]
+  existingBrochure: string
+  brochure: File | null
   logo: File | null
   existingLogo: string
   status: string
+  status_commercial: string
   is_highlighted: boolean
   videoUrl: string
   videoShort: string
 }
 
 const tiposImovel = ['Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft', 'Terreno', 'Comercial', 'Empreendimento', 'Flat', 'Penthouse', 'Villa']
+
+// Map DB lowercase values back to capitalized form values
+const dbTypeToForm: Record<string, string> = {
+  apartamento: 'Apartamento', apartment: 'Apartamento', casa: 'Casa', house: 'Casa',
+  flat: 'Flat', lote: 'Terreno', land: 'Terreno', comercial: 'Comercial', commercial: 'Comercial',
+  resort: 'Villa', penthouse: 'Penthouse', studio: 'Studio', mixed: 'Empreendimento',
+}
 const statusOptions = ['disponivel', 'em_negociacao', 'reservado', 'vendido', 'lancamento']
 const featuresOptions = [
   'Piscina', 'Academia', 'Salão de festas', 'Churrasqueira', 'Playground', 'Quadra esportiva',
@@ -88,8 +124,9 @@ export default function EditarImovelPage() {
     name: '', type: '', location: '', address: '', developer: '', developer_id: '', description: '',
     area: '', bedrooms: '', bathrooms: '', parking: '', floor: '', features: [],
     priceMin: '', priceMax: '', pricePerSqm: '', totalUnits: '', availableUnits: '', deliveryDate: '',
-    images: [], existingImages: [], logo: null, existingLogo: '',
-    status: 'disponivel', is_highlighted: false,
+    images: [], existingImages: [], existingFloorPlans: [], floorPlans: [], existingBrochure: '', brochure: null,
+    logo: null, existingLogo: '',
+    status: 'disponivel', status_commercial: 'draft', is_highlighted: false,
     videoUrl: '', videoShort: '',
   })
 
@@ -106,7 +143,7 @@ export default function EditarImovelPage() {
 
         setFormData({
           name: d.name || '',
-          type: d.tipo || d.property_type || d.type || '',
+          type: dbTypeToForm[d.tipo] || dbTypeToForm[d.property_type] || dbTypeToForm[d.type] || d.tipo || d.property_type || d.type || '',
           location: d.neighborhood || d.region || '',
           address: d.address || '',
           developer: d.developer || d.developers?.name || '',
@@ -116,19 +153,24 @@ export default function EditarImovelPage() {
           bedrooms: d.bedrooms?.toString() || '',
           bathrooms: d.bathrooms?.toString() || '',
           parking: d.parking_spaces?.toString() || '',
-          floor: '',
+          floor: d.floor_count?.toString() || '',
           features: Array.isArray(d.features) ? d.features : [],
-          priceMin: d.price_min?.toString() || '',
-          priceMax: d.price_max?.toString() || '',
+          priceMin: d.price_min?.toString() || d.price_from?.toString() || '',
+          priceMax: d.price_max?.toString() || d.price_to?.toString() || '',
           pricePerSqm: d.price_per_sqm?.toString() || '',
-          totalUnits: d.units_count?.toString() || '',
+          totalUnits: d.units_count?.toString() || d.total_units?.toString() || '',
           availableUnits: d.available_units?.toString() || '',
           deliveryDate: d.delivery_date ? d.delivery_date.substring(0, 7) : '',
           images: [],
           existingImages: galleryImgs,
+          existingFloorPlans: Array.isArray(d.floor_plans) ? d.floor_plans : [],
+          floorPlans: [],
+          existingBrochure: d.brochure_url || '',
+          brochure: null,
           logo: null,
           existingLogo: d.developers?.logo_url || d.developer_logo || '',
           status: d.status || 'disponivel',
+          status_commercial: d.status_commercial || d.status_comercial || 'draft',
           is_highlighted: !!d.is_highlighted,
           videoUrl: d.video_url || '',
           videoShort: d.video_short_url || '',
@@ -196,6 +238,32 @@ export default function EditarImovelPage() {
     setFormData(prev => ({ ...prev, existingImages: prev.existingImages.filter(img => img !== url) }))
   }
 
+  const setMainImage = (index: number) => {
+    setFormData(prev => {
+      const imgs = [...prev.existingImages]
+      const [main] = imgs.splice(index, 1)
+      return { ...prev, existingImages: [main, ...imgs] }
+    })
+  }
+
+  const handleFloorPlanUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    setFormData(prev => ({ ...prev, floorPlans: [...prev.floorPlans, ...files] }))
+  }
+
+  const removeFloorPlan = (index: number) => {
+    setFormData(prev => ({ ...prev, floorPlans: prev.floorPlans.filter((_, i) => i !== index) }))
+  }
+
+  const removeExistingFloorPlan = (url: string) => {
+    setFormData(prev => ({ ...prev, existingFloorPlans: prev.existingFloorPlans.filter(fp => fp !== url) }))
+  }
+
+  const handleBrochureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) setFormData(prev => ({ ...prev, brochure: file }))
+  }
+
   const validateStep = (step: Step): boolean => {
     const newErrors: Record<string, string> = {}
     if (step === 1) {
@@ -234,7 +302,24 @@ export default function EditarImovelPage() {
       // 2. Combine existing + new images
       const allImages = [...formData.existingImages, ...newImageUrls]
 
-      // 3. Build update payload
+      // 3. Upload new floor plans
+      let newFloorPlanUrls: string[] = []
+      if (formData.floorPlans.length > 0) {
+        toast.info(`Enviando ${formData.floorPlans.length} planta(s)...`)
+        const fpResults = await uploadMultipleFiles(formData.floorPlans, 'developments', 'plantas')
+        newFloorPlanUrls = fpResults.filter(r => !r.error).map(r => r.url)
+      }
+      const allFloorPlans = [...formData.existingFloorPlans, ...newFloorPlanUrls]
+
+      // 4. Upload brochure if new
+      let brochureUrl: string | null = formData.existingBrochure || null
+      if (formData.brochure) {
+        toast.info('Enviando brochure...')
+        const brResult = await uploadFile(formData.brochure, 'media', 'developments/brochures')
+        if (!brResult.error) brochureUrl = brResult.url
+      }
+
+      // 5. Build update payload
       const updatePayload: Record<string, any> = {
         id: params.id,
         name: formData.name,
@@ -249,17 +334,24 @@ export default function EditarImovelPage() {
         bedrooms: Number(formData.bedrooms) || null,
         bathrooms: Number(formData.bathrooms) || null,
         parking_spaces: Number(formData.parking) || null,
+        floor_count: Number(formData.floor) || null,
         features: formData.features,
         price_min: Number(formData.priceMin) || null,
         price_max: Number(formData.priceMax) || null,
+        price_from: Number(formData.priceMin) || null,
+        price_to: Number(formData.priceMax) || null,
         price_per_sqm: Number(formData.pricePerSqm) || null,
         units_count: Number(formData.totalUnits) || null,
         available_units: Number(formData.availableUnits) || null,
         delivery_date: formData.deliveryDate ? new Date(formData.deliveryDate).toISOString() : null,
         status: formData.status,
+        status_commercial: formData.status_commercial,
+        status_comercial: formData.status_commercial,
         is_highlighted: formData.is_highlighted,
         gallery_images: allImages,
         image: allImages[0] || null,
+        floor_plans: allFloorPlans,
+        brochure_url: brochureUrl,
         video_url: formData.videoUrl || null,
         video_short_url: formData.videoShort || null,
       }
@@ -385,6 +477,16 @@ export default function EditarImovelPage() {
                 </select>
               </div>
               <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Visibilidade no Site</label>
+                <select value={formData.status_commercial} onChange={e => handleChange('status_commercial', e.target.value)} className={inputStyle} style={inputBg}>
+                  <option value="published">Publicado (visível)</option>
+                  <option value="draft">Rascunho (oculto)</option>
+                  <option value="campaign">Campanha</option>
+                  <option value="private">Privado</option>
+                  <option value="sold">Vendido</option>
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Bairro / Região</label>
                 <input type="text" value={formData.location} onChange={e => handleChange('location', e.target.value)} placeholder="Boa Viagem, Brickell, Downtown..." className={inputStyle} style={inputBg} />
               </div>
@@ -494,38 +596,45 @@ export default function EditarImovelPage() {
 
         {/* Step 4 */}
         {currentStep === 4 && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <h2 className="text-xl font-bold" style={{ color: T.text }}>Mídia</h2>
 
-            {/* Video URLs */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>URL do Vídeo Principal (YouTube)</label>
-                <input type="url" value={formData.videoUrl} onChange={e => handleChange('videoUrl', e.target.value)}
-                  placeholder="https://www.youtube.com/watch?v=..." className={inputStyle} style={inputBg} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>URL do Short / Reels</label>
-                <input type="url" value={formData.videoShort} onChange={e => handleChange('videoShort', e.target.value)}
-                  placeholder="https://www.youtube.com/shorts/..." className={inputStyle} style={inputBg} />
-              </div>
-            </div>
+            {/* ── Existing Images with Set Main ── */}
             {formData.existingImages.length > 0 && (
               <div>
-                <label className="block text-sm font-medium mb-3" style={{ color: T.textSub }}>Imagens Atuais ({formData.existingImages.length})</label>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium" style={{ color: T.textSub }}>Imagens Atuais ({formData.existingImages.length})</label>
+                  <span className="text-[11px]" style={{ color: T.textDim }}>★ = imagem de capa</span>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {formData.existingImages.map((url, index) => (
-                    <div key={index} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                    <div key={index} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${index === 0 ? '#f59e0b' : T.border}` }}>
                       <img src={url} alt={`Imagem ${index + 1}`} className="w-full h-32 object-cover" />
+                      {/* Star = set as main */}
+                      <button type="button" onClick={() => setMainImage(index)}
+                        className="absolute top-2 left-2 w-6 h-6 rounded-full flex items-center justify-center transition-all"
+                        style={{ background: index === 0 ? '#f59e0b' : 'rgba(0,0,0,0.5)' }}
+                        title={index === 0 ? 'Capa atual' : 'Definir como capa'}>
+                        <Star size={11} fill={index === 0 ? 'white' : 'none'} className="text-white" />
+                      </button>
+                      {/* Delete */}
                       <button type="button" onClick={() => removeExistingImage(url)}
                         className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <X size={14} />
                       </button>
+                      {index === 0 && (
+                        <div className="absolute bottom-0 inset-x-0 text-[10px] font-bold text-center py-0.5"
+                          style={{ background: 'rgba(245,158,11,0.85)', color: 'white' }}>
+                          CAPA
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
             )}
+
+            {/* ── Upload New Photos ── */}
             <div>
               <label className="block text-sm font-medium mb-3" style={{ color: T.textSub }}>Adicionar Novas Fotos</label>
               <label className="block cursor-pointer">
@@ -549,6 +658,132 @@ export default function EditarImovelPage() {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* ── Video YouTube ── */}
+            <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
+              <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Vídeo Principal (YouTube)</label>
+              <div className="relative">
+                <Play className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textDim }} />
+                <input type="url" value={formData.videoUrl} onChange={e => handleChange('videoUrl', e.target.value)}
+                  placeholder="https://youtube.com/watch?v=... ou youtu.be/..."
+                  className={inputStyle} style={{ ...inputBg, paddingLeft: '2.5rem' }} />
+              </div>
+              {formData.videoUrl && getYoutubeEmbedUrl(formData.videoUrl) && (
+                <div className="mt-3 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                  <iframe
+                    src={getYoutubeEmbedUrl(formData.videoUrl)!}
+                    className="w-full h-full"
+                    allowFullScreen
+                    title="Preview vídeo"
+                  />
+                </div>
+              )}
+              {formData.videoUrl && !getYoutubeEmbedUrl(formData.videoUrl) && (
+                <p className="mt-1.5 text-xs flex items-center gap-1" style={{ color: '#f87171' }}>
+                  <AlertCircle size={12} /> URL do YouTube inválida
+                </p>
+              )}
+            </div>
+
+            {/* ── Short / Reels ── */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Short / Reels (YouTube Shorts)</label>
+              <div className="relative">
+                <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textDim }} />
+                <input type="url" value={formData.videoShort} onChange={e => handleChange('videoShort', e.target.value)}
+                  placeholder="https://youtube.com/shorts/..."
+                  className={inputStyle} style={{ ...inputBg, paddingLeft: '2.5rem' }} />
+              </div>
+            </div>
+
+            {/* ── Floor Plans ── */}
+            <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
+              <label className="block text-sm font-medium mb-3" style={{ color: T.textSub }}>Plantas do Imóvel</label>
+              {formData.existingFloorPlans.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                  {formData.existingFloorPlans.map((url, index) => (
+                    <div key={index} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                      <img src={url} alt={`Planta ${index + 1}`} className="w-full h-28 object-cover" />
+                      <button type="button" onClick={() => removeExistingFloorPlan(url)}
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <label className="block cursor-pointer">
+                <input type="file" multiple accept="image/*" onChange={handleFloorPlanUpload} className="hidden" />
+                <div className="border-2 border-dashed rounded-xl p-6 text-center transition-all hover:opacity-80" style={{ borderColor: T.border }}>
+                  <ImageIcon size={28} className="mx-auto mb-2" style={{ color: T.textDim }} />
+                  <p className="text-sm font-medium" style={{ color: T.text }}>Adicionar plantas</p>
+                  <p className="text-xs mt-1" style={{ color: T.textDim }}>PNG, JPG — planta tipo, cobertura, subsolo</p>
+                </div>
+              </label>
+              {formData.floorPlans.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+                  {formData.floorPlans.map((file, i) => (
+                    <div key={i} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                      <img src={URL.createObjectURL(file)} alt={`Planta ${i + 1}`} className="w-full h-28 object-cover" />
+                      <button type="button" onClick={() => removeFloorPlan(i)}
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <X size={14} />
+                      </button>
+                      <div className="absolute bottom-0 inset-x-0 text-[10px] font-bold text-center py-0.5 truncate px-2"
+                        style={{ background: 'rgba(0,0,0,0.6)', color: 'white' }}>
+                        {file.name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ── Brochure PDF ── */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Brochure / Material Digital</label>
+              {formData.existingBrochure && !formData.brochure && (
+                <div className="flex items-center gap-3 p-4 rounded-xl mb-3" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                  <FileText size={20} style={{ color: T.gold }} />
+                  <a href={formData.existingBrochure} target="_blank" rel="noopener noreferrer"
+                    className="text-sm font-medium underline flex-1 truncate" style={{ color: T.gold }}>
+                    Brochure atual
+                  </a>
+                  <button type="button" onClick={() => handleChange('existingBrochure', '')}
+                    className="text-xs font-semibold" style={{ color: '#f87171' }}>
+                    Remover
+                  </button>
+                </div>
+              )}
+              <label className="block cursor-pointer">
+                <input type="file" accept=".pdf,image/*" onChange={handleBrochureUpload} className="hidden" />
+                <div className="border-2 border-dashed rounded-xl p-5 transition-all hover:opacity-80" style={{ borderColor: T.border }}>
+                  {formData.brochure ? (
+                    <div className="flex items-center gap-3">
+                      <FileText size={20} style={{ color: T.gold }} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate" style={{ color: T.text }}>{formData.brochure.name}</p>
+                        <p className="text-xs" style={{ color: T.textDim }}>{(formData.brochure.size / 1024 / 1024).toFixed(1)} MB</p>
+                      </div>
+                      <button type="button" onClick={e => { e.preventDefault(); handleChange('brochure', null) }}
+                        className="text-xs font-semibold" style={{ color: '#f87171' }}>
+                        Remover
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <FileText size={24} style={{ color: T.textDim }} />
+                      <div>
+                        <p className="text-sm font-medium" style={{ color: T.text }}>
+                          {formData.existingBrochure ? 'Substituir brochure' : 'Adicionar brochure'}
+                        </p>
+                        <p className="text-xs" style={{ color: T.textDim }}>PDF, PNG — será disponibilizado no site</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </label>
             </div>
           </div>
         )}

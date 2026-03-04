@@ -88,6 +88,9 @@ interface FormData {
     deliveryDate: string
     description: string
 
+    // Step 3: Status
+    status_commercial: string
+
     // Step 4: Mídia
     images: File[]
     logo: File | null
@@ -221,6 +224,7 @@ export default function NovoImovelPage() {
         priceMin: '', priceMax: '', pricePerSqm: '',
         totalUnits: '', availableUnits: '', deliveryDate: '',
         description: '',
+        status_commercial: 'published',
         images: [], logo: null,
         floorPlans: [], brochure: null,
         videoUrl: '', videoShort: '',
@@ -504,6 +508,7 @@ export default function NovoImovelPage() {
                 availableUnits: formData.availableUnits,
                 deliveryDate: formData.deliveryDate,
                 description: formData.description,
+                status_commercial: formData.status_commercial,
                 gallery_images: imageUrls,
                 image: imageUrls[0] || null,
                 floor_plans: floorPlanUrls,
@@ -959,6 +964,21 @@ export default function NovoImovelPage() {
                                     value={formData.availableUnits}
                                     onChange={v => handleChange('availableUnits', v)}
                                     placeholder="45"
+                                />
+                            </div>
+                            <div>
+                                <Label>Visibilidade</Label>
+                                <Select
+                                    value={formData.status_commercial}
+                                    onChange={v => handleChange('status_commercial', v)}
+                                    options={[
+                                        { value: 'published', label: 'Publicado (visível no site)' },
+                                        { value: 'draft', label: 'Rascunho (oculto)' },
+                                        { value: 'campaign', label: 'Campanha' },
+                                        { value: 'private', label: 'Privado' },
+                                        { value: 'sold', label: 'Vendido' },
+                                    ]}
+                                    placeholder="Status de publicação"
                                 />
                             </div>
                         </div>
