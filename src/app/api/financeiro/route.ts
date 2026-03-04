@@ -1,5 +1,5 @@
 // src/app/api/financeiro/route.ts
-// ── Financial Transactions CRUD (tabela: transactions) ────────
+// ── Financial Transactions CRUD (tabela: financial_transactions) ────────
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -25,21 +25,18 @@ export async function GET(req: NextRequest) {
 
         if (id) {
             const { data, error } = await supabase
-                .from('transactions')
+                .from('financial_transactions')
                 .select('*')
                 .eq('id', id)
-                .eq('user_id', user.id)
                 .single()
             if (error) return NextResponse.json({ error: error.message }, { status: 404 })
-            // Mapear `date` → `due_date` para compatibilidade com o UI
-            return NextResponse.json({ ...data, due_date: data.date })
+            return NextResponse.json(data)
         }
 
         let query = supabase
-            .from('transactions')
-            .select('id, type, category, description, amount, date, status, notes, created_at')
-            .eq('user_id', user.id)
-            .order('date', { ascending: false })
+            .from('financial_transactions')
+            .select('id, type, category, description, amount, due_date, paid_date, status, payment_method, notes, created_at')
+            .order('due_date', { ascending: false })
 
         if (type)   query = query.eq('type', type)
         if (status) query = query.eq('status', status)
@@ -48,16 +45,14 @@ export async function GET(req: NextRequest) {
             const start = `${y}-${m}-01`
             const lastDay = new Date(parseInt(y), parseInt(m), 0).getDate()
             const end = `${y}-${m}-${String(lastDay).padStart(2, '0')}`
-            query = query.gte('date', start).lte('date', end)
+            query = query.gte('due_date', start).lte('due_date', end)
         }
 
         const { data, error } = await query.limit(200)
         if (error) return NextResponse.json([], { status: 200 }) // graceful
-        // Mapear date → due_date para o front
-        const mapped = (data || []).map((t: any) => ({ ...t, due_date: t.date, payment_method: null }))
-        return NextResponse.json(mapped)
+        return NextResponse.json(data || [])
 
-    } catch (err: any) {
+    } catch {
         return NextResponse.json([], { status: 200 })
     }
 }
@@ -69,31 +64,29 @@ export async function POST(req: NextRequest) {
         if (!supabase || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
         const body = await req.json()
-        const { type, category, description, amount, due_date, status, notes, related_entity_type, related_entity_id } = body
+        const { type, category, description, amount, due_date, status, notes } = body
 
         if (!type || !description || amount === undefined) {
             return NextResponse.json({ error: 'type, description e amount são obrigatórios' }, { status: 400 })
         }
 
         const { data, error } = await supabase
-            .from('transactions')
+            .from('financial_transactions')
             .insert({
-                user_id: user.id,
+                created_by: user.id,
                 type,
                 category: category || 'Outros',
                 description,
                 amount: parseFloat(String(amount)),
-                date: due_date || new Date().toISOString().split('T')[0],
+                due_date: due_date || new Date().toISOString().split('T')[0],
                 status: status || 'pendente',
                 notes: notes || null,
-                related_entity_type: related_entity_type || null,
-                related_entity_id: related_entity_id || null,
             })
             .select()
             .single()
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-        return NextResponse.json({ ...data, due_date: data.date }, { status: 201 })
+        return NextResponse.json(data, { status: 201 })
 
     } catch (err: any) {
         return NextResponse.json({ error: err.message }, { status: 500 })
@@ -107,24 +100,21 @@ export async function PUT(req: NextRequest) {
         if (!supabase || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
         const body = await req.json()
-        const { id, due_date, paid_date, ...rest } = body
+        const { id, ...rest } = body
 
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
 
-        // Mapear due_date → date se enviado
         const updates: any = { ...rest, updated_at: new Date().toISOString() }
-        if (due_date) updates.date = due_date
 
         const { data, error } = await supabase
-            .from('transactions')
+            .from('financial_transactions')
             .update(updates)
             .eq('id', id)
-            .eq('user_id', user.id)
             .select()
             .single()
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-        return NextResponse.json({ ...data, due_date: data.date })
+        return NextResponse.json(data)
 
     } catch (err: any) {
         return NextResponse.json({ error: err.message }, { status: 500 })
@@ -142,10 +132,9 @@ export async function DELETE(req: NextRequest) {
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
 
         const { error } = await supabase
-            .from('transactions')
+            .from('financial_transactions')
             .update({ status: 'cancelado', updated_at: new Date().toISOString() })
             .eq('id', id)
-            .eq('user_id', user.id)
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json({ success: true })

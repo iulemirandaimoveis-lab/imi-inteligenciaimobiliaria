@@ -83,12 +83,11 @@ export default function MetasPage() {
         const end = `${y}-${m}-${String(lastDay).padStart(2, '0')}`
 
         const { data: txs } = await supabase
-            .from('transactions')
+            .from('financial_transactions')
             .select('type, amount, category')
-            .eq('user_id', user.id)
             .in('status', ['pago', 'pendente'])
-            .gte('date', start)
-            .lte('date', end)
+            .gte('due_date', start)
+            .lte('due_date', end)
 
         const revenue = (txs || []).filter((t: any) => t.type === 'receita').reduce((s: number, t: any) => s + Number(t.amount), 0)
         const avals = (txs || []).filter((t: any) => t.category?.toLowerCase().includes('honorário') || t.category?.toLowerCase().includes('avaliação')).length
