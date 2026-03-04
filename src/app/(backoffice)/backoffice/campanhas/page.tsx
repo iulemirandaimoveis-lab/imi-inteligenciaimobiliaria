@@ -3,443 +3,313 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-    Search,
-    Plus,
-    TrendingUp,
-    TrendingDown,
-    DollarSign,
-    Users,
-    MousePointer,
-    Target,
-    Eye,
-    Edit,
-    Play,
-    Pause,
-    BarChart3,
-    Instagram,
-    Facebook,
-    Globe,
-    Mail,
-    MessageSquare,
+    Search, Plus, TrendingUp, TrendingDown, DollarSign, Users,
+    MousePointer, Target, Eye, Edit, Play, Pause, BarChart3,
+    Instagram, Facebook, Globe, Mail, MessageSquare, Megaphone,
 } from 'lucide-react'
+import { motion } from 'framer-motion'
+import useSWR from 'swr'
+import { createClient } from '@/lib/supabase/client'
 
-// ⚠️ NÃO MODIFICAR - Campanhas reais Recife
-const campanhasData = [
-    {
-        id: 1,
-        name: 'Lançamento Reserva Imperial',
-        status: 'ativa',
-        platform: 'Instagram',
-        objective: 'Conversão',
-        startDate: '2026-02-01',
-        endDate: '2026-02-29',
-        budget: 5000,
-        spent: 3200,
-        impressions: 45000,
-        clicks: 1350,
-        leads: 67,
-        conversions: 12,
-        revenue: 7800000,
-        ctr: 3.0,
-        cpc: 2.37,
-        cpl: 47.76,
-        cpa: 266.67,
-        roi: 243750,
-    },
-    {
-        id: 2,
-        name: 'Google Ads Boa Viagem',
-        status: 'ativa',
-        platform: 'Google',
-        objective: 'Leads',
-        startDate: '2026-02-01',
-        endDate: '2026-02-29',
-        budget: 3000,
-        spent: 2100,
-        impressions: 28000,
-        clicks: 840,
-        leads: 43,
-        conversions: 8,
-        revenue: 3400000,
-        ctr: 3.0,
-        cpc: 2.5,
-        cpl: 48.84,
-        cpa: 262.5,
-        roi: 161905,
-    },
-    {
-        id: 3,
-        name: 'Facebook Villa Jardins',
-        status: 'ativa',
-        platform: 'Facebook',
-        objective: 'Reconhecimento',
-        startDate: '2026-02-10',
-        endDate: '2026-03-10',
-        budget: 2000,
-        spent: 800,
-        impressions: 52000,
-        clicks: 1560,
-        leads: 28,
-        conversions: 3,
-        revenue: 1440000,
-        ctr: 3.0,
-        cpc: 0.51,
-        cpl: 28.57,
-        cpa: 266.67,
-        roi: 180000,
-    },
-    {
-        id: 4,
-        name: 'Email Marketing Piedade',
-        status: 'pausada',
-        platform: 'Email',
-        objective: 'Conversão',
-        startDate: '2021-05-15',
-        endDate: '2026-02-15',
-        budget: 800,
-        spent: 800,
-        impressions: 12000,
-        clicks: 480,
-        leads: 18,
-        conversions: 5,
-        revenue: 2125000,
-        ctr: 4.0,
-        cpc: 1.67,
-        cpl: 44.44,
-        cpa: 160,
-        roi: 265625,
-    },
-    {
-        id: 5,
-        name: 'WhatsApp Business Pina',
-        status: 'concluida',
-        platform: 'WhatsApp',
-        objective: 'Conversão',
-        startDate: '2026-01-20',
-        endDate: '2026-02-10',
-        budget: 1200,
-        spent: 1200,
-        impressions: 8000,
-        clicks: 320,
-        leads: 22,
-        conversions: 7,
-        revenue: 2940000,
-        ctr: 4.0,
-        cpc: 3.75,
-        cpl: 54.55,
-        cpa: 171.43,
-        roi: 245000,
-    },
-]
+const supabase = createClient()
 
-// ⚠️ NÃO MODIFICAR - Stats totais
-const totalStats = {
-    budget: campanhasData.reduce((acc, c) => acc + c.budget, 0),
-    spent: campanhasData.reduce((acc, c) => acc + c.spent, 0),
-    impressions: campanhasData.reduce((acc, c) => acc + c.impressions, 0),
-    clicks: campanhasData.reduce((acc, c) => acc + c.clicks, 0),
-    leads: campanhasData.reduce((acc, c) => acc + c.leads, 0),
-    conversions: campanhasData.reduce((acc, c) => acc + c.conversions, 0),
-    revenue: campanhasData.reduce((acc, c) => acc + c.revenue, 0),
-    avgCTR: '0',
-    avgCPC: '0',
-    avgCPL: '0',
-    avgROI: '0'
+const T = {
+    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    gold: '#486581',
 }
 
-totalStats.avgCTR = ((totalStats.clicks / totalStats.impressions) * 100).toFixed(2)
-totalStats.avgCPC = (totalStats.spent / totalStats.clicks).toFixed(2)
-totalStats.avgCPL = (totalStats.spent / totalStats.leads).toFixed(2)
-totalStats.avgROI = (((totalStats.revenue - totalStats.spent) / totalStats.spent) * 100).toFixed(0)
+export interface Campaign {
+    id: string
+    slug: string
+    name: string
+    campaign_type: string
+    status: string
+    development_id: string | null
+    start_date: string | null
+    end_date: string | null
+    budget: number | null
+    spent: number
+    impressions: number
+    clicks: number
+    leads_count: number
+    conversions: number
+    cpl: number
+    cpc: number
+    ctr: number
+    conversion_rate: number
+    description: string | null
+    created_at: string
+}
+
+function useCampanhas(filters: { search?: string; status?: string; type?: string }) {
+    return useSWR(['campanhas', filters], async () => {
+        let query = supabase
+            .from('campaigns')
+            .select('*')
+            .order('created_at', { ascending: false })
+
+        if (filters.search) {
+            query = query.ilike('name', `%${filters.search}%`)
+        }
+        if (filters.status && filters.status !== 'all') {
+            query = query.eq('status', filters.status)
+        }
+        if (filters.type && filters.type !== 'all') {
+            query = query.eq('campaign_type', filters.type)
+        }
+
+        const { data, error } = await query
+        if (error) throw error
+        return (data || []) as Campaign[]
+    })
+}
+
+const TYPE_MAP: Record<string, { label: string; icon: any }> = {
+    google_ads: { label: 'Google Ads', icon: Globe },
+    facebook_ads: { label: 'Facebook', icon: Facebook },
+    instagram_ads: { label: 'Instagram', icon: Instagram },
+    email: { label: 'Email', icon: Mail },
+    whatsapp: { label: 'WhatsApp', icon: MessageSquare },
+    sms: { label: 'SMS', icon: MessageSquare },
+    organic: { label: 'Orgânico', icon: TrendingUp },
+    referral: { label: 'Indicação', icon: Users },
+    event: { label: 'Evento', icon: Target },
+    other: { label: 'Outro', icon: BarChart3 },
+}
+
+const STATUS_MAP: Record<string, { label: string; textColor: string; bg: string; icon: any }> = {
+    active: { label: 'Ativa', textColor: '#4CAF7D', bg: 'rgba(76,175,125,0.10)', icon: Play },
+    paused: { label: 'Pausada', textColor: '#E8A87C', bg: 'rgba(232,168,124,0.10)', icon: Pause },
+    completed: { label: 'Concluída', textColor: '#7B9EC4', bg: 'rgba(123,158,196,0.10)', icon: Target },
+    draft: { label: 'Rascunho', textColor: '#A89EC4', bg: 'rgba(168,158,196,0.10)', icon: Edit },
+    archived: { label: 'Arquivada', textColor: '#6B7280', bg: 'rgba(107,114,128,0.10)', icon: Eye },
+}
+
+const formatBRL = (v: number | null | undefined) => {
+    if (!v && v !== 0) return '—'
+    if (v >= 1000000) return `R$ ${(v / 1000000).toFixed(1)}M`
+    if (v >= 1000) return `R$ ${(v / 1000).toFixed(1)}k`
+    return `R$ ${v.toFixed(2)}`
+}
+
+const fmt = (v: number | null | undefined, decimals = 0) =>
+    v == null ? '—' : v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toFixed(decimals)
 
 export default function CampanhasPage() {
     const router = useRouter()
-    const [searchTerm, setSearchTerm] = useState('')
+    const [search, setSearch] = useState('')
     const [statusFilter, setStatusFilter] = useState('all')
-    const [platformFilter, setPlatformFilter] = useState('all')
+    const [typeFilter, setTypeFilter] = useState('all')
 
-    const filteredCampanhas = campanhasData.filter(camp => {
-        const matchesSearch = camp.name.toLowerCase().includes(searchTerm.toLowerCase())
-        const matchesStatus = statusFilter === 'all' || camp.status === statusFilter
-        const matchesPlatform = platformFilter === 'all' || camp.platform === platformFilter
-        return matchesSearch && matchesStatus && matchesPlatform
+    const { data: campanhas, isLoading, mutate } = useCampanhas({
+        search, status: statusFilter, type: typeFilter,
     })
 
-    const getStatusConfig = (status: string) => {
-        const configs: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-            ativa: { label: 'Ativa', color: 'text-green-700', bg: 'bg-green-50', icon: Play },
-            pausada: { label: 'Pausada', color: 'text-orange-700', bg: 'bg-orange-50', icon: Pause },
-            concluida: { label: 'Concluída', color: 'text-blue-700', bg: 'bg-blue-50', icon: Target },
-        }
-        return configs[status] || configs.ativa
-    }
-
-    const getPlatformIcon = (platform: string) => {
-        const icons: Record<string, any> = {
-            Instagram: Instagram,
-            Facebook: Facebook,
-            Google: Globe,
-            Email: Mail,
-            WhatsApp: MessageSquare,
-        }
-        return icons[platform] || Globe
-    }
-
-    const formatPrice = (price: number) => {
-        if (price >= 1000000) return `R$ ${(price / 1000000).toFixed(1)}M`
-        if (price >= 1000) return `R$ ${(price / 1000).toFixed(1)}k`
-        return `R$ ${price.toFixed(2)}`
-    }
-
-    const formatNumber = (num: number) => {
-        if (num >= 1000) return `${(num / 1000).toFixed(1)}k`
-        return num.toString()
-    }
+    const totalBudget = campanhas?.reduce((s, c) => s + (c.budget || 0), 0) || 0
+    const totalSpent = campanhas?.reduce((s, c) => s + c.spent, 0) || 0
+    const totalLeads = campanhas?.reduce((s, c) => s + c.leads_count, 0) || 0
+    const totalConversions = campanhas?.reduce((s, c) => s + c.conversions, 0) || 0
+    const avgCTR = campanhas?.length
+        ? (campanhas.reduce((s, c) => s + c.ctr, 0) / campanhas.length).toFixed(2)
+        : '0.00'
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5">
+
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+                className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Campanhas de Marketing</h1>
-                    <p className="text-sm text-gray-600 mt-1">Gerencie e analise suas campanhas</p>
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Campanhas</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
+                        Gestão de campanhas de marketing
+                    </p>
                 </div>
                 <button
                     onClick={() => router.push('/backoffice/campanhas/nova')}
-                    className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-all"
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+                    style={{ background: T.gold }}
                 >
-                    <Plus size={20} />
+                    <Plus size={16} />
                     Nova Campanha
                 </button>
-            </div>
+            </motion.div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Orçamento Total</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatPrice(totalStats.budget)}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Investido</p>
-                    <p className="text-2xl font-bold text-[#0F0F1E]">{formatPrice(totalStats.spent)}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Impressões</p>
-                    <p className="text-2xl font-bold text-gray-900">{formatNumber(totalStats.impressions)}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Cliques</p>
-                    <p className="text-2xl font-bold text-blue-700">{formatNumber(totalStats.clicks)}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Leads</p>
-                    <p className="text-2xl font-bold text-purple-700">{totalStats.leads}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Conversões</p>
-                    <p className="text-2xl font-bold text-green-700">{totalStats.conversions}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">Receita</p>
-                    <p className="text-2xl font-bold text-green-700">{formatPrice(totalStats.revenue)}</p>
-                </div>
-                <div className="bg-white rounded-xl p-4 border border-gray-100">
-                    <p className="text-xs text-gray-600 mb-1">ROI Médio</p>
-                    <p className="text-2xl font-bold text-green-700">{totalStats.avgROI}%</p>
-                </div>
-            </div>
-
-            {/* Métricas Médias */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                    <p className="text-xs text-blue-700 font-medium mb-1">CTR Médio</p>
-                    <p className="text-2xl font-bold text-blue-900">{totalStats.avgCTR}%</p>
-                    <p className="text-xs text-blue-600 mt-1">Click-through rate</p>
-                </div>
-                <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                    <p className="text-xs text-purple-700 font-medium mb-1">CPC Médio</p>
-                    <p className="text-2xl font-bold text-purple-900">{formatPrice(parseFloat(totalStats.avgCPC))}</p>
-                    <p className="text-xs text-purple-600 mt-1">Custo por clique</p>
-                </div>
-                <div className="bg-orange-50 rounded-xl p-4 border border-orange-200">
-                    <p className="text-xs text-orange-700 font-medium mb-1">CPL Médio</p>
-                    <p className="text-2xl font-bold text-orange-900">{formatPrice(parseFloat(totalStats.avgCPL))}</p>
-                    <p className="text-xs text-orange-600 mt-1">Custo por lead</p>
-                </div>
-                <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                    <p className="text-xs text-green-700 font-medium mb-1">Taxa Conversão</p>
-                    <p className="text-2xl font-bold text-green-900">
-                        {((totalStats.conversions / totalStats.leads) * 100).toFixed(1)}%
-                    </p>
-                    <p className="text-xs text-green-600 mt-1">Leads → Vendas</p>
-                </div>
-            </div>
+            {/* KPIs */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}
+                className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                {[
+                    { label: 'Orçamento', value: formatBRL(totalBudget), color: T.gold },
+                    { label: 'Investido', value: formatBRL(totalSpent), color: '#7BA3C2' },
+                    { label: 'Leads', value: String(totalLeads), color: '#A89EC4' },
+                    { label: 'Conversões', value: String(totalConversions), color: '#4CAF7D' },
+                    { label: 'CTR Médio', value: `${avgCTR}%`, color: '#E8A87C' },
+                ].map((kpi, i) => (
+                    <div key={i} className="rounded-2xl p-4 transition-all"
+                        style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-xs mb-1.5" style={{ color: T.textDim }}>{kpi.label}</p>
+                        <p className="text-xl font-bold" style={{ color: isLoading ? T.textDim : kpi.color }}>
+                            {isLoading ? '—' : kpi.value}
+                        </p>
+                    </div>
+                ))}
+            </motion.div>
 
             {/* Filtros */}
-            <div className="bg-white rounded-xl p-4 border border-gray-100">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                        <input
-                            type="text"
-                            placeholder="Buscar campanhas..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                        />
-                    </div>
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
-                    >
-                        <option value="all">Todos os status</option>
-                        <option value="ativa">Ativa</option>
-                        <option value="pausada">Pausada</option>
-                        <option value="concluida">Concluída</option>
-                    </select>
-                    <select
-                        value={platformFilter}
-                        onChange={(e) => setPlatformFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
-                    >
-                        <option value="all">Todas as plataformas</option>
-                        <option value="Instagram">Instagram</option>
-                        <option value="Facebook">Facebook</option>
-                        <option value="Google">Google</option>
-                        <option value="Email">Email</option>
-                        <option value="WhatsApp">WhatsApp</option>
-                    </select>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.08 }}
+                className="flex flex-col sm:flex-row gap-3 p-4 rounded-2xl"
+                style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="relative flex-1">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2"
+                        style={{ color: T.textDim }} />
+                    <input
+                        type="text" placeholder="Buscar campanhas..." value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                    />
                 </div>
-            </div>
+                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
+                    className="h-10 px-3 rounded-xl text-sm outline-none"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
+                    <option value="all">Todos os status</option>
+                    <option value="active">Ativa</option>
+                    <option value="paused">Pausada</option>
+                    <option value="completed">Concluída</option>
+                    <option value="draft">Rascunho</option>
+                </select>
+                <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
+                    className="h-10 px-3 rounded-xl text-sm outline-none"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
+                    <option value="all">Todas as plataformas</option>
+                    <option value="instagram_ads">Instagram</option>
+                    <option value="facebook_ads">Facebook</option>
+                    <option value="google_ads">Google Ads</option>
+                    <option value="email">Email</option>
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="organic">Orgânico</option>
+                </select>
+            </motion.div>
 
-            {/* Lista de Campanhas */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {filteredCampanhas.map((campanha) => {
-                    const statusConfig = getStatusConfig(campanha.status)
-                    const PlatformIcon = getPlatformIcon(campanha.platform)
-                    const StatusIcon = statusConfig.icon
-                    const progressPercent = (campanha.spent / campanha.budget) * 100
-                    const roiPositive = campanha.roi > 0
+            {/* Loading */}
+            {isLoading && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="rounded-2xl h-52 animate-pulse"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }} />
+                    ))}
+                </div>
+            )}
 
-                    return (
-                        <div
-                            key={campanha.id}
-                            className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all cursor-pointer"
-                            onClick={() => router.push(`/backoffice/campanhas/${campanha.id}`)}
-                        >
-                            {/* Header */}
-                            <div className="p-6 border-b border-gray-100">
-                                <div className="flex items-start justify-between mb-3">
-                                    <div className="flex items-start gap-3">
-                                        <div className="w-10 h-10 bg-accent-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <PlatformIcon size={20} className="text-[#486581]" />
+            {/* Cards */}
+            {!isLoading && campanhas && campanhas.length > 0 && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {campanhas.map((c, i) => {
+                        const type = TYPE_MAP[c.campaign_type] || TYPE_MAP.other
+                        const status = STATUS_MAP[c.status] || STATUS_MAP.draft
+                        const TypeIcon = type.icon
+                        const StatusIcon = status.icon
+                        const progressPct = c.budget ? Math.min((c.spent / c.budget) * 100, 100) : 0
+
+                        return (
+                            <motion.div key={c.id}
+                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.05 }}
+                                className="rounded-2xl overflow-hidden cursor-pointer transition-all"
+                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = T.borderGold }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = T.border }}
+                                onClick={() => router.push(`/backoffice/campanhas/${c.id}`)}
+                            >
+                                {/* Card header */}
+                                <div className="p-5" style={{ borderBottom: `1px solid ${T.border}` }}>
+                                    <div className="flex items-start justify-between mb-3">
+                                        <div className="flex items-start gap-3">
+                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                style={{ background: 'rgba(72,101,129,0.12)' }}>
+                                                <TypeIcon size={18} style={{ color: T.gold }} />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold leading-tight" style={{ color: T.text }}>{c.name}</p>
+                                                <p className="text-xs mt-0.5" style={{ color: T.textDim }}>{type.label}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="font-bold text-gray-900 mb-1">{campanha.name}</h3>
-                                            <p className="text-sm text-gray-600">{campanha.objective} • {campanha.platform}</p>
-                                        </div>
-                                    </div>
-                                    <div className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 ${statusConfig.bg} ${statusConfig.color}`}>
-                                        <StatusIcon size={12} />
-                                        {statusConfig.label}
-                                    </div>
-                                </div>
-
-                                {/* Budget Progress */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span className="text-gray-600">Orçamento</span>
-                                        <span className="font-medium text-gray-900">
-                                            {formatPrice(campanha.spent)} / {formatPrice(campanha.budget)}
+                                        <span className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg flex-shrink-0"
+                                            style={{ color: status.textColor, background: status.bg }}>
+                                            <StatusIcon size={10} />
+                                            {status.label}
                                         </span>
                                     </div>
-                                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                        <div
-                                            className={`h-full rounded-full transition-all ${progressPercent > 90 ? 'bg-red-500' : progressPercent > 70 ? 'bg-orange-500' : 'bg-[#102A43]'
-                                                }`}
-                                            style={{ width: `${Math.min(progressPercent, 100)}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
 
-                            {/* Stats Grid */}
-                            <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div>
-                                    <p className="text-xs text-gray-600 mb-1">Impressões</p>
-                                    <p className="text-lg font-bold text-gray-900">{formatNumber(campanha.impressions)}</p>
+                                    {/* Budget progress */}
+                                    {c.budget && (
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center justify-between text-xs"
+                                                style={{ color: T.textDim }}>
+                                                <span>Investido</span>
+                                                <span style={{ color: T.text }}>{formatBRL(c.spent)} / {formatBRL(c.budget)}</span>
+                                            </div>
+                                            <div className="h-1.5 rounded-full overflow-hidden"
+                                                style={{ background: T.elevated }}>
+                                                <div className="h-full rounded-full transition-all"
+                                                    style={{
+                                                        width: `${progressPct}%`,
+                                                        background: progressPct > 90 ? '#E87C7C' : progressPct > 70 ? '#E8A87C' : T.gold,
+                                                    }} />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                                <div>
-                                    <p className="text-xs text-gray-600 mb-1">Cliques</p>
-                                    <p className="text-lg font-bold text-blue-700">{formatNumber(campanha.clicks)}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-600 mb-1">CTR</p>
-                                    <p className="text-lg font-bold text-purple-700">{campanha.ctr.toFixed(1)}%</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-600 mb-1">Leads</p>
-                                    <p className="text-lg font-bold text-[#0F0F1E]">{campanha.leads}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-600 mb-1">Conversões</p>
-                                    <p className="text-lg font-bold text-green-700">{campanha.conversions}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-600 mb-1">Taxa Conv.</p>
-                                    <p className="text-lg font-bold text-green-700">
-                                        {((campanha.conversions / campanha.leads) * 100).toFixed(1)}%
-                                    </p>
-                                </div>
-                            </div>
 
-                            {/* Footer - ROI */}
-                            <div className={`p-6 border-t flex items-center justify-between ${roiPositive ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
-                                }`}>
-                                <div>
-                                    <p className={`text-xs font-medium mb-1 ${roiPositive ? 'text-green-700' : 'text-red-700'}`}>
-                                        Retorno sobre Investimento
-                                    </p>
-                                    <div className="flex items-center gap-2">
-                                        <p className={`text-2xl font-bold ${roiPositive ? 'text-green-900' : 'text-red-900'}`}>
-                                            {campanha.roi.toLocaleString('pt-BR')}%
-                                        </p>
-                                        {roiPositive ? (
-                                            <TrendingUp size={20} className="text-green-700" />
-                                        ) : (
-                                            <TrendingDown size={20} className="text-red-700" />
-                                        )}
-                                    </div>
+                                {/* Metrics grid */}
+                                <div className="p-5 grid grid-cols-3 gap-3">
+                                    {[
+                                        { label: 'Impressões', value: fmt(c.impressions), color: T.textSub },
+                                        { label: 'Cliques', value: fmt(c.clicks), color: '#7BA3C2' },
+                                        { label: 'CTR', value: `${c.ctr?.toFixed(1) ?? '0.0'}%`, color: '#A89EC4' },
+                                        { label: 'Leads', value: String(c.leads_count), color: T.gold },
+                                        { label: 'Conversões', value: String(c.conversions), color: '#4CAF7D' },
+                                        { label: 'CPL', value: formatBRL(c.cpl), color: '#E8A87C' },
+                                    ].map((m, j) => (
+                                        <div key={j}>
+                                            <p className="text-[10px] mb-0.5" style={{ color: T.textDim }}>{m.label}</p>
+                                            <p className="text-sm font-bold" style={{ color: m.color }}>{m.value}</p>
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-xs text-gray-600 mb-1">Receita Gerada</p>
-                                    <p className={`text-lg font-bold ${roiPositive ? 'text-green-900' : 'text-gray-900'}`}>
-                                        {formatPrice(campanha.revenue)}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
+                            </motion.div>
+                        )
+                    })}
+                </div>
+            )}
 
-            {/* Empty State */}
-            {filteredCampanhas.length === 0 && (
-                <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Search size={32} className="text-gray-400" />
+            {/* Empty state */}
+            {!isLoading && campanhas?.length === 0 && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                    className="rounded-2xl p-16 flex flex-col items-center text-center"
+                    style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                        style={{ background: 'rgba(72,101,129,0.10)' }}>
+                        <Megaphone size={24} style={{ color: T.gold }} />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma campanha encontrada</h3>
-                    <p className="text-gray-600 mb-6">Tente ajustar os filtros ou criar uma nova campanha</p>
+                    <p className="text-base font-semibold mb-1" style={{ color: T.text }}>
+                        Nenhuma campanha encontrada
+                    </p>
+                    <p className="text-sm mb-6" style={{ color: T.textDim }}>
+                        {search || statusFilter !== 'all' || typeFilter !== 'all'
+                            ? 'Tente ajustar os filtros.'
+                            : 'Crie sua primeira campanha para começar a acompanhar resultados.'}
+                    </p>
                     <button
                         onClick={() => router.push('/backoffice/campanhas/nova')}
-                        className="inline-flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]"
-                    >
-                        <Plus size={20} />
+                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
+                        style={{ background: T.gold }}>
+                        <Plus size={15} />
                         Nova Campanha
                     </button>
-                </div>
+                </motion.div>
             )}
         </div>
     )

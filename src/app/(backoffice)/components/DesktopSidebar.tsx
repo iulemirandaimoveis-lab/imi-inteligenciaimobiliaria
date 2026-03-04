@@ -256,8 +256,12 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             <span className="flex-1">{item.label}</span>
             {item.badge && (
                 <span
-                    className="text-[10px] px-1.5 py-0.5 rounded-full font-bold text-white"
-                    style={{ background: 'rgba(26,26,46,0.60)' }}
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold border ${
+                        item.badge === 'BREVE'
+                            ? 'text-gray-500 bg-white/[0.04] border-white/10'
+                            : 'text-white border-transparent'
+                    }`}
+                    style={item.badge !== 'BREVE' ? { background: 'rgba(26,26,46,0.60)' } : undefined}
                 >
                     {item.badge}
                 </span>
