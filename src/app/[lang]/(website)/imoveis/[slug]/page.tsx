@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
@@ -11,6 +12,74 @@ import DevelopmentCTA from '../components/DevelopmentCTA'
 
 // Forcing dynamic for real-time updates from Backoffice
 export const dynamic = 'force-dynamic'
+
+const BASE = 'https://www.iulemirandaimoveis.com.br'
+const SITE = 'IMI — Iule Miranda Imóveis'
+
+export async function generateMetadata({ params }: { params: { slug: string, lang: string } }): Promise<Metadata> {
+    const supabase = await createClient()
+
+    const { data } = await supabase
+        .from('developments')
+        .select('name, description, neighborhood, city, state, country, price_from, price_min, gallery_images, images, image')
+        .eq('slug', params.slug)
+        .single()
+
+    if (!data) return { title: `Empreendimento | ${SITE}` }
+
+    const location = [
+        data.neighborhood,
+        data.city,
+        data.country !== 'Brasil' ? data.country : data.state,
+    ].filter(Boolean).join(', ')
+
+    const title = `${data.name} | ${location} — ${SITE}`
+
+    const priceMin = data.price_from || data.price_min
+    const priceText = priceMin
+        ? `A partir de R$ ${(Number(priceMin) / 1_000_000).toFixed(1).replace('.', ',')}M. `
+        : ''
+
+    const rawDesc = data.description
+        ? data.description.substring(0, 140)
+        : `Empreendimento premium em ${location}. Consultoria especializada IMI.`
+
+    const description = priceText + rawDesc
+
+    // Main image: prefer images JSONB > gallery_images > legacy image column > fallback
+    const imagesJson: any = typeof data.images === 'object' && data.images ? data.images : {}
+    const gallery: string[] = Array.isArray(imagesJson.gallery)
+        ? imagesJson.gallery
+        : (Array.isArray(data.gallery_images) ? data.gallery_images : [])
+    const rawImage: string = imagesJson.main || gallery[0] || (data as any).image || ''
+    // Ensure absolute URL — local paths get the BASE prepended
+    const mainImage: string = rawImage
+        ? (rawImage.startsWith('http') ? rawImage : `${BASE}${rawImage}`)
+        : `${BASE}/og-image.jpg`
+
+    const url = `${BASE}/${params.lang}/imoveis/${params.slug}`
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            url,
+            siteName: SITE,
+            images: [{ url: mainImage, width: 1200, height: 630, alt: data.name }],
+            locale: 'pt_BR',
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: [mainImage],
+        },
+        alternates: { canonical: url },
+    }
+}
 
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
     const supabase = await createClient()
@@ -36,8 +105,44 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
     const development = mapDbPropertyToDevelopment(data)
 
+    // JSON-LD structured data for rich search results
+    const priceMin = Number(data.price_from || data.price_min) || undefined
+    const location = [data.neighborhood, data.city, data.country !== 'Brasil' ? data.country : data.state].filter(Boolean).join(', ')
+    const imagesJson: any = typeof data.images === 'object' && data.images ? data.images : {}
+    const gallery: string[] = Array.isArray(imagesJson.gallery) ? imagesJson.gallery : (Array.isArray(data.gallery_images) ? data.gallery_images : [])
+    const rawImg: string = imagesJson.main || gallery[0] || (data as any).image || ''
+    const mainImage: string = rawImg ? (rawImg.startsWith('http') ? rawImg : `${BASE}${rawImg}`) : ''
+
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'RealEstateListing',
+        name: development.name,
+        description: data.description || `Empreendimento premium em ${location}.`,
+        url: `${BASE}/${params.lang}/imoveis/${params.slug}`,
+        image: mainImage || undefined,
+        ...(priceMin && {
+            offers: {
+                '@type': 'Offer',
+                priceCurrency: 'BRL',
+                price: priceMin,
+                availability: 'https://schema.org/InStock',
+            },
+        }),
+        address: {
+            '@type': 'PostalAddress',
+            addressLocality: data.city || '',
+            addressRegion: data.state || '',
+            addressCountry: data.country === 'Brasil' ? 'BR' : data.country || 'BR',
+            streetAddress: data.neighborhood || '',
+        },
+    }
+
     return (
         <main className="bg-[#FAFBFC] pb-24 lg:pb-0">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <DevelopmentHero development={development} />
 
             <div className="container-custom py-10 md:py-20">

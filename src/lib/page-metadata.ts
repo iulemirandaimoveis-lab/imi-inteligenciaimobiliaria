@@ -57,7 +57,7 @@ export const PAGE_METADATA = {
   ),
   imoveis: (lang: string) => meta(
     'Imóveis de Alto Padrão — Portfólio Curado',
-    'Residências, coberturas e empreendimentos premium em Recife e Olinda. Curadoria técnica com análise de mercado.',
+    'Empreendimentos premium no Brasil e no exterior. Residências, coberturas e lançamentos selecionados em Recife, São Paulo, Paraíba, Dubai e EUA. Curadoria técnica IMI.',
     `/${lang}/imoveis`
   ),
   projetos: (lang: string) => meta(
