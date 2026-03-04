@@ -20,6 +20,7 @@ const NAV_ITEMS = [
     { key: 'credito', label: 'Crédito' },
     { key: 'consultoria', label: 'Consultoria' },
     { key: 'inteligencia', label: 'Inteligência' },
+    { key: 'biblioteca', label: 'Biblioteca' },
     { key: 'sobre', label: 'Sobre' },
     { key: 'contato', label: 'Contato' },
 ]
