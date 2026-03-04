@@ -154,14 +154,10 @@ export default function WhatsappPage() {
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-lg font-bold" style={{ color: T.text }}>Mensagens</h1>
             <div className="flex gap-1">
-              <button className="p-2 rounded-xl transition-colors" style={{ color: T.textMuted }}
-                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+              <button className="p-2 rounded-xl transition-colors hover-card" style={{ color: T.textMuted }}>
                 <MessageSquare size={18} />
               </button>
-              <button className="p-2 rounded-xl transition-colors" style={{ color: T.textMuted }}
-                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+              <button className="p-2 rounded-xl transition-colors hover-card" style={{ color: T.textMuted }}>
                 <Settings size={18} />
               </button>
             </div>
@@ -211,13 +207,12 @@ export default function WhatsappPage() {
                 <button
                   key={conversa.id}
                   onClick={() => selectConversation(conversa)}
-                  className="w-full flex items-center gap-3 p-4 transition-all"
+                  className="w-full flex items-center gap-3 p-4 transition-all hover-card"
                   style={{
                     background: active ? T.elevated : 'transparent',
                     borderLeft: active ? `3px solid ${T.gold}` : '3px solid transparent',
                   }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.background = T.hover }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.background = 'transparent' }}
+                  
                 >
                   <div className="relative flex-shrink-0">
                     <div className="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm"
@@ -287,18 +282,14 @@ export default function WhatsappPage() {
               </div>
               <div className="flex items-center gap-0.5 flex-shrink-0">
                 {[Video, Phone, Search].map((Icon, i) => (
-                  <button key={i} className="hidden sm:flex p-2 rounded-xl transition-colors"
-                    style={{ color: T.textMuted }}
-                    onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                  <button key={i} className="hidden sm:flex p-2 rounded-xl transition-colors hover-card"
+                    style={{ color: T.textMuted }}>
                     <Icon size={18} />
                   </button>
                 ))}
-                <button className="p-2 rounded-xl transition-colors"
+                <button className="p-2 rounded-xl transition-colors hover-card"
                   onClick={() => setShowInfo(!showInfo)}
-                  style={{ color: showInfo ? T.gold : T.textMuted }}
-                  onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                  style={{ color: showInfo ? T.gold : T.textMuted }}>
                   <MoreVertical size={18} />
                 </button>
               </div>
@@ -393,12 +384,8 @@ export default function WhatsappPage() {
                     className="p-2 sm:p-2.5 rounded-xl transition-all"
                     style={{ background: showTemplates ? T.gold : 'transparent', color: showTemplates ? '#fff' : T.textMuted }}
                     title="Templates & IA"><Zap size={18} /></button>
-                  <button className="hidden sm:flex p-2.5 rounded-xl transition-colors" style={{ color: T.textMuted }}
-                    onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}><Paperclip size={18} /></button>
-                  <button className="hidden sm:flex p-2.5 rounded-xl transition-colors" style={{ color: T.textMuted }}
-                    onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}><Smile size={18} /></button>
+                  <button className="hidden sm:flex p-2.5 rounded-xl transition-colors hover-card" style={{ color: T.textMuted }}><Paperclip size={18} /></button>
+                  <button className="hidden sm:flex p-2.5 rounded-xl transition-colors hover-card" style={{ color: T.textMuted }}><Smile size={18} /></button>
                 </div>
                 <div className="flex-1">
                   <textarea

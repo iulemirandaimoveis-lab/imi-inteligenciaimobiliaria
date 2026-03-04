@@ -272,7 +272,7 @@ export default function AutomacoesPage() {
                                                 : <Play size={16} className="text-green-400" />}
                                         </button>
                                         <button onClick={() => handleDelete(wf.id)}
-                                            className="opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/10 rounded-lg transition">
+                                            className="touch-always-visible opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/10 rounded-lg transition">
                                             <X size={16} className="text-red-400" />
                                         </button>
                                     </div>

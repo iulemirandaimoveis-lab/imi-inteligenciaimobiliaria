@@ -217,10 +217,8 @@ export default function CampanhasPage() {
                             <motion.div key={c.id}
                                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.05 }}
-                                className="rounded-2xl overflow-hidden cursor-pointer transition-all"
+                                className="hover-card rounded-2xl overflow-hidden cursor-pointer transition-all"
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = T.borderGold }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = T.border }}
                                 onClick={() => router.push(`/backoffice/campanhas/${c.id}`)}
                             >
                                 {/* Card header */}

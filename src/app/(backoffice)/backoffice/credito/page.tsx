@@ -300,7 +300,7 @@ export default function CreditoPage() {
                         <p className="text-xs text-gray-500">Parcela: {formatCurrency(op.monthly_payment)}/mês</p>
                       )}
                     </div>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1 touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity">
                       <Link href={`/backoffice/credito/${op.id}`} className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-white transition-colors">
                         <Eye size={14} />
                       </Link>

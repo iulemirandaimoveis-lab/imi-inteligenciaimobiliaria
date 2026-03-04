@@ -56,16 +56,8 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.04, duration: 0.35 }}
-            className="rounded-2xl overflow-hidden cursor-pointer group transition-all"
+            className="hover-card rounded-2xl overflow-hidden cursor-pointer group transition-all"
             style={{ background: T.surface, border: `1px solid ${T.border}` }}
-            onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`
-                    ; (e.currentTarget as HTMLElement).style.background = T.elevated
-            }}
-            onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`
-                    ; (e.currentTarget as HTMLElement).style.background = T.surface
-            }}
         >
             {/* Image */}
             <div
@@ -382,10 +374,8 @@ export default function ImoveisPage() {
                                 initial={{ opacity: 0, x: -8 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.03 }}
-                                className="flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all"
+                                className="hover-card flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all"
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}
                             >
                                 <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(26,26,46,0.08)' }}>
                                     <Building2 size={20} style={{ color: T.gold }} />

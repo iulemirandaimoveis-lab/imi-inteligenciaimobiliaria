@@ -259,7 +259,7 @@ export default function AutomacaoConteudoPage() {
                                     <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition-all">
                                         <Settings size={18} />
                                     </button>
-                                    <button className="w-10 h-10 flex items-center justify-center rounded-xl opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-600">
+                                    <button className="w-10 h-10 flex items-center justify-center rounded-xl touch-always-visible opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-600">
                                         <MoreVertical size={18} />
                                     </button>
                                 </div>

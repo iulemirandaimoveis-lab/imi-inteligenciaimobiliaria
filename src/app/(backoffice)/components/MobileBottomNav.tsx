@@ -171,7 +171,7 @@ export function MobileBottomNav() {
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="relative text-[10px] font-medium mt-0.5 transition-colors duration-150"
+                                            className="relative text-[11px] font-medium mt-0.5 transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
@@ -209,7 +209,7 @@ export function MobileBottomNav() {
                                 }
                             </motion.span>
                             <span
-                                className="relative text-[10px] font-semibold mt-1 transition-colors"
+                                className="relative text-[11px] font-semibold mt-1 transition-colors"
                                 style={{ color: open ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                             >
                                 Mais
@@ -363,16 +363,10 @@ export function MobileBottomNav() {
                                                     <Link
                                                         href={item.href}
                                                         onClick={() => setOpen(false)}
-                                                        className="flex items-center gap-4 px-5 py-3 mx-2 rounded-xl transition-all"
+                                                        className="hover-card flex items-center gap-4 px-5 py-3 mx-2 rounded-xl transition-all"
                                                         style={{
                                                             background: active ? 'var(--bo-active-bg)' : 'transparent',
                                                             color: active ? 'var(--nav-active)' : 'var(--bo-text-muted)',
-                                                        }}
-                                                        onMouseEnter={e => {
-                                                            if (!active) (e.currentTarget as HTMLElement).style.background = 'var(--bo-hover)'
-                                                        }}
-                                                        onMouseLeave={e => {
-                                                            if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent'
                                                         }}
                                                     >
                                                         <div

@@ -421,8 +421,7 @@ function NovoContratoInner() {
                             ].map(a => (
                                 <button key={a.label} onClick={a.action} className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-all"
                                     style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`}
-                                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`}>
+                                    >
                                     <a.icon size={18} style={{ color: T.gold }} />
                                     <span className="text-[10px] font-semibold" style={{ color: T.textSub }}>{a.label}</span>
                                 </button>

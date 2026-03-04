@@ -288,9 +288,7 @@ export default function FinanceiroPage() {
                                 </thead>
                                 <tbody>
                                     {filtered.map(t => (
-                                        <tr key={t.id} className="transition-colors" style={{ borderBottom: `1px solid ${T.border}` }}
-                                            onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
-                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                                        <tr key={t.id} className="transition-colors hover-card" style={{ borderBottom: `1px solid ${T.border}` }}>
                                             <td className="px-4 py-3 text-xs" style={{ color: T.textSub }}>
                                                 {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : '—'}
                                             </td>

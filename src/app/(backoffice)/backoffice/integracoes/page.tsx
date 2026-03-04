@@ -307,19 +307,12 @@ export default function IntegracoesPage() {
                             <motion.div key={integ.id}
                                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.04 }}
-                                className="rounded-2xl p-4 transition-all group"
+                                className="rounded-2xl p-4 transition-all group hover-card"
                                 style={{
                                     background: connected ? 'rgba(107,184,123,0.05)' : T.surface,
                                     border: `1px solid ${connected ? 'rgba(107,184,123,0.22)' : T.border}`,
                                 }}
-                                onMouseEnter={e => {
-                                    (e.currentTarget as HTMLElement).style.border = `1px solid ${connected ? 'rgba(107,184,123,0.40)' : T.borderGold}`
-                                        ; (e.currentTarget as HTMLElement).style.background = T.elevated
-                                }}
-                                onMouseLeave={e => {
-                                    (e.currentTarget as HTMLElement).style.border = `1px solid ${connected ? 'rgba(107,184,123,0.22)' : T.border}`
-                                        ; (e.currentTarget as HTMLElement).style.background = connected ? 'rgba(107,184,123,0.05)' : T.surface
-                                }}
+
                             >
                                 {/* Top */}
                                 <div className="flex items-start gap-3 mb-4">

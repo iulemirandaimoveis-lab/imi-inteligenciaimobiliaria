@@ -248,20 +248,12 @@ export default function LeadsPage() {
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.03 }}
-                            className="rounded-2xl cursor-pointer transition-all"
+                            className="hover-card rounded-2xl cursor-pointer transition-all"
                             style={{
                                 background: T.surface,
                                 border: `1px solid ${T.border}`,
                             }}
                             onClick={() => router.push(`/backoffice/leads/${lead.id}`)}
-                            onMouseEnter={e => {
-                                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`
-                                    ; (e.currentTarget as HTMLElement).style.background = T.elevated
-                            }}
-                            onMouseLeave={e => {
-                                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`
-                                    ; (e.currentTarget as HTMLElement).style.background = T.surface
-                            }}
                         >
                             <div className="flex items-center gap-3 p-4">
                                 {/* Avatar */}
@@ -319,22 +311,18 @@ export default function LeadsPage() {
                                     <motion.button
                                         whileTap={{ scale: 0.9 }}
                                         onClick={e => { e.stopPropagation(); window.location.href = `tel:${lead.phone}` }}
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
+                                        className="hover-card w-10 h-10 rounded-xl flex items-center justify-center transition-all"
                                         style={{ background: 'transparent' }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                     >
-                                        <Phone size={13} style={{ color: T.textDim }} />
+                                        <Phone size={14} style={{ color: T.textDim }} />
                                     </motion.button>
                                     <motion.button
                                         whileTap={{ scale: 0.9 }}
                                         onClick={e => { e.stopPropagation(); window.location.href = `mailto:${lead.email}` }}
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all"
+                                        className="hover-card w-10 h-10 rounded-xl flex items-center justify-center transition-all"
                                         style={{ background: 'transparent' }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                     >
-                                        <Mail size={13} style={{ color: T.textDim }} />
+                                        <Mail size={14} style={{ color: T.textDim }} />
                                     </motion.button>
                                 </div>
                             </div>

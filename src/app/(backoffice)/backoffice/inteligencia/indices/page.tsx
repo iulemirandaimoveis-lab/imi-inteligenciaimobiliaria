@@ -123,20 +123,20 @@ export default function IndicesBackofficePage() {
                                     >
                                         {idx.is_published ? 'Publicado' : 'Rascunho'}
                                     </span>
-                                    <button onClick={() => togglePublish(idx.id, idx.is_published)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10">
-                                        {idx.is_published ? <EyeOff size={13} style={{ color: 'var(--bo-text-muted)' }} /> : <Eye size={13} style={{ color: 'var(--accent-500)' }} />}
+                                    <button onClick={() => togglePublish(idx.id, idx.is_published)} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10">
+                                        {idx.is_published ? <EyeOff size={14} style={{ color: 'var(--bo-text-muted)' }} /> : <Eye size={14} style={{ color: 'var(--accent-500)' }} />}
                                     </button>
-                                    <button onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10">
-                                        <Save size={13} style={{ color: 'var(--bo-text-muted)' }} />
+                                    <button onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10">
+                                        <Save size={14} style={{ color: 'var(--bo-text-muted)' }} />
                                     </button>
-                                    <button onClick={() => deleteIndex(idx.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-500/10">
-                                        <Trash2 size={13} style={{ color: '#ef4444' }} />
+                                    <button onClick={() => deleteIndex(idx.id)} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-red-500/10">
+                                        <Trash2 size={14} style={{ color: '#ef4444' }} />
                                     </button>
                                 </div>
                             </div>
 
                             {/* Metrics */}
-                            <div className="grid grid-cols-4 divide-x" style={{ borderColor: 'var(--bo-border)' }}>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 divide-x" style={{ borderColor: 'var(--bo-border)' }}>
                                 {[
                                     { label: 'Valor Atual', val: idx.value.toFixed(1) },
                                     { label: '1 Mês', val: formatVar(idx.variation_1m), color: varColor(idx.variation_1m) },
@@ -153,7 +153,7 @@ export default function IndicesBackofficePage() {
                             {/* Edit form */}
                             {editingId === idx.id && (
                                 <div className="p-5 border-t space-y-4" style={{ borderColor: 'var(--bo-border)', background: 'var(--bo-active-bg)' }}>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Nome</label>
                                             <input className={inputClass} style={inputStyle} value={editForm.name ?? ''} onChange={e => setEditForm(p => ({ ...p, name: e.target.value }))} />

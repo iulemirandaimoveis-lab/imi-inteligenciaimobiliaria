@@ -215,19 +215,11 @@ export default function DashboardClient({
                         >
                             <Link href={kpi.href}>
                                 <div
-                                    className="relative overflow-hidden rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-200 group"
+                                    className="hover-card relative overflow-hidden rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-200 group"
                                     style={{
                                         background: T.elevated,
                                         border: `1px solid ${T.borderGold}`,
                                         boxShadow: 'var(--bo-shadow)',
-                                    }}
-                                    onMouseEnter={e => {
-                                        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(72,101,129,0.4)'
-                                        ;(e.currentTarget as HTMLElement).style.boxShadow = 'var(--bo-shadow-elevated)'
-                                    }}
-                                    onMouseLeave={e => {
-                                        (e.currentTarget as HTMLElement).style.borderColor = 'var(--bo-border-gold)'
-                                        ;(e.currentTarget as HTMLElement).style.boxShadow = 'var(--bo-shadow)'
                                     }}
                                 >
                                     <div className="flex items-start justify-between mb-4">
@@ -260,14 +252,14 @@ export default function DashboardClient({
             </div>
 
             {/* ── Gráfico + Ações Rápidas ─────────────────────── */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
                 {/* Gráfico de Leads e Receita */}
                 <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.4 }}
-                    className="lg:col-span-2 rounded-2xl p-5"
+                    className="md:col-span-2 lg:col-span-2 rounded-2xl p-5"
                     style={{ background: T.surface, border: `1px solid ${T.border}` }}
                 >
                     <div className="flex items-center justify-between mb-5">
@@ -348,10 +340,8 @@ export default function DashboardClient({
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.37 + i * 0.05 }}
                                     whileTap={{ scale: 0.97 }}
-                                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all group"
+                                    className="hover-card flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all group"
                                     style={{ background: 'transparent' }}
-                                    onMouseEnter={e => (e.currentTarget.style.background = T.elevated)}
-                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                                         style={{ background: 'rgba(72,101,129,0.1)' }}>
@@ -368,7 +358,7 @@ export default function DashboardClient({
             </div>
 
             {/* ── Performance por Canal + Atividade Recente ──── */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
                 {/* Performance por Canal */}
                 <motion.div
@@ -435,9 +425,7 @@ export default function DashboardClient({
                     <div className="divide-y" style={{ borderColor: T.border }}>
                         {recentLeads.length > 0 ? recentLeads.slice(0, 4).map((lead: any) => (
                             <Link key={lead.id} href={`/backoffice/leads/${lead.id}`}>
-                                <div className="flex items-center gap-3 px-5 py-3 cursor-pointer transition-all"
-                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
-                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                                <div className="hover-card flex items-center gap-3 px-5 py-3 cursor-pointer transition-all">
                                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
                                         style={{ background: 'rgba(72,101,129,0.15)', color: T.gold }}>
                                         {lead.name?.charAt(0).toUpperCase()}
@@ -478,9 +466,7 @@ export default function DashboardClient({
                     </div>
                     <div className="divide-y" style={{ borderColor: T.border }}>
                         {recentAvaliacoes.length > 0 ? recentAvaliacoes.slice(0, 4).map((av: any) => (
-                            <div key={av.id} className="flex items-center gap-3 px-5 py-3 cursor-pointer transition-all"
-                                onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
-                                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                            <div key={av.id} className="hover-card flex items-center gap-3 px-5 py-3 cursor-pointer transition-all">
                                 <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0"
                                     style={{ background: 'rgba(72,101,129,0.1)' }}>
                                     <Scale size={13} style={{ color: T.gold }} />

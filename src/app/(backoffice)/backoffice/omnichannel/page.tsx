@@ -95,13 +95,12 @@ export default function OmniChannelPage() {
                         {channels.map(ch => (
                             <div
                                 key={ch.name}
-                                className="rounded-2xl p-5 flex items-center gap-4 transition-all"
+                                className="rounded-2xl p-5 flex items-center gap-4 transition-all hover-card"
                                 style={{
                                     background: T.elevated,
                                     border: `1px solid ${T.border}`,
                                 }}
-                                onMouseEnter={e => (e.currentTarget.style.borderColor = ch.status === 'Ativo' ? `${ch.color}40` : T.border)}
-                                onMouseLeave={e => (e.currentTarget.style.borderColor = T.border)}
+
                             >
                                 <div
                                     className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -128,10 +127,8 @@ export default function OmniChannelPage() {
                                         {ch.status}
                                     </span>
                                     {ch.href && (
-                                        <a href={ch.href} className="p-1.5 rounded-lg transition-colors"
-                                            style={{ color: T.textMuted }}
-                                            onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                                        <a href={ch.href} className="p-1.5 rounded-lg transition-colors hover-card"
+                                            style={{ color: T.textMuted }}>
                                             <ExternalLink size={14} />
                                         </a>
                                     )}
@@ -214,16 +211,12 @@ export default function OmniChannelPage() {
                         </div>
                         <div className="flex items-center gap-1">
                             <button onClick={() => setIframeKey(k => k + 1)}
-                                className="p-1.5 rounded-lg transition-colors" style={{ color: T.textMuted }}
-                                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                className="p-1.5 rounded-lg transition-colors hover-card" style={{ color: T.textMuted }}
                                 title="Recarregar">
                                 <RefreshCw size={14} />
                             </button>
                             <a href={CHATWOOT_URL} target="_blank" rel="noopener noreferrer"
-                                className="p-1.5 rounded-lg transition-colors" style={{ color: T.textMuted }}
-                                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                className="p-1.5 rounded-lg transition-colors hover-card" style={{ color: T.textMuted }}
                                 title="Abrir em nova aba">
                                 <ExternalLink size={14} />
                             </a>

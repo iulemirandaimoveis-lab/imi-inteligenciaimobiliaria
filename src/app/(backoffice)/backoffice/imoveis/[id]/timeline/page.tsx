@@ -127,7 +127,7 @@ export default function PropertyTimelinePage() {
                                             <div className="w-6 h-6 rounded-full bg-imi-100 flex items-center justify-center text-[10px] font-bold text-imi-400 border border-white">L</div>
                                             <span className="text-[10px] text-imi-400 font-medium">Registrado por Laila M.</span>
                                         </div>
-                                        <button className="p-2 hover:bg-imi-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                                        <button className="p-2 hover:bg-imi-50 rounded-lg transition-colors touch-always-visible opacity-0 group-hover:opacity-100">
                                             <Edit3 size={16} className="text-imi-300" />
                                         </button>
                                     </div>

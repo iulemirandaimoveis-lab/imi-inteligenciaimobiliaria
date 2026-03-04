@@ -223,7 +223,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
     return (
         <Link
             href={item.href!}
-            className="relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all"
+            className="hover-card relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all"
             style={{
                 color: isActive ? '#ffffff' : 'var(--sidebar-text)',
                 background: isActive
@@ -231,18 +231,6 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     : 'transparent',
                 fontWeight: isActive ? 600 : 400,
                 boxShadow: isActive ? '0 2px 12px rgba(26,26,46,0.25)' : 'none',
-            }}
-            onMouseEnter={e => {
-                if (!isActive) {
-                    (e.currentTarget as HTMLElement).style.background = 'var(--sidebar-hover)'
-                    ;(e.currentTarget as HTMLElement).style.color = 'var(--sidebar-text-active)'
-                }
-            }}
-            onMouseLeave={e => {
-                if (!isActive) {
-                    (e.currentTarget as HTMLElement).style.background = 'transparent'
-                    ;(e.currentTarget as HTMLElement).style.color = 'var(--sidebar-text)'
-                }
             }}
         >
             {/* Active indicator bar */}
@@ -355,16 +343,8 @@ export function DesktopSidebar() {
                     <button
                         onClick={handleSignOut}
                         title="Sair"
-                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                        className="hover-card w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
                         style={{ background: 'var(--bo-icon-bg)', color: 'var(--bo-text-muted)' }}
-                        onMouseEnter={e => {
-                            e.currentTarget.style.background = 'var(--s-cancel-bg)'
-                            e.currentTarget.style.color = 'var(--s-cancel)'
-                        }}
-                        onMouseLeave={e => {
-                            e.currentTarget.style.background = 'var(--bo-icon-bg)'
-                            e.currentTarget.style.color = 'var(--bo-text-muted)'
-                        }}
                     >
                         <LogOut size={14} />
                     </button>

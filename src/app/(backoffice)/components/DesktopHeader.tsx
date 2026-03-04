@@ -99,7 +99,9 @@ function NotificationBell() {
             })
             setNotifications(prev => prev.map(n => ({ ...n, read: true })))
             setUnread(0)
-        } catch {}
+        } catch (err) {
+            console.error('Failed to mark notifications as read:', err)
+        }
     }
 
     return (
@@ -158,13 +160,11 @@ function NotificationBell() {
                                         initial={{ opacity: 0, x: -6 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: i * 0.03 }}
-                                        className="flex gap-3 px-4 py-3 cursor-pointer transition-all"
+                                        className="hover-card flex gap-3 px-4 py-3 cursor-pointer transition-all"
                                         style={{
                                             background: !n.read ? 'var(--bo-active-bg)' : 'transparent',
                                             borderBottom: '1px solid var(--bo-border)',
                                         }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
-                                        onMouseLeave={e => (e.currentTarget.style.background = !n.read ? 'var(--bo-active-bg)' : 'transparent')}
                                     >
                                         <div
                                             className="w-2 h-2 rounded-full mt-1.5 shrink-0"
@@ -268,20 +268,16 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                                     { icon: Settings, label: 'Configurações', action: () => { setOpen(false); router.push('/backoffice/settings') } },
                                 ].map(({ icon: Icon, label, action }) => (
                                     <button key={label} onClick={action}
-                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
+                                        className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
                                         style={{ color: 'var(--bo-text-muted)' }}
-                                        onMouseEnter={e => { (e.currentTarget.style.background = 'var(--bo-hover)'); (e.currentTarget.style.color = 'var(--bo-text)') }}
-                                        onMouseLeave={e => { (e.currentTarget.style.background = 'transparent'); (e.currentTarget.style.color = 'var(--bo-text-muted)') }}
                                     >
                                         <Icon size={14} />{label}
                                     </button>
                                 ))}
                                 <div className="h-px my-1" style={{ background: 'var(--bo-border)' }} />
                                 <button onClick={() => { setOpen(false); onSignOut() }}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
+                                    className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
                                     style={{ color: 'var(--s-cancel)' }}
-                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--s-cancel-bg)')}
-                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <LogOut size={14} />Sair
                                 </button>

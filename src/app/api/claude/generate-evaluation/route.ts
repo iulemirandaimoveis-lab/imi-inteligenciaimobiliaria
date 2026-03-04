@@ -97,8 +97,7 @@ COMPLIANCE:
             .map((block: any) => block.text)
             .join('\n\n')
 
-        // Log para auditoria (opcional)
-        console.log(`Laudo gerado para avaliação ${evaluationId}`)
+        // Auditoria
 
         return NextResponse.json({
             content,

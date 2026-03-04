@@ -184,11 +184,10 @@ export default function ConteudosPage() {
                         <motion.div key={c.id}
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.03 }}
-                            className="rounded-2xl cursor-pointer transition-all"
+                            className="rounded-2xl cursor-pointer transition-all hover-card"
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}
                             onClick={() => router.push(`/backoffice/conteudos/${c.id}`)}
-                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
+>
                             <div className="flex items-center gap-4 p-4">
                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                                     style={{ background: 'rgba(72,101,129,0.12)' }}>
@@ -305,10 +304,9 @@ export default function ConteudosPage() {
                         return (
                             <motion.button key={item.l} whileTap={{ scale: 0.96 }}
                                 onClick={() => router.push(`/backoffice/conteudos/ia?type=${item.type}`)}
-                                className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-xs font-semibold transition-all"
+                                className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-xs font-semibold transition-all hover-card"
                                 style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textSub }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = T.borderGold; (e.currentTarget as HTMLElement).style.color = T.text }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = T.border; (e.currentTarget as HTMLElement).style.color = T.textSub }}>
+>
                                 <Icon size={13} /> {item.l}
                             </motion.button>
                         )

@@ -339,7 +339,7 @@ export default function LeadRulesPage() {
                                 {/* Ações */}
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <button
-                                        className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 opacity-0 group-hover:opacity-100 transition-all"
+                                        className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 touch-always-visible opacity-0 group-hover:opacity-100 transition-all"
                                         title="Editar"
                                     >
                                         <Edit size={14} />

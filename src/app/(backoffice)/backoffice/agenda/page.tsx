@@ -158,7 +158,7 @@ export default function AgendaPage() {
                         <p className={`text-sm mt-1 ${T.sub}`}>Gerencie reuniões, vistorias e compromissos</p>
                     </div>
                     <button onClick={() => setShowModal(true)}
-                        className={`flex items-center gap-2 h-11 px-6 ${T.accentBg} text-white rounded-xl font-semibold hover:brightness-110 transition`}>
+                        className={`flex items-center justify-center gap-2 h-11 px-6 w-full sm:w-auto ${T.accentBg} text-white rounded-xl font-semibold hover:brightness-110 transition`}>
                         <Plus size={20} /> Novo Evento
                     </button>
                 </div>
@@ -182,8 +182,8 @@ export default function AgendaPage() {
                     </div>
                 ) : (
                     <>
-                        {/* Calendar Grid */}
-                        <div className={T.card}>
+                        {/* Calendar Grid — hidden on mobile */}
+                        <div className={`${T.card} hidden sm:block`}>
                             {/* Day headers */}
                             <div className="grid grid-cols-7 border-b border-white/[.06]">
                                 {diasSemana.map(d => (
@@ -228,8 +228,77 @@ export default function AgendaPage() {
                             </div>
                         </div>
 
-                        {/* Events List */}
-                        <div className={T.card}>
+                        {/* Mobile List View — date-grouped events */}
+                        <div className="sm:hidden space-y-3">
+                            {events.length === 0 ? (
+                                <div className={`${T.card} p-8 text-center`}>
+                                    <Calendar size={40} className="mx-auto text-white/20 mb-3" />
+                                    <h3 className={`text-base font-semibold ${T.text} mb-1`}>Nenhum evento</h3>
+                                    <p className={`text-sm ${T.sub}`}>Crie um novo evento para começar</p>
+                                </div>
+                            ) : (
+                                Object.entries(eventsByDay)
+                                    .sort(([a], [b]) => a.localeCompare(b))
+                                    .map(([dateStr, dayEvents]) => {
+                                        const date = new Date(dateStr + 'T12:00:00')
+                                        const isToday = dateStr === new Date().toISOString().split('T')[0]
+                                        const dayLabel = date.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })
+                                        return (
+                                            <div key={dateStr}>
+                                                <div className="flex items-center gap-2 mb-1.5 px-1">
+                                                    <span className={`text-xs font-bold uppercase ${isToday ? 'text-[#486581]' : 'text-white/40'}`}>
+                                                        {isToday ? '📍 Hoje' : dayLabel}
+                                                    </span>
+                                                    <div className="flex-1 h-px bg-white/[.06]" />
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    {dayEvents.map(ev => {
+                                                        const cfg = getTypeConfig(ev.event_type)
+                                                        const Icon = cfg.icon
+                                                        return (
+                                                            <div key={ev.id} className={`${T.card} hover-card p-3.5 group`}>
+                                                                <div className="flex items-start gap-3">
+                                                                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                                                                        style={{ backgroundColor: `${cfg.color}15` }}>
+                                                                        <Icon size={16} style={{ color: cfg.color }} />
+                                                                    </div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <div className="flex items-start justify-between gap-2">
+                                                                            <h3 className={`text-sm font-semibold truncate ${T.text}`}>{ev.title}</h3>
+                                                                            <button onClick={() => handleDelete(ev.id)}
+                                                                                className="touch-always-visible opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/10 rounded-lg transition flex-shrink-0">
+                                                                                <X size={14} className="text-red-400" />
+                                                                            </button>
+                                                                        </div>
+                                                                        <div className="flex items-center gap-3 mt-1 text-xs text-white/40">
+                                                                            {!ev.all_day && (
+                                                                                <span className="flex items-center gap-1">
+                                                                                    <Clock size={12} />
+                                                                                    {formatTime(ev.start_time)}
+                                                                                    {ev.end_time && ` - ${formatTime(ev.end_time)}`}
+                                                                                </span>
+                                                                            )}
+                                                                            {ev.all_day && <span>Dia inteiro</span>}
+                                                                            {ev.location && (
+                                                                                <span className="flex items-center gap-1 truncate">
+                                                                                    <MapPin size={12} /> {ev.location}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                            )}
+                        </div>
+
+                        {/* Events List — desktop */}
+                        <div className={`${T.card} hidden sm:block`}>
                             <div className="p-5 border-b border-white/[.06]">
                                 <h2 className={`text-lg font-bold ${T.text}`}>Eventos do Mês ({events.length})</h2>
                             </div>
@@ -264,7 +333,7 @@ export default function AgendaPage() {
                                                                     {cfg.label}
                                                                 </span>
                                                                 <button onClick={() => handleDelete(ev.id)}
-                                                                    className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/10 rounded-lg transition">
+                                                                    className="touch-always-visible opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/10 rounded-lg transition">
                                                                     <X size={14} className="text-red-400" />
                                                                 </button>
                                                             </div>
@@ -328,7 +397,7 @@ export default function AgendaPage() {
                                 </select>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-xs font-medium text-white/60 mb-1.5 block">Início *</label>
                                     <input type="datetime-local" value={form.start_time}

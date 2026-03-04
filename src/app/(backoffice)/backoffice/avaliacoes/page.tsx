@@ -125,10 +125,8 @@ export default function AvaliacoesPage() {
                     <Link key={a.href} href={a.href}>
                         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 + i * 0.05 }}
-                            className="flex items-center gap-3 p-3.5 rounded-2xl cursor-pointer transition-all group"
-                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
+                            className="hover-card flex items-center gap-3 p-3.5 rounded-2xl cursor-pointer transition-all group"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                                 style={{ background: 'rgba(26,26,46,0.10)' }}>
                                 <a.icon size={15} style={{ color: T.gold }} />
@@ -160,7 +158,7 @@ export default function AvaliacoesPage() {
                         { key: 'concluida', label: 'Concluídas' },
                     ].map(t => (
                         <button key={t.key} onClick={() => setTab(t.key)}
-                            className="px-3.5 h-8 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
+                            className="px-3.5 h-10 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
                                 background: tab === t.key ? '#486581' : T.elevated,
                                 color: tab === t.key ? 'white' : T.textDim,
@@ -204,10 +202,8 @@ export default function AvaliacoesPage() {
                                 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.04 }}
                                 onClick={() => router.push(`/backoffice/avaliacoes/${av.id}`)}
-                                className="rounded-2xl cursor-pointer transition-all"
-                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
+                                className="hover-card rounded-2xl cursor-pointer transition-all"
+                                style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <div className="flex items-center gap-3 p-4">
                                     <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                                         style={{ background: `${sc.text}18` }}>

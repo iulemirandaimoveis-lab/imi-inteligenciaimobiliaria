@@ -168,10 +168,9 @@ export default function PagarPage() {
                         return (
                             <motion.div key={t.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.03 }}
-                                className="flex items-center gap-3 sm:gap-4 p-4 rounded-2xl transition-all"
+                                className="flex items-center gap-3 sm:gap-4 p-4 rounded-2xl transition-all hover-card"
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`; (e.currentTarget as HTMLElement).style.background = T.elevated }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`; (e.currentTarget as HTMLElement).style.background = T.surface }}>
+>
                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                                     style={{ background: 'rgba(229,115,115,0.10)' }}>
                                     <ArrowDownCircle size={18} style={{ color: '#E57373' }} />

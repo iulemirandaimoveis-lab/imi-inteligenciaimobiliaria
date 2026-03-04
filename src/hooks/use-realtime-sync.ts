@@ -121,15 +121,12 @@ export function useRealtimeDevelopments(
     return useRealtimeTable({
         table: 'developments',
         onInsert: (dev) => {
-            console.log('Novo empreendimento:', dev.name)
             onUpdate?.(dev)
         },
         onUpdate: (dev, old) => {
-            console.log('Empreendimento atualizado:', dev.name)
             onUpdate?.(dev)
         },
         onDelete: (dev) => {
-            console.log('Empreendimento deletado:', dev.name)
             onUpdate?.(dev)
         }
     })
@@ -144,7 +141,6 @@ export function useRealtimeLeads(
     return useRealtimeTable({
         table: 'leads',
         onInsert: (lead) => {
-            console.log('Novo lead:', lead.name)
             onUpdate?.(lead)
 
             // Notificação toast (opcional)
@@ -158,7 +154,6 @@ export function useRealtimeLeads(
             }
         },
         onUpdate: (lead) => {
-            console.log('Lead atualizado:', lead.name)
             onUpdate?.(lead)
         }
     })
@@ -273,10 +268,8 @@ export function useOnlinePresence(roomName: string = 'online-users') {
                 setOnlineUsers(users)
             })
             .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-                console.log('Usuário entrou:', key, newPresences)
             })
             .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-                console.log('Usuário saiu:', key, leftPresences)
             })
             .subscribe(async (status) => {
                 if (status === 'SUBSCRIBED') {

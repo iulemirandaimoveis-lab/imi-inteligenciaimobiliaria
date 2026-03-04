@@ -1539,3 +1539,29 @@
 .z-modal        { z-index: 70; }   /* Modais */
 .z-command      { z-index: 80; }   /* Command palette */
 .z-toast        { z-index: 90; }   /* Toast notifications */
+
+/* ── MOBILE TOUCH UTILITIES (Sprint 28) ───────────────────── */
+
+/* Touch-safe hover — only apply hover effect on devices with pointer */
+@media (hover: hover) {
+  .hover-card:hover {
+    border-color: var(--bo-border-gold) !important;
+    background: var(--bo-elevated) !important;
+  }
+}
+
+/* Tap feedback for touch devices */
+.hover-card {
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.hover-card:active {
+  background: var(--bo-elevated) !important;
+  border-color: var(--bo-border-gold) !important;
+}
+
+/* Elements hidden by group-hover — always visible on touch devices */
+@media (hover: none) {
+  .touch-always-visible {
+    opacity: 1 !important;
+  }
+}

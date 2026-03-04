@@ -347,10 +347,10 @@ export default function HojePage() {
                                         e.stopPropagation()
                                         if (l.phone) window.location.href = `tel:${l.phone}`
                                     }}
-                                    className="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer"
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer"
                                     style={{ background: 'rgba(232,168,124,0.12)' }}
                                 >
-                                    <Phone size={13} style={{ color: '#E8A87C' }} />
+                                    <Phone size={15} style={{ color: '#E8A87C' }} />
                                 </motion.div>
                                 <motion.div
                                     whileTap={{ scale: 0.85 }}
@@ -358,10 +358,10 @@ export default function HojePage() {
                                         e.stopPropagation()
                                         if (l.phone) window.open(`https://wa.me/${l.phone?.replace(/\D/g, '')}`)
                                     }}
-                                    className="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer"
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer"
                                     style={{ background: 'rgba(37,211,102,0.1)' }}
                                 >
-                                    <MessageCircle size={13} style={{ color: '#25D366' }} />
+                                    <MessageCircle size={15} style={{ color: '#25D366' }} />
                                 </motion.div>
                             </div>
                         </motion.button>

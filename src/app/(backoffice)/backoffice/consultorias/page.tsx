@@ -216,17 +216,10 @@ export default function ConsultoriasPage() {
                             key={c.id}
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.03 }}
-                            className="rounded-2xl cursor-pointer transition-all"
+                            className="rounded-2xl cursor-pointer transition-all hover-card"
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}
                             onClick={() => router.push(`/backoffice/consultorias/${c.id}`)}
-                            onMouseEnter={e => {
-                                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`
-                                ;(e.currentTarget as HTMLElement).style.background = T.elevated
-                            }}
-                            onMouseLeave={e => {
-                                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`
-                                ;(e.currentTarget as HTMLElement).style.background = T.surface
-                            }}
+
                         >
                             <div className="flex items-start gap-4 p-4">
                                 <div

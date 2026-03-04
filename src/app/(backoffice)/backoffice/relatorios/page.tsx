@@ -283,10 +283,9 @@ export default function RelatoriosPage() {
                                 <motion.div key={r.id}
                                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.06 }}
-                                    className="rounded-2xl p-5 transition-all"
+                                    className="rounded-2xl p-5 transition-all hover-card"
                                     style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = T.borderGold }}
-                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = T.border }}
+
                                 >
                                     <div className="flex items-start gap-4">
                                         <div className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"

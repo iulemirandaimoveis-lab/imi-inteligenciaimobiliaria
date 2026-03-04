@@ -619,7 +619,7 @@ export default function EditarImovelPage() {
                       </button>
                       {/* Delete */}
                       <button type="button" onClick={() => removeExistingImage(url)}
-                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity">
                         <X size={14} />
                       </button>
                       {index === 0 && (
@@ -651,7 +651,7 @@ export default function EditarImovelPage() {
                     <div key={index} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                       <img src={URL.createObjectURL(file)} alt={`Nova ${index + 1}`} className="w-full h-32 object-cover" />
                       <button type="button" onClick={() => removeNewImage(index)}
-                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity">
                         <X size={14} />
                       </button>
                     </div>
@@ -706,7 +706,7 @@ export default function EditarImovelPage() {
                     <div key={index} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                       <img src={url} alt={`Planta ${index + 1}`} className="w-full h-28 object-cover" />
                       <button type="button" onClick={() => removeExistingFloorPlan(url)}
-                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity">
                         <X size={14} />
                       </button>
                     </div>
@@ -727,7 +727,7 @@ export default function EditarImovelPage() {
                     <div key={i} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                       <img src={URL.createObjectURL(file)} alt={`Planta ${i + 1}`} className="w-full h-28 object-cover" />
                       <button type="button" onClick={() => removeFloorPlan(i)}
-                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity">
                         <X size={14} />
                       </button>
                       <div className="absolute bottom-0 inset-x-0 text-[10px] font-bold text-center py-0.5 truncate px-2"

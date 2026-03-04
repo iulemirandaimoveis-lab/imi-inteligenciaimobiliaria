@@ -20,7 +20,6 @@ export interface CreateLeadData {
 
 export async function createLead(data: CreateLeadData) {
     try {
-        console.log('Creating lead:', data.email);
 
         // 1. Obter Tenant ID (IMI)
         // Cachear isso seria ideal, mas por enquanto vamos buscar
@@ -49,7 +48,6 @@ export async function createLead(data: CreateLeadData) {
 
         if (existingLead) {
             leadId = existingLead.id;
-            console.log('Lead exists, updating:', leadId);
 
             // Atualizar dados de contato se necessário
             await supabase.from('leads').update({
@@ -76,7 +74,6 @@ export async function createLead(data: CreateLeadData) {
 
             if (createError) throw createError;
             leadId = newLead.id;
-            console.log('New lead created:', leadId);
         }
 
         // 3. Registrar Consulta (Consultation)

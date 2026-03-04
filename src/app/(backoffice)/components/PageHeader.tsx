@@ -66,10 +66,8 @@ export default function PageHeader({
                             {crumb.href ? (
                                 <Link href={crumb.href}>
                                     <span
-                                        className="text-xs font-medium transition-colors duration-120"
+                                        className="text-xs font-medium transition-colors duration-120 hover:text-[#486581]"
                                         style={{ color: 'var(--bo-text-muted)' }}
-                                        onMouseEnter={e => (e.currentTarget.style.color = 'var(--bo-text-gold, #486581)')}
-                                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--bo-text-muted)')}
                                     >
                                         {crumb.label}
                                     </span>
