@@ -2,49 +2,56 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import useSWR from 'swr'
+import { createClient } from '@/lib/supabase/client'
 import {
-  Plus, Search, DollarSign, Calculator, TrendingUp, CheckCircle, Clock,
-  AlertCircle, User, Building2, ChevronRight, Eye, Edit, BarChart2,
-  Home, CreditCard, Landmark, Percent, Calendar, ArrowRight
+  Plus, DollarSign, Calculator, CheckCircle, Clock,
+  AlertCircle, User, Eye, Landmark, Percent, ArrowRight, FileX,
 } from 'lucide-react'
 import Link from 'next/link'
 
-// ============================================================
-// DADOS MOCK — Crédito
-// ============================================================
+const supabase = createClient()
 
-const OPERACOES = [
-  {
-    id: '1', protocolo: 'CRD-2026-001', status: 'aprovado',
-    cliente: 'João Paulo Ferreira', tipo: 'Financiamento SFH',
-    banco: 'Caixa Econômica Federal', valorSolicitado: 480000,
-    valorImovel: 600000, prazoMeses: 360, taxa: 10.5, parcela: 4328,
-    imóvel: 'Apartamento — Boa Viagem', dataSolicitacao: '2026-01-15',
-    observacoes: 'FGTS autorizado. Análise positiva.'
-  },
-  {
-    id: '2', protocolo: 'CRD-2026-002', status: 'analise',
-    cliente: 'Ana Beatriz Correia', tipo: 'Financiamento SFI',
-    banco: 'Bradesco', valorSolicitado: 1200000,
-    valorImovel: 1500000, prazoMeses: 240, taxa: 12.0, parcela: 13800,
-    imóvel: 'Cobertura — Boa Viagem', dataSolicitacao: '2026-02-01',
-    observacoes: 'Renda qualificada. Aguardando avaliação do imóvel.'
-  },
-  {
-    id: '3', protocolo: 'CRD-2026-003', status: 'documentacao',
-    cliente: 'Roberto Cavalcante', tipo: 'Home Equity',
-    banco: 'Itaú', valorSolicitado: 300000,
-    valorImovel: 800000, prazoMeses: 120, taxa: 13.5, parcela: 4567,
-    imóvel: 'Casa — Setúbal', dataSolicitacao: '2026-02-10',
-    observacoes: 'Imóvel quitado como garantia.'
-  },
-]
+interface CreditApplication {
+  id: string
+  protocol: string
+  client_name: string
+  client_email: string
+  bank: string | null
+  financed_amount: number
+  property_value: number
+  term_months: number
+  interest_rate: number | null
+  monthly_payment: number | null
+  system: string | null
+  status: string
+  property_address: string
+  created_at: string
+}
 
-const STATUS_CONFIG = {
-  aprovado: { label: 'Aprovado', color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle },
-  analise: { label: 'Em Análise', color: 'bg-blue-100 text-blue-700', icon: Clock },
-  documentacao: { label: 'Documentação', color: 'bg-amber-100 text-amber-700', icon: AlertCircle },
-  recusado: { label: 'Recusado', color: 'bg-red-100 text-red-700', icon: AlertCircle },
+function useCreditApplications() {
+  return useSWR('credit_applications', async () => {
+    const { data, error } = await supabase
+      .from('credit_applications')
+      .select('id, protocol, client_name, client_email, bank, financed_amount, property_value, term_months, interest_rate, monthly_payment, system, status, property_address, created_at')
+      .order('created_at', { ascending: false })
+      .limit(50)
+    if (error) throw error
+    return (data ?? []) as CreditApplication[]
+  })
+}
+
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ElementType }> = {
+  pending:       { label: 'Pendente',      color: 'bg-gray-100 text-gray-700',    icon: Clock },
+  approved:      { label: 'Aprovado',      color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle },
+  under_review:  { label: 'Em Análise',    color: 'bg-blue-100 text-blue-700',    icon: Clock },
+  documents:     { label: 'Documentação',  color: 'bg-amber-100 text-amber-700',  icon: AlertCircle },
+  rejected:      { label: 'Recusado',      color: 'bg-red-100 text-red-700',      icon: AlertCircle },
+  // legacy PT values
+  aprovado:      { label: 'Aprovado',      color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle },
+  analise:       { label: 'Em Análise',    color: 'bg-blue-100 text-blue-700',    icon: Clock },
+  documentacao:  { label: 'Documentação',  color: 'bg-amber-100 text-amber-700',  icon: AlertCircle },
+  recusado:      { label: 'Recusado',      color: 'bg-red-100 text-red-700',      icon: AlertCircle },
 }
 
 // ============================================================
@@ -178,11 +185,15 @@ function SimuladorCredito() {
 
 export default function CreditoPage() {
   const [activeTab, setActiveTab] = useState<'operacoes' | 'simulador'>('simulador')
+  const { data: operacoes, isLoading } = useCreditApplications()
 
   const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
-  const totalPortfolio = OPERACOES.reduce((s, o) => s + o.valorSolicitado, 0)
-  const aprovados = OPERACOES.filter(o => o.status === 'aprovado').length
+  const list = operacoes ?? []
+  const totalPortfolio = list.reduce((s, o) => s + (o.financed_amount ?? 0), 0)
+  const isApproved = (s: string) => s === 'approved' || s === 'aprovado'
+  const isReview = (s: string) => s === 'under_review' || s === 'analise'
+  const isDocs = (s: string) => s === 'documents' || s === 'documentacao'
 
   return (
     <div className="space-y-6">
@@ -200,10 +211,10 @@ export default function CreditoPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { l: 'Portfólio Total', v: formatCurrency(totalPortfolio), icon: DollarSign, c: 'text-[#486581] bg-amber-50' },
-          { l: 'Aprovados', v: aprovados, icon: CheckCircle, c: 'text-emerald-600 bg-emerald-50' },
-          { l: 'Em Análise', v: OPERACOES.filter(o => o.status === 'analise').length, icon: Clock, c: 'text-blue-600 bg-blue-50' },
-          { l: 'Documentação', v: OPERACOES.filter(o => o.status === 'documentacao').length, icon: AlertCircle, c: 'text-amber-600 bg-amber-50' },
+          { l: 'Portfólio Total', v: isLoading ? '—' : formatCurrency(totalPortfolio), icon: DollarSign, c: 'text-[#486581] bg-amber-50' },
+          { l: 'Aprovados',       v: isLoading ? '—' : list.filter(o => isApproved(o.status)).length, icon: CheckCircle, c: 'text-emerald-600 bg-emerald-50' },
+          { l: 'Em Análise',      v: isLoading ? '—' : list.filter(o => isReview(o.status)).length,   icon: Clock,        c: 'text-blue-600 bg-blue-50' },
+          { l: 'Documentação',    v: isLoading ? '—' : list.filter(o => isDocs(o.status)).length,     icon: AlertCircle,  c: 'text-amber-600 bg-amber-50' },
         ].map(kpi => {
           const Icon = kpi.icon
           return (
@@ -220,7 +231,7 @@ export default function CreditoPage() {
 
       {/* Tabs */}
       <div className="flex border-b border-gray-200">
-        {[{ v: 'simulador', l: '🧮 Simulador' }, { v: 'operacoes', l: '📁 Operações' }].map(tab => (
+        {[{ v: 'simulador', l: 'Simulador' }, { v: 'operacoes', l: 'Operações' }].map(tab => (
           <button key={tab.v} onClick={() => setActiveTab(tab.v as any)}
             className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.v ? 'border-[#334E68] text-[#486581]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
             {tab.l}
@@ -231,42 +242,75 @@ export default function CreditoPage() {
       {activeTab === 'simulador' && <SimuladorCredito />}
 
       {activeTab === 'operacoes' && (
-        <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
-          {OPERACOES.map(op => {
-            const Stt = STATUS_CONFIG[op.status as keyof typeof STATUS_CONFIG]
-            const StatusIcon = Stt.icon
-            return (
-              <div key={op.id} className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors group">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
-                  <Landmark size={18} className="text-gray-500" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-xs font-mono text-gray-400">{op.protocolo}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${Stt.color}`}>
-                      <StatusIcon size={11} /> {Stt.label}
-                    </span>
+        <>
+          {isLoading ? (
+            <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50 animate-pulse">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex items-center gap-4 p-4">
+                  <div className="w-10 h-10 rounded-xl bg-gray-100" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 w-32 bg-gray-100 rounded" />
+                    <div className="h-4 w-48 bg-gray-100 rounded" />
+                    <div className="h-3 w-64 bg-gray-100 rounded" />
                   </div>
-                  <p className="text-sm font-semibold text-gray-900">{op.cliente}</p>
-                  <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
-                    <span>{op.tipo}</span>
-                    <span>{op.banco}</span>
-                    <span>{op.prazoMeses / 12} anos</span>
+                  <div className="hidden sm:block space-y-1 text-right">
+                    <div className="h-4 w-24 bg-gray-100 rounded ml-auto" />
+                    <div className="h-3 w-28 bg-gray-100 rounded ml-auto" />
                   </div>
                 </div>
-                <div className="hidden sm:block text-right">
-                  <p className="text-sm font-bold text-gray-900">{formatCurrency(op.valorSolicitado)}</p>
-                  <p className="text-xs text-gray-500">Parcela: {formatCurrency(op.parcela)}/mês</p>
-                </div>
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Link href={`/backoffice/credito/${op.id}`} className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-white transition-colors">
-                    <Eye size={14} />
-                  </Link>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+              ))}
+            </div>
+          ) : list.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
+              <FileX size={32} className="mx-auto mb-3 text-gray-300" />
+              <p className="text-sm font-semibold text-gray-700 mb-1">Nenhuma operação de crédito</p>
+              <p className="text-xs text-gray-400 mb-4">Cadastre a primeira operação de crédito</p>
+              <Link href="/backoffice/credito/novo"
+                className="inline-flex items-center gap-2 h-9 px-4 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
+                <Plus size={16} /> Nova Operação
+              </Link>
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
+              {list.map(op => {
+                const stt = STATUS_CONFIG[op.status] ?? STATUS_CONFIG.pending
+                const StatusIcon = stt.icon
+                return (
+                  <div key={op.id} className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors group">
+                    <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <Landmark size={18} className="text-gray-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-xs font-mono text-gray-400">{op.protocol}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${stt.color}`}>
+                          <StatusIcon size={11} /> {stt.label}
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">{op.client_name}</p>
+                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+                        {op.system && <span>Sistema {op.system}</span>}
+                        {op.bank && <span>{op.bank}</span>}
+                        <span>{op.term_months / 12} anos</span>
+                      </div>
+                    </div>
+                    <div className="hidden sm:block text-right">
+                      <p className="text-sm font-bold text-gray-900">{formatCurrency(op.financed_amount)}</p>
+                      {op.monthly_payment && (
+                        <p className="text-xs text-gray-500">Parcela: {formatCurrency(op.monthly_payment)}/mês</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Link href={`/backoffice/credito/${op.id}`} className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-white transition-colors">
+                        <Eye size={14} />
+                      </Link>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </>
       )}
     </div>
   )

@@ -5,59 +5,22 @@ import { useRouter, useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft, Phone, Mail, MapPin, Building2, DollarSign,
-  Calendar, Star, Edit, Trash2, MessageSquare, FileText,
-  Check, Clock, TrendingUp, Eye, MousePointerClick, Download,
-  Megaphone, ChevronRight, Sparkles, MoreVertical, Send,
+  Calendar, Star, Edit, MessageSquare, FileText,
+  Clock, TrendingUp, Eye, MousePointerClick,
+  ChevronRight, Sparkles, MoreVertical, Send, AlertCircle,
 } from 'lucide-react'
-
-const LEADS_DB: Record<number, any> = {
-  1: {
-    id: 1, name: 'Maria Santos Silva', initials: 'MS',
-    email: 'maria.santos@gmail.com', phone: '(81) 99845-3421',
-    score: 92, status: 'hot', source: 'Instagram',
-    interest: 'Apartamento 3Q', location: 'Boa Viagem',
-    budget: 'R$ 450k – 600k', created: '2026-02-14T10:30:00',
-    lastContact: '2026-02-14T15:20:00',
-    notes: 'Interessada em empreendimentos próximos ao mar. Preferência por acabamento premium.',
-    aiInsight: 'Lead demonstrou alto interesse em apartamentos com vista mar em Boa Viagem. Passou mais de 8 minutos visualizando a página do Reserva Imperial. Sugerimos abordagem focada em exclusividade e entrega em 2027.',
-    nextStep: 'Enviar Relatório de Avaliação NBR 14653 do Reserva Imperial',
-    timeline: [
-      { icon: Eye, label: 'Visualizou "Reserva Imperial"', detail: 'Duração: 08:14 min · Alto engajamento', time: '2 min atrás', accent: true },
-      { icon: MousePointerClick, label: 'Clicou em "Solicitar Avaliação"', detail: 'CTA na página de Avaliações', time: '1h atrás', accent: false },
-      { icon: Download, label: 'Baixou relatório de mercado', detail: 'Arquivo: Mercado_BoaViagem_2026.pdf', time: 'Hoje 10:24', accent: false },
-      { icon: Megaphone, label: 'Inbound via Instagram Ads', detail: 'Campanha: Alto Padrão Recife', time: 'Ontem', accent: false },
-    ],
-    history: [
-      { type: 'call', label: 'Ligação realizada', note: 'Interessada, pediu para ligar na próxima semana', date: '14/02', icon: Phone },
-      { type: 'whatsapp', label: 'WhatsApp enviado', note: 'Material do Reserva Imperial encaminhado', date: '13/02', icon: MessageSquare },
-      { type: 'note', label: 'Nota adicionada', note: 'Preferência por pavimento alto, andar > 12', date: '12/02', icon: FileText },
-    ],
-  },
-  2: {
-    id: 2, name: 'João Pedro Almeida', initials: 'JP',
-    email: 'joao.almeida@hotmail.com', phone: '(81) 98732-1098',
-    score: 85, status: 'hot', source: 'Google Ads',
-    interest: 'Casa 4Q', location: 'Piedade',
-    budget: 'R$ 800k – 1M', created: '2026-02-14T08:15:00',
-    lastContact: '2026-02-14T14:45:00',
-    notes: 'Procura casa com quintal. Família com 2 filhos.',
-    aiInsight: 'Lead com perfil familiar. Alta intenção de compra. Prioriza quintal e segurança. Abordagem: destaque diferenciais estruturais e planta familiar.',
-    nextStep: 'Agendar visita a empreendimento em Piedade',
-    timeline: [
-      { icon: Eye, label: 'Visualizou plantas Casa 4Q', detail: 'Duração: 05:30 min', time: '3h atrás', accent: true },
-      { icon: Megaphone, label: 'Inbound via Google Ads', detail: 'Campanha: Casas Recife', time: 'Hoje 08:00', accent: false },
-    ],
-    history: [],
-  },
-}
+import { useLead } from '@/hooks/use-leads-complete'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-  hot: { label: 'Quente', color: 'text-red-600', bg: 'bg-red-50 border-red-200', dot: 'bg-red-500' },
-  warm: { label: 'Morno', color: 'text-orange-600', bg: 'bg-orange-50 border-orange-200', dot: 'bg-orange-500' },
-  cold: { label: 'Frio', color: 'text-blue-600', bg: 'bg-blue-50 border-blue-200', dot: 'bg-blue-500' },
-  qualified: { label: 'Qualificado', color: 'text-green-600', bg: 'bg-green-50 border-green-200', dot: 'bg-green-500' },
-  new: { label: 'Novo', color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200', dot: 'bg-purple-500' },
-  lost: { label: 'Perdido', color: 'text-gray-500', bg: 'bg-gray-100 border-gray-200', dot: 'bg-gray-400' },
+  hot:       { label: 'Quente',     color: 'text-red-600',    bg: 'bg-red-50 border-red-200',       dot: 'bg-red-500' },
+  warm:      { label: 'Morno',      color: 'text-orange-600', bg: 'bg-orange-50 border-orange-200', dot: 'bg-orange-500' },
+  cold:      { label: 'Frio',       color: 'text-blue-600',   bg: 'bg-blue-50 border-blue-200',     dot: 'bg-blue-500' },
+  qualified: { label: 'Qualificado',color: 'text-green-600',  bg: 'bg-green-50 border-green-200',   dot: 'bg-green-500' },
+  new:       { label: 'Novo',       color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200', dot: 'bg-purple-500' },
+  contacted: { label: 'Contactado', color: 'text-sky-600',    bg: 'bg-sky-50 border-sky-200',       dot: 'bg-sky-500' },
+  proposal:  { label: 'Proposta',   color: 'text-indigo-600', bg: 'bg-indigo-50 border-indigo-200', dot: 'bg-indigo-500' },
+  won:       { label: 'Ganho',      color: 'text-emerald-600',bg: 'bg-emerald-50 border-emerald-200',dot: 'bg-emerald-500' },
+  lost:      { label: 'Perdido',    color: 'text-gray-500',   bg: 'bg-gray-100 border-gray-200',    dot: 'bg-gray-400' },
 }
 
 function ScoreRing({ score }: { score: number }) {
@@ -82,24 +45,108 @@ function ScoreRing({ score }: { score: number }) {
   )
 }
 
+function LoadingSkeleton() {
+  return (
+    <div className="max-w-2xl mx-auto pb-20 animate-pulse">
+      <div className="h-8 w-24 bg-gray-200 rounded-lg mb-6" />
+      <div className="bg-white rounded-3xl border border-[#E9ECEF] p-6 mb-4">
+        <div className="flex items-start gap-4 mb-5">
+          <div className="w-14 h-14 rounded-2xl bg-gray-200 flex-shrink-0" />
+          <div className="flex-1 space-y-2">
+            <div className="h-5 w-40 bg-gray-200 rounded" />
+            <div className="h-4 w-24 bg-gray-100 rounded" />
+          </div>
+          <div className="w-16 h-16 rounded-full bg-gray-200" />
+        </div>
+        <div className="grid grid-cols-2 gap-2 mb-5">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className={`h-4 bg-gray-100 rounded ${i === 4 ? 'col-span-2' : ''}`} />
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="h-11 bg-gray-100 rounded-2xl" />
+          <div className="h-11 bg-gray-200 rounded-2xl" />
+        </div>
+      </div>
+      <div className="bg-gray-800 rounded-3xl h-36 mb-4" />
+      <div className="bg-white rounded-3xl border border-[#E9ECEF] h-48" />
+    </div>
+  )
+}
+
+function formatCapital(capital: number | null): string {
+  if (!capital) return '—'
+  if (capital >= 1_000_000) return `R$ ${(capital / 1_000_000).toFixed(1).replace('.', ',')}M`
+  if (capital >= 1_000) return `R$ ${(capital / 1_000).toFixed(0)}k`
+  return `R$ ${capital.toLocaleString('pt-BR')}`
+}
+
+function getInitials(name: string): string {
+  return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
+}
+
+function getTimeAgo(iso: string | null): string {
+  if (!iso) return '—'
+  const diff = Date.now() - new Date(iso).getTime()
+  const d = Math.floor(diff / 86400000)
+  const h = Math.floor(diff / 3600000)
+  const m = Math.floor(diff / 60000)
+  if (d > 0) return `${d}d atrás`
+  if (h > 0) return `${h}h atrás`
+  return `${m}min atrás`
+}
+
 export default function LeadDetailPage() {
   const router = useRouter()
   const params = useParams()
-  const id = Number(params?.id) || 1
-  const lead = LEADS_DB[id] || LEADS_DB[1]
+  const id = params?.id as string | undefined
+
+  const { lead, isLoading, isError } = useLead(id ?? null)
   const [activeTab, setActiveTab] = useState<'timeline' | 'history' | 'notes'>('timeline')
   const [note, setNote] = useState('')
-  const status = STATUS_CONFIG[lead.status] || STATUS_CONFIG.cold
 
-  const getTimeAgo = (iso: string) => {
-    const diff = Date.now() - new Date(iso).getTime()
-    const d = Math.floor(diff / 86400000)
-    const h = Math.floor(diff / 3600000)
-    const m = Math.floor(diff / 60000)
-    if (d > 0) return `${d}d atrás`
-    if (h > 0) return `${h}h atrás`
-    return `${m}min atrás`
+  if (isLoading) return <LoadingSkeleton />
+
+  if (isError || !lead) {
+    return (
+      <div className="max-w-2xl mx-auto pb-20">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-[#6C757D] hover:text-[#1A1A1A] transition-colors font-medium text-sm mb-6"
+        >
+          <ArrowLeft size={16} />
+          Leads
+        </button>
+        <div className="bg-white rounded-3xl border border-[#E9ECEF] p-12 text-center">
+          <AlertCircle size={32} className="mx-auto mb-3 text-gray-300" />
+          <p className="text-[15px] font-semibold text-[#1A1A1A] mb-1">Lead não encontrado</p>
+          <p className="text-[13px] text-[#ADB5BD]">O lead solicitado não existe ou foi removido.</p>
+        </div>
+      </div>
+    )
   }
+
+  const status = STATUS_CONFIG[lead.status] ?? STATUS_CONFIG.new
+  const initials = getInitials(lead.name)
+  const devName = (lead as any).development?.name ?? null
+
+  // Build a generic timeline from what we know
+  const timeline = [
+    lead.last_interaction_at && {
+      icon: MessageSquare,
+      label: 'Último contato registrado',
+      detail: devName ? `Empreendimento: ${devName}` : '',
+      time: getTimeAgo(lead.last_interaction_at),
+      accent: true,
+    },
+    {
+      icon: Eye,
+      label: `Lead capturado via ${lead.source || 'Orgânico'}`,
+      detail: devName ? `Interesse: ${lead.interest || devName}` : (lead.interest || ''),
+      time: getTimeAgo(lead.created_at),
+      accent: !lead.last_interaction_at,
+    },
+  ].filter(Boolean) as Array<{ icon: any; label: string; detail: string; time: string; accent: boolean }>
 
   return (
     <div className="max-w-2xl mx-auto pb-20">
@@ -133,7 +180,7 @@ export default function LeadDetailPage() {
         <div className="flex items-start gap-4 mb-5">
           {/* Avatar */}
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1A1A1A] to-[#495057] flex items-center justify-center text-white text-lg font-bold flex-shrink-0">
-            {lead.initials}
+            {initials}
           </div>
 
           {/* Info */}
@@ -144,43 +191,70 @@ export default function LeadDetailPage() {
                 <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
                 {status.label}
               </span>
-              <span className="text-[11px] text-[#ADB5BD]">via {lead.source}</span>
+              {lead.source && (
+                <span className="text-[11px] text-[#ADB5BD]">via {lead.source}</span>
+              )}
             </div>
           </div>
 
           {/* Score Ring */}
-          <ScoreRing score={lead.score} />
+          <ScoreRing score={lead.score ?? 0} />
         </div>
 
         {/* Contact info grid */}
         <div className="grid grid-cols-2 gap-2 mb-5">
-          <div className="flex items-center gap-2 text-sm text-[#495057]">
-            <Mail size={13} className="text-[#ADB5BD] flex-shrink-0" />
-            <span className="truncate text-[12px]">{lead.email}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-[#495057]">
-            <Phone size={13} className="text-[#ADB5BD] flex-shrink-0" />
-            <span className="text-[12px]">{lead.phone}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin size={13} className="text-[#ADB5BD] flex-shrink-0" />
-            <span className="text-[12px] text-[#495057]">{lead.location}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Building2 size={13} className="text-[#ADB5BD] flex-shrink-0" />
-            <span className="text-[12px] text-[#495057]">{lead.interest}</span>
-          </div>
-          <div className="flex items-center gap-2 col-span-2">
-            <DollarSign size={13} className="text-[#ADB5BD] flex-shrink-0" />
-            <span className="text-[12px] font-semibold text-[#1A1A1A]">{lead.budget}</span>
-          </div>
+          {lead.email && (
+            <div className="flex items-center gap-2 text-sm text-[#495057]">
+              <Mail size={13} className="text-[#ADB5BD] flex-shrink-0" />
+              <span className="truncate text-[12px]">{lead.email}</span>
+            </div>
+          )}
+          {lead.phone && (
+            <div className="flex items-center gap-2 text-sm text-[#495057]">
+              <Phone size={13} className="text-[#ADB5BD] flex-shrink-0" />
+              <span className="text-[12px]">{lead.phone}</span>
+            </div>
+          )}
+          {devName && (
+            <div className="flex items-center gap-2">
+              <Building2 size={13} className="text-[#ADB5BD] flex-shrink-0" />
+              <span className="text-[12px] text-[#495057]">{devName}</span>
+            </div>
+          )}
+          {lead.interest && (
+            <div className="flex items-center gap-2">
+              <MapPin size={13} className="text-[#ADB5BD] flex-shrink-0" />
+              <span className="text-[12px] text-[#495057]">{lead.interest}</span>
+            </div>
+          )}
+          {lead.capital && (
+            <div className="flex items-center gap-2 col-span-2">
+              <DollarSign size={13} className="text-[#ADB5BD] flex-shrink-0" />
+              <span className="text-[12px] font-semibold text-[#1A1A1A]">{formatCapital(lead.capital)}</span>
+            </div>
+          )}
         </div>
+
+        {/* Tags */}
+        {lead.tags && lead.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-5">
+            {lead.tags.map((tag, i) => (
+              <span key={i} className="px-2 py-0.5 bg-[#F8F9FA] border border-[#E9ECEF] rounded-full text-[10px] font-medium text-[#495057]">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Meta */}
         <div className="flex items-center gap-4 text-[11px] text-[#ADB5BD] mb-5">
-          <span>Criado {getTimeAgo(lead.created)}</span>
-          <span>·</span>
-          <span>Último contato {getTimeAgo(lead.lastContact)}</span>
+          <span>Criado {getTimeAgo(lead.created_at)}</span>
+          {lead.last_interaction_at && (
+            <>
+              <span>·</span>
+              <span>Último contato {getTimeAgo(lead.last_interaction_at)}</span>
+            </>
+          )}
         </div>
 
         {/* Action buttons */}
@@ -193,7 +267,7 @@ export default function LeadDetailPage() {
             Ligar
           </a>
           <a
-            href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
+            href={`https://wa.me/55${(lead.phone ?? '').replace(/\D/g, '')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 h-11 bg-[#1A1A1A] hover:bg-[#102A43] rounded-2xl text-[13px] font-semibold text-white transition-all duration-200"
@@ -211,22 +285,38 @@ export default function LeadDetailPage() {
         transition={{ delay: 0.1, duration: 0.35 }}
         className="bg-[#1A1A1A] rounded-3xl p-6 mb-4 relative overflow-hidden"
       >
-        {/* Glow */}
         <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#102A43]/20 rounded-full blur-2xl" />
-
         <div className="flex items-center gap-2 mb-3 relative z-10">
           <Sparkles size={16} className="text-[#486581]" />
           <h3 className="font-bold text-white text-[15px]">AI Insight Strategy</h3>
         </div>
         <p className="text-[#9CA3AF] text-[13px] leading-relaxed mb-4 relative z-10">
-          {lead.aiInsight}
+          {lead.score >= 85
+            ? `${lead.name} tem score alto (${lead.score}). Abordagem proativa recomendada — alta probabilidade de conversão.`
+            : lead.score >= 70
+            ? `Score moderado (${lead.score}). Qualificar melhor interesse antes de apresentar propostas.`
+            : `Lead em aquecimento (score ${lead.score}). Nutrição com conteúdo relevante recomendada antes de contato direto.`
+          }
+          {devName ? ` Interesse principal: ${devName}.` : ''}
+          {lead.capital ? ` Capital declarado: ${formatCapital(lead.capital)}.` : ''}
         </p>
         <div className="bg-white/[0.07] rounded-2xl border border-white/10 p-4 relative z-10">
           <p className="text-[10px] uppercase font-bold text-[#6C757D] mb-1.5 tracking-widest">
             Próxima Ação Sugerida
           </p>
           <div className="flex items-center justify-between">
-            <span className="text-[13px] text-white">{lead.nextStep}</span>
+            <span className="text-[13px] text-white">
+              {lead.status === 'new' || lead.status === 'cold'
+                ? 'Entrar em contato e qualificar necessidade'
+                : lead.status === 'contacted' || lead.status === 'warm'
+                ? 'Agendar visita ou apresentação de proposta'
+                : lead.status === 'proposal'
+                ? 'Follow-up na proposta enviada'
+                : lead.status === 'hot' || lead.status === 'qualified'
+                ? 'Apresentar proposta personalizada'
+                : 'Atualizar status do lead'
+              }
+            </span>
             <ChevronRight size={14} className="text-[#486581] flex-shrink-0" />
           </div>
         </div>
@@ -239,12 +329,11 @@ export default function LeadDetailPage() {
         transition={{ delay: 0.18 }}
         className="bg-white rounded-3xl border border-[#E9ECEF] overflow-hidden shadow-sm"
       >
-        {/* Tab bar */}
         <div className="flex border-b border-[#E9ECEF]">
           {[
-            { key: 'timeline', label: 'Behavioural' },
+            { key: 'timeline', label: 'Timeline' },
             { key: 'history', label: 'Histórico' },
-            { key: 'notes', label: 'Nota' },
+            { key: 'notes', label: 'Observações' },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -264,44 +353,49 @@ export default function LeadDetailPage() {
           {activeTab === 'timeline' && (
             <div className="space-y-1">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-[#1A1A1A] text-[14px]">Behavioral Timeline</h3>
-                <span className="text-[10px] font-bold text-[#486581] bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                  Live
+                <h3 className="font-bold text-[#1A1A1A] text-[14px]">Eventos do Lead</h3>
+                <span className="text-[10px] font-bold text-[#486581] bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
+                  {timeline.length} evento{timeline.length !== 1 ? 's' : ''}
                 </span>
               </div>
-              <div className="relative">
-                {/* Vertical line */}
-                <div className="absolute left-5 top-0 bottom-0 w-px bg-[#E9ECEF]" />
 
-                <div className="space-y-4">
-                  {lead.timeline.map((event: any, i: number) => (
-                    <div key={i} className="flex gap-4 relative">
-                      {/* Icon dot */}
-                      <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${event.accent
-                          ? 'bg-[#1A1A1A] ring-4 ring-white shadow-md'
-                          : 'bg-[#F8F9FA] border border-[#E9ECEF]'
-                        }`}>
-                        <event.icon size={14} className={event.accent ? 'text-[#486581]' : 'text-[#ADB5BD]'} />
-                      </div>
-
-                      {/* Content */}
-                      <div className={`flex-1 bg-[#F8F9FA] border border-[#E9ECEF] rounded-2xl p-3.5 ${i > 0 ? 'opacity-80' : ''}`}>
-                        <div className="flex items-start justify-between gap-2 mb-0.5">
-                          <h4 className="font-semibold text-[13px] text-[#1A1A1A]">{event.label}</h4>
-                          <span className="text-[10px] text-[#ADB5BD] flex-shrink-0">{event.time}</span>
+              {timeline.length > 0 ? (
+                <div className="relative">
+                  <div className="absolute left-5 top-0 bottom-0 w-px bg-[#E9ECEF]" />
+                  <div className="space-y-4">
+                    {timeline.map((event, i) => (
+                      <div key={i} className="flex gap-4 relative">
+                        <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${event.accent
+                            ? 'bg-[#1A1A1A] ring-4 ring-white shadow-md'
+                            : 'bg-[#F8F9FA] border border-[#E9ECEF]'
+                          }`}>
+                          <event.icon size={14} className={event.accent ? 'text-[#486581]' : 'text-[#ADB5BD]'} />
                         </div>
-                        <p className="text-[11px] text-[#6C757D]">{event.detail}</p>
-                        {event.accent && (
-                          <div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold text-emerald-600">
-                            <TrendingUp size={10} />
-                            Alto engajamento detectado
+                        <div className={`flex-1 bg-[#F8F9FA] border border-[#E9ECEF] rounded-2xl p-3.5 ${i > 0 ? 'opacity-80' : ''}`}>
+                          <div className="flex items-start justify-between gap-2 mb-0.5">
+                            <h4 className="font-semibold text-[13px] text-[#1A1A1A]">{event.label}</h4>
+                            <span className="text-[10px] text-[#ADB5BD] flex-shrink-0">{event.time}</span>
                           </div>
-                        )}
+                          {event.detail && (
+                            <p className="text-[11px] text-[#6C757D]">{event.detail}</p>
+                          )}
+                          {event.accent && (
+                            <div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold text-emerald-600">
+                              <TrendingUp size={10} />
+                              Evento mais recente
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="text-center py-8 text-[#ADB5BD]">
+                  <Eye size={28} className="mx-auto mb-2 opacity-40" />
+                  <p className="text-[13px]">Nenhum evento registrado</p>
+                </div>
+              )}
             </div>
           )}
 
@@ -312,44 +406,33 @@ export default function LeadDetailPage() {
                 <h3 className="font-bold text-[#1A1A1A] text-[14px]">Histórico de Contatos</h3>
                 <button className="text-[11px] font-bold text-[#486581]">+ Registrar</button>
               </div>
-              {lead.history.length > 0 ? (
-                <div className="space-y-3">
-                  {lead.history.map((h: any, i: number) => (
-                    <div key={i} className="flex gap-3 p-3.5 bg-[#F8F9FA] rounded-2xl border border-[#E9ECEF]">
-                      <div className="w-9 h-9 rounded-xl bg-white border border-[#E9ECEF] flex items-center justify-center flex-shrink-0">
-                        <h.icon size={14} className="text-[#6C757D]" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <p className="text-[12px] font-semibold text-[#1A1A1A]">{h.label}</p>
-                          <span className="text-[10px] text-[#ADB5BD]">{h.date}/02</span>
-                        </div>
-                        <p className="text-[11px] text-[#6C757D]">{h.note}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-[#ADB5BD]">
-                  <Clock size={28} className="mx-auto mb-2 opacity-40" />
-                  <p className="text-[13px]">Nenhum contato registrado ainda</p>
-                </div>
-              )}
+              <div className="text-center py-8 text-[#ADB5BD]">
+                <Clock size={28} className="mx-auto mb-2 opacity-40" />
+                <p className="text-[13px]">Nenhum contato registrado ainda</p>
+                <p className="text-[11px] mt-1">Use o botão acima para registrar um contato</p>
+              </div>
             </div>
           )}
 
           {/* ── NOTES TAB ── */}
           {activeTab === 'notes' && (
             <div>
-              <div className="bg-[#F8F9FA] rounded-2xl border border-[#E9ECEF] p-4 mb-4">
-                <p className="text-[13px] text-[#495057] leading-relaxed">{lead.notes}</p>
-              </div>
+              {lead.message ? (
+                <div className="bg-[#F8F9FA] rounded-2xl border border-[#E9ECEF] p-4 mb-4">
+                  <p className="text-[13px] text-[#495057] leading-relaxed">{lead.message}</p>
+                </div>
+              ) : (
+                <div className="bg-[#F8F9FA] rounded-2xl border border-[#E9ECEF] p-4 mb-4 text-center text-[#ADB5BD]">
+                  <FileText size={20} className="mx-auto mb-1 opacity-40" />
+                  <p className="text-[12px]">Nenhuma mensagem do lead</p>
+                </div>
+              )}
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={note}
                   onChange={e => setNote(e.target.value)}
-                  placeholder="Adicionar nota..."
+                  placeholder="Adicionar observação..."
                   className="flex-1 h-11 px-4 text-[13px] bg-[#F8F9FA] border border-[#E9ECEF] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]/30 focus:border-[#334E68]"
                 />
                 <button
