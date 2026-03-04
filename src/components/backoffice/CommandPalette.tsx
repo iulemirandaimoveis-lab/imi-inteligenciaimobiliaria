@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { Command } from 'cmdk'
 import {
     Calculator,
@@ -23,21 +23,57 @@ import {
     Command as CommandIcon
 } from 'lucide-react'
 
+// Map each backoffice section to its "novo" route
+const NOVO_ROUTES: Record<string, string> = {
+    '/backoffice/leads':       '/backoffice/leads/novo',
+    '/backoffice/imoveis':     '/backoffice/imoveis/novo',
+    '/backoffice/avaliacoes':  '/backoffice/avaliacoes/nova',
+    '/backoffice/consultorias':'/backoffice/consultorias/nova',
+    '/backoffice/contratos':   '/backoffice/contratos/novo',
+}
+
+function isInputFocused() {
+    const el = document.activeElement
+    if (!el) return false
+    const tag = el.tagName.toLowerCase()
+    return tag === 'input' || tag === 'textarea' || (el as HTMLElement).isContentEditable
+}
+
 export function CommandPalette() {
     const [open, setOpen] = React.useState(false)
     const router = useRouter()
+    const pathname = usePathname()
 
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
+            // Cmd/Ctrl+K — always open palette
             if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault()
-                setOpen((open) => !open)
+                setOpen(o => !o)
+                return
+            }
+            // Skip if palette is open or an input is focused
+            if (open || isInputFocused()) return
+            // '/' — open search palette
+            if (e.key === '/') {
+                e.preventDefault()
+                setOpen(true)
+                return
+            }
+            // 'n' — navigate to "novo" for current section
+            if (e.key === 'n' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+                const base = '/' + pathname.split('/').slice(1, 3).join('/')
+                const novoRoute = NOVO_ROUTES[base]
+                if (novoRoute) {
+                    e.preventDefault()
+                    router.push(novoRoute)
+                }
             }
         }
 
         document.addEventListener('keydown', down)
         return () => document.removeEventListener('keydown', down)
-    }, [])
+    }, [open, pathname, router])
 
     const runCommand = React.useCallback((command: () => unknown) => {
         setOpen(false)
@@ -127,8 +163,12 @@ export function CommandPalette() {
 
                 <div className="p-2" style={{ borderTop: '1px solid var(--bo-border)', background: 'rgba(255,255,255,0.02)' }}>
                     <div className="flex items-center justify-between px-3">
-                        <span className="text-[10px]" style={{ color: 'var(--bo-text-muted)' }}>
-                            Navegue com <kbd className="font-sans px-1 py-0.5 rounded mx-1" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>↑</kbd><kbd className="font-sans px-1 py-0.5 rounded mx-1" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>↓</kbd>
+                        <span className="text-[10px] flex items-center gap-2" style={{ color: 'var(--bo-text-muted)' }}>
+                            <span>Navegar <kbd className="font-sans px-1 py-0.5 rounded" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>↑</kbd><kbd className="font-sans px-1 py-0.5 rounded ml-1" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>↓</kbd></span>
+                            <span className="opacity-50">·</span>
+                            <span>Buscar <kbd className="font-sans px-1 py-0.5 rounded" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>/</kbd></span>
+                            <span className="opacity-50">·</span>
+                            <span>Novo <kbd className="font-sans px-1 py-0.5 rounded" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>n</kbd></span>
                         </span>
                         <span className="text-[10px] flex items-center gap-1" style={{ color: 'var(--bo-text-muted)' }}>
                             <CommandIcon size={10} /> IMI Intelligence

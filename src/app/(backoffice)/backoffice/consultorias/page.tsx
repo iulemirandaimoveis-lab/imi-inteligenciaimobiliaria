@@ -1,215 +1,355 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import {
-  Briefcase, Plus, Search, Filter, Eye, Edit, Clock,
-  CheckCircle2, XCircle, ChevronRight, DollarSign, User, Calendar, MapPin
+    Briefcase, Plus, Search, Eye, Edit, Clock,
+    CheckCircle2, DollarSign, Calendar, MapPin,
 } from 'lucide-react'
+
+// ── Theme tokens ──────────────────────────────────────────────
+const T = {
+    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    gold: '#486581',
+}
 
 // ── Types ─────────────────────────────────────────────────────
 interface Consultoria {
-  id: string
-  protocolo: string
-  cliente_nome: string
-  cliente_email: string
-  tipo: 'estrategica' | 'tributaria' | 'patrimonial' | 'mercado' | 'juridica'
-  descricao: string
-  cidade: string
-  status: 'em_andamento' | 'concluida' | 'proposta' | 'cancelada'
-  honorarios: number
-  honorarios_status: 'pago' | 'parcial' | 'pendente'
-  data_inicio: string
-  data_prev_conclusao: string
+    id: string
+    protocolo: string
+    cliente_nome: string
+    cliente_email: string
+    tipo: string
+    descricao: string
+    cidade: string
+    status: string
+    honorarios: number
+    honorarios_status: string
+    data_inicio: string
+    data_prev_conclusao: string
 }
-
-// ── Mock Data ─────────────────────────────────────────────────
-const MOCK: Consultoria[] = [
-  {
-    id: '1', protocolo: 'CON-2026-001',
-    cliente_nome: 'Família Cavalcanti', cliente_email: 'cavalcanti@gmail.com',
-    tipo: 'patrimonial', descricao: 'Estruturação patrimonial pré-holding familiar — 3 imóveis Boa Viagem',
-    cidade: 'Recife', status: 'em_andamento', honorarios: 8500,
-    honorarios_status: 'parcial', data_inicio: '2026-01-15', data_prev_conclusao: '2026-03-15',
-  },
-  {
-    id: '2', protocolo: 'CON-2026-002',
-    cliente_nome: 'Construtora Omega S.A.', cliente_email: 'omega@construtora.com.br',
-    tipo: 'mercado', descricao: 'Análise de viabilidade VGV — Empreendimento Torre Norte, Olinda',
-    cidade: 'Olinda', status: 'concluida', honorarios: 15000,
-    honorarios_status: 'pago', data_inicio: '2025-11-01', data_prev_conclusao: '2026-01-31',
-  },
-  {
-    id: '3', protocolo: 'CON-2026-003',
-    cliente_nome: 'Dr. Fernando Albuquerque', cliente_email: 'fernando.alb@adv.com',
-    tipo: 'juridica', descricao: 'Laudo técnico para ação de indenização — desapropriação parcial Piedade',
-    cidade: 'Recife', status: 'proposta', honorarios: 6000,
-    honorarios_status: 'pendente', data_inicio: '2026-02-20', data_prev_conclusao: '2026-04-01',
-  },
-]
 
 // ── Config Maps ───────────────────────────────────────────────
 const TIPO_LABEL: Record<string, string> = {
-  estrategica: 'Estratégica', tributaria: 'Tributária',
-  patrimonial: 'Patrimonial', mercado: 'Análise de Mercado', juridica: 'Jurídica',
+    estrategica: 'Estratégica', tributaria: 'Tributária',
+    patrimonial: 'Patrimonial', mercado: 'Análise de Mercado', juridica: 'Jurídica',
 }
-const STATUS_CFG: Record<string, { l: string; cls: string }> = {
-  em_andamento: { l: 'Em Andamento', cls: 'bg-blue-50 text-blue-700' },
-  concluida:    { l: 'Concluída',    cls: 'bg-emerald-50 text-emerald-700' },
-  proposta:     { l: 'Proposta',     cls: 'bg-purple-50 text-purple-700' },
-  cancelada:    { l: 'Cancelada',    cls: 'bg-red-50 text-red-700' },
+const STATUS_CFG: Record<string, { l: string; text: string; bg: string }> = {
+    em_andamento: { l: 'Em Andamento', text: '#486581', bg: 'rgba(72,101,129,0.15)' },
+    concluida:    { l: 'Concluída',    text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+    proposta:     { l: 'Proposta',     text: '#B87BB8', bg: 'rgba(184,123,184,0.12)' },
+    cancelada:    { l: 'Cancelada',    text: '#E87B7B', bg: 'rgba(232,123,123,0.12)' },
 }
-const HON_CFG: Record<string, { l: string; cls: string }> = {
-  pago:     { l: 'Pago',     cls: 'text-emerald-600' },
-  parcial:  { l: 'Parcial',  cls: 'text-amber-600' },
-  pendente: { l: 'Pendente', cls: 'text-red-500' },
+const HON_CFG: Record<string, { l: string; color: string }> = {
+    pago:     { l: 'Pago',     color: '#6BB87B' },
+    parcial:  { l: 'Parcial',  color: '#E8A87C' },
+    pendente: { l: 'Pendente', color: '#E87B7B' },
 }
+
+const fmtCurrency = (v: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
 // ── Component ─────────────────────────────────────────────────
 export default function ConsultoriasPage() {
-  const [search, setSearch] = useState('')
-  const [filtroStatus, setFiltroStatus] = useState<string>('todos')
+    const router = useRouter()
+    const [search, setSearch] = useState('')
+    const [filtroStatus, setFiltroStatus] = useState('todos')
+    const [consultorias, setConsultorias] = useState<Consultoria[]>([])
+    const [loading, setLoading] = useState(true)
 
-  const fmtCurrency = (v: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
+    useEffect(() => {
+        fetch('/api/consultorias')
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data)) setConsultorias(data)
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false))
+    }, [])
 
-  const filtered = MOCK.filter(c => {
-    const matchSearch = c.cliente_nome.toLowerCase().includes(search.toLowerCase()) ||
-      c.protocolo.toLowerCase().includes(search.toLowerCase()) ||
-      c.cidade.toLowerCase().includes(search.toLowerCase())
-    const matchStatus = filtroStatus === 'todos' || c.status === filtroStatus
-    return matchSearch && matchStatus
-  })
+    const filtered = consultorias.filter(c => {
+        const q = search.toLowerCase()
+        const matchSearch = c.cliente_nome.toLowerCase().includes(q) ||
+            (c.protocolo || '').toLowerCase().includes(q) ||
+            (c.cidade || '').toLowerCase().includes(q)
+        const matchStatus = filtroStatus === 'todos' || c.status === filtroStatus
+        return matchSearch && matchStatus
+    })
 
-  const totalHonorarios = MOCK.reduce((s, c) => s + c.honorarios, 0)
-  const recebido = MOCK.filter(c => c.honorarios_status === 'pago').reduce((s, c) => s + c.honorarios, 0)
-  const emAndamento = MOCK.filter(c => c.status === 'em_andamento').length
-  const propostas = MOCK.filter(c => c.status === 'proposta').length
+    const totalHonorarios = consultorias.reduce((s, c) => s + (c.honorarios || 0), 0)
+    const recebido = consultorias.filter(c => c.honorarios_status === 'pago').reduce((s, c) => s + (c.honorarios || 0), 0)
+    const emAndamento = consultorias.filter(c => c.status === 'em_andamento').length
+    const propostas = consultorias.filter(c => c.status === 'proposta').length
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900">Consultorias</h1>
-          <p className="text-xs text-gray-500 mt-0.5">Gestão de projetos e honorários</p>
-        </div>
-        <Link href="/backoffice/consultorias/nova"
-          className="flex items-center gap-2 h-9 px-4 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
-          <Plus size={16} /> Nova Consultoria
-        </Link>
-      </div>
-
-      {/* KPIs */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
-        {[
-          { l: 'Total Portfólio', v: fmtCurrency(totalHonorarios), icon: DollarSign, cls: 'text-[#486581] bg-amber-50' },
-          { l: 'Honorários Recebidos', v: fmtCurrency(recebido), icon: CheckCircle2, cls: 'text-emerald-600 bg-emerald-50' },
-          { l: 'Em Andamento', v: emAndamento, icon: Clock, cls: 'text-blue-600 bg-blue-50' },
-          { l: 'Propostas Abertas', v: propostas, icon: Briefcase, cls: 'text-purple-600 bg-purple-50' },
-        ].map(kpi => {
-          const Icon = kpi.icon
-          return (
-            <div key={kpi.l} className="bg-white rounded-xl border border-gray-100 p-4">
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${kpi.cls.split(' ')[1]}`}>
-                <Icon size={18} className={kpi.cls.split(' ')[0]} />
-              </div>
-              <p className="text-xl font-bold text-gray-900">{kpi.v}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{kpi.l}</p>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Filtros */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Buscar cliente, protocolo, cidade…"
-            className="w-full pl-9 pr-4 h-9 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:border-[#334E68]"
-          />
-        </div>
-        <div className="flex gap-2">
-          {['todos', 'em_andamento', 'proposta', 'concluida'].map(s => (
-            <button key={s}
-              onClick={() => setFiltroStatus(s)}
-              className={`h-9 px-3 rounded-xl text-xs font-medium transition-colors border ${filtroStatus === s
-                ? 'bg-[#141420] text-white border-[#141420]'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}`}>
-              {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.l}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Lista */}
-      <div className="space-y-3">
-        {filtered.length === 0 && (
-          <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
-            <Briefcase size={32} className="mx-auto text-gray-300 mb-3" />
-            <p className="text-gray-500 text-sm">Nenhuma consultoria encontrada</p>
-            <Link href="/backoffice/consultorias/nova"
-              className="mt-4 inline-flex items-center gap-2 text-sm text-[#486581] font-medium hover:underline">
-              <Plus size={14} /> Criar nova consultoria
-            </Link>
-          </div>
-        )}
-
-        {filtered.map(c => {
-          const stt = STATUS_CFG[c.status]
-          const hon = HON_CFG[c.honorarios_status]
-          return (
-            <div key={c.id} className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-sm transition-all">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
-                  <Briefcase size={18} className="text-gray-500" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2 flex-wrap">
+    if (loading) {
+        return (
+            <div className="space-y-5 max-w-7xl mx-auto">
+                <div className="flex items-start justify-between gap-4">
                     <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-mono text-gray-400">{c.protocolo}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${stt.cls}`}>{stt.l}</span>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
-                          {TIPO_LABEL[c.tipo]}
-                        </span>
-                      </div>
-                      <p className="text-sm font-semibold text-gray-900 mt-1">{c.cliente_nome}</p>
-                      <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{c.descricao}</p>
+                        <div className="skeleton h-6 w-32 mb-2" />
+                        <div className="skeleton h-4 w-48" />
                     </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-sm font-bold text-gray-900">{fmtCurrency(c.honorarios)}</p>
-                      <p className={`text-xs font-medium ${hon.cls}`}>{hon.l}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 mt-3 flex-wrap">
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
-                      <MapPin size={12} /> {c.cidade}
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
-                      <Calendar size={12} /> Início: {new Date(c.data_inicio).toLocaleDateString('pt-BR')}
-                    </span>
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
-                      <Clock size={12} /> Conclusão: {new Date(c.data_prev_conclusao).toLocaleDateString('pt-BR')}
-                    </span>
-                    <div className="ml-auto flex gap-2">
-                      <button className="h-7 px-3 border border-gray-200 rounded-lg text-xs hover:border-gray-300 flex items-center gap-1">
-                        <Eye size={12} /> Ver
-                      </button>
-                      <button className="h-7 px-3 border border-gray-200 rounded-lg text-xs hover:border-gray-300 flex items-center gap-1">
-                        <Edit size={12} /> Editar
-                      </button>
-                    </div>
-                  </div>
+                    <div className="skeleton h-10 w-40 rounded-xl" />
                 </div>
-              </div>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    {[...Array(4)].map((_, i) => (
+                        <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 80}ms` }}>
+                            <div className="skeleton h-3 w-20 mb-3" />
+                            <div className="skeleton h-6 w-24" />
+                        </div>
+                    ))}
+                </div>
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
+                        <div className="skeleton w-10 h-10 rounded-xl flex-shrink-0" />
+                        <div className="flex-1">
+                            <div className="skeleton h-4 w-40 mb-2" />
+                            <div className="skeleton h-3 w-56" />
+                        </div>
+                    </div>
+                ))}
             </div>
-          )
-        })}
-      </div>
-    </div>
-  )
+        )
+    }
+
+    return (
+        <div className="space-y-5 max-w-7xl mx-auto">
+
+            {/* Header */}
+            <motion.div
+                initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+                className="flex items-start justify-between gap-4"
+            >
+                <div>
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Consultorias</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>Gestão de projetos e honorários</p>
+                </div>
+                <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => router.push('/backoffice/consultorias/nova')}
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                    style={{ background: T.gold }}
+                >
+                    <Plus size={16} /> Nova Consultoria
+                </motion.button>
+            </motion.div>
+
+            {/* KPIs */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {[
+                    { l: 'Total Portfólio', v: fmtCurrency(totalHonorarios), icon: DollarSign, color: T.gold },
+                    { l: 'Honorários Recebidos', v: fmtCurrency(recebido), icon: CheckCircle2, color: '#6BB87B' },
+                    { l: 'Em Andamento', v: emAndamento, icon: Clock, color: '#486581' },
+                    { l: 'Propostas Abertas', v: propostas, icon: Briefcase, color: '#B87BB8' },
+                ].map((kpi, i) => {
+                    const Icon = kpi.icon
+                    return (
+                        <motion.div
+                            key={kpi.l}
+                            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.06, duration: 0.35 }}
+                            className="rounded-2xl p-4"
+                            style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}
+                        >
+                            <p className="text-xs font-medium mb-1" style={{ color: T.textSub }}>{kpi.l}</p>
+                            <p className="text-2xl font-bold" style={{ color: kpi.color }}>{kpi.v}</p>
+                        </motion.div>
+                    )
+                })}
+            </div>
+
+            {/* Filtros */}
+            <div
+                className="rounded-2xl p-4"
+                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+            >
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex-1 relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: T.textDim }} />
+                        <input
+                            value={search} onChange={e => setSearch(e.target.value)}
+                            placeholder="Buscar cliente, protocolo, cidade…"
+                            className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none transition-all"
+                            style={{
+                                background: T.elevated,
+                                border: `1px solid ${T.border}`,
+                                color: T.text,
+                                caretColor: T.gold,
+                            }}
+                            onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
+                            onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
+                        />
+                    </div>
+                    <div className="flex items-center gap-1.5 overflow-x-auto flex-shrink-0">
+                        {['todos', 'em_andamento', 'proposta', 'concluida'].map(s => (
+                            <button
+                                key={s}
+                                onClick={() => setFiltroStatus(s)}
+                                className="px-3.5 h-10 rounded-xl text-xs font-semibold transition-all whitespace-nowrap"
+                                style={{
+                                    background: filtroStatus === s
+                                        ? (s === 'todos' ? T.gold : STATUS_CFG[s]?.bg || T.elevated)
+                                        : T.elevated,
+                                    color: filtroStatus === s
+                                        ? (s === 'todos' ? 'white' : STATUS_CFG[s]?.text || T.textSub)
+                                        : T.textDim,
+                                    border: `1px solid ${filtroStatus === s ? T.borderGold : T.border}`,
+                                }}
+                            >
+                                {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.l}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Lista */}
+            <div className="space-y-2">
+                {filtered.map((c, i) => {
+                    const stt = STATUS_CFG[c.status] || { l: c.status, text: T.textSub, bg: T.elevated }
+                    const hon = HON_CFG[c.honorarios_status] || { l: c.honorarios_status, color: T.textSub }
+                    return (
+                        <motion.div
+                            key={c.id}
+                            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.03 }}
+                            className="rounded-2xl cursor-pointer transition-all"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                            onClick={() => router.push(`/backoffice/consultorias/${c.id}`)}
+                            onMouseEnter={e => {
+                                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.borderGold}`
+                                ;(e.currentTarget as HTMLElement).style.background = T.elevated
+                            }}
+                            onMouseLeave={e => {
+                                (e.currentTarget as HTMLElement).style.border = `1px solid ${T.border}`
+                                ;(e.currentTarget as HTMLElement).style.background = T.surface
+                            }}
+                        >
+                            <div className="flex items-start gap-4 p-4">
+                                <div
+                                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    style={{ background: 'rgba(72,101,129,0.12)' }}
+                                >
+                                    <Briefcase size={18} style={{ color: T.gold }} />
+                                </div>
+
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-start justify-between gap-2 flex-wrap">
+                                        <div className="min-w-0">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                {c.protocolo && (
+                                                    <span className="text-[10px] font-mono" style={{ color: T.textDim }}>
+                                                        {c.protocolo}
+                                                    </span>
+                                                )}
+                                                <span
+                                                    className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                                    style={{ color: stt.text, background: stt.bg }}
+                                                >
+                                                    {stt.l}
+                                                </span>
+                                                {c.tipo && (
+                                                    <span
+                                                        className="text-[10px] px-2 py-0.5 rounded-full"
+                                                        style={{ color: T.textSub, background: T.elevated }}
+                                                    >
+                                                        {TIPO_LABEL[c.tipo] || c.tipo}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-sm font-semibold mt-1 truncate" style={{ color: T.text }}>
+                                                {c.cliente_nome}
+                                            </p>
+                                            {c.descricao && (
+                                                <p className="text-[11px] mt-0.5 line-clamp-1" style={{ color: T.textDim }}>
+                                                    {c.descricao}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {c.honorarios > 0 && (
+                                            <div className="text-right flex-shrink-0">
+                                                <p className="text-sm font-bold" style={{ color: T.text }}>
+                                                    {fmtCurrency(c.honorarios)}
+                                                </p>
+                                                <p className="text-[11px] font-semibold" style={{ color: hon.color }}>
+                                                    {hon.l}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center gap-4 mt-3 flex-wrap">
+                                        {c.cidade && (
+                                            <span className="flex items-center gap-1 text-[11px]" style={{ color: T.textDim }}>
+                                                <MapPin size={11} /> {c.cidade}
+                                            </span>
+                                        )}
+                                        {c.data_inicio && (
+                                            <span className="flex items-center gap-1 text-[11px]" style={{ color: T.textDim }}>
+                                                <Calendar size={11} /> {new Date(c.data_inicio).toLocaleDateString('pt-BR')}
+                                            </span>
+                                        )}
+                                        {c.data_prev_conclusao && (
+                                            <span className="flex items-center gap-1 text-[11px] hidden sm:flex" style={{ color: T.textDim }}>
+                                                <Clock size={11} /> {new Date(c.data_prev_conclusao).toLocaleDateString('pt-BR')}
+                                            </span>
+                                        )}
+
+                                        <div className="ml-auto flex gap-1.5" onClick={e => e.stopPropagation()}>
+                                            <motion.button
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => router.push(`/backoffice/consultorias/${c.id}`)}
+                                                className="h-7 px-3 rounded-lg text-[11px] font-medium flex items-center gap-1 transition-all"
+                                                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}
+                                            >
+                                                <Eye size={11} /> Ver
+                                            </motion.button>
+                                            <motion.button
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => router.push(`/backoffice/consultorias/${c.id}/editar`)}
+                                                className="h-7 px-3 rounded-lg text-[11px] font-medium flex items-center gap-1 transition-all"
+                                                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}
+                                            >
+                                                <Edit size={11} /> Editar
+                                            </motion.button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )
+                })}
+
+                {filtered.length === 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                        className="empty-state rounded-2xl"
+                        style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                    >
+                        <div className="empty-state-icon">
+                            <Briefcase size={24} />
+                        </div>
+                        <p className="empty-state-title">Nenhuma consultoria encontrada</p>
+                        <p className="empty-state-desc">
+                            {search ? 'Tente buscar com outros termos' : 'Registre suas consultorias para acompanhar o portfólio.'}
+                        </p>
+                        {!search && (
+                            <motion.button
+                                whileTap={{ scale: 0.96 }}
+                                onClick={() => router.push('/backoffice/consultorias/nova')}
+                                className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
+                                style={{ background: T.gold }}
+                            >
+                                <Plus size={14} /> Nova Consultoria
+                            </motion.button>
+                        )}
+                    </motion.div>
+                )}
+            </div>
+        </div>
+    )
 }

@@ -1,41 +1,50 @@
-import { createClient } from '@supabase/supabase-js'
-import { NextRequest } from 'next/server'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET() {
-    const supabase = getSupabase()
-    const { data, error } = await supabase
-        .from('consultations')
-        .select('*')
-        .order('created_at', { ascending: false })
+    try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
 
-    if (error) return Response.json({ error: error.message }, { status: 500 })
-    return Response.json({ data })
+        if (!user) {
+            return NextResponse.json([], { status: 200 })
+        }
+
+        const { data, error } = await supabase
+            .from('consultorias')
+            .select('id, protocolo, cliente_nome, cliente_email, tipo, descricao, cidade, status, honorarios, honorarios_status, data_inicio, data_prev_conclusao, created_at')
+            .order('created_at', { ascending: false })
+            .limit(100)
+
+        if (error) {
+            console.error('Error fetching consultorias:', error)
+            return NextResponse.json([], { status: 200 })
+        }
+
+        return NextResponse.json(data || [])
+    } catch (err) {
+        console.error('consultorias GET error:', err)
+        return NextResponse.json([], { status: 200 })
+    }
 }
 
-export async function POST(request: NextRequest) {
-    const supabase = getSupabase()
-    const body = await request.json()
+export async function POST(req: Request) {
+    try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
 
-    const { data, error } = await supabase
-        .from('consultations')
-        .insert({
-            client_name: body.client_name || body.clienteNome || body.nome,
-            client_email: body.client_email || body.clienteEmail || body.email,
-            client_phone: body.client_phone || body.clienteTelefone || body.telefone,
-            type: body.type || body.tipo,
-            status: body.status || 'pending',
-            description: body.description || body.descricao,
-            scheduled_at: body.scheduled_at || body.dataAgendamento,
-            value: body.value || body.valor,
-            notes: body.notes || body.observacoes,
-        })
-        .select()
-        .single()
+        if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    if (error) return Response.json({ error: error.message }, { status: 500 })
-    return Response.json({ data }, { status: 201 })
+        const body = await req.json()
+        const { data, error } = await supabase
+            .from('consultorias')
+            .insert(body)
+            .select()
+            .single()
+
+        if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+        return NextResponse.json(data, { status: 201 })
+    } catch {
+        return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    }
 }
