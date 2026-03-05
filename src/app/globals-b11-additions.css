@@ -98,6 +98,11 @@
   border: 1px solid var(--bo-border);
   border-radius: 16px;
   transition: border-color 0.2s, box-shadow 0.2s;
+  /* Contain children — prevents overflow on Android */
+  overflow: hidden;
+  /* Flex children should not escape */
+  min-width: 0;
+  max-width: 100%;
 }
 
 .intel-card:hover {
@@ -140,6 +145,24 @@
 .badge-pend    { color: var(--s-pend);   background: var(--s-pend-bg);   }
 .badge-cancel  { color: var(--s-cancel); background: var(--s-cancel-bg); }
 
+/* ── HORIZONTAL SCROLL ROWS (KPI, FilterTabs) ─────────────── */
+/* Critical: constrain scroll containers on Android */
+.scroll-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* Contain width to viewport */
+  width: 100%;
+  max-width: 100%;
+  /* Android: clip overflow properly */
+  position: relative;
+}
+.scroll-row::-webkit-scrollbar { display: none; }
+.scroll-row > * { flex-shrink: 0; }
+
 /* ── MOBILE-FIRST UX FIXES ─────────────────────────────────── */
 
 /* Bottom nav safe area */
@@ -153,6 +176,20 @@
 @media (max-width: 640px) {
   .backoffice-root {
     overflow-wrap: break-word;
+    /* Belt + suspenders for Samsung/Android */
+    overflow-x: clip;
+  }
+
+  /* Clip main and content wrapper */
+  .backoffice-root main {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .backoffice-root main > div {
+    overflow-x: hidden;
+    width: 100%;
   }
 
   /* Tighter safe padding */

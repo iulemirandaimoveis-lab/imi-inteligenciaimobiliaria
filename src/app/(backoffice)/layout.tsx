@@ -31,7 +31,7 @@ export default async function BackofficeLayout({
             <MobileHeader />
 
             {/* Main Content — pt-14 on mobile for MobileHeader, lg:pt-16 for DesktopHeader */}
-            <main className="pt-14 lg:pt-16 lg:pl-60 min-h-screen">
+            <main className="pt-14 lg:pt-16 lg:pl-60 min-h-screen overflow-x-hidden" style={{ maxWidth: '100vw' }}>
                 <div className="p-4 pb-28 lg:p-6 lg:pb-6">
                     <ErrorBoundary>
                         <BackofficeRealtimeProvider>

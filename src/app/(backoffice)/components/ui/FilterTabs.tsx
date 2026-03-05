@@ -25,8 +25,10 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
       className={`flex gap-2 overflow-x-auto ${className}`}
       style={{
         scrollbarWidth: 'none',
-        WebkitOverflowScrolling: 'touch',
         paddingBottom: '2px',
+        width: '100%',
+        maxWidth: '100%',
+        position: 'relative',
       }}
     >
       {tabs.map((tab) => {

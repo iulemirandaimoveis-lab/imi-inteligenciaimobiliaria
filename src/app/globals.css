@@ -106,6 +106,12 @@
 
 /* ── BASE RESETS ────────────────────────────────────────────── */
 @layer base {
+  html, body {
+    /* Android / Samsung overflow fix — prevents horizontal scroll at root */
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
