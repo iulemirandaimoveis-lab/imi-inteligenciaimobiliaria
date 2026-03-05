@@ -4,6 +4,9 @@
 // GET /api/export?module=campanhas&format=csv
 // GET /api/export?module=contratos&format=csv
 // Exports data as CSV — no external dependencies
+
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
