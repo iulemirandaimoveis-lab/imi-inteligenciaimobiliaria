@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { generateImage, uploadGeneratedImage } from '@/lib/ai/gemini';
 import { GenerateImageRequest, AspectRatio } from '@/types/commercial-system';
 
+export const runtime = 'nodejs'
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient();

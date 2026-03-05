@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { generatePostContent } from '@/lib/ai/claude';
 import { GenerateContentRequest, SocialPlatform, ContentType } from '@/types/commercial-system';
 
+export const runtime = 'nodejs'
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient();

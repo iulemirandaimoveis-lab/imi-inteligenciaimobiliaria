@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { generateContentCalendar } from '@/lib/ai/claude';
 import { GenerateCalendarRequest } from '@/types/commercial-system';
 
+export const runtime = 'nodejs'
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient();

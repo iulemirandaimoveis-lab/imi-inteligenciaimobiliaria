@@ -13,6 +13,20 @@ export async function POST(request: Request) {
             )
         }
 
+        // 0. Check if broker with this email already exists in our table
+        const { data: existingBroker } = await supabaseAdmin
+            .from('brokers')
+            .select('id, email')
+            .eq('email', email)
+            .maybeSingle()
+
+        if (existingBroker) {
+            return NextResponse.json(
+                { error: 'Já existe um corretor cadastrado com este email.' },
+                { status: 409 }
+            )
+        }
+
         // 1. Create auth user with service role (admin.createUser requires service role)
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
             email,
@@ -22,6 +36,55 @@ export async function POST(request: Request) {
         })
 
         if (authError) {
+            // If auth user already exists (orphaned from a failed previous attempt),
+            // find and delete it so we can recreate cleanly.
+            if (authError.message.includes('already been registered') || authError.message.includes('already registered')) {
+                // List users to find the orphaned one
+                const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
+                const orphan = users?.find(u => u.email === email)
+                if (orphan) {
+                    // Delete orphaned auth user and retry
+                    await supabaseAdmin.auth.admin.deleteUser(orphan.id)
+                    // Retry auth user creation
+                    const { data: retryAuth, error: retryError } = await supabaseAdmin.auth.admin.createUser({
+                        email,
+                        password,
+                        email_confirm: true,
+                        user_metadata: { name },
+                    })
+                    if (retryError) {
+                        return NextResponse.json({ error: retryError.message }, { status: 400 })
+                    }
+                    // Continue with the retried auth user
+                    const userId = retryAuth.user.id
+                    const { data: broker, error: brokerError } = await supabaseAdmin
+                        .from('brokers')
+                        .insert({
+                            user_id: userId,
+                            name,
+                            email,
+                            phone: phone || null,
+                            creci,
+                            status: status || 'active',
+                            permissions: permissions || [],
+                            role: 'broker',
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString(),
+                        })
+                        .select()
+                        .single()
+
+                    if (brokerError) {
+                        await supabaseAdmin.auth.admin.deleteUser(userId)
+                        return NextResponse.json({ error: brokerError.message }, { status: 500 })
+                    }
+                    return NextResponse.json(broker, { status: 201 })
+                }
+                return NextResponse.json(
+                    { error: 'Este email já está em uso. Tente outro email.' },
+                    { status: 409 }
+                )
+            }
             return NextResponse.json({ error: authError.message }, { status: 400 })
         }
 

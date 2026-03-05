@@ -1,7 +1,8 @@
-
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
+
+export const runtime = 'nodejs'
 
 const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
@@ -49,7 +50,13 @@ REGRAS:
         return NextResponse.json({ description })
 
     } catch (err: any) {
-        console.error('AI Description Error:', err)
-        return NextResponse.json({ error: 'Falha na geração IA' }, { status: 500 })
+        const message = err?.message || String(err)
+        console.error('AI Description Error:', message, err)
+        // Return the real error in development; generic in production
+        return NextResponse.json({
+            error: process.env.NODE_ENV === 'development'
+                ? `Falha na geração IA: ${message}`
+                : 'Falha na geração IA',
+        }, { status: 500 })
     }
 }

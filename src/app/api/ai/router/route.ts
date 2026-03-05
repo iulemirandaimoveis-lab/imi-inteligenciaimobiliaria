@@ -13,6 +13,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'nodejs'
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
 export type AIModel =

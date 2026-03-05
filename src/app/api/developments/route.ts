@@ -74,6 +74,10 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         videoUrl: 'video_url',
         videoShort: 'video_short_url',
         floor: 'floor_count',
+        // 'area' does not exist in DB — map to area_from (DB has area_from + area_to)
+        area: 'area_from',
+        areaFrom: 'area_from',
+        areaTo: 'area_to',
     }
 
     for (const [key, value] of Object.entries(body)) {
@@ -90,7 +94,7 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
         'price_min', 'price_max', 'price_per_sqm',
         'units_count', 'available_units', 'bedrooms', 'bathrooms',
         'parking_spaces', 'private_area', 'floor_count',
-        'total_units',
+        'total_units', 'area_from', 'area_to', 'total_area',
     ]
     for (const f of numericFields) {
         if (result[f] !== undefined && result[f] !== null && result[f] !== '') {
@@ -103,6 +107,11 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
     // Sync dual price columns (price_min/price_max ↔ price_from/price_to)
     if (result.price_min !== undefined) result.price_from = result.price_min
     if (result.price_max !== undefined) result.price_to = result.price_max
+
+    // Sync area: if only area_from set (from single 'area' form field), mirror to area_to
+    if (result.area_from !== undefined && result.area_from !== null && result.area_to === undefined) {
+        result.area_to = result.area_from
+    }
 
     // Sync dual status columns with proper value mapping
     // status_commercial (EN): draft, published, campaign, private, sold

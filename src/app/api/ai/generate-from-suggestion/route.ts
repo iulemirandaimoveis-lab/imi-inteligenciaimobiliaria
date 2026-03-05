@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { generatePostContent } from '@/lib/ai/claude';
 import { ContentType, SocialPlatform } from '@/types/commercial-system';
 
+export const runtime = 'nodejs'
 interface GenerateFromSuggestionRequest {
     tenant_id: string;
     calendar_id: string;
