@@ -17,6 +17,7 @@ import {
     X,
     Settings,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 /* ── Dark-theme design tokens ─────────────────────────── */
 const T = {
@@ -87,11 +88,13 @@ export default function AutomacoesPage() {
     useEffect(() => { fetchWorkflows() }, [fetchWorkflows])
 
     const toggleActive = async (wf: Workflow) => {
+        const next = !wf.is_active
         await fetch('/api/automacoes', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: wf.id, is_active: !wf.is_active }),
+            body: JSON.stringify({ id: wf.id, is_active: next }),
         })
+        toast.success(next ? `"${wf.name}" ativada` : `"${wf.name}" pausada`)
         fetchWorkflows()
     }
 
@@ -99,7 +102,7 @@ export default function AutomacoesPage() {
         if (!form.name) return
         setSaving(true)
         try {
-            await fetch('/api/automacoes', {
+            const res = await fetch('/api/automacoes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -109,17 +112,29 @@ export default function AutomacoesPage() {
                     is_active: true,
                 }),
             })
+            if (!res.ok) throw new Error('Erro ao criar automação')
             setShowModal(false)
             setForm({ name: '', description: '', trigger_type: 'manual' })
+            toast.success(`Automação "${form.name}" criada!`)
             fetchWorkflows()
-        } catch { /* ignore */ }
+        } catch (err: any) {
+            toast.error(err.message || 'Erro ao criar automação')
+        }
         setSaving(false)
     }
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Deseja excluir esta automação?')) return
-        await fetch(`/api/automacoes?id=${id}`, { method: 'DELETE' })
-        fetchWorkflows()
+    const handleDelete = async (id: string, name: string) => {
+        toast.warning(`Excluir "${name}"?`, {
+            action: {
+                label: 'Sim, excluir',
+                onClick: async () => {
+                    await fetch(`/api/automacoes?id=${id}`, { method: 'DELETE' })
+                    toast.success('Automação excluída')
+                    fetchWorkflows()
+                },
+            },
+            duration: 6000,
+        })
     }
 
     const getTimeAgo = (dateStr: string | null) => {
@@ -271,7 +286,7 @@ export default function AutomacoesPage() {
                                                 ? <Pause size={16} className="text-amber-400" />
                                                 : <Play size={16} className="text-green-400" />}
                                         </button>
-                                        <button onClick={() => handleDelete(wf.id)}
+                                        <button onClick={() => handleDelete(wf.id, wf.name)}
                                             className="touch-always-visible opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/10 rounded-lg transition">
                                             <X size={16} className="text-red-400" />
                                         </button>

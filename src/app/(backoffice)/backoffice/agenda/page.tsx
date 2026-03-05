@@ -15,6 +15,7 @@ import {
     Loader2,
     X,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 /* ── Dark-theme design tokens ─────────────────────────── */
 const T = {
@@ -117,10 +118,18 @@ export default function AgendaPage() {
         setSaving(false)
     }
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Deseja excluir este evento?')) return
-        await fetch(`/api/agenda?id=${id}`, { method: 'DELETE' })
-        fetchEvents()
+    const handleDelete = async (id: string, title?: string) => {
+        toast.warning(`Excluir "${title || 'este evento'}"?`, {
+            action: {
+                label: 'Sim, excluir',
+                onClick: async () => {
+                    await fetch(`/api/agenda?id=${id}`, { method: 'DELETE' })
+                    toast.success('Evento excluído')
+                    fetchEvents()
+                },
+            },
+            duration: 6000,
+        })
     }
 
     // Group events by day

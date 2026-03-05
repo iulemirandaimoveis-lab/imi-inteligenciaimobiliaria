@@ -52,17 +52,26 @@ export default function TrackingLinksPage() {
         setTimeout(() => setCopiedId(null), 2000)
     }
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Tem certeza que deseja excluir este link?')) return
-        try {
-            const res = await fetch(`/api/qr/links?id=${id}`, { method: 'DELETE' })
-            if (res.ok) {
-                setLinks(prev => prev.filter(l => l.id !== id))
-                toast.success('Link excluído')
-            }
-        } catch (err) {
-            toast.error('Erro ao excluir')
-        }
+    const handleDelete = async (id: string, campaignName: string) => {
+        toast.warning(`Excluir "${campaignName || 'este link'}"?`, {
+            action: {
+                label: 'Sim, excluir',
+                onClick: async () => {
+                    try {
+                        const res = await fetch(`/api/qr/links?id=${id}`, { method: 'DELETE' })
+                        if (res.ok) {
+                            setLinks(prev => prev.filter(l => l.id !== id))
+                            toast.success('Link excluído')
+                        } else {
+                            toast.error('Erro ao excluir link')
+                        }
+                    } catch {
+                        toast.error('Erro ao excluir link')
+                    }
+                },
+            },
+            duration: 6000,
+        })
     }
 
     const handleDownloadQR = async (url: string, name: string) => {
@@ -241,7 +250,7 @@ export default function TrackingLinksPage() {
                                             <ExternalLink size={14} style={{ color: T.textMuted }} />
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(link.id)}
+                                            onClick={() => handleDelete(link.id, link.campaign_name)}
                                             className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
                                             style={{ background: T.hover }}
                                             title="Excluir"

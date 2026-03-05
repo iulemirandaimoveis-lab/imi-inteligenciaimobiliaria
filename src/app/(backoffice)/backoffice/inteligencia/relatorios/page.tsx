@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Plus, FileText, Pencil, Trash2, Eye, EyeOff, Download, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 type Report = {
     id: string
@@ -46,10 +47,18 @@ export default function RelatoriosBackofficePage() {
     }
 
     async function deleteReport(id: string) {
-        if (!confirm('Remover este relatório?')) return
-        const supabase = createClient()
-        await supabase.from('market_reports').delete().eq('id', id)
-        load()
+        toast.warning('Remover este relatório?', {
+            action: {
+                label: 'Sim, remover',
+                onClick: async () => {
+                    const supabase = createClient()
+                    await supabase.from('market_reports').delete().eq('id', id)
+                    toast.success('Relatório removido')
+                    load()
+                },
+            },
+            duration: 6000,
+        })
     }
 
     return (

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Plus, BookOpen, Pencil, Trash2, Eye, EyeOff, ExternalLink, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 type Ebook = {
     id: string
@@ -42,10 +43,18 @@ export default function EbooksPage() {
     }
 
     async function deleteEbook(id: string) {
-        if (!confirm('Remover este ebook?')) return
-        const supabase = createClient()
-        await supabase.from('ebooks').delete().eq('id', id)
-        load()
+        toast.warning('Remover este ebook?', {
+            action: {
+                label: 'Sim, remover',
+                onClick: async () => {
+                    const supabase = createClient()
+                    await supabase.from('ebooks').delete().eq('id', id)
+                    toast.success('Ebook removido')
+                    load()
+                },
+            },
+            duration: 6000,
+        })
     }
 
     return (

@@ -73,18 +73,25 @@ export default function ImovelDetalhesPage() {
   }, [params.id])
 
   const handleDelete = async () => {
-    if (!confirm('Tem certeza que deseja arquivar este empreendimento?')) return
-    setDeleting(true)
-    try {
-      const res = await fetch(`/api/developments?id=${params.id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Erro ao arquivar')
-      toast.success('Empreendimento arquivado com sucesso')
-      router.push('/backoffice/imoveis')
-    } catch (err: any) {
-      toast.error(err.message)
-    } finally {
-      setDeleting(false)
-    }
+    toast.warning('Arquivar este empreendimento?', {
+      action: {
+        label: 'Sim, arquivar',
+        onClick: async () => {
+          setDeleting(true)
+          try {
+            const res = await fetch(`/api/developments?id=${params.id}`, { method: 'DELETE' })
+            if (!res.ok) throw new Error('Erro ao arquivar')
+            toast.success('Empreendimento arquivado com sucesso')
+            router.push('/backoffice/imoveis')
+          } catch (err: any) {
+            toast.error(err.message)
+          } finally {
+            setDeleting(false)
+          }
+        },
+      },
+      duration: 6000,
+    })
   }
 
   if (loading) {

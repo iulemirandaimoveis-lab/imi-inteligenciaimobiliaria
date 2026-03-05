@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Plus, TrendingUp, Save, Trash2, Eye, EyeOff, Loader2, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 type MarketIndex = {
     id: string
@@ -66,10 +67,18 @@ export default function IndicesBackofficePage() {
     }
 
     async function deleteIndex(id: string) {
-        if (!confirm('Remover este índice?')) return
-        const supabase = createClient()
-        await supabase.from('market_indices').delete().eq('id', id)
-        load()
+        toast.warning('Remover este índice de mercado?', {
+            action: {
+                label: 'Sim, remover',
+                onClick: async () => {
+                    const supabase = createClient()
+                    await supabase.from('market_indices').delete().eq('id', id)
+                    toast.success('Índice removido')
+                    load()
+                },
+            },
+            duration: 6000,
+        })
     }
 
     const inputClass = "h-8 px-2.5 rounded-lg text-sm outline-none transition-all w-full"

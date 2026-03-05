@@ -65,13 +65,15 @@ export async function POST(request: Request) {
             .insert({
                 development_id,
                 campaign_name: campaign_name || `${utm_source}-${utm_campaign}`,
-                original_url: originalUrl,
                 url: originalUrl,
                 short_code: shortCode,
-                utm_params: { source: utm_source, medium: utm_medium, campaign: utm_campaign, content: utm_content || null },
                 custom_slug: custom_slug || null,
+                utm_source,
+                utm_medium,
+                utm_campaign,
+                utm_content: utm_content || null,
+                utm_params: { source: utm_source, medium: utm_medium, campaign: utm_campaign, content: utm_content || null },
                 clicks: 0,
-                created_at: new Date().toISOString()
             })
             .select()
             .single()

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { TrendingUp, TrendingDown, Minus, Plus, Save, Trash2, Loader2, RefreshCw } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 type Indicator = {
     id: string
@@ -56,10 +57,18 @@ export default function IndicadoresPage() {
     }
 
     async function deleteIndicator(id: string) {
-        if (!confirm('Remover este indicador?')) return
-        const supabase = createClient()
-        await supabase.from('market_indicators').delete().eq('id', id)
-        load()
+        toast.warning('Remover este indicador?', {
+            action: {
+                label: 'Sim, remover',
+                onClick: async () => {
+                    const supabase = createClient()
+                    await supabase.from('market_indicators').delete().eq('id', id)
+                    toast.success('Indicador removido')
+                    load()
+                },
+            },
+            duration: 6000,
+        })
     }
 
     async function addIndicator() {
