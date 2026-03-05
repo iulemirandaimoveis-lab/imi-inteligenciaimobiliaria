@@ -5,88 +5,17 @@ import { useRouter, useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft, Phone, Mail, MapPin, Building2, DollarSign,
-  Calendar, Star, Edit, MessageSquare, FileText,
+  Calendar, Edit, MessageSquare, FileText,
   Clock, TrendingUp, Eye, MousePointerClick,
-  ChevronRight, Sparkles, MoreVertical, Send, AlertCircle,
+  AlertCircle, Send, Globe, MoreVertical,
 } from 'lucide-react'
 import { useLead } from '@/hooks/use-leads-complete'
+import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
+import { AIInsightCard } from '@/app/(backoffice)/components/ui/AIInsightCard'
+import { AIScore } from '@/app/(backoffice)/components/ui/AIScore'
+import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
 
-// ── Dark theme tokens ──────────────────────────────────────────
-const T = {
-  bg: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  surface: 'var(--bo-surface)',
-  border: 'var(--bo-border)',
-  borderGold: 'var(--bo-border-gold)',
-  text: 'var(--bo-text)',
-  textSub: 'var(--bo-text-muted)',
-  gold: '#486581',
-  iconBg: 'var(--bo-icon-bg)',
-}
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-  hot:       { label: 'Quente',      color: '#E8A87C', bg: 'rgba(232,168,124,0.12)', dot: '#E8A87C' },
-  warm:      { label: 'Morno',       color: '#7EC8A4', bg: 'rgba(126,200,164,0.12)', dot: '#7EC8A4' },
-  cold:      { label: 'Frio',        color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', dot: '#7B9EC4' },
-  qualified: { label: 'Qualificado', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', dot: '#6BB87B' },
-  new:       { label: 'Novo',        color: '#9B8EC4', bg: 'rgba(155,142,196,0.12)', dot: '#9B8EC4' },
-  contacted: { label: 'Contactado',  color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', dot: '#7B9EC4' },
-  proposal:  { label: 'Proposta',    color: '#486581', bg: 'rgba(72,101,129,0.15)',  dot: '#486581' },
-  won:       { label: 'Ganho',       color: '#6BB87B', bg: 'rgba(107,184,123,0.15)', dot: '#6BB87B' },
-  lost:      { label: 'Perdido',     color: '#7B8794', bg: 'rgba(123,135,148,0.12)', dot: '#7B8794' },
-}
-
-function ScoreRing({ score }: { score: number }) {
-  const r = 20, c = 2 * Math.PI * r
-  const fill = (score / 100) * c
-  const color = score >= 85 ? '#6BB87B' : score >= 70 ? '#E8A87C' : '#7B9EC4'
-
-  return (
-    <div className="relative w-16 h-16 flex-shrink-0">
-      <svg className="w-full h-full -rotate-90" viewBox="0 0 48 48">
-        <circle cx="24" cy="24" r={r} strokeWidth="4" stroke="var(--bo-border)" fill="none" />
-        <circle cx="24" cy="24" r={r} strokeWidth="4" stroke={color} fill="none"
-          strokeDasharray={`${fill} ${c}`} strokeLinecap="round"
-          style={{ transition: 'stroke-dasharray 0.6s ease' }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-[13px] font-black leading-none" style={{ color: T.text }}>{score}</span>
-        <span className="text-[9px] font-bold uppercase" style={{ color: T.textSub }}>score</span>
-      </div>
-    </div>
-  )
-}
-
-function LoadingSkeleton() {
-  return (
-    <div className="max-w-2xl mx-auto pb-20 animate-pulse">
-      <div className="h-8 w-24 rounded-lg mb-6" style={{ background: 'var(--bo-elevated)' }} />
-      <div className="rounded-3xl p-6 mb-4" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
-        <div className="flex items-start gap-4 mb-5">
-          <div className="w-14 h-14 rounded-2xl flex-shrink-0" style={{ background: 'var(--bo-border)' }} />
-          <div className="flex-1 space-y-2">
-            <div className="h-5 w-40 rounded" style={{ background: 'var(--bo-border)' }} />
-            <div className="h-4 w-24 rounded" style={{ background: 'var(--bo-icon-bg)' }} />
-          </div>
-          <div className="w-16 h-16 rounded-full" style={{ background: 'var(--bo-border)' }} />
-        </div>
-        <div className="grid grid-cols-2 gap-2 mb-5">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className={`h-4 rounded ${i === 4 ? 'col-span-2' : ''}`} style={{ background: 'var(--bo-icon-bg)' }} />
-          ))}
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="h-11 rounded-2xl" style={{ background: 'var(--bo-icon-bg)' }} />
-          <div className="h-11 rounded-2xl" style={{ background: 'var(--bo-border)' }} />
-        </div>
-      </div>
-      <div className="rounded-3xl h-36 mb-4" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }} />
-      <div className="rounded-3xl h-48" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }} />
-    </div>
-  )
-}
-
+// ── Helpers ────────────────────────────────────────────────────────
 function formatCapital(capital: number | null): string {
   if (!capital) return '—'
   if (capital >= 1_000_000) return `R$ ${(capital / 1_000_000).toFixed(1).replace('.', ',')}M`
@@ -106,9 +35,51 @@ function getTimeAgo(iso: string | null): string {
   const m = Math.floor(diff / 60000)
   if (d > 0) return `${d}d atrás`
   if (h > 0) return `${h}h atrás`
-  return `${m}min atrás`
+  if (m > 0) return `${m}min atrás`
+  return 'agora'
 }
 
+function formatDate(iso: string | null): string {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+// ── Avatar gradient based on status ──────────────────────────────
+const AVATAR_GRADIENTS: Record<string, string> = {
+  hot:       'linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%)',
+  warm:      'linear-gradient(135deg, #78350f 0%, #d97706 100%)',
+  cold:      'linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%)',
+  qualified: 'linear-gradient(135deg, #14532d 0%, #15803d 100%)',
+  proposal:  'linear-gradient(135deg, #1e1b4b 0%, #3730a3 100%)',
+  won:       'linear-gradient(135deg, #14532d 0%, #166534 100%)',
+  lost:      'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
+}
+
+// ── Timeline events ────────────────────────────────────────────────
+const TIMELINE_ICONS: Record<string, React.ElementType> = {
+  view: Eye,
+  click: MousePointerClick,
+  contact: MessageSquare,
+  capture: Globe,
+  calendar: Calendar,
+}
+
+// ── Skeleton ───────────────────────────────────────────────────────
+function LoadingSkeleton() {
+  return (
+    <div className="max-w-2xl mx-auto pb-24 space-y-4 animate-pulse">
+      <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 10, width: '40%', opacity: 0.5 }} />
+      <div style={{ height: 180, background: 'var(--bo-card)', borderRadius: 20, opacity: 0.4 }} />
+      <div style={{ height: 80, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.35 }} />
+      <div style={{ height: 120, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.3 }} />
+      {[0,1,2].map(i => (
+        <div key={i} style={{ height: 80, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.25 - i * 0.05 }} />
+      ))}
+    </div>
+  )
+}
+
+// ── Main ───────────────────────────────────────────────────────────
 export default function LeadDetailPage() {
   const router = useRouter()
   const params = useParams()
@@ -125,152 +96,253 @@ export default function LeadDetailPage() {
       <div className="max-w-2xl mx-auto pb-20">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 font-medium text-sm mb-6 transition-colors"
-          style={{ color: T.textSub }}
+          className="flex items-center gap-2 mb-6"
+          style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
         >
-          <ArrowLeft size={16} />
-          Leads
+          <ArrowLeft size={15} /> Leads
         </button>
-        <div className="rounded-3xl p-12 text-center" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-          <AlertCircle size={32} className="mx-auto mb-3" style={{ color: T.textSub, opacity: 0.4 }} />
-          <p className="text-[15px] font-semibold mb-1" style={{ color: T.text }}>Lead não encontrado</p>
-          <p className="text-[13px]" style={{ color: T.textSub }}>O lead solicitado não existe ou foi removido.</p>
+        <div
+          className="rounded-2xl text-center"
+          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', padding: '48px 24px' }}
+        >
+          <AlertCircle size={28} style={{ color: 'var(--bo-text-muted)', opacity: 0.3, margin: '0 auto 12px' }} />
+          <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--bo-text)', marginBottom: '6px' }}>Lead não encontrado</p>
+          <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>O lead solicitado não existe ou foi removido.</p>
         </div>
       </div>
     )
   }
 
-  const status = STATUS_CONFIG[lead.status] ?? STATUS_CONFIG.new
-  const initials = getInitials(lead.name)
-  const devName = (lead as any).development?.name ?? null
+  const initials     = getInitials(lead.name)
+  const avatarBg     = AVATAR_GRADIENTS[lead.status] ?? AVATAR_GRADIENTS.cold
+  const devName      = (lead as any).development?.name ?? null
+  const aiIntentPct  = lead.score ?? 0
+  const leadStatus   = lead.status || 'cold'
 
-  // Build a generic timeline from what we know
+  // AI insight text
+  const aiInsight = lead.score >= 85
+    ? `${lead.name.split(' ')[0]} demonstra intenção de compra muito alta (score ${lead.score}). Abordagem proativa com proposta personalizada é a ação recomendada.`
+    : lead.score >= 70
+    ? `Score moderado (${lead.score}). Qualificar interesse específico antes de apresentar proposta. ${devName ? `Interesse em ${devName}.` : ''}`
+    : `Lead em aquecimento (score ${lead.score}). Nutrição com conteúdo e follow-up consistente recomendados.`
+
+  const nextAction = lead.status === 'hot' || lead.status === 'qualified'
+    ? 'Apresentar proposta personalizada'
+    : lead.status === 'warm' || lead.status === 'contacted'
+    ? 'Agendar visita ou apresentação'
+    : lead.status === 'proposal'
+    ? 'Follow-up na proposta enviada'
+    : 'Qualificar necessidade do lead'
+
+  // Build timeline
   const timeline = [
     lead.last_interaction_at && {
       icon: MessageSquare,
-      label: 'Último contato registrado',
-      detail: devName ? `Empreendimento: ${devName}` : '',
+      label: 'Último Contato Registrado',
+      detail: devName ? `Empreendimento: ${devName}` : lead.interest || '',
       time: getTimeAgo(lead.last_interaction_at),
       accent: true,
+      trending: true,
     },
     {
-      icon: Eye,
-      label: `Lead capturado via ${lead.source || 'Orgânico'}`,
-      detail: devName ? `Interesse: ${lead.interest || devName}` : (lead.interest || ''),
+      icon: lead.source?.toLowerCase().includes('whatsapp') ? MessageSquare
+           : lead.source?.toLowerCase().includes('google') ? Globe
+           : Globe,
+      label: `Capturado via ${lead.source || 'Orgânico'}`,
+      detail: lead.interest ? `Interesse: ${lead.interest}` : 'Lead sem interesse definido',
       time: getTimeAgo(lead.created_at),
       accent: !lead.last_interaction_at,
+      trending: false,
     },
-  ].filter(Boolean) as Array<{ icon: any; label: string; detail: string; time: string; accent: boolean }>
+  ].filter(Boolean) as Array<{
+    icon: React.ElementType; label: string; detail: string;
+    time: string; accent: boolean; trending: boolean;
+  }>
 
   return (
-    <div className="max-w-2xl mx-auto pb-20">
+    <div className="max-w-2xl mx-auto pb-24 space-y-4">
 
-      {/* ── TOP NAV ── */}
-      <div className="flex items-center justify-between mb-6">
+      {/* ── Top Nav ───────────────────────────────────── */}
+      <div className="flex items-center justify-between">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 font-medium text-sm transition-colors"
-          style={{ color: T.textSub }}
+          className="flex items-center gap-2"
+          style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
         >
-          <ArrowLeft size={16} />
-          Leads
+          <ArrowLeft size={15} /> Leads
         </button>
         <div className="flex items-center gap-2">
           <button
-            className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
-            style={{ border: `1px solid ${T.border}`, background: 'transparent' }}
+            onClick={() => router.push(`/backoffice/leads/${id}/editar`)}
+            style={{
+              width: '34px', height: '34px', borderRadius: '10px',
+              background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+            }}
           >
-            <Edit size={15} style={{ color: T.textSub }} />
+            <Edit size={14} style={{ color: 'var(--bo-text-muted)' }} />
           </button>
           <button
-            className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
-            style={{ border: `1px solid ${T.border}`, background: 'transparent' }}
+            style={{
+              width: '34px', height: '34px', borderRadius: '10px',
+              background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+            }}
           >
-            <MoreVertical size={15} style={{ color: T.textSub }} />
+            <MoreVertical size={14} style={{ color: 'var(--bo-text-muted)' }} />
           </button>
         </div>
       </div>
 
-      {/* ── HERO CARD ── */}
+      {/* ── Hero Profile Card ─────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
-        className="rounded-3xl p-6 mb-4"
-        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+        transition={{ duration: 0.28 }}
+        style={{
+          background: 'var(--bo-card)',
+          border: '1px solid var(--bo-border)',
+          borderRadius: '20px',
+          padding: '20px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
       >
-        <div className="flex items-start gap-4 mb-5">
-          {/* Avatar */}
-          <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-lg font-bold flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}
-          >
+        {/* Background accent glow */}
+        <div style={{
+          position: 'absolute', top: '-30px', right: '-20px',
+          width: '100px', height: '100px', borderRadius: '50%',
+          background: 'var(--imi-blue-dim)', filter: 'blur(30px)', pointerEvents: 'none',
+        }} />
+
+        {/* Label */}
+        <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-blue-bright)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px', position: 'relative' }}>
+          LEAD PROFILE
+        </div>
+
+        {/* Avatar + Info + AI Score */}
+        <div className="flex items-start gap-4 mb-5" style={{ position: 'relative' }}>
+          <div style={{
+            width: '56px', height: '56px', borderRadius: '16px',
+            background: avatarBg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '18px', fontWeight: 700, color: 'rgba(255,255,255,0.92)',
+            flexShrink: 0, letterSpacing: '-0.02em',
+          }}>
             {initials}
           </div>
 
-          {/* Info */}
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold mb-0.5 truncate" style={{ color: T.text }}>{lead.name}</h1>
+            <h1 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--bo-text)', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '6px' }}>
+              {lead.name}
+            </h1>
             <div className="flex items-center gap-2 flex-wrap">
-              <span
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold"
-                style={{ color: status.color, background: status.bg }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: status.dot }} />
-                {status.label}
-              </span>
+              <StatusBadge status={leadStatus} size="sm" glow dot />
               {lead.source && (
-                <span className="text-[11px]" style={{ color: T.textSub }}>via {lead.source}</span>
+                <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', fontWeight: 500 }}>
+                  via {lead.source}
+                </span>
               )}
             </div>
           </div>
 
-          {/* Score Ring */}
-          <ScoreRing score={lead.score ?? 0} />
+          {/* AI Intent Score */}
+          <div
+            style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              background: 'var(--bo-elevated)',
+              border: '1px solid var(--imi-blue-border)',
+              borderRadius: '14px', padding: '10px 12px',
+              flexShrink: 0,
+            }}
+          >
+            <span style={{ fontSize: '8px', fontWeight: 700, color: 'var(--imi-blue-bright)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
+              AI Intent
+            </span>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--bo-text)', lineHeight: 1 }}>
+              {aiIntentPct}%
+            </span>
+          </div>
+        </div>
+
+        {/* Contact actions */}
+        <div className="grid grid-cols-2 gap-2 mb-5">
+          <a
+            href={`tel:${lead.phone}`}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              height: '46px', borderRadius: '12px', fontSize: '13px', fontWeight: 600,
+              color: 'var(--bo-text)', background: 'var(--bo-elevated)',
+              border: '1px solid var(--bo-border)', textDecoration: 'none',
+            }}
+          >
+            <Phone size={15} style={{ color: 'var(--imi-blue-bright)' }} /> Ligar
+          </a>
+          <a
+            href={`https://wa.me/55${(lead.phone ?? '').replace(/\D/g, '')}`}
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              height: '46px', borderRadius: '12px', fontSize: '13px', fontWeight: 700,
+              color: '#fff', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+              border: 'none', textDecoration: 'none',
+            }}
+          >
+            <MessageSquare size={15} /> WhatsApp
+          </a>
         </div>
 
         {/* Contact info grid */}
-        <div className="grid grid-cols-2 gap-2 mb-5">
+        <div className="space-y-2">
           {lead.email && (
             <div className="flex items-center gap-2">
-              <Mail size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
-              <span className="truncate text-[12px]" style={{ color: T.textSub }}>{lead.email}</span>
+              <Mail size={12} style={{ color: 'var(--bo-text-muted)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', color: 'var(--bo-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {lead.email}
+              </span>
             </div>
           )}
           {lead.phone && (
             <div className="flex items-center gap-2">
-              <Phone size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
-              <span className="text-[12px]" style={{ color: T.textSub }}>{lead.phone}</span>
+              <Phone size={12} style={{ color: 'var(--bo-text-muted)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>{lead.phone}</span>
             </div>
           )}
           {devName && (
             <div className="flex items-center gap-2">
-              <Building2 size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
-              <span className="text-[12px]" style={{ color: T.textSub }}>{devName}</span>
+              <Building2 size={12} style={{ color: 'var(--bo-text-muted)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>{devName}</span>
             </div>
           )}
           {lead.interest && (
             <div className="flex items-center gap-2">
-              <MapPin size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
-              <span className="text-[12px]" style={{ color: T.textSub }}>{lead.interest}</span>
+              <MapPin size={12} style={{ color: 'var(--bo-text-muted)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>{lead.interest}</span>
             </div>
           )}
           {lead.capital && (
-            <div className="flex items-center gap-2 col-span-2">
-              <DollarSign size={13} className="flex-shrink-0" style={{ color: T.textSub }} />
-              <span className="text-[12px] font-semibold" style={{ color: T.text }}>{formatCapital(lead.capital)}</span>
+            <div className="flex items-center gap-2">
+              <DollarSign size={12} style={{ color: 'var(--imi-ai-gold)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--imi-ai-gold)' }}>
+                {formatCapital(lead.capital)}
+              </span>
             </div>
           )}
         </div>
 
         {/* Tags */}
         {lead.tags && lead.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-5">
-            {lead.tags.map((tag, i) => (
+          <div className="flex flex-wrap gap-1.5 mt-4">
+            {lead.tags.map((tag: string, i: number) => (
               <span
                 key={i}
-                className="px-2 py-0.5 rounded-full text-[11px] font-medium"
-                style={{ background: T.iconBg, border: `1px solid ${T.border}`, color: T.textSub }}
+                style={{
+                  fontSize: '10px', fontWeight: 600,
+                  color: 'var(--bo-text-muted)', background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid var(--bo-border)', padding: '2px 8px', borderRadius: '6px',
+                }}
               >
                 {tag}
               </span>
@@ -278,159 +350,147 @@ export default function LeadDetailPage() {
           </div>
         )}
 
-        {/* Meta */}
-        <div className="flex items-center gap-4 text-[11px] mb-5" style={{ color: T.textSub }}>
-          <span>Criado {getTimeAgo(lead.created_at)}</span>
+        {/* Meta: created + last contact */}
+        <div
+          className="flex items-center gap-3 mt-4 pt-3"
+          style={{ borderTop: '1px solid var(--bo-border)', fontSize: '10px', color: 'var(--bo-text-muted)' }}
+        >
+          <span className="flex items-center gap-1">
+            <Calendar size={9} />
+            Criado {getTimeAgo(lead.created_at)}
+          </span>
           {lead.last_interaction_at && (
             <>
-              <span>·</span>
-              <span>Último contato {getTimeAgo(lead.last_interaction_at)}</span>
+              <span style={{ color: 'var(--bo-border)', fontSize: '12px' }}>·</span>
+              <span className="flex items-center gap-1">
+                <Clock size={9} />
+                Último contato {getTimeAgo(lead.last_interaction_at)}
+              </span>
             </>
           )}
         </div>
-
-        {/* ── Action buttons — primary CTAs for field use ── */}
-        <div className="grid grid-cols-2 gap-3">
-          <a
-            href={`tel:${lead.phone}`}
-            className="flex items-center justify-center gap-2 h-12 rounded-2xl text-[14px] font-semibold transition-all"
-            style={{ background: T.iconBg, border: `1px solid ${T.border}`, color: T.text }}
-          >
-            <Phone size={16} />
-            Ligar
-          </a>
-          <a
-            href={`https://wa.me/55${(lead.phone ?? '').replace(/\D/g, '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 h-12 rounded-2xl text-[14px] font-semibold text-white transition-all"
-            style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)' }}
-          >
-            <MessageSquare size={16} />
-            WhatsApp
-          </a>
-        </div>
       </motion.div>
 
-      {/* ── AI INSIGHT CARD ── */}
+      {/* ── AI Insight Card ───────────────────────────── */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.35 }}
-        className="rounded-3xl p-6 mb-4 relative overflow-hidden"
-        style={{ background: 'var(--bo-elevated)', border: `1px solid ${T.borderGold}` }}
+        transition={{ delay: 0.10 }}
       >
-        <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full blur-2xl" style={{ background: 'rgba(72,101,129,0.15)' }} />
-        <div className="flex items-center gap-2 mb-3 relative z-10">
-          <Sparkles size={16} style={{ color: T.gold }} />
-          <h3 className="font-bold text-[15px]" style={{ color: T.text }}>AI Insight Strategy</h3>
-        </div>
-        <p className="text-[13px] leading-relaxed mb-4 relative z-10" style={{ color: T.textSub }}>
-          {lead.score >= 85
-            ? `${lead.name} tem score alto (${lead.score}). Abordagem proativa recomendada — alta probabilidade de conversão.`
-            : lead.score >= 70
-            ? `Score moderado (${lead.score}). Qualificar melhor interesse antes de apresentar propostas.`
-            : `Lead em aquecimento (score ${lead.score}). Nutrição com conteúdo relevante recomendada antes de contato direto.`
-          }
-          {devName ? ` Interesse principal: ${devName}.` : ''}
-          {lead.capital ? ` Capital declarado: ${formatCapital(lead.capital)}.` : ''}
-        </p>
-        <div
-          className="rounded-2xl p-4 relative z-10"
-          style={{ background: 'var(--bo-icon-bg)', border: `1px solid ${T.border}` }}
+        <AIInsightCard
+          title="AI Insight Strategy"
+          variant="gold"
+          nextStep={nextAction}
         >
-          <p className="text-[10px] uppercase font-bold mb-1.5 tracking-widest" style={{ color: T.textSub }}>
-            Próxima Ação Sugerida
-          </p>
-          <div className="flex items-center justify-between">
-            <span className="text-[13px]" style={{ color: T.text }}>
-              {lead.status === 'new' || lead.status === 'cold'
-                ? 'Entrar em contato e qualificar necessidade'
-                : lead.status === 'contacted' || lead.status === 'warm'
-                ? 'Agendar visita ou apresentação de proposta'
-                : lead.status === 'proposal'
-                ? 'Follow-up na proposta enviada'
-                : lead.status === 'hot' || lead.status === 'qualified'
-                ? 'Apresentar proposta personalizada'
-                : 'Atualizar status do lead'
-              }
-            </span>
-            <ChevronRight size={14} style={{ color: T.gold }} className="flex-shrink-0" />
-          </div>
-        </div>
+          <span style={{ color: 'var(--bo-text)', fontSize: '12px', lineHeight: 1.65 }}>
+            {aiInsight}
+          </span>
+        </AIInsightCard>
       </motion.div>
 
-      {/* ── TABS ── */}
+      {/* ── Behavioral Timeline Tabs ──────────────────── */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.18 }}
-        className="rounded-3xl overflow-hidden"
-        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.16 }}
+        style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '20px', overflow: 'hidden' }}
       >
-        {/* Tab bar */}
-        <div className="flex" style={{ borderBottom: `1px solid ${T.border}` }}>
+        {/* Tab header */}
+        <div className="flex" style={{ borderBottom: '1px solid var(--bo-border)' }}>
           {[
-            { key: 'timeline', label: 'Timeline' },
-            { key: 'history', label: 'Histórico' },
-            { key: 'notes', label: 'Observações' },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as any)}
-              className="flex-1 py-3.5 text-[12px] font-bold uppercase tracking-wider transition-colors"
-              style={{
-                color: activeTab === tab.key ? T.text : T.textSub,
-                borderBottom: activeTab === tab.key ? `2px solid ${T.gold}` : '2px solid transparent',
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
+            { key: 'timeline', label: 'Behavioral Timeline' },
+            { key: 'history',  label: 'Histórico' },
+            { key: 'notes',    label: 'Notas' },
+          ].map((tab) => {
+            const isActive = activeTab === tab.key
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key as any)}
+                style={{
+                  flex: 1,
+                  padding: '13px 8px',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  color: isActive ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: `2px solid ${isActive ? 'var(--imi-blue-bright)' : 'transparent'}`,
+                  cursor: 'pointer',
+                  transition: 'all 0.18s',
+                }}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
         </div>
 
-        <div className="p-5">
-          {/* ── TIMELINE TAB ── */}
+        <div style={{ padding: '16px' }}>
+
+          {/* ── Timeline ── */}
           {activeTab === 'timeline' && (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-[14px]" style={{ color: T.text }}>Eventos do Lead</h3>
-                <span
-                  className="text-[10px] font-bold px-2.5 py-1 rounded-full"
-                  style={{ color: T.gold, background: 'rgba(72,101,129,0.12)', border: `1px solid rgba(72,101,129,0.2)` }}
-                >
-                  {timeline.length} evento{timeline.length !== 1 ? 's' : ''}
-                </span>
-              </div>
+            <div>
+              <SectionHeader
+                title="Eventos do Lead"
+                badge={`${timeline.length} evento${timeline.length !== 1 ? 's' : ''}`}
+              />
 
               {timeline.length > 0 ? (
-                <div className="relative">
-                  <div className="absolute left-5 top-0 bottom-0 w-px" style={{ background: T.border }} />
+                <div style={{ position: 'relative' }}>
+                  {/* Vertical line */}
+                  <div style={{
+                    position: 'absolute', left: '19px', top: '20px', bottom: '20px',
+                    width: '2px', background: 'var(--bo-border)',
+                  }} />
+
                   <div className="space-y-4">
                     {timeline.map((event, i) => (
-                      <div key={i} className="flex gap-4 relative">
-                        <div
-                          className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                          style={event.accent
-                            ? { background: 'var(--bo-elevated)', border: `2px solid ${T.gold}` }
-                            : { background: T.iconBg, border: `1px solid ${T.border}` }
-                          }
-                        >
-                          <event.icon size={14} style={{ color: event.accent ? T.gold : T.textSub }} />
+                      <div key={i} className="flex gap-3">
+                        {/* Icon node */}
+                        <div style={{
+                          position: 'relative', zIndex: 1,
+                          width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
+                          background: event.accent
+                            ? 'var(--imi-blue-dim)'
+                            : 'rgba(255,255,255,0.04)',
+                          border: `2px solid ${event.accent ? 'var(--imi-blue-border)' : 'var(--bo-border)'}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                          <event.icon
+                            size={14}
+                            style={{ color: event.accent ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)' }}
+                          />
                         </div>
+
+                        {/* Card */}
                         <div
-                          className={`flex-1 rounded-2xl p-3.5 ${i > 0 ? 'opacity-75' : ''}`}
-                          style={{ background: T.iconBg, border: `1px solid ${T.border}` }}
+                          style={{
+                            flex: 1,
+                            background: 'rgba(255,255,255,0.03)',
+                            border: '1px solid var(--bo-border)',
+                            borderRadius: '12px',
+                            padding: '10px 12px',
+                            opacity: i > 0 ? 0.75 : 1,
+                          }}
                         >
-                          <div className="flex items-start justify-between gap-2 mb-0.5">
-                            <h4 className="font-semibold text-[13px]" style={{ color: T.text }}>{event.label}</h4>
-                            <span className="text-[10px] flex-shrink-0" style={{ color: T.textSub }}>{event.time}</span>
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h4 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text)' }}>
+                              {event.label}
+                            </h4>
+                            <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', flexShrink: 0 }}>
+                              {event.time}
+                            </span>
                           </div>
                           {event.detail && (
-                            <p className="text-[11px]" style={{ color: T.textSub }}>{event.detail}</p>
+                            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginBottom: '4px' }}>
+                              {event.detail}
+                            </p>
                           )}
-                          {event.accent && (
-                            <div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold" style={{ color: '#6BB87B' }}>
+                          {event.trending && (
+                            <div className="flex items-center gap-1" style={{ fontSize: '10px', fontWeight: 700, color: 'var(--s-done)' }}>
                               <TrendingUp size={10} />
                               Evento mais recente
                             </div>
@@ -441,67 +501,83 @@ export default function LeadDetailPage() {
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8" style={{ color: T.textSub }}>
-                  <Eye size={28} className="mx-auto mb-2 opacity-40" />
-                  <p className="text-[13px]">Nenhum evento registrado</p>
+                <div style={{ textAlign: 'center', padding: '32px 0' }}>
+                  <Eye size={26} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 10px' }} />
+                  <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)' }}>Nenhum evento registrado</p>
                 </div>
               )}
             </div>
           )}
 
-          {/* ── HISTORY TAB ── */}
+          {/* ── History ── */}
           {activeTab === 'history' && (
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-[14px]" style={{ color: T.text }}>Histórico de Contatos</h3>
-                <button className="text-[11px] font-bold" style={{ color: T.gold }}>+ Registrar</button>
-              </div>
-              <div className="text-center py-8" style={{ color: T.textSub }}>
-                <Clock size={28} className="mx-auto mb-2 opacity-40" />
-                <p className="text-[13px]">Nenhum contato registrado ainda</p>
-                <p className="text-[11px] mt-1">Use o botão acima para registrar um contato</p>
+              <SectionHeader
+                title="Histórico de Contatos"
+                action={{ label: '+ Registrar', onClick: () => {} }}
+              />
+              <div style={{ textAlign: 'center', padding: '32px 0' }}>
+                <Clock size={26} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 10px' }} />
+                <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)', marginBottom: '4px' }}>Sem contatos registrados</p>
+                <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>Use o botão acima para registrar</p>
               </div>
             </div>
           )}
 
-          {/* ── NOTES TAB ── */}
+          {/* ── Notes ── */}
           {activeTab === 'notes' && (
             <div>
+              <SectionHeader title="Observações" />
               {lead.message ? (
                 <div
-                  className="rounded-2xl p-4 mb-4"
-                  style={{ background: T.iconBg, border: `1px solid ${T.border}` }}
+                  style={{
+                    background: 'rgba(255,255,255,0.03)', border: '1px solid var(--bo-border)',
+                    borderRadius: '12px', padding: '12px', marginBottom: '12px',
+                  }}
                 >
-                  <p className="text-[13px] leading-relaxed" style={{ color: T.textSub }}>{lead.message}</p>
+                  <p style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--bo-text-muted)' }}>
+                    {lead.message}
+                  </p>
                 </div>
               ) : (
                 <div
-                  className="rounded-2xl p-4 mb-4 text-center"
-                  style={{ background: T.iconBg, border: `1px solid ${T.border}`, color: T.textSub }}
+                  style={{
+                    background: 'rgba(255,255,255,0.02)', border: '1px solid var(--bo-border)',
+                    borderRadius: '12px', padding: '20px', textAlign: 'center', marginBottom: '12px',
+                  }}
                 >
-                  <FileText size={20} className="mx-auto mb-1 opacity-40" />
-                  <p className="text-[12px]">Nenhuma mensagem do lead</p>
+                  <FileText size={20} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 8px' }} />
+                  <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>Nenhuma mensagem do lead</p>
                 </div>
               )}
+              {/* Note input */}
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={note}
                   onChange={e => setNote(e.target.value)}
                   placeholder="Adicionar observação..."
-                  className="flex-1 h-11 px-4 text-[13px] rounded-xl outline-none placeholder:opacity-40"
                   style={{
-                    background: T.iconBg,
-                    border: `1px solid ${T.border}`,
-                    color: T.text,
+                    flex: 1, height: '42px', padding: '0 14px',
+                    fontSize: '13px', background: 'var(--bo-elevated)',
+                    border: '1px solid var(--bo-border)', borderRadius: '10px',
+                    color: 'var(--bo-text)', outline: 'none',
                   }}
                 />
                 <button
                   disabled={!note.trim()}
-                  className="w-11 h-11 text-white rounded-xl flex items-center justify-center transition-colors disabled:opacity-40"
-                  style={{ background: T.gold }}
+                  style={{
+                    width: '42px', height: '42px', borderRadius: '10px',
+                    background: note.trim()
+                      ? 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)'
+                      : 'rgba(255,255,255,0.05)',
+                    border: 'none', cursor: note.trim() ? 'pointer' : 'default',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    opacity: note.trim() ? 1 : 0.4,
+                    transition: 'all 0.18s',
+                  }}
                 >
-                  <Send size={14} />
+                  <Send size={14} style={{ color: note.trim() ? '#fff' : 'var(--bo-text-muted)' }} />
                 </button>
               </div>
             </div>

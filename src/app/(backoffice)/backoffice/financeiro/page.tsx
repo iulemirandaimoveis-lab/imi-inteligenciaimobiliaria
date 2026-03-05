@@ -3,420 +3,384 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
-    TrendingUp, TrendingDown, DollarSign, Plus, Loader2,
-    ArrowUpCircle, ArrowDownCircle, Download, X, CheckCircle,
+  TrendingUp, TrendingDown, DollarSign, Plus, Loader2,
+  ArrowUpCircle, ArrowDownCircle, X, CheckCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
-
-const T = {
-    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
-}
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
+import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTabs'
+import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
+import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
 
 interface Transaction {
-    id: string
-    type: 'receita' | 'despesa'
-    category: string
-    description: string
-    amount: number
-    due_date: string | null
-    paid_date: string | null
-    status: string
-    payment_method: string | null
-    notes: string | null
-    created_at: string
+  id: string
+  type: 'receita' | 'despesa'
+  category: string
+  description: string
+  amount: number
+  due_date: string | null
+  paid_date: string | null
+  status: string
+  payment_method: string | null
+  notes: string | null
+  created_at: string
 }
 
 const CATEGORIAS = [
-    'Comissão', 'Honorário', 'Consultoria', 'Marketing',
-    'Pessoal', 'Infraestrutura', 'Tecnologia', 'Jurídico', 'Outros'
+  'Comissão', 'Honorário', 'Consultoria', 'Marketing',
+  'Pessoal', 'Infraestrutura', 'Tecnologia', 'Jurídico', 'Outros'
 ]
 
 const formatCurrency = (v: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
+  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
+
+const STATUS_TX: Record<string, { statusKey: string; label: string }> = {
+  pago:     { statusKey: 'done',   label: 'Pago'     },
+  pendente: { statusKey: 'pend',   label: 'Pendente' },
+  atrasado: { statusKey: 'hot',    label: 'Atrasado' },
+  cancelado:{ statusKey: 'cancel', label: 'Cancelado'},
+}
 
 export default function FinanceiroPage() {
-    const [transactions, setTransactions] = useState<Transaction[]>([])
-    const [loading, setLoading] = useState(true)
-    const [tipoFilter, setTipoFilter] = useState<'todos' | 'receita' | 'despesa'>('todos')
-    const [showForm, setShowForm] = useState(false)
-    const [saving, setSaving] = useState(false)
+  const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [loading, setLoading] = useState(true)
+  const [tipoFilter, setTipoFilter] = useState('todos')
+  const [showForm, setShowForm] = useState(false)
+  const [saving, setSaving] = useState(false)
 
-    // Form state
-    const [form, setForm] = useState({
-        type: 'receita' as 'receita' | 'despesa',
-        category: 'Comissão',
-        description: '',
-        amount: '',
-        due_date: '',
-        status: 'pendente',
-        payment_method: '',
-        notes: '',
-    })
+  const [form, setForm] = useState({
+    type: 'receita' as 'receita' | 'despesa',
+    category: 'Comissão',
+    description: '',
+    amount: '',
+    due_date: '',
+    status: 'pendente',
+    payment_method: '',
+    notes: '',
+  })
 
-    const fetchTransactions = async () => {
-        try {
-            const res = await fetch('/api/financeiro')
-            if (res.ok) {
-                const data = await res.json()
-                setTransactions(data)
-            }
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setLoading(false)
-        }
+  const fetchTransactions = async () => {
+    try {
+      const res = await fetch('/api/financeiro')
+      if (res.ok) {
+        const data = await res.json()
+        setTransactions(data)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    useEffect(() => { fetchTransactions() }, [])
+  useEffect(() => { fetchTransactions() }, [])
 
-    const handleSubmit = async () => {
-        if (!form.description || !form.amount) {
-            toast.error('Descrição e valor são obrigatórios')
-            return
-        }
-        setSaving(true)
-        try {
-            const res = await fetch('/api/financeiro', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...form,
-                    amount: parseFloat(form.amount),
-                    due_date: form.due_date || null,
-                }),
-            })
-            if (res.ok) {
-                toast.success('Lançamento criado!')
-                setShowForm(false)
-                setForm({ type: 'receita', category: 'Comissão', description: '', amount: '', due_date: '', status: 'pendente', payment_method: '', notes: '' })
-                fetchTransactions()
-            } else {
-                const data = await res.json()
-                toast.error(data.error || 'Erro ao salvar')
-            }
-        } catch { toast.error('Erro de conexão') }
-        finally { setSaving(false) }
+  const handleSubmit = async () => {
+    if (!form.description || !form.amount) {
+      toast.error('Descrição e valor são obrigatórios')
+      return
     }
+    setSaving(true)
+    try {
+      const res = await fetch('/api/financeiro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, amount: parseFloat(form.amount), due_date: form.due_date || null }),
+      })
+      if (res.ok) {
+        toast.success('Lançamento criado!')
+        setShowForm(false)
+        setForm({ type: 'receita', category: 'Comissão', description: '', amount: '', due_date: '', status: 'pendente', payment_method: '', notes: '' })
+        fetchTransactions()
+      } else {
+        const data = await res.json()
+        toast.error(data.error || 'Erro ao salvar')
+      }
+    } catch { toast.error('Erro de conexão') }
+    finally { setSaving(false) }
+  }
 
-    const markPaid = async (id: string) => {
-        try {
-            const res = await fetch('/api/financeiro', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, status: 'pago', paid_date: new Date().toISOString().split('T')[0] }),
-            })
-            if (res.ok) {
-                toast.success('Marcado como pago')
-                fetchTransactions()
-            }
-        } catch { toast.error('Erro ao atualizar') }
-    }
+  const markPaid = async (id: string) => {
+    try {
+      const res = await fetch('/api/financeiro', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: 'pago', paid_date: new Date().toISOString().split('T')[0] }),
+      })
+      if (res.ok) { toast.success('Marcado como pago'); fetchTransactions() }
+    } catch { toast.error('Erro ao atualizar') }
+  }
 
-    const filtered = transactions.filter(t =>
-        t.status !== 'cancelado' && (tipoFilter === 'todos' || t.type === tipoFilter)
-    )
+  const filtered = transactions.filter(t =>
+    t.status !== 'cancelado' && (tipoFilter === 'todos' || t.type === tipoFilter)
+  )
 
-    const totalReceitas = transactions.filter(t => t.type === 'receita' && t.status !== 'cancelado').reduce((s, t) => s + Number(t.amount), 0)
-    const totalDespesas = transactions.filter(t => t.type === 'despesa' && t.status !== 'cancelado').reduce((s, t) => s + Number(t.amount), 0)
-    const saldo = totalReceitas - totalDespesas
-    const pendentes = transactions.filter(t => t.status === 'pendente').length
+  const totalReceitas = transactions.filter(t => t.type === 'receita' && t.status !== 'cancelado').reduce((s, t) => s + Number(t.amount), 0)
+  const totalDespesas = transactions.filter(t => t.type === 'despesa' && t.status !== 'cancelado').reduce((s, t) => s + Number(t.amount), 0)
+  const saldo = totalReceitas - totalDespesas
+  const pendentes = transactions.filter(t => t.status === 'pendente').length
 
-    if (loading) {
-        return (
-            <div className="space-y-5 max-w-7xl mx-auto">
-                {/* Header skeleton */}
-                <div className="flex items-center justify-between">
-                    <div className="space-y-2">
-                        <div className="h-6 w-32 rounded-lg animate-pulse" style={{ background: T.elevated }} />
-                        <div className="h-4 w-56 rounded-lg animate-pulse" style={{ background: T.elevated }} />
-                    </div>
-                    <div className="h-10 w-36 rounded-xl animate-pulse" style={{ background: T.elevated }} />
-                </div>
-                {/* KPI skeletons */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {[0,1,2,3].map(i => (
-                        <div key={i} className="rounded-2xl p-4 space-y-3 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                            <div className="h-3 w-16 rounded" style={{ background: T.surface }} />
-                            <div className="h-6 w-24 rounded" style={{ background: T.surface }} />
-                        </div>
-                    ))}
-                </div>
-                {/* Table skeleton */}
-                <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <div className="p-4" style={{ borderBottom: `1px solid ${T.border}` }}>
-                        <div className="h-4 w-32 rounded animate-pulse" style={{ background: T.elevated }} />
-                    </div>
-                    <div className="divide-y" style={{ borderColor: T.border }}>
-                        {[0,1,2,3,4].map(i => (
-                            <div key={i} className="flex items-center gap-4 p-4 animate-pulse">
-                                <div className="h-4 w-12 rounded" style={{ background: T.elevated }} />
-                                <div className="h-4 flex-1 rounded" style={{ background: T.elevated }} />
-                                <div className="h-4 w-20 rounded" style={{ background: T.elevated }} />
-                                <div className="h-4 w-24 rounded" style={{ background: T.elevated }} />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        )
-    }
+  const filterTabs: FilterTab[] = [
+    { id: 'todos',   label: 'Todos',    count: filtered.length },
+    { id: 'receita', label: 'Receitas', dotColor: 'var(--s-done)' },
+    { id: 'despesa', label: 'Despesas', dotColor: 'var(--s-hot)'  },
+  ]
 
+  const inputStyle = {
+    width: '100%', height: '44px', padding: '0 12px',
+    borderRadius: '10px', fontSize: '13px', color: 'var(--bo-text)',
+    background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+    outline: 'none', boxSizing: 'border-box' as const,
+  }
+
+  if (loading) {
     return (
-        <div className="space-y-5 max-w-7xl mx-auto">
-            {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Financeiro</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>Gestão de receitas, despesas e fluxo de caixa</p>
-                </div>
-                <motion.button whileTap={{ scale: 0.96 }} onClick={() => setShowForm(true)}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: T.gold, boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
-                    <Plus size={16} /> Novo Lançamento
-                </motion.button>
-            </motion.div>
-
-            {/* KPI Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                    { label: 'Receitas', value: totalReceitas, color: '#6BB87B', icon: ArrowUpCircle },
-                    { label: 'Despesas', value: totalDespesas, color: '#E57373', icon: ArrowDownCircle },
-                    { label: 'Saldo', value: saldo, color: saldo >= 0 ? '#6BB87B' : '#E57373', icon: saldo >= 0 ? TrendingUp : TrendingDown },
-                    { label: 'Pendentes', value: pendentes, color: '#486581', icon: DollarSign, isCount: true },
-                ].map((kpi, i) => (
-                    <motion.div key={kpi.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
-                        <div className="flex items-center justify-between mb-2">
-                            <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: kpi.color }}>{kpi.label}</p>
-                            <kpi.icon size={16} style={{ color: kpi.color }} />
-                        </div>
-                        <p className="text-xl font-bold" style={{ color: T.text }}>
-                            {(kpi as any).isCount ? kpi.value : formatCurrency(kpi.value as number)}
-                        </p>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Filter + Table */}
-            <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" style={{ borderBottom: `1px solid ${T.border}` }}>
-                    <h2 className="text-sm font-bold" style={{ color: T.text }}>Lançamentos ({filtered.length})</h2>
-                    <div className="flex items-center gap-1.5 overflow-x-auto">
-                        {(['todos', 'receita', 'despesa'] as const).map(f => (
-                            <button key={f} onClick={() => setTipoFilter(f)}
-                                className="px-3.5 h-9 rounded-xl text-xs font-semibold transition-all flex-shrink-0"
-                                style={{
-                                    background: tipoFilter === f ? (f === 'receita' ? 'rgba(107,184,123,0.15)' : f === 'despesa' ? 'rgba(229,115,115,0.15)' : T.gold) : T.elevated,
-                                    color: tipoFilter === f ? (f === 'receita' ? '#6BB87B' : f === 'despesa' ? '#E57373' : 'white') : T.textDim,
-                                    border: `1px solid ${tipoFilter === f ? T.borderGold : T.border}`,
-                                }}>
-                                {f === 'todos' ? 'Todos' : f === 'receita' ? 'Receitas' : 'Despesas'}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                {filtered.length === 0 ? (
-                    <div className="p-12 text-center">
-                        <DollarSign size={40} className="mx-auto mb-4 opacity-20" style={{ color: T.textDim }} />
-                        <p className="text-sm font-semibold" style={{ color: T.textSub }}>Nenhum lançamento encontrado</p>
-                        <p className="text-xs mt-1 mb-4" style={{ color: T.textDim }}>Registre receitas e despesas para controlar seu fluxo de caixa</p>
-                        <button onClick={() => setShowForm(true)}
-                            className="inline-flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
-                            style={{ background: T.gold }}>
-                            <Plus size={16} /> Novo Lançamento
-                        </button>
-                    </div>
-                ) : (
-                    <>
-                        {/* Mobile: card list */}
-                        <div className="sm:hidden">
-                            {filtered.map(t => {
-                                const statusColor = t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#486581'
-                                const statusBg = t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(72,101,129,0.12)'
-                                const statusLabel = t.status === 'pago' ? 'Pago' : t.status === 'atrasado' ? 'Atrasado' : 'Pendente'
-                                return (
-                                    <div key={t.id} className="flex items-center gap-3 px-4 py-3.5" style={{ borderBottom: `1px solid ${T.border}` }}>
-                                        <div className="flex-shrink-0">
-                                            {t.type === 'receita'
-                                                ? <ArrowUpCircle size={22} style={{ color: '#6BB87B' }} />
-                                                : <ArrowDownCircle size={22} style={{ color: '#E57373' }} />}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-medium truncate" style={{ color: T.text }}>{t.description}</p>
-                                            <div className="flex items-center gap-2 mt-0.5">
-                                                <span className="text-[10px]" style={{ color: T.textDim }}>
-                                                    {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : '—'}
-                                                </span>
-                                                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ color: statusColor, background: statusBg }}>
-                                                    {statusLabel}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-2 flex-shrink-0">
-                                            <p className="text-sm font-bold" style={{ color: t.type === 'receita' ? '#6BB87B' : '#E57373' }}>
-                                                {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
-                                            </p>
-                                            {t.status === 'pendente' && (
-                                                <button onClick={() => markPaid(t.id)}
-                                                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                                                    style={{ background: 'rgba(107,184,123,0.10)' }}>
-                                                    <CheckCircle size={18} style={{ color: '#6BB87B' }} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-
-                        {/* Desktop: table */}
-                        <div className="hidden sm:block overflow-x-auto">
-                            <table className="w-full">
-                                <thead>
-                                    <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Data</th>
-                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Descrição</th>
-                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Categoria</th>
-                                        <th className="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Status</th>
-                                        <th className="px-4 py-3 text-right text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textDim }}>Valor</th>
-                                        <th className="px-4 py-3" />
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filtered.map(t => (
-                                        <tr key={t.id} className="transition-colors hover-card" style={{ borderBottom: `1px solid ${T.border}` }}>
-                                            <td className="px-4 py-3 text-xs" style={{ color: T.textSub }}>
-                                                {t.due_date ? new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) : '—'}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <div className="flex items-center gap-2">
-                                                    {t.type === 'receita'
-                                                        ? <ArrowUpCircle size={14} className="flex-shrink-0" style={{ color: '#6BB87B' }} />
-                                                        : <ArrowDownCircle size={14} className="flex-shrink-0" style={{ color: '#E57373' }} />}
-                                                    <span className="text-xs font-medium truncate max-w-[200px]" style={{ color: T.text }}>{t.description}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <span className="text-[10px] font-semibold px-2 py-1 rounded-lg" style={{ background: T.elevated, color: T.textSub }}>{t.category}</span>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <span className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{
-                                                    color: t.status === 'pago' ? '#6BB87B' : t.status === 'atrasado' ? '#E57373' : '#486581',
-                                                    background: t.status === 'pago' ? 'rgba(107,184,123,0.12)' : t.status === 'atrasado' ? 'rgba(229,115,115,0.12)' : 'rgba(72,101,129,0.12)',
-                                                }}>
-                                                    {t.status === 'pago' ? 'Pago' : t.status === 'atrasado' ? 'Atrasado' : 'Pendente'}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3 text-right text-xs font-bold" style={{ color: t.type === 'receita' ? '#6BB87B' : '#E57373' }}>
-                                                {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
-                                            </td>
-                                            <td className="px-4 py-3 text-right">
-                                                {t.status === 'pendente' && (
-                                                    <button onClick={() => markPaid(t.id)} className="text-[10px] font-semibold px-2 py-1 rounded-lg transition-all"
-                                                        style={{ color: '#6BB87B', background: 'rgba(107,184,123,0.08)' }}>
-                                                        <CheckCircle size={12} className="inline mr-1" />Pagar
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </>
-                )}
-            </div>
-
-            {/* New Transaction Modal */}
-            {showForm && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)' }}>
-                    <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
-                        className="w-full max-w-lg rounded-2xl p-6 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-bold" style={{ color: T.text }}>Novo Lançamento</h3>
-                            <button onClick={() => setShowForm(false)}><X size={18} style={{ color: T.textDim }} /></button>
-                        </div>
-
-                        {/* Type toggle */}
-                        <div className="flex gap-2">
-                            {(['receita', 'despesa'] as const).map(t => (
-                                <button key={t} onClick={() => setForm(f => ({ ...f, type: t }))}
-                                    className="flex-1 h-10 rounded-xl text-xs font-semibold transition-all"
-                                    style={{
-                                        background: form.type === t ? (t === 'receita' ? 'rgba(107,184,123,0.15)' : 'rgba(229,115,115,0.15)') : T.elevated,
-                                        color: form.type === t ? (t === 'receita' ? '#6BB87B' : '#E57373') : T.textDim,
-                                        border: `1px solid ${form.type === t ? T.borderGold : T.border}`,
-                                    }}>
-                                    {t === 'receita' ? '↑ Receita' : '↓ Despesa'}
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div className="sm:col-span-2">
-                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Descrição *</label>
-                                <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                                    placeholder="Ex: Comissão Venda Apt 905" className="w-full h-12 px-3 rounded-xl text-sm outline-none"
-                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
-                            </div>
-                            <div>
-                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Valor (R$) *</label>
-                                <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
-                                    placeholder="0.00" className="w-full h-12 px-3 rounded-xl text-sm outline-none"
-                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
-                            </div>
-                            <div>
-                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Categoria</label>
-                                <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                                    className="w-full h-12 px-3 rounded-xl text-sm outline-none"
-                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
-                                    {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Data de Vencimento</label>
-                                <input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))}
-                                    className="w-full h-12 px-3 rounded-xl text-sm outline-none"
-                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
-                            </div>
-                            <div>
-                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Método de Pagamento</label>
-                                <select value={form.payment_method} onChange={e => setForm(f => ({ ...f, payment_method: e.target.value }))}
-                                    className="w-full h-12 px-3 rounded-xl text-sm outline-none"
-                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
-                                    <option value="">Não informado</option>
-                                    <option value="pix">PIX</option>
-                                    <option value="transferencia">Transferência</option>
-                                    <option value="boleto">Boleto</option>
-                                    <option value="cartao">Cartão</option>
-                                    <option value="dinheiro">Dinheiro</option>
-                                </select>
-                            </div>
-                            <div className="sm:col-span-2">
-                                <label className="text-[11px] font-semibold mb-1 block" style={{ color: T.textDim }}>Observações</label>
-                                <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                                    rows={2} placeholder="Notas adicionais..." className="w-full px-3 py-2 rounded-xl text-sm outline-none resize-none"
-                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
-                            </div>
-                        </div>
-
-                        <div className="flex gap-3 pt-2">
-                            <button onClick={() => setShowForm(false)} className="flex-1 h-12 rounded-xl text-sm font-semibold"
-                                style={{ background: T.elevated, color: T.textSub, border: `1px solid ${T.border}` }}>Cancelar</button>
-                            <button onClick={handleSubmit} disabled={saving}
-                                className="flex-1 h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2"
-                                style={{ background: T.gold }}>
-                                {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
-                                {saving ? 'Salvando...' : 'Salvar'}
-                            </button>
-                        </div>
-                    </motion.div>
-                </div>
-            )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ height: '72px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ display: 'flex', gap: '12px' }}>
+          {[1,2,3,4].map(i => (
+            <div key={i} style={{ flex: 1, height: '88px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+          ))}
         </div>
+        <div style={{ height: '300px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+      </div>
     )
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+        <PageIntelHeader
+          moduleLabel="FINANCEIRO INTELLIGENCE"
+          title="Financeiro"
+          subtitle="Receitas, despesas e fluxo de caixa"
+          actions={
+            <button
+              onClick={() => setShowForm(true)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                height: '38px', padding: '0 18px', borderRadius: '12px',
+                fontSize: '13px', fontWeight: 700, color: '#fff',
+                background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+                border: 'none', cursor: 'pointer',
+                boxShadow: '0 0 18px rgba(59,130,246,0.35)', flexShrink: 0,
+              }}
+            >
+              <Plus size={15} />
+              Novo Lançamento
+            </button>
+          }
+        />
+      </motion.div>
+
+      {/* KPI row */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08, duration: 0.35 }}
+        style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}
+      >
+        <div style={{ flexShrink: 0, minWidth: '130px', flex: '1 1 0' }}>
+          <KPICard label="Receitas" value={formatCurrency(totalReceitas)} sublabel="entradas" icon={<ArrowUpCircle size={16} />} accent="green" />
+        </div>
+        <div style={{ flexShrink: 0, minWidth: '130px', flex: '1 1 0' }}>
+          <KPICard label="Despesas" value={formatCurrency(totalDespesas)} sublabel="saídas" icon={<ArrowDownCircle size={16} />} accent="hot" />
+        </div>
+        <div style={{ flexShrink: 0, minWidth: '130px', flex: '1 1 0' }}>
+          <KPICard
+            label="Saldo"
+            value={formatCurrency(saldo)}
+            sublabel="balanço atual"
+            icon={saldo >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+            accent={saldo >= 0 ? 'green' : 'hot'}
+          />
+        </div>
+        <div style={{ flexShrink: 0, minWidth: '110px', flex: '1 1 0' }}>
+          <KPICard label="Pendentes" value={String(pendentes)} sublabel="a liquidar" icon={<DollarSign size={16} />} accent="warm" />
+        </div>
+      </motion.div>
+
+      {/* Transactions panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.14, duration: 0.35 }}
+        style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', overflow: 'hidden' }}
+      >
+        <div style={{ padding: '14px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+          <SectionHeader title="Lançamentos" badge={filtered.length} />
+          <FilterTabs tabs={filterTabs} active={tipoFilter} onChange={setTipoFilter} />
+        </div>
+
+        {filtered.length === 0 ? (
+          <div style={{ padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', textAlign: 'center' }}>
+            <DollarSign size={32} color="var(--bo-text-muted)" />
+            <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--bo-text)' }}>Nenhum lançamento encontrado</p>
+            <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)' }}>Registre receitas e despesas para controlar seu fluxo de caixa</p>
+            <button
+              onClick={() => setShowForm(true)}
+              style={{
+                marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
+                height: '38px', padding: '0 18px', borderRadius: '12px',
+                fontSize: '13px', fontWeight: 700, color: '#fff',
+                background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+                border: 'none', cursor: 'pointer',
+              }}
+            >
+              <Plus size={15} />Novo Lançamento
+            </button>
+          </div>
+        ) : (
+          <div>
+            {filtered.map((t, i) => {
+              const txStatus = STATUS_TX[t.status] || STATUS_TX.pendente
+              return (
+                <motion.div
+                  key={t.id}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03 }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    padding: '12px 14px',
+                    borderBottom: '1px solid var(--bo-border)',
+                  }}
+                >
+                  <div style={{ flexShrink: 0 }}>
+                    {t.type === 'receita'
+                      ? <ArrowUpCircle size={22} color="var(--s-done)" />
+                      : <ArrowDownCircle size={22} color="var(--s-hot)" />
+                    }
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text)', marginBottom: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {t.description}
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'var(--bo-surface)', padding: '1px 6px', borderRadius: '6px', border: '1px solid var(--bo-border)' }}>
+                        {t.category}
+                      </span>
+                      {t.due_date && (
+                        <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
+                          {new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                        </span>
+                      )}
+                      <StatusBadge status={txStatus.statusKey} label={txStatus.label} size="xs" dot />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                    <p style={{ fontSize: '13px', fontWeight: 700, color: t.type === 'receita' ? 'var(--s-done)' : 'var(--s-hot)' }}>
+                      {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
+                    </p>
+                    {t.status === 'pendente' && (
+                      <button
+                        onClick={() => markPaid(t.id)}
+                        title="Marcar como pago"
+                        style={{
+                          width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          background: 'var(--s-done-bg)', border: 'none', cursor: 'pointer',
+                        }}
+                      >
+                        <CheckCircle size={16} color="var(--s-done)" />
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+        )}
+      </motion.div>
+
+      {/* Modal */}
+      {showForm && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)' }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            style={{ width: '100%', maxWidth: '480px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--bo-text)' }}>Novo Lançamento</h3>
+              <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+                <X size={18} color="var(--bo-text-muted)" />
+              </button>
+            </div>
+
+            {/* Type toggle */}
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {(['receita', 'despesa'] as const).map(tp => (
+                <button key={tp} onClick={() => setForm(f => ({ ...f, type: tp }))}
+                  style={{
+                    flex: 1, height: '40px', borderRadius: '10px', fontSize: '13px', fontWeight: 600,
+                    cursor: 'pointer', transition: 'all 0.18s ease',
+                    background: form.type === tp ? (tp === 'receita' ? 'var(--s-done-bg)' : 'var(--s-hot-bg)') : 'var(--bo-surface)',
+                    color: form.type === tp ? (tp === 'receita' ? 'var(--s-done)' : 'var(--s-hot)') : 'var(--bo-text-muted)',
+                    border: `1px solid ${form.type === tp ? (tp === 'receita' ? 'var(--s-done)' : 'var(--s-hot)') : 'var(--bo-border)'}`,
+                  }}>
+                  {tp === 'receita' ? '↑ Receita' : '↓ Despesa'}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Descrição *</label>
+                <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                  placeholder="Ex: Comissão Venda Apt 905" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Valor (R$) *</label>
+                <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
+                  placeholder="0.00" style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Categoria</label>
+                <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} style={inputStyle}>
+                  {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Data de Vencimento</label>
+                <input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))} style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Método de Pagamento</label>
+                <select value={form.payment_method} onChange={e => setForm(f => ({ ...f, payment_method: e.target.value }))} style={inputStyle}>
+                  <option value="">Não informado</option>
+                  <option value="pix">PIX</option>
+                  <option value="transferencia">Transferência</option>
+                  <option value="boleto">Boleto</option>
+                  <option value="cartao">Cartão</option>
+                  <option value="dinheiro">Dinheiro</option>
+                </select>
+              </div>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Observações</label>
+                <textarea value={form.notes || ''} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+                  rows={2} placeholder="Notas adicionais..."
+                  style={{ ...inputStyle, height: 'auto', padding: '10px 12px', resize: 'none' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={() => setShowForm(false)}
+                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
+                Cancelar
+              </button>
+              <button onClick={handleSubmit} disabled={saving}
+                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', color: '#fff', background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.7 : 1 }}>
+                {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={16} />}
+                {saving ? 'Salvando...' : 'Salvar'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </div>
+  )
 }

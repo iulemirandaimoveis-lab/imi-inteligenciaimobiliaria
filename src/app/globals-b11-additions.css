@@ -13,30 +13,54 @@
   /* Surface overrides — force institutional dark palette */
   --surface-0: var(--bo-surface);
   --surface-1: var(--bo-elevated);
-  --surface-2: #21263A;
+  --surface-2: #1A2235;
 
   /* Extended text tokens */
-  --bo-text-tertiary:  #4E5669;
-  --bo-text-accent:    #486581;
-  --bo-text-accent-dim:#334E68;
+  --bo-text-tertiary:  #475569;
+  --bo-text-accent:    #60A5FA;
+  --bo-text-accent-dim:#2563EB;
 
   /* Extended border tokens */
-  --bo-border-subtle:  rgba(255,255,255,0.06);
-  --bo-border-strong:  rgba(255,255,255,0.18);
+  --bo-border-subtle:  rgba(255,255,255,0.05);
+  --bo-border-strong:  rgba(255,255,255,0.16);
 
   /* Navigation tokens */
-  --nav-bg:        rgba(19,22,30,0.95);
-  --nav-border:    rgba(51,78,104,0.15);
-  --nav-active:    #486581;
-  --nav-inactive:  #4E5669;
+  --nav-bg:        rgba(12,16,23,0.96);
+  --nav-border:    rgba(37,99,235,0.12);
+  --nav-active:    #60A5FA;
+  --nav-inactive:  #475569;
 
-  /* Status — unified palette */
-  --s-hot:    #E8A87C;  --s-hot-bg:    rgba(232,168,124,0.12);
-  --s-warm:   #F59E0B;  --s-warm-bg:   rgba(245,158,11,0.12);
-  --s-cold:   #7B9EC4;  --s-cold-bg:   rgba(123,158,196,0.12);
-  --s-done:   #6BB87B;  --s-done-bg:   rgba(107,184,123,0.12);
-  --s-pend:   #A89EC4;  --s-pend-bg:   rgba(168,158,196,0.12);
-  --s-cancel: #E57373;  --s-cancel-bg: rgba(229,115,115,0.12);
+  /* ── Status — NEON palette (matches Stitch design system) ── */
+  --s-hot:    #F87171;  --s-hot-bg:    rgba(248,113,113,0.14);
+  --s-warm:   #FBBF24;  --s-warm-bg:   rgba(251,191,36,0.14);
+  --s-cold:   #22D3EE;  --s-cold-bg:   rgba(34,211,238,0.12);
+  --s-done:   #4ADE80;  --s-done-bg:   rgba(74,222,128,0.12);
+  --s-pend:   #A78BFA;  --s-pend-bg:   rgba(167,139,250,0.12);
+  --s-cancel: #F87171;  --s-cancel-bg: rgba(248,113,113,0.10);
+
+  /* ── IMI Intelligence accent tokens ────────────────────── */
+  --imi-blue:        #2563EB;
+  --imi-blue-bright: #3B82F6;
+  --imi-blue-dim:    rgba(37,99,235,0.12);
+  --imi-blue-border: rgba(59,130,246,0.25);
+
+  /* AI Gold — insight cards, premium actions */
+  --imi-ai-gold:   #EAB308;
+  --imi-ai-bg:     rgba(234,179,8,0.10);
+  --imi-ai-border: rgba(234,179,8,0.25);
+
+  /* AI Green — live, active states */
+  --imi-ai-green:    #4ADE80;
+  --imi-ai-green-bg: rgba(74,222,128,0.10);
+
+  /* Neon exact (Stitch) */
+  --imi-neon-hot:  #FF3131;
+  --imi-neon-warm: #FFD700;
+  --imi-neon-cold: #00F5FF;
+
+  /* Card surface — slightly elevated from surface */
+  --bo-card:  #141C2B;
+  --bo-card-hover: #19243A;
 }
 
 /* ── BACKOFFICE INPUT DARK ─────────────────────────────────── */
@@ -55,18 +79,58 @@
 
 /* ── GLASS CARD UTILITY ─────────────────────────────────────── */
 .glass-card {
-  background: rgba(26,30,42,0.70);
-  border: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.04) inset;
+  background: rgba(20,28,43,0.82);
+  border: 1px solid rgba(255,255,255,0.07);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.40), 0 1px 0 rgba(255,255,255,0.04) inset;
   border-radius: 16px;
 }
 
 .glass-card:hover {
-  border-color: rgba(255,255,255,0.14);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.36), 0 1px 0 rgba(255,255,255,0.06) inset;
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.44), 0 1px 0 rgba(255,255,255,0.06) inset;
 }
+
+/* ── IMI INTELLIGENCE CARD ─────────────────────────────────── */
+.intel-card {
+  background: var(--bo-card);
+  border: 1px solid var(--bo-border);
+  border-radius: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.intel-card:hover {
+  border-color: var(--imi-blue-border);
+  box-shadow: 0 0 0 1px var(--imi-blue-dim);
+}
+
+/* ── NEON GLOW UTILITIES ───────────────────────────────────── */
+.glow-hot  { box-shadow: 0 0 8px rgba(248,113,113,0.35); }
+.glow-warm { box-shadow: 0 0 8px rgba(251,191,36,0.35); }
+.glow-cold { box-shadow: 0 0 8px rgba(34,211,238,0.35); }
+.glow-blue { box-shadow: 0 0 10px rgba(59,130,246,0.30); }
+.glow-ai   { box-shadow: 0 0 8px rgba(74,222,128,0.30); }
+
+/* ── LIVE INDICATOR ────────────────────────────────────────── */
+.live-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--imi-ai-green);
+  animation: live-dot 1.6s ease-in-out infinite;
+}
+
+/* ── ANIMATE UTILITIES ─────────────────────────────────────── */
+.animate-fade-in-up    { animation: fade-in-up 0.35s var(--ease-out) both; }
+.animate-fade-in-scale { animation: fade-in-scale 0.25s var(--ease-out) both; }
+
+/* Stagger delays for list items */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
 
 /* ── STATUS BADGE UTILITY ─────────────────────────────────── */
 .badge-hot     { color: var(--s-hot);    background: var(--s-hot-bg);    }

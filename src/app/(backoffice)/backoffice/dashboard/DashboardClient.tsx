@@ -6,21 +6,11 @@ import { motion, useInView, useMotionValue, useSpring } from 'framer-motion'
 import {
     TrendingUp, Users, Building2, Scale, Plus,
     ChevronRight, Banknote, BarChart2, AlertTriangle,
-    Clock, Info, ArrowUpRight,
+    Info, ArrowUpRight, Zap,
 } from 'lucide-react'
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import Link from 'next/link'
-
-// ── Design tokens ──────────────────────────────────────────────
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)',
-    textSub: 'var(--bo-text-muted)',
-    gold: '#486581',
-}
+import { KPICard, MetricBar, StatusBadge, SectionHeader } from '../../components/ui'
 
 // ── Animated counter ──────────────────────────────────────────
 function AnimNum({ value, prefix = '', suffix = '', decimals = 0 }: {
@@ -37,25 +27,18 @@ function AnimNum({ value, prefix = '', suffix = '', decimals = 0 }: {
     return <span ref={ref}>{prefix}0{suffix}</span>
 }
 
-// ── Status badge ───────────────────────────────────────────────
-function StatusBadge({ status }: { status: string }) {
-    const cfg: Record<string, { label: string; color: string; bg: string }> = {
-        concluida:      { label: 'Concluída',     color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-        em_andamento:   { label: 'Em Andamento',  color: '#486581', bg: 'rgba(72,101,129,0.15)' },
-        aguardando_docs:{ label: 'Aguard. Docs',  color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
-        pgto_pendente:  { label: 'Pgto. Pendente',color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-        hot:  { label: 'Quente',  color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-        warm: { label: 'Morno',   color: '#486581', bg: 'rgba(72,101,129,0.15)' },
-        cold: { label: 'Frio',    color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
-        new:  { label: 'Novo',    color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-    }
-    const c = cfg[status] || cfg.cold
-    return (
-        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap"
-            style={{ color: c.color, background: c.bg }}>
-            {c.label}
-        </span>
-    )
+// ── Status maps for library StatusBadge ──────────────────────
+const LEAD_STATUS_MAP: Record<string, { statusKey: string; label: string }> = {
+    hot:  { statusKey: 'hot',    label: 'HOT' },
+    warm: { statusKey: 'warm',   label: 'WARM' },
+    cold: { statusKey: 'cold',   label: 'COLD' },
+    new:  { statusKey: 'active', label: 'NOVO' },
+}
+const AV_STATUS_MAP: Record<string, { statusKey: string; label: string }> = {
+    concluida:       { statusKey: 'done',   label: 'CONCLUÍDA' },
+    em_andamento:    { statusKey: 'active', label: 'EM ANDAMENTO' },
+    aguardando_docs: { statusKey: 'pend',   label: 'DOCS' },
+    pgto_pendente:   { statusKey: 'pend',   label: 'PGTO PEND.' },
 }
 
 // ── Interfaces ────────────────────────────────────────────────
@@ -84,42 +67,9 @@ export default function DashboardClient({
     const router = useRouter()
 
     const now = new Date()
-    const dayNames  = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado']
+    const dayNames   = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado']
     const monthNames = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro']
     const dateStr = `${dayNames[now.getDay()]}, ${now.getDate()} de ${monthNames[now.getMonth()]}`
-
-    const KPIS = [
-        {
-            label: 'Honorários Recebidos', icon: Banknote,
-            value: fmt(avStats.honorarios_recebidos),
-            delta: avStats.honorarios_pendentes > 0 ? `+${fmt(avStats.honorarios_pendentes)} pendente` : null,
-            up: null,
-            sub: `${avStats.concluidas} avaliações concluídas`,
-            href: '/backoffice/financeiro',
-        },
-        {
-            label: 'Leads Ativos', icon: Users,
-            value: String(stats.total_leads),
-            delta: stats.leads_today > 0 ? `+${stats.leads_today} hoje` : null,
-            up: stats.leads_today > 0,
-            sub: 'no pipeline',
-            href: '/backoffice/leads',
-        },
-        {
-            label: 'Honorários a Receber', icon: Scale,
-            value: fmt(avStats.honorarios_pendentes),
-            delta: null, up: null,
-            sub: `${avStats.em_andamento} laudos em andamento`,
-            href: '/backoffice/avaliacoes',
-        },
-        {
-            label: 'Imóveis no Portfólio', icon: Building2,
-            value: String(imoveisCount),
-            delta: null, up: null,
-            sub: 'cadastrados',
-            href: '/backoffice/imoveis',
-        },
-    ]
 
     const ACTIONS = [
         { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale },
@@ -134,9 +84,9 @@ export default function DashboardClient({
         info:    Info,
     }
     const alertaColor: Record<string, { border: string; bg: string; text: string; btn: string }> = {
-        warning: { border: 'rgba(245,158,11,0.3)', bg: 'rgba(245,158,11,0.06)', text: '#F59E0B', btn: 'rgba(245,158,11,0.15)' },
-        danger:  { border: 'rgba(239,68,68,0.3)',  bg: 'rgba(239,68,68,0.06)',  text: '#EF4444', btn: 'rgba(239,68,68,0.15)' },
-        info:    { border: 'rgba(72,101,129,0.4)', bg: 'rgba(72,101,129,0.08)', text: '#486581', btn: 'rgba(72,101,129,0.18)' },
+        warning: { border: 'rgba(245,158,11,0.3)',  bg: 'rgba(245,158,11,0.06)',  text: '#F59E0B', btn: 'rgba(245,158,11,0.15)' },
+        danger:  { border: 'rgba(239,68,68,0.3)',   bg: 'rgba(239,68,68,0.06)',   text: '#EF4444', btn: 'rgba(239,68,68,0.15)' },
+        info:    { border: 'rgba(59,130,246,0.3)',  bg: 'rgba(59,130,246,0.06)',  text: '#3B82F6', btn: 'rgba(59,130,246,0.15)' },
     }
 
     return (
@@ -150,14 +100,34 @@ export default function DashboardClient({
                 className="flex items-start justify-between gap-4"
             >
                 <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Painel Executivo</h1>
-                    <p className="text-sm mt-0.5 capitalize" style={{ color: T.textSub }}>{dateStr}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <span style={{
+                            fontSize: '9px', fontWeight: 700,
+                            color: 'var(--imi-blue-bright)',
+                            textTransform: 'uppercase', letterSpacing: '0.12em',
+                        }}>
+                            INTELLIGENCE OS
+                        </span>
+                        <span style={{
+                            width: 6, height: 6, borderRadius: '50%',
+                            background: 'var(--imi-ai-green)',
+                            boxShadow: '0 0 6px var(--imi-ai-green)',
+                            display: 'inline-block',
+                            animation: 'live-dot 1.6s ease-in-out infinite',
+                        }} />
+                    </div>
+                    <h1 className="text-xl font-bold" style={{ color: 'var(--bo-text)' }}>
+                        Painel Executivo
+                    </h1>
+                    <p className="text-sm mt-0.5 capitalize" style={{ color: 'var(--bo-text-muted)' }}>
+                        {dateStr}
+                    </p>
                 </div>
                 <motion.button
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: T.gold }}
+                    style={{ background: 'linear-gradient(135deg, #3B82F6, #2563EB)' }}
                 >
                     <Plus size={15} />
                     <span className="hidden sm:inline">Nova Avaliação</span>
@@ -171,7 +141,7 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05, duration: 0.35 }}
-                    className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide"
+                    className="flex gap-3 overflow-x-auto pb-1"
                     style={{ scrollbarWidth: 'none' }}
                 >
                     {alertas.map((alerta, i) => {
@@ -187,7 +157,9 @@ export default function DashboardClient({
                                 style={{ background: c.bg, border: `1px solid ${c.border}`, minWidth: 240 }}
                             >
                                 <IconComp size={15} style={{ color: c.text, flexShrink: 0 }} />
-                                <p className="text-xs font-medium flex-1" style={{ color: T.text }}>{alerta.mensagem}</p>
+                                <p className="text-xs font-medium flex-1" style={{ color: 'var(--bo-text)' }}>
+                                    {alerta.mensagem}
+                                </p>
                                 <Link href={alerta.href}>
                                     <span
                                         className="text-[11px] font-semibold px-2.5 py-1 rounded-lg whitespace-nowrap"
@@ -202,79 +174,76 @@ export default function DashboardClient({
                 </motion.div>
             )}
 
-            {/* ── KPI Grid ─────────────────────────────────────── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                {KPIS.map((kpi, i) => {
-                    const Icon = kpi.icon
-                    return (
-                        <motion.div
-                            key={kpi.label}
-                            initial={{ opacity: 0, y: 16 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            <Link href={kpi.href}>
-                                <div
-                                    className="hover-card relative overflow-hidden rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-200 group"
-                                    style={{
-                                        background: T.elevated,
-                                        border: `1px solid ${T.borderGold}`,
-                                        boxShadow: 'var(--bo-shadow)',
-                                    }}
-                                >
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                            style={{ background: 'rgba(72,101,129,0.12)' }}>
-                                            <Icon size={18} style={{ color: T.gold }} />
-                                        </div>
-                                        {kpi.delta && (
-                                            <span className="text-[10px] font-semibold px-2 py-1 rounded-lg"
-                                                style={{
-                                                    color: kpi.up === true ? '#6BB87B' : kpi.up === false ? '#E57373' : T.textSub,
-                                                    background: kpi.up === true ? 'rgba(107,184,123,0.12)' : kpi.up === false ? 'rgba(229,115,115,0.12)' : 'rgba(72,101,129,0.1)',
-                                                }}>
-                                                {kpi.up === true ? '↑ ' : kpi.up === false ? '↓ ' : ''}{kpi.delta}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p className="text-xl sm:text-2xl font-bold tracking-tight mb-1" style={{ color: T.text }}>
-                                        {kpi.value}
-                                    </p>
-                                    <p className="text-xs font-medium" style={{ color: T.textSub }}>{kpi.label}</p>
-                                    {kpi.sub && (
-                                        <p className="text-[11px] mt-1" style={{ color: T.textSub, opacity: 0.7 }}>{kpi.sub}</p>
-                                    )}
-                                </div>
-                            </Link>
-                        </motion.div>
-                    )
-                })}
-            </div>
+            {/* ── KPI Row ──────────────────────────────────────── */}
+            <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.4 }}
+                className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+            >
+                <Link href="/backoffice/financeiro">
+                    <KPICard
+                        label="Honorários Recebidos"
+                        value={fmt(avStats.honorarios_recebidos)}
+                        sublabel={`${avStats.concluidas} avaliações concluídas`}
+                        icon={<Banknote size={14} />}
+                        accent="green"
+                    />
+                </Link>
+                <Link href="/backoffice/leads">
+                    <KPICard
+                        label="Leads Ativos"
+                        value={String(stats.total_leads)}
+                        sublabel={stats.leads_today > 0 ? `+${stats.leads_today} hoje` : 'no pipeline'}
+                        icon={<Users size={14} />}
+                        accent="blue"
+                    />
+                </Link>
+                <Link href="/backoffice/avaliacoes">
+                    <KPICard
+                        label="A Receber"
+                        value={fmt(avStats.honorarios_pendentes)}
+                        sublabel={`${avStats.em_andamento} laudos em andamento`}
+                        icon={<Scale size={14} />}
+                        accent="warm"
+                    />
+                </Link>
+                <Link href="/backoffice/imoveis">
+                    <KPICard
+                        label="Imóveis Portfólio"
+                        value={String(imoveisCount)}
+                        sublabel="cadastrados"
+                        icon={<Building2 size={14} />}
+                        accent="cold"
+                    />
+                </Link>
+            </motion.div>
 
             {/* ── Gráfico + Ações Rápidas ─────────────────────── */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-                {/* Gráfico de Leads e Receita */}
+                {/* Gráfico de Performance */}
                 <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.4 }}
-                    className="md:col-span-2 lg:col-span-2 rounded-2xl p-5"
-                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                    transition={{ delay: 0.22, duration: 0.4 }}
+                    className="md:col-span-2 lg:col-span-2 intel-card"
                 >
                     <div className="flex items-center justify-between mb-5">
                         <div>
-                            <h3 className="text-sm font-semibold" style={{ color: T.text }}>Performance — últimos 6 meses</h3>
-                            <p className="text-xs mt-0.5" style={{ color: T.textSub }}>Leads captados vs Receita (R$ mil)</p>
+                            <SectionHeader title="Performance" />
+                            <p className="text-[10px] mt-0.5" style={{ color: 'var(--bo-text-muted)' }}>últimos 6 meses</p>
                         </div>
                         <div className="flex items-center gap-3 text-[11px]">
                             <span className="flex items-center gap-1.5">
-                                <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: T.gold }} />
-                                <span style={{ color: T.textSub }}>Leads</span>
+                                <span className="w-2.5 h-2.5 rounded-full inline-block"
+                                    style={{ background: '#3B82F6' }} />
+                                <span style={{ color: 'var(--bo-text-muted)' }}>Leads</span>
                             </span>
                             <span className="flex items-center gap-1.5">
-                                <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: '#6BB87B' }} />
-                                <span style={{ color: T.textSub }}>Receita</span>
+                                <span className="w-2.5 h-2.5 rounded-full inline-block"
+                                    style={{ background: 'var(--s-done)' }} />
+                                <span style={{ color: 'var(--bo-text-muted)' }}>Receita</span>
                             </span>
                         </div>
                     </div>
@@ -283,23 +252,25 @@ export default function DashboardClient({
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                                     <defs>
-                                        <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%"  stopColor="#486581" stopOpacity={0.22} />
-                                            <stop offset="95%" stopColor="#486581" stopOpacity={0.01} />
+                                        <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%"  stopColor="#3B82F6" stopOpacity={0.22} />
+                                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.01} />
                                         </linearGradient>
-                                        <linearGradient id="greenGrad" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%"  stopColor="#6BB87B" stopOpacity={0.2} />
-                                            <stop offset="95%" stopColor="#6BB87B" stopOpacity={0.01} />
+                                        <linearGradient id="greenGrad2" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%"  stopColor="#22C55E" stopOpacity={0.2} />
+                                            <stop offset="95%" stopColor="#22C55E" stopOpacity={0.01} />
                                         </linearGradient>
                                     </defs>
                                     <XAxis dataKey="mes" axisLine={false} tickLine={false}
-                                        tick={{ fill: '#4E5669', fontSize: 10, fontWeight: 500 }} />
+                                        tick={{ fill: 'var(--bo-text-muted)', fontSize: 10, fontWeight: 500 }} />
                                     <YAxis hide />
                                     <Tooltip
                                         contentStyle={{
-                                            background: T.elevated,
-                                            border: `1px solid ${T.borderGold}`,
-                                            borderRadius: 10, color: T.text, fontSize: 11,
+                                            background: 'var(--bo-elevated)',
+                                            border: '1px solid var(--bo-border)',
+                                            borderRadius: 10,
+                                            color: 'var(--bo-text)',
+                                            fontSize: 11,
                                             boxShadow: 'var(--bo-shadow-elevated)',
                                         }}
                                         formatter={(v: any, name?: string) => [
@@ -307,17 +278,19 @@ export default function DashboardClient({
                                             name === 'leads' ? 'Leads' : 'Receita',
                                         ] as [string, string]}
                                     />
-                                    <Area type="monotone" dataKey="leads" stroke="#486581" strokeWidth={2}
-                                        fill="url(#goldGrad)" dot={false}
-                                        activeDot={{ r: 4, fill: '#486581', strokeWidth: 0 }} />
-                                    <Area type="monotone" dataKey="receita" stroke="#6BB87B" strokeWidth={2}
-                                        fill="url(#greenGrad)" dot={false}
-                                        activeDot={{ r: 4, fill: '#6BB87B', strokeWidth: 0 }} />
+                                    <Area type="monotone" dataKey="leads" stroke="#3B82F6" strokeWidth={2}
+                                        fill="url(#blueGrad)" dot={false}
+                                        activeDot={{ r: 4, fill: '#3B82F6', strokeWidth: 0 }} />
+                                    <Area type="monotone" dataKey="receita" stroke="#22C55E" strokeWidth={2}
+                                        fill="url(#greenGrad2)" dot={false}
+                                        activeDot={{ r: 4, fill: '#22C55E', strokeWidth: 0 }} />
                                 </AreaChart>
                             </ResponsiveContainer>
                         ) : (
                             <div className="h-full flex items-center justify-center">
-                                <p className="text-xs" style={{ color: T.textSub }}>Sem dados suficientes</p>
+                                <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
+                                    Sem dados suficientes
+                                </p>
                             </div>
                         )}
                     </div>
@@ -327,28 +300,29 @@ export default function DashboardClient({
                 <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.35, duration: 0.4 }}
-                    className="rounded-2xl p-5"
-                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                    transition={{ delay: 0.28, duration: 0.4 }}
+                    className="intel-card"
                 >
-                    <h3 className="text-sm font-semibold mb-4" style={{ color: T.text }}>Ações Rápidas</h3>
+                    <SectionHeader title="Ações Rápidas" className="mb-4" />
                     <div className="space-y-1.5">
                         {ACTIONS.map((a, i) => (
                             <Link key={a.href} href={a.href}>
                                 <motion.div
                                     initial={{ opacity: 0, x: -8 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.37 + i * 0.05 }}
+                                    transition={{ delay: 0.3 + i * 0.05 }}
                                     whileTap={{ scale: 0.97 }}
-                                    className="hover-card flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all group"
+                                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all group"
                                     style={{ background: 'transparent' }}
                                 >
                                     <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                                        style={{ background: 'rgba(72,101,129,0.1)' }}>
-                                        <a.icon size={14} style={{ color: T.gold }} />
+                                        style={{ background: 'var(--imi-blue-dim)' }}>
+                                        <a.icon size={14} style={{ color: 'var(--imi-blue-bright)' }} />
                                     </div>
-                                    <span className="text-sm font-medium flex-1" style={{ color: T.textSub }}>{a.label}</span>
-                                    <ChevronRight size={14} style={{ color: T.textSub, opacity: 0.5 }}
+                                    <span className="text-sm font-medium flex-1" style={{ color: 'var(--bo-text-muted)' }}>
+                                        {a.label}
+                                    </span>
+                                    <ChevronRight size={14} style={{ color: 'var(--bo-text-muted)', opacity: 0.5 }}
                                         className="group-hover:translate-x-0.5 transition-transform" />
                                 </motion.div>
                             </Link>
@@ -364,43 +338,28 @@ export default function DashboardClient({
                 <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.42, duration: 0.4 }}
-                    className="rounded-2xl overflow-hidden"
-                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                    transition={{ delay: 0.35, duration: 0.4 }}
+                    className="intel-card"
                 >
-                    <div className="px-5 py-4" style={{ borderBottom: `1px solid ${T.border}` }}>
-                        <h3 className="text-sm font-semibold" style={{ color: T.text }}>Performance por Canal</h3>
-                        <p className="text-[11px] mt-0.5" style={{ color: T.textSub }}>Origem dos últimos 6 meses</p>
-                    </div>
+                    <SectionHeader title="Performance por Canal" className="mb-1" />
+                    <p className="text-[10px] mb-4" style={{ color: 'var(--bo-text-muted)' }}>origem dos últimos 6 meses</p>
                     {canalPerformance.length > 0 ? (
-                        <div className="divide-y" style={{ borderColor: T.border }}>
+                        <div className="space-y-3">
                             {canalPerformance.map((item, i) => (
-                                <div key={item.canal} className="flex items-center gap-3 px-5 py-3">
-                                    <div className="w-6 text-center">
-                                        <span className="text-[10px] font-bold" style={{ color: T.textSub }}>#{i + 1}</span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-medium truncate" style={{ color: T.text }}>{item.canal}</p>
-                                        <div className="mt-1.5 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(72,101,129,0.12)' }}>
-                                            <motion.div
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${item.pct}%` }}
-                                                transition={{ delay: 0.5 + i * 0.08, duration: 0.5 }}
-                                                className="h-full rounded-full"
-                                                style={{ background: T.gold }}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="text-right flex-shrink-0">
-                                        <p className="text-xs font-bold" style={{ color: T.text }}>{item.leads}</p>
-                                        <p className="text-[10px]" style={{ color: T.textSub }}>{item.pct}%</p>
-                                    </div>
-                                </div>
+                                <MetricBar
+                                    key={item.canal}
+                                    label={`#${i + 1} ${item.canal}`}
+                                    value={item.pct}
+                                    valueLabel={`${item.leads} leads · ${item.pct}%`}
+                                    color="var(--imi-blue-bright)"
+                                />
                             ))}
                         </div>
                     ) : (
-                        <div className="px-5 py-8 text-center">
-                            <p className="text-xs" style={{ color: T.textSub }}>Sem dados de canal ainda</p>
+                        <div className="py-8 text-center">
+                            <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
+                                Sem dados de canal ainda
+                            </p>
                         </div>
                     )}
                 </motion.div>
@@ -409,39 +368,51 @@ export default function DashboardClient({
                 <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.47, duration: 0.4 }}
-                    className="rounded-2xl overflow-hidden"
-                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                    transition={{ delay: 0.4, duration: 0.4 }}
+                    className="intel-card overflow-hidden"
+                    style={{ padding: 0 }}
                 >
-                    <div className="flex items-center justify-between px-5 py-4"
-                        style={{ borderBottom: `1px solid ${T.border}` }}>
-                        <h3 className="text-sm font-semibold" style={{ color: T.text }}>Leads Recentes</h3>
+                    <div className="flex items-center justify-between px-4 py-3"
+                        style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                        <SectionHeader title="Leads Recentes" />
                         <Link href="/backoffice/leads">
-                            <span className="text-xs font-medium flex items-center gap-1" style={{ color: T.gold }}>
+                            <span className="text-xs font-semibold flex items-center gap-1"
+                                style={{ color: 'var(--imi-blue-bright)' }}>
                                 Ver todos <ArrowUpRight size={11} />
                             </span>
                         </Link>
                     </div>
-                    <div className="divide-y" style={{ borderColor: T.border }}>
-                        {recentLeads.length > 0 ? recentLeads.slice(0, 4).map((lead: any) => (
-                            <Link key={lead.id} href={`/backoffice/leads/${lead.id}`}>
-                                <div className="hover-card flex items-center gap-3 px-5 py-3 cursor-pointer transition-all">
-                                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
-                                        style={{ background: 'rgba(72,101,129,0.15)', color: T.gold }}>
-                                        {lead.name?.charAt(0).toUpperCase()}
+                    <div>
+                        {recentLeads.length > 0 ? recentLeads.slice(0, 4).map((lead: any) => {
+                            const s = LEAD_STATUS_MAP[lead.status] ?? { statusKey: 'cold', label: lead.status }
+                            return (
+                                <Link key={lead.id} href={`/backoffice/leads/${lead.id}`}>
+                                    <div className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-all"
+                                        style={{ borderBottom: '1px solid var(--bo-border)' }}
+                                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
+                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                    >
+                                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
+                                            style={{ background: 'var(--imi-blue-dim)', color: 'var(--imi-blue-bright)' }}>
+                                            {lead.name?.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-xs font-semibold truncate" style={{ color: 'var(--bo-text)' }}>
+                                                {lead.name}
+                                            </p>
+                                            <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>
+                                                {lead.source}{lead.interest ? ` · ${lead.interest}` : ''}
+                                            </p>
+                                        </div>
+                                        <StatusBadge status={s.statusKey} label={s.label} size="xs" glow />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-semibold truncate" style={{ color: T.text }}>{lead.name}</p>
-                                        <p className="text-[10px] truncate" style={{ color: T.textSub }}>
-                                            {lead.source} {lead.interest ? `· ${lead.interest}` : ''}
-                                        </p>
-                                    </div>
-                                    <StatusBadge status={lead.status} />
-                                </div>
-                            </Link>
-                        )) : (
-                            <div className="px-5 py-8 text-center">
-                                <p className="text-xs" style={{ color: T.textSub }}>Nenhum lead cadastrado</p>
+                                </Link>
+                            )
+                        }) : (
+                            <div className="px-4 py-8 text-center">
+                                <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
+                                    Nenhum lead cadastrado
+                                </p>
                             </div>
                         )}
                     </div>
@@ -451,44 +422,55 @@ export default function DashboardClient({
                 <motion.div
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.52, duration: 0.4 }}
-                    className="rounded-2xl overflow-hidden"
-                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                    transition={{ delay: 0.45, duration: 0.4 }}
+                    className="intel-card overflow-hidden"
+                    style={{ padding: 0 }}
                 >
-                    <div className="flex items-center justify-between px-5 py-4"
-                        style={{ borderBottom: `1px solid ${T.border}` }}>
-                        <h3 className="text-sm font-semibold" style={{ color: T.text }}>Avaliações Recentes</h3>
+                    <div className="flex items-center justify-between px-4 py-3"
+                        style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                        <SectionHeader title="Avaliações Recentes" />
                         <Link href="/backoffice/avaliacoes">
-                            <span className="text-xs font-medium flex items-center gap-1" style={{ color: T.gold }}>
+                            <span className="text-xs font-semibold flex items-center gap-1"
+                                style={{ color: 'var(--imi-blue-bright)' }}>
                                 Ver todas <ArrowUpRight size={11} />
                             </span>
                         </Link>
                     </div>
-                    <div className="divide-y" style={{ borderColor: T.border }}>
-                        {recentAvaliacoes.length > 0 ? recentAvaliacoes.slice(0, 4).map((av: any) => (
-                            <div key={av.id} className="hover-card flex items-center gap-3 px-5 py-3 cursor-pointer transition-all">
-                                <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0"
-                                    style={{ background: 'rgba(72,101,129,0.1)' }}>
-                                    <Scale size={13} style={{ color: T.gold }} />
+                    <div>
+                        {recentAvaliacoes.length > 0 ? recentAvaliacoes.slice(0, 4).map((av: any) => {
+                            const s = AV_STATUS_MAP[av.status] ?? { statusKey: 'pend', label: av.status }
+                            return (
+                                <div key={av.id}
+                                    className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-all"
+                                    style={{ borderBottom: '1px solid var(--bo-border)' }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
+                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                >
+                                    <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0"
+                                        style={{ background: 'var(--imi-blue-dim)' }}>
+                                        <Scale size={13} style={{ color: 'var(--imi-blue-bright)' }} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs font-semibold truncate" style={{ color: 'var(--bo-text)' }}>
+                                            {av.protocolo}
+                                        </p>
+                                        <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>
+                                            {av.tipo_imovel} · {av.bairro}
+                                        </p>
+                                    </div>
+                                    <div className="text-right flex-shrink-0">
+                                        <p className="text-[11px] font-semibold mb-1" style={{ color: 'var(--imi-blue-bright)' }}>
+                                            {fmt(av.honorarios || 0)}
+                                        </p>
+                                        <StatusBadge status={s.statusKey} label={s.label} size="xs" />
+                                    </div>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-xs font-semibold truncate" style={{ color: T.text }}>
-                                        {av.protocolo}
-                                    </p>
-                                    <p className="text-[10px] truncate" style={{ color: T.textSub }}>
-                                        {av.tipo_imovel} · {av.bairro}
-                                    </p>
-                                </div>
-                                <div className="text-right flex-shrink-0">
-                                    <p className="text-[11px] font-semibold" style={{ color: T.gold }}>
-                                        {fmt(av.honorarios || 0)}
-                                    </p>
-                                    <StatusBadge status={av.status} />
-                                </div>
-                            </div>
-                        )) : (
-                            <div className="px-5 py-8 text-center">
-                                <p className="text-xs" style={{ color: T.textSub }}>Nenhuma avaliação cadastrada</p>
+                            )
+                        }) : (
+                            <div className="px-4 py-8 text-center">
+                                <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
+                                    Nenhuma avaliação cadastrada
+                                </p>
                             </div>
                         )}
                     </div>
