@@ -134,18 +134,18 @@ const CONTEUDOS_CALENDARIO = [
 ]
 
 const TIPO_CONFIG: Record<string, { icon: any; label: string; color: string; bg: string }> = {
-    instagram: { icon: Instagram, label: 'Instagram', color: 'text-pink-600', bg: 'bg-pink-50 border-pink-100' },
-    linkedin: { icon: Linkedin, label: 'LinkedIn', color: 'text-blue-700', bg: 'bg-blue-50 border-blue-100' },
-    facebook: { icon: Facebook, label: 'Facebook', color: 'text-blue-600', bg: 'bg-blue-50 border-blue-100' },
-    email: { icon: Mail, label: 'E-mail', color: 'text-green-600', bg: 'bg-green-50 border-green-100' },
-    blog: { icon: Globe, label: 'Blog', color: 'text-[var(--bo-accent)]', bg: 'bg-accent-50 border-accent-100' },
-    youtube: { icon: Youtube, label: 'YouTube', color: 'text-red-600', bg: 'bg-red-50 border-red-100' },
+    instagram: { icon: Instagram, label: 'Instagram', color: '#EC4899', bg: 'rgba(236,72,153,0.12)' },
+    linkedin: { icon: Linkedin, label: 'LinkedIn', color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
+    facebook: { icon: Facebook, label: 'Facebook', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
+    email: { icon: Mail, label: 'E-mail', color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
+    blog: { icon: Globe, label: 'Blog', color: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)' },
+    youtube: { icon: Youtube, label: 'YouTube', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' },
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-    publicado: { label: 'Publicado', color: 'bg-green-50 text-green-700', icon: CheckCircle },
-    agendado: { label: 'Agendado', color: 'bg-blue-50 text-blue-700', icon: Clock },
-    rascunho: { label: 'Rascunho', color: 'bg-gray-100 text-gray-600', icon: AlertCircle },
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
+    publicado: { label: 'Publicado', color: '#10B981', bg: 'rgba(16,185,129,0.12)', icon: CheckCircle },
+    agendado: { label: 'Agendado', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: Clock },
+    rascunho: { label: 'Rascunho', color: 'var(--bo-text-muted)', bg: 'var(--bo-elevated)', icon: AlertCircle },
 }
 
 const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -227,7 +227,7 @@ export default function CalendarioPage() {
                             <button
                                 key={v}
                                 onClick={() => setView(v)}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors`}
+                                className="px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors"
                                 style={view === v
                                     ? { background: T.surface, color: T.text }
                                     : { color: T.textMuted }
@@ -239,7 +239,8 @@ export default function CalendarioPage() {
                     </div>
                     <button
                         onClick={() => router.push('/backoffice/conteudo/novo')}
-                        className="flex items-center gap-2 h-10 px-4 bg-[#16162A] text-white rounded-xl text-sm font-medium hover:bg-[#0F0F1E]"
+                        className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium text-white"
+                        style={{ background: T.accent }}
                     >
                         <Plus size={16} />
                         Novo
@@ -251,23 +252,17 @@ export default function CalendarioPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                     { label: 'Total no Mês', value: stats.total, color: T.text, bg: T.elevated },
-                    { label: 'Publicados', value: stats.publicados, color: 'text-green-700', bg: 'bg-green-50', colorRaw: null },
-                    { label: 'Agendados', value: stats.agendados, color: 'text-blue-700', bg: 'bg-blue-50', colorRaw: null },
+                    { label: 'Publicados', value: stats.publicados, color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
+                    { label: 'Agendados', value: stats.agendados, color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
                     { label: 'Rascunhos', value: stats.rascunhos, color: T.textMuted, bg: T.elevated },
-                ].map((s, i) => (
+                ].map((s) => (
                     <div
                         key={s.label}
-                        className={`rounded-2xl p-4 ${typeof s.bg === 'string' && s.bg.startsWith('bg-') ? s.bg : ''}`}
-                        style={{
-                            ...(typeof s.bg === 'string' && !s.bg.startsWith('bg-') ? { background: s.bg } : {}),
-                            border: `1px solid ${T.border}`
-                        }}
+                        className="rounded-2xl p-4"
+                        style={{ background: s.bg, border: `1px solid ${T.border}` }}
                     >
                         <p className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>{s.label}</p>
-                        <p
-                            className={`text-3xl font-bold mt-1 ${typeof s.color === 'string' && s.color.startsWith('text-') ? s.color : ''}`}
-                            style={typeof s.color === 'string' && !s.color.startsWith('text-') ? { color: s.color } : {}}
-                        >{s.value}</p>
+                        <p className="text-3xl font-bold mt-1" style={{ color: s.color }}>{s.value}</p>
                     </div>
                 ))}
             </div>
@@ -277,13 +272,16 @@ export default function CalendarioPage() {
                 <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Filtrar:</span>
                 {Object.entries(TIPO_CONFIG).map(([k, v]) => {
                     const Icon = v.icon
+                    const isActive = filtroTipo === k
                     return (
                         <button
                             key={k}
-                            onClick={() => setFiltroTipo(filtroTipo === k ? null : k)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${filtroTipo === k ? `${v.bg} ${v.color}` : ''
-                                }`}
-                            style={filtroTipo !== k ? { background: T.surface, borderColor: T.border, color: T.textMuted } : {}}
+                            onClick={() => setFiltroTipo(isActive ? null : k)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border"
+                            style={isActive
+                                ? { background: v.bg, color: v.color, borderColor: v.color }
+                                : { background: T.surface, borderColor: T.border, color: T.textMuted }
+                            }
                         >
                             <Icon size={12} />
                             {v.label}
@@ -291,17 +289,22 @@ export default function CalendarioPage() {
                     )
                 })}
                 <div className="w-px h-5" style={{ background: T.border }} />
-                {Object.entries(STATUS_CONFIG).map(([k, v]) => (
-                    <button
-                        key={k}
-                        onClick={() => setFiltroStatus(filtroStatus === k ? null : k)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${filtroStatus === k ? v.color + ' border-current' : ''
-                            }`}
-                        style={filtroStatus !== k ? { background: T.surface, borderColor: T.border, color: T.textMuted } : {}}
-                    >
-                        {v.label}
-                    </button>
-                ))}
+                {Object.entries(STATUS_CONFIG).map(([k, v]) => {
+                    const isActive = filtroStatus === k
+                    return (
+                        <button
+                            key={k}
+                            onClick={() => setFiltroStatus(isActive ? null : k)}
+                            className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all border"
+                            style={isActive
+                                ? { background: v.bg, color: v.color, borderColor: v.color }
+                                : { background: T.surface, borderColor: T.border, color: T.textMuted }
+                            }
+                        >
+                            {v.label}
+                        </button>
+                    )
+                })}
             </div>
 
             {view === 'mes' && (
@@ -350,15 +353,14 @@ export default function CalendarioPage() {
                                     <button
                                         key={dia}
                                         onClick={() => setDiaSelecionado(isSelecionado ? null : dia)}
-                                        className={`relative aspect-square p-1 rounded-xl text-sm transition-all ${isSelecionado
-                                            ? 'bg-[#16162A] text-white'
-                                            : isHoje
-                                                ? 'bg-accent-50 border border-accent-200 text-[#0F0F1E] font-bold'
-                                                : ''
-                                            }`}
-                                        style={!isSelecionado && !isHoje ? {
-                                            color: conteudosDia.length > 0 ? T.text : T.textMuted
-                                        } : {}}
+                                        className="relative aspect-square p-1 rounded-xl text-sm transition-all"
+                                        style={
+                                            isSelecionado
+                                                ? { background: T.accent, color: '#fff' }
+                                                : isHoje
+                                                    ? { background: 'rgba(72,101,129,0.2)', border: `1px solid ${T.accent}`, color: T.text, fontWeight: 700 }
+                                                    : { color: conteudosDia.length > 0 ? T.text : T.textMuted }
+                                        }
                                     >
                                         <span className="text-xs">{dia}</span>
                                         {conteudosDia.length > 0 && (
@@ -368,8 +370,8 @@ export default function CalendarioPage() {
                                                     return (
                                                         <span
                                                             key={i}
-                                                            className={`w-1.5 h-1.5 rounded-full ${isSelecionado ? 'bg-white/70' : cfg.color.replace('text-', 'bg-')
-                                                                }`}
+                                                            className="w-1.5 h-1.5 rounded-full"
+                                                            style={{ background: isSelecionado ? 'rgba(255,255,255,0.7)' : cfg.color }}
                                                         />
                                                     )
                                                 })}
@@ -391,7 +393,8 @@ export default function CalendarioPage() {
                                     </h3>
                                     <button
                                         onClick={() => router.push('/backoffice/conteudo/novo')}
-                                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-accent-50 text-[var(--bo-accent)] hover:bg-accent-100"
+                                        className="w-7 h-7 flex items-center justify-center rounded-lg"
+                                        style={{ background: 'rgba(72,101,129,0.12)', color: T.accent }}
                                     >
                                         <Plus size={14} />
                                     </button>
@@ -415,13 +418,13 @@ export default function CalendarioPage() {
                                             const sCfg = STATUS_CONFIG[c.status]
                                             const TIcon = tCfg.icon
                                             return (
-                                                <div key={c.id} className={`p-3 rounded-xl border ${tCfg.bg}`}>
+                                                <div key={c.id} className="p-3 rounded-xl border" style={{ background: tCfg.bg, borderColor: T.border }}>
                                                     <div className="flex items-start justify-between gap-2 mb-1">
                                                         <div className="flex items-center gap-2">
-                                                            <TIcon size={14} className={tCfg.color} />
-                                                            <span className={`text-xs font-medium ${tCfg.color}`}>{tCfg.label}</span>
+                                                            <TIcon size={14} style={{ color: tCfg.color }} />
+                                                            <span className="text-xs font-medium" style={{ color: tCfg.color }}>{tCfg.label}</span>
                                                         </div>
-                                                        <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${sCfg.color}`}>
+                                                        <span className="px-2 py-0.5 rounded-md text-xs font-medium" style={{ color: sCfg.color, background: sCfg.bg }}>
                                                             {sCfg.label}
                                                         </span>
                                                     </div>
@@ -433,11 +436,11 @@ export default function CalendarioPage() {
                                                         <span className="text-xs truncate" style={{ color: T.textMuted }}>{c.autor}</span>
                                                     </div>
                                                     <div className="flex gap-1 mt-2">
-                                                        <button className="flex items-center gap-1 text-xs h-6 px-2 rounded-lg hover:bg-white/60" style={{ color: T.textMuted }}>
+                                                        <button className="flex items-center gap-1 text-xs h-6 px-2 rounded-lg hover:opacity-80" style={{ color: T.textMuted }}>
                                                             <Eye size={11} />
                                                             Ver
                                                         </button>
-                                                        <button className="flex items-center gap-1 text-xs h-6 px-2 rounded-lg hover:bg-white/60" style={{ color: T.textMuted }}>
+                                                        <button className="flex items-center gap-1 text-xs h-6 px-2 rounded-lg hover:opacity-80" style={{ color: T.textMuted }}>
                                                             <Edit size={11} />
                                                             Editar
                                                         </button>
@@ -472,10 +475,10 @@ export default function CalendarioPage() {
                                                 >
                                                     <div className="flex items-center justify-between mb-1">
                                                         <div className="flex items-center gap-1.5">
-                                                            <TIcon size={12} className={tCfg.color} />
-                                                            <span className={`text-xs font-medium ${tCfg.color}`}>{tCfg.label}</span>
+                                                            <TIcon size={12} style={{ color: tCfg.color }} />
+                                                            <span className="text-xs font-medium" style={{ color: tCfg.color }}>{tCfg.label}</span>
                                                         </div>
-                                                        <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${sCfg.color}`}>
+                                                        <span className="px-1.5 py-0.5 rounded text-xs font-medium" style={{ color: sCfg.color }}>
                                                             {dia}/{anoMes.mes + 1}
                                                         </span>
                                                     </div>
@@ -512,8 +515,8 @@ export default function CalendarioPage() {
                                         style={{ borderBottom: `1px solid ${T.border}` }}
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tCfg.bg}`}>
-                                                <TIcon size={18} className={tCfg.color} />
+                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: tCfg.bg }}>
+                                                <TIcon size={18} style={{ color: tCfg.color }} />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium" style={{ color: T.text }}>{c.titulo}</p>
@@ -533,7 +536,7 @@ export default function CalendarioPage() {
                                                     day: '2-digit', month: 'short'
                                                 })}
                                             </span>
-                                            <span className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium ${sCfg.color}`}>
+                                            <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium" style={{ color: sCfg.color, background: sCfg.bg }}>
                                                 <StatusIcon size={11} />
                                                 {sCfg.label}
                                             </span>

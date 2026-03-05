@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { ArrowLeft, Save, Building2, MapPin, DollarSign, Calendar, Globe } from 'lucide-react'
 
 const T = {
@@ -65,11 +66,38 @@ export default function NovoProjetoPage() {
     ]
 
     const handleSubmit = async () => {
+        if (!form.nome.trim()) {
+            toast.error('Nome do projeto é obrigatório')
+            setCurrentStep(0)
+            return
+        }
         setIsSubmitting(true)
-        // Simula save — conectar a Supabase em Step 7
-        await new Promise(r => setTimeout(r, 1200))
-        setIsSubmitting(false)
-        router.push('/backoffice/projetos')
+        try {
+            const res = await fetch('/api/projetos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nome: form.nome.trim(),
+                    tipo: form.tipo || null,
+                    descricao: form.descricao || null,
+                    cidade: form.localizacao || null,
+                    status: form.status || 'planejamento',
+                    unidades: form.unidades ? Number(form.unidades) : 0,
+                    area_total_m2: form.areaTotal ? parseFloat(form.areaTotal.replace(/\./g, '').replace(',', '.')) : null,
+                    vgv: form.vgv ? parseFloat(form.vgv) : 0,
+                    data_lancamento: form.dataLancamento || null,
+                    data_entrega_prev: form.dataEntrega || null,
+                }),
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Erro ao criar projeto')
+            toast.success('Projeto criado com sucesso!')
+            router.push('/backoffice/projetos')
+        } catch (err: any) {
+            toast.error(err.message || 'Erro ao salvar projeto')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     const inputStyle = {

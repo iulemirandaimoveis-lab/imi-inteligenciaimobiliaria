@@ -23,13 +23,13 @@ const T = {
 }
 
 const STATUS_CONFIG = {
-  disponivel: { label: 'Disponível', color: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-500' },
-  ready: { label: 'Pronto', color: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-500' },
-  launch: { label: 'Lançamento', color: 'bg-blue-100 text-blue-700', dot: 'bg-blue-500' },
-  under_construction: { label: 'Em Construção', color: 'bg-amber-100 text-amber-700', dot: 'bg-amber-500' },
-  em_negociacao: { label: 'Em Negociação', color: 'bg-amber-100 text-amber-700', dot: 'bg-amber-500' },
-  vendido: { label: 'Vendido', color: 'bg-gray-100 text-gray-700', dot: 'bg-gray-500' },
-  inativo: { label: 'Inativo', color: 'bg-gray-100 text-gray-600', dot: 'bg-gray-400' },
+  disponivel: { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', dot: '#10B981' },
+  ready: { label: 'Pronto', color: '#10B981', bg: 'rgba(16,185,129,0.14)', dot: '#10B981' },
+  launch: { label: 'Lançamento', color: '#60A5FA', bg: 'rgba(96,165,250,0.14)', dot: '#3B82F6' },
+  under_construction: { label: 'Em Construção', color: '#F59E0B', bg: 'rgba(245,158,11,0.14)', dot: '#F59E0B' },
+  em_negociacao: { label: 'Em Negociação', color: '#F59E0B', bg: 'rgba(245,158,11,0.14)', dot: '#F59E0B' },
+  vendido: { label: 'Vendido', color: 'var(--bo-text-muted)', bg: 'var(--bo-elevated)', dot: 'var(--bo-text-muted)' },
+  inativo: { label: 'Inativo', color: 'var(--bo-text-muted)', bg: 'var(--bo-elevated)', dot: 'var(--bo-text-muted)' },
 }
 
 export default function ImoveisClient({ developments }: { developments: Development[] }) {
@@ -73,7 +73,8 @@ export default function ImoveisClient({ developments }: { developments: Developm
         </div>
         <div className="flex gap-2">
           <Link href="/backoffice/imoveis/novo"
-            className="flex items-center gap-2 h-9 px-4 bg-[#102A43] text-white rounded-xl text-sm font-semibold shadow-sm hover:shadow-md hover:bg-[#16162A] transition-all">
+            className="flex items-center gap-2 h-9 px-4 text-white rounded-xl text-sm font-semibold shadow-sm transition-all"
+            style={{ background: 'var(--bo-accent)' }}>
             <Plus size={16} /> Novo Empreendimento
           </Link>
         </div>
@@ -197,8 +198,9 @@ export default function ImoveisClient({ developments }: { developments: Developm
                   )}
 
                   <div className="absolute top-3 left-3 flex gap-2">
-                    <span className={`text-xs px-2 py-1 rounded-full font-bold flex items-center shadow-sm gap-1 uppercase tracking-tight ${Stt.color}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${Stt.dot}`} /> {Stt.label}
+                    <span className="text-xs px-2 py-1 rounded-full font-bold flex items-center shadow-sm gap-1 uppercase tracking-tight"
+                      style={{ color: Stt.color, background: Stt.bg }}>
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: Stt.dot }} /> {Stt.label}
                     </span>
                   </div>
 
@@ -278,7 +280,8 @@ export default function ImoveisClient({ developments }: { developments: Developm
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${Stt.color}`}>{Stt.label}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider"
+                      style={{ color: Stt.color, background: Stt.bg }}>{Stt.label}</span>
                     <span className="text-xs font-medium px-2 py-0.5 rounded-full truncate max-w-[150px]"
                       style={{ color: T.accent, background: 'rgba(72,101,129,0.1)' }}>{im.developer}</span>
                   </div>

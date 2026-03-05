@@ -119,7 +119,7 @@ export default function CampanhaAnalyticsPage() {
           <div>
             <h1 className="text-2xl font-bold" style={{ color: T.text }}>{campaign.name}</h1>
             <div className="flex items-center gap-3 mt-2">
-              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium">
+              <span className="px-3 py-1 rounded-lg text-sm font-medium" style={{ background: 'rgba(16,185,129,0.12)', color: '#10B981' }}>
                 ● Ativa
               </span>
               <span className="text-sm" style={{ color: T.textMuted }}>
@@ -149,7 +149,8 @@ export default function CampanhaAnalyticsPage() {
           </button>
           <button
             onClick={() => router.push(`/backoffice/campanhas/${params.id}/editar`)}
-            className="h-10 px-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 flex items-center gap-2"
+            className="h-10 px-4 rounded-xl font-medium flex items-center gap-2 text-white"
+            style={{ background: '#3B82F6' }}
           >
             <Edit size={18} />
             Editar
@@ -162,8 +163,8 @@ export default function CampanhaAnalyticsPage() {
         {/* Investimento */}
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-              <DollarSign size={20} className="text-blue-600" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.12)' }}>
+              <DollarSign size={20} style={{ color: '#3B82F6' }} />
             </div>
             <div className="text-right">
               <p className="text-xs" style={{ color: T.textMuted }}>Orçamento</p>
@@ -187,10 +188,10 @@ export default function CampanhaAnalyticsPage() {
         {/* Leads */}
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-              <Users size={20} className="text-green-600" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.12)' }}>
+              <Users size={20} style={{ color: '#10B981' }} />
             </div>
-            <div className="flex items-center gap-1 text-green-600">
+            <div className="flex items-center gap-1" style={{ color: '#10B981' }}>
               <TrendingUp size={16} />
               <span className="text-sm font-medium">+12%</span>
             </div>
@@ -206,10 +207,10 @@ export default function CampanhaAnalyticsPage() {
         {/* CTR */}
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-              <MousePointerClick size={20} className="text-purple-600" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.12)' }}>
+              <MousePointerClick size={20} style={{ color: '#8B5CF6' }} />
             </div>
-            <div className="flex items-center gap-1 text-green-600">
+            <div className="flex items-center gap-1" style={{ color: '#10B981' }}>
               <TrendingUp size={16} />
               <span className="text-sm font-medium">+8%</span>
             </div>
@@ -225,10 +226,10 @@ export default function CampanhaAnalyticsPage() {
         {/* ROI */}
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
-            <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
-              <TrendingUp size={20} className="text-orange-600" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(249,115,22,0.12)' }}>
+              <TrendingUp size={20} style={{ color: '#F97316' }} />
             </div>
-            <div className="flex items-center gap-1 text-green-600">
+            <div className="flex items-center gap-1" style={{ color: '#10B981' }}>
               <TrendingUp size={16} />
               <span className="text-sm font-medium">+24%</span>
             </div>
@@ -254,17 +255,21 @@ export default function CampanhaAnalyticsPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setTimeRange('7d')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === '7d' ? 'bg-blue-100 text-blue-700' : ''
-                  }`}
-                style={timeRange !== '7d' ? { color: T.textMuted } : {}}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                style={timeRange === '7d'
+                  ? { background: 'rgba(59,130,246,0.14)', color: '#3B82F6' }
+                  : { color: T.textMuted }
+                }
               >
                 7 dias
               </button>
               <button
                 onClick={() => setTimeRange('30d')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === '30d' ? 'bg-blue-100 text-blue-700' : ''
-                  }`}
-                style={timeRange !== '30d' ? { color: T.textMuted } : {}}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                style={timeRange === '30d'
+                  ? { background: 'rgba(59,130,246,0.14)', color: '#3B82F6' }
+                  : { color: T.textMuted }
+                }
               >
                 30 dias
               </button>
@@ -309,7 +314,7 @@ export default function CampanhaAnalyticsPage() {
           {/* Legend */}
           <div className="flex items-center gap-6 mt-6 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500" />
+              <div className="w-3 h-3 rounded-full" style={{ background: '#3B82F6' }} />
               <span className="text-xs" style={{ color: T.textMuted }}>Leads por dia</span>
             </div>
             <div className="flex items-center gap-2">
@@ -376,11 +381,11 @@ export default function CampanhaAnalyticsPage() {
           {/* Stats */}
           <div className="space-y-3">
             {campaign.deviceStats.map((device, index) => {
-              const colors = ['bg-blue-500', 'bg-purple-500', 'bg-pink-500']
+              const colors = ['#3B82F6', '#8B5CF6', '#EC4899']
               return (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${colors[index]}`} />
+                    <div className="w-3 h-3 rounded-full" style={{ background: colors[index] }} />
                     <span className="text-sm font-medium" style={{ color: T.text }}>{device.device}</span>
                   </div>
                   <div className="text-right">
@@ -403,8 +408,8 @@ export default function CampanhaAnalyticsPage() {
               <h3 className="text-lg font-bold" style={{ color: T.text }}>Top Criativos</h3>
               <p className="text-sm mt-1" style={{ color: T.textMuted }}>Melhor performance</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-              <BarChart3 size={20} className="text-purple-600" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.12)' }}>
+              <BarChart3 size={20} style={{ color: '#8B5CF6' }} />
             </div>
           </div>
 
@@ -437,8 +442,8 @@ export default function CampanhaAnalyticsPage() {
               <h3 className="text-lg font-bold" style={{ color: T.text }}>Métricas Adicionais</h3>
               <p className="text-sm mt-1" style={{ color: T.textMuted }}>Performance geral</p>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-              <Activity size={20} className="text-green-600" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.12)' }}>
+              <Activity size={20} style={{ color: '#10B981' }} />
             </div>
           </div>
 
@@ -481,13 +486,13 @@ export default function CampanhaAnalyticsPage() {
           </div>
 
           {/* Projeção */}
-          <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
+          <div className="mt-4 p-4 rounded-xl" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
             <div className="flex items-center gap-2 mb-2">
-              <Zap size={16} className="text-blue-600" />
-              <p className="text-xs font-bold text-blue-900">Projeção Final</p>
+              <Zap size={16} style={{ color: '#3B82F6' }} />
+              <p className="text-xs font-bold" style={{ color: T.text }}>Projeção Final</p>
             </div>
-            <p className="text-sm text-gray-700">
-              Com o ritmo atual, você deve atingir <span className="font-bold text-blue-700">~85 leads</span> até o fim da campanha.
+            <p className="text-sm" style={{ color: T.textMuted }}>
+              Com o ritmo atual, você deve atingir <span className="font-bold" style={{ color: '#3B82F6' }}>~85 leads</span> até o fim da campanha.
             </p>
           </div>
         </div>

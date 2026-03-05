@@ -84,11 +84,23 @@ function ConfigModal({
 
     const handleSave = async () => {
         setSaving(true)
-        // Na produção: POST /api/integracoes/save com valores criptografados
-        await new Promise(r => setTimeout(r, 800))
-        onSave(integracao.id, values)
-        setSaving(false)
-        onClose()
+        try {
+            const res = await fetch('/api/integracoes/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ integration_id: integracao.id, config: values }),
+            })
+            if (!res.ok) {
+                const err = await res.json()
+                console.error('Integração save error:', err)
+            }
+        } catch (e) {
+            console.error('Integração save:', e)
+        } finally {
+            setSaving(false)
+            onSave(integracao.id, values)
+            onClose()
+        }
     }
 
     return (

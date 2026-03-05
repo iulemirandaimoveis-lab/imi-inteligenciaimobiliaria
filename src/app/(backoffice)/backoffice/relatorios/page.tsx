@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { toast } from 'sonner'
 import {
     Download, Users, Building2, Scale, DollarSign,
     Briefcase, TrendingUp, ChevronDown, FileSpreadsheet, File,
@@ -139,8 +140,29 @@ export default function RelatoriosPage() {
 
     const handleGerar = async (id: number) => {
         setGerando(id)
-        await new Promise(r => setTimeout(r, 1500))
-        setGerando(null)
+        try {
+            const relatorio = RELATORIOS.find(r => r.id === id)
+            if (!relatorio) return
+
+            const module = relatorio.categoria === 'crm' ? 'crm' : relatorio.categoria
+            const res = await fetch(`/api/export?module=${module}`)
+            if (!res.ok) throw new Error('Erro ao gerar relatório')
+
+            const blob = await res.blob()
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `${relatorio.label.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            URL.revokeObjectURL(url)
+            toast.success(`${relatorio.label} exportado com sucesso!`)
+        } catch (err: any) {
+            toast.error(err.message || 'Erro ao gerar relatório')
+        } finally {
+            setGerando(null)
+        }
     }
 
     return (

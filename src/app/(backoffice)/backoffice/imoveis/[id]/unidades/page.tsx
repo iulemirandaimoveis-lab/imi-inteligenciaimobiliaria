@@ -176,9 +176,9 @@ export default function ImoveisUnidadesPage() {
 
   const getStatusConfig = (status: string) => {
     const configs: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-      disponivel: { label: 'Disponível', color: 'text-green-700', bg: 'bg-green-50', icon: CheckCircle },
-      reservada: { label: 'Reservada', color: 'text-orange-700', bg: 'bg-orange-50', icon: Clock },
-      vendida: { label: 'Vendida', color: 'text-gray-700', bg: 'bg-gray-100', icon: XCircle },
+      disponivel: { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
+      reservada: { label: 'Reservada', color: '#F59E0B', bg: 'rgba(245,158,11,0.14)', icon: Clock },
+      vendida: { label: 'Vendida', color: 'var(--bo-text-muted)', bg: 'var(--bo-elevated)', icon: XCircle },
     }
     return configs[status] || configs.disponivel
   }
@@ -223,7 +223,8 @@ export default function ImoveisUnidadesPage() {
           </button>
           <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades/nova`)}
-            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
+            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium transition-colors"
+            style={{ background: T.accent }}
           >
             <Plus size={20} />
             <span className="hidden sm:inline">Nova Unidade</span>
@@ -238,21 +239,21 @@ export default function ImoveisUnidadesPage() {
           <p className="text-2xl font-bold" style={{ color: T.text }}>{unidadesData.empreendimento.totalUnidades}</p>
         </div>
         <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <p className="text-xs text-green-600 mb-1">Disponíveis</p>
-          <p className="text-2xl font-bold text-green-700">{unidadesData.empreendimento.disponiveis}</p>
+          <p className="text-xs mb-1" style={{ color: '#10B981' }}>Disponíveis</p>
+          <p className="text-2xl font-bold" style={{ color: '#10B981' }}>{unidadesData.empreendimento.disponiveis}</p>
           <div className="h-1 rounded-full overflow-hidden mt-2" style={{ background: T.elevated }}>
-            <div className="h-full bg-green-500" style={{ width: `${progressDisponiveis}%` }} />
+            <div className="h-full" style={{ width: `${progressDisponiveis}%`, background: '#10B981' }} />
           </div>
         </div>
         <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <p className="text-xs text-orange-600 mb-1">Reservadas</p>
-          <p className="text-2xl font-bold text-orange-700">{unidadesData.empreendimento.reservadas}</p>
+          <p className="text-xs mb-1" style={{ color: '#F59E0B' }}>Reservadas</p>
+          <p className="text-2xl font-bold" style={{ color: '#F59E0B' }}>{unidadesData.empreendimento.reservadas}</p>
         </div>
         <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Vendidas</p>
           <p className="text-2xl font-bold" style={{ color: T.text }}>{unidadesData.empreendimento.vendidas}</p>
           <div className="h-1 rounded-full overflow-hidden mt-2" style={{ background: T.elevated }}>
-            <div className="h-full bg-gray-500" style={{ width: `${progressVendidas}%` }} />
+            <div className="h-full" style={{ width: `${progressVendidas}%`, background: 'var(--bo-text-muted)' }} />
           </div>
         </div>
       </div>
@@ -315,14 +316,15 @@ export default function ImoveisUnidadesPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-bold" style={{ color: T.text }}>{unidade.codigo}</h3>
                     {unidade.destaque && (
-                      <span className="px-2 py-0.5 bg-accent-50 text-[#0F0F1E] text-xs font-medium rounded">
+                      <span className="px-2 py-0.5 text-xs font-medium rounded" style={{ background: 'rgba(72,101,129,0.15)', color: T.accent }}>
                         Destaque
                       </span>
                     )}
                   </div>
                   <p className="text-xs" style={{ color: T.textMuted }}>{unidade.tipo} • Andar {unidade.andar}</p>
                 </div>
-                <span className={`px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1 ${statusConfig.bg} ${statusConfig.color}`}>
+                <span className="px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1"
+                  style={{ background: statusConfig.bg, color: statusConfig.color }}>
                   <StatusIcon size={12} />
                   {statusConfig.label}
                 </span>
@@ -405,7 +407,8 @@ export default function ImoveisUnidadesPage() {
           <p className="mb-6" style={{ color: T.textMuted }}>Tente ajustar os filtros ou adicionar uma nova unidade</p>
           <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades/nova`)}
-            className="inline-flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]"
+            className="inline-flex items-center gap-2 h-11 px-6 rounded-xl font-medium text-white"
+            style={{ background: T.accent }}
           >
             <Plus size={20} />
             Nova Unidade
