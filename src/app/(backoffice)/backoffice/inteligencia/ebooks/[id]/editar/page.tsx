@@ -90,7 +90,7 @@ export default function EditarEbookPage() {
             <div className="flex items-center gap-4 mb-8">
                 <Link
                     href="/backoffice/inteligencia/ebooks"
-                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-white/10"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--bo-hover)]"
                     style={{ background: 'var(--bo-icon-bg)' }}
                 >
                     <ArrowLeft size={15} style={{ color: 'var(--bo-text-muted)' }} />

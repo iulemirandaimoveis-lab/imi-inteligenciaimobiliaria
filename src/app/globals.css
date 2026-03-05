@@ -66,27 +66,43 @@
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-  /* Backoffice Theme Variables - Light Mode (Default to Light outside of dark mode, or handled in .dark) */
-  --bo-surface: #ffffff;
-  --bo-elevated: #f8f9fa;
+  /* Backoffice Theme Variables - Light Mode */
+  --bo-surface: #f4f7fc;
+  --bo-elevated: #ffffff;
   --bo-border: rgba(0, 0, 0, 0.08);
   --bo-border-light: rgba(0, 0, 0, 0.04);
   --bo-border-gold: rgba(51, 78, 104, 0.25);
-  --bo-text: #1a1a1a;
+  --bo-text: #111827;
   --bo-text-muted: #6b7280;
+  --bo-text-tertiary: #9ca3af;
+  --bo-text-accent: #334E68;
+  --bo-text-accent-dim: #486581;
   --bo-hover: rgba(0, 0, 0, 0.04);
   --bo-active-bg: rgba(51, 78, 104, 0.08);
   --bo-icon-bg: rgba(0, 0, 0, 0.05);
   --bo-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   --bo-shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.1);
   --bo-drawer-bg: #ffffff;
-  --header-bg: rgba(255,255,255,0.85);
+  --header-bg: rgba(244,247,252,0.92);
   --backdrop-bg: rgba(0,0,0,0.3);
+  /* Responsive accent — navy in light, bright blue in dark */
+  --bo-accent: #334E68;
+  --bo-accent-dim: #1A2F44;
+  /* Card surface */
+  --bo-card: #ffffff;
+  --bo-card-hover: #f0f4f8;
+  /* Extended borders */
+  --bo-border-subtle: rgba(0,0,0,0.04);
+  --bo-border-strong: rgba(0,0,0,0.12);
+  /* Navigation tokens — light mode */
+  --nav-bg: rgba(244,247,252,0.96);
+  --nav-border: rgba(0,0,0,0.06);
+  --nav-active: #334E68;
+  --nav-inactive: #6b7280;
 }
 
 .dark {
   /* ── IMI INTELLIGENCE DARK THEME v4.0 ─────────────────────── */
-  /* Deep charcoal backgrounds — matches Stitch design system    */
   --bo-surface: #0C1017;
   --bo-elevated: #111822;
   --bo-border: rgba(255, 255, 255, 0.07);
@@ -94,6 +110,9 @@
   --bo-border-gold: rgba(37, 99, 235, 0.22);
   --bo-text: #E8EDF2;
   --bo-text-muted: #8B949E;
+  --bo-text-tertiary: #475569;
+  --bo-text-accent: #60A5FA;
+  --bo-text-accent-dim: #2563EB;
   --bo-hover: rgba(255, 255, 255, 0.045);
   --bo-active-bg: rgba(37, 99, 235, 0.12);
   --bo-icon-bg: rgba(255, 255, 255, 0.06);
@@ -102,6 +121,20 @@
   --bo-drawer-bg: #0C1017;
   --header-bg: rgba(10,13,19,0.92);
   --backdrop-bg: rgba(5,7,11,0.80);
+  /* Responsive accent — bright blue in dark mode */
+  --bo-accent: #3B82F6;
+  --bo-accent-dim: #1D4ED8;
+  /* Card surface */
+  --bo-card: #141C2B;
+  --bo-card-hover: #19243A;
+  /* Extended borders */
+  --bo-border-subtle: rgba(255,255,255,0.05);
+  --bo-border-strong: rgba(255,255,255,0.16);
+  /* Navigation tokens — dark mode */
+  --nav-bg: rgba(12,16,23,0.96);
+  --nav-border: rgba(37,99,235,0.12);
+  --nav-active: #60A5FA;
+  --nav-inactive: #475569;
 }
 
 /* ── BASE RESETS ────────────────────────────────────────────── */

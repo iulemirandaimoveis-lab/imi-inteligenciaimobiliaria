@@ -23,7 +23,7 @@ const T = {
   text: 'var(--bo-text)',
   textMuted: 'var(--bo-text-muted)',
   hover: 'var(--bo-hover)',
-  accent: '#486581',
+  accent: 'var(--bo-accent)',
 }
 
 // ⚠️ NÃO MODIFICAR - Dados ROI mockados
@@ -178,11 +178,11 @@ export default function CampanhasROIPage() {
                     <div className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
                       {idx + 1}
                     </div>
-                    <p className="font-semibold text-gray-900 text-sm">{camp.name}</p>
+                    <p className="font-semibold text-sm" style={{ color: "var(--bo-text)" }}>{camp.name}</p>
                   </div>
                   <p className="text-lg font-bold text-green-700">{camp.roi.toLocaleString('pt-BR')}%</p>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-gray-600">
+                <div className="flex items-center gap-4 text-xs" style={{ color: "var(--bo-text-muted)" }}>
                   <span>Investido: {formatPrice(camp.spent)}</span>
                   <span>•</span>
                   <span>Receita: {formatPrice(camp.revenue)}</span>
@@ -202,10 +202,10 @@ export default function CampanhasROIPage() {
             {roiData.bottomPerformers.map((camp, idx) => (
               <div key={idx} className="p-4 bg-orange-50 border border-orange-200 rounded-xl">
                 <div className="flex items-start justify-between mb-2">
-                  <p className="font-semibold text-gray-900 text-sm">{camp.name}</p>
+                  <p className="font-semibold text-sm" style={{ color: "var(--bo-text)" }}>{camp.name}</p>
                   <p className="text-lg font-bold text-orange-700">{camp.roi.toLocaleString('pt-BR')}%</p>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-gray-600">
+                <div className="flex items-center gap-4 text-xs" style={{ color: "var(--bo-text-muted)" }}>
                   <span>Investido: {formatPrice(camp.spent)}</span>
                   <span>•</span>
                   <span>Receita: {formatPrice(camp.revenue)}</span>

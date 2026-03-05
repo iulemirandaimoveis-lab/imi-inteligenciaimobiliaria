@@ -10,12 +10,12 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: 'var(--bo-accent)',
 }
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     disponivel: { label: 'Disponível', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    em_negociacao: { label: 'Negociação', text: '#486581', bg: 'rgba(26,26,46,0.12)', icon: Clock },
+    em_negociacao: { label: 'Negociação', text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Clock },
     reservado: { label: 'Reservado', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
     vendido: { label: 'Vendido', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
     lancamento: { label: 'Lançamento', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Tag },
@@ -253,7 +253,7 @@ export default function ImoveisPage() {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/imoveis/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
+                    style={{ background: 'var(--bo-accent)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                     <Plus size={16} /> Novo Empreendimento
                 </motion.button>
@@ -273,7 +273,7 @@ export default function ImoveisPage() {
                             border: `1px solid ${T.borderGold}`,
                         }}
                     >
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'rgba(26,26,46,0.10)' }}>
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'var(--bo-active-bg)' }}>
                             <s.icon size={16} style={{ color: T.gold }} />
                         </div>
                         <p className="text-xl font-bold" style={{ color: T.text }}>{s.value}</p>
@@ -322,7 +322,7 @@ export default function ImoveisPage() {
                                 onClick={() => setFilter(s)}
                                 className="px-3 h-10 rounded-xl text-xs font-semibold transition-all hidden sm:block"
                                 style={{
-                                    background: filter === s ? '#486581' : T.elevated,
+                                    background: filter === s ? 'var(--bo-accent)' : T.elevated,
                                     color: filter === s ? 'white' : T.textDim,
                                     border: `1px solid ${filter === s ? T.borderGold : T.border}`,
                                 }}
@@ -339,7 +339,7 @@ export default function ImoveisPage() {
                                     onClick={() => setView(v)}
                                     className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
                                     style={{
-                                        background: view === v ? '#486581' : T.elevated,
+                                        background: view === v ? 'var(--bo-accent)' : T.elevated,
                                         border: `1px solid ${view === v ? T.borderGold : T.border}`,
                                     }}
                                 >
@@ -377,7 +377,7 @@ export default function ImoveisPage() {
                                 className="hover-card flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all"
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
                             >
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(26,26,46,0.08)' }}>
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bo-active-bg)' }}>
                                     <Building2 size={20} style={{ color: T.gold }} />
                                 </div>
                                 <div className="flex-1 min-w-0">

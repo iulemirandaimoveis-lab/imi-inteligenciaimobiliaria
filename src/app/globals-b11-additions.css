@@ -10,27 +10,12 @@
   overflow-x: hidden;
   max-width: 100vw;
 
-  /* Surface overrides — force institutional dark palette */
+  /* Surface aliases — follow theme */
   --surface-0: var(--bo-surface);
   --surface-1: var(--bo-elevated);
-  --surface-2: #1A2235;
+  --surface-2: var(--bo-card);
 
-  /* Extended text tokens */
-  --bo-text-tertiary:  #475569;
-  --bo-text-accent:    #60A5FA;
-  --bo-text-accent-dim:#2563EB;
-
-  /* Extended border tokens */
-  --bo-border-subtle:  rgba(255,255,255,0.05);
-  --bo-border-strong:  rgba(255,255,255,0.16);
-
-  /* Navigation tokens */
-  --nav-bg:        rgba(12,16,23,0.96);
-  --nav-border:    rgba(37,99,235,0.12);
-  --nav-active:    #60A5FA;
-  --nav-inactive:  #475569;
-
-  /* ── Status — NEON palette (matches Stitch design system) ── */
+  /* ── Status — NEON palette (same in both modes) ── */
   --s-hot:    #F87171;  --s-hot-bg:    rgba(248,113,113,0.14);
   --s-warm:   #FBBF24;  --s-warm-bg:   rgba(251,191,36,0.14);
   --s-cold:   #22D3EE;  --s-cold-bg:   rgba(34,211,238,0.12);
@@ -38,7 +23,7 @@
   --s-pend:   #A78BFA;  --s-pend-bg:   rgba(167,139,250,0.12);
   --s-cancel: #F87171;  --s-cancel-bg: rgba(248,113,113,0.10);
 
-  /* ── IMI Intelligence accent tokens ────────────────────── */
+  /* ── IMI Intelligence accent tokens (same in both modes) ── */
   --imi-blue:        #2563EB;
   --imi-blue-bright: #3B82F6;
   --imi-blue-dim:    rgba(37,99,235,0.12);
@@ -57,10 +42,6 @@
   --imi-neon-hot:  #FF3131;
   --imi-neon-warm: #FFD700;
   --imi-neon-cold: #00F5FF;
-
-  /* Card surface — slightly elevated from surface */
-  --bo-card:  #141C2B;
-  --bo-card-hover: #19243A;
 }
 
 /* ── BACKOFFICE INPUT DARK ─────────────────────────────────── */
@@ -75,6 +56,57 @@
 .backoffice-root input::placeholder,
 .backoffice-root textarea::placeholder {
   color: var(--bo-text-muted);
+}
+
+/* ── TAILWIND LEGACY CLASS OVERRIDES (dark mode) ──────────────
+   These catch any page still using old Tailwind light-theme classes
+   and force them to use the dark theme CSS variables.
+   ─────────────────────────────────────────────────────────────── */
+.dark .backoffice-root .bg-white {
+  background: var(--bo-elevated) !important;
+}
+.dark .backoffice-root .bg-gray-50,
+.dark .backoffice-root .bg-gray-100 {
+  background: var(--bo-surface) !important;
+}
+.dark .backoffice-root .bg-gray-200 {
+  background: var(--bo-elevated) !important;
+}
+.dark .backoffice-root .text-gray-900,
+.dark .backoffice-root .text-gray-800 {
+  color: var(--bo-text) !important;
+}
+.dark .backoffice-root .text-gray-700,
+.dark .backoffice-root .text-gray-600 {
+  color: var(--bo-text-muted) !important;
+}
+.dark .backoffice-root .text-gray-500,
+.dark .backoffice-root .text-gray-400 {
+  color: var(--bo-text-muted) !important;
+}
+.dark .backoffice-root .border-gray-100,
+.dark .backoffice-root .border-gray-200,
+.dark .backoffice-root .border-gray-300 {
+  border-color: var(--bo-border) !important;
+}
+.dark .backoffice-root .divide-gray-200 > * + * {
+  border-color: var(--bo-border) !important;
+}
+/* Input/form overrides for pages that still use Tailwind form classes */
+.dark .backoffice-root input.bg-white,
+.dark .backoffice-root textarea.bg-white,
+.dark .backoffice-root select.bg-white {
+  background: var(--bo-elevated) !important;
+  color: var(--bo-text) !important;
+}
+/* Ring/focus overrides */
+.dark .backoffice-root .ring-gray-300 {
+  --tw-ring-color: var(--bo-border) !important;
+}
+/* Placeholder text in dark mode */
+.dark .backoffice-root ::placeholder {
+  color: var(--bo-text-muted) !important;
+  opacity: 0.7;
 }
 
 /* ── GLASS CARD UTILITY ─────────────────────────────────────── */

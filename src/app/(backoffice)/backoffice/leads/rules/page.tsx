@@ -41,7 +41,7 @@ const T = {
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
+    accent: 'var(--bo-accent)',
 }
 
 // ⚠️ NÃO MODIFICAR - Regras mockadas contextualizadas Recife
@@ -151,7 +151,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'produto',
         icone: Star,
-        cor: 'text-[#486581] bg-accent-50 border-accent-100',
+        cor: 'text-[var(--bo-accent)] bg-accent-50 border-accent-100',
         execucoes: 78,
     },
     {

@@ -46,7 +46,7 @@ const QUICK_CREATE = [
         desc: 'Cadastrar empreendimento',
         href: '/backoffice/imoveis/novo',
         icon: Building2,
-        color: '#486581',
+        color: 'var(--bo-accent)',
         bg: 'rgba(51,78,104,0.12)',
     },
     {
@@ -249,9 +249,9 @@ export function MobileBottomNav() {
                                     height: 52,
                                     marginTop: '-20px',
                                     background: quickCreateOpen
-                                        ? 'linear-gradient(135deg, #2d5986, #486581)'
-                                        : 'linear-gradient(135deg, #1E3A5F, #334E68)',
-                                    boxShadow: '0 4px 20px rgba(51,78,104,0.55)',
+                                        ? 'linear-gradient(135deg, var(--bo-accent), var(--bo-accent-dim))'
+                                        : 'linear-gradient(135deg, var(--bo-accent-dim), var(--bo-accent))',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
                                 }}
                             >
                                 <motion.div
@@ -508,6 +508,41 @@ export function MobileBottomNav() {
                                 </motion.button>
                             </div>
 
+                            {/* ── User Profile strip (always visible) ── */}
+                            <div
+                                className="flex items-center gap-3 px-5 py-3 flex-shrink-0"
+                                style={{ borderBottom: '1px solid var(--bo-border)' }}
+                            >
+                                <div
+                                    className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                                    style={{ background: 'linear-gradient(135deg, var(--bo-accent-dim), var(--bo-accent))' }}
+                                >
+                                    IM
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold truncate" style={{ color: 'var(--bo-text)' }}>
+                                        Iule Miranda
+                                    </p>
+                                    <p className="text-[11px] font-medium truncate" style={{ color: 'var(--bo-accent)' }}>
+                                        Admin
+                                    </p>
+                                </div>
+                                <motion.button
+                                    whileTap={{ scale: 0.9 }}
+                                    onClick={async () => {
+                                        setOpen(false)
+                                        const supabase = createClient()
+                                        await supabase.auth.signOut()
+                                        router.push('/login')
+                                    }}
+                                    className="flex items-center gap-2 px-3 h-9 rounded-xl text-sm font-semibold flex-shrink-0"
+                                    style={{ background: 'var(--s-cancel-bg)', color: 'var(--s-cancel)' }}
+                                >
+                                    <LogOut size={14} />
+                                    Sair
+                                </motion.button>
+                            </div>
+
                             {/* ── Quick Access Grid ── */}
                             <div className="px-4 pt-4 pb-2 flex-shrink-0">
                                 <div className="grid grid-cols-4 gap-1.5">
@@ -615,7 +650,7 @@ export function MobileBottomNav() {
                                                         <div
                                                             className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                                                             style={{
-                                                                background: active ? 'rgba(26,26,46,0.15)' : 'var(--bo-icon-bg)',
+                                                                background: active ? 'var(--bo-hover)' : 'var(--bo-icon-bg)',
                                                             }}
                                                         >
                                                             <item.icon size={15} />
@@ -631,43 +666,6 @@ export function MobileBottomNav() {
                                     </div>
                                 ))}
 
-                                {/* ── User Profile & Logout ── */}
-                                {!search && (
-                                    <div
-                                        className="mt-4 px-6 pb-6 pt-4"
-                                        style={{ borderTop: '1px solid var(--bo-border)' }}
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <div
-                                                className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                                                style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}
-                                            >
-                                                IM
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-semibold truncate" style={{ color: 'var(--bo-text)' }}>
-                                                    Iule Miranda
-                                                </p>
-                                                <p className="text-xs truncate" style={{ color: 'var(--bo-text-muted)' }}>
-                                                    Admin
-                                                </p>
-                                            </div>
-                                            <motion.button
-                                                whileTap={{ scale: 0.9 }}
-                                                onClick={async () => {
-                                                    setOpen(false)
-                                                    const supabase = createClient()
-                                                    await supabase.auth.signOut()
-                                                    router.push('/login')
-                                                }}
-                                                className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                                style={{ background: 'var(--s-cancel-bg)' }}
-                                            >
-                                                <LogOut size={16} style={{ color: 'var(--s-cancel)' }} />
-                                            </motion.button>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         </motion.div>
                     </>

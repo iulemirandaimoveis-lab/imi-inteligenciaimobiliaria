@@ -11,7 +11,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: 'var(--bo-accent)',
 }
 
 interface Notification {
@@ -29,7 +29,7 @@ const TYPE_ICONS: Record<string, any> = {
     alerta: AlertCircle, info: Info, sucesso: CheckCircle,
 }
 const TYPE_COLORS: Record<string, string> = {
-    lead: '#7B9EC4', imovel: '#6BB87B', financeiro: '#486581', contrato: '#A89EC4',
+    lead: '#7B9EC4', imovel: '#6BB87B', financeiro: 'var(--bo-accent)', contrato: '#A89EC4',
     alerta: '#E57373', info: '#7B9EC4', sucesso: '#6BB87B',
 }
 
@@ -150,7 +150,7 @@ export default function NotificacoesPage() {
                                 </div>
                                 {!n.read && (
                                     <button className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
-                                        style={{ background: 'rgba(26,26,46,0.08)' }} onClick={e => { e.stopPropagation(); markRead(n.id) }}>
+                                        style={{ background: 'var(--bo-active-bg)' }} onClick={e => { e.stopPropagation(); markRead(n.id) }}>
                                         <Check size={12} style={{ color: T.gold }} />
                                     </button>
                                 )}

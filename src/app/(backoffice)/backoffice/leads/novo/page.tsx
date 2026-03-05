@@ -26,7 +26,7 @@ const T = {
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
+    accent: 'var(--bo-accent)',
 }
 
 const origens = [

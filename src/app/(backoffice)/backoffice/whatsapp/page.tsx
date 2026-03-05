@@ -19,7 +19,7 @@ const T = {
   text: 'var(--bo-text)',
   textMuted: 'var(--bo-text-muted)',
   textTertiary: 'var(--bo-text-tertiary, var(--bo-text-muted))',
-  gold: '#486581',
+  gold: 'var(--bo-accent)',
   shadow: 'var(--bo-shadow)',
 }
 
@@ -216,7 +216,7 @@ export default function WhatsappPage() {
                 >
                   <div className="relative flex-shrink-0">
                     <div className="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm"
-                      style={{ background: 'rgba(26,26,46,0.12)', color: T.gold }}>
+                      style={{ background: 'var(--bo-active-bg)', color: T.gold }}>
                       {getInitials(conversa.contact_name)}
                     </div>
                     {conversa.status === 'active' && (
@@ -267,7 +267,7 @@ export default function WhatsappPage() {
                   <ArrowLeft size={20} />
                 </button>
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0"
-                  style={{ background: 'rgba(26,26,46,0.12)', color: T.gold }}>
+                  style={{ background: 'var(--bo-active-bg)', color: T.gold }}>
                   {getInitials(activeConversation.contact_name)}
                 </div>
                 <div className="min-w-0">
@@ -276,7 +276,7 @@ export default function WhatsappPage() {
                     <span>{activeConversation.phone_number}</span>
                     <span>•</span>
                     <span className="px-1.5 py-0.5 rounded-md capitalize"
-                      style={{ background: 'rgba(26,26,46,0.10)', color: T.gold }}>{activeConversation.status}</span>
+                      style={{ background: 'var(--bo-active-bg)', color: T.gold }}>{activeConversation.status}</span>
                   </div>
                 </div>
               </div>
@@ -297,7 +297,7 @@ export default function WhatsappPage() {
 
             {/* Encryption notice */}
             <div className="px-3 sm:px-5 py-1.5 flex items-center gap-2 flex-shrink-0"
-              style={{ background: 'var(--s-warm-bg)', borderBottom: `1px solid rgba(26,26,46,0.15)` }}>
+              style={{ background: 'var(--s-warm-bg)', borderBottom: `1px solid var(--bo-hover)` }}>
               <ShieldCheck size={13} style={{ color: 'var(--s-warm)' }} />
               <p className="text-[10px] font-medium" style={{ color: 'var(--s-warm)' }}>
                 Integração oficial via <span className="font-bold">WhatsApp Business API</span>. Mensagens criptografadas.
@@ -327,7 +327,7 @@ export default function WhatsappPage() {
                         <div
                           className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 ${isOutbound ? 'rounded-tr-sm' : 'rounded-tl-sm'}`}
                           style={isOutbound
-                            ? { background: '#486581', color: '#fff' }
+                            ? { background: 'var(--bo-accent)', color: '#fff' }
                             : { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
                           }
                         >
@@ -351,7 +351,7 @@ export default function WhatsappPage() {
                 <div className="mb-3 flex flex-wrap gap-2">
                   {aiLoading ? (
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold"
-                      style={{ background: 'rgba(26,26,46,0.10)', color: T.gold, border: `1px solid rgba(26,26,46,0.20)` }}>
+                      style={{ background: 'var(--bo-active-bg)', color: T.gold, border: `1px solid var(--bo-border)` }}>
                       <Loader2 size={14} className="animate-spin" /> IA formulando resposta...
                     </div>
                   ) : (
@@ -359,7 +359,7 @@ export default function WhatsappPage() {
                       {TEMPLATES_WHATSAPP.map(tpl => (
                         <button key={tpl.id} onClick={() => applyTemplate(tpl.text)}
                           className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
-                          style={{ background: 'rgba(26,26,46,0.10)', color: T.gold, border: `1px solid rgba(26,26,46,0.20)` }}>
+                          style={{ background: 'var(--bo-active-bg)', color: T.gold, border: `1px solid var(--bo-border)` }}>
                           {tpl.label}
                         </button>
                       ))}
@@ -401,7 +401,7 @@ export default function WhatsappPage() {
                 </div>
                 <button onClick={handleSend} disabled={!newMessage.trim() || sending}
                   className="h-11 w-11 flex items-center justify-center rounded-2xl transition-all disabled:opacity-40 flex-shrink-0"
-                  style={{ background: '#486581', color: '#fff' }}>
+                  style={{ background: 'var(--bo-accent)', color: '#fff' }}>
                   {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                 </button>
               </div>
@@ -418,7 +418,7 @@ export default function WhatsappPage() {
             <button className="absolute right-3 top-3 p-1 rounded-lg" onClick={() => setShowInfo(false)}
               style={{ color: T.textMuted }}><X size={16} /></button>
             <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold mb-3"
-              style={{ background: 'rgba(26,26,46,0.12)', color: T.gold }}>
+              style={{ background: 'var(--bo-active-bg)', color: T.gold }}>
               {getInitials(activeConversation.contact_name)}
             </div>
             <h3 className="font-bold text-sm" style={{ color: T.text }}>{activeConversation.contact_name}</h3>
@@ -462,7 +462,7 @@ export default function WhatsappPage() {
 
           <div className="p-4 flex-shrink-0" style={{ borderTop: `1px solid ${T.border}`, background: T.elevated }}>
             <button className="w-full h-10 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
-              style={{ background: '#486581', color: '#fff' }}>
+              style={{ background: 'var(--bo-accent)', color: '#fff' }}>
               Ver Ficha Completa →
             </button>
           </div>

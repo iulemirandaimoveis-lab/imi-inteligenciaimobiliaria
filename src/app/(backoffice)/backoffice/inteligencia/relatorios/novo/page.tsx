@@ -56,7 +56,7 @@ export default function NovoRelatorioPage() {
     return (
         <div className="p-6 lg:p-8 max-w-2xl">
             <div className="flex items-center gap-4 mb-8">
-                <Link href="/backoffice/inteligencia/relatorios" className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10" style={{ background: 'var(--bo-icon-bg)' }}>
+                <Link href="/backoffice/inteligencia/relatorios" className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]" style={{ background: 'var(--bo-icon-bg)' }}>
                     <ArrowLeft size={15} style={{ color: 'var(--bo-text-muted)' }} />
                 </Link>
                 <div>

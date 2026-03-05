@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Bell, X, ChevronRight, ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
+import ThemeToggle from './ThemeToggle'
 
 interface Notification {
     id: string
@@ -137,7 +138,7 @@ export default function MobileHeader() {
             <div
                 className="lg:hidden fixed top-0 inset-x-0 z-40"
                 style={{
-                    background: 'var(--header-bg, rgba(11,11,17,0.92))',
+                    background: 'var(--header-bg)',
                     backdropFilter: 'blur(20px)',
                     WebkitBackdropFilter: 'blur(20px)',
                     borderBottom: '1px solid var(--bo-border)',
@@ -189,7 +190,10 @@ export default function MobileHeader() {
                     </div>
 
                     {/* Right: Actions */}
-                    <div className="ml-auto flex items-center gap-1 flex-shrink-0">
+                    <div className="ml-auto flex items-center gap-0.5 flex-shrink-0">
+                        {/* Theme Toggle */}
+                        <ThemeToggle size="sm" />
+
                         {/* Search */}
                         <button
                             onClick={triggerSearch}
@@ -205,11 +209,11 @@ export default function MobileHeader() {
                             className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-all"
                             style={{ background: notifOpen ? 'var(--bo-elevated)' : 'transparent' }}
                         >
-                            <Bell size={18} style={{ color: notifOpen ? '#486581' : 'var(--bo-text-muted)' }} />
+                            <Bell size={18} style={{ color: notifOpen ? 'var(--bo-accent)' : 'var(--bo-text-muted)' }} />
                             {unreadCount > 0 && (
                                 <span
                                     className="absolute top-1 right-1 w-4 h-4 text-[9px] font-bold text-white rounded-full flex items-center justify-center"
-                                    style={{ background: '#486581', boxShadow: '0 0 0 2px var(--bo-surface)' }}
+                                    style={{ background: 'var(--bo-accent)', boxShadow: '0 0 0 2px var(--bo-surface)' }}
                                 >
                                     {unreadCount > 9 ? '9+' : unreadCount}
                                 </span>
@@ -258,7 +262,7 @@ export default function MobileHeader() {
                                         <button
                                             onClick={markAllRead}
                                             className="text-[11px] font-semibold"
-                                            style={{ color: '#486581' }}
+                                            style={{ color: 'var(--bo-accent)' }}
                                         >
                                             Marcar lidas
                                         </button>
@@ -276,13 +280,13 @@ export default function MobileHeader() {
                                         key={n.id}
                                         className="flex gap-3 px-4 py-3 transition-all"
                                         style={{
-                                            background: n.read ? 'transparent' : 'rgba(26,26,46,0.05)',
+                                            background: n.read ? 'transparent' : 'var(--bo-hover)',
                                             borderBottom: '1px solid var(--bo-border)',
                                         }}
                                     >
                                         <div
                                             className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                                            style={{ background: n.read ? 'transparent' : '#486581' }}
+                                            style={{ background: n.read ? 'transparent' : 'var(--bo-accent)' }}
                                         />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-semibold" style={{ color: 'var(--bo-text)' }}>
@@ -316,7 +320,7 @@ export default function MobileHeader() {
                                 <button
                                     onClick={() => { setNotifOpen(false); router.push('/backoffice/notificacoes') }}
                                     className="text-xs font-semibold flex items-center justify-center gap-1 mx-auto"
-                                    style={{ color: '#486581' }}
+                                    style={{ color: 'var(--bo-accent)' }}
                                 >
                                     Ver todas <ChevronRight size={12} />
                                 </button>

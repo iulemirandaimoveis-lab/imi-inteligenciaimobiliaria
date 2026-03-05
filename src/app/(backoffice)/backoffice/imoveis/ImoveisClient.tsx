@@ -19,7 +19,7 @@ const T = {
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
+    accent: 'var(--bo-accent)',
 }
 
 const STATUS_CONFIG = {
@@ -82,7 +82,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { l: 'VGV Global (Est.)', v: formatCurrency(totalValor), icon: DollarSign, c: 'text-[#486581] bg-[#102A43]/10' },
+          { l: 'VGV Global (Est.)', v: formatCurrency(totalValor), icon: DollarSign, c: 'text-[var(--bo-accent)] bg-[#102A43]/10' },
           { l: 'Lançamentos', v: developments.filter(i => i.status === 'launch').length, icon: Activity, c: 'text-blue-400 bg-blue-500/10' },
           { l: 'Em Destaque (Premium)', v: developments.filter(i => i.isHighlighted).length, icon: Star, c: 'text-amber-400 bg-amber-500/10' },
           { l: 'Prontos / Disponíveis', v: developments.filter(i => i.status === 'ready').length, icon: CheckCircle, c: 'text-emerald-400 bg-emerald-500/10' },

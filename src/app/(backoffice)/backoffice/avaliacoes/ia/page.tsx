@@ -330,7 +330,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                                 {uploadedFiles.map(file => (
                                     <div key={file.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: T.bg }}>
                                         {file.type === 'image'
-                                            ? <ImageIcon size={17} style={{ color: '#486581' }} />
+                                            ? <ImageIcon size={17} style={{ color: 'var(--bo-accent)' }} />
                                             : <FileText size={17} style={{ color: '#8B5CF6' }} />
                                         }
                                         <div className="flex-1 min-w-0">
@@ -349,7 +349,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                     {/* Info */}
                     <div className="rounded-2xl p-5" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
                         <div className="flex gap-3">
-                            <AlertCircle size={18} style={{ color: '#486581', flexShrink: 0, marginTop: 1 }} />
+                            <AlertCircle size={18} style={{ color: 'var(--bo-accent)', flexShrink: 0, marginTop: 1 }} />
                             <div>
                                 <p className="text-sm font-bold mb-1" style={{ color: '#8CA4B8' }}>Documentos Recomendados</p>
                                 <ul className="text-xs space-y-0.5" style={{ color: '#8CA4B8' }}>

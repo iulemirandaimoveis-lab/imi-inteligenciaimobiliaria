@@ -261,7 +261,7 @@ const T = {
   text: 'var(--bo-text)',
   textMuted: 'var(--bo-text-muted)',
   hover: 'var(--bo-hover)',
-  accent: '#486581',
+  accent: 'var(--bo-accent)',
 }
 
 export default function ExerciciosPage() {
@@ -537,7 +537,7 @@ export default function ExerciciosPage() {
         <div className="flex flex-wrap gap-2">
           {['Todos', 'basico', 'intermediario', 'avancado'].map(nv => (
             <button key={nv} onClick={() => setSelectedNivel(nv)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedNivel === nv ? 'bg-gray-900 text-white border-gray-900' : 'hover:border-gray-400'}`}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedNivel === nv ? 'bg-[var(--bo-accent)] text-white border-transparent' : ''}`}
               style={selectedNivel !== nv ? { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` } : undefined}>
               {nv === 'Todos' ? 'Todos os níveis' : NIVEIS[nv as keyof typeof NIVEIS]}
             </button>

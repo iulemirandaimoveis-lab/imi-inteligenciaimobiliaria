@@ -14,7 +14,7 @@ const T = {
     border: 'var(--bo-border)',
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
-    accent: '#486581',
+    accent: 'var(--bo-accent)',
 }
 
 const bancos = [

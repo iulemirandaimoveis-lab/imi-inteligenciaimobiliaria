@@ -116,7 +116,7 @@ export default function HojePage() {
         transition={{ duration: 0.28, ease: [0, 0, 0.2, 1] }}
         className="rounded-2xl"
         style={{
-          background: 'linear-gradient(135deg, var(--bo-card) 0%, rgba(20,28,43,0.95) 100%)',
+          background: 'linear-gradient(135deg, var(--bo-card) 0%, var(--bo-surface) 100%)',
           border: '1px solid var(--bo-border)',
           padding: '16px',
           position: 'relative',

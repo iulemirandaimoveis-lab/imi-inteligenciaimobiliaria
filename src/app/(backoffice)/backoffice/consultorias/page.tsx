@@ -13,7 +13,7 @@ const T = {
     surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: 'var(--bo-accent)',
 }
 
 // ── Types ─────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ const TIPO_LABEL: Record<string, string> = {
     patrimonial: 'Patrimonial', mercado: 'Análise de Mercado', juridica: 'Jurídica',
 }
 const STATUS_CFG: Record<string, { l: string; text: string; bg: string }> = {
-    em_andamento: { l: 'Em Andamento', text: '#486581', bg: 'rgba(72,101,129,0.15)' },
+    em_andamento: { l: 'Em Andamento', text: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.15)' },
     concluida:    { l: 'Concluída',    text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
     proposta:     { l: 'Proposta',     text: '#B87BB8', bg: 'rgba(184,123,184,0.12)' },
     cancelada:    { l: 'Cancelada',    text: '#E87B7B', bg: 'rgba(232,123,123,0.12)' },
@@ -142,7 +142,7 @@ export default function ConsultoriasPage() {
                 {[
                     { l: 'Total Portfólio', v: fmtCurrency(totalHonorarios), icon: DollarSign, color: T.gold },
                     { l: 'Honorários Recebidos', v: fmtCurrency(recebido), icon: CheckCircle2, color: '#6BB87B' },
-                    { l: 'Em Andamento', v: emAndamento, icon: Clock, color: '#486581' },
+                    { l: 'Em Andamento', v: emAndamento, icon: Clock, color: 'var(--bo-accent)' },
                     { l: 'Propostas Abertas', v: propostas, icon: Briefcase, color: '#B87BB8' },
                 ].map((kpi, i) => {
                     const Icon = kpi.icon

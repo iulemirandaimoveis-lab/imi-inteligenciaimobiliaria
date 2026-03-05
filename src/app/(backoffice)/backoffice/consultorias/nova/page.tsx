@@ -101,7 +101,7 @@ export default function NovaConsultoriaPage() {
         {step === 1 && (
           <>
             <div className="flex items-center gap-2 mb-4">
-              <User size={16} className="text-[#486581]" />
+              <User size={16} className="text-[var(--bo-accent)]" />
               <h2 className="text-sm font-bold" style={{ color: T.text }}>Dados do Cliente</h2>
             </div>
 
@@ -160,7 +160,7 @@ export default function NovaConsultoriaPage() {
         {step === 2 && (
           <>
             <div className="flex items-center gap-2 mb-4">
-              <Briefcase size={16} className="text-[#486581]" />
+              <Briefcase size={16} className="text-[var(--bo-accent)]" />
               <h2 className="text-sm font-bold" style={{ color: T.text }}>Tipo e Escopo</h2>
             </div>
 
@@ -201,7 +201,7 @@ export default function NovaConsultoriaPage() {
         {step === 3 && (
           <>
             <div className="flex items-center gap-2 mb-4">
-              <DollarSign size={16} className="text-[#486581]" />
+              <DollarSign size={16} className="text-[var(--bo-accent)]" />
               <h2 className="text-sm font-bold" style={{ color: T.text }}>Honorários e Prazos</h2>
             </div>
 
@@ -274,7 +274,7 @@ export default function NovaConsultoriaPage() {
               </div>
               <div className="flex justify-between">
                 <span style={{ color: T.sub }}>Honorários</span>
-                <span className="font-bold text-[#486581]">
+                <span className="font-bold text-[var(--bo-accent)]">
                   {form.honorarios ? `R$ ${Number(form.honorarios).toLocaleString('pt-BR')}` : '—'}
                 </span>
               </div>

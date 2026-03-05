@@ -30,7 +30,7 @@ const T = {
   text: 'var(--bo-text)',
   textMuted: 'var(--bo-text-muted)',
   hover: 'var(--bo-hover)',
-  accent: '#486581',
+  accent: 'var(--bo-accent)',
 }
 
 // Mock data (seria carregado do Supabase)
@@ -336,7 +336,7 @@ export default function CampanhaAnalyticsPage() {
                   cy="50"
                   r="40"
                   fill="none"
-                  stroke="#486581"
+                  stroke="var(--bo-accent)"
                   strokeWidth="20"
                   strokeDasharray="251.2"
                   strokeDashoffset="0"

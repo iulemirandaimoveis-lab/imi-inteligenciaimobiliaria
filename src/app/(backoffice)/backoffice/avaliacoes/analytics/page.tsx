@@ -28,7 +28,7 @@ const T = {
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
+    accent: 'var(--bo-accent)',
 }
 
 // Mock data (depois virá do Supabase)
@@ -168,7 +168,7 @@ export default function AvaliacoesAnalyticsPage() {
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-4">
-                                            <span className="text-xs font-black text-[#486581]">{item.percentage}%</span>
+                                            <span className="text-xs font-black text-[var(--bo-accent)]">{item.percentage}%</span>
                                             <Badge variant="neutral" size="sm">{item.count} laudos</Badge>
                                         </div>
                                     </div>
@@ -231,7 +231,7 @@ export default function AvaliacoesAnalyticsPage() {
                                 <div key={month.month} className="group">
                                     <div className="flex flex-col md:flex-row items-center gap-8">
                                         <div className="w-20 text-center md:text-left shrink-0">
-                                            <span className="text-xs font-black uppercase text-imi-900 group-hover:text-[#486581] transition-colors">
+                                            <span className="text-xs font-black uppercase text-imi-900 group-hover:text-[var(--bo-accent)] transition-colors">
                                                 {month.month}
                                             </span>
                                         </div>
@@ -269,7 +269,7 @@ export default function AvaliacoesAnalyticsPage() {
                         <div className="space-y-4">
                             {data.topClients.map((client, index) => (
                                 <div key={client.name} className="flex items-center gap-6 p-6 bg-imi-50/50 rounded-3xl border border-imi-100/30 hover:border-accent-200 transition-all group" style={{ ['--hover-bg' as string]: T.hover }}>
-                                    <div className="w-12 h-12 rounded-2xl bg-imi-950 text-[#486581] flex items-center justify-center text-lg font-black shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                    <div className="w-12 h-12 rounded-2xl bg-imi-950 text-[var(--bo-accent)] flex items-center justify-center text-lg font-black shrink-0 shadow-lg group-hover:scale-110 transition-transform">
                                         {index + 1}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -348,7 +348,7 @@ export default function AvaliacoesAnalyticsPage() {
 
                         <div className="text-center p-8 bg-white/5 rounded-3xl border border-white/10">
                             <p className="text-[10px] font-bold text-imi-400 uppercase tracking-widest mb-3">Unit Billing Médio</p>
-                            <p className="text-5xl font-black text-[#486581] mb-2">
+                            <p className="text-5xl font-black text-[var(--bo-accent)] mb-2">
                                 <span className="text-xl">R$</span>{(data.overview.totalRevenue / data.overview.total).toFixed(0)}
                             </p>
                             <p className="text-xs text-imi-500 font-bold uppercase tracking-widest">Por Laudo Emitido</p>

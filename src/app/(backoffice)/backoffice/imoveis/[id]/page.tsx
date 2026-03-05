@@ -28,12 +28,12 @@ const T = {
   bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
   border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
   text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-  gold: '#486581',
+  gold: 'var(--bo-accent)',
 }
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
   disponivel: { label: 'Disponível', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-  em_negociacao: { label: 'Negociação', color: '#486581', bg: 'rgba(26,26,46,0.12)' },
+  em_negociacao: { label: 'Negociação', color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)' },
   reservado: { label: 'Reservado', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
   vendido: { label: 'Vendido', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
   lancamento: { label: 'Lançamento', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
@@ -200,7 +200,7 @@ export default function ImovelDetalhesPage() {
           </div>
         )}
         {(data.price_min || data.price_max) && (
-          <div className="px-4 py-2 rounded-xl" style={{ background: 'rgba(26,26,46,0.08)', border: `1px solid ${T.borderGold}` }}>
+          <div className="px-4 py-2 rounded-xl" style={{ background: 'var(--bo-active-bg)', border: `1px solid ${T.borderGold}` }}>
             <span className="text-sm font-bold" style={{ color: T.gold }}>
               {data.price_min && data.price_max
                 ? `${formatPrice(data.price_min)} - ${formatPrice(data.price_max)}`

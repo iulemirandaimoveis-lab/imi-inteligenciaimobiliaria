@@ -17,7 +17,7 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: 'var(--bo-accent)',
 }
 
 const ICONES: Record<string, any> = {
@@ -30,7 +30,7 @@ const STATUS_CFG: Record<IntegracaoStatus, { label: string; text: string; bg: st
     conectado: { label: 'Conectado', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle, dot: '#6BB87B' },
     desconectado: { label: 'Desconectado', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: XCircle, dot: '#E8A87C' },
     erro: { label: 'Erro', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle, dot: '#E57373' },
-    pendente: { label: 'Pendente', text: '#486581', bg: 'rgba(26,26,46,0.12)', icon: Clock, dot: '#486581' },
+    pendente: { label: 'Pendente', text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Clock, dot: 'var(--bo-accent)' },
     nao_configurado: { label: 'Não configurado', text: '#4E5669', bg: 'rgba(78,86,105,0.12)', icon: XCircle, dot: '#4E5669' },
 }
 
@@ -222,7 +222,7 @@ function ConfigModal({
 
                     <button onClick={handleSave} disabled={saving}
                         className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
-                        style={{ background: '#486581' }}>
+                        style={{ background: 'var(--bo-accent)' }}>
                         {saving ? 'Salvando...' : 'Salvar Configuração'}
                     </button>
                 </div>
@@ -268,7 +268,7 @@ export default function IntegracoesPage() {
                     {[
                         { label: 'Conectadas', value: conectadas, color: '#6BB87B' },
                         { label: 'Disponíveis', value: INTEGRACOES.length, color: '#7B9EC4' },
-                        { label: 'A configurar', value: configurar, color: '#486581' },
+                        { label: 'A configurar', value: configurar, color: 'var(--bo-accent)' },
                     ].map((s, i) => (
                         <motion.div key={s.label}
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
@@ -287,7 +287,7 @@ export default function IntegracoesPage() {
                         <button key={cat.key} onClick={() => setCategoriaAtiva(cat.key)}
                             className="px-3.5 h-9 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
-                                background: categoriaAtiva === cat.key ? '#486581' : T.surface,
+                                background: categoriaAtiva === cat.key ? 'var(--bo-accent)' : T.surface,
                                 color: categoriaAtiva === cat.key ? 'white' : T.textDim,
                                 border: `1px solid ${categoriaAtiva === cat.key ? T.borderGold : T.border}`,
                             }}>
@@ -351,7 +351,7 @@ export default function IntegracoesPage() {
                                     onClick={() => setIntegracaoAberta(integ)}
                                     className="mt-3 w-full h-9 rounded-xl text-xs font-semibold transition-all"
                                     style={{
-                                        background: connected ? 'rgba(107,184,123,0.12)' : 'rgba(26,26,46,0.10)',
+                                        background: connected ? 'rgba(107,184,123,0.12)' : 'var(--bo-active-bg)',
                                         border: `1px solid ${connected ? 'rgba(107,184,123,0.25)' : T.borderGold}`,
                                         color: connected ? '#6BB87B' : T.gold,
                                     }}
@@ -395,7 +395,7 @@ export default function IntegracoesPage() {
                             'GDRIVE_FOLDER_ID=',
                             'GDRIVE_SERVICE_ACCOUNT_JSON=',
                         ].map((line, i) => (
-                            <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? '#486581' : '#6BB87B' }}>
+                            <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? 'var(--bo-accent)' : '#6BB87B' }}>
                                 {line || '\u00A0'}
                             </div>
                         ))}

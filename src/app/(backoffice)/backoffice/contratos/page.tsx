@@ -13,13 +13,13 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: 'var(--bo-accent)',
 }
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     rascunho: { label: 'Rascunho', text: '#4E5669', bg: 'rgba(78,86,105,0.15)', icon: FileText },
     gerado: { label: 'Gerado', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
-    aguardando_assinatura: { label: 'Aguard. Assinatura', text: '#486581', bg: 'rgba(26,26,46,0.12)', icon: Clock },
+    aguardando_assinatura: { label: 'Aguard. Assinatura', text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Clock },
     assinado_parcial: { label: 'Parcialmente Assinado', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
     assinado: { label: 'Assinado', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
     cancelado: { label: 'Cancelado', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: X },
@@ -80,7 +80,7 @@ export default function ContratosPage() {
     const KPIS = [
         { label: 'Total', value: kpiValues.total, icon: FileText, color: '#7B9EC4' },
         { label: 'Assinados', value: kpiValues.assinados, icon: CheckCircle, color: '#6BB87B' },
-        { label: 'Aguard. Assinatura', value: kpiValues.aguardando, icon: Clock, color: '#486581' },
+        { label: 'Aguard. Assinatura', value: kpiValues.aguardando, icon: Clock, color: 'var(--bo-accent)' },
         { label: 'Internacionais', value: kpiValues.internacionais, icon: Globe, color: '#E8A87C' },
     ]
 
@@ -98,7 +98,7 @@ export default function ContratosPage() {
                 <motion.button whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/contratos/novo')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                    style={{ background: 'var(--bo-accent)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                     <Sparkles size={15} /> Novo Contrato
                 </motion.button>
             </motion.div>
@@ -131,7 +131,7 @@ export default function ContratosPage() {
                         onClick={() => setActiveTab(tab.key as any)}
                         className="flex items-center gap-2 px-4 h-10 rounded-xl text-sm font-semibold transition-all"
                         style={{
-                            background: activeTab === tab.key ? '#486581' : T.surface,
+                            background: activeTab === tab.key ? 'var(--bo-accent)' : T.surface,
                             color: activeTab === tab.key ? 'white' : T.textDim,
                             border: `1px solid ${activeTab === tab.key ? T.borderGold : T.border}`,
                         }}>
@@ -159,7 +159,7 @@ export default function ContratosPage() {
                                         <button key={s} onClick={() => setFilterStatus(s)}
                                             className="px-3 h-10 rounded-xl text-xs font-semibold flex-shrink-0"
                                             style={{
-                                                background: filterStatus === s ? '#486581' : T.elevated,
+                                                background: filterStatus === s ? 'var(--bo-accent)' : T.elevated,
                                                 color: filterStatus === s ? 'white' : T.textDim,
                                                 border: `1px solid ${filterStatus === s ? T.borderGold : T.border}`,
                                             }}>
@@ -190,7 +190,7 @@ export default function ContratosPage() {
 >
                                             <div className="flex items-center gap-3 p-4">
                                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                                    style={{ background: 'rgba(26,26,46,0.10)' }}>
+                                                    style={{ background: 'var(--bo-active-bg)' }}>
                                                     <FileSignature size={18} style={{ color: T.gold }} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -226,7 +226,7 @@ export default function ContratosPage() {
                                 <p className="text-sm mb-3">Nenhum contrato encontrado</p>
                                 <button onClick={() => router.push('/backoffice/contratos/novo')}
                                     className="text-xs font-semibold px-4 py-2 rounded-xl text-white"
-                                    style={{ background: '#486581' }}>
+                                    style={{ background: 'var(--bo-accent)' }}>
                                     Gerar primeiro contrato
                                 </button>
                             </div>
@@ -249,7 +249,7 @@ export default function ContratosPage() {
                                                 transition={{ delay: i * 0.03 }}
                                                 onClick={() => router.push(`/backoffice/contratos/novo?modelo=${m.id}`)}
                                                 className="rounded-2xl p-4 cursor-pointer transition-all group hover-card"
-                                                style={{ background: m.id === 'modelo-personalizado' ? 'rgba(26,26,46,0.06)' : T.surface, border: `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}` }}
+                                                style={{ background: m.id === 'modelo-personalizado' ? 'var(--bo-hover)' : T.surface, border: `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}` }}
 >
                                                 <div className="flex items-start gap-3">
                                                     <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -259,7 +259,7 @@ export default function ContratosPage() {
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-1.5 mb-1">
                                                             <p className="text-xs font-semibold" style={{ color: T.text }}>{m.nome}</p>
-                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(26,26,46,0.15)', color: T.gold }}>✦</span>}
+                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bo-hover)', color: T.gold }}>✦</span>}
                                                             {m.internacional && <Globe size={9} style={{ color: '#E8A87C' }} />}
                                                         </div>
                                                         <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>

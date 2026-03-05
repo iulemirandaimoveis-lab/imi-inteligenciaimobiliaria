@@ -208,7 +208,7 @@ const T = {
   text: 'var(--bo-text)',
   textMuted: 'var(--bo-text-muted)',
   hover: 'var(--bo-hover)',
-  accent: '#486581',
+  accent: 'var(--bo-accent)',
 }
 
 // ============================================================
@@ -402,7 +402,7 @@ export default function NovaAvaliacaoPage() {
                     style={!done && !active ? { background: T.elevated, color: T.textMuted } : undefined}>
                     {done ? <Check size={16} /> : <Icon size={16} />}
                   </div>
-                  <span className={`text-xs mt-1 hidden sm:block ${active ? 'text-[#486581] font-medium' : done ? 'text-emerald-600' : ''}`}
+                  <span className={`text-xs mt-1 hidden sm:block ${active ? 'text-[var(--bo-accent)] font-medium' : done ? 'text-emerald-600' : ''}`}
                     style={!active && !done ? { color: T.textMuted } : undefined}>
                     {step.label}
                   </span>
@@ -593,7 +593,7 @@ export default function NovaAvaliacaoPage() {
                   <button key={f.value} type="button" onClick={() => handleChange('finalidade', f.value)}
                     className={`flex items-start gap-3 p-3 rounded-xl text-left transition-all ${formData.finalidade === f.value ? 'border-[#334E68] bg-amber-50' : ''}`}
                     style={formData.finalidade !== f.value ? { border: `1px solid ${T.border}`, background: T.elevated } : { border: '1px solid #334E68' }}>
-                    <div className={`w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0 ${formData.finalidade === f.value ? 'border-[#334E68] bg-[#102A43]' : 'border-gray-300'}`} />
+                    <div className={`w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0 ${formData.finalidade === f.value ? 'border-[#334E68] bg-[#102A43]' : 'border-[var(--bo-border)]'}`} />
                     <div>
                       <p className="text-sm font-medium" style={{ color: T.text }}>{f.label}</p>
                       {f.subtitulo && <p className="text-xs" style={{ color: T.textMuted }}>{f.subtitulo}</p>}
@@ -825,8 +825,8 @@ export default function NovaAvaliacaoPage() {
 
             {/* Resumo estatístico */}
             {formData.comparaveis.length >= 3 && formData.comparaveis.every(c => c.area > 0 && c.valorVenda > 0) && (
-              <div className="bg-gray-900 rounded-xl p-4 text-white">
-                <p className="text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">Análise Estatística da Amostra</p>
+              <div className="rounded-xl p-4" style={{ background: "var(--bo-elevated)", border: "1px solid var(--bo-border)" }}>
+                <p className="text-xs font-semibold mb-3 uppercase tracking-wider" style={{ color: "var(--bo-text-muted)" }}>Análise Estatística da Amostra</p>
                 {(() => {
                   const valores = formData.comparaveis.map(c => c.valorVenda / c.area).filter(v => v > 0)
                   const media = valores.reduce((a, b) => a + b, 0) / valores.length
@@ -842,8 +842,8 @@ export default function NovaAvaliacaoPage() {
                         { l: 'CV%', v: cv.toFixed(1) + '%', ok: cv < 30 }
                       ].map(item => (
                         <div key={item.l}>
-                          <p className="text-xs text-gray-500">{item.l}</p>
-                          <p className={`text-sm font-bold mt-0.5 ${item.ok === false ? 'text-red-400' : item.ok === true ? 'text-emerald-400' : 'text-[#486581]'}`}>{item.v}</p>
+                          <p className="text-xs" style={{ color: "var(--bo-text-muted)" }}>{item.l}</p>
+                          <p className={`text-sm font-bold mt-0.5 ${item.ok === false ? 'text-red-400' : item.ok === true ? 'text-emerald-400' : 'text-[var(--bo-accent)]'}`}>{item.v}</p>
                         </div>
                       ))}
                     </div>
@@ -863,7 +863,7 @@ export default function NovaAvaliacaoPage() {
               <p className="text-sm font-semibold text-blue-800 col-span-2">Documentos Necessários (NBR 14653)</p>
               {['Matrícula do imóvel (RI Digital / ONR)', 'IPTU vigente', 'Plantas / Croquis', 'Memorial descritivo', 'Fotos do imóvel (mín. 8 fotos)', 'Habite-se (edificações)'].map(d => (
                 <div key={d} className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded border border-blue-300 bg-white flex items-center justify-center">
+                  <div className="w-4 h-4 rounded border border-blue-300 flex items-center justify-center" style={{ background: "var(--bo-elevated)" }}>
                     <Check size={10} className="text-blue-500" />
                   </div>
                   <span className="text-xs text-blue-700">{d}</span>
@@ -929,15 +929,15 @@ export default function NovaAvaliacaoPage() {
             </div>
 
             {/* Resumo Final */}
-            <div className="bg-gray-900 rounded-xl p-5 text-white space-y-3">
-              <p className="text-sm font-semibold text-gray-300">Resumo da Avaliação</p>
+            <div className="rounded-xl p-5 space-y-3" style={{ background: "var(--bo-elevated)", border: "1px solid var(--bo-border)" }}>
+              <p className="text-sm font-semibold" style={{ color: "var(--bo-text)" }}>Resumo da Avaliação</p>
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div><span className="text-gray-500">Imóvel:</span><br /><span className="text-white">{formData.tipo || '—'} • {formData.bairro || '—'}</span></div>
-                <div><span className="text-gray-500">Área:</span><br /><span className="text-white">{formData.areaPrivativa ? formData.areaPrivativa + ' m²' : '—'}</span></div>
-                <div><span className="text-gray-500">Cliente:</span><br /><span className="text-white">{formData.clienteNome || '—'}</span></div>
-                <div><span className="text-gray-500">Metodologia:</span><br /><span className="text-white">{METODOLOGIAS.find(m => m.value === formData.metodologia)?.label?.split(' ').slice(0, 3).join(' ') || '—'}</span></div>
-                <div><span className="text-gray-500">Comparáveis:</span><br /><span className={formData.comparaveis.length >= 3 ? 'text-emerald-400' : 'text-red-400'}>{formData.comparaveis.length} amostras</span></div>
-                <div><span className="text-gray-500">Honorários:</span><br /><span className="text-[#486581] font-semibold">{formData.valorHonorarios ? formatCurrency(Number(formData.valorHonorarios)) : '—'}</span></div>
+                <div><span style={{ color: "var(--bo-text-muted)" }}>Imóvel:</span><br /><span style={{ color: "var(--bo-text)" }}>{formData.tipo || '—'} • {formData.bairro || '—'}</span></div>
+                <div><span style={{ color: "var(--bo-text-muted)" }}>Área:</span><br /><span style={{ color: "var(--bo-text)" }}>{formData.areaPrivativa ? formData.areaPrivativa + ' m²' : '—'}</span></div>
+                <div><span style={{ color: "var(--bo-text-muted)" }}>Cliente:</span><br /><span style={{ color: "var(--bo-text)" }}>{formData.clienteNome || '—'}</span></div>
+                <div><span style={{ color: "var(--bo-text-muted)" }}>Metodologia:</span><br /><span style={{ color: "var(--bo-text)" }}>{METODOLOGIAS.find(m => m.value === formData.metodologia)?.label?.split(' ').slice(0, 3).join(' ') || '—'}</span></div>
+                <div><span style={{ color: "var(--bo-text-muted)" }}>Comparáveis:</span><br /><span className={formData.comparaveis.length >= 3 ? 'text-emerald-400' : 'text-red-400'}>{formData.comparaveis.length} amostras</span></div>
+                <div><span style={{ color: "var(--bo-text-muted)" }}>Honorários:</span><br /><span className="text-[var(--bo-accent)] font-semibold">{formData.valorHonorarios ? formatCurrency(Number(formData.valorHonorarios)) : '—'}</span></div>
               </div>
             </div>
           </div>

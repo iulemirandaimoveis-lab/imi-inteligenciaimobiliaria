@@ -100,7 +100,7 @@ export default function IndicadoresPage() {
                     <p className="text-sm mt-1" style={{ color: 'var(--bo-text-muted)' }}>KPIs do dashboard público — editáveis inline</p>
                 </div>
                 <div className="flex gap-3">
-                    <button onClick={load} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10 transition-colors" style={{ background: 'var(--bo-icon-bg)' }}>
+                    <button onClick={load} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)] transition-colors" style={{ background: 'var(--bo-icon-bg)' }}>
                         <RefreshCw size={14} style={{ color: 'var(--bo-text-muted)' }} />
                     </button>
                     <button
@@ -148,7 +148,7 @@ export default function IndicadoresPage() {
                                     <td className="px-4 py-3"><span className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>Agora</span></td>
                                     <td className="px-4 py-3">
                                         <div className="flex gap-1">
-                                            <button onClick={addIndicator} disabled={saving || !newForm.metric_name || !newForm.value} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10 disabled:opacity-40">
+                                            <button onClick={addIndicator} disabled={saving || !newForm.metric_name || !newForm.value} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)] disabled:opacity-40">
                                                 {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} style={{ color: '#34d399' }} />}
                                             </button>
                                             <button onClick={() => setAddingNew(false)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-500/10">
@@ -160,7 +160,7 @@ export default function IndicadoresPage() {
                             )}
 
                             {indicators.map((ind) => (
-                                <tr key={ind.id} style={{ borderBottom: '1px solid var(--bo-border-subtle)' }} className="hover:bg-white/[0.02] transition-colors">
+                                <tr key={ind.id} style={{ borderBottom: '1px solid var(--bo-border-subtle)' }} className="hover:bg-[var(--bo-hover)] transition-colors">
                                     {editingId === ind.id ? (
                                         <>
                                             <td className="px-4 py-3"><input className={inputClass} style={inputStyle} value={editForm.metric_name ?? ''} onChange={e => setEditForm(p => ({ ...p, metric_name: e.target.value }))} /></td>
@@ -180,10 +180,10 @@ export default function IndicadoresPage() {
                                             <td className="px-4 py-3"><span className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>Agora</span></td>
                                             <td className="px-4 py-3">
                                                 <div className="flex gap-1">
-                                                    <button onClick={() => saveEdit(ind.id)} disabled={saving} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10 disabled:opacity-40">
+                                                    <button onClick={() => saveEdit(ind.id)} disabled={saving} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)] disabled:opacity-40">
                                                         {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} style={{ color: '#34d399' }} />}
                                                     </button>
-                                                    <button onClick={() => setEditingId(null)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10">
+                                                    <button onClick={() => setEditingId(null)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]">
                                                         <Minus size={13} style={{ color: 'var(--bo-text-muted)' }} />
                                                     </button>
                                                 </div>
@@ -203,7 +203,7 @@ export default function IndicadoresPage() {
                                             <td className="px-4 py-4"><span className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>{formatDate(ind.updated_at)}</span></td>
                                             <td className="px-4 py-4">
                                                 <div className="flex gap-1">
-                                                    <button onClick={() => { setEditingId(ind.id); setEditForm(ind) }} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10">
+                                                    <button onClick={() => { setEditingId(ind.id); setEditForm(ind) }} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]">
                                                         <Save size={13} style={{ color: 'var(--bo-text-muted)' }} />
                                                     </button>
                                                     <button onClick={() => deleteIndicator(ind.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-500/10">

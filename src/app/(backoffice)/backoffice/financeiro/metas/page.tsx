@@ -14,7 +14,7 @@ const T = {
     surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: 'var(--bo-accent)',
 }
 
 const fmt = (v: number) =>
@@ -201,7 +201,7 @@ export default function MetasPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <ProgressBar pct={revPct} color={revPct >= 100 ? '#6BB87B' : revPct >= 60 ? '#486581' : '#E8A87C'} />
+                                    <ProgressBar pct={revPct} color={revPct >= 100 ? '#6BB87B' : revPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs" style={{ color: T.textSub }}>
                                             Meta: {revTarget > 0 ? fmt(revTarget) : 'não definida'}
@@ -220,7 +220,7 @@ export default function MetasPage() {
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <Scale size={15} style={{ color: '#486581' }} />
+                                        <Scale size={15} style={{ color: 'var(--bo-accent)' }} />
                                         <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textSub }}>Avaliações/Honorários</span>
                                     </div>
                                     <p className="text-2xl font-bold" style={{ color: T.text }}>{actuals.avaliacoes}</p>
@@ -246,7 +246,7 @@ export default function MetasPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <ProgressBar pct={avalPct} color={avalPct >= 100 ? '#6BB87B' : avalPct >= 60 ? '#486581' : '#E8A87C'} />
+                                    <ProgressBar pct={avalPct} color={avalPct >= 100 ? '#6BB87B' : avalPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs" style={{ color: T.textSub }}>
                                             Meta: {avalTarget > 0 ? `${avalTarget} lançamentos` : 'não definida'}

@@ -143,7 +143,7 @@ const T = {
   text: 'var(--bo-text)',
   textMuted: 'var(--bo-text-muted)',
   hover: 'var(--bo-hover)',
-  accent: '#486581',
+  accent: 'var(--bo-accent)',
 }
 
 // ── Component ─────────────────────────────────────────────────
@@ -227,7 +227,7 @@ export default function EmailHonorariosPage() {
     banco: 'bg-blue-50 text-blue-700',
     particular: 'bg-emerald-50 text-emerald-700',
     escritorio: 'bg-amber-50 text-amber-700',
-    outro: 'bg-gray-100 text-gray-600',
+    outro: 'bg-[var(--bo-elevated)] text-[var(--bo-text-muted)]',
   }
   const URGENCIA_BADGE: Record<string, string> = {
     baixa: 'bg-green-50 text-green-700',
@@ -258,7 +258,7 @@ export default function EmailHonorariosPage() {
           <div className="flex gap-2">
             {EXEMPLOS.map(ex => (
               <button key={ex.label} onClick={() => setEmailText(ex.conteudo)}
-                className="text-xs px-2.5 py-1 rounded-lg hover:border-[#334E68] hover:text-[#486581] transition-colors"
+                className="text-xs px-2.5 py-1 rounded-lg hover:border-[#334E68] hover:text-[var(--bo-accent)] transition-colors"
                 style={{ border: `1px solid ${T.border}`, color: T.textMuted }}>
                 {ex.label}
               </button>
@@ -289,7 +289,7 @@ export default function EmailHonorariosPage() {
           <div className="flex" style={{ borderBottom: `1px solid ${T.border}` }}>
             {(['analise', 'resposta'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#334E68] text-[#486581]' : 'border-transparent hover:text-gray-700'}`}
+                className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#334E68] text-[var(--bo-accent)]' : 'border-transparent'}`}
                 style={activeTab !== tab ? { color: T.textMuted } : undefined}>
                 {tab === 'analise' ? '📊 Análise do Email' : '✉ Rascunho de Resposta'}
               </button>

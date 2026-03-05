@@ -20,9 +20,9 @@ const T = {
     textMuted: 'var(--bo-text-muted)',
     border: 'var(--bo-border)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
-    accentBg: 'rgba(26,26,46,0.10)',
-    accentBorder: 'rgba(26,26,46,0.25)',
+    accent: 'var(--bo-accent)',
+    accentBg: 'var(--bo-active-bg)',
+    accentBorder: 'rgba(0,0,0,0.15)',
 }
 
 const UTM_SOURCES = [
@@ -427,7 +427,7 @@ export default function QRGeneratorPage() {
                         style={{
                             background: T.accent,
                             color: '#fff',
-                            boxShadow: '0 4px 16px rgba(26,26,46,0.25)',
+                            boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
                         }}
                     >
                         {loading ? (
@@ -511,7 +511,7 @@ export default function QRGeneratorPage() {
                         <button
                             onClick={() => downloadQR('png')}
                             className="w-full py-4 px-6 rounded-xl font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-3 transition-all text-white"
-                            style={{ background: T.accent, boxShadow: '0 4px 16px rgba(26,26,46,0.25)' }}
+                            style={{ background: T.accent, boxShadow: '0 4px 16px rgba(0,0,0,0.15)' }}
                         >
                             <Download size={18} />
                             Baixar PNG (Alta Resolução)

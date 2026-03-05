@@ -34,7 +34,7 @@ const T = {
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
+    accent: 'var(--bo-accent)',
 }
 
 type Step = 1 | 2 | 3
@@ -290,7 +290,7 @@ export default function EditarCampanhaPage() {
 
   const selectedChannel = canais.find(c => c.value === formData.channel)
 
-  const inputClass = "w-full h-11 px-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#486581] transition-all"
+  const inputClass = "w-full h-11 px-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
   const inputStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
   const inputErrorStyle = { background: T.elevated, border: '1px solid #EF4444', color: T.text }
 
@@ -593,7 +593,7 @@ export default function EditarCampanhaPage() {
                   onChange={(e) => handleChange('targetAudience', e.target.value)}
                   placeholder="Ex: Profissionais liberais, casais sem filhos, renda acima de R$ 10k"
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#486581] resize-none transition-all"
+                  className="w-full px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] resize-none transition-all"
                   style={inputStyle}
                 />
               </div>
@@ -715,7 +715,7 @@ export default function EditarCampanhaPage() {
                   placeholder="Descreva os principais benefícios e diferenciais..."
                   rows={4}
                   maxLength={200}
-                  className="w-full px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#486581] resize-none transition-all"
+                  className="w-full px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] resize-none transition-all"
                   style={errors.adDescription ? inputErrorStyle : inputStyle}
                 />
                 <p className="text-xs mt-1" style={{ color: T.textMuted }}>
@@ -833,7 +833,7 @@ export default function EditarCampanhaPage() {
                       value={formData.utmSource}
                       onChange={(e) => handleChange('utmSource', e.target.value)}
                       placeholder="instagram"
-                      className="w-full h-10 px-3 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#486581] transition-all"
+                      className="w-full h-10 px-3 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
                       style={inputStyle}
                     />
                   </div>
@@ -846,7 +846,7 @@ export default function EditarCampanhaPage() {
                       value={formData.utmMedium}
                       onChange={(e) => handleChange('utmMedium', e.target.value)}
                       placeholder="paid"
-                      className="w-full h-10 px-3 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#486581] transition-all"
+                      className="w-full h-10 px-3 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
                       style={inputStyle}
                     />
                   </div>
@@ -859,7 +859,7 @@ export default function EditarCampanhaPage() {
                       value={formData.utmCampaign}
                       onChange={(e) => handleChange('utmCampaign', e.target.value)}
                       placeholder="reserva-imperial"
-                      className="w-full h-10 px-3 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#486581] transition-all"
+                      className="w-full h-10 px-3 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all"
                       style={inputStyle}
                     />
                   </div>

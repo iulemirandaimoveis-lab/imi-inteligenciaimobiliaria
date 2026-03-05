@@ -92,7 +92,7 @@ export default function IndicesBackofficePage() {
                     <p className="text-sm mt-1" style={{ color: 'var(--bo-text-muted)' }}>Gestão dos índices de mercado proprietários</p>
                 </div>
                 <div className="flex gap-3">
-                    <button onClick={load} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10 transition-colors" style={{ background: 'var(--bo-icon-bg)' }}>
+                    <button onClick={load} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)] transition-colors" style={{ background: 'var(--bo-icon-bg)' }}>
                         <RefreshCw size={14} style={{ color: 'var(--bo-text-muted)' }} />
                     </button>
                 </div>
@@ -132,10 +132,10 @@ export default function IndicesBackofficePage() {
                                     >
                                         {idx.is_published ? 'Publicado' : 'Rascunho'}
                                     </span>
-                                    <button onClick={() => togglePublish(idx.id, idx.is_published)} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10">
+                                    <button onClick={() => togglePublish(idx.id, idx.is_published)} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]">
                                         {idx.is_published ? <EyeOff size={14} style={{ color: 'var(--bo-text-muted)' }} /> : <Eye size={14} style={{ color: 'var(--accent-500)' }} />}
                                     </button>
-                                    <button onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-white/10">
+                                    <button onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]">
                                         <Save size={14} style={{ color: 'var(--bo-text-muted)' }} />
                                     </button>
                                     <button onClick={() => deleteIndex(idx.id)} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-red-500/10">

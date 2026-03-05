@@ -19,15 +19,14 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-/* ── Dark-theme design tokens ─────────────────────────── */
+/* ── Design tokens ─────────────────────────── */
 const T = {
-    page: 'min-h-screen bg-[#0B0B11]',
-    card: 'bg-[#141420] border border-white/[.06] rounded-2xl',
-    text: 'text-white',
-    sub: 'text-white/50',
-    accent: '#486581',
-    accentBg: 'bg-[#102A43]',
-    input: 'bg-[#102A43] border border-white/10 text-white placeholder:text-white/30 rounded-xl',
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    accent: 'var(--bo-accent)',
 }
 
 interface Workflow {
@@ -54,12 +53,12 @@ const TRIGGER_ICONS: Record<string, any> = {
 }
 
 const TRIGGER_COLORS: Record<string, string> = {
-    new_lead: '#486581',
+    new_lead: 'var(--bo-accent)',
     follow_up: '#8B5CF6',
     schedule: '#F59E0B',
     team: '#10B981',
     report: '#EF4444',
-    pipeline: '#486581',
+    pipeline: 'var(--bo-accent)',
     manual: '#6B7280',
 }
 
@@ -163,17 +162,17 @@ export default function AutomacoesPage() {
     const getColor = (t: string) => TRIGGER_COLORS[t] || '#6B7280'
 
     return (
-        <div className={T.page}>
+        <div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h1 className={`text-2xl font-bold ${T.text}`}>IA & Automações</h1>
-                        <p className={`text-sm mt-1 ${T.sub}`}>Workflows automáticos e inteligência artificial</p>
+                        <h1 className="text-2xl font-bold" style={{ color: 'var(--bo-text)' }}>IA & Automações</h1>
+                        <p className="text-sm mt-1" style={{ color: 'var(--bo-text-muted)' }}>Workflows automáticos e inteligência artificial</p>
                     </div>
                     <button onClick={() => setShowModal(true)}
-                        className={`flex items-center gap-2 h-11 px-6 ${T.accentBg} text-white rounded-xl font-semibold hover:brightness-110 transition`}>
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold transition" style={{ background: "var(--bo-accent)" }}>
                         <Plus size={20} /> Nova Automação
                     </button>
                 </div>
@@ -181,39 +180,39 @@ export default function AutomacoesPage() {
                 {/* Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
-                        { l: 'Total', v: stats.total, color: '#486581' },
+                        { l: 'Total', v: stats.total, color: 'var(--bo-accent)' },
                         { l: 'Ativas', v: stats.ativas, color: '#22C55E' },
                         { l: 'Pausadas', v: stats.pausadas, color: '#F59E0B' },
                         { l: 'Execuções Total', v: stats.execucoesTotal, color: '#8B5CF6' },
                     ].map(s => (
-                        <div key={s.l} className={T.card + ' p-4'}>
-                            <p className={`text-xs mb-1 ${T.sub}`}>{s.l}</p>
+                        <div key={s.l} className="rounded-2xl p-4" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
+                            <p className="text-xs mb-1" style={{ color: 'var(--bo-text-muted)' }}>{s.l}</p>
                             <p className="text-2xl font-bold" style={{ color: s.color }}>{s.v}</p>
                         </div>
                     ))}
                 </div>
 
                 {/* Search */}
-                <div className={T.card + ' p-4'}>
+                <div className="rounded-2xl p-4" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" size={20} />
+                        <Search style={{ color: 'var(--bo-text-muted)' }} className="absolute left-3 top-1/2 -translate-y-1/2" size={20} />
                         <input type="text" placeholder="Buscar automações..."
                             value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                            className={`w-full h-11 pl-10 pr-4 ${T.input}`} />
+                            className="w-full h-11 pl-10 pr-4 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }} />
                     </div>
                 </div>
 
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-[#486581]" size={32} />
+                        <Loader2 className="animate-spin text-[var(--bo-accent)]" size={32} />
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className={`${T.card} p-12 text-center`}>
-                        <Zap size={48} className="mx-auto text-white/20 mb-4" />
-                        <h3 className={`text-lg font-semibold ${T.text} mb-2`}>Nenhuma automação encontrada</h3>
-                        <p className={`${T.sub} mb-6`}>Crie um novo workflow para automatizar processos</p>
+                    <div className="rounded-2xl p-12 text-center" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
+                        <Zap size={48} className="mx-auto mb-4" style={{ color: 'var(--bo-text-muted)', opacity: 0.3 }} />
+                        <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--bo-text)' }}>Nenhuma automação encontrada</h3>
+                        <p className="mb-6" style={{ color: 'var(--bo-text-muted)' }}>Crie um novo workflow para automatizar processos</p>
                         <button onClick={() => setShowModal(true)}
-                            className={`inline-flex items-center gap-2 h-11 px-6 ${T.accentBg} text-white rounded-xl font-semibold hover:brightness-110`}>
+                            className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold" style={{ background: "var(--bo-accent)" }}>
                             <Plus size={20} /> Nova Automação
                         </button>
                     </div>
@@ -224,7 +223,7 @@ export default function AutomacoesPage() {
                             const color = getColor(wf.trigger_type)
 
                             return (
-                                <div key={wf.id} className={`${T.card} p-6 hover:border-white/10 transition-all group`}>
+                                <div key={wf.id} className="rounded-2xl p-6 transition-all group" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
                                     {/* Header */}
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-start gap-3">
@@ -233,8 +232,8 @@ export default function AutomacoesPage() {
                                                 <Icon size={24} style={{ color }} />
                                             </div>
                                             <div>
-                                                <h3 className={`font-bold ${T.text} mb-1`}>{wf.name}</h3>
-                                                {wf.description && <p className={`text-sm ${T.sub}`}>{wf.description}</p>}
+                                                <h3 className="font-bold mb-1" style={{ color: 'var(--bo-text)' }}>{wf.name}</h3>
+                                                {wf.description && <p className="text-sm" style={{ color: 'var(--bo-text-muted)' }}>{wf.description}</p>}
                                             </div>
                                         </div>
                                         <span className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 ${wf.is_active
@@ -247,12 +246,12 @@ export default function AutomacoesPage() {
                                     </div>
 
                                     {/* Trigger */}
-                                    <div className="mb-4 p-3 bg-white/[.03] rounded-lg">
+                                    <div className="mb-4 p-3 bg-[var(--bo-hover)] rounded-lg">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <Zap size={14} className="text-white/40" />
-                                            <span className="text-xs font-semibold text-white/40 uppercase">Trigger</span>
+                                            <Zap size={14} style={{ color: 'var(--bo-text-muted)' }} className="" />
+                                            <span className="text-xs font-semibold uppercase" style={{ color: 'var(--bo-text-muted)' }}>Trigger</span>
                                         </div>
-                                        <p className={`text-sm font-medium ${T.text}`}>{wf.trigger_type}</p>
+                                        <p className="text-sm font-medium" style={{ color: 'var(--bo-text)' }}>{wf.trigger_type}</p>
                                     </div>
 
                                     {/* Config preview */}
@@ -267,21 +266,21 @@ export default function AutomacoesPage() {
                                     )}
 
                                     {/* Stats */}
-                                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/[.06]">
+                                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[var(--bo-border)]">
                                         <div>
-                                            <p className={`text-xs ${T.sub} mb-1`}>Execuções</p>
-                                            <p className={`text-lg font-bold ${T.text}`}>{wf.run_count || 0}</p>
+                                            <p className="text-xs mb-1" style={{ color: 'var(--bo-text-muted)' }}>Execuções</p>
+                                            <p className="text-lg font-bold" style={{ color: 'var(--bo-text)' }}>{wf.run_count || 0}</p>
                                         </div>
                                         <div>
-                                            <p className={`text-xs ${T.sub} mb-1`}>Última Execução</p>
-                                            <p className={`text-xs font-medium ${T.text}`}>{getTimeAgo(wf.last_run_at)}</p>
+                                            <p className="text-xs mb-1" style={{ color: 'var(--bo-text-muted)' }}>Última Execução</p>
+                                            <p className="text-xs font-medium" style={{ color: 'var(--bo-text)' }}>{getTimeAgo(wf.last_run_at)}</p>
                                         </div>
                                     </div>
 
                                     {/* Actions */}
-                                    <div className="flex items-center justify-end gap-2 pt-4 border-t border-white/[.06] mt-4">
+                                    <div className="flex items-center justify-end gap-2 pt-4 border-t border-[var(--bo-border)] mt-4">
                                         <button onClick={() => toggleActive(wf)}
-                                            className="p-2 hover:bg-white/5 rounded-lg transition" title={wf.is_active ? 'Pausar' : 'Ativar'}>
+                                            className="p-2 hover:bg-[var(--bo-hover)] rounded-lg transition" title={wf.is_active ? 'Pausar' : 'Ativar'}>
                                             {wf.is_active
                                                 ? <Pause size={16} className="text-amber-400" />
                                                 : <Play size={16} className="text-green-400" />}
@@ -301,25 +300,25 @@ export default function AutomacoesPage() {
             {/* Create Modal */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className={`${T.card} w-full max-w-lg p-6 space-y-5`}>
+                    <div className="rounded-2xl w-full max-w-lg p-6 space-y-5" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
                         <div className="flex items-center justify-between">
-                            <h2 className={`text-lg font-bold ${T.text}`}>Nova Automação</h2>
-                            <button onClick={() => setShowModal(false)} className="p-1.5 hover:bg-white/5 rounded-lg">
-                                <X size={20} className="text-white/40" />
+                            <h2 className="text-lg font-bold" style={{ color: 'var(--bo-text)' }}>Nova Automação</h2>
+                            <button onClick={() => setShowModal(false)} className="p-1.5 hover:bg-[var(--bo-hover)] rounded-lg">
+                                <X size={20} style={{ color: 'var(--bo-text-muted)' }} className="" />
                             </button>
                         </div>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="text-xs font-medium text-white/60 mb-1.5 block">Nome *</label>
+                                <label className="text-xs font-medium mb-1.5 block" style={{ color: 'var(--bo-text-muted)' }}>Nome *</label>
                                 <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                                    className={`w-full h-11 px-4 ${T.input}`} placeholder="Nome da automação" />
+                                    className="w-full h-11 px-4 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }} placeholder="Nome da automação" />
                             </div>
 
                             <div>
-                                <label className="text-xs font-medium text-white/60 mb-1.5 block">Tipo de Trigger</label>
+                                <label className="text-xs font-medium mb-1.5 block" style={{ color: 'var(--bo-text-muted)' }}>Tipo de Trigger</label>
                                 <select value={form.trigger_type} onChange={e => setForm({ ...form, trigger_type: e.target.value })}
-                                    className={`w-full h-11 px-4 ${T.input}`}>
+                                    className="w-full h-11 px-4 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }}>
                                     <option value="manual">Manual</option>
                                     <option value="new_lead">Novo Lead</option>
                                     <option value="follow_up">Follow-up</option>
@@ -331,20 +330,20 @@ export default function AutomacoesPage() {
                             </div>
 
                             <div>
-                                <label className="text-xs font-medium text-white/60 mb-1.5 block">Descrição</label>
+                                <label className="text-xs font-medium mb-1.5 block" style={{ color: 'var(--bo-text-muted)' }}>Descrição</label>
                                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
-                                    rows={3} className={`w-full px-4 py-3 ${T.input}`}
+                                    rows={3} className="w-full px-4 py-3 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }}
                                     placeholder="Descreva o que esta automação faz" />
                             </div>
                         </div>
 
                         <div className="flex gap-3 pt-2">
                             <button onClick={() => setShowModal(false)}
-                                className="flex-1 h-11 border border-white/10 text-white/60 rounded-xl font-medium hover:bg-white/5 transition">
+                                className="flex-1 h-11 rounded-xl font-medium transition" style={{ border: '1px solid var(--bo-border)', color: 'var(--bo-text-muted)' }}>
                                 Cancelar
                             </button>
                             <button onClick={handleCreate} disabled={saving || !form.name}
-                                className={`flex-1 h-11 ${T.accentBg} text-white rounded-xl font-semibold hover:brightness-110 transition disabled:opacity-40`}>
+                                className="flex-1 h-11 text-white rounded-xl font-semibold transition disabled:opacity-40" style={{ background: "var(--bo-accent)" }}>
                                 {saving ? <Loader2 className="animate-spin mx-auto" size={20} /> : 'Criar Automação'}
                             </button>
                         </div>

@@ -53,7 +53,7 @@ const T = {
   text: 'var(--bo-text)',
   textMuted: 'var(--bo-text-muted)',
   hover: 'var(--bo-hover)',
-  accent: '#486581',
+  accent: 'var(--bo-accent)',
 }
 
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
@@ -63,7 +63,7 @@ const TIPOS_CONTEUDO = [
   { id: 'instagram', label: 'Post Instagram', icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars', color: 'text-pink-600 bg-pink-50' },
   { id: 'linkedin', label: 'Post LinkedIn', icon: Linkedin, desc: 'Artigo ou post profissional', color: 'text-blue-700 bg-blue-50' },
   { id: 'facebook', label: 'Post Facebook', icon: Facebook, desc: 'Post com engajamento', color: 'text-indigo-600 bg-indigo-50' },
-  { id: 'landing', label: 'Landing Page Copy', icon: Globe, desc: 'Hero, benefícios, CTA', color: 'text-[#486581] bg-accent-50' },
+  { id: 'landing', label: 'Landing Page Copy', icon: Globe, desc: 'Hero, benefícios, CTA', color: 'text-[var(--bo-accent)] bg-accent-50' },
 ]
 
 // ⚠️ NÃO MODIFICAR - Templates por tipo
@@ -541,7 +541,7 @@ export default function NovoConteudoPage() {
 
       {/* ── Modal Assistente IA ───────────────────────────────────────────── */}
       {aiPanel.open && (
-        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+        <div className="fixed inset-0 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300" style={{ background: "rgba(0,0,0,0.5)" }}>
           <div className="rounded-3xl border shadow-2xl w-full max-w-xl overflow-hidden scale-in-center" style={{ background: T.surface, borderColor: T.border }}>
             {/* Header */}
             <div className="flex items-center justify-between p-6 bg-[#16162A] text-white">
@@ -565,7 +565,7 @@ export default function NovoConteudoPage() {
               {aiPanel.loading ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-5">
                   <div className="relative">
-                    <Loader2 size={48} className="animate-spin text-[#486581]" />
+                    <Loader2 size={48} className="animate-spin text-[var(--bo-accent)]" />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-2 h-2 bg-[#16162A] rounded-full" />
                     </div>

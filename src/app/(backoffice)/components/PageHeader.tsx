@@ -21,7 +21,7 @@ interface PageHeaderProps {
 }
 
 const badgeColors = {
-    gold: { bg: 'rgba(26,26,46,0.10)', text: 'var(--bo-text-gold, #486581)', border: 'rgba(26,26,46,0.2)' },
+    gold: { bg: 'var(--bo-active-bg)', text: 'var(--bo-text-gold, #486581)', border: 'var(--bo-border)' },
     green: { bg: 'var(--s-done-bg, #F0FDF4)', text: 'var(--s-done, #15803D)', border: 'rgba(107,184,123,0.20)' },
     blue: { bg: 'var(--s-cold-bg, #EFF6FF)', text: 'var(--s-cold, #1A2F44)', border: 'rgba(123,158,196,0.20)' },
     red: { bg: 'var(--s-cancel-bg, #FEF2F2)', text: 'var(--s-cancel, #DC2626)', border: 'rgba(229,115,115,0.20)' },
@@ -66,7 +66,7 @@ export default function PageHeader({
                             {crumb.href ? (
                                 <Link href={crumb.href}>
                                     <span
-                                        className="text-xs font-medium transition-colors duration-120 hover:text-[#486581]"
+                                        className="text-xs font-medium transition-colors duration-120 hover:text-[var(--bo-accent)]"
                                         style={{ color: 'var(--bo-text-muted)' }}
                                     >
                                         {crumb.label}
@@ -137,7 +137,7 @@ export default function PageHeader({
                         transition={{ delay: 0.2, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                         className="mt-4 h-px"
                         style={{
-                            background: 'linear-gradient(90deg, rgba(26,26,46,0.5) 0%, rgba(26,26,46,0.15) 40%, transparent 100%)',
+                            background: 'linear-gradient(90deg, var(--bo-surface) 0%, var(--bo-hover) 40%, transparent 100%)',
                         }}
                     />
                 </div>

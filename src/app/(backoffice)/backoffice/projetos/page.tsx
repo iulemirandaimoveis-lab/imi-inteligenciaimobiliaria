@@ -10,7 +10,7 @@ const T = {
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
+    accent: 'var(--bo-accent)',
 }
 
 interface Projeto {
@@ -33,7 +33,7 @@ interface Projeto {
 }
 
 const STATUS_CFG: Record<string, { l: string; color: string }> = {
-    estruturacao: { l: 'Estruturação', color: '#486581' },
+    estruturacao: { l: 'Estruturação', color: 'var(--bo-accent)' },
     lancamento: { l: 'Lançamento', color: '#10B981' },
     obras: { l: 'Em Obras', color: '#F59E0B' },
     pronto: { l: 'Pronto', color: '#22C55E' },
@@ -121,8 +121,8 @@ export default function ProjetosPage() {
                 {/* KPIs */}
                 <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
                     {[
-                        { l: 'VGV Total Portfólio', v: fmtCurrency(totalVGV), icon: DollarSign, color: '#486581' },
-                        { l: 'Total de Unidades', v: totalUnidades, icon: Building2, color: '#486581' },
+                        { l: 'VGV Total Portfólio', v: fmtCurrency(totalVGV), icon: DollarSign, color: 'var(--bo-accent)' },
+                        { l: 'Total de Unidades', v: totalUnidades, icon: Building2, color: 'var(--bo-accent)' },
                         { l: 'Unidades Vendidas', v: totalVendidas, icon: Users, color: '#10B981' },
                         { l: 'Taxa Média de Vendas', v: `${taxaMedia}%`, icon: TrendingUp, color: '#8B5CF6' },
                     ].map(kpi => {
@@ -219,7 +219,7 @@ export default function ProjetosPage() {
                                                 <div className="h-full rounded-full transition-all"
                                                     style={{
                                                         width: `${pct}%`,
-                                                        backgroundColor: pct >= 75 ? '#22C55E' : '#486581',
+                                                        backgroundColor: pct >= 75 ? '#22C55E' : 'var(--bo-accent)',
                                                     }} />
                                             </div>
                                         </div>

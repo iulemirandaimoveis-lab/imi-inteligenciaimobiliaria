@@ -13,7 +13,7 @@ const T = {
     surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: 'var(--bo-accent)',
 }
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {

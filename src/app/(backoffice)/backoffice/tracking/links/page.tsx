@@ -19,8 +19,8 @@ const T = {
     textMuted: 'var(--bo-text-muted)',
     border: 'var(--bo-border)',
     hover: 'var(--bo-hover)',
-    accent: '#486581',
-    accentBg: 'rgba(26,26,46,0.10)',
+    accent: 'var(--bo-accent)',
+    accentBg: 'var(--bo-active-bg)',
 }
 
 export default function TrackingLinksPage() {

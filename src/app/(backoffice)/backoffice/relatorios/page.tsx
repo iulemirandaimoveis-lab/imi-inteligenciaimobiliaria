@@ -20,11 +20,11 @@ const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: 'var(--bo-accent)',
 }
 
 const FUNNEL_STAGES = [
-    { key: 'new', label: 'Novos', color: '#486581' },
+    { key: 'new', label: 'Novos', color: 'var(--bo-accent)' },
     { key: 'contacted', label: 'Contatados', color: '#5B7A9C' },
     { key: 'visit_scheduled', label: 'Visita Agendada', color: '#6B8FAF' },
     { key: 'proposal', label: 'Proposta', color: '#7BA3C2' },
@@ -94,7 +94,7 @@ const CAT_MAP: Record<string, { label: string; text: string; bg: string }> = {
     avaliacoes: { label: 'Avaliações', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
     financeiro: { label: 'Financeiro', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
     crm: { label: 'CRM', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
-    imoveis: { label: 'Imóveis', text: '#486581', bg: 'rgba(72,101,129,0.12)' },
+    imoveis: { label: 'Imóveis', text: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)' },
     consultorias: { label: 'Consultorias', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
 }
 
@@ -162,7 +162,7 @@ export default function RelatoriosPage() {
                         onClick={() => setTab(t.key as any)}
                         className="flex items-center gap-2 px-4 h-9 rounded-lg text-sm font-medium transition-all"
                         style={{
-                            background: tab === t.key ? '#486581' : 'transparent',
+                            background: tab === t.key ? 'var(--bo-accent)' : 'transparent',
                             color: tab === t.key ? 'white' : T.textDim,
                         }}
                     >
@@ -179,7 +179,7 @@ export default function RelatoriosPage() {
                     {/* KPI strip */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {[
-                            { label: 'Total Leads', value: funnel?.reduce((s, f) => s + f.value, 0) || 0, color: '#486581' },
+                            { label: 'Total Leads', value: funnel?.reduce((s, f) => s + f.value, 0) || 0, color: 'var(--bo-accent)' },
                             { label: 'Fechados', value: won, color: '#4CAF7D' },
                             { label: 'Taxa Conversão', value: `${conversionRate}%`, color: '#A89EC4' },
                             { label: 'Empreendimentos', value: byDev?.length || 0, color: '#E8A87C' },
@@ -228,7 +228,7 @@ export default function RelatoriosPage() {
                                         <XAxis dataKey="semana" tick={{ fontSize: 10, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
                                         <YAxis tick={{ fontSize: 10, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
-                                        <Line type="monotone" dataKey="leads" name="Leads" stroke="#486581" strokeWidth={2} dot={{ fill: '#486581', r: 3 }} />
+                                        <Line type="monotone" dataKey="leads" name="Leads" stroke="var(--bo-accent)" strokeWidth={2} dot={{ fill: 'var(--bo-accent)', r: 3 }} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             )}
@@ -248,7 +248,7 @@ export default function RelatoriosPage() {
                                         <XAxis type="number" tick={{ fontSize: 10, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
                                         <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fill: 'var(--bo-text-muted)' }} width={95} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
-                                        <Bar dataKey="leads" name="Leads" fill="#486581" radius={[0, 4, 4, 0]} maxBarSize={16} />
+                                        <Bar dataKey="leads" name="Leads" fill="var(--bo-accent)" radius={[0, 4, 4, 0]} maxBarSize={16} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             )}
@@ -266,7 +266,7 @@ export default function RelatoriosPage() {
                             <button key={cat} onClick={() => setCatAtiva(cat)}
                                 className="px-3.5 h-9 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                                 style={{
-                                    background: catAtiva === cat ? '#486581' : T.surface,
+                                    background: catAtiva === cat ? 'var(--bo-accent)' : T.surface,
                                     color: catAtiva === cat ? 'white' : T.textDim,
                                     border: `1px solid ${catAtiva === cat ? T.borderGold : T.border}`,
                                 }}>
@@ -289,7 +289,7 @@ export default function RelatoriosPage() {
                                 >
                                     <div className="flex items-start gap-4">
                                         <div className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
-                                            style={{ background: cat?.bg || 'rgba(26,26,46,0.10)' }}>
+                                            style={{ background: cat?.bg || 'var(--bo-active-bg)' }}>
                                             <r.icon size={20} style={{ color: cat?.text || T.gold }} />
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -319,7 +319,7 @@ export default function RelatoriosPage() {
                                         <motion.button whileTap={{ scale: 0.95 }}
                                             onClick={() => handleGerar(r.id)} disabled={loading}
                                             className="flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white transition-all"
-                                            style={{ background: loading ? 'rgba(26,26,46,0.30)' : '#486581', opacity: loading ? 0.7 : 1 }}>
+                                            style={{ background: loading ? 'var(--bo-elevated)' : 'var(--bo-accent)', opacity: loading ? 0.7 : 1 }}>
                                             {loading ? (
                                                 <>
                                                     <motion.span animate={{ rotate: 360 }}

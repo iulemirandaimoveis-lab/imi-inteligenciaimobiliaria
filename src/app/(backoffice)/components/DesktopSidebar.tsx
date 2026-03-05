@@ -179,7 +179,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     {item.badge && (
                         <span
                             className="text-[10px] px-1.5 py-0.5 rounded-full font-bold text-white"
-                            style={{ background: 'rgba(26,26,46,0.60)' }}
+                            style={{ background: 'var(--bo-card)' }}
                         >
                             {item.badge}
                         </span>
@@ -230,7 +230,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     ? 'linear-gradient(135deg, var(--accent-500), var(--accent-600))'
                     : 'transparent',
                 fontWeight: isActive ? 600 : 400,
-                boxShadow: isActive ? '0 2px 12px rgba(26,26,46,0.25)' : 'none',
+                boxShadow: isActive ? '0 2px 12px rgba(0,0,0,0.15)' : 'none',
             }}
         >
             {/* Active indicator bar */}
@@ -238,7 +238,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 <motion.div
                     layoutId="sidebar-active"
                     className="absolute -left-[11px] top-1/2 w-[3px] h-4 rounded-full"
-                    style={{ background: '#486581', transform: 'translateY(-50%)' }}
+                    style={{ background: 'var(--bo-accent)', transform: 'translateY(-50%)' }}
                     transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                 />
             )}
@@ -248,10 +248,10 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 <span
                     className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold border ${
                         item.badge === 'BREVE'
-                            ? 'text-gray-500 bg-white/[0.04] border-white/10'
+                            ? 'text-[var(--bo-text-muted)] bg-[var(--bo-hover)] border-[var(--bo-border)]'
                             : 'text-white border-transparent'
                     }`}
-                    style={item.badge !== 'BREVE' ? { background: 'rgba(26,26,46,0.60)' } : undefined}
+                    style={item.badge !== 'BREVE' ? { background: 'var(--bo-card)' } : undefined}
                 >
                     {item.badge}
                 </span>
@@ -280,7 +280,7 @@ export function DesktopSidebar() {
             <div
                 className="absolute top-0 right-0 w-32 h-48 pointer-events-none"
                 style={{
-                    background: 'radial-gradient(ellipse at top right, rgba(26,26,46,0.06) 0%, transparent 70%)',
+                    background: 'radial-gradient(ellipse at top right, var(--bo-hover) 0%, transparent 70%)',
                 }}
             />
             {/* Logo */}
@@ -294,14 +294,14 @@ export function DesktopSidebar() {
                 >
                     IMI
                 </span>
-                <div className="h-6 w-px bg-white/20"></div>
+                <div className="h-6 w-px" style={{ background: 'var(--sidebar-border)' }}></div>
                 <span className="text-[9px] font-medium uppercase tracking-[0.15em] leading-[1.1]" style={{ color: 'var(--sidebar-text)' }}>
                     Inteligência<br />Imobiliária
                 </span>
             </div>
 
-            {/* Nav */}
-            <nav className="flex-1 overflow-y-auto py-3 px-2.5">
+            {/* Nav — min-h-0 is critical for flex overflow-y-auto to scroll */}
+            <nav className="flex-1 overflow-y-auto min-h-0 py-3 px-2.5">
                 {SECTIONS.map((section, idx) => (
                     <div key={section.label} className={idx > 0 ? 'mt-4' : ''}>
                         <p

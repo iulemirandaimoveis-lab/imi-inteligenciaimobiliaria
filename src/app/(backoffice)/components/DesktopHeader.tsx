@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Bell, LogOut, Settings, ChevronDown } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import ThemeToggle from './ThemeToggle'
 
 const supabase = createClient()
 
@@ -43,7 +44,7 @@ function SearchBar() {
             style={{
                 background: 'var(--bo-surface)',
                 border: `1px solid ${focused ? 'var(--bo-border-gold)' : 'var(--bo-border)'}`,
-                boxShadow: focused ? '0 0 0 3px rgba(26,26,46,0.08)' : 'none',
+                boxShadow: focused ? '0 0 0 3px var(--bo-active-bg)' : 'none',
             }}
         >
             <Search size={14} style={{ color: focused ? 'var(--accent-500)' : 'var(--bo-text-muted)' }} className="flex-shrink-0 transition-colors" />
@@ -307,6 +308,8 @@ export default function DesktopHeader() {
             <div className="w-full h-full px-6 flex items-center justify-between gap-4">
                 <SearchBar />
                 <div className="flex items-center gap-1.5">
+                    <ThemeToggle />
+                    <div className="w-px h-5 mx-0.5" style={{ background: 'var(--bo-border)' }} />
                     <NotificationBell />
                     <div className="w-px h-5 mx-1" style={{ background: 'var(--bo-border)' }} />
                     <UserMenu onSignOut={handleSignOut} />

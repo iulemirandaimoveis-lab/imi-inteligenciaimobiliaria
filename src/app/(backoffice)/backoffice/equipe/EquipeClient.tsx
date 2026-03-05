@@ -18,7 +18,7 @@ const T = {
     text: 'var(--bo-text)',
     textSub: 'var(--bo-text-muted)',
     textDim: 'var(--bo-text-muted)',
-    gold: '#486581',
+    gold: 'var(--bo-accent)',
 }
 
 type UserRole = 'admin' | 'manager' | 'agent' | 'viewer' | string
@@ -213,7 +213,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                     whileTap={{ scale: 0.96 }}
                     onClick={openAdd}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all"
-                    style={{ background: '#1E3A5F', boxShadow: '0 2px 8px rgba(30,58,95,0.4)' }}
+                    style={{ background: 'var(--bo-accent)', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
                 >
                     <Plus size={16} /> Adicionar Membro
                 </motion.button>
@@ -285,7 +285,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                             <button
                                 onClick={openAdd}
                                 className="mt-4 inline-flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-medium text-white"
-                                style={{ background: '#1E3A5F' }}>
+                                style={{ background: 'var(--bo-accent)' }}>
                                 <Plus size={14} /> Adicionar primeiro membro
                             </button>
                         )}
@@ -310,7 +310,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                 {/* Avatar */}
                                 <div
                                     className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 uppercase"
-                                    style={{ background: '#1E3A5F', color: '#8CA4B8' }}>
+                                    style={{ background: 'var(--bo-elevated)', color: 'var(--bo-text-muted)' }}>
                                     {member.name
                                         ? member.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)
                                         : '??'}
@@ -364,7 +364,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                     <button
                                         onClick={() => openEdit(member)}
                                         disabled={isBeingDeleted}
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
+                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
                                         style={{ color: T.textDim }}
                                         title="Editar membro">
                                         <Edit size={14} />
@@ -372,7 +372,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                     <button
                                         onClick={() => setMenuOpen(menuOpen === member.id ? null : member.id)}
                                         disabled={isBeingDeleted}
-                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
+                                        className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
                                         style={{ color: T.textDim }}>
                                         {isBeingDeleted
                                             ? <Loader2 size={14} className="animate-spin" />
@@ -391,7 +391,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, minWidth: '150px' }}>
                                                 <button
                                                     onClick={() => openEdit(member)}
-                                                    className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-left transition-colors hover:bg-white/5">
+                                                    className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-left transition-colors hover:bg-[var(--bo-hover)]">
                                                     <Edit size={13} style={{ color: T.textDim }} />
                                                     <span style={{ color: T.text }}>Editar</span>
                                                 </button>
@@ -454,7 +454,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                         </div>
                                         <button
                                             onClick={closeModal}
-                                            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-white/5"
+                                            className="w-8 h-8 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--bo-hover)]"
                                             style={{ color: T.textDim }}>
                                             <X size={16} />
                                         </button>
@@ -544,7 +544,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                             disabled={saving}
                                             className="flex-1 h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all"
                                             style={{
-                                                background: saving ? '#334E68' : '#1E3A5F',
+                                                background: saving ? 'var(--bo-elevated)' : 'var(--bo-accent)',
                                                 boxShadow: saving ? 'none' : '0 2px 8px rgba(30,58,95,0.4)',
                                             }}>
                                             {saving && <Loader2 size={15} className="animate-spin" />}

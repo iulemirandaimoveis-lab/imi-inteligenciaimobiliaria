@@ -68,7 +68,7 @@ export class ErrorBoundary extends Component<Props, State> {
                         <button
                             onClick={this.handleReset}
                             className="flex items-center gap-2 px-5 h-10 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                            style={{ background: '#486581' }}
+                            style={{ background: 'var(--bo-accent)' }}
                         >
                             <RefreshCcw size={14} />
                             Tentar novamente

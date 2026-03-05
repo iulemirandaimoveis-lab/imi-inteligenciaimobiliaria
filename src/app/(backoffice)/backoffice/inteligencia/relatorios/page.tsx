@@ -106,7 +106,7 @@ export default function RelatoriosBackofficePage() {
                         </thead>
                         <tbody>
                             {reports.map((r) => (
-                                <tr key={r.id} style={{ borderBottom: '1px solid var(--bo-border-subtle)' }} className="hover:bg-white/[0.02] transition-colors">
+                                <tr key={r.id} style={{ borderBottom: '1px solid var(--bo-border-subtle)' }} className="hover:bg-[var(--bo-hover)] transition-colors">
                                     <td className="px-5 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bo-icon-bg)' }}>
@@ -142,10 +142,10 @@ export default function RelatoriosBackofficePage() {
                                     </td>
                                     <td className="px-5 py-4">
                                         <div className="flex items-center gap-1">
-                                            <button onClick={() => togglePublish(r.id, r.is_published)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10">
+                                            <button onClick={() => togglePublish(r.id, r.is_published)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]">
                                                 {r.is_published ? <EyeOff size={13} style={{ color: 'var(--bo-text-muted)' }} /> : <Eye size={13} style={{ color: 'var(--accent-500)' }} />}
                                             </button>
-                                            <Link href={`/backoffice/inteligencia/relatorios/${r.id}/editar`} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/10">
+                                            <Link href={`/backoffice/inteligencia/relatorios/${r.id}/editar`} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]">
                                                 <Pencil size={13} style={{ color: 'var(--bo-text-muted)' }} />
                                             </Link>
                                             <button onClick={() => deleteReport(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-500/10">

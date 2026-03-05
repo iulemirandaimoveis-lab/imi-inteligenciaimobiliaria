@@ -120,7 +120,7 @@ export default function EbooksPage() {
                                 <tr
                                     key={e.id}
                                     style={{ borderBottom: '1px solid var(--bo-border-subtle)' }}
-                                    className="hover:bg-white/[0.02] transition-colors"
+                                    className="hover:bg-[var(--bo-hover)] transition-colors"
                                 >
                                     <td className="px-5 py-4">
                                         <div className="flex items-center gap-3">
@@ -171,7 +171,7 @@ export default function EbooksPage() {
                                         <div className="flex items-center gap-1">
                                             <button
                                                 onClick={() => togglePublish(e.id, e.is_published)}
-                                                className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-white/10"
+                                                className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--bo-hover)]"
                                                 title={e.is_published ? 'Despublicar' : 'Publicar'}
                                             >
                                                 {e.is_published
@@ -181,7 +181,7 @@ export default function EbooksPage() {
                                             </button>
                                             <Link
                                                 href={`/backoffice/inteligencia/ebooks/${e.id}/editar`}
-                                                className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-white/10"
+                                                className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--bo-hover)]"
                                             >
                                                 <Pencil size={13} style={{ color: 'var(--bo-text-muted)' }} />
                                             </Link>

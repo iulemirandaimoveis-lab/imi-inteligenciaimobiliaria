@@ -252,7 +252,7 @@ export default function PermissoesPage() {
                             onClick={handleSave}
                             disabled={saving}
                             className="flex items-center gap-2 h-10 px-5 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-40"
-                            style={{ background: '#486581' }}
+                            style={{ background: 'var(--bo-accent)' }}
                         >
                             {saving
                                 ? <><Loader2 size={16} className="animate-spin" /> Salvando...</>
@@ -321,7 +321,7 @@ export default function PermissoesPage() {
                         {/* Matrix Header */}
                         <div className="p-6" style={{ borderBottom: `1px solid ${T.border}`, background: T.bg }}>
                             <div className="flex items-center gap-3 mb-2">
-                                <Shield size={24} className="text-[#486581]" />
+                                <Shield size={24} className="text-[var(--bo-accent)]" />
                                 <h2 className="text-lg font-bold" style={{ color: T.text }}>{selectedRole.name}</h2>
                                 <span className="px-3 py-1 rounded-lg text-xs font-medium"
                                     style={{
