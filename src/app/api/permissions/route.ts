@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
         const supabase = await createClient()
         const { searchParams } = new URL(request.url)
         const role = searchParams.get('role')
-        const module = searchParams.get('module')
+        const moduleName = searchParams.get('module')
         const action = searchParams.get('action')
 
         if (!role) {
@@ -24,13 +24,13 @@ export async function GET(request: NextRequest) {
             return NextResponse.json(data || [])
         }
 
-        if (module && action) {
+        if (moduleName && action) {
             // Check specific permission
             const { data } = await supabase
                 .from('role_permissions')
                 .select('allowed')
                 .eq('role', role)
-                .eq('module', module)
+                .eq('module', moduleName)
                 .eq('action', action)
                 .single()
 
@@ -57,15 +57,15 @@ export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient()
         const body = await request.json()
-        const { role, module, action, allowed } = body
+        const { role, module: moduleName, action, allowed } = body
 
-        if (!role || !module || !action || typeof allowed !== 'boolean') {
+        if (!role || !moduleName || !action || typeof allowed !== 'boolean') {
             return NextResponse.json({ error: 'role, module, action, allowed required' }, { status: 400 })
         }
 
         const { data, error } = await supabase
             .from('role_permissions')
-            .upsert({ role, module, action, allowed }, { onConflict: 'role,module,action' })
+            .upsert({ role, module: moduleName, action, allowed }, { onConflict: 'role,module,action' })
             .select()
             .single()
 
@@ -82,15 +82,15 @@ export async function PUT(request: NextRequest) {
     try {
         const supabase = await createClient()
         const body = await request.json()
-        const { role, module, action, allowed } = body
+        const { role, module: moduleName, action, allowed } = body
 
-        if (!role || !module || !action || typeof allowed !== 'boolean') {
+        if (!role || !moduleName || !action || typeof allowed !== 'boolean') {
             return NextResponse.json({ error: 'role, module, action, allowed required' }, { status: 400 })
         }
 
         const { data, error } = await supabase
             .from('role_permissions')
-            .upsert({ role, module, action, allowed }, { onConflict: 'role,module,action' })
+            .upsert({ role, module: moduleName, action, allowed }, { onConflict: 'role,module,action' })
             .select()
             .single()
 
@@ -110,7 +110,7 @@ export async function DELETE(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
         const role = searchParams.get('role')
-        const module = searchParams.get('module')
+        const moduleName = searchParams.get('module')
         const action = searchParams.get('action')
 
         if (id) {
@@ -123,12 +123,12 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ success: true })
         }
 
-        if (role && module && action) {
+        if (role && moduleName && action) {
             const { error } = await supabase
                 .from('role_permissions')
                 .delete()
                 .eq('role', role)
-                .eq('module', module)
+                .eq('module', moduleName)
                 .eq('action', action)
 
             if (error) return NextResponse.json({ error: error.message }, { status: 500 })

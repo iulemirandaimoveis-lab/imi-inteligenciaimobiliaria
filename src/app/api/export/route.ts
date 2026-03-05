@@ -29,13 +29,13 @@ export async function GET(request: NextRequest) {
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
         const { searchParams } = new URL(request.url)
-        const module = searchParams.get('module') || 'leads'
+        const moduleName = searchParams.get('module') || 'leads'
         const month = searchParams.get('month') // e.g. '2026-03'
 
         let rows: Record<string, unknown>[] = []
-        let filename = `export-${module}-${new Date().toISOString().split('T')[0]}.csv`
+        let filename = `export-${moduleName}-${new Date().toISOString().split('T')[0]}.csv`
 
-        switch (module) {
+        switch (moduleName) {
             case 'leads': {
                 let query = supabase
                     .from('leads')
