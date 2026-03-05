@@ -15,6 +15,16 @@ import {
     TrendingUp,
 } from 'lucide-react'
 
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
+
 // Interface para os dados reias do Supabase
 export interface Developer {
     id: string; // or number depending on DB, uuid
@@ -69,14 +79,15 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Construtoras Parceiras</h1>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <h1 className="text-2xl font-bold" style={{ color: T.text }}>Construtoras Parceiras</h1>
+                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>
                         Gestão real integrada: {initialData.length} parceiros do portfólio IMI encontrados
                     </p>
                 </div>
                 <button
                     onClick={() => router.push('/backoffice/construtoras/nova')}
-                    className="flex items-center gap-2 h-11 px-6 bg-[#102A43] text-white rounded-xl font-medium hover:bg-[#16162A] transition-colors"
+                    className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium transition-colors hover:brightness-110"
+                    style={{ background: T.accent }}
                 >
                     <Plus size={20} />
                     Nova Construtora
@@ -85,45 +96,47 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div className="bg-white rounded-xl p-4 border shadow-sm">
-                    <p className="text-xs text-gray-500 mb-1">Total</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Total</p>
+                    <p className="text-2xl font-bold" style={{ color: T.text }}>{stats.total}</p>
                 </div>
-                <div className="bg-white rounded-xl p-4 border shadow-sm">
-                    <p className="text-xs text-green-600 mb-1">Ativas</p>
-                    <p className="text-2xl font-bold text-green-700">{stats.ativas}</p>
+                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs mb-1 text-green-500">Ativas</p>
+                    <p className="text-2xl font-bold text-green-500">{stats.ativas}</p>
                 </div>
-                <div className="bg-white rounded-xl p-4 border shadow-sm">
-                    <p className="text-xs text-gray-500 mb-1">Projetos Ativos</p>
-                    <p className="text-2xl font-bold text-blue-700">{stats.projetos}</p>
+                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Projetos Ativos</p>
+                    <p className="text-2xl font-bold text-blue-400">{stats.projetos}</p>
                 </div>
-                <div className="bg-white rounded-xl p-4 border shadow-sm">
-                    <p className="text-xs text-gray-500 mb-1">Unidades Vendidas</p>
-                    <p className="text-2xl font-bold text-purple-700">{stats.vendas}</p>
+                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Unidades Vendidas</p>
+                    <p className="text-2xl font-bold text-purple-400">{stats.vendas}</p>
                 </div>
-                <div className="bg-white rounded-xl p-4 border shadow-sm">
-                    <p className="text-xs text-gray-500 mb-1">Receita Total</p>
-                    <p className="text-xl font-bold text-green-700">{formatPrice(stats.receita)}</p>
+                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Receita Total</p>
+                    <p className="text-xl font-bold text-green-500">{formatPrice(stats.receita)}</p>
                 </div>
             </div>
 
             {/* Filtros */}
-            <div className="bg-white rounded-xl p-4 border shadow-sm">
+            <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                         <input
                             type="text"
                             placeholder="Buscar pelo nome ou razão social..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all"
+                            className="w-full h-11 pl-10 pr-4 rounded-xl outline-none focus:ring-2 focus:ring-[#334E68] transition-all"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                         />
                     </div>
                     <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white transition-all"
+                        className="h-11 px-4 rounded-xl outline-none focus:ring-2 focus:ring-[#334E68] transition-all"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     >
                         <option value="all">Todos os status</option>
                         <option value="ativa">Ativa</option>
@@ -137,73 +150,77 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                 {filteredConstrutoras.map((construtora) => (
                     <div
                         key={construtora.id}
-                        className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all cursor-pointer flex flex-col h-full"
+                        className="rounded-2xl p-6 transition-all cursor-pointer flex flex-col h-full hover:brightness-105"
+                        style={{ background: T.surface, border: `1px solid ${T.border}` }}
                         onClick={() => router.push(`/backoffice/construtoras/${construtora.id}`)}
                     >
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
                             <div className="flex items-start gap-4">
-                                <div className="w-14 h-14 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden relative">
+                                <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden relative"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                     {construtora.logo_url ? (
                                         <img src={construtora.logo_url} alt={construtora.name} className="w-full h-full object-contain p-1" />
                                     ) : (
-                                        <Building2 size={24} className="text-gray-300" />
+                                        <Building2 size={24} style={{ color: T.textMuted }} />
                                     )}
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900 leading-tight mb-1">{construtora.name}</h3>
-                                    <p className="text-xs text-gray-500 mb-1">{construtora.legal_name || 'Sem Razão Social'}</p>
-                                    <p className="text-[10px] text-gray-400 font-mono tracking-wider">{construtora.cnpj || 'CNPJ NÃO CADASTRADO'}</p>
+                                    <h3 className="font-bold leading-tight mb-1" style={{ color: T.text }}>{construtora.name}</h3>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>{construtora.legal_name || 'Sem Razão Social'}</p>
+                                    <p className="text-[10px] font-mono tracking-wider" style={{ color: T.textMuted }}>{construtora.cnpj || 'CNPJ NÃO CADASTRADO'}</p>
                                 </div>
                             </div>
                             <div className="flex flex-col items-end gap-2">
-                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${construtora.is_active ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-gray-100 text-gray-600 border border-gray-200'
+                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${construtora.is_active ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
                                     }`}>
                                     {construtora.is_active ? 'Ativa' : 'Inativa'}
                                 </span>
                                 <div className="flex items-center gap-1 mt-1">
                                     <Star size={12} className="text-yellow-400 fill-current" />
-                                    <span className="text-sm font-bold text-gray-900">{construtora.rating?.toFixed(1) || '4.0'}</span>
+                                    <span className="text-sm font-bold" style={{ color: T.text }}>{construtora.rating?.toFixed(1) || '4.0'}</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Stats */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 py-4 border-y border-gray-50">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 py-4"
+                            style={{ borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}` }}>
                             <div>
-                                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Projetos</p>
-                                <p className="text-lg font-bold text-blue-700">{construtora.empreendimentosAtivos || 0}</p>
+                                <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Projetos</p>
+                                <p className="text-lg font-bold text-blue-400">{construtora.empreendimentosAtivos || 0}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">Vendas</p>
-                                <p className="text-lg font-bold text-[#486581]">{construtora.unidadesVendidas || 0}</p>
+                                <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Vendas</p>
+                                <p className="text-lg font-bold" style={{ color: T.accent }}>{construtora.unidadesVendidas || 0}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">VGV / Receita</p>
-                                <p className="text-sm font-bold text-emerald-600">{construtora.receitaTotal ? formatPrice(construtora.receitaTotal) : 'R$ 0'}</p>
+                                <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>VGV / Receita</p>
+                                <p className="text-sm font-bold text-emerald-400">{construtora.receitaTotal ? formatPrice(construtora.receitaTotal) : 'R$ 0'}</p>
                             </div>
                         </div>
 
                         {/* Contato */}
                         <div className="space-y-2 mb-4 flex-1">
-                            <div className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">
-                                <MapPin size={14} className="text-gray-400 shrink-0" />
+                            <div className="flex items-center gap-2 text-xs p-2 rounded-lg" style={{ background: T.elevated, color: T.textMuted }}>
+                                <MapPin size={14} style={{ color: T.textMuted }} className="shrink-0" />
                                 <span className="line-clamp-1 truncate">{construtora.address || 'Endereço não cadastrado'}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">
-                                <Phone size={14} className="text-gray-400 shrink-0" />
+                            <div className="flex items-center gap-2 text-xs p-2 rounded-lg" style={{ background: T.elevated, color: T.textMuted }}>
+                                <Phone size={14} style={{ color: T.textMuted }} className="shrink-0" />
                                 <span>{construtora.phone || 'Sem telefone'}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">
-                                <Mail size={14} className="text-gray-400 shrink-0" />
+                            <div className="flex items-center gap-2 text-xs p-2 rounded-lg" style={{ background: T.elevated, color: T.textMuted }}>
+                                <Mail size={14} style={{ color: T.textMuted }} className="shrink-0" />
                                 <span className="truncate">{construtora.email || 'Sem e-mail'}</span>
                             </div>
                         </div>
 
                         {/* Footer */}
-                        <div className="flex items-center justify-between pt-4 mt-auto">
-                            <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md">
-                                <TrendingUp size={12} className="text-emerald-500" />
+                        <div className="flex items-center justify-between pt-4 mt-auto" style={{ borderTop: `1px solid ${T.border}` }}>
+                            <div className="flex items-center gap-2 text-xs font-semibold px-2.5 py-1 rounded-md"
+                                style={{ background: T.elevated, color: T.textMuted }}>
+                                <TrendingUp size={12} className="text-emerald-400" />
                                 <span>Parceria: {construtora.parceriaDuracao || 'Nova'}</span>
                             </div>
                             <div className="flex items-center gap-1.5">
@@ -212,18 +229,20 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                                         e.stopPropagation()
                                         router.push(`/backoffice/construtoras/${construtora.id}`)
                                     }}
-                                    className="w-8 h-8 flex justify-center items-center hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
+                                    className="w-8 h-8 flex justify-center items-center rounded-lg transition-colors"
+                                    style={{ border: `1px solid ${T.border}`, color: T.textMuted }}
                                 >
-                                    <Eye size={14} className="text-gray-600" />
+                                    <Eye size={14} />
                                 </button>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation()
                                         router.push(`/backoffice/construtoras/${construtora.id}/editar`)
                                     }}
-                                    className="w-8 h-8 flex justify-center items-center hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
+                                    className="w-8 h-8 flex justify-center items-center rounded-lg transition-colors"
+                                    style={{ border: `1px solid ${T.border}`, color: T.textMuted }}
                                 >
-                                    <Edit size={14} className="text-gray-600" />
+                                    <Edit size={14} />
                                 </button>
                             </div>
                         </div>
@@ -233,15 +252,18 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
 
             {/* Empty State */}
             {filteredConstrutoras.length === 0 && (
-                <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-12 text-center">
-                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Building2 size={24} className="text-gray-300" />
+                <div className="rounded-2xl p-12 text-center"
+                    style={{ background: T.surface, border: `1px dashed ${T.border}` }}>
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                        style={{ background: T.elevated }}>
+                        <Building2 size={24} style={{ color: T.textMuted }} />
                     </div>
-                    <h3 className="text-sm font-bold text-gray-900 mb-1">Nenhuma construtora encontrada</h3>
-                    <p className="text-xs text-gray-500 mb-6">Cadastre construtoras para que elas sejam exibidas na página pública de Empreendimentos.</p>
+                    <h3 className="text-sm font-bold mb-1" style={{ color: T.text }}>Nenhuma construtora encontrada</h3>
+                    <p className="text-xs mb-6" style={{ color: T.textMuted }}>Cadastre construtoras para que elas sejam exibidas na página pública de Empreendimentos.</p>
                     <button
                         onClick={() => router.push('/backoffice/construtoras/nova')}
-                        className="inline-flex items-center gap-2 h-10 px-5 bg-[#102A43] text-white rounded-xl text-sm font-medium hover:bg-[#16162A]"
+                        className="inline-flex items-center gap-2 h-10 px-5 text-white rounded-xl text-sm font-medium hover:brightness-110 transition-colors"
+                        style={{ background: T.accent }}
                     >
                         <Plus size={16} />
                         Nova Construtora

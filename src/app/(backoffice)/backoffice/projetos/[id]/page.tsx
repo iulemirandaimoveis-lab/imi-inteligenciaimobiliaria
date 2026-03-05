@@ -18,6 +18,16 @@ import {
     ExternalLink,
 } from 'lucide-react'
 
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
+
 // ⚠️ NÃO MODIFICAR - Dados mockados
 const projetoData = {
     id: 1,
@@ -80,9 +90,9 @@ export default function ProjetoDetalhePage() {
     const progressCaptacao = (projetoData.captacaoAtual / projetoData.captacaoAlvo) * 100
 
     const milestoneStatus = (s: string) => {
-        if (s === 'concluido') return { icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50' }
-        if (s === 'andamento') return { icon: Clock, color: 'text-blue-600', bg: 'bg-blue-50' }
-        return { icon: Clock, color: 'text-gray-400', bg: 'bg-gray-100' }
+        if (s === 'concluido') return { icon: CheckCircle, color: '#10B981', bg: 'rgba(16,185,129,0.1)' }
+        if (s === 'andamento') return { icon: Clock, color: '#3B82F6', bg: 'rgba(59,130,246,0.1)' }
+        return { icon: Clock, color: T.textMuted, bg: T.elevated }
     }
 
     return (
@@ -90,17 +100,19 @@ export default function ProjetoDetalhePage() {
             {/* Header */}
             <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
-                    <button onClick={() => router.back()} className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition-colors">
+                    <button onClick={() => router.back()}
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+                        style={{ border: `1px solid ${T.border}`, color: T.text, background: T.surface }}>
                         <ArrowLeft size={20} />
                     </button>
                     <div>
                         <div className="flex items-center gap-3 mb-1">
-                            <h1 className="text-2xl font-bold text-gray-900">{projetoData.nome}</h1>
-                            <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium">
+                            <h1 className="text-2xl font-bold" style={{ color: T.text }}>{projetoData.nome}</h1>
+                            <span className="px-3 py-1 rounded-lg text-xs font-medium bg-blue-500/10 text-blue-400">
                                 {projetoData.statusLabel}
                             </span>
                         </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-2 text-sm" style={{ color: T.textMuted }}>
                             <MapPin size={14} />
                             {projetoData.localizacao}
                         </div>
@@ -111,15 +123,17 @@ export default function ProjetoDetalhePage() {
                         href={`https://${projetoData.website}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 h-11 px-5 border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-medium transition-colors"
+                        style={{ border: `1px solid ${T.border}`, color: T.text, background: T.surface }}
                     >
                         <Globe size={16} />
                         Website
-                        <ExternalLink size={14} className="text-gray-400" />
+                        <ExternalLink size={14} style={{ color: T.textMuted }} />
                     </a>
                     <button
                         onClick={() => router.push(`/backoffice/projetos/${params.id}/editar`)}
-                        className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] transition-colors"
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium transition-colors hover:brightness-110"
+                        style={{ background: T.accent }}
                     >
                         <Edit size={16} />
                         Editar
@@ -129,42 +143,42 @@ export default function ProjetoDetalhePage() {
 
             {/* KPIs */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl p-5 border">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">VGV</p>
-                    <p className="text-2xl font-bold text-[#0F0F1E]">{formatCurrency(projetoData.vgv)}</p>
+                <div className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>VGV</p>
+                    <p className="text-2xl font-bold" style={{ color: T.text }}>{formatCurrency(projetoData.vgv)}</p>
                 </div>
-                <div className="bg-white rounded-xl p-5 border">
-                    <p className="text-xs text-green-600 uppercase tracking-wider mb-2">Captação</p>
-                    <p className="text-2xl font-bold text-green-700">{formatCurrency(projetoData.captacaoAtual)}</p>
-                    <p className="text-xs text-gray-400 mt-1">de {formatCurrency(projetoData.captacaoAlvo)} ({progressCaptacao.toFixed(0)}%)</p>
+                <div className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs uppercase tracking-wider mb-2 text-green-500">Captação</p>
+                    <p className="text-2xl font-bold text-green-500">{formatCurrency(projetoData.captacaoAtual)}</p>
+                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>de {formatCurrency(projetoData.captacaoAlvo)} ({progressCaptacao.toFixed(0)}%)</p>
                 </div>
-                <div className="bg-white rounded-xl p-5 border">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Unidades</p>
-                    <p className="text-2xl font-bold text-gray-900">{projetoData.unidades}</p>
+                <div className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>Unidades</p>
+                    <p className="text-2xl font-bold" style={{ color: T.text }}>{projetoData.unidades}</p>
                 </div>
-                <div className="bg-white rounded-xl p-5 border">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Área Preservação</p>
-                    <p className="text-2xl font-bold text-gray-900">{projetoData.areaPreservacao}</p>
+                <div className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-xs uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>Área Preservação</p>
+                    <p className="text-2xl font-bold" style={{ color: T.text }}>{projetoData.areaPreservacao}</p>
                 </div>
             </div>
 
             {/* Barra de captação */}
-            <div className="bg-white rounded-xl p-5 border">
+            <div className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-gray-700">Progresso de Captação — Fase 1</span>
-                    <span className="text-sm font-bold text-gray-900">{progressCaptacao.toFixed(0)}%</span>
+                    <span className="text-sm font-medium" style={{ color: T.text }}>Progresso de Captação — Fase 1</span>
+                    <span className="text-sm font-bold" style={{ color: T.text }}>{progressCaptacao.toFixed(0)}%</span>
                 </div>
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#102A43] rounded-full transition-all" style={{ width: `${progressCaptacao}%` }} />
+                <div className="h-3 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                    <div className="h-full rounded-full transition-all" style={{ width: `${progressCaptacao}%`, background: T.accent }} />
                 </div>
-                <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+                <div className="flex items-center justify-between mt-2 text-xs" style={{ color: T.textMuted }}>
                     <span>{formatCurrency(projetoData.captacaoAtual)} captados</span>
                     <span>Meta: {formatCurrency(projetoData.captacaoAlvo)}</span>
                 </div>
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-gray-200">
+            <div style={{ borderBottom: `1px solid ${T.border}` }}>
                 <div className="flex gap-6">
                     {[
                         { key: 'overview', label: 'Visão Geral' },
@@ -175,8 +189,11 @@ export default function ProjetoDetalhePage() {
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key as any)}
-                            className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key ? 'border-[#334E68] text-[#486581]' : 'border-transparent text-gray-600 hover:text-gray-900'
-                                }`}
+                            className="pb-4 px-2 text-sm font-medium border-b-2 transition-colors"
+                            style={{
+                                borderBottomColor: activeTab === tab.key ? T.accent : 'transparent',
+                                color: activeTab === tab.key ? T.accent : T.textMuted,
+                            }}
                         >
                             {tab.label}
                         </button>
@@ -188,54 +205,56 @@ export default function ProjetoDetalhePage() {
             {activeTab === 'overview' && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-white rounded-2xl p-6 border">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">Sobre o Projeto</h2>
-                            <p className="text-sm text-gray-700 leading-relaxed">{projetoData.descricao}</p>
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Sobre o Projeto</h2>
+                            <p className="text-sm leading-relaxed" style={{ color: T.textMuted }}>{projetoData.descricao}</p>
                         </div>
-                        <div className="bg-white rounded-2xl p-6 border">
-                            <h2 className="text-lg font-bold text-gray-900 mb-4">Parceiros</h2>
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Parceiros</h2>
                             <div className="space-y-3">
                                 {projetoData.parceiros.map((p, i) => (
-                                    <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                                        <span className="text-sm font-medium text-gray-900">{p.nome}</span>
-                                        <span className="text-xs text-gray-500">{p.papel}</span>
+                                    <div key={i} className="flex items-center justify-between py-2"
+                                        style={{ borderBottom: i < projetoData.parceiros.length - 1 ? `1px solid ${T.border}` : 'none' }}>
+                                        <span className="text-sm font-medium" style={{ color: T.text }}>{p.nome}</span>
+                                        <span className="text-xs" style={{ color: T.textMuted }}>{p.papel}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </div>
                     <div className="space-y-6">
-                        <div className="bg-white rounded-2xl p-6 border">
-                            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Detalhes</h2>
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Detalhes</h2>
                             <div className="space-y-3 text-sm">
                                 <div>
-                                    <p className="text-xs text-gray-500 mb-1">Tipo</p>
-                                    <p className="font-medium text-gray-900">{projetoData.tipo}</p>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Tipo</p>
+                                    <p className="font-medium" style={{ color: T.text }}>{projetoData.tipo}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500 mb-1">Área Total</p>
-                                    <p className="font-medium text-gray-900">{projetoData.areaTotal}</p>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Área Total</p>
+                                    <p className="font-medium" style={{ color: T.text }}>{projetoData.areaTotal}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500 mb-1">Lançamento</p>
-                                    <p className="font-medium text-gray-900">{new Date(projetoData.dataLancamento).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</p>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Lançamento</p>
+                                    <p className="font-medium" style={{ color: T.text }}>{new Date(projetoData.dataLancamento).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500 mb-1">Entrega Prevista</p>
-                                    <p className="font-medium text-gray-900">{new Date(projetoData.dataEntrega).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</p>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Entrega Prevista</p>
+                                    <p className="font-medium" style={{ color: T.text }}>{new Date(projetoData.dataEntrega).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-500 mb-1">Investidores-Alvo</p>
-                                    <p className="font-medium text-gray-900">{projetoData.investidoresAlvo}</p>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Investidores-Alvo</p>
+                                    <p className="font-medium" style={{ color: T.text }}>{projetoData.investidoresAlvo}</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white rounded-2xl p-6 border">
-                            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Documentos</h2>
-                            <button className="flex items-center gap-3 w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-sm">
-                                <FileText size={16} className="text-[#486581]" />
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>Documentos</h2>
+                            <button className="flex items-center gap-3 w-full p-3 rounded-lg transition-colors text-sm"
+                                style={{ border: `1px solid ${T.border}`, color: T.text, background: T.elevated }}>
+                                <FileText size={16} style={{ color: T.accent }} />
                                 <span>Pitch Deck v4</span>
-                                <ExternalLink size={14} className="text-gray-400 ml-auto" />
+                                <ExternalLink size={14} className="ml-auto" style={{ color: T.textMuted }} />
                             </button>
                         </div>
                     </div>
@@ -244,22 +263,25 @@ export default function ProjetoDetalhePage() {
 
             {/* Tab: Milestones */}
             {activeTab === 'milestones' && (
-                <div className="bg-white rounded-2xl p-6 border">
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="space-y-4">
                         {projetoData.milestones.map((m, i) => {
                             const sc = milestoneStatus(m.status)
                             const StatusIcon = sc.icon
                             return (
-                                <div key={i} className="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${sc.bg}`}>
-                                        <StatusIcon size={20} className={sc.color} />
+                                <div key={i} className="flex items-center gap-4 p-4 rounded-xl transition-colors"
+                                    style={{ background: T.elevated }}>
+                                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                                        style={{ background: sc.bg }}>
+                                        <StatusIcon size={20} style={{ color: sc.color }} />
                                     </div>
                                     <div className="flex-1">
-                                        <p className={`text-sm font-medium ${m.status === 'concluido' ? 'text-gray-900' : m.status === 'andamento' ? 'text-gray-900' : 'text-gray-500'}`}>
+                                        <p className="text-sm font-medium"
+                                            style={{ color: m.status === 'pendente' ? T.textMuted : T.text }}>
                                             {m.label}
                                         </p>
                                     </div>
-                                    <span className="text-xs text-gray-400">
+                                    <span className="text-xs" style={{ color: T.textMuted }}>
                                         {new Date(m.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                                     </span>
                                 </div>
@@ -273,15 +295,16 @@ export default function ProjetoDetalhePage() {
             {activeTab === 'investidores' && (
                 <div className="space-y-4">
                     {projetoData.investidores.map((inv, i) => (
-                        <div key={i} className="bg-white rounded-xl p-5 border flex items-center gap-4">
+                        <div key={i} className="rounded-xl p-5 flex items-center gap-4"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <span className="text-2xl">{inv.pais}</span>
                             <div className="flex-1">
-                                <p className="font-semibold text-gray-900">{inv.nome}</p>
+                                <p className="font-semibold" style={{ color: T.text }}>{inv.nome}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-lg font-bold text-[#0F0F1E]">{formatCurrency(inv.alocacao)}</p>
+                                <p className="text-lg font-bold" style={{ color: T.text }}>{formatCurrency(inv.alocacao)}</p>
                             </div>
-                            <span className={`px-3 py-1 rounded-lg text-xs font-medium ${inv.status === 'confirmado' ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700'
+                            <span className={`px-3 py-1 rounded-lg text-xs font-medium ${inv.status === 'confirmado' ? 'bg-green-500/10 text-green-400' : 'bg-orange-500/10 text-orange-400'
                                 }`}>
                                 {inv.status === 'confirmado' ? 'Confirmado' : 'Em análise'}
                             </span>
@@ -292,31 +315,33 @@ export default function ProjetoDetalhePage() {
 
             {/* Tab: Landing */}
             {activeTab === 'landing' && (
-                <div className="bg-white rounded-2xl p-6 border">
-                    <h2 className="text-lg font-bold text-gray-900 mb-4">Landing Page do Projeto</h2>
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Landing Page do Projeto</h2>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">URL</label>
+                            <label className="block text-xs font-medium uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>URL</label>
                             <div className="flex items-center gap-3">
                                 <input
                                     type="text"
                                     value={projetoData.website}
                                     readOnly
-                                    className="flex-1 h-11 px-4 border border-gray-200 rounded-xl bg-gray-50 text-sm"
+                                    className="flex-1 h-11 px-4 rounded-xl text-sm outline-none"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                 />
                                 <a
                                     href={`https://${projetoData.website}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="h-11 px-5 bg-[#16162A] text-white rounded-xl text-sm font-medium hover:bg-[#0F0F1E] transition-colors flex items-center gap-2"
+                                    className="h-11 px-5 text-white rounded-xl text-sm font-medium transition-colors flex items-center gap-2 hover:brightness-110"
+                                    style={{ background: T.accent }}
                                 >
                                     <Globe size={16} />
                                     Abrir
                                 </a>
                             </div>
                         </div>
-                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                            <p className="text-sm text-blue-800">
+                        <div className="p-4 rounded-xl" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                            <p className="text-sm" style={{ color: '#93C5FD' }}>
                                 💡 A landing page do Reserva Imperial é gerenciada separadamente. Para editar o conteúdo, acesse o CMS ou entre em contato com a equipe de desenvolvimento.
                             </p>
                         </div>

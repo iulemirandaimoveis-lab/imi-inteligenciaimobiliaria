@@ -2,7 +2,7 @@
 // ── Salva contrato: Supabase Storage + Google Drive (se config) ──
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -108,17 +108,9 @@ export async function POST(req: NextRequest) {
       notas,
     } = await req.json()
 
-    const supabaseUrl     = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-    const supabaseKey     = process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
     const gdriveFolder    = process.env.GDRIVE_FOLDER_ID
     const gdriveJson      = process.env.GDRIVE_SERVICE_ACCOUNT_JSON
     const ano             = new Date().getFullYear()
-
-    if (!supabaseUrl || !supabaseKey) {
-      return NextResponse.json({ error: 'Supabase não configurado' }, { status: 500 })
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey)
 
     // ── Gera HTML do contrato principal ────────────────────
     const htmlContent = markdownToHtmlDoc(conteudo_markdown, idioma_primario, numero, criado_por_nome)
@@ -131,11 +123,11 @@ export async function POST(req: NextRequest) {
     const htmlPath = `${ano}/${numero}.html`
     const mdPath   = `${ano}/${numero}.md`
 
-    await supabase.storage.from('contratos').upload(htmlPath, htmlBuffer, { contentType: 'text/html', upsert: true })
-    await supabase.storage.from('contratos').upload(mdPath, mdBuffer, { contentType: 'text/markdown', upsert: true })
+    await supabaseAdmin.storage.from('contratos').upload(htmlPath, htmlBuffer, { contentType: 'text/html', upsert: true })
+    await supabaseAdmin.storage.from('contratos').upload(mdPath, mdBuffer, { contentType: 'text/markdown', upsert: true })
 
-    const { data: { publicUrl: htmlUrl } } = supabase.storage.from('contratos').getPublicUrl(htmlPath)
-    const { data: { publicUrl: mdUrl   } } = supabase.storage.from('contratos').getPublicUrl(mdPath)
+    const { data: { publicUrl: htmlUrl } } = supabaseAdmin.storage.from('contratos').getPublicUrl(htmlPath)
+    const { data: { publicUrl: mdUrl   } } = supabaseAdmin.storage.from('contratos').getPublicUrl(mdPath)
 
     results.supabase = { html_url: htmlUrl, md_url: mdUrl }
 
@@ -160,12 +152,12 @@ export async function POST(req: NextRequest) {
         if (!conteudo) continue
         const langBuffer = Buffer.from(conteudo as string, 'utf-8')
         const langPath   = `${ano}/${numero}_${lang}.md`
-        await supabase.storage.from('contratos').upload(langPath, langBuffer, { contentType: 'text/markdown', upsert: true })
+        await supabaseAdmin.storage.from('contratos').upload(langPath, langBuffer, { contentType: 'text/markdown', upsert: true })
       }
     }
 
     // ── Salva no banco ────────────────────────────────────
-    const { data: contrato, error: dbError } = await supabase
+    const { data: contrato, error: dbError } = await supabaseAdmin
       .from('contratos')
       .insert({
         numero,

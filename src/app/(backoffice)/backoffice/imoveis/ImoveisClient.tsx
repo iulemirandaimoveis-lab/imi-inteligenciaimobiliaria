@@ -12,6 +12,16 @@ import {
 import Link from 'next/link'
 import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
 
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
+
 const STATUS_CONFIG = {
   disponivel: { label: 'Disponível', color: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-500' },
   ready: { label: 'Pronto', color: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-500' },
@@ -58,8 +68,8 @@ export default function ImoveisClient({ developments }: { developments: Developm
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Portfólio / Empreendimentos</h1>
-          <p className="text-xs text-gray-500 mt-0.5">Gestão Global IMI • {developments.length} ativos comerciais listados</p>
+          <h1 className="text-xl font-bold" style={{ color: T.text }}>Portfólio / Empreendimentos</h1>
+          <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Gestão Global IMI • {developments.length} ativos comerciais listados</p>
         </div>
         <div className="flex gap-2">
           <Link href="/backoffice/imoveis/novo"
@@ -73,42 +83,57 @@ export default function ImoveisClient({ developments }: { developments: Developm
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { l: 'VGV Global (Est.)', v: formatCurrency(totalValor), icon: DollarSign, c: 'text-[#486581] bg-[#102A43]/10' },
-          { l: 'Lançamentos', v: developments.filter(i => i.status === 'launch').length, icon: Activity, c: 'text-blue-600 bg-blue-50' },
-          { l: 'Em Destaque (Premium)', v: developments.filter(i => i.isHighlighted).length, icon: Star, c: 'text-amber-500 bg-amber-50' },
-          { l: 'Prontos / Disponíveis', v: developments.filter(i => i.status === 'ready').length, icon: CheckCircle, c: 'text-emerald-600 bg-emerald-50' },
+          { l: 'Lançamentos', v: developments.filter(i => i.status === 'launch').length, icon: Activity, c: 'text-blue-400 bg-blue-500/10' },
+          { l: 'Em Destaque (Premium)', v: developments.filter(i => i.isHighlighted).length, icon: Star, c: 'text-amber-400 bg-amber-500/10' },
+          { l: 'Prontos / Disponíveis', v: developments.filter(i => i.status === 'ready').length, icon: CheckCircle, c: 'text-emerald-400 bg-emerald-500/10' },
         ].map((kpi, idx) => {
           const Icon = kpi.icon
           return (
-            <div key={idx} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <div key={idx} className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${kpi.c}`}>
                 <Icon size={16} />
               </div>
-              <p className="text-xl font-bold text-gray-900 truncate">{kpi.v}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{kpi.l}</p>
+              <p className="text-xl font-bold truncate" style={{ color: T.text }}>{kpi.v}</p>
+              <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{kpi.l}</p>
             </div>
           )
         })}
       </div>
 
       {/* Barra de busca e filtros */}
-      <div className="space-y-3 bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+      <div className="space-y-3 p-3 rounded-xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex flex-col sm:flex-row items-center gap-2">
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: T.textMuted }} />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Buscar construtora, ativo, bairro..."
-              className="w-full h-10 pl-9 pr-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all" />
+              className="w-full h-10 pl-9 pr-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] transition-all"
+              style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
             <button onClick={() => setShowFilters(!showFilters)}
-              className={`flex-1 sm:flex-none flex justify-center items-center gap-2 h-10 px-4 border rounded-xl text-sm font-medium transition-colors ${showFilters ? 'border-[#334E68] text-[#486581] bg-[#102A43]/5' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+              className="flex-1 sm:flex-none flex justify-center items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors"
+              style={showFilters
+                ? { border: `1px solid ${T.accent}`, color: T.accent, background: 'rgba(72,101,129,0.1)' }
+                : { border: `1px solid ${T.border}`, color: T.textMuted, background: T.elevated }
+              }>
               <SlidersHorizontal size={16} /> Filtros
             </button>
-            <div className="flex border border-gray-200 rounded-xl overflow-hidden shrink-0">
-              <button onClick={() => setViewMode('grid')} className={`w-10 h-10 flex items-center justify-center transition-colors ${viewMode === 'grid' ? 'bg-gray-900 text-white' : 'hover:bg-gray-50'}`}>
+            <div className="flex rounded-xl overflow-hidden shrink-0" style={{ border: `1px solid ${T.border}` }}>
+              <button onClick={() => setViewMode('grid')}
+                className="w-10 h-10 flex items-center justify-center transition-colors"
+                style={viewMode === 'grid'
+                  ? { background: T.text, color: T.surface }
+                  : { background: T.elevated, color: T.textMuted }
+                }>
                 <Grid3X3 size={16} />
               </button>
-              <button onClick={() => setViewMode('list')} className={`w-10 h-10 flex items-center justify-center transition-colors ${viewMode === 'list' ? 'bg-gray-900 text-white' : 'hover:bg-gray-50'}`}>
+              <button onClick={() => setViewMode('list')}
+                className="w-10 h-10 flex items-center justify-center transition-colors"
+                style={viewMode === 'list'
+                  ? { background: T.text, color: T.surface }
+                  : { background: T.elevated, color: T.textMuted }
+                }>
                 <List size={16} />
               </button>
             </div>
@@ -117,26 +142,30 @@ export default function ImoveisClient({ developments }: { developments: Developm
 
         {/* Filtros avançados */}
         {showFilters && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3" style={{ borderTop: `1px solid ${T.border}` }}>
             <div>
-              <label className="text-xs text-gray-500 block mb-1 font-medium">Preço mínimo</label>
+              <label className="text-xs block mb-1 font-medium" style={{ color: T.textMuted }}>Preço mínimo</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-semibold">R$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold" style={{ color: T.textMuted }}>R$</span>
                 <input type="number" value={precoMin} onChange={e => setPrecoMin(e.target.value)} placeholder="0"
-                  className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#334E68] focus:outline-none" />
+                  className="w-full h-9 pl-8 pr-3 rounded-lg text-sm focus:ring-1 focus:ring-[#334E68] focus:outline-none"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
               </div>
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-1 font-medium">Preço máximo</label>
+              <label className="text-xs block mb-1 font-medium" style={{ color: T.textMuted }}>Preço máximo</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-semibold">R$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold" style={{ color: T.textMuted }}>R$</span>
                 <input type="number" value={precoMax} onChange={e => setPrecoMax(e.target.value)} placeholder="Sem limite"
-                  className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#334E68] focus:outline-none" />
+                  className="w-full h-9 pl-8 pr-3 rounded-lg text-sm focus:ring-1 focus:ring-[#334E68] focus:outline-none"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
               </div>
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-1 font-medium">Status de Obra</label>
-              <select value={status} onChange={e => setStatus(e.target.value)} className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-[#334E68] focus:outline-none bg-white">
+              <label className="text-xs block mb-1 font-medium" style={{ color: T.textMuted }}>Status de Obra</label>
+              <select value={status} onChange={e => setStatus(e.target.value)}
+                className="w-full h-9 px-3 rounded-lg text-sm focus:ring-1 focus:ring-[#334E68] focus:outline-none"
+                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                 <option value="todos">Todos</option>
                 <option value="launch">Lançamento</option>
                 <option value="under_construction">Em Construção</option>
@@ -147,7 +176,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
         )}
       </div>
 
-      <p className="text-xs text-gray-500 font-medium">{filtered.length} imóveis/empreendimentos encontrados</p>
+      <p className="text-xs font-medium" style={{ color: T.textMuted }}>{filtered.length} imóveis/empreendimentos encontrados</p>
 
       {/* Grid View */}
       {viewMode === 'grid' && (
@@ -157,13 +186,14 @@ export default function ImoveisClient({ developments }: { developments: Developm
             const Stt = STATUS_CONFIG[statusKey] || STATUS_CONFIG['em_negociacao'];
 
             return (
-              <div key={im.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group flex flex-col h-full">
+              <div key={im.id} className="rounded-2xl overflow-hidden hover:shadow-lg transition-all group flex flex-col h-full"
+                style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 {/* Photo Header */}
-                <div className="relative h-48 bg-gray-100 overflow-hidden shrink-0">
+                <div className="relative h-48 overflow-hidden shrink-0" style={{ background: T.elevated }}>
                   {im.images.main ? (
                     <img src={im.images.main} alt={im.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 uppercase text-gray-400 font-bold text-lg">{im.developer?.slice(0, 3)}</div>
+                    <div className="absolute inset-0 flex items-center justify-center uppercase font-bold text-lg" style={{ color: T.textMuted }}>{im.developer?.slice(0, 3)}</div>
                   )}
 
                   <div className="absolute top-3 left-3 flex gap-2">
@@ -191,27 +221,28 @@ export default function ImoveisClient({ developments }: { developments: Developm
 
                 {/* Body Content */}
                 <div className="p-4 flex flex-col flex-1">
-                  <p className="text-[10px] text-gray-400 font-mono mb-1 uppercase tracking-wider">{im.slug.slice(0, 15)}</p>
-                  <h3 className="font-bold text-gray-900 text-sm leading-tight mb-2 line-clamp-2">{im.name}</h3>
-                  <p className="text-xs text-gray-500 flex items-center gap-1.5 mb-3">
-                    <MapPin size={12} className="text-[#486581]" /> <span className="truncate">{im.location.neighborhood}, {im.location.city}</span>
+                  <p className="text-[10px] font-mono mb-1 uppercase tracking-wider" style={{ color: T.textMuted }}>{im.slug.slice(0, 15)}</p>
+                  <h3 className="font-bold text-sm leading-tight mb-2 line-clamp-2" style={{ color: T.text }}>{im.name}</h3>
+                  <p className="text-xs flex items-center gap-1.5 mb-3" style={{ color: T.textMuted }}>
+                    <MapPin size={12} style={{ color: T.accent }} /> <span className="truncate">{im.location.neighborhood}, {im.location.city}</span>
                   </p>
 
-                  <div className="flex items-center gap-3 text-xs text-gray-600 mb-4 bg-gray-50 p-2 rounded-lg">
-                    <span className="flex items-center gap-1" title="Área"><Ruler size={13} className="text-gray-400" /> {im.specs.areaRange}</span>
-                    <span className="flex items-center gap-1" title="Quartos"><Bed size={13} className="text-gray-400" /> {im.specs.bedroomsRange}</span>
+                  <div className="flex items-center gap-3 text-xs mb-4 p-2 rounded-lg" style={{ background: T.elevated, color: T.textMuted }}>
+                    <span className="flex items-center gap-1" title="Área"><Ruler size={13} style={{ color: T.textMuted }} /> {im.specs.areaRange}</span>
+                    <span className="flex items-center gap-1" title="Quartos"><Bed size={13} style={{ color: T.textMuted }} /> {im.specs.bedroomsRange}</span>
                   </div>
 
-                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <div className="mt-auto pt-3 flex items-center justify-between" style={{ borderTop: `1px solid ${T.border}` }}>
                     <div>
-                      <p className="text-xs text-gray-400 mb-0.5">A partir de</p>
-                      <p className="text-base font-black text-gray-900 tracking-tight">
+                      <p className="text-xs mb-0.5" style={{ color: T.textMuted }}>A partir de</p>
+                      <p className="text-base font-black tracking-tight" style={{ color: T.text }}>
                         {im.priceRange.min > 0 ? formatCurrency(im.priceRange.min) : 'Sob Consulta'}
                       </p>
                     </div>
                     <div className="flex gap-1.5">
                       <Link href={`/imoveis/${im.slug}`} target="_blank"
-                        className="w-8 h-8 rounded-full bg-gray-50 text-gray-400 flex items-center justify-center hover:bg-[#102A43] hover:text-white transition-colors">
+                        className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-[#102A43] hover:text-white"
+                        style={{ background: T.elevated, color: T.textMuted }}>
                         <ExternalLink size={14} />
                       </Link>
                     </div>
@@ -225,18 +256,22 @@ export default function ImoveisClient({ developments }: { developments: Developm
 
       {/* List View */}
       {viewMode === 'list' && (
-        <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100 shadow-sm">
-          {filtered.map(im => {
+        <div className="rounded-xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          {filtered.map((im, idx) => {
             const statusKey = im.status as keyof typeof STATUS_CONFIG;
             const Stt = STATUS_CONFIG[statusKey] || STATUS_CONFIG['em_negociacao'];
 
             return (
-              <div key={im.id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 hover:bg-gray-50 transition-colors group">
-                <div className="w-full sm:w-20 sm:h-20 h-32 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 overflow-hidden relative">
+              <div key={im.id}
+                className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 transition-colors group"
+                style={{
+                  borderTop: idx > 0 ? `1px solid ${T.border}` : undefined,
+                }}>
+                <div className="w-full sm:w-20 sm:h-20 h-32 rounded-lg flex items-center justify-center shrink-0 overflow-hidden relative" style={{ background: T.elevated }}>
                   {im.images.main ? (
                     <img src={im.images.main} alt={im.name} className="w-full h-full object-cover" />
                   ) : (
-                    <Building2 size={24} className="text-gray-300" />
+                    <Building2 size={24} style={{ color: T.textMuted }} />
                   )}
                   {im.isHighlighted && <div className="absolute top-1 right-1 bg-black/50 p-1 rounded"><Star size={10} className="text-yellow-400 fill-current" /></div>}
                 </div>
@@ -244,10 +279,11 @@ export default function ImoveisClient({ developments }: { developments: Developm
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${Stt.color}`}>{Stt.label}</span>
-                    <span className="text-xs font-medium text-[#486581] bg-[#102A43]/10 px-2 py-0.5 rounded-full truncate max-w-[150px]">{im.developer}</span>
+                    <span className="text-xs font-medium px-2 py-0.5 rounded-full truncate max-w-[150px]"
+                      style={{ color: T.accent, background: 'rgba(72,101,129,0.1)' }}>{im.developer}</span>
                   </div>
-                  <p className="text-sm font-bold text-gray-900 truncate mb-1">{im.name}</p>
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                  <p className="text-sm font-bold truncate mb-1" style={{ color: T.text }}>{im.name}</p>
+                  <div className="flex flex-wrap items-center gap-3 text-xs" style={{ color: T.textMuted }}>
                     <span className="flex items-center gap-1"><MapPin size={11} /> {im.location.neighborhood}</span>
                     <span className="flex items-center gap-1"><Ruler size={11} /> {im.specs.areaRange}</span>
                     <span className="flex items-center gap-1"><Bed size={11} /> {im.specs.bedroomsRange} quartos</span>
@@ -256,14 +292,15 @@ export default function ImoveisClient({ developments }: { developments: Developm
 
                 <div className="sm:text-right flex sm:flex-col justify-between items-center sm:items-end w-full sm:w-auto mt-2 sm:mt-0">
                   <div>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5 sm:block hidden">A partir de</p>
-                    <p className="text-base font-black text-gray-900">
+                    <p className="text-[10px] uppercase tracking-wider mb-0.5 sm:block hidden" style={{ color: T.textMuted }}>A partir de</p>
+                    <p className="text-base font-black" style={{ color: T.text }}>
                       {im.priceRange.min > 0 ? formatCurrency(im.priceRange.min) : 'Consulta'}
                     </p>
                   </div>
                   <div className="flex items-center gap-1.5 sm:mt-2">
                     <Link href={`/imoveis/${im.slug}`} target="_blank"
-                      className="h-8 px-3 rounded-lg border border-gray-200 text-gray-500 flex items-center gap-2 text-xs font-semibold hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-colors">
+                      className="h-8 px-3 rounded-lg flex items-center gap-2 text-xs font-semibold transition-colors hover:bg-[#102A43] hover:text-white"
+                      style={{ border: `1px solid ${T.border}`, color: T.textMuted }}>
                       VER <ExternalLink size={12} />
                     </Link>
                   </div>
@@ -275,12 +312,12 @@ export default function ImoveisClient({ developments }: { developments: Developm
       )}
 
       {filtered.length === 0 && (
-        <div className="py-16 text-center bg-white rounded-2xl border border-gray-100 border-dashed">
-          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Search size={24} className="text-gray-300" />
+        <div className="py-16 text-center rounded-2xl border-dashed" style={{ background: T.surface, border: `2px dashed ${T.border}` }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: T.elevated }}>
+            <Search size={24} style={{ color: T.textMuted }} />
           </div>
-          <h3 className="text-sm font-bold text-gray-900 mb-1">Nenhum imóvel encontrado</h3>
-          <p className="text-xs text-gray-500 max-w-sm mx-auto">Tente ajustar os filtros ou os termos da busca para encontrar os empreendimentos do portfólio.</p>
+          <h3 className="text-sm font-bold mb-1" style={{ color: T.text }}>Nenhum imóvel encontrado</h3>
+          <p className="text-xs max-w-sm mx-auto" style={{ color: T.textMuted }}>Tente ajustar os filtros ou os termos da busca para encontrar os empreendimentos do portfólio.</p>
         </div>
       )}
     </div>

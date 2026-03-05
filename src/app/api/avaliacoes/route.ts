@@ -1,12 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
-
 export async function GET(request: NextRequest) {
-    const supabase = getSupabase()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
     const status = searchParams.get('status')
@@ -24,22 +20,36 @@ export async function GET(request: NextRequest) {
     }
 
     // List all
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 250)
+    const offset = (page - 1) * limit
+
     let query = supabase
         .from('avaliacoes')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
 
     if (status && status !== 'todos') {
         query = query.eq('status', status)
     }
 
-    const { data, error } = await query
+    query = query.range(offset, offset + limit - 1)
+
+    const { data, error, count } = await query
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-    return NextResponse.json({ data })
+    return NextResponse.json({
+        data,
+        pagination: {
+            page,
+            limit,
+            total: count || 0,
+            pages: Math.ceil((count || 0) / limit),
+        },
+    })
 }
 
 export async function POST(request: NextRequest) {
-    const supabase = getSupabase()
+    const supabase = await createClient()
     const body = await request.json()
 
     const payload: Record<string, any> = {
@@ -94,7 +104,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-    const supabase = getSupabase()
+    const supabase = await createClient()
     const body = await request.json()
     const { id, ...updates } = body
 
@@ -114,7 +124,7 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-    const supabase = getSupabase()
+    const supabase = await createClient()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 

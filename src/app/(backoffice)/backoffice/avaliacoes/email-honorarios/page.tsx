@@ -136,6 +136,16 @@ Recife/PE • (81) 9 9723-0455
 www.iulemirandaimoveis.com.br`
 }
 
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
+
 // ── Component ─────────────────────────────────────────────────
 export default function EmailHonorariosPage() {
   const router = useRouter()
@@ -230,25 +240,26 @@ export default function EmailHonorariosPage() {
       {/* Header */}
       <div className="flex items-center gap-3">
         <button onClick={() => router.back()}
-          className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50">
+          className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ border: `1px solid ${T.border}` }}>
           <ArrowLeft size={16} />
         </button>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Interpretador de Email + Honorários</h1>
-          <p className="text-xs text-gray-500">IA analisa emails de tribunais, bancos e particulares e gera proposta automática</p>
+          <h1 className="text-xl font-bold" style={{ color: T.text }}>Interpretador de Email + Honorários</h1>
+          <p className="text-xs" style={{ color: T.textMuted }}>IA analisa emails de tribunais, bancos e particulares e gera proposta automática</p>
         </div>
       </div>
 
       {/* Input */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-4">
+      <div className="rounded-xl p-5 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <label className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-            <Mail size={15} className="text-[#486581]" /> Cole o email aqui
+          <label className="text-sm font-semibold flex items-center gap-2" style={{ color: T.text }}>
+            <Mail size={15} style={{ color: T.accent }} /> Cole o email aqui
           </label>
           <div className="flex gap-2">
             {EXEMPLOS.map(ex => (
               <button key={ex.label} onClick={() => setEmailText(ex.conteudo)}
-                className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg hover:border-[#334E68] hover:text-[#486581] transition-colors">
+                className="text-xs px-2.5 py-1 rounded-lg hover:border-[#334E68] hover:text-[#486581] transition-colors"
+                style={{ border: `1px solid ${T.border}`, color: T.textMuted }}>
                 {ex.label}
               </button>
             ))}
@@ -257,7 +268,8 @@ export default function EmailHonorariosPage() {
 
         <textarea value={emailText} onChange={e => setEmailText(e.target.value)}
           rows={7} placeholder="Cole aqui o conteúdo do email recebido do tribunal, banco ou cliente..."
-          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-[#334E68] resize-none" />
+          className="w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-[#334E68] resize-none"
+          style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
 
         {error && (
           <p className="text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">{error}</p>
@@ -274,22 +286,23 @@ export default function EmailHonorariosPage() {
       {/* Resultado */}
       {analysis && (
         <>
-          <div className="flex border-b border-gray-200">
+          <div className="flex" style={{ borderBottom: `1px solid ${T.border}` }}>
             {(['analise', 'resposta'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#334E68] text-[#486581]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#334E68] text-[#486581]' : 'border-transparent hover:text-gray-700'}`}
+                style={activeTab !== tab ? { color: T.textMuted } : undefined}>
                 {tab === 'analise' ? '📊 Análise do Email' : '✉ Rascunho de Resposta'}
               </button>
             ))}
           </div>
 
           {activeTab === 'analise' && (
-            <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-5">
+            <div className="rounded-xl p-5 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className="flex items-start justify-between gap-3 flex-wrap">
                 <div>
-                  <p className="font-bold text-gray-900">{analysis.solicitante}</p>
+                  <p className="font-bold" style={{ color: T.text }}>{analysis.solicitante}</p>
                   {analysis.observacoes_relevantes && (
-                    <p className="text-xs text-gray-500 mt-0.5">{analysis.observacoes_relevantes}</p>
+                    <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{analysis.observacoes_relevantes}</p>
                   )}
                 </div>
                 <div className="flex gap-2 flex-wrap">
@@ -313,12 +326,12 @@ export default function EmailHonorariosPage() {
                 ].map(item => {
                   const Icon = item.icon
                   return (
-                    <div key={item.label} className="p-3 bg-gray-50 rounded-xl">
+                    <div key={item.label} className="p-3 rounded-xl" style={{ background: T.elevated }}>
                       <div className="flex items-center gap-1.5 mb-1">
-                        <Icon size={12} className="text-gray-400" />
-                        <span className="text-xs text-gray-500">{item.label}</span>
+                        <Icon size={12} style={{ color: T.textMuted }} />
+                        <span className="text-xs" style={{ color: T.textMuted }}>{item.label}</span>
                       </div>
-                      <p className="text-sm font-medium text-gray-900 capitalize">{item.value}</p>
+                      <p className="text-sm font-medium capitalize" style={{ color: T.text }}>{item.value}</p>
                     </div>
                   )
                 })}
@@ -331,15 +344,15 @@ export default function EmailHonorariosPage() {
                     <DollarSign size={14} /> Proposta de Honorários (IBAPE)
                   </p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:divide-x divide-gray-100 p-4 text-center">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 p-4 text-center" style={{ background: T.surface }}>
                   {[
-                    { l: 'Mínimo', v: analysis.honorariosMin, cls: 'text-gray-700' },
-                    { l: 'Recomendado', v: analysis.honorariosRec, cls: 'text-[#486581]' },
-                    { l: 'Máximo', v: analysis.honorariosMax, cls: 'text-gray-700' },
+                    { l: 'Mínimo', v: analysis.honorariosMin, cls: T.textMuted },
+                    { l: 'Recomendado', v: analysis.honorariosRec, cls: T.accent },
+                    { l: 'Máximo', v: analysis.honorariosMax, cls: T.textMuted },
                   ].map(h => (
                     <div key={h.l}>
-                      <p className="text-xs text-gray-500 mb-1">{h.l}</p>
-                      <p className={`text-xl font-bold ${h.cls}`}>{fmtCurrency(h.v)}</p>
+                      <p className="text-xs mb-1" style={{ color: T.textMuted }}>{h.l}</p>
+                      <p className={`text-xl font-bold`} style={{ color: h.cls === T.accent ? T.accent : T.text }}>{fmtCurrency(h.v)}</p>
                     </div>
                   ))}
                 </div>
@@ -351,7 +364,8 @@ export default function EmailHonorariosPage() {
                   <Mail size={15} /> Ver Rascunho
                 </button>
                 <button onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                  className="flex-1 h-10 border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                  className="flex-1 h-10 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                  style={{ border: `1px solid ${T.border}`, color: T.text }}>
                   <FileText size={15} /> Criar Avaliação
                 </button>
               </div>
@@ -359,24 +373,27 @@ export default function EmailHonorariosPage() {
           )}
 
           {activeTab === 'resposta' && (
-            <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-4">
+            <div className="rounded-xl p-5 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className="flex items-center justify-between">
-                <p className="text-sm font-bold text-gray-900">Rascunho de Proposta</p>
+                <p className="text-sm font-bold" style={{ color: T.text }}>Rascunho de Proposta</p>
                 <div className="flex gap-2">
                   <button onClick={() => setEditing(p => !p)}
-                    className="flex items-center gap-1.5 h-8 px-3 border border-gray-200 rounded-lg text-xs hover:bg-gray-50">
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs transition-colors"
+                    style={{ border: `1px solid ${T.border}`, color: T.text }}>
                     <Edit3 size={12} /> {editing ? 'Pré-visualizar' : 'Editar'}
                   </button>
                   <button onClick={copiar}
-                    className="flex items-center gap-1.5 h-8 px-3 border border-gray-200 rounded-lg text-xs hover:bg-gray-50">
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs transition-colors"
+                    style={{ border: `1px solid ${T.border}`, color: T.text }}>
                     {copied ? <><Check size={12} className="text-emerald-500" /> Copiado</> : <><Copy size={12} /> Copiar</>}
                   </button>
                 </div>
               </div>
               {editing
                 ? <textarea value={editedDraft} onChange={e => setEditedDraft(e.target.value)}
-                  rows={22} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-[#334E68] resize-none" />
-                : <pre className="whitespace-pre-wrap text-sm text-gray-800 bg-gray-50 rounded-xl p-4 font-sans leading-relaxed">{editing ? editedDraft : draft}</pre>
+                  rows={22} className="w-full px-3 py-2.5 rounded-xl text-sm font-mono focus:outline-none focus:border-[#334E68] resize-none"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
+                : <pre className="whitespace-pre-wrap text-sm rounded-xl p-4 font-sans leading-relaxed" style={{ background: T.elevated, color: T.text }}>{editing ? editedDraft : draft}</pre>
               }
             </div>
           )}

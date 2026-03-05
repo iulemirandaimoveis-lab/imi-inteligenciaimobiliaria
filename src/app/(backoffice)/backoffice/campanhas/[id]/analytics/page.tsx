@@ -23,6 +23,16 @@ import {
   Zap,
 } from 'lucide-react'
 
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
+
 // Mock data (seria carregado do Supabase)
 const mockCampaignData = {
   id: 1,
@@ -101,20 +111,21 @@ export default function CampanhaAnalyticsPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center"
+            className="w-10 h-10 rounded-lg flex items-center justify-center"
+            style={{ border: `1px solid ${T.border}` }}
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} style={{ color: T.text }} />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{campaign.name}</h1>
+            <h1 className="text-2xl font-bold" style={{ color: T.text }}>{campaign.name}</h1>
             <div className="flex items-center gap-3 mt-2">
               <span className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium">
                 ● Ativa
               </span>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm" style={{ color: T.textMuted }}>
                 {campaign.channel}
               </span>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm" style={{ color: T.textMuted }}>
                 {campaign.startDate} - {campaign.endDate}
               </span>
             </div>
@@ -122,11 +133,17 @@ export default function CampanhaAnalyticsPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="h-10 px-4 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 flex items-center gap-2">
+          <button
+            className="h-10 px-4 rounded-xl font-medium flex items-center gap-2"
+            style={{ border: `1px solid ${T.border}`, color: T.text }}
+          >
             <Download size={18} />
             Exportar
           </button>
-          <button className="h-10 px-4 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 flex items-center gap-2">
+          <button
+            className="h-10 px-4 rounded-xl font-medium flex items-center gap-2"
+            style={{ border: `1px solid ${T.border}`, color: T.text }}
+          >
             <Share2 size={18} />
             Compartilhar
           </button>
@@ -143,32 +160,32 @@ export default function CampanhaAnalyticsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Investimento */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
               <DollarSign size={20} className="text-blue-600" />
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-600">Orçamento</p>
-              <p className="text-sm font-medium text-gray-500">{formatCurrency(campaign.budget)}</p>
+              <p className="text-xs" style={{ color: T.textMuted }}>Orçamento</p>
+              <p className="text-sm font-medium" style={{ color: T.textMuted }}>{formatCurrency(campaign.budget)}</p>
             </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 mb-1">
+          <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>
             {formatCurrency(campaign.spent)}
           </p>
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
               <div
                 className="h-full bg-blue-500 transition-all"
                 style={{ width: `${budgetUsed}%` }}
               />
             </div>
-            <span className="text-xs font-medium text-gray-600">{budgetUsed.toFixed(0)}%</span>
+            <span className="text-xs font-medium" style={{ color: T.textMuted }}>{budgetUsed.toFixed(0)}%</span>
           </div>
         </div>
 
         {/* Leads */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
               <Users size={20} className="text-green-600" />
@@ -178,16 +195,16 @@ export default function CampanhaAnalyticsPage() {
               <span className="text-sm font-medium">+12%</span>
             </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 mb-1">
+          <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>
             {campaign.leads}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm" style={{ color: T.textMuted }}>
             Leads Gerados • CPL {formatCurrency(campaign.cpl)}
           </p>
         </div>
 
         {/* CTR */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
               <MousePointerClick size={20} className="text-purple-600" />
@@ -197,16 +214,16 @@ export default function CampanhaAnalyticsPage() {
               <span className="text-sm font-medium">+8%</span>
             </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 mb-1">
+          <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>
             {campaign.ctr.toFixed(1)}%
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm" style={{ color: T.textMuted }}>
             CTR • {formatNumber(campaign.clicks)} cliques
           </p>
         </div>
 
         {/* ROI */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
               <TrendingUp size={20} className="text-orange-600" />
@@ -216,10 +233,10 @@ export default function CampanhaAnalyticsPage() {
               <span className="text-sm font-medium">+24%</span>
             </div>
           </div>
-          <p className="text-2xl font-bold text-gray-900 mb-1">
+          <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>
             {campaign.roi}%
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm" style={{ color: T.textMuted }}>
             ROI • {campaign.conversions} conversões
           </p>
         </div>
@@ -228,24 +245,26 @@ export default function CampanhaAnalyticsPage() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Performance Diária */}
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-100">
+        <div className="lg:col-span-2 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Performance Diária</h3>
-              <p className="text-sm text-gray-600 mt-1">Últimos 7 dias</p>
+              <h3 className="text-lg font-bold" style={{ color: T.text }}>Performance Diária</h3>
+              <p className="text-sm mt-1" style={{ color: T.textMuted }}>Últimos 7 dias</p>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setTimeRange('7d')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === '7d' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === '7d' ? 'bg-blue-100 text-blue-700' : ''
                   }`}
+                style={timeRange !== '7d' ? { color: T.textMuted } : {}}
               >
                 7 dias
               </button>
               <button
                 onClick={() => setTimeRange('30d')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === '30d' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-100'
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${timeRange === '30d' ? 'bg-blue-100 text-blue-700' : ''
                   }`}
+                style={timeRange !== '30d' ? { color: T.textMuted } : {}}
               >
                 30 dias
               </button>
@@ -260,10 +279,10 @@ export default function CampanhaAnalyticsPage() {
 
               return (
                 <div key={index} className="flex items-center gap-4">
-                  <span className="text-xs font-medium text-gray-600 w-12">{stat.date}</span>
+                  <span className="text-xs font-medium w-12" style={{ color: T.textMuted }}>{stat.date}</span>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 h-8 bg-gray-100 rounded-lg overflow-hidden">
+                      <div className="flex-1 h-8 rounded-lg overflow-hidden" style={{ background: T.elevated }}>
                         <div
                           className="h-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-end pr-2"
                           style={{ width: `${width}%` }}
@@ -274,13 +293,13 @@ export default function CampanhaAnalyticsPage() {
                         </div>
                       </div>
                       {width <= 20 && (
-                        <span className="text-xs font-bold text-gray-900 w-6">{stat.leads}</span>
+                        <span className="text-xs font-bold w-6" style={{ color: T.text }}>{stat.leads}</span>
                       )}
                     </div>
                   </div>
                   <div className="text-right w-24">
-                    <p className="text-xs font-medium text-gray-900">{formatCurrency(stat.spent)}</p>
-                    <p className="text-xs text-gray-500">{formatNumber(stat.clicks)} cliques</p>
+                    <p className="text-xs font-medium" style={{ color: T.text }}>{formatCurrency(stat.spent)}</p>
+                    <p className="text-xs" style={{ color: T.textMuted }}>{formatNumber(stat.clicks)} cliques</p>
                   </div>
                 </div>
               )
@@ -288,23 +307,23 @@ export default function CampanhaAnalyticsPage() {
           </div>
 
           {/* Legend */}
-          <div className="flex items-center gap-6 mt-6 pt-6 border-t border-gray-100">
+          <div className="flex items-center gap-6 mt-6 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-blue-500" />
-              <span className="text-xs text-gray-600">Leads por dia</span>
+              <span className="text-xs" style={{ color: T.textMuted }}>Leads por dia</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-gray-300" />
-              <span className="text-xs text-gray-600">Investimento diário</span>
+              <div className="w-3 h-3 rounded-full" style={{ background: T.elevated }} />
+              <span className="text-xs" style={{ color: T.textMuted }}>Investimento diário</span>
             </div>
           </div>
         </div>
 
         {/* Device Distribution */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Por Dispositivo</h3>
-            <p className="text-sm text-gray-600 mt-1">Distribuição de leads</p>
+            <h3 className="text-lg font-bold" style={{ color: T.text }}>Por Dispositivo</h3>
+            <p className="text-sm mt-1" style={{ color: T.textMuted }}>Distribuição de leads</p>
           </div>
 
           {/* Donut Chart Simulation */}
@@ -347,8 +366,8 @@ export default function CampanhaAnalyticsPage() {
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-gray-900">{campaign.leads}</p>
-                  <p className="text-xs text-gray-600">Total</p>
+                  <p className="text-2xl font-bold" style={{ color: T.text }}>{campaign.leads}</p>
+                  <p className="text-xs" style={{ color: T.textMuted }}>Total</p>
                 </div>
               </div>
             </div>
@@ -362,11 +381,11 @@ export default function CampanhaAnalyticsPage() {
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className={`w-3 h-3 rounded-full ${colors[index]}`} />
-                    <span className="text-sm font-medium text-gray-900">{device.device}</span>
+                    <span className="text-sm font-medium" style={{ color: T.text }}>{device.device}</span>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-gray-900">{device.percentage}%</p>
-                    <p className="text-xs text-gray-600">{device.leads} leads</p>
+                    <p className="text-sm font-bold" style={{ color: T.text }}>{device.percentage}%</p>
+                    <p className="text-xs" style={{ color: T.textMuted }}>{device.leads} leads</p>
                   </div>
                 </div>
               )
@@ -378,11 +397,11 @@ export default function CampanhaAnalyticsPage() {
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Criativos */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Top Criativos</h3>
-              <p className="text-sm text-gray-600 mt-1">Melhor performance</p>
+              <h3 className="text-lg font-bold" style={{ color: T.text }}>Top Criativos</h3>
+              <p className="text-sm mt-1" style={{ color: T.textMuted }}>Melhor performance</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
               <BarChart3 size={20} className="text-purple-600" />
@@ -391,19 +410,20 @@ export default function CampanhaAnalyticsPage() {
 
           <div className="space-y-4">
             {campaign.topCreatives.map((creative, index) => (
-              <div key={creative.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-sm font-bold text-gray-900">
+              <div key={creative.id} className="flex items-center gap-4 p-4 rounded-xl" style={{ background: T.elevated }}>
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg text-sm font-bold"
+                  style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}>
                   {index + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">{creative.name}</p>
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-sm font-medium" style={{ color: T.text }}>{creative.name}</p>
+                  <p className="text-xs mt-1" style={{ color: T.textMuted }}>
                     {formatNumber(creative.impressions)} impressões • {formatNumber(creative.clicks)} cliques
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-gray-900">{creative.ctr.toFixed(1)}%</p>
-                  <p className="text-xs text-gray-600">CTR</p>
+                  <p className="text-sm font-bold" style={{ color: T.text }}>{creative.ctr.toFixed(1)}%</p>
+                  <p className="text-xs" style={{ color: T.textMuted }}>CTR</p>
                 </div>
               </div>
             ))}
@@ -411,11 +431,11 @@ export default function CampanhaAnalyticsPage() {
         </div>
 
         {/* Métricas Adicionais */}
-        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Métricas Adicionais</h3>
-              <p className="text-sm text-gray-600 mt-1">Performance geral</p>
+              <h3 className="text-lg font-bold" style={{ color: T.text }}>Métricas Adicionais</h3>
+              <p className="text-sm mt-1" style={{ color: T.textMuted }}>Performance geral</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
               <Activity size={20} className="text-green-600" />
@@ -424,39 +444,39 @@ export default function CampanhaAnalyticsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             {/* Impressões */}
-            <div className="p-4 bg-gray-50 rounded-xl">
+            <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
               <div className="flex items-center gap-2 mb-2">
-                <Eye size={16} className="text-gray-600" />
-                <p className="text-xs font-medium text-gray-600">Impressões</p>
+                <Eye size={16} style={{ color: T.textMuted }} />
+                <p className="text-xs font-medium" style={{ color: T.textMuted }}>Impressões</p>
               </div>
-              <p className="text-xl font-bold text-gray-900">{formatNumber(campaign.impressions)}</p>
+              <p className="text-xl font-bold" style={{ color: T.text }}>{formatNumber(campaign.impressions)}</p>
             </div>
 
             {/* CPC */}
-            <div className="p-4 bg-gray-50 rounded-xl">
+            <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
               <div className="flex items-center gap-2 mb-2">
-                <MousePointerClick size={16} className="text-gray-600" />
-                <p className="text-xs font-medium text-gray-600">CPC Médio</p>
+                <MousePointerClick size={16} style={{ color: T.textMuted }} />
+                <p className="text-xs font-medium" style={{ color: T.textMuted }}>CPC Médio</p>
               </div>
-              <p className="text-xl font-bold text-gray-900">{formatCurrency(campaign.cpc)}</p>
+              <p className="text-xl font-bold" style={{ color: T.text }}>{formatCurrency(campaign.cpc)}</p>
             </div>
 
             {/* Taxa de Conversão */}
-            <div className="p-4 bg-gray-50 rounded-xl">
+            <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
               <div className="flex items-center gap-2 mb-2">
-                <Target size={16} className="text-gray-600" />
-                <p className="text-xs font-medium text-gray-600">Conversão</p>
+                <Target size={16} style={{ color: T.textMuted }} />
+                <p className="text-xs font-medium" style={{ color: T.textMuted }}>Conversão</p>
               </div>
-              <p className="text-xl font-bold text-gray-900">{campaign.conversionRate.toFixed(1)}%</p>
+              <p className="text-xl font-bold" style={{ color: T.text }}>{campaign.conversionRate.toFixed(1)}%</p>
             </div>
 
             {/* Dias Restantes */}
-            <div className="p-4 bg-gray-50 rounded-xl">
+            <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
               <div className="flex items-center gap-2 mb-2">
-                <Calendar size={16} className="text-gray-600" />
-                <p className="text-xs font-medium text-gray-600">Dias Restantes</p>
+                <Calendar size={16} style={{ color: T.textMuted }} />
+                <p className="text-xs font-medium" style={{ color: T.textMuted }}>Dias Restantes</p>
               </div>
-              <p className="text-xl font-bold text-gray-900">{daysRemaining}</p>
+              <p className="text-xl font-bold" style={{ color: T.text }}>{daysRemaining}</p>
             </div>
           </div>
 

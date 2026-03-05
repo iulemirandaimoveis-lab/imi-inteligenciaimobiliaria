@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 // Protected: requires CRON_SECRET or valid admin session
 function isAuthorized(request: Request): boolean {
@@ -32,11 +32,6 @@ export async function POST(request: Request) {
                 { status: 400 }
             )
         }
-
-        const supabaseAdmin = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-            process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
-        )
 
         // 1. Create user in Supabase Auth
         const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({

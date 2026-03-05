@@ -29,6 +29,16 @@ import {
     Eye,
 } from 'lucide-react'
 
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
+
 // ⚠️ NÃO MODIFICAR - Conteúdos mockados calendário contextualizados Recife
 const CONTEUDOS_CALENDARIO = [
     {
@@ -206,19 +216,22 @@ export default function CalendarioPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Calendário Editorial</h1>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <h1 className="text-2xl font-bold" style={{ color: T.text }}>Calendário Editorial</h1>
+                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>
                         Planejamento e agendamento de conteúdo
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex bg-gray-100 rounded-xl p-1">
+                    <div className="flex rounded-xl p-1" style={{ background: T.elevated }}>
                         {(['mes', 'semana', 'lista'] as const).map(v => (
                             <button
                                 key={v}
                                 onClick={() => setView(v)}
-                                className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${view === v ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                                    }`}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors`}
+                                style={view === v
+                                    ? { background: T.surface, color: T.text }
+                                    : { color: T.textMuted }
+                                }
                             >
                                 {v === 'mes' ? 'Mês' : v === 'semana' ? 'Semana' : 'Lista'}
                             </button>
@@ -237,42 +250,54 @@ export default function CalendarioPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total no Mês', value: stats.total, color: 'text-gray-900', bg: 'bg-gray-50' },
-                    { label: 'Publicados', value: stats.publicados, color: 'text-green-700', bg: 'bg-green-50' },
-                    { label: 'Agendados', value: stats.agendados, color: 'text-blue-700', bg: 'bg-blue-50' },
-                    { label: 'Rascunhos', value: stats.rascunhos, color: 'text-gray-600', bg: 'bg-gray-100' },
-                ].map(s => (
-                    <div key={s.label} className={`${s.bg} rounded-2xl p-4 border border-gray-100`}>
-                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{s.label}</p>
-                        <p className={`text-3xl font-bold mt-1 ${s.color}`}>{s.value}</p>
+                    { label: 'Total no Mês', value: stats.total, color: T.text, bg: T.elevated },
+                    { label: 'Publicados', value: stats.publicados, color: 'text-green-700', bg: 'bg-green-50', colorRaw: null },
+                    { label: 'Agendados', value: stats.agendados, color: 'text-blue-700', bg: 'bg-blue-50', colorRaw: null },
+                    { label: 'Rascunhos', value: stats.rascunhos, color: T.textMuted, bg: T.elevated },
+                ].map((s, i) => (
+                    <div
+                        key={s.label}
+                        className={`rounded-2xl p-4 ${typeof s.bg === 'string' && s.bg.startsWith('bg-') ? s.bg : ''}`}
+                        style={{
+                            ...(typeof s.bg === 'string' && !s.bg.startsWith('bg-') ? { background: s.bg } : {}),
+                            border: `1px solid ${T.border}`
+                        }}
+                    >
+                        <p className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>{s.label}</p>
+                        <p
+                            className={`text-3xl font-bold mt-1 ${typeof s.color === 'string' && s.color.startsWith('text-') ? s.color : ''}`}
+                            style={typeof s.color === 'string' && !s.color.startsWith('text-') ? { color: s.color } : {}}
+                        >{s.value}</p>
                     </div>
                 ))}
             </div>
 
             {/* Filtros */}
             <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Filtrar:</span>
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Filtrar:</span>
                 {Object.entries(TIPO_CONFIG).map(([k, v]) => {
                     const Icon = v.icon
                     return (
                         <button
                             key={k}
                             onClick={() => setFiltroTipo(filtroTipo === k ? null : k)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${filtroTipo === k ? `${v.bg} ${v.color}` : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${filtroTipo === k ? `${v.bg} ${v.color}` : ''
                                 }`}
+                            style={filtroTipo !== k ? { background: T.surface, borderColor: T.border, color: T.textMuted } : {}}
                         >
                             <Icon size={12} />
                             {v.label}
                         </button>
                     )
                 })}
-                <div className="w-px h-5 bg-gray-200" />
+                <div className="w-px h-5" style={{ background: T.border }} />
                 {Object.entries(STATUS_CONFIG).map(([k, v]) => (
                     <button
                         key={k}
                         onClick={() => setFiltroStatus(filtroStatus === k ? null : k)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${filtroStatus === k ? v.color + ' border-current' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
+                        className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${filtroStatus === k ? v.color + ' border-current' : ''
                             }`}
+                        style={filtroStatus !== k ? { background: T.surface, borderColor: T.border, color: T.textMuted } : {}}
                     >
                         {v.label}
                     </button>
@@ -282,24 +307,32 @@ export default function CalendarioPage() {
             {view === 'mes' && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Grade do calendário */}
-                    <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6">
+                    <div className="lg:col-span-2 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         {/* Navegação do mês */}
                         <div className="flex items-center justify-between mb-6">
-                            <button onClick={mesAnterior} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100">
-                                <ChevronLeft size={18} className="text-gray-600" />
+                            <button
+                                onClick={mesAnterior}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl"
+                                style={{ color: T.textMuted }}
+                            >
+                                <ChevronLeft size={18} />
                             </button>
-                            <h2 className="text-lg font-bold text-gray-900">
+                            <h2 className="text-lg font-bold" style={{ color: T.text }}>
                                 {MESES[anoMes.mes]} {anoMes.ano}
                             </h2>
-                            <button onClick={proximoMes} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100">
-                                <ChevronRight size={18} className="text-gray-600" />
+                            <button
+                                onClick={proximoMes}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl"
+                                style={{ color: T.textMuted }}
+                            >
+                                <ChevronRight size={18} />
                             </button>
                         </div>
 
                         {/* Dias da semana */}
                         <div className="grid grid-cols-7 mb-2">
                             {DIAS_SEMANA.map(d => (
-                                <div key={d} className="text-center text-xs font-bold text-gray-400 py-1">{d}</div>
+                                <div key={d} className="text-center text-xs font-bold py-1" style={{ color: T.textMuted }}>{d}</div>
                             ))}
                         </div>
 
@@ -321,10 +354,11 @@ export default function CalendarioPage() {
                                             ? 'bg-[#16162A] text-white'
                                             : isHoje
                                                 ? 'bg-accent-50 border border-accent-200 text-[#0F0F1E] font-bold'
-                                                : conteudosDia.length > 0
-                                                    ? 'hover:bg-gray-50 text-gray-900'
-                                                    : 'hover:bg-gray-50 text-gray-500'
+                                                : ''
                                             }`}
+                                        style={!isSelecionado && !isHoje ? {
+                                            color: conteudosDia.length > 0 ? T.text : T.textMuted
+                                        } : {}}
                                     >
                                         <span className="text-xs">{dia}</span>
                                         {conteudosDia.length > 0 && (
@@ -348,11 +382,11 @@ export default function CalendarioPage() {
                     </div>
 
                     {/* Painel lateral: conteúdos do dia / lista */}
-                    <div className="bg-white rounded-2xl border border-gray-100 p-4">
+                    <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         {diaSelecionado ? (
                             <>
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-sm font-bold text-gray-900">
+                                    <h3 className="text-sm font-bold" style={{ color: T.text }}>
                                         {diaSelecionado} de {MESES[anoMes.mes]}
                                     </h3>
                                     <button
@@ -364,11 +398,12 @@ export default function CalendarioPage() {
                                 </div>
                                 {conteudosDiaSelecionado.length === 0 ? (
                                     <div className="text-center py-8">
-                                        <Calendar size={32} className="mx-auto text-gray-200 mb-2" />
-                                        <p className="text-sm text-gray-400">Nenhum conteúdo neste dia</p>
+                                        <Calendar size={32} className="mx-auto mb-2" style={{ color: T.border }} />
+                                        <p className="text-sm" style={{ color: T.textMuted }}>Nenhum conteúdo neste dia</p>
                                         <button
                                             onClick={() => router.push('/backoffice/conteudo/novo')}
-                                            className="mt-3 text-xs text-[#486581] hover:text-[#0F0F1E] font-medium"
+                                            className="mt-3 text-xs font-medium hover:opacity-80"
+                                            style={{ color: T.accent }}
                                         >
                                             + Adicionar conteúdo
                                         </button>
@@ -390,19 +425,19 @@ export default function CalendarioPage() {
                                                             {sCfg.label}
                                                         </span>
                                                     </div>
-                                                    <p className="text-sm font-medium text-gray-900 leading-tight">{c.titulo}</p>
+                                                    <p className="text-sm font-medium leading-tight" style={{ color: T.text }}>{c.titulo}</p>
                                                     <div className="flex items-center gap-2 mt-1.5">
-                                                        <Clock size={11} className="text-gray-400" />
-                                                        <span className="text-xs text-gray-500">{c.horario}</span>
-                                                        <span className="text-xs text-gray-300">·</span>
-                                                        <span className="text-xs text-gray-500 truncate">{c.autor}</span>
+                                                        <Clock size={11} style={{ color: T.textMuted }} />
+                                                        <span className="text-xs" style={{ color: T.textMuted }}>{c.horario}</span>
+                                                        <span className="text-xs" style={{ color: T.border }}>·</span>
+                                                        <span className="text-xs truncate" style={{ color: T.textMuted }}>{c.autor}</span>
                                                     </div>
                                                     <div className="flex gap-1 mt-2">
-                                                        <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 h-6 px-2 rounded-lg hover:bg-white/60">
+                                                        <button className="flex items-center gap-1 text-xs h-6 px-2 rounded-lg hover:bg-white/60" style={{ color: T.textMuted }}>
                                                             <Eye size={11} />
                                                             Ver
                                                         </button>
-                                                        <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 h-6 px-2 rounded-lg hover:bg-white/60">
+                                                        <button className="flex items-center gap-1 text-xs h-6 px-2 rounded-lg hover:bg-white/60" style={{ color: T.textMuted }}>
                                                             <Edit size={11} />
                                                             Editar
                                                         </button>
@@ -415,7 +450,7 @@ export default function CalendarioPage() {
                             </>
                         ) : (
                             <>
-                                <h3 className="text-sm font-bold text-gray-900 mb-4">
+                                <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>
                                     Próximas Publicações
                                 </h3>
                                 <div className="space-y-3">
@@ -432,7 +467,8 @@ export default function CalendarioPage() {
                                                 <button
                                                     key={c.id}
                                                     onClick={() => setDiaSelecionado(dia)}
-                                                    className="w-full text-left p-3 rounded-xl hover:bg-gray-50 border border-gray-50 hover:border-gray-100 transition-all"
+                                                    className="w-full text-left p-3 rounded-xl transition-all"
+                                                    style={{ border: `1px solid ${T.border}` }}
                                                 >
                                                     <div className="flex items-center justify-between mb-1">
                                                         <div className="flex items-center gap-1.5">
@@ -443,7 +479,7 @@ export default function CalendarioPage() {
                                                             {dia}/{anoMes.mes + 1}
                                                         </span>
                                                     </div>
-                                                    <p className="text-xs font-medium text-gray-800 leading-tight line-clamp-2">{c.titulo}</p>
+                                                    <p className="text-xs font-medium leading-tight line-clamp-2" style={{ color: T.text }}>{c.titulo}</p>
                                                 </button>
                                             )
                                         })}
@@ -455,11 +491,11 @@ export default function CalendarioPage() {
             )}
 
             {view === 'lista' && (
-                <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
+                <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     {conteudosFiltrados.length === 0 ? (
                         <div className="text-center py-12">
-                            <Calendar size={40} className="mx-auto text-gray-200 mb-3" />
-                            <p className="text-gray-500">Nenhum conteúdo encontrado com os filtros selecionados</p>
+                            <Calendar size={40} className="mx-auto mb-3" style={{ color: T.border }} />
+                            <p style={{ color: T.textMuted }}>Nenhum conteúdo encontrado com os filtros selecionados</p>
                         </div>
                     ) : (
                         conteudosFiltrados
@@ -470,17 +506,21 @@ export default function CalendarioPage() {
                                 const TIcon = tCfg.icon
                                 const StatusIcon = sCfg.icon
                                 return (
-                                    <div key={c.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                    <div
+                                        key={c.id}
+                                        className="p-4 flex items-center justify-between transition-colors"
+                                        style={{ borderBottom: `1px solid ${T.border}` }}
+                                    >
                                         <div className="flex items-center gap-4">
                                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tCfg.bg}`}>
                                                 <TIcon size={18} className={tCfg.color} />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-gray-900">{c.titulo}</p>
+                                                <p className="text-sm font-medium" style={{ color: T.text }}>{c.titulo}</p>
                                                 <div className="flex items-center gap-3 mt-0.5">
-                                                    <span className="text-xs text-gray-500">{c.autor}</span>
-                                                    <span className="text-xs text-gray-300">·</span>
-                                                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                                                    <span className="text-xs" style={{ color: T.textMuted }}>{c.autor}</span>
+                                                    <span className="text-xs" style={{ color: T.border }}>·</span>
+                                                    <div className="flex items-center gap-1 text-xs" style={{ color: T.textMuted }}>
                                                         <Clock size={10} />
                                                         {c.horario}
                                                     </div>
@@ -488,7 +528,7 @@ export default function CalendarioPage() {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <span className="text-sm font-medium text-gray-600">
+                                            <span className="text-sm font-medium" style={{ color: T.textMuted }}>
                                                 {new Date(c.data + 'T12:00:00').toLocaleDateString('pt-BR', {
                                                     day: '2-digit', month: 'short'
                                                 })}
@@ -497,7 +537,10 @@ export default function CalendarioPage() {
                                                 <StatusIcon size={11} />
                                                 {sCfg.label}
                                             </span>
-                                            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                                            <button
+                                                className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors"
+                                                style={{ color: T.textMuted }}
+                                            >
                                                 <Edit size={14} />
                                             </button>
                                         </div>
@@ -509,8 +552,8 @@ export default function CalendarioPage() {
             )}
 
             {view === 'semana' && (
-                <div className="bg-white rounded-2xl border border-gray-100 p-6">
-                    <p className="text-sm text-gray-500 text-center py-8">
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <p className="text-sm text-center py-8" style={{ color: T.textMuted }}>
                         Vista semanal — implementar quando necessário
                     </p>
                 </div>

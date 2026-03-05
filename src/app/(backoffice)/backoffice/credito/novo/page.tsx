@@ -14,6 +14,16 @@ import { toast } from 'sonner'
 
 const supabase = createClient()
 
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
+
 const steps = [
     { id: 1, name: 'Cliente', description: 'Dados pessoais' },
     { id: 2, name: 'Imóvel', description: 'Informações do registro' },
@@ -173,9 +183,10 @@ export default function CreditoNovoPage() {
                                                 ? 'bg-green-500 text-white rotate-[360deg]'
                                                 : currentStep === step.id
                                                     ? 'bg-[#102A43] text-white scale-110 shadow-glow'
-                                                    : 'bg-white text-imi-300 border border-imi-100'
+                                                    : 'text-imi-300 border border-imi-100'
                                             }
                     `}
+                                        style={currentStep <= step.id && currentStep !== step.id ? { background: T.elevated } : undefined}
                                     >
                                         {currentStep > step.id ? <Check size={24} strokeWidth={4} /> : step.id}
                                     </div>
@@ -402,7 +413,7 @@ export default function CreditoNovoPage() {
                                 className="h-14"
                             />
 
-                            <div className="bg-imi-50/50 p-6 rounded-2xl border border-imi-100">
+                            <div className="p-6 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                 <div className="flex flex-col md:flex-row items-center gap-8">
                                     <div className="flex-1">
                                         <Select
@@ -410,7 +421,6 @@ export default function CreditoNovoPage() {
                                             name="has_fgts"
                                             value={formData.has_fgts}
                                             onChange={handleChange}
-                                            className="bg-white"
                                             options={[
                                                 { value: 'no', label: 'Não utilizar FGTS' },
                                                 { value: 'yes', label: 'Sim, utilizar como entrada/amortização' },
@@ -427,7 +437,6 @@ export default function CreditoNovoPage() {
                                                 value={formData.fgts_value}
                                                 onChange={handleChange}
                                                 placeholder="0.00"
-                                                className="bg-white"
                                             />
                                         </div>
                                     )}

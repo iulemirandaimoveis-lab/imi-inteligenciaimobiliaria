@@ -21,6 +21,16 @@ import {
     Zap
 } from 'lucide-react'
 
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
+
 // Mock data (depois virá do Supabase)
 const mockAnalytics = {
     overview: {
@@ -86,7 +96,8 @@ export default function AvaliacoesAnalyticsPage() {
                 action={
                     <div className="flex items-center gap-4">
                         <Select
-                            className="w-48 bg-white"
+                            className="w-48"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                             value={timeRange}
                             onChange={(e) => setTimeRange(e.target.value)}
                             options={[
@@ -96,7 +107,7 @@ export default function AvaliacoesAnalyticsPage() {
                                 { value: 'year', label: 'Visão Anual' },
                             ]}
                         />
-                        <Button variant="outline" icon={<Zap size={18} />} className="bg-white">Insight Rápido</Button>
+                        <Button variant="outline" icon={<Zap size={18} />} style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>Insight Rápido</Button>
                     </div>
                 }
             />
@@ -257,7 +268,7 @@ export default function AvaliacoesAnalyticsPage() {
                     <CardBody className="p-8">
                         <div className="space-y-4">
                             {data.topClients.map((client, index) => (
-                                <div key={client.name} className="flex items-center gap-6 p-6 bg-imi-50/50 rounded-3xl border border-imi-100/30 hover:bg-white hover:border-accent-200 transition-all group">
+                                <div key={client.name} className="flex items-center gap-6 p-6 bg-imi-50/50 rounded-3xl border border-imi-100/30 hover:border-accent-200 transition-all group" style={{ ['--hover-bg' as string]: T.hover }}>
                                     <div className="w-12 h-12 rounded-2xl bg-imi-950 text-[#486581] flex items-center justify-center text-lg font-black shrink-0 shadow-lg group-hover:scale-110 transition-transform">
                                         {index + 1}
                                     </div>
@@ -268,7 +279,7 @@ export default function AvaliacoesAnalyticsPage() {
                                         </p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-xl font-black text-[#0F0F1E]">
+                                        <p className="text-xl font-black" style={{ color: T.text }}>
                                             R$ {(client.revenue / 1000).toFixed(0)}k
                                         </p>
                                         <p className="text-[9px] font-black text-imi-400 uppercase tracking-widest">Revenue Life-Time</p>

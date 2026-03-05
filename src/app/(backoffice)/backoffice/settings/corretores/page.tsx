@@ -1,23 +1,25 @@
 'use client'
 
 import React, { useState } from 'react'
-import PageHeader from '@/components/backoffice/PageHeader'
-import { UserCircle, Search, Filter, Plus, Shield, CheckCircle, XCircle, MoreVertical } from 'lucide-react'
-import Button from '@/components/ui/Button'
-import Input from '@/components/ui/Input'
-import Card from '@/components/ui/Card'
-import Badge from '@/components/ui/Badge'
-import EmptyState from '@/components/backoffice/EmptyState'
+import { UserCircle, Search, Plus, Shield, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useBrokers, updateBrokerStatus } from '@/hooks/use-brokers'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
 
 export default function CorretoresPage() {
     const [searchTerm, setSearchTerm] = useState('')
     const [statusFilter, setStatusFilter] = useState('all')
-
     const { brokers, isLoading, mutate } = useBrokers({ search: searchTerm, status: statusFilter })
 
     const handleStatusToggle = async (id: string, currentStatus: string) => {
@@ -26,7 +28,7 @@ export default function CorretoresPage() {
             await updateBrokerStatus(id, newStatus)
             toast.success(`Corretor ${newStatus === 'active' ? 'ativado' : 'inativado'} com sucesso`)
             mutate()
-        } catch (error) {
+        } catch {
             toast.error('Erro ao atualizar status')
         }
     }
@@ -35,146 +37,144 @@ export default function CorretoresPage() {
     const inactiveBrokers = brokers.filter(b => b.status === 'inactive').length
 
     return (
-        <div className="space-y-8 animate-fade-in custom-scrollbar pb-20">
-            <PageHeader
-                title="Gestão de Corretores"
-                description="Controle de acesso, permições e desempenho da equipe comercial."
-                breadcrumbs={[
-                    { label: 'Configurações', href: '/backoffice/settings' },
-                    { label: 'Corretores' }
-                ]}
-                action={
-                    <Link href="/backoffice/settings/corretores/novo">
-                        <Button icon={<Plus size={18} />}>Novo Corretor</Button>
-                    </Link>
-                }
-            />
-
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card padding="md" className="flex items-center justify-between bg-white dark:bg-card-dark border-gray-100 dark:border-white/5">
-                    <div>
-                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Total Registrados</p>
-                        <p className="text-3xl font-display font-bold text-gray-900 dark:text-white mt-1">{brokers.length}</p>
-                    </div>
-                    <div className="p-3 bg-primary/10 rounded-xl text-primary"><UserCircle size={24} /></div>
-                </Card>
-                <Card padding="md" className="flex items-center justify-between bg-white dark:bg-card-dark border-gray-100 dark:border-white/5">
-                    <div>
-                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Ativos</p>
-                        <p className="text-3xl font-display font-bold text-green-600 mt-1">{activeBrokers}</p>
-                    </div>
-                    <div className="p-3 bg-green-500/10 rounded-xl text-green-600"><CheckCircle size={24} /></div>
-                </Card>
-                <Card padding="md" className="flex items-center justify-between bg-white dark:bg-card-dark border-gray-100 dark:border-white/5">
-                    <div>
-                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Inativos</p>
-                        <p className="text-3xl font-display font-bold text-gray-400 mt-1">{inactiveBrokers}</p>
-                    </div>
-                    <div className="p-3 bg-gray-100 dark:bg-white/5 rounded-xl text-gray-400"><XCircle size={24} /></div>
-                </Card>
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Gestão de Corretores</h1>
+                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>Controle de acesso, permissões e desempenho da equipe comercial</p>
+                </div>
+                <Link href="/backoffice/settings/corretores/novo"
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+                    style={{ background: '#1E3A5F' }}>
+                    <Plus size={16} /> Novo Corretor
+                </Link>
             </div>
 
-            {/* Filters & List */}
-            <div className="bg-white dark:bg-card-dark rounded-[2.5rem] border border-gray-100 dark:border-white/5 shadow-soft overflow-hidden">
-                <div className="p-6 border-b border-gray-100 dark:border-white/5 flex flex-col md:flex-row gap-4 justify-between items-center bg-gray-50/50 dark:bg-card-darker/50">
-                    <div className="relative w-full md:w-96">
-                        <Input
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                    { label: 'Total Registrados', value: brokers.length, color: T.accent, bg: 'rgba(72,101,129,0.12)', icon: UserCircle },
+                    { label: 'Ativos', value: activeBrokers, color: '#4ADE80', bg: 'rgba(74,222,128,0.1)', icon: CheckCircle },
+                    { label: 'Inativos', value: inactiveBrokers, color: T.textMuted, bg: 'rgba(148,163,184,0.1)', icon: XCircle },
+                ].map(s => {
+                    const Icon = s.icon
+                    return (
+                        <div key={s.label} className="flex items-center justify-between rounded-xl p-5"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div>
+                                <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>{s.label}</p>
+                                <p className="text-3xl font-bold" style={{ color: s.color }}>{s.value}</p>
+                            </div>
+                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: s.bg }}>
+                                <Icon size={22} style={{ color: s.color }} />
+                            </div>
+                        </div>
+                    )
+                })}
+            </div>
+
+            {/* Filters + List */}
+            <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                {/* Filter bar */}
+                <div className="p-5 border-b flex flex-col md:flex-row gap-4 justify-between items-center"
+                    style={{ borderColor: T.border, background: T.elevated }}>
+                    <div className="relative w-full md:w-80">
+                        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                        <input
+                            type="text"
                             placeholder="Buscar por nome, email ou CRECI..."
-                            leftIcon={<Search size={18} />}
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="bg-white dark:bg-card-dark border-gray-200 dark:border-white/10"
+                            onChange={e => setSearchTerm(e.target.value)}
+                            className="w-full h-10 pl-9 pr-3 rounded-xl text-sm outline-none"
+                            style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
                         />
                     </div>
-                    <div className="flex gap-2 w-full md:w-auto">
-                        <button
-                            onClick={() => setStatusFilter('all')}
-                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === 'all' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5'}`}
-                        >
-                            Todos
-                        </button>
-                        <button
-                            onClick={() => setStatusFilter('active')}
-                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === 'active' ? 'bg-white dark:bg-white/10 text-green-600 shadow-sm' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5'}`}
-                        >
-                            Ativos
-                        </button>
-                        <button
-                            onClick={() => setStatusFilter('inactive')}
-                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${statusFilter === 'inactive' ? 'bg-white dark:bg-white/10 text-gray-400 shadow-sm' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5'}`}
-                        >
-                            Inativos
-                        </button>
+                    <div className="flex gap-2">
+                        {[{ v: 'all', l: 'Todos' }, { v: 'active', l: 'Ativos' }, { v: 'inactive', l: 'Inativos' }].map(tab => (
+                            <button key={tab.v} onClick={() => setStatusFilter(tab.v)}
+                                className="px-4 py-2 rounded-xl text-xs font-bold transition-all"
+                                style={{
+                                    background: statusFilter === tab.v ? T.accent : 'transparent',
+                                    color: statusFilter === tab.v ? '#fff' : T.textMuted,
+                                    border: `1px solid ${statusFilter === tab.v ? T.accent : T.border}`,
+                                }}>
+                                {tab.l}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
                 {isLoading ? (
-                    <div className="p-12 flex justify-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <div className="flex items-center justify-center p-16">
+                        <Loader2 size={24} className="animate-spin" style={{ color: T.accent }} />
                     </div>
                 ) : brokers.length > 0 ? (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left">
                             <thead>
-                                <tr className="border-b border-gray-100 dark:border-white/5 text-xs text-gray-400 uppercase tracking-wider">
-                                    <th className="p-6 font-bold">Corretor</th>
-                                    <th className="p-6 font-bold">Contato</th>
-                                    <th className="p-6 font-bold">CRECI</th>
-                                    <th className="p-6 font-bold">Status</th>
-                                    <th className="p-6 font-bold">Permissões</th>
-                                    <th className="p-6 font-bold text-right">Ações</th>
+                                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                                    {['Corretor', 'Contato', 'CRECI', 'Status', 'Permissões', ''].map(h => (
+                                        <th key={h} className="px-5 py-3 text-[10px] font-bold uppercase tracking-wider"
+                                            style={{ color: T.textMuted }}>{h}</th>
+                                    ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {brokers.map((broker) => (
-                                    <tr key={broker.id} className="border-b border-gray-50 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
-                                        <td className="p-6">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                                                    {broker.avatar_url ? (
-                                                        <img src={broker.avatar_url} alt={broker.name} className="w-full h-full rounded-full object-cover" />
-                                                    ) : (
-                                                        broker.name.charAt(0)
-                                                    )}
+                                {brokers.map((broker, i) => (
+                                    <tr key={broker.id}
+                                        className="transition-colors group"
+                                        style={{ borderTop: i > 0 ? `1px solid ${T.border}` : 'none' }}>
+                                        <td className="px-5 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden"
+                                                    style={{ background: 'rgba(72,101,129,0.15)', color: T.accent }}>
+                                                    {broker.avatar_url
+                                                        ? <img src={broker.avatar_url} alt={broker.name} className="w-full h-full object-cover" />
+                                                        : broker.name.charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-gray-900 dark:text-white">{broker.name}</p>
-                                                    <p className="text-xs text-gray-500">Cadastrado em {format(new Date(broker.created_at), 'dd/MM/yyyy')}</p>
+                                                    <p className="text-sm font-bold" style={{ color: T.text }}>{broker.name}</p>
+                                                    <p className="text-xs" style={{ color: T.textMuted }}>
+                                                        Cadastrado em {format(new Date(broker.created_at), 'dd/MM/yyyy')}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-6">
-                                            <div className="text-sm text-gray-600 dark:text-gray-300">
-                                                <p>{broker.email}</p>
-                                                <p className="text-xs text-gray-400 mt-0.5">{broker.phone || '-'}</p>
-                                            </div>
+                                        <td className="px-5 py-4">
+                                            <p className="text-sm" style={{ color: T.text }}>{broker.email}</p>
+                                            <p className="text-xs" style={{ color: T.textMuted }}>{broker.phone || '—'}</p>
                                         </td>
-                                        <td className="p-6">
-                                            <span className="font-mono text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-white/5 px-2 py-1 rounded">
+                                        <td className="px-5 py-4">
+                                            <code className="text-xs px-2 py-1 rounded font-mono"
+                                                style={{ background: T.elevated, color: T.textMuted }}>
                                                 {broker.creci}
+                                            </code>
+                                        </td>
+                                        <td className="px-5 py-4">
+                                            <span className="text-xs px-2.5 py-1 rounded-full font-semibold"
+                                                style={{
+                                                    background: broker.status === 'active' ? 'rgba(74,222,128,0.12)' : 'rgba(148,163,184,0.1)',
+                                                    color: broker.status === 'active' ? '#4ADE80' : T.textMuted,
+                                                }}>
+                                                {broker.status === 'active' ? 'Ativo' : 'Inativo'}
                                             </span>
                                         </td>
-                                        <td className="p-6">
-                                            <Badge variant={broker.status === 'active' ? 'success' : 'default'} size="sm">
-                                                {broker.status === 'active' ? 'Ativo' : 'Inativo'}
-                                            </Badge>
-                                        </td>
-                                        <td className="p-6">
+                                        <td className="px-5 py-4">
                                             <div className="flex items-center gap-2">
-                                                <Shield size={16} className="text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                                <Shield size={14} style={{ color: T.textMuted }} />
+                                                <span className="text-sm" style={{ color: T.textMuted }}>
                                                     {broker.permissions?.length || 0} módulos
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="p-6 text-right">
+                                        <td className="px-5 py-4 text-right">
                                             <button
                                                 onClick={() => handleStatusToggle(broker.id, broker.status)}
-                                                className="text-gray-400 hover:text-primary transition-colors p-2"
-                                                title={broker.status === 'active' ? 'Desativar' : 'Ativar'}
-                                            >
-                                                {broker.status === 'active' ? <XCircle size={20} /> : <CheckCircle size={20} />}
+                                                className="p-2 rounded-lg transition-all hover:opacity-80"
+                                                style={{ color: broker.status === 'active' ? '#F87171' : '#4ADE80' }}
+                                                title={broker.status === 'active' ? 'Desativar' : 'Ativar'}>
+                                                {broker.status === 'active' ? <XCircle size={18} /> : <CheckCircle size={18} />}
                                             </button>
                                         </td>
                                     </tr>
@@ -183,19 +183,17 @@ export default function CorretoresPage() {
                         </table>
                     </div>
                 ) : (
-                    <div className="p-12 flex flex-col items-center justify-center min-h-[400px]">
-                        <EmptyState
-                            icon={UserCircle}
-                            title="Nenhum corretor encontrado"
-                            description={searchTerm ? "Tente ajustar os termos da busca." : "Comece cadastrando sua equipe comercial."}
-                            action={
-                                !searchTerm && (
-                                    <Link href="/backoffice/settings/corretores/novo">
-                                        <Button variant="primary" icon={<Plus size={18} />}>Cadastrar Primeiro Corretor</Button>
-                                    </Link>
-                                )
-                            }
-                        />
+                    <div className="flex flex-col items-center justify-center py-16 gap-3">
+                        <UserCircle size={36} className="opacity-20" style={{ color: T.textMuted }} />
+                        <p className="text-sm font-semibold" style={{ color: T.textMuted }}>
+                            {searchTerm ? 'Nenhum corretor encontrado' : 'Nenhum corretor cadastrado'}
+                        </p>
+                        {!searchTerm && (
+                            <Link href="/backoffice/settings/corretores/novo"
+                                className="text-sm font-semibold" style={{ color: T.accent }}>
+                                Cadastrar primeiro corretor
+                            </Link>
+                        )}
                     </div>
                 )}
             </div>

@@ -32,6 +32,16 @@ import {
   Lock,
 } from 'lucide-react'
 
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
+
 // ⚠️ NÃO MODIFICAR - Registros de auditoria mockados contextualizados
 const AUDIT_LOGS = [
   {
@@ -161,22 +171,22 @@ const AUDIT_LOGS = [
 ]
 
 const ACAO_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  login: { label: 'Login', icon: LogIn, color: 'text-blue-600 bg-blue-50' },
-  logout: { label: 'Logout', icon: LogOut, color: 'text-gray-600 bg-gray-100' },
-  create: { label: 'Criação', icon: Plus, color: 'text-green-600 bg-green-50' },
-  update: { label: 'Edição', icon: Edit, color: 'text-orange-600 bg-orange-50' },
-  delete: { label: 'Exclusão', icon: Trash2, color: 'text-red-600 bg-red-50' },
-  view: { label: 'Visualização', icon: Eye, color: 'text-gray-600 bg-gray-100' },
-  export: { label: 'Exportação', icon: Download, color: 'text-purple-600 bg-purple-50' },
-  sync: { label: 'Sync', icon: Settings, color: 'text-blue-600 bg-blue-50' },
-  backup: { label: 'Backup', icon: Shield, color: 'text-green-600 bg-green-50' },
+  login: { label: 'Login', icon: LogIn, color: 'text-blue-400 bg-blue-500/10' },
+  logout: { label: 'Logout', icon: LogOut, color: 'text-gray-400 bg-gray-500/10' },
+  create: { label: 'Criação', icon: Plus, color: 'text-green-400 bg-green-500/10' },
+  update: { label: 'Edição', icon: Edit, color: 'text-orange-400 bg-orange-500/10' },
+  delete: { label: 'Exclusão', icon: Trash2, color: 'text-red-400 bg-red-500/10' },
+  view: { label: 'Visualização', icon: Eye, color: 'text-gray-400 bg-gray-500/10' },
+  export: { label: 'Exportação', icon: Download, color: 'text-purple-400 bg-purple-500/10' },
+  sync: { label: 'Sync', icon: Settings, color: 'text-blue-400 bg-blue-500/10' },
+  backup: { label: 'Backup', icon: Shield, color: 'text-green-400 bg-green-500/10' },
 }
 
 const SEVERIDADE_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  info: { label: 'Info', color: 'bg-blue-50 text-blue-700', icon: CheckCircle },
-  success: { label: 'Sucesso', color: 'bg-green-50 text-green-700', icon: CheckCircle },
-  warning: { label: 'Atenção', color: 'bg-amber-50 text-amber-700', icon: AlertTriangle },
-  danger: { label: 'Crítico', color: 'bg-red-50 text-red-700', icon: AlertTriangle },
+  info: { label: 'Info', color: 'bg-blue-500/10 text-blue-400', icon: CheckCircle },
+  success: { label: 'Sucesso', color: 'bg-green-500/10 text-green-400', icon: CheckCircle },
+  warning: { label: 'Atenção', color: 'bg-amber-500/10 text-amber-400', icon: AlertTriangle },
+  danger: { label: 'Crítico', color: 'bg-red-500/10 text-red-400', icon: AlertTriangle },
 }
 
 const MODULOS = ['todos', 'auth', 'imoveis', 'leads', 'campanhas', 'avaliacoes', 'financeiro', 'integracoes', 'settings', 'relatorios', 'sistema']
@@ -221,13 +231,14 @@ export default function AuditPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Trilha de Auditoria</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold" style={{ color: T.text }}>Trilha de Auditoria</h1>
+          <p className="text-sm mt-1" style={{ color: T.textMuted }}>
             Registro imutável de todas as ações no sistema
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 h-10 px-4 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200">
+          <button className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors"
+            style={{ background: T.elevated, color: T.text, border: `1px solid ${T.border}` }}>
             <Download size={16} />
             Exportar CSV
           </button>
@@ -237,19 +248,19 @@ export default function AuditPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total de Eventos', value: stats.total, color: 'text-gray-900', bg: 'bg-gray-50', icon: Shield },
-          { label: 'Críticos', value: stats.criticos, color: 'text-red-700', bg: 'bg-red-50', icon: AlertTriangle },
-          { label: 'Atenção', value: stats.atencao, color: 'text-amber-700', bg: 'bg-amber-50', icon: AlertTriangle },
-          { label: 'Usuários Ativos', value: stats.usuarios, color: 'text-blue-700', bg: 'bg-blue-50', icon: User },
+          { label: 'Total de Eventos', value: stats.total, textColor: T.text, bg: T.elevated, icon: Shield },
+          { label: 'Críticos', value: stats.criticos, textColor: '#F87171', bg: 'rgba(239,68,68,0.08)', icon: AlertTriangle },
+          { label: 'Atenção', value: stats.atencao, textColor: '#FCD34D', bg: 'rgba(245,158,11,0.08)', icon: AlertTriangle },
+          { label: 'Usuários Ativos', value: stats.usuarios, textColor: '#60A5FA', bg: 'rgba(59,130,246,0.08)', icon: User },
         ].map(s => {
           const Icon = s.icon
           return (
-            <div key={s.label} className={`${s.bg} rounded-2xl p-4 border border-gray-100`}>
+            <div key={s.label} className="rounded-2xl p-4" style={{ background: s.bg, border: `1px solid ${T.border}` }}>
               <div className="flex items-center justify-between">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{s.label}</p>
-                <Icon size={14} className={s.color} />
+                <p className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>{s.label}</p>
+                <Icon size={14} style={{ color: s.textColor }} />
               </div>
-              <p className={`text-3xl font-bold mt-1 ${s.color}`}>{s.value}</p>
+              <p className="text-3xl font-bold mt-1" style={{ color: s.textColor }}>{s.value}</p>
             </div>
           )
         })}
@@ -258,12 +269,13 @@ export default function AuditPage() {
       {/* Barra de busca e filtros */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
           <input
             value={busca}
             onChange={e => setBusca(e.target.value)}
             placeholder="Buscar por usuário, ação, módulo..."
-            className="w-full h-11 pl-11 pr-4 border border-gray-200 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-[#334E68]"
+            className="w-full h-11 pl-11 pr-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#334E68]"
+            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
           />
         </div>
 
@@ -271,7 +283,8 @@ export default function AuditPage() {
         <select
           value={moduloFiltro}
           onChange={e => setModuloFiltro(e.target.value)}
-          className="h-11 px-4 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#334E68] bg-white"
+          className="h-11 px-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#334E68]"
+          style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
         >
           {MODULOS.map(m => (
             <option key={m} value={m}>
@@ -288,8 +301,9 @@ export default function AuditPage() {
               onClick={() => setSeveridadeFiltro(severidadeFiltro === k ? null : k)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${severidadeFiltro === k
                 ? `${v.color} border-current`
-                : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
+                : ''
                 }`}
+              style={severidadeFiltro !== k ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted } : {}}
             >
               {v.label}
             </button>
@@ -298,47 +312,52 @@ export default function AuditPage() {
       </div>
 
       {/* Tabela de logs */}
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Cabeçalho */}
-        <div className="grid grid-cols-12 gap-4 px-4 py-3 bg-gray-50 border-b border-gray-100">
-          <div className="col-span-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Usuário</div>
-          <div className="col-span-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Ação</div>
-          <div className="col-span-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Descrição</div>
-          <div className="col-span-1 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</div>
-          <div className="col-span-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Timestamp</div>
+        <div className="grid grid-cols-12 gap-4 px-4 py-3" style={{ background: T.elevated, borderBottom: `1px solid ${T.border}` }}>
+          <div className="col-span-3 text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Usuário</div>
+          <div className="col-span-2 text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Ação</div>
+          <div className="col-span-4 text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Descrição</div>
+          <div className="col-span-1 text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Status</div>
+          <div className="col-span-2 text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Timestamp</div>
         </div>
 
         {/* Linhas */}
-        <div className="divide-y divide-gray-50">
+        <div>
           {logsFiltrados.length === 0 ? (
             <div className="text-center py-12">
-              <Shield size={40} className="mx-auto text-gray-200 mb-3" />
-              <p className="text-gray-500 font-medium">Nenhum evento encontrado</p>
+              <Shield size={40} className="mx-auto mb-3" style={{ color: T.textMuted, opacity: 0.3 }} />
+              <p className="font-medium" style={{ color: T.textMuted }}>Nenhum evento encontrado</p>
             </div>
           ) : (
-            logsFiltrados.map(log => {
+            logsFiltrados.map((log, index) => {
               const acaoCfg = ACAO_CONFIG[log.acao] || ACAO_CONFIG['view']
               const sevCfg = SEVERIDADE_CONFIG[log.severidade]
               const AcaoIcon = acaoCfg.icon
               const SevIcon = sevCfg.icon
 
               return (
-                <div key={log.id} className="grid grid-cols-12 gap-4 px-4 py-4 hover:bg-gray-50 transition-colors items-center">
+                <div key={log.id}
+                  className="grid grid-cols-12 gap-4 px-4 py-4 transition-colors items-center"
+                  style={{ borderTop: index > 0 ? `1px solid ${T.border}` : 'none' }}>
                   {/* Usuário */}
                   <div className="col-span-3 flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full text-[10px] font-bold flex items-center justify-center flex-shrink-0 ${log.usuario === 'Sistema' ? 'bg-gray-100 text-gray-600' : 'bg-accent-100 text-[#0F0F1E]'
-                      }`}>
+                    <div className="w-8 h-8 rounded-full text-[10px] font-bold flex items-center justify-center flex-shrink-0"
+                      style={{
+                        background: log.usuario === 'Sistema' ? T.elevated : `${T.accent}20`,
+                        color: log.usuario === 'Sistema' ? T.textMuted : T.accent,
+                      }}>
                       {getInitials(log.usuario)}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-bold text-gray-900 truncate">{log.usuario}</p>
-                      <p className="text-[10px] text-gray-400 truncate">{log.ip}</p>
+                      <p className="text-sm font-bold truncate" style={{ color: T.text }}>{log.usuario}</p>
+                      <p className="text-[10px] truncate" style={{ color: T.textMuted }}>{log.ip}</p>
                     </div>
                   </div>
 
                   {/* Ação */}
                   <div className="col-span-2">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold border ${acaoCfg.color}`}>
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-transparent ${acaoCfg.color}`}>
                       <AcaoIcon size={12} />
                       {acaoCfg.label}
                     </span>
@@ -346,10 +365,11 @@ export default function AuditPage() {
 
                   {/* Descrição */}
                   <div className="col-span-4">
-                    <p className="text-xs text-gray-700 leading-relaxed line-clamp-2">{log.descricao}</p>
-                    {log.entidade_id && (
-                      <p className="text-[10px] text-gray-400 font-mono mt-1 px-1.5 py-0.5 bg-gray-50 rounded inline-block">
-                        ID: {log.entidade_id}
+                    <p className="text-xs leading-relaxed line-clamp-2" style={{ color: T.textMuted }}>{log.descricao}</p>
+                    {(log as any).entidade_id && (
+                      <p className="text-[10px] font-mono mt-1 px-1.5 py-0.5 rounded inline-block"
+                        style={{ background: T.elevated, color: T.textMuted }}>
+                        ID: {(log as any).entidade_id}
                       </p>
                     )}
                   </div>
@@ -364,11 +384,11 @@ export default function AuditPage() {
 
                   {/* Timestamp */}
                   <div className="col-span-2">
-                    <div className="flex items-center gap-1.5 text-xs text-gray-700 font-medium">
-                      <Clock size={12} className="text-gray-400" />
+                    <div className="flex items-center gap-1.5 text-xs font-medium" style={{ color: T.text }}>
+                      <Clock size={12} style={{ color: T.textMuted }} />
                       {formatTimestamp(log.timestamp)}
                     </div>
-                    <p className="text-[10px] text-gray-400 truncate mt-1">{log.dispositivo}</p>
+                    <p className="text-[10px] truncate mt-1" style={{ color: T.textMuted }}>{log.dispositivo}</p>
                   </div>
                 </div>
               )
@@ -377,11 +397,11 @@ export default function AuditPage() {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-gray-50 bg-gray-50 flex items-center justify-between">
-          <span className="text-xs text-gray-500 font-medium">
+        <div className="px-4 py-3 flex items-center justify-between" style={{ borderTop: `1px solid ${T.border}`, background: T.elevated }}>
+          <span className="text-xs font-medium" style={{ color: T.textMuted }}>
             {logsFiltrados.length} de {AUDIT_LOGS.length} eventos registrados
           </span>
-          <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
             <Lock size={12} />
             Logs Imutáveis — Supabase DB
           </div>

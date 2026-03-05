@@ -84,6 +84,16 @@ const finalidades = [
   'Outra',
 ]
 
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
+
 export default function EditarAvaliacaoPage() {
   const router = useRouter()
   const params = useParams()
@@ -284,13 +294,14 @@ export default function EditarAvaliacaoPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center"
+            className="w-10 h-10 rounded-lg flex items-center justify-center"
+            style={{ border: `1px solid ${T.border}` }}
           >
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Editar Avaliação Técnica</h1>
-            <p className="text-sm text-gray-600 mt-1">Laudo NBR 14653 • Passo {currentStep} de 3</p>
+            <h1 className="text-2xl font-bold" style={{ color: T.text }}>Editar Avaliação Técnica</h1>
+            <p className="text-sm mt-1" style={{ color: T.textMuted }}>Laudo NBR 14653 • Passo {currentStep} de 3</p>
           </div>
         </div>
 
@@ -303,7 +314,7 @@ export default function EditarAvaliacaoPage() {
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-100">
+      <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between mb-4">
           {steps.map((step, index) => {
             const StepIcon = step.icon
@@ -314,25 +325,25 @@ export default function EditarAvaliacaoPage() {
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isCompleted ? 'bg-green-500 text-white' :
-                    isActive ? 'bg-purple-500 text-white' :
-                      'bg-gray-100 text-gray-400'
-                    }`}>
+                    isActive ? 'bg-purple-500 text-white' : ''
+                    }`}
+                    style={!isCompleted && !isActive ? { background: T.elevated, color: T.textMuted } : undefined}>
                     {isCompleted ? <Check size={24} /> : <StepIcon size={24} />}
                   </div>
-                  <p className={`text-sm font-medium mt-2 ${isActive ? 'text-purple-700' : isCompleted ? 'text-green-700' : 'text-gray-500'
-                    }`}>
+                  <p className={`text-sm font-medium mt-2 ${isActive ? 'text-purple-700' : isCompleted ? 'text-green-700' : ''}`}
+                    style={!isActive && !isCompleted ? { color: T.textMuted } : undefined}>
                     {step.label}
                   </p>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`h-1 flex-1 mx-4 rounded-full transition-all ${currentStep > step.number ? 'bg-green-500' : 'bg-gray-200'
-                    }`} />
+                  <div className={`h-1 flex-1 mx-4 rounded-full transition-all ${currentStep > step.number ? 'bg-green-500' : ''}`}
+                    style={currentStep <= step.number ? { background: T.border } : undefined} />
                 )}
               </div>
             )
           })}
         </div>
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
           <div
             className="h-full bg-purple-500 transition-all duration-300"
             style={{ width: `${progress}%` }}
@@ -341,27 +352,27 @@ export default function EditarAvaliacaoPage() {
       </div>
 
       {/* Form Content */}
-      <div className="bg-white rounded-2xl p-8 border border-gray-100">
+      <div className="rounded-2xl p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Step 1: Imóvel */}
         {currentStep === 1 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Dados do Imóvel</h2>
+            <h2 className="text-xl font-bold mb-6" style={{ color: T.text }}>Dados do Imóvel</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Endereço */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Endereço Completo *
                 </label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-3 text-gray-400" size={20} />
+                  <MapPin className="absolute left-3 top-3" size={20} style={{ color: T.textMuted }} />
                   <textarea
                     value={formData.propertyAddress}
                     onChange={(e) => handleChange('propertyAddress', e.target.value)}
                     placeholder="Ex: Av. Boa Viagem, 3500 - Apto 802, Boa Viagem"
                     rows={3}
-                    className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none ${errors.propertyAddress ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                      }`}
+                    className={`w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.propertyAddress ? '#fca5a5' : T.border}`, color: T.text }}
                   />
                 </div>
                 {errors.propertyAddress && (
@@ -374,16 +385,16 @@ export default function EditarAvaliacaoPage() {
 
               {/* Tipo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Tipo de Imóvel *
                 </label>
                 <div className="relative">
-                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <select
                     value={formData.propertyType}
                     onChange={(e) => handleChange('propertyType', e.target.value)}
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white ${errors.propertyType ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                      }`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.propertyType ? '#fca5a5' : T.border}`, color: T.text }}
                   >
                     <option value="">Selecione...</option>
                     {tiposImovel.map(tipo => (
@@ -401,18 +412,18 @@ export default function EditarAvaliacaoPage() {
 
               {/* Área */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Área Privativa (m²) *
                 </label>
                 <div className="relative">
-                  <Ruler className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Ruler className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="number"
                     value={formData.propertyArea}
                     onChange={(e) => handleChange('propertyArea', e.target.value)}
                     placeholder="95"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.propertyArea ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                      }`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.propertyArea ? '#fca5a5' : T.border}`, color: T.text }}
                   />
                 </div>
                 {errors.propertyArea && (
@@ -425,7 +436,7 @@ export default function EditarAvaliacaoPage() {
 
               {/* Quartos */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Quartos
                 </label>
                 <input
@@ -433,13 +444,14 @@ export default function EditarAvaliacaoPage() {
                   value={formData.bedrooms}
                   onChange={(e) => handleChange('bedrooms', e.target.value)}
                   placeholder="3"
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
 
               {/* Banheiros */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Banheiros
                 </label>
                 <input
@@ -447,13 +459,14 @@ export default function EditarAvaliacaoPage() {
                   value={formData.bathrooms}
                   onChange={(e) => handleChange('bathrooms', e.target.value)}
                   placeholder="2"
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
 
               {/* Vagas */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Vagas de Garagem
                 </label>
                 <input
@@ -461,32 +474,35 @@ export default function EditarAvaliacaoPage() {
                   value={formData.parking}
                   onChange={(e) => handleChange('parking', e.target.value)}
                   placeholder="2"
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
 
               {/* Cidade */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Cidade
                 </label>
                 <input
                   type="text"
                   value={formData.city}
                   onChange={(e) => handleChange('city', e.target.value)}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
 
               {/* Estado */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Estado
                 </label>
                 <select
                   value={formData.state}
                   onChange={(e) => handleChange('state', e.target.value)}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 >
                   <option value="PE">Pernambuco</option>
                   <option value="SP">São Paulo</option>
@@ -501,23 +517,23 @@ export default function EditarAvaliacaoPage() {
         {/* Step 2: Cliente */}
         {currentStep === 2 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Dados do Cliente</h2>
+            <h2 className="text-xl font-bold mb-6" style={{ color: T.text }}>Dados do Cliente</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Nome */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Nome Completo *
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="text"
                     value={formData.clientName}
                     onChange={(e) => handleChange('clientName', e.target.value)}
                     placeholder="Ex: Maria Santos Silva"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.clientName ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                      }`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.clientName ? '#fca5a5' : T.border}`, color: T.text }}
                   />
                 </div>
                 {errors.clientName && (
@@ -530,18 +546,18 @@ export default function EditarAvaliacaoPage() {
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Email *
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="email"
                     value={formData.clientEmail}
                     onChange={(e) => handleChange('clientEmail', e.target.value)}
                     placeholder="email@exemplo.com"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.clientEmail ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                      }`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.clientEmail ? '#fca5a5' : T.border}`, color: T.text }}
                   />
                 </div>
                 {errors.clientEmail && (
@@ -554,36 +570,38 @@ export default function EditarAvaliacaoPage() {
 
               {/* Telefone */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Telefone
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="text"
                     value={formData.clientPhone}
                     onChange={(e) => handleChange('clientPhone', formatPhone(e.target.value))}
                     placeholder="(81) 99999-9999"
                     maxLength={15}
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
               </div>
 
               {/* CPF */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   CPF/CNPJ
                 </label>
                 <div className="relative">
-                  <FileText className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <FileText className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="text"
                     value={formData.clientCPF}
                     onChange={(e) => handleChange('clientCPF', formatCPF(e.target.value))}
                     placeholder="000.000.000-00"
                     maxLength={14}
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
               </div>
@@ -594,19 +612,19 @@ export default function EditarAvaliacaoPage() {
         {/* Step 3: Avaliação */}
         {currentStep === 3 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Dados da Avaliação</h2>
+            <h2 className="text-xl font-bold mb-6" style={{ color: T.text }}>Dados da Avaliação</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Finalidade */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Finalidade da Avaliação *
                 </label>
                 <select
                   value={formData.purpose}
                   onChange={(e) => handleChange('purpose', e.target.value)}
-                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white ${errors.purpose ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
+                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                  style={{ background: T.elevated, border: `1px solid ${errors.purpose ? '#fca5a5' : T.border}`, color: T.text }}
                 >
                   <option value="">Selecione...</option>
                   {finalidades.map(fin => (
@@ -623,14 +641,14 @@ export default function EditarAvaliacaoPage() {
 
               {/* Método */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Método de Avaliação *
                 </label>
                 <select
                   value={formData.method}
                   onChange={(e) => handleChange('method', e.target.value)}
-                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white ${errors.method ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
+                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                  style={{ background: T.elevated, border: `1px solid ${errors.method ? '#fca5a5' : T.border}`, color: T.text }}
                 >
                   {metodosAvaliacao.map(met => (
                     <option key={met} value={met}>{met}</option>
@@ -646,40 +664,42 @@ export default function EditarAvaliacaoPage() {
 
               {/* Data Solicitação */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Data da Solicitação
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="date"
                     value={formData.requestDate}
                     onChange={(e) => handleChange('requestDate', e.target.value)}
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
               </div>
 
               {/* Prazo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Prazo de Entrega
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="date"
                     value={formData.deadline}
                     onChange={(e) => handleChange('deadline', e.target.value)}
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
               </div>
             </div>
 
             {/* Upload Documentos */}
-            <div className="pt-6 border-t border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+            <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
+              <label className="block text-sm font-medium mb-3" style={{ color: T.text }}>
                 Documentos (Escritura, IPTU, Fotos)
               </label>
               <label className="block">
@@ -690,12 +710,12 @@ export default function EditarAvaliacaoPage() {
                   onChange={handleDocumentUpload}
                   className="hidden"
                 />
-                <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-purple-400 hover:bg-purple-50 transition-all cursor-pointer">
-                  <Upload size={40} className="mx-auto text-gray-400 mb-3" />
-                  <p className="text-sm font-medium text-gray-900 mb-1">
+                <div className="border-2 border-dashed rounded-2xl p-8 text-center hover:border-purple-400 hover:bg-purple-50 transition-all cursor-pointer" style={{ borderColor: T.border }}>
+                  <Upload size={40} className="mx-auto mb-3" style={{ color: T.textMuted }} />
+                  <p className="text-sm font-medium mb-1" style={{ color: T.text }}>
                     Clique para fazer upload
                   </p>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs" style={{ color: T.textMuted }}>
                     PDF, JPG, PNG, DOC (máx. 10MB cada)
                   </p>
                 </div>
@@ -705,11 +725,11 @@ export default function EditarAvaliacaoPage() {
               {formData.documents.length > 0 && (
                 <div className="mt-4 space-y-2">
                   {formData.documents.map((file, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div key={index} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: T.elevated }}>
                       <FileText size={20} className="text-purple-600" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-                        <p className="text-xs text-gray-600">{formatFileSize(file.size)}</p>
+                        <p className="text-sm font-medium truncate" style={{ color: T.text }}>{file.name}</p>
+                        <p className="text-xs" style={{ color: T.textMuted }}>{formatFileSize(file.size)}</p>
                       </div>
                       <button
                         type="button"
@@ -733,7 +753,8 @@ export default function EditarAvaliacaoPage() {
           type="button"
           onClick={handlePrev}
           disabled={currentStep === 1}
-          className="flex items-center gap-2 h-11 px-6 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ border: `1px solid ${T.border}`, color: T.text }}
         >
           <ArrowLeft size={20} />
           Anterior

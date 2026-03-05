@@ -1,10 +1,6 @@
 // POST /api/tracking/pageview — Records page views from the public website
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 function parseUA(ua: string) {
     let deviceType = 'desktop'
@@ -34,7 +30,6 @@ function isBot(ua: string): boolean {
 
 export async function POST(request: NextRequest) {
     try {
-        const supabase = getSupabase()
         const body = await request.json()
         const {
             sessionId, pageUrl, pagePath, referrer,
@@ -56,7 +51,7 @@ export async function POST(request: NextRequest) {
         const { deviceType, browser, os } = parseUA(ua)
 
         // 1. Record page view
-        await supabase.from('page_views').insert({
+        await supabaseAdmin.from('page_views').insert({
             session_id: sessionId,
             page_url: pageUrl || pagePath,
             page_path: pagePath,
@@ -76,14 +71,14 @@ export async function POST(request: NextRequest) {
         })
 
         // 2. Upsert session
-        const { data: existingSession } = await supabase
+        const { data: existingSession } = await supabaseAdmin
             .from('tracking_sessions')
             .select('id, page_count')
             .eq('session_id', sessionId)
             .single()
 
         if (existingSession) {
-            await supabase
+            await supabaseAdmin
                 .from('tracking_sessions')
                 .update({
                     last_page: pagePath,
@@ -93,7 +88,7 @@ export async function POST(request: NextRequest) {
                 })
                 .eq('session_id', sessionId)
         } else {
-            await supabase.from('tracking_sessions').insert({
+            await supabaseAdmin.from('tracking_sessions').insert({
                 session_id: sessionId,
                 first_page: pagePath,
                 last_page: pagePath,
@@ -112,7 +107,7 @@ export async function POST(request: NextRequest) {
 
         // 3. Hot lead detection — notify if visitor views 3+ property pages
         if (developmentSlug && existingSession) {
-            const { count } = await supabase
+            const { count } = await supabaseAdmin
                 .from('page_views')
                 .select('*', { count: 'exact', head: true })
                 .eq('session_id', sessionId)
@@ -120,7 +115,7 @@ export async function POST(request: NextRequest) {
 
             if (count && count >= 3) {
                 // Check if we already sent a notification for this session
-                const { data: existingNotif } = await supabase
+                const { data: existingNotif } = await supabaseAdmin
                     .from('notifications')
                     .select('id')
                     .eq('type', 'hot_lead')
@@ -128,7 +123,7 @@ export async function POST(request: NextRequest) {
                     .limit(1)
 
                 if (!existingNotif || existingNotif.length === 0) {
-                    await supabase.from('notifications').insert({
+                    await supabaseAdmin.from('notifications').insert({
                         user_id: '00000000-0000-0000-0000-000000000000',
                         type: 'hot_lead',
                         title: '🔥 Visitante interessado detectado',

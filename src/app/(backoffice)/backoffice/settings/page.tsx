@@ -14,10 +14,13 @@ import {
 } from 'lucide-react'
 
 const T = {
-  bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-  text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-  gold: '#486581',
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
 }
 
 interface SettingsData {
@@ -132,12 +135,12 @@ export default function SettingsPage() {
   }
 
   const toggleCheckedStyle = {
-    background: '#486581',
+    background: T.accent,
   }
 
   const toggleUncheckedStyle = {
-    background: 'var(--bo-hover)',
-    border: '1px solid var(--bo-border)',
+    background: T.elevated,
+    border: `1px solid ${T.border}`,
   }
 
   return (
@@ -146,7 +149,7 @@ export default function SettingsPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold" style={{ color: T.text }}>Configurações</h1>
-          <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
+          <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>
             Gerencie as preferências e configurações do sistema
           </p>
         </div>
@@ -155,7 +158,7 @@ export default function SettingsPage() {
           onClick={handleSave}
           disabled={isSaving}
           className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
-          style={{ background: '#486581', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
+          style={{ background: T.accent, boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
         >
           {isSaving ? (
             <><Loader2 size={16} className="animate-spin" /> Salvando...</>
@@ -185,9 +188,9 @@ export default function SettingsPage() {
               onClick={() => setActiveTab(tab.id)}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap"
               style={{
-                background: activeTab === tab.id ? 'var(--bo-active-bg)' : 'transparent',
-                color: activeTab === tab.id ? T.gold : T.textDim,
-                border: activeTab === tab.id ? `1px solid ${T.borderGold}` : '1px solid transparent',
+                background: activeTab === tab.id ? T.elevated : 'transparent',
+                color: activeTab === tab.id ? T.accent : T.textMuted,
+                border: activeTab === tab.id ? `1px solid ${T.border}` : '1px solid transparent',
               }}
             >
               <Icon size={16} />
@@ -204,7 +207,7 @@ export default function SettingsPage() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Informações da Empresa</h3>
-              <p className="text-sm" style={{ color: T.textDim }}>Dados básicos da sua imobiliária</p>
+              <p className="text-sm" style={{ color: T.textMuted }}>Dados básicos da sua imobiliária</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -215,7 +218,7 @@ export default function SettingsPage() {
                 { key: 'companyAddress', label: 'Endereço', type: 'text' },
               ].map(field => (
                 <div key={field.key}>
-                  <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
                     {field.label}
                   </label>
                   <input
@@ -224,7 +227,7 @@ export default function SettingsPage() {
                     onChange={(e) => handleChange(field.key as keyof SettingsData, e.target.value)}
                     className="w-full h-11 px-4 rounded-xl text-sm outline-none transition-all"
                     style={inputStyle}
-                    onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
+                    onFocus={e => (e.currentTarget.style.border = `1px solid ${T.accent}`)}
                     onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
                   />
                 </div>
@@ -238,7 +241,7 @@ export default function SettingsPage() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Preferências de Notificações</h3>
-              <p className="text-sm" style={{ color: T.textDim }}>Escolha como deseja receber atualizações</p>
+              <p className="text-sm" style={{ color: T.textMuted }}>Escolha como deseja receber atualizações</p>
             </div>
 
             <div className="space-y-3">
@@ -252,7 +255,7 @@ export default function SettingsPage() {
                   style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                   <div>
                     <p className="text-sm font-medium" style={{ color: T.text }}>{item.label}</p>
-                    <p className="text-xs mt-1" style={{ color: T.textDim }}>{item.desc}</p>
+                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>{item.desc}</p>
                   </div>
                   <button
                     onClick={() => handleChange(item.key as keyof SettingsData, !(settings as any)[item.key])}
@@ -275,12 +278,12 @@ export default function SettingsPage() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Aparência e Idioma</h3>
-              <p className="text-sm" style={{ color: T.textDim }}>Personalize a interface do sistema</p>
+              <p className="text-sm" style={{ color: T.textMuted }}>Personalize a interface do sistema</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
                   Tema
                 </label>
                 <select
@@ -299,7 +302,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
                   Idioma
                 </label>
                 <select
@@ -322,7 +325,7 @@ export default function SettingsPage() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Segurança e Privacidade</h3>
-              <p className="text-sm" style={{ color: T.textDim }}>Proteja sua conta e dados</p>
+              <p className="text-sm" style={{ color: T.textMuted }}>Proteja sua conta e dados</p>
             </div>
 
             <div className="space-y-4">
@@ -330,7 +333,7 @@ export default function SettingsPage() {
                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                 <div>
                   <p className="text-sm font-medium" style={{ color: T.text }}>Autenticação de Dois Fatores</p>
-                  <p className="text-xs mt-1" style={{ color: T.textDim }}>Adicione uma camada extra de segurança</p>
+                  <p className="text-xs mt-1" style={{ color: T.textMuted }}>Adicione uma camada extra de segurança</p>
                 </div>
                 <button
                   onClick={() => handleChange('twoFactorAuth', !settings.twoFactorAuth)}
@@ -345,7 +348,7 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
                   Tempo de Sessão (minutos)
                 </label>
                 <select
@@ -369,7 +372,7 @@ export default function SettingsPage() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Integrações Externas</h3>
-              <p className="text-sm" style={{ color: T.textDim }}>Conecte com ferramentas de terceiros</p>
+              <p className="text-sm" style={{ color: T.textMuted }}>Conecte com ferramentas de terceiros</p>
             </div>
 
             <div className="space-y-4">
@@ -379,7 +382,7 @@ export default function SettingsPage() {
                 { key: 'whatsappApi', label: 'WhatsApp API Token', placeholder: 'EAAxxxxxxxxxx' },
               ].map(field => (
                 <div key={field.key}>
-                  <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textDim }}>
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
                     {field.label}
                   </label>
                   <input
@@ -389,7 +392,7 @@ export default function SettingsPage() {
                     placeholder={field.placeholder}
                     className="w-full h-11 px-4 rounded-xl text-sm outline-none font-mono transition-all"
                     style={inputStyle}
-                    onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
+                    onFocus={e => (e.currentTarget.style.border = `1px solid ${T.accent}`)}
                     onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
                   />
                 </div>

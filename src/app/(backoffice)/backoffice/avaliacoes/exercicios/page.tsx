@@ -254,6 +254,16 @@ const EXERCICIOS: Exercicio[] = [
 const CATEGORIAS = [...new Set(EXERCICIOS.map(e => e.categoria))]
 const NIVEIS = { basico: '🟢 Básico', intermediario: '🟡 Intermediário', avancado: '🔴 Avançado' }
 
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
+
 export default function ExerciciosPage() {
   const router = useRouter()
   const [selectedCat, setSelectedCat] = useState<string>('Todos')
@@ -351,12 +361,12 @@ export default function ExerciciosPage() {
   if (mode === 'resultado') {
     return (
       <div className="max-w-2xl mx-auto space-y-6 pb-20">
-        <div className="text-center py-8 bg-white rounded-xl border border-gray-100 px-6">
+        <div className="text-center py-8 rounded-xl px-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
             <Trophy size={36} className="text-amber-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">Treino Concluído!</h2>
-          <p className="text-gray-500">{score.total} questões respondidas</p>
+          <h2 className="text-2xl font-bold mb-1" style={{ color: T.text }}>Treino Concluído!</h2>
+          <p style={{ color: T.textMuted }}>{score.total} questões respondidas</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
             {[
@@ -364,23 +374,23 @@ export default function ExerciciosPage() {
               { label: 'Corretas', value: score.corretas, color: 'text-emerald-600' },
               { label: 'Sequência max.', value: score.maxStreak, color: 'text-amber-600' },
             ].map(item => (
-              <div key={item.label} className="bg-gray-50 rounded-xl p-3">
+              <div key={item.label} className="rounded-xl p-3" style={{ background: T.elevated }}>
                 <p className={`text-2xl font-bold ${item.color}`}>{item.value}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{item.label}</p>
+                <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{item.label}</p>
               </div>
             ))}
           </div>
 
           {Object.entries(score.categorias).length > 0 && (
             <div className="mt-6 text-left space-y-2">
-              <p className="text-sm font-semibold text-gray-700 mb-3">Por categoria:</p>
+              <p className="text-sm font-semibold mb-3" style={{ color: T.text }}>Por categoria:</p>
               {Object.entries(score.categorias).map(([cat, data]) => (
                 <div key={cat} className="flex items-center gap-3">
-                  <span className="text-sm text-gray-600 w-32 truncate">{cat}</span>
-                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <span className="text-sm w-32 truncate" style={{ color: T.textMuted }}>{cat}</span>
+                  <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: T.border }}>
                     <div className="h-full bg-[#102A43] rounded-full transition-all" style={{ width: `${(data.corretas / data.total) * 100}%` }} />
                   </div>
-                  <span className="text-xs text-gray-500 w-12 text-right">{data.corretas}/{data.total}</span>
+                  <span className="text-xs w-12 text-right" style={{ color: T.textMuted }}>{data.corretas}/{data.total}</span>
                 </div>
               ))}
             </div>
@@ -398,7 +408,7 @@ export default function ExerciciosPage() {
     return (
       <div className="max-w-2xl mx-auto space-y-4 pb-20">
         <div className="flex items-center justify-between">
-          <button onClick={() => setMode('menu')} className="w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center">
+          <button onClick={() => setMode('menu')} className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ border: `1px solid ${T.border}` }}>
             <ArrowLeft size={18} />
           </button>
           <div className="flex items-center gap-3">
@@ -407,7 +417,7 @@ export default function ExerciciosPage() {
                 <Zap size={16} /> {score.streak}x
               </span>
             )}
-            <span className="text-sm text-gray-500">{currentIdx + 1} / {filtered.length}</span>
+            <span className="text-sm" style={{ color: T.textMuted }}>{currentIdx + 1} / {filtered.length}</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-emerald-600 font-bold">{score.corretas}✓</span>
@@ -416,19 +426,19 @@ export default function ExerciciosPage() {
         </div>
 
         {/* Progress */}
-        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.border }}>
           <div className="h-full bg-[#102A43] rounded-full transition-all" style={{ width: `${((currentIdx) / filtered.length) * 100}%` }} />
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
+        <div className="rounded-xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           {/* Meta */}
           <div className="flex items-center gap-2">
-            <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">{current.categoria}</span>
-            <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">{NIVEIS[current.nivel]}</span>
+            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: T.elevated, color: T.textMuted }}>{current.categoria}</span>
+            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: T.elevated, color: T.textMuted }}>{NIVEIS[current.nivel]}</span>
             {current.normaRef && <span className="text-xs px-2 py-0.5 bg-blue-50 rounded-full text-blue-600">{current.normaRef}</span>}
           </div>
 
-          <p className="text-base font-semibold text-gray-900 leading-relaxed">{current.pergunta}</p>
+          <p className="text-base font-semibold leading-relaxed" style={{ color: T.text }}>{current.pergunta}</p>
 
           {current.contexto && (
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800 font-mono">
@@ -438,16 +448,19 @@ export default function ExerciciosPage() {
 
           <div className="space-y-2">
             {current.opcoes.map((opt, idx) => {
-              let cls = 'border-gray-200 hover:border-gray-300 text-gray-800'
+              let cls = ''
+              let inlineStyle: React.CSSProperties = { border: `1px solid ${T.border}`, color: T.text }
               if (revealed) {
-                if (idx === current.correta) cls = 'border-emerald-400 bg-emerald-50 text-emerald-800'
-                else if (idx === selected && idx !== current.correta) cls = 'border-red-400 bg-red-50 text-red-800'
-                else cls = 'border-gray-100 text-gray-400'
+                if (idx === current.correta) { cls = 'border-emerald-400 bg-emerald-50 text-emerald-800'; inlineStyle = {} }
+                else if (idx === selected && idx !== current.correta) { cls = 'border-red-400 bg-red-50 text-red-800'; inlineStyle = {} }
+                else { inlineStyle = { border: `1px solid ${T.border}`, color: T.textMuted } }
               }
               return (
                 <button key={idx} onClick={() => handleAnswer(idx)}
-                  className={`w-full flex items-center gap-3 p-3.5 border rounded-xl text-left text-sm transition-all ${cls}`}>
-                  <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold flex-shrink-0 ${revealed && idx === current.correta ? 'bg-emerald-500 border-emerald-500 text-white' : revealed && idx === selected ? 'bg-red-500 border-red-500 text-white' : 'border-gray-300'}`}>
+                  className={`w-full flex items-center gap-3 p-3.5 rounded-xl text-left text-sm transition-all ${cls}`}
+                  style={Object.keys(inlineStyle).length > 0 ? inlineStyle : undefined}>
+                  <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold flex-shrink-0 ${revealed && idx === current.correta ? 'bg-emerald-500 border-emerald-500 text-white' : revealed && idx === selected ? 'bg-red-500 border-red-500 text-white' : ''}`}
+                    style={!revealed || (idx !== current.correta && idx !== selected) ? { borderColor: T.border } : undefined}>
                     {String.fromCharCode(65 + idx)}
                   </div>
                   {opt}
@@ -478,12 +491,12 @@ export default function ExerciciosPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-20">
       <div className="flex items-center gap-4">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center">
+        <button onClick={() => router.back()} className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ border: `1px solid ${T.border}` }}>
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Exercícios — NBR 14653</h1>
-          <p className="text-xs text-gray-500">Treine avaliação imobiliária diariamente</p>
+          <h1 className="text-xl font-bold" style={{ color: T.text }}>Exercícios — NBR 14653</h1>
+          <p className="text-xs" style={{ color: T.textMuted }}>Treine avaliação imobiliária diariamente</p>
         </div>
       </div>
 
@@ -496,13 +509,13 @@ export default function ExerciciosPage() {
         ].map(item => {
           const Icon = item.icon
           return (
-            <div key={item.label} className="bg-white rounded-xl border border-gray-100 p-4 flex items-center gap-3">
+            <div key={item.label} className="rounded-xl p-4 flex items-center gap-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${item.color}`}>
                 <Icon size={18} />
               </div>
               <div>
-                <p className="text-xl font-bold text-gray-900">{item.value}</p>
-                <p className="text-xs text-gray-500">{item.label}</p>
+                <p className="text-xl font-bold" style={{ color: T.text }}>{item.value}</p>
+                <p className="text-xs" style={{ color: T.textMuted }}>{item.label}</p>
               </div>
             </div>
           )
@@ -510,12 +523,13 @@ export default function ExerciciosPage() {
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-3">
-        <p className="text-sm font-semibold text-gray-700">Filtros</p>
+      <div className="rounded-xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <p className="text-sm font-semibold" style={{ color: T.text }}>Filtros</p>
         <div className="flex flex-wrap gap-2">
           {['Todos', ...CATEGORIAS].map(cat => (
             <button key={cat} onClick={() => setSelectedCat(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedCat === cat ? 'bg-[#102A43] text-white border-[#334E68]' : 'bg-white text-gray-600 border-gray-200 hover:border-[#334E68]'}`}>
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedCat === cat ? 'bg-[#102A43] text-white border-[#334E68]' : 'hover:border-[#334E68]'}`}
+              style={selectedCat !== cat ? { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` } : undefined}>
               {cat}
             </button>
           ))}
@@ -523,14 +537,15 @@ export default function ExerciciosPage() {
         <div className="flex flex-wrap gap-2">
           {['Todos', 'basico', 'intermediario', 'avancado'].map(nv => (
             <button key={nv} onClick={() => setSelectedNivel(nv)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedNivel === nv ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'}`}>
+              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedNivel === nv ? 'bg-gray-900 text-white border-gray-900' : 'hover:border-gray-400'}`}
+              style={selectedNivel !== nv ? { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` } : undefined}>
               {nv === 'Todos' ? 'Todos os níveis' : NIVEIS[nv as keyof typeof NIVEIS]}
             </button>
           ))}
         </div>
 
         <div className="flex items-center justify-between pt-1">
-          <p className="text-sm text-gray-500"><strong className="text-gray-900">{filtered.length}</strong> questões selecionadas</p>
+          <p className="text-sm" style={{ color: T.textMuted }}><strong style={{ color: T.text }}>{filtered.length}</strong> questões selecionadas</p>
           <button onClick={startTreino} disabled={filtered.length === 0}
             className="flex items-center gap-2 h-9 px-5 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors disabled:opacity-40">
             <Play size={15} /> Iniciar Treino
@@ -539,23 +554,24 @@ export default function ExerciciosPage() {
       </div>
 
       {/* IA Generator */}
-      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+      <div className="rounded-xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <button type="button" onClick={() => setShowIA(!showIA)}
-          className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
+          className="w-full flex items-center justify-between p-4 transition-colors"
+          style={{ background: T.surface }}>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
               <Sparkles size={18} className="text-amber-600" />
             </div>
             <div className="text-left">
-              <p className="text-sm font-semibold text-gray-900">Gerar Exercício com IA</p>
-              <p className="text-xs text-gray-500">Questões personalizadas ilimitadas</p>
+              <p className="text-sm font-semibold" style={{ color: T.text }}>Gerar Exercício com IA</p>
+              <p className="text-xs" style={{ color: T.textMuted }}>Questões personalizadas ilimitadas</p>
             </div>
           </div>
-          <ChevronDown size={18} className={`text-gray-400 transition-transform ${showIA ? 'rotate-180' : ''}`} />
+          <ChevronDown size={18} className={`transition-transform ${showIA ? 'rotate-180' : ''}`} style={{ color: T.textMuted }} />
         </button>
 
         {showIA && (
-          <div className="p-4 border-t border-gray-100 space-y-3">
+          <div className="p-4 space-y-3" style={{ borderTop: `1px solid ${T.border}` }}>
             <button onClick={generateIAExercise} disabled={isGenerating}
               className="w-full flex items-center justify-center gap-2 h-10 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-sm font-medium hover:bg-amber-100 transition-colors disabled:opacity-50">
               {isGenerating ? <><Loader2 size={16} className="animate-spin" /> Gerando...</> : <><Sparkles size={16} /> Nova Questão</>}
@@ -564,11 +580,11 @@ export default function ExerciciosPage() {
               try {
                 const parsed = JSON.parse(iaExercicio)
                 return (
-                  <div className="space-y-3 p-3 bg-gray-50 rounded-xl">
-                    <p className="text-sm font-medium text-gray-900">{parsed.pergunta}</p>
+                  <div className="space-y-3 p-3 rounded-xl" style={{ background: T.elevated }}>
+                    <p className="text-sm font-medium" style={{ color: T.text }}>{parsed.pergunta}</p>
                     {parsed.opcoes?.map((opt: string, i: number) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-gray-600">
-                        <span className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold flex-shrink-0">
+                      <div key={i} className="flex items-center gap-2 text-xs" style={{ color: T.textMuted }}>
+                        <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ background: T.border, color: T.text }}>
                           {String.fromCharCode(65 + i)}
                         </span>
                         <span className={i === parsed.correta ? 'font-bold text-emerald-700' : ''}>{opt}</span>

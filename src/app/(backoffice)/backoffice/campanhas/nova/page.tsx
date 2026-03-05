@@ -27,6 +27,16 @@ import {
   Upload,
 } from 'lucide-react'
 
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
+
 type Step = 1 | 2 | 3
 
 interface FormData {
@@ -259,13 +269,14 @@ export default function NovaCampanhaPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center"
+            className="w-10 h-10 rounded-lg flex items-center justify-center"
+            style={{ border: `1px solid ${T.border}` }}
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20} style={{ color: T.text }} />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Nova Campanha de Marketing</h1>
-            <p className="text-sm text-gray-600 mt-1">Passo {currentStep} de 3</p>
+            <h1 className="text-2xl font-bold" style={{ color: T.text }}>Nova Campanha de Marketing</h1>
+            <p className="text-sm mt-1" style={{ color: T.textMuted }}>Passo {currentStep} de 3</p>
           </div>
         </div>
 
@@ -278,7 +289,7 @@ export default function NovaCampanhaPage() {
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-white rounded-2xl p-6 border border-gray-100">
+      <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between mb-4">
           {steps.map((step, index) => {
             const StepIcon = step.icon
@@ -290,24 +301,30 @@ export default function NovaCampanhaPage() {
                 <div className="flex flex-col items-center flex-1">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isCompleted ? 'bg-green-500 text-white' :
                     isActive ? 'bg-blue-500 text-white' :
-                      'bg-gray-100 text-gray-400'
-                    }`}>
+                      ''
+                    }`}
+                    style={!isCompleted && !isActive ? { background: T.elevated, color: T.textMuted } : {}}
+                  >
                     {isCompleted ? <Check size={24} /> : <StepIcon size={24} />}
                   </div>
-                  <p className={`text-sm font-medium mt-2 ${isActive ? 'text-blue-700' : isCompleted ? 'text-green-700' : 'text-gray-500'
-                    }`}>
+                  <p className={`text-sm font-medium mt-2 ${isActive ? 'text-blue-700' : isCompleted ? 'text-green-700' : ''
+                    }`}
+                    style={!isActive && !isCompleted ? { color: T.textMuted } : {}}
+                  >
                     {step.label}
                   </p>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`h-1 flex-1 mx-4 rounded-full transition-all ${currentStep > step.number ? 'bg-green-500' : 'bg-gray-200'
-                    }`} />
+                  <div className={`h-1 flex-1 mx-4 rounded-full transition-all ${currentStep > step.number ? 'bg-green-500' : ''
+                    }`}
+                    style={currentStep <= step.number ? { background: T.elevated } : {}}
+                  />
                 )}
               </div>
             )
           })}
         </div>
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
           <div
             className="h-full bg-blue-500 transition-all duration-300"
             style={{ width: `${progress}%` }}
@@ -316,27 +333,27 @@ export default function NovaCampanhaPage() {
       </div>
 
       {/* Form Content */}
-      <div className="bg-white rounded-2xl p-8 border border-gray-100">
+      <div className="rounded-2xl p-8" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Step 1: Configuração */}
         {currentStep === 1 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Configuração da Campanha</h2>
+            <h2 className="text-xl font-bold mb-6" style={{ color: T.text }}>Configuração da Campanha</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Nome */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Nome da Campanha *
                 </label>
                 <div className="relative">
-                  <Target className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Target className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     placeholder="Ex: Lançamento Reserva Imperial - Instagram"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                      }`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-300 bg-red-50' : ''}`}
+                    style={!errors.name ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.text } : {}}
                   />
                 </div>
                 {errors.name && (
@@ -349,14 +366,14 @@ export default function NovaCampanhaPage() {
 
               {/* Objetivo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Objetivo *
                 </label>
                 <select
                   value={formData.objective}
                   onChange={(e) => handleChange('objective', e.target.value)}
-                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white ${errors.objective ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
+                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.objective ? 'border-red-300 bg-red-50' : ''}`}
+                  style={!errors.objective ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.text } : {}}
                 >
                   <option value="">Selecione...</option>
                   {objetivos.map(obj => (
@@ -373,14 +390,14 @@ export default function NovaCampanhaPage() {
 
               {/* Canal */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Canal *
                 </label>
                 <select
                   value={formData.channel}
                   onChange={(e) => handleChange('channel', e.target.value)}
-                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white ${errors.channel ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
+                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.channel ? 'border-red-300 bg-red-50' : ''}`}
+                  style={!errors.channel ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.text } : {}}
                 >
                   <option value="">Selecione...</option>
                   {canais.map(canal => (
@@ -397,33 +414,34 @@ export default function NovaCampanhaPage() {
 
               {/* Data Início */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Data de Início *
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="date"
                     value={formData.startDate}
                     onChange={(e) => handleChange('startDate', e.target.value)}
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.startDate ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                      }`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.startDate ? 'border-red-300 bg-red-50' : ''}`}
+                    style={!errors.startDate ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.text } : {}}
                   />
                 </div>
               </div>
 
               {/* Data Fim */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Data de Término
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => handleChange('endDate', e.target.value)}
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
               </div>
@@ -434,27 +452,27 @@ export default function NovaCampanhaPage() {
         {/* Step 2: Orçamento */}
         {currentStep === 2 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Orçamento e Metas</h2>
+            <h2 className="text-xl font-bold mb-6" style={{ color: T.text }}>Orçamento e Metas</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Orçamento Total */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Orçamento Total *
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="number"
                     value={formData.budget}
                     onChange={(e) => handleChange('budget', e.target.value)}
                     placeholder="5000"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.budget ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                      }`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.budget ? 'border-red-300 bg-red-50' : ''}`}
+                    style={!errors.budget ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.text } : {}}
                   />
                 </div>
                 {formData.budget && (
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs mt-1" style={{ color: T.textMuted }}>
                     {formatCurrency(formData.budget)}
                   </p>
                 )}
@@ -468,21 +486,22 @@ export default function NovaCampanhaPage() {
 
               {/* Orçamento Diário */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Orçamento Diário
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="number"
                     value={formData.dailyBudget}
                     onChange={(e) => handleChange('dailyBudget', e.target.value)}
                     placeholder="200"
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
                 {formData.dailyBudget && (
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs mt-1" style={{ color: T.textMuted }}>
                     {formatCurrency(formData.dailyBudget)}/dia
                   </p>
                 )}
@@ -490,18 +509,18 @@ export default function NovaCampanhaPage() {
 
               {/* Meta de Leads */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Meta de Leads *
                 </label>
                 <div className="relative">
-                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Users className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="number"
                     value={formData.expectedLeads}
                     onChange={(e) => handleChange('expectedLeads', e.target.value)}
                     placeholder="50"
-                    className={`w-full h-11 pl-10 pr-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.expectedLeads ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                      }`}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.expectedLeads ? 'border-red-300 bg-red-50' : ''}`}
+                    style={!errors.expectedLeads ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.text } : {}}
                   />
                 </div>
                 {errors.expectedLeads && (
@@ -514,29 +533,30 @@ export default function NovaCampanhaPage() {
 
               {/* CPL Estimado */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Custo por Lead (CPL)
                 </label>
                 <div className="relative">
-                  <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                   <input
                     type="text"
                     value={formData.costPerLead ? formatCurrency(formData.costPerLead) : ''}
                     readOnly
                     placeholder="Calculado automaticamente"
-                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl bg-gray-50 text-gray-700 font-medium"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl font-medium"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
               </div>
             </div>
 
             {/* Segmentação */}
-            <div className="pt-6 border-t border-gray-200 space-y-6">
-              <h3 className="text-lg font-bold text-gray-900">Segmentação</h3>
+            <div className="pt-6 space-y-6" style={{ borderTop: `1px solid ${T.border}` }}>
+              <h3 className="text-lg font-bold" style={{ color: T.text }}>Segmentação</h3>
 
               {/* Público-Alvo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Público-Alvo
                 </label>
                 <textarea
@@ -544,19 +564,21 @@ export default function NovaCampanhaPage() {
                   onChange={(e) => handleChange('targetAudience', e.target.value)}
                   placeholder="Ex: Profissionais liberais, casais sem filhos, renda acima de R$ 10k"
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
 
               {/* Faixa Etária */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Faixa Etária
                 </label>
                 <select
                   value={formData.ageRange}
                   onChange={(e) => handleChange('ageRange', e.target.value)}
-                  className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 >
                   <option value="18-24">18-24 anos</option>
                   <option value="25-34">25-34 anos</option>
@@ -569,7 +591,7 @@ export default function NovaCampanhaPage() {
 
               {/* Localização */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium mb-3" style={{ color: T.text }}>
                   Localização
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -580,21 +602,22 @@ export default function NovaCampanhaPage() {
                       onClick={() => toggleLocation(loc)}
                       className={`h-10 px-4 rounded-lg text-sm font-medium transition-all ${formData.location.includes(loc)
                         ? 'bg-blue-500 text-white'
-                        : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+                        : ''
                         }`}
+                      style={!formData.location.includes(loc) ? { border: `1px solid ${T.border}`, color: T.text } : {}}
                     >
                       {loc}
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs mt-2" style={{ color: T.textMuted }}>
                   {formData.location.length} localização(ões) selecionada(s)
                 </p>
               </div>
 
               {/* Interesses */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium mb-3" style={{ color: T.text }}>
                   Interesses
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -605,14 +628,15 @@ export default function NovaCampanhaPage() {
                       onClick={() => toggleInterest(interest)}
                       className={`h-10 px-4 rounded-lg text-sm font-medium transition-all ${formData.interests.includes(interest)
                         ? 'bg-blue-500 text-white'
-                        : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+                        : ''
                         }`}
+                      style={!formData.interests.includes(interest) ? { border: `1px solid ${T.border}`, color: T.text } : {}}
                     >
                       {interest}
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs mt-2" style={{ color: T.textMuted }}>
                   {formData.interests.length} interesse(s) selecionado(s)
                 </p>
               </div>
@@ -623,12 +647,12 @@ export default function NovaCampanhaPage() {
         {/* Step 3: Criativos */}
         {currentStep === 3 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Criativos e Tracking</h2>
+            <h2 className="text-xl font-bold mb-6" style={{ color: T.text }}>Criativos e Tracking</h2>
 
             <div className="grid grid-cols-1 gap-6">
               {/* Título */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Título do Anúncio *
                 </label>
                 <input
@@ -637,10 +661,10 @@ export default function NovaCampanhaPage() {
                   onChange={(e) => handleChange('adTitle', e.target.value)}
                   placeholder="Ex: Seu Apartamento dos Sonhos em Boa Viagem"
                   maxLength={60}
-                  className={`w-full h-11 px-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.adTitle ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
+                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.adTitle ? 'border-red-300 bg-red-50' : ''}`}
+                  style={!errors.adTitle ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.text } : {}}
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs mt-1" style={{ color: T.textMuted }}>
                   {formData.adTitle.length}/60 caracteres
                 </p>
                 {errors.adTitle && (
@@ -653,7 +677,7 @@ export default function NovaCampanhaPage() {
 
               {/* Descrição */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                   Descrição *
                 </label>
                 <textarea
@@ -662,10 +686,10 @@ export default function NovaCampanhaPage() {
                   placeholder="Descreva os principais benefícios e diferenciais..."
                   rows={4}
                   maxLength={200}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${errors.adDescription ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    }`}
+                  className={`w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${errors.adDescription ? 'border-red-300 bg-red-50' : ''}`}
+                  style={!errors.adDescription ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.text } : {}}
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs mt-1" style={{ color: T.textMuted }}>
                   {formData.adDescription.length}/200 caracteres
                 </p>
                 {errors.adDescription && (
@@ -679,13 +703,14 @@ export default function NovaCampanhaPage() {
               {/* CTA */}
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                     Call to Action
                   </label>
                   <select
                     value={formData.callToAction}
                     onChange={(e) => handleChange('callToAction', e.target.value)}
-                    className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                    className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   >
                     <option value="Saiba Mais">Saiba Mais</option>
                     <option value="Agende Visita">Agende Visita</option>
@@ -697,17 +722,18 @@ export default function NovaCampanhaPage() {
 
                 {/* Landing Page */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                     URL da Landing Page
                   </label>
                   <div className="relative">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
                     <input
                       type="url"
                       value={formData.landingPageUrl}
                       onChange={(e) => handleChange('landingPageUrl', e.target.value)}
                       placeholder="https://..."
-                      className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                   </div>
                 </div>
@@ -715,7 +741,7 @@ export default function NovaCampanhaPage() {
 
               {/* Upload Imagens */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium mb-3" style={{ color: T.text }}>
                   Imagens do Anúncio
                 </label>
                 <label className="block">
@@ -726,12 +752,12 @@ export default function NovaCampanhaPage() {
                     onChange={handleImageUpload}
                     className="hidden"
                   />
-                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer">
-                    <Upload size={40} className="mx-auto text-gray-400 mb-3" />
-                    <p className="text-sm font-medium text-gray-900 mb-1">
+                  <div className="border-2 border-dashed rounded-2xl p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer" style={{ borderColor: T.border }}>
+                    <Upload size={40} className="mx-auto mb-3" style={{ color: T.textMuted }} />
+                    <p className="text-sm font-medium mb-1" style={{ color: T.text }}>
                       Clique para fazer upload
                     </p>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs" style={{ color: T.textMuted }}>
                       JPG, PNG (1200x628px recomendado)
                     </p>
                   </div>
@@ -760,14 +786,14 @@ export default function NovaCampanhaPage() {
               </div>
 
               {/* UTM Parameters */}
-              <div className="pt-6 border-t border-gray-200">
-                <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
+                <h3 className="text-sm font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
                   <Sparkles size={16} className="text-blue-600" />
                   Parâmetros UTM (Tracking)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-2">
+                    <label className="block text-xs font-medium mb-2" style={{ color: T.textMuted }}>
                       utm_source
                     </label>
                     <input
@@ -775,11 +801,12 @@ export default function NovaCampanhaPage() {
                       value={formData.utmSource}
                       onChange={(e) => handleChange('utmSource', e.target.value)}
                       placeholder="instagram"
-                      className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-2">
+                    <label className="block text-xs font-medium mb-2" style={{ color: T.textMuted }}>
                       utm_medium
                     </label>
                     <input
@@ -787,11 +814,12 @@ export default function NovaCampanhaPage() {
                       value={formData.utmMedium}
                       onChange={(e) => handleChange('utmMedium', e.target.value)}
                       placeholder="paid"
-                      className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-2">
+                    <label className="block text-xs font-medium mb-2" style={{ color: T.textMuted }}>
                       utm_campaign
                     </label>
                     <input
@@ -799,7 +827,8 @@ export default function NovaCampanhaPage() {
                       value={formData.utmCampaign}
                       onChange={(e) => handleChange('utmCampaign', e.target.value)}
                       placeholder="reserva-imperial"
-                      className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-10 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                   </div>
                 </div>
@@ -815,7 +844,8 @@ export default function NovaCampanhaPage() {
           type="button"
           onClick={handlePrev}
           disabled={currentStep === 1}
-          className="flex items-center gap-2 h-11 px-6 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ border: `1px solid ${T.border}`, color: T.text }}
         >
           <ArrowLeft size={20} />
           Anterior

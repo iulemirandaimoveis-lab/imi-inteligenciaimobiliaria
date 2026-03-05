@@ -1,15 +1,10 @@
 // GET /api/tracking/session — Get session analytics for the backoffice
 // POST /api/tracking/session — Update session duration (heartbeat from client)
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export async function GET(request: NextRequest) {
     try {
-        const supabase = getSupabase()
         const { searchParams } = new URL(request.url)
         const timeRange = searchParams.get('time_range') || '30d'
         const daysAgo = timeRange === '7d' ? 7 : timeRange === '90d' ? 90 : 30
@@ -18,7 +13,7 @@ export async function GET(request: NextRequest) {
         startDate.setDate(startDate.getDate() - daysAgo)
 
         // Sessions summary
-        const { data: sessions, error } = await supabase
+        const { data: sessions, error } = await supabaseAdmin
             .from('tracking_sessions')
             .select('*')
             .gte('started_at', startDate.toISOString())
@@ -95,20 +90,20 @@ export async function GET(request: NextRequest) {
             sessionsByDay,
             topEntryPages,
         })
-    } catch (err: any) {
-        console.error('Session analytics error:', err)
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Unknown error'
+        console.error('Session analytics error:', message)
+        return NextResponse.json({ error: message }, { status: 500 })
     }
 }
 
 // Heartbeat — update session duration
 export async function POST(request: NextRequest) {
     try {
-        const supabase = getSupabase()
         const { sessionId, duration, scrollDepth, pagePath } = await request.json()
         if (!sessionId) return NextResponse.json({ ok: true })
 
-        await supabase
+        await supabaseAdmin
             .from('tracking_sessions')
             .update({
                 total_duration: duration ? Number(duration) : 0,
@@ -119,7 +114,7 @@ export async function POST(request: NextRequest) {
 
         // Also update the latest page_view duration
         if (duration && pagePath) {
-            const { data: latestView } = await supabase
+            const { data: latestView } = await supabaseAdmin
                 .from('page_views')
                 .select('id')
                 .eq('session_id', sessionId)
@@ -129,7 +124,7 @@ export async function POST(request: NextRequest) {
                 .single()
 
             if (latestView) {
-                await supabase
+                await supabaseAdmin
                     .from('page_views')
                     .update({
                         duration_seconds: Number(duration),

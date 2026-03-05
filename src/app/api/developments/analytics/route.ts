@@ -1,9 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
@@ -21,7 +17,7 @@ export async function GET(request: NextRequest) {
     const sinceISO = sinceDate.toISOString()
 
     try {
-        const supabase = getSupabase()
+        const supabase = await createClient()
         // 1. Get development info
         const { data: development } = await supabase
             .from('developments')

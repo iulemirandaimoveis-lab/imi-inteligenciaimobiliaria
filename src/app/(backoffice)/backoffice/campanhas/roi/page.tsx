@@ -16,6 +16,16 @@ import {
   MessageSquare,
 } from 'lucide-react'
 
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
+
 // ⚠️ NÃO MODIFICAR - Dados ROI mockados
 const roiData = {
   // Campanhas por canal
@@ -70,15 +80,16 @@ export default function CampanhasROIPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">ROI das Campanhas</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold" style={{ color: T.text }}>ROI das Campanhas</h1>
+          <p className="text-sm mt-1" style={{ color: T.textMuted }}>
             Análise de retorno sobre investimento
           </p>
         </div>
         <select
           value={periodoFilter}
           onChange={(e) => setPeriodoFilter(e.target.value)}
-          className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+          className="h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+          style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
         >
           <option value="semana">Última Semana</option>
           <option value="mes">Último Mês</option>
@@ -95,25 +106,25 @@ export default function CampanhasROIPage() {
           <p className="text-sm text-green-100">ROI Médio</p>
         </div>
 
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Investido</p>
+        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <p className="text-xs mb-1" style={{ color: T.textMuted }}>Investido</p>
           <p className="text-2xl font-bold text-orange-700">{formatPrice(totalInvested)}</p>
         </div>
 
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Receita</p>
+        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <p className="text-xs mb-1" style={{ color: T.textMuted }}>Receita</p>
           <p className="text-2xl font-bold text-green-700">{formatPrice(totalRevenue)}</p>
         </div>
 
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Lucro</p>
+        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <p className="text-xs mb-1" style={{ color: T.textMuted }}>Lucro</p>
           <p className="text-2xl font-bold text-green-700">{formatPrice(totalRevenue - totalInvested)}</p>
         </div>
       </div>
 
       {/* ROI por Canal */}
-      <div className="bg-white rounded-2xl p-6 border">
-        <h2 className="text-lg font-bold text-gray-900 mb-6">ROI por Canal</h2>
+      <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>ROI por Canal</h2>
         <div className="space-y-4">
           {roiData.porCanal.map((canal, idx) => {
             const PlatformIcon = canal.icon
@@ -124,22 +135,22 @@ export default function CampanhasROIPage() {
               <div key={idx}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center">
-                      <PlatformIcon size={20} className="text-gray-600" />
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: T.elevated }}>
+                      <PlatformIcon size={20} style={{ color: T.textMuted }} />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{canal.platform}</p>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-sm font-semibold" style={{ color: T.text }}>{canal.platform}</p>
+                      <p className="text-xs" style={{ color: T.textMuted }}>
                         {formatPrice(canal.spent)} investido • {canal.conversions} conversões
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-green-700">{canal.roi.toLocaleString('pt-BR')}%</p>
-                    <p className="text-xs text-gray-600">{formatPrice(canal.revenue)} receita</p>
+                    <p className="text-xs" style={{ color: T.textMuted }}>{formatPrice(canal.revenue)} receita</p>
                   </div>
                 </div>
-                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-3 rounded-full overflow-hidden" style={{ background: T.elevated }}>
                   <div
                     className="h-full bg-green-500 rounded-full transition-all"
                     style={{ width: `${barWidth}%` }}
@@ -154,10 +165,10 @@ export default function CampanhasROIPage() {
       {/* Top & Bottom Performers */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Performers */}
-        <div className="bg-white rounded-2xl p-6 border">
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center gap-2 mb-6">
             <Award size={20} className="text-green-600" />
-            <h2 className="text-lg font-bold text-gray-900">Top 3 Performers</h2>
+            <h2 className="text-lg font-bold" style={{ color: T.text }}>Top 3 Performers</h2>
           </div>
           <div className="space-y-4">
             {roiData.topPerformers.map((camp, idx) => (
@@ -182,10 +193,10 @@ export default function CampanhasROIPage() {
         </div>
 
         {/* Bottom Performers */}
-        <div className="bg-white rounded-2xl p-6 border">
+        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center gap-2 mb-6">
             <AlertTriangle size={20} className="text-orange-600" />
-            <h2 className="text-lg font-bold text-gray-900">Requerem Atenção</h2>
+            <h2 className="text-lg font-bold" style={{ color: T.text }}>Requerem Atenção</h2>
           </div>
           <div className="space-y-4">
             {roiData.bottomPerformers.map((camp, idx) => (
@@ -209,8 +220,8 @@ export default function CampanhasROIPage() {
       </div>
 
       {/* Evolução Mensal */}
-      <div className="bg-white rounded-2xl p-6 border">
-        <h2 className="text-lg font-bold text-gray-900 mb-6">Evolução Mensal do ROI</h2>
+      <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Evolução Mensal do ROI</h2>
         <div className="space-y-4">
           {roiData.evolucaoMensal.map((month, idx) => {
             const maxROI = Math.max(...roiData.evolucaoMensal.map(m => m.roi))
@@ -222,7 +233,7 @@ export default function CampanhasROIPage() {
               <div key={idx}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-gray-900 w-20">{month.month}</span>
+                    <span className="text-sm font-semibold w-20" style={{ color: T.text }}>{month.month}</span>
                     <div className="flex items-center gap-2">
                       {trend ? (
                         <TrendingUp size={14} className="text-green-600" />
@@ -234,11 +245,11 @@ export default function CampanhasROIPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="text-right text-xs text-gray-600">
+                  <div className="text-right text-xs" style={{ color: T.textMuted }}>
                     <span>{formatPrice(month.invested)} → {formatPrice(month.revenue)}</span>
                   </div>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
                   <div
                     className={`h-full rounded-full transition-all ${trend ? 'bg-green-500' : 'bg-orange-500'
                       }`}

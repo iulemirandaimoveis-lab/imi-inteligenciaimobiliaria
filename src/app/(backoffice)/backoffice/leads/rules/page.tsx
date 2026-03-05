@@ -34,6 +34,16 @@ import {
     X,
 } from 'lucide-react'
 
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
+
 // ⚠️ NÃO MODIFICAR - Regras mockadas contextualizadas Recife
 const REGRAS_INICIAIS = [
     {
@@ -129,7 +139,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'comportamento',
         icone: Eye,
-        cor: 'text-gray-600 bg-gray-100 border-gray-200',
+        cor: 'text-gray-400 bg-gray-400/10 border-gray-400/20',
         execucoes: 312,
     },
     {
@@ -209,12 +219,15 @@ export default function LeadRulesPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Regras de Pontuação</h1>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <h1 className="text-2xl font-bold" style={{ color: T.text }}>Regras de Pontuação</h1>
+                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>
                         Configure como leads são qualificados automaticamente
                     </p>
                 </div>
-                <button className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]">
+                <button
+                    className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium transition-colors"
+                    style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-600))' }}
+                >
                     <Plus size={18} />
                     Nova Regra
                 </button>
@@ -223,24 +236,24 @@ export default function LeadRulesPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total de Regras', value: stats.total, color: 'text-gray-900' },
-                    { label: 'Regras Ativas', value: stats.ativas, color: 'text-green-700' },
-                    { label: 'Score Máximo', value: `${stats.scoreMaximo} pts`, color: 'text-[#0F0F1E]' },
-                    { label: 'Execuções Totais', value: stats.execucoesTotais.toLocaleString('pt-BR'), color: 'text-blue-700' },
+                    { label: 'Total de Regras', value: stats.total },
+                    { label: 'Regras Ativas', value: stats.ativas, valueColor: '#34d399' },
+                    { label: 'Score Máximo', value: `${stats.scoreMaximo} pts` },
+                    { label: 'Execuções Totais', value: stats.execucoesTotais.toLocaleString('pt-BR'), valueColor: '#60a5fa' },
                 ].map(s => (
-                    <div key={s.label} className="bg-white rounded-2xl p-4 border border-gray-100">
-                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{s.label}</p>
-                        <p className={`text-2xl font-bold mt-1 ${s.color}`}>{s.value}</p>
+                    <div key={s.label} className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>{s.label}</p>
+                        <p className="text-2xl font-bold mt-1" style={{ color: s.valueColor ?? T.text }}>{s.value}</p>
                     </div>
                 ))}
             </div>
 
             {/* Info box */}
-            <div className="bg-blue-50 rounded-2xl border border-blue-100 p-4 flex items-start gap-3">
-                <Info size={16} className="text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="rounded-2xl p-4 flex items-start gap-3" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                <Info size={16} className="text-blue-400 flex-shrink-0 mt-0.5" />
                 <div>
-                    <p className="text-sm font-medium text-blue-900">Como funciona o Lead Scoring</p>
-                    <p className="text-xs text-blue-700 mt-0.5">
+                    <p className="text-sm font-medium text-blue-300">Como funciona o Lead Scoring</p>
+                    <p className="text-xs text-blue-400 mt-0.5">
                         Cada lead começa com 0 pontos. As regras somam ou subtraem pontos automaticamente.
                         Leads com score ≥ 50 são classificados como <strong>Quentes</strong>,
                         20-49 como <strong>Mornos</strong>, e abaixo de 20 como <strong>Frios</strong>.
@@ -250,11 +263,14 @@ export default function LeadRulesPage() {
 
             {/* Filtros */}
             <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Categoria:</span>
+                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Categoria:</span>
                 <button
                     onClick={() => setFiltroCategoria(null)}
-                    className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-colors ${!filtroCategoria ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
+                    className="px-3 py-1.5 rounded-xl text-sm font-medium transition-colors"
+                    style={!filtroCategoria
+                        ? { background: T.text, color: 'var(--bo-bg)' }
+                        : { background: T.elevated, color: T.textMuted }
+                    }
                 >
                     Todas
                 </button>
@@ -262,8 +278,11 @@ export default function LeadRulesPage() {
                     <button
                         key={cat}
                         onClick={() => setFiltroCategoria(filtroCategoria === cat ? null : cat)}
-                        className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-colors capitalize ${filtroCategoria === cat ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
+                        className="px-3 py-1.5 rounded-xl text-sm font-medium transition-colors capitalize"
+                        style={filtroCategoria === cat
+                            ? { background: T.text, color: 'var(--bo-bg)' }
+                            : { background: T.elevated, color: T.textMuted }
+                        }
                     >
                         {CATEGORIAS_LABEL[cat] || cat}
                     </button>
@@ -271,9 +290,10 @@ export default function LeadRulesPage() {
                 <div className="ml-auto flex items-center gap-2">
                     <button
                         onClick={() => setMostrarInativas(!mostrarInativas)}
-                        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
+                        className="flex items-center gap-1.5 text-sm transition-colors hover:opacity-80"
+                        style={{ color: T.textMuted }}
                     >
-                        {mostrarInativas ? <ToggleRight size={18} className="text-[#486581]" /> : <ToggleLeft size={18} />}
+                        {mostrarInativas ? <ToggleRight size={18} style={{ color: T.accent }} /> : <ToggleLeft size={18} />}
                         Mostrar inativas
                     </button>
                 </div>
@@ -286,8 +306,8 @@ export default function LeadRulesPage() {
                     return (
                         <div
                             key={regra.id}
-                            className={`bg-white rounded-2xl border p-5 transition-all group ${regra.ativa ? 'border-gray-100 hover:shadow-sm' : 'border-gray-100 opacity-60'
-                                }`}
+                            className={`rounded-2xl p-5 transition-all group ${!regra.ativa ? 'opacity-60' : ''}`}
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
                         >
                             <div className="flex items-start gap-4">
                                 {/* Ícone */}
@@ -299,14 +319,14 @@ export default function LeadRulesPage() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-start justify-between gap-2 mb-1">
                                         <div>
-                                            <h3 className="text-sm font-bold text-gray-900">{regra.nome}</h3>
-                                            <p className="text-xs text-gray-500 mt-0.5">{regra.descricao}</p>
+                                            <h3 className="text-sm font-bold" style={{ color: T.text }}>{regra.nome}</h3>
+                                            <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{regra.descricao}</p>
                                         </div>
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             {/* Score badge */}
                                             <span className={`px-2.5 py-1 rounded-lg text-sm font-bold ${regra.pontos > 0
-                                                    ? 'bg-green-50 text-green-700'
-                                                    : 'bg-red-50 text-red-700'
+                                                    ? 'bg-green-500/10 text-green-400'
+                                                    : 'bg-red-500/10 text-red-400'
                                                 }`}>
                                                 {regra.pontos > 0 ? '+' : ''}{regra.pontos} pts
                                             </span>
@@ -316,20 +336,20 @@ export default function LeadRulesPage() {
                                     <div className="flex items-center gap-4 mt-2">
                                         {/* Gatilho */}
                                         <div className="flex items-center gap-1.5">
-                                            <Zap size={11} className="text-gray-400" />
-                                            <span className="text-xs text-gray-500 font-mono bg-gray-50 px-2 py-0.5 rounded-md">
+                                            <Zap size={11} style={{ color: T.textMuted }} />
+                                            <span className="text-xs font-mono px-2 py-0.5 rounded-md" style={{ color: T.textMuted, background: T.elevated }}>
                                                 {regra.gatilho}
                                             </span>
                                         </div>
 
                                         {/* Categoria */}
-                                        <span className="text-xs text-gray-400">
+                                        <span className="text-xs" style={{ color: T.textMuted }}>
                                             {CATEGORIAS_LABEL[regra.categoria]}
                                         </span>
 
                                         {/* Execuções */}
                                         {regra.execucoes > 0 && (
-                                            <span className="text-xs text-gray-400">
+                                            <span className="text-xs" style={{ color: T.textMuted }}>
                                                 {regra.execucoes} execuções
                                             </span>
                                         )}
@@ -339,10 +359,10 @@ export default function LeadRulesPage() {
                                 {/* Ações */}
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <button
-                                        className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 touch-always-visible opacity-0 group-hover:opacity-100 transition-all"
+                                        className="w-8 h-8 flex items-center justify-center rounded-xl transition-all opacity-0 group-hover:opacity-100 hover:bg-white/10"
                                         title="Editar"
                                     >
-                                        <Edit size={14} />
+                                        <Edit size={14} style={{ color: T.textMuted }} />
                                     </button>
                                     <button
                                         onClick={() => toggleRegra(regra.id)}
@@ -351,13 +371,13 @@ export default function LeadRulesPage() {
                                     >
                                         {regra.ativa ? (
                                             <>
-                                                <ToggleRight size={16} className="text-green-600" />
-                                                <span className="text-green-700">Ativa</span>
+                                                <ToggleRight size={16} className="text-green-500" />
+                                                <span className="text-green-400">Ativa</span>
                                             </>
                                         ) : (
                                             <>
-                                                <ToggleLeft size={16} className="text-gray-400" />
-                                                <span className="text-gray-500">Inativa</span>
+                                                <ToggleLeft size={16} style={{ color: T.textMuted }} />
+                                                <span style={{ color: T.textMuted }}>Inativa</span>
                                             </>
                                         )}
                                     </button>
@@ -368,10 +388,10 @@ export default function LeadRulesPage() {
                 })}
 
                 {regrasFiltradas.length === 0 && (
-                    <div className="text-center py-12 bg-white rounded-2xl border border-gray-100">
-                        <Settings size={40} className="mx-auto text-gray-200 mb-3" />
-                        <p className="text-gray-500">Nenhuma regra encontrada</p>
-                        <button className="mt-3 text-sm text-[#486581] hover:text-[#0F0F1E] font-medium">
+                    <div className="text-center py-12 rounded-2xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <Settings size={40} className="mx-auto mb-3" style={{ color: T.textMuted, opacity: 0.4 }} />
+                        <p style={{ color: T.textMuted }}>Nenhuma regra encontrada</p>
+                        <button className="mt-3 text-sm font-medium hover:opacity-80 transition-opacity" style={{ color: T.accent }}>
                             + Criar primeira regra
                         </button>
                     </div>
@@ -379,20 +399,20 @@ export default function LeadRulesPage() {
             </div>
 
             {/* Score preview */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6">
-                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
+            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: T.text }}>
                     Simulador de Score
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                     {[
-                        { label: 'Lead Frio', range: '0–19 pts', color: 'bg-gray-100 text-gray-700', desc: 'Nutrição automática' },
-                        { label: 'Lead Morno', range: '20–49 pts', color: 'bg-orange-50 text-orange-700', desc: 'Follow-up em 48h' },
-                        { label: 'Lead Quente', range: '50+ pts', color: 'bg-red-50 text-red-700', desc: 'Contato imediato' },
+                        { label: 'Lead Frio', range: '0–19 pts', bgColor: T.elevated, textColor: T.textMuted, desc: 'Nutrição automática' },
+                        { label: 'Lead Morno', range: '20–49 pts', bgColor: 'rgba(249,115,22,0.1)', textColor: '#fb923c', desc: 'Follow-up em 48h' },
+                        { label: 'Lead Quente', range: '50+ pts', bgColor: 'rgba(239,68,68,0.1)', textColor: '#f87171', desc: 'Contato imediato' },
                     ].map(cat => (
-                        <div key={cat.label} className={`${cat.color} rounded-xl p-4`}>
-                            <p className="text-sm font-bold">{cat.label}</p>
-                            <p className="text-xs font-mono mt-1">{cat.range}</p>
-                            <p className="text-xs mt-2 opacity-70">{cat.desc}</p>
+                        <div key={cat.label} className="rounded-xl p-4" style={{ background: cat.bgColor }}>
+                            <p className="text-sm font-bold" style={{ color: cat.textColor }}>{cat.label}</p>
+                            <p className="text-xs font-mono mt-1" style={{ color: cat.textColor }}>{cat.range}</p>
+                            <p className="text-xs mt-2 opacity-70" style={{ color: cat.textColor }}>{cat.desc}</p>
                         </div>
                     ))}
                 </div>

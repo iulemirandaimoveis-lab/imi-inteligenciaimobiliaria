@@ -46,6 +46,16 @@ import {
   X,
 } from 'lucide-react'
 
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
+
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
 const TIPOS_CONTEUDO = [
   { id: 'blog', label: 'Artigo Blog', icon: FileText, desc: 'SEO-friendly, 800-2000 palavras', color: 'text-blue-600 bg-blue-50' },
@@ -267,19 +277,20 @@ export default function NovoConteudoPage() {
   }
 
   return (
-    <div className="space-y-6 text-gray-900">
+    <div className="space-y-6" style={{ color: T.text }}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
+            style={{ background: T.elevated }}
           >
-            <ArrowLeft size={20} className="text-gray-600" />
+            <ArrowLeft size={20} style={{ color: T.textMuted }} />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Novo Conteúdo</h1>
-            <p className="text-sm text-gray-500 font-medium">
+            <h1 className="text-2xl font-bold" style={{ color: T.text }}>Novo Conteúdo</h1>
+            <p className="text-sm font-medium" style={{ color: T.textMuted }}>
               Editor inteligente com assistência de IA
             </p>
           </div>
@@ -287,7 +298,8 @@ export default function NovoConteudoPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setPreview(!preview)}
-            className="flex items-center gap-2 h-11 px-4 bg-gray-100 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-200 transition-colors"
+            className="flex items-center gap-2 h-11 px-4 rounded-xl text-sm font-bold transition-colors"
+            style={{ background: T.elevated, color: T.text }}
           >
             <Eye size={18} />
             {preview ? 'Voltar ao Editor' : 'Visualizar'}
@@ -307,8 +319,8 @@ export default function NovoConteudoPage() {
         {/* ── Painel esquerdo: configuração ──────────────────────────────── */}
         <div className="lg:col-span-1 space-y-6">
           {/* Tipo de conteúdo */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">
+          <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <label className="block text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: T.textMuted }}>
               Canal de Publicação
             </label>
             <div className="space-y-2">
@@ -320,15 +332,16 @@ export default function NovoConteudoPage() {
                     onClick={() => setTipo(t.id)}
                     className={`w-full flex items-center gap-4 p-3.5 rounded-2xl text-left transition-all group ${tipo === t.id
                       ? 'bg-accent-50 border border-accent-100 shadow-sm'
-                      : 'hover:bg-gray-50 border border-transparent'
+                      : 'border border-transparent'
                       }`}
+                    style={tipo !== t.id ? { borderColor: 'transparent' } : {}}
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 ${t.color}`}>
                       <Icon size={20} />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-900 leading-tight">{t.label}</p>
-                      <p className="text-[10px] text-gray-500 font-medium mt-0.5">{t.desc}</p>
+                      <p className="text-sm font-bold leading-tight" style={{ color: T.text }}>{t.label}</p>
+                      <p className="text-[10px] font-medium mt-0.5" style={{ color: T.textMuted }}>{t.desc}</p>
                     </div>
                     {tipo === t.id && (
                       <div className="ml-auto w-2 h-2 bg-[#16162A] rounded-full" />
@@ -340,19 +353,20 @@ export default function NovoConteudoPage() {
           </div>
 
           {/* Contexto para IA */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">
+          <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <label className="block text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: T.textMuted }}>
               Objetivo & Contexto
             </label>
             <textarea
               value={contexto}
               onChange={e => setContexto(e.target.value)}
               placeholder="Ex: Lançamento Reserva Imperial, foco em investidores, destacar valorização de 18% a.a. em Boa Viagem..."
-              className="w-full h-28 px-4 py-3 text-sm border border-gray-100 rounded-2xl text-gray-900 focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all resize-none bg-gray-50 font-medium placeholder:text-gray-400"
+              className="w-full h-28 px-4 py-3 text-sm rounded-2xl focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all resize-none font-medium"
+              style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
             />
             <div className="flex items-center gap-2 mt-2 px-1">
-              <Info size={12} className="text-[#486581]" />
-              <p className="text-[10px] text-gray-400 font-medium italic">Dados ricos geram roteiros melhores pela IA.</p>
+              <Info size={12} style={{ color: T.accent }} />
+              <p className="text-[10px] font-medium italic" style={{ color: T.textMuted }}>Dados ricos geram roteiros melhores pela IA.</p>
             </div>
           </div>
 
@@ -379,7 +393,7 @@ export default function NovoConteudoPage() {
                   <Zap size={14} className="text-white/30 group-hover:text-white group-hover:fill-white transition-all" />
                 </button>
               ))}
-              <div className="pt-2 mt-2 border-t border-white/10">
+              <div className="pt-2 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                 <button
                   onClick={usarTemplate}
                   className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/10 text-xs text-white/70 hover:text-white transition-all font-bold"
@@ -397,12 +411,12 @@ export default function NovoConteudoPage() {
           {!preview ? (
             <>
               {/* Campo título */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+              <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center gap-2 mb-4">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${tipoAtual.color}`}>
                     <TipoIcon size={16} />
                   </div>
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
                     {tipo === 'email' ? 'Subject Line do E-mail' : 'Título de Referência'}
                   </label>
                 </div>
@@ -414,18 +428,20 @@ export default function NovoConteudoPage() {
                       ? 'Ex: Oportunidade: Reserva Imperial com 18% de valorização...'
                       : 'Ex: Guia definitivo para investir em Boa Viagem'
                   }
-                  className="w-full h-12 px-5 border border-gray-100 rounded-2xl text-base font-bold text-gray-900 focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all bg-gray-50/50"
+                  className="w-full h-12 px-5 rounded-2xl text-base font-bold focus:ring-2 focus:ring-[#334E68] focus:border-transparent transition-all"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
 
               {/* Editor central */}
-              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-                <div className="flex items-center gap-1 px-5 py-3 border-b border-gray-100 flex-wrap bg-gray-100/30">
-                  <div className="flex items-center gap-1 bg-white p-1 rounded-xl shadow-sm border border-gray-100">
+              <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="flex items-center gap-1 px-5 py-3 flex-wrap" style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
+                  <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     {[Bold, Italic, Link2, List, Quote, Image].map((Icon, i) => (
                       <button
                         key={i}
-                        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-50 text-gray-400 hover:text-[#486581] transition-all font-bold"
+                        className="w-9 h-9 flex items-center justify-center rounded-lg transition-all font-bold"
+                        style={{ color: T.textMuted }}
                         title="Formatação"
                       >
                         <Icon size={16} />
@@ -433,8 +449,8 @@ export default function NovoConteudoPage() {
                     ))}
                   </div>
                   <div className="flex items-center gap-2 ml-auto">
-                    <Hash size={14} className="text-gray-300" />
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Markdown Ativo</span>
+                    <Hash size={14} style={{ color: T.border }} />
+                    <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Markdown Ativo</span>
                   </div>
                 </div>
 
@@ -447,29 +463,32 @@ export default function NovoConteudoPage() {
                       ? 'Escreva sua legenda luxuosa aqui...\n\nUse quebras de linha e emojis estrategicamente.\n\n#BoaViagem #IMIAntlantis'
                       : 'Comece a estruturar seu conteúdo estratégico...'
                   }
-                  className="w-full h-[500px] px-8 py-6 text-sm text-gray-900 focus:outline-none resize-none leading-relaxed font-sans scrollbar-thin scrollbar-thumb-gray-200"
+                  className="w-full h-[500px] px-8 py-6 text-sm focus:outline-none resize-none leading-relaxed font-sans scrollbar-thin scrollbar-thumb-gray-200"
+                  style={{ background: T.surface, color: T.text }}
                 />
 
                 {/* Status bar */}
-                <div className="flex items-center justify-between px-6 py-3 border-t border-gray-50 bg-gray-100/20">
+                <div className="flex items-center justify-between px-6 py-3" style={{ borderTop: `1px solid ${T.border}`, background: T.elevated }}>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Palavras:</span>
-                      <span className="text-xs font-bold text-gray-900">{corpo.split(/\s+/).filter(Boolean).length}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Palavras:</span>
+                      <span className="text-xs font-bold" style={{ color: T.text }}>{corpo.split(/\s+/).filter(Boolean).length}</span>
                     </div>
-                    <div className="h-4 w-px bg-gray-200" />
+                    <div className="h-4 w-px" style={{ background: T.border }} />
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Caractéres:</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Caractéres:</span>
                       <span className={`text-xs font-bold ${tipo === 'instagram' && charCount > 300
                         ? 'text-red-600'
-                        : 'text-gray-900'
-                        }`}>
+                        : ''
+                        }`}
+                        style={!(tipo === 'instagram' && charCount > 300) ? { color: T.text } : {}}
+                      >
                         {charCount.toLocaleString('pt-BR')}
-                        {tipo === 'instagram' && <span className="text-gray-400"> / 300</span>}
+                        {tipo === 'instagram' && <span style={{ color: T.textMuted }}> / 300</span>}
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-[#486581] uppercase tracking-widest">
+                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: T.accent }}>
                     <div className="w-2 h-2 bg-[#102A43] rounded-full animate-pulse" />
                     Backup Automático Ativo
                   </div>
@@ -478,7 +497,7 @@ export default function NovoConteudoPage() {
             </>
           ) : (
             /* ── Preview Mode ───────────────────────────────────────────── */
-            <div className="bg-white rounded-2xl border border-gray-100 p-10 shadow-lg min-h-[600px] relative overflow-hidden">
+            <div className="rounded-2xl p-10 min-h-[600px] relative overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               <div className="absolute top-0 right-0 p-8 opacity-5">
                 <LogoIMI className="w-32" />
               </div>
@@ -488,29 +507,29 @@ export default function NovoConteudoPage() {
                   <TipoIcon size={20} />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Prévia do Canal</span>
-                  <span className="text-sm font-bold text-gray-900">{tipoAtual.label}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest block" style={{ color: T.textMuted }}>Prévia do Canal</span>
+                  <span className="text-sm font-bold" style={{ color: T.text }}>{tipoAtual.label}</span>
                 </div>
                 <div className="ml-auto flex items-center gap-2">
-                  <Clock size={14} className="text-gray-400" />
-                  <span className="text-xs font-bold text-gray-500">{formatShortDate()}</span>
+                  <Clock size={14} style={{ color: T.textMuted }} />
+                  <span className="text-xs font-bold" style={{ color: T.textMuted }}>{formatShortDate()}</span>
                 </div>
               </div>
 
               {titulo && (
-                <h1 className="text-3xl font-bold text-gray-900 mb-8 leading-tight tracking-tight border-l-4 border-[#334E68] pl-6">
+                <h1 className="text-3xl font-bold mb-8 leading-tight tracking-tight border-l-4 border-[#334E68] pl-6" style={{ color: T.text }}>
                   {titulo}
                 </h1>
               )}
 
               {corpo ? (
                 <div className="prose prose-sm max-w-none">
-                  <div className="text-base text-gray-800 whitespace-pre-wrap leading-relaxed font-sans space-y-4">
+                  <div className="text-base whitespace-pre-wrap leading-relaxed font-sans space-y-4" style={{ color: T.text }}>
                     {corpo}
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-gray-300">
+                <div className="flex flex-col items-center justify-center py-20" style={{ color: T.border }}>
                   <AlignLeft size={64} className="mb-4 opacity-10" />
                   <p className="font-bold uppercase tracking-widest text-sm">Sem conteúdo para exibir</p>
                 </div>
@@ -523,7 +542,7 @@ export default function NovoConteudoPage() {
       {/* ── Modal Assistente IA ───────────────────────────────────────────── */}
       {aiPanel.open && (
         <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-2xl w-full max-w-xl overflow-hidden scale-in-center">
+          <div className="rounded-3xl border shadow-2xl w-full max-w-xl overflow-hidden scale-in-center" style={{ background: T.surface, borderColor: T.border }}>
             {/* Header */}
             <div className="flex items-center justify-between p-6 bg-[#16162A] text-white">
               <div className="flex items-center gap-3">
@@ -552,14 +571,14 @@ export default function NovoConteudoPage() {
                     </div>
                   </div>
                   <div className="text-center">
-                    <p className="font-bold text-gray-900 uppercase tracking-widest text-xs">Consultando Modelos...</p>
-                    <p className="text-[10px] text-gray-400 font-medium mt-1">Orquestrando Claude Sonnet & Gemini Pro</p>
+                    <p className="font-bold uppercase tracking-widest text-xs" style={{ color: T.text }}>Consultando Modelos...</p>
+                    <p className="text-[10px] font-medium mt-1" style={{ color: T.textMuted }}>Orquestrando Claude Sonnet & Gemini Pro</p>
                   </div>
                 </div>
               ) : aiPanel.result ? (
                 <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 max-h-[350px] overflow-y-auto scrollbar-thin">
-                    <pre className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed font-sans font-medium">
+                  <div className="rounded-2xl p-6 max-h-[350px] overflow-y-auto scrollbar-thin" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <pre className="text-sm whitespace-pre-wrap leading-relaxed font-sans font-medium" style={{ color: T.text }}>
                       {aiPanel.result}
                     </pre>
                   </div>
@@ -575,14 +594,16 @@ export default function NovoConteudoPage() {
                     <div className="flex gap-2 w-full sm:w-auto">
                       <button
                         onClick={() => navigator.clipboard.writeText(aiPanel.result)}
-                        className="flex items-center gap-2 h-12 px-4 bg-gray-100 text-gray-700 rounded-2xl text-sm hover:bg-gray-200 flex-1 sm:flex-none justify-center transition-colors"
+                        className="flex items-center gap-2 h-12 px-4 rounded-2xl text-sm flex-1 sm:flex-none justify-center transition-colors"
+                        style={{ background: T.elevated, color: T.text }}
                         title="Copiar para área de transferência"
                       >
                         <Copy size={18} />
                       </button>
                       <button
                         onClick={() => gerarComIA(aiPanel.task, aiPanel.field)}
-                        className="flex items-center gap-2 h-12 px-4 bg-gray-100 text-gray-700 rounded-2xl text-sm hover:bg-gray-200 flex-1 sm:flex-none justify-center transition-colors shadow-inner"
+                        className="flex items-center gap-2 h-12 px-4 rounded-2xl text-sm flex-1 sm:flex-none justify-center transition-colors"
+                        style={{ background: T.elevated, color: T.text }}
                         title="Regerar resposta"
                       >
                         <RefreshCw size={18} />

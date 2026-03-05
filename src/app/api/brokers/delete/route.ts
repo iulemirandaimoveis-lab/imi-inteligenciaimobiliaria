@@ -1,14 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-
-function getAdmin() {
-    return createClient(supabaseUrl, serviceKey, {
-        auth: { autoRefreshToken: false, persistSession: false },
-    })
-}
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export async function DELETE(request: Request) {
     try {
@@ -19,10 +10,8 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ error: 'userId é obrigatório' }, { status: 400 })
         }
 
-        const admin = getAdmin()
-
         // 1. Delete broker record first (FK constraint)
-        const { error: brokerError } = await admin
+        const { error: brokerError } = await supabaseAdmin
             .from('brokers')
             .delete()
             .eq('user_id', userId)
@@ -33,7 +22,7 @@ export async function DELETE(request: Request) {
         }
 
         // 2. Delete auth user via admin API
-        const { error: authError } = await admin.auth.admin.deleteUser(userId)
+        const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
         if (authError) {
             return NextResponse.json({ error: authError.message }, { status: 500 })

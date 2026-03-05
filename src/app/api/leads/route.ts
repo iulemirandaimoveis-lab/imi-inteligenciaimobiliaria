@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { logAudit, getRequestMeta } from '@/lib/governance'
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
@@ -11,11 +11,16 @@ export async function GET() {
             return NextResponse.json([], { status: 200 });
         }
 
-        const { data: leads, error } = await supabase
+        const { searchParams } = new URL(request.url)
+        const page = parseInt(searchParams.get('page') || '1')
+        const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 250)
+        const offset = (page - 1) * limit
+
+        const { data: leads, error, count } = await supabase
             .from('leads')
-            .select('id, name, email, phone, source, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, utm_source')
+            .select('id, name, email, phone, source, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, utm_source', { count: 'exact' })
             .order('created_at', { ascending: false })
-            .limit(100);
+            .range(offset, offset + limit - 1);
 
         if (error) {
             console.error('Error fetching leads:', error);
@@ -39,7 +44,15 @@ export async function GET() {
             updated_at: l.updated_at || l.created_at || new Date().toISOString(),
         }));
 
-        return NextResponse.json(formatted);
+        return NextResponse.json({
+            data: formatted,
+            pagination: {
+                page,
+                limit,
+                total: count || 0,
+                pages: Math.ceil((count || 0) / limit),
+            },
+        });
     } catch (error) {
         console.error('Error in GET /api/leads:', error);
         return NextResponse.json([], { status: 200 });
@@ -108,6 +121,14 @@ export async function POST(request: Request) {
             new_data: { name: body.name, email: body.email, source: body.source },
             ...meta,
         })
+
+        // Non-blocking auto-score calculation
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+        fetch(`${baseUrl}/api/ai/auto-score`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lead_id: lead.id }),
+        }).catch(() => {}) // Fire-and-forget
 
         return NextResponse.json({ success: true, lead })
     } catch (error) {

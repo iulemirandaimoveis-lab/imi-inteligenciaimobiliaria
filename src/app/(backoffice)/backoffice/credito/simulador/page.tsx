@@ -3,30 +3,26 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-    ArrowLeft,
-    Calculator,
-    DollarSign,
-    TrendingUp,
-    TrendingDown,
-    Home,
-    Calendar,
-    Percent,
-    Download,
-    Save,
-    Building2,
-    AlertCircle,
-    CheckCircle,
-    Info,
+    ArrowLeft, Calculator, DollarSign, TrendingUp,
+    Home, Percent, Save, Building2,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-// ⚠️ Bancos reais Brasil com taxas médias 2026
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    accent: '#486581',
+}
+
 const bancos = [
-    { id: 1, name: 'Caixa Econômica Federal', rate: 9.5, color: 'blue' },
-    { id: 2, name: 'Banco do Brasil', rate: 8.9, color: 'yellow' },
-    { id: 3, name: 'Itaú', rate: 9.8, color: 'orange' },
-    { id: 4, name: 'Santander', rate: 8.7, color: 'red' },
-    { id: 5, name: 'Bradesco', rate: 9.6, color: 'red' },
+    { id: 1, name: 'Caixa Econômica Federal', rate: 9.5 },
+    { id: 2, name: 'Banco do Brasil',          rate: 8.9 },
+    { id: 3, name: 'Itaú',                     rate: 9.8 },
+    { id: 4, name: 'Santander',                rate: 8.7 },
+    { id: 5, name: 'Bradesco',                 rate: 9.6 },
 ]
 
 interface AmortizationRow {
@@ -40,7 +36,6 @@ interface AmortizationRow {
 export default function SimuladorCreditoPage() {
     const router = useRouter()
 
-    // Form State
     const [propertyValue, setPropertyValue] = useState(580000)
     const [downPayment, setDownPayment] = useState(116000)
     const [term, setTerm] = useState(360)
@@ -48,7 +43,6 @@ export default function SimuladorCreditoPage() {
     const [system, setSystem] = useState<'sac' | 'price'>('price')
     const [selectedBank, setSelectedBank] = useState(bancos[0])
 
-    // Calculated State
     const [financedAmount, setFinancedAmount] = useState(0)
     const [monthlyPayment, setMonthlyPayment] = useState(0)
     const [totalPayment, setTotalPayment] = useState(0)
@@ -56,271 +50,174 @@ export default function SimuladorCreditoPage() {
     const [ltv, setLtv] = useState(0)
     const [amortization, setAmortization] = useState<AmortizationRow[]>([])
 
-    // Recalculate on input change
-    useEffect(() => {
-        calculate()
-    }, [propertyValue, downPayment, term, interestRate, system])
+    useEffect(() => { calculate() }, [propertyValue, downPayment, term, interestRate, system])
 
     const calculate = () => {
         const financed = propertyValue - downPayment
         setFinancedAmount(financed)
-
-        const ltvCalc = (financed / propertyValue) * 100
-        setLtv(ltvCalc)
-
+        setLtv((financed / propertyValue) * 100)
         const monthlyRate = interestRate / 100 / 12
-        let payment = 0
-        let total = 0
+        let payment = 0, total = 0
         const schedule: AmortizationRow[] = []
-
         if (system === 'price') {
-            // Sistema PRICE (parcelas fixas)
             payment = financed * (monthlyRate * Math.pow(1 + monthlyRate, term)) / (Math.pow(1 + monthlyRate, term) - 1)
-
             let balance = financed
             for (let i = 1; i <= term; i++) {
                 const interestPayment = balance * monthlyRate
                 const principalPayment = payment - interestPayment
                 balance -= principalPayment
-
-                schedule.push({
-                    month: i,
-                    payment,
-                    principal: principalPayment,
-                    interest: interestPayment,
-                    balance: Math.max(0, balance),
-                })
+                schedule.push({ month: i, payment, principal: principalPayment, interest: interestPayment, balance: Math.max(0, balance) })
             }
-
             total = payment * term
         } else {
-            // Sistema SAC (amortização constante)
             const principalPayment = financed / term
             let balance = financed
-
             for (let i = 1; i <= term; i++) {
                 const interestPayment = balance * monthlyRate
                 payment = principalPayment + interestPayment
                 balance -= principalPayment
-
-                schedule.push({
-                    month: i,
-                    payment,
-                    principal: principalPayment,
-                    interest: interestPayment,
-                    balance: Math.max(0, balance),
-                })
-
+                schedule.push({ month: i, payment, principal: principalPayment, interest: interestPayment, balance: Math.max(0, balance) })
                 total += payment
             }
-
-            payment = schedule[0].payment // Primeira parcela (maior no SAC)
+            payment = schedule[0].payment
         }
-
         setMonthlyPayment(payment)
         setTotalPayment(total)
         setTotalInterest(total - financed)
         setAmortization(schedule)
     }
 
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-            minimumFractionDigits: 0,
-        }).format(value)
-    }
-
-    const formatPercent = (value: number) => {
-        return `${value.toFixed(2)}%`
-    }
-
+    const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(v)
+    const fmtPct = (v: number) => `${v.toFixed(2)}%`
     const downPaymentPercent = (downPayment / propertyValue) * 100
 
-    const handleSaveSimulation = () => {
-        toast.success('Simulação salva com sucesso!')
-        router.push('/backoffice/credito')
+    const inputStyle: React.CSSProperties = {
+        background: T.elevated,
+        border: `1px solid ${T.border}`,
+        color: T.text,
+        width: '100%',
+        height: '44px',
+        borderRadius: '12px',
+        padding: '0 14px 0 36px',
+        fontSize: '14px',
+        outline: 'none',
     }
+    const inputStyleNoIcon: React.CSSProperties = { ...inputStyle, padding: '0 14px' }
 
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center"
-                    >
-                        <ArrowLeft size={20} />
+                    <button onClick={() => router.back()}
+                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <ArrowLeft size={18} style={{ color: T.textMuted }} />
                     </button>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Simulador de Crédito</h1>
-                        <p className="text-sm text-gray-600 mt-1">Calcule financiamento imobiliário em tempo real</p>
+                        <h1 className="text-xl font-bold" style={{ color: T.text }}>Simulador de Crédito</h1>
+                        <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>Calcule financiamento imobiliário em tempo real</p>
                     </div>
                 </div>
-                <div className="flex gap-3">
-                    <button className="flex items-center gap-2 h-11 px-6 border border-gray-200 rounded-xl font-medium hover:bg-gray-50">
-                        <Download size={20} />
-                        Exportar PDF
-                    </button>
-                    <button
-                        onClick={handleSaveSimulation}
-                        className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]"
-                    >
-                        <Save size={20} />
-                        Salvar Simulação
-                    </button>
-                </div>
+                <button onClick={() => { toast.success('Simulação salva com sucesso!'); router.push('/backoffice/credito') }}
+                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+                    style={{ background: '#1E3A5F' }}>
+                    <Save size={16} /> Salvar Simulação
+                </button>
             </div>
 
-            {/* Main Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* LEFT: Form (Sticky) */}
+                {/* LEFT: Form */}
                 <div className="lg:col-span-1">
-                    <div className="bg-white rounded-2xl p-6 border border-gray-100 sticky top-6 space-y-6">
-                        <h2 className="text-lg font-bold text-gray-900">Dados da Simulação</h2>
+                    <div className="sticky top-6 space-y-5 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <h2 className="text-base font-bold" style={{ color: T.text }}>Dados da Simulação</h2>
 
                         {/* Valor do Imóvel */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Valor do Imóvel
-                            </label>
+                            <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Valor do Imóvel</label>
                             <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
-                                <input
-                                    type="number"
-                                    value={propertyValue}
-                                    onChange={(e) => setPropertyValue(Number(e.target.value))}
-                                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                                />
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium" style={{ color: T.textMuted }}>R$</span>
+                                <input type="number" value={propertyValue} onChange={e => setPropertyValue(Number(e.target.value))} style={inputStyle} />
                             </div>
                         </div>
 
                         {/* Entrada */}
                         <div>
-                            <div className="flex items-center justify-between mb-2">
-                                <label className="text-sm font-medium text-gray-700">Entrada</label>
-                                <span className="text-sm font-bold text-[#486581]">
-                                    {downPaymentPercent.toFixed(1)}%
-                                </span>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-semibold" style={{ color: T.textMuted }}>Entrada</label>
+                                <span className="text-xs font-bold" style={{ color: T.accent }}>{downPaymentPercent.toFixed(1)}%</span>
                             </div>
                             <div className="relative mb-3">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
-                                <input
-                                    type="number"
-                                    value={downPayment}
-                                    onChange={(e) => setDownPayment(Number(e.target.value))}
-                                    className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-                                />
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium" style={{ color: T.textMuted }}>R$</span>
+                                <input type="number" value={downPayment} onChange={e => setDownPayment(Number(e.target.value))} style={inputStyle} />
                             </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max={propertyValue}
-                                step="1000"
-                                value={downPayment}
-                                onChange={(e) => setDownPayment(Number(e.target.value))}
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [#243B53]"
-                            />
+                            <input type="range" min="0" max={propertyValue} step="1000" value={downPayment}
+                                onChange={e => setDownPayment(Number(e.target.value))}
+                                className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                                style={{ accentColor: T.accent }} />
                         </div>
 
                         {/* Prazo */}
                         <div>
-                            <div className="flex items-center justify-between mb-2">
-                                <label className="text-sm font-medium text-gray-700">Prazo</label>
-                                <span className="text-sm font-bold text-gray-900">
-                                    {term} meses ({(term / 12).toFixed(0)} anos)
-                                </span>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-semibold" style={{ color: T.textMuted }}>Prazo</label>
+                                <span className="text-xs font-bold" style={{ color: T.text }}>{term} meses ({(term / 12).toFixed(0)} anos)</span>
                             </div>
-                            <input
-                                type="range"
-                                min="12"
-                                max="420"
-                                step="12"
-                                value={term}
-                                onChange={(e) => setTerm(Number(e.target.value))}
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer [#243B53]"
-                            />
-                            <div className="flex justify-between text-xs text-gray-500 mt-1">
-                                <span>1 ano</span>
-                                <span>10</span>
-                                <span>20</span>
-                                <span>30</span>
-                                <span>35 anos</span>
+                            <input type="range" min="12" max="420" step="12" value={term}
+                                onChange={e => setTerm(Number(e.target.value))}
+                                className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                                style={{ accentColor: T.accent }} />
+                            <div className="flex justify-between mt-1" style={{ color: T.textMuted }}>
+                                {['1a', '10', '20', '30', '35a'].map(l => <span key={l} className="text-[10px]">{l}</span>)}
                             </div>
                         </div>
 
-                        {/* Taxa de Juros */}
+                        {/* Taxa */}
                         <div>
-                            <div className="flex items-center justify-between mb-2">
-                                <label className="text-sm font-medium text-gray-700">Taxa de Juros (a.a.)</label>
-                                <span className="text-sm font-bold text-purple-700">{formatPercent(interestRate)}</span>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-semibold" style={{ color: T.textMuted }}>Taxa de Juros (a.a.)</label>
+                                <span className="text-xs font-bold" style={{ color: '#A78BFA' }}>{fmtPct(interestRate)}</span>
                             </div>
-                            <input
-                                type="range"
-                                min="7"
-                                max="12"
-                                step="0.1"
-                                value={interestRate}
-                                onChange={(e) => setInterestRate(Number(e.target.value))}
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
-                            />
-                            <div className="flex justify-between text-xs text-gray-500 mt-1">
-                                <span>7%</span>
-                                <span>9.5%</span>
-                                <span>12%</span>
+                            <input type="range" min="7" max="12" step="0.1" value={interestRate}
+                                onChange={e => setInterestRate(Number(e.target.value))}
+                                className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                                style={{ accentColor: '#A78BFA' }} />
+                            <div className="flex justify-between mt-1" style={{ color: T.textMuted }}>
+                                {['7%', '9.5%', '12%'].map(l => <span key={l} className="text-[10px]">{l}</span>)}
                             </div>
                         </div>
 
                         {/* Sistema */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-3">Sistema de Amortização</label>
-                            <div className="grid grid-cols-2 gap-3">
-                                <button
-                                    onClick={() => setSystem('price')}
-                                    className={`h-11 rounded-xl font-medium transition-all ${system === 'price'
-                                            ? 'bg-[#16162A] text-white'
-                                            : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
-                                        }`}
-                                >
-                                    PRICE
-                                </button>
-                                <button
-                                    onClick={() => setSystem('sac')}
-                                    className={`h-11 rounded-xl font-medium transition-all ${system === 'sac'
-                                            ? 'bg-[#16162A] text-white'
-                                            : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
-                                        }`}
-                                >
-                                    SAC
-                                </button>
+                            <label className="block text-xs font-semibold mb-2" style={{ color: T.textMuted }}>Sistema de Amortização</label>
+                            <div className="grid grid-cols-2 gap-2">
+                                {(['price', 'sac'] as const).map(s => (
+                                    <button key={s} onClick={() => setSystem(s)}
+                                        className="h-11 rounded-xl font-semibold text-sm transition-all uppercase"
+                                        style={{
+                                            background: system === s ? T.accent : T.elevated,
+                                            border: `1px solid ${system === s ? T.accent : T.border}`,
+                                            color: system === s ? '#fff' : T.textMuted,
+                                        }}>
+                                        {s}
+                                    </button>
+                                ))}
                             </div>
-                            <p className="text-xs text-gray-500 mt-2">
-                                {system === 'price'
-                                    ? 'Parcelas fixas durante todo o período'
-                                    : 'Parcelas decrescentes, amortização constante'}
+                            <p className="text-xs mt-2" style={{ color: T.textMuted }}>
+                                {system === 'price' ? 'Parcelas fixas durante todo o período' : 'Parcelas decrescentes, amortização constante'}
                             </p>
                         </div>
 
                         {/* Banco */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-3">Banco</label>
-                            <select
-                                value={selectedBank.id}
-                                onChange={(e) => {
+                            <label className="block text-xs font-semibold mb-2" style={{ color: T.textMuted }}>Banco</label>
+                            <select value={selectedBank.id}
+                                onChange={e => {
                                     const bank = bancos.find(b => b.id === Number(e.target.value))
-                                    if (bank) {
-                                        setSelectedBank(bank)
-                                        setInterestRate(bank.rate)
-                                    }
+                                    if (bank) { setSelectedBank(bank); setInterestRate(bank.rate) }
                                 }}
-                                className="w-full h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
-                            >
-                                {bancos.map(bank => (
-                                    <option key={bank.id} value={bank.id}>
-                                        {bank.name} - {bank.rate}% a.a.
-                                    </option>
-                                ))}
+                                style={inputStyleNoIcon}>
+                                {bancos.map(b => <option key={b.id} value={b.id}>{b.name} — {b.rate}% a.a.</option>)}
                             </select>
                         </div>
                     </div>
@@ -328,175 +225,124 @@ export default function SimuladorCreditoPage() {
 
                 {/* RIGHT: Results */}
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Resumo Principal */}
-                    <div className="bg-gradient-to-br from-[#102A43] to-[#16162A] rounded-2xl p-8 text-white">
+                    {/* Resumo */}
+                    <div className="rounded-2xl p-8 text-white" style={{ background: 'linear-gradient(135deg, #1E3A5F, #0B1929)' }}>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            <div>
-                                <p className="text-sm text-accent-100 mb-1">Parcela Mensal</p>
-                                <p className="text-3xl font-bold">{formatCurrency(monthlyPayment)}</p>
-                                {system === 'sac' && (
-                                    <p className="text-xs text-accent-200 mt-1">Primeira parcela</p>
-                                )}
-                            </div>
-                            <div>
-                                <p className="text-sm text-accent-100 mb-1">Valor Financiado</p>
-                                <p className="text-2xl font-bold">{formatCurrency(financedAmount)}</p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-accent-100 mb-1">Total a Pagar</p>
-                                <p className="text-2xl font-bold">{formatCurrency(totalPayment)}</p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-accent-100 mb-1">Total Juros</p>
-                                <p className="text-2xl font-bold">{formatCurrency(totalInterest)}</p>
-                            </div>
+                            {[
+                                { l: 'Parcela Mensal', v: fmt(monthlyPayment), large: true },
+                                { l: 'Valor Financiado', v: fmt(financedAmount) },
+                                { l: 'Total a Pagar', v: fmt(totalPayment) },
+                                { l: 'Total Juros', v: fmt(totalInterest) },
+                            ].map(item => (
+                                <div key={item.l}>
+                                    <p className="text-xs text-white/60 mb-1">{item.l}</p>
+                                    <p className={`font-bold ${item.large ? 'text-3xl' : 'text-xl'}`}>{item.v}</p>
+                                    {item.large && system === 'sac' && <p className="text-xs text-white/40 mt-1">Primeira parcela</p>}
+                                </div>
+                            ))}
                         </div>
                     </div>
 
                     {/* Indicadores */}
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-white rounded-xl p-6 border border-gray-100">
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${ltv <= 70 ? 'bg-green-50' : ltv <= 80 ? 'bg-orange-50' : 'bg-red-50'
-                                    }`}>
-                                    <Percent size={20} className={
-                                        ltv <= 70 ? 'text-green-600' : ltv <= 80 ? 'text-orange-600' : 'text-red-600'
-                                    } />
+                        {[
+                            {
+                                label: 'LTV (Loan-to-Value)', value: `${ltv.toFixed(1)}%`,
+                                icon: Percent,
+                                color: ltv <= 70 ? '#4ADE80' : ltv <= 80 ? '#FCD34D' : '#F87171',
+                                bg: ltv <= 70 ? 'rgba(74,222,128,0.1)' : ltv <= 80 ? 'rgba(252,211,77,0.1)' : 'rgba(248,113,113,0.1)',
+                                note: ltv <= 70 ? '✓ Excelente — Aprovação facilitada' : ltv <= 80 ? '⚠ Bom — Dentro do limite' : '✗ Alto — Pode exigir garantias',
+                            },
+                            {
+                                label: 'Entrada', value: `${downPaymentPercent.toFixed(1)}%`,
+                                icon: TrendingUp,
+                                color: '#60A5FA', bg: 'rgba(96,165,250,0.1)',
+                                note: `${fmt(downPayment)} de entrada`,
+                            },
+                        ].map(item => {
+                            const Icon = item.icon
+                            return (
+                                <div key={item.label} className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: item.bg }}>
+                                            <Icon size={18} style={{ color: item.color }} />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs" style={{ color: T.textMuted }}>{item.label}</p>
+                                            <p className="text-xl font-bold" style={{ color: item.color }}>{item.value}</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs" style={{ color: T.textMuted }}>{item.note}</p>
                                 </div>
-                                <div>
-                                    <p className="text-xs text-gray-600">LTV (Loan-to-Value)</p>
-                                    <p className={`text-2xl font-bold ${ltv <= 70 ? 'text-green-700' : ltv <= 80 ? 'text-orange-700' : 'text-red-700'
-                                        }`}>
-                                        {ltv.toFixed(1)}%
-                                    </p>
-                                </div>
-                            </div>
-                            <p className="text-xs text-gray-500">
-                                {ltv <= 70 && '✓ Excelente - Aprovação facilitada'}
-                                {ltv > 70 && ltv <= 80 && '⚠ Bom - Dentro do limite padrão'}
-                                {ltv > 80 && '✗ Alto - Pode exigir garantias adicionais'}
-                            </p>
-                        </div>
-
-                        <div className="bg-white rounded-xl p-6 border border-gray-100">
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                                    <TrendingUp size={20} className="text-blue-600" />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-600">Entrada</p>
-                                    <p className="text-2xl font-bold text-blue-700">
-                                        {downPaymentPercent.toFixed(1)}%
-                                    </p>
-                                </div>
-                            </div>
-                            <p className="text-xs text-gray-500">
-                                {formatCurrency(downPayment)} de entrada
-                            </p>
-                        </div>
+                            )
+                        })}
                     </div>
 
-                    {/* Tabela Amortização */}
-                    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                        <div className="p-6 border-b border-gray-100">
-                            <h3 className="text-lg font-bold text-gray-900">Tabela de Amortização</h3>
-                            <p className="text-sm text-gray-600 mt-1">
-                                Mostrando primeiras 12 e últimas 12 parcelas
-                            </p>
+                    {/* Tabela de Amortização */}
+                    <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="p-5 border-b" style={{ borderColor: T.border }}>
+                            <h3 className="text-base font-bold" style={{ color: T.text }}>Tabela de Amortização</h3>
+                            <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Primeiras 12 e últimas 12 parcelas</p>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gray-50 border-b border-gray-100">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Mês</th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase">Parcela</th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase">Amortização</th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase">Juros</th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase">Saldo</th>
+                                <thead style={{ background: T.elevated }}>
+                                    <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                                        {['Mês', 'Parcela', 'Amortização', 'Juros', 'Saldo'].map(h => (
+                                            <th key={h} className={`px-5 py-3 text-[10px] font-bold uppercase tracking-wider ${h !== 'Mês' ? 'text-right' : 'text-left'}`}
+                                                style={{ color: T.textMuted }}>{h}</th>
+                                        ))}
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    {/* Primeiras 12 */}
-                                    {amortization.slice(0, 12).map((row) => (
-                                        <tr key={row.month} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 text-sm font-medium text-gray-900">{row.month}</td>
-                                            <td className="px-6 py-4 text-sm text-right font-semibold text-gray-900">
-                                                {formatCurrency(row.payment)}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-right text-green-700">
-                                                {formatCurrency(row.principal)}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-right text-red-700">
-                                                {formatCurrency(row.interest)}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-right text-gray-600">
-                                                {formatCurrency(row.balance)}
-                                            </td>
-                                        </tr>
-                                    ))}
-
-                                    {/* Separador */}
-                                    {amortization.length > 24 && (
-                                        <tr>
-                                            <td colSpan={5} className="px-6 py-3 text-center text-sm text-gray-500 bg-gray-50">
-                                                ... {amortization.length - 24} parcelas intermediárias ...
-                                            </td>
-                                        </tr>
-                                    )}
-
-                                    {/* Últimas 12 */}
-                                    {amortization.slice(-12).map((row) => (
-                                        <tr key={row.month} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 text-sm font-medium text-gray-900">{row.month}</td>
-                                            <td className="px-6 py-4 text-sm text-right font-semibold text-gray-900">
-                                                {formatCurrency(row.payment)}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-right text-green-700">
-                                                {formatCurrency(row.principal)}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-right text-red-700">
-                                                {formatCurrency(row.interest)}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-right text-gray-600">
-                                                {formatCurrency(row.balance)}
-                                            </td>
-                                        </tr>
-                                    ))}
+                                <tbody>
+                                    {[...amortization.slice(0, 12), ...(amortization.length > 24 ? [null] : []), ...amortization.slice(-12)].map((row, i) => {
+                                        if (row === null) return (
+                                            <tr key="sep" style={{ background: T.elevated }}>
+                                                <td colSpan={5} className="px-5 py-2 text-center text-xs" style={{ color: T.textMuted }}>
+                                                    ... {amortization.length - 24} parcelas intermediárias ...
+                                                </td>
+                                            </tr>
+                                        )
+                                        return (
+                                            <tr key={row.month} style={{ borderTop: `1px solid ${T.border}` }} className="transition-colors hover:opacity-80">
+                                                <td className="px-5 py-3 text-sm font-medium" style={{ color: T.text }}>{row.month}</td>
+                                                <td className="px-5 py-3 text-sm text-right font-semibold" style={{ color: T.text }}>{fmt(row.payment)}</td>
+                                                <td className="px-5 py-3 text-sm text-right" style={{ color: '#4ADE80' }}>{fmt(row.principal)}</td>
+                                                <td className="px-5 py-3 text-sm text-right" style={{ color: '#F87171' }}>{fmt(row.interest)}</td>
+                                                <td className="px-5 py-3 text-sm text-right" style={{ color: T.textMuted }}>{fmt(row.balance)}</td>
+                                            </tr>
+                                        )
+                                    })}
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
                     {/* Comparativo Bancos */}
-                    <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                        <h3 className="text-lg font-bold text-gray-900 mb-4">Comparativo de Bancos</h3>
+                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <h3 className="text-base font-bold mb-4" style={{ color: T.text }}>Comparativo de Bancos</h3>
                         <div className="space-y-3">
-                            {bancos.map((bank) => {
-                                const monthlyRate = bank.rate / 100 / 12
-                                const payment = financedAmount * (monthlyRate * Math.pow(1 + monthlyRate, term)) / (Math.pow(1 + monthlyRate, term) - 1)
-                                const total = payment * term
-                                const interest = total - financedAmount
-
+                            {bancos.map(bank => {
+                                const mr = bank.rate / 100 / 12
+                                const pmt = financedAmount * (mr * Math.pow(1 + mr, term)) / (Math.pow(1 + mr, term) - 1)
+                                const total = pmt * term
+                                const selected = selectedBank.id === bank.id
                                 return (
-                                    <div
-                                        key={bank.id}
-                                        className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${selectedBank.id === bank.id
-                                                ? 'border-[#334E68] bg-accent-50'
-                                                : 'border-gray-100 hover:border-gray-200'
-                                            }`}
-                                        onClick={() => {
-                                            setSelectedBank(bank)
-                                            setInterestRate(bank.rate)
+                                    <div key={bank.id}
+                                        className="p-4 rounded-xl border-2 transition-all cursor-pointer"
+                                        style={{
+                                            border: selected ? `2px solid ${T.accent}` : `1px solid ${T.border}`,
+                                            background: selected ? 'rgba(72,101,129,0.1)' : T.elevated,
                                         }}
-                                    >
+                                        onClick={() => { setSelectedBank(bank); setInterestRate(bank.rate) }}>
                                         <div className="flex items-center justify-between">
                                             <div>
-                                                <p className="font-semibold text-gray-900">{bank.name}</p>
-                                                <p className="text-sm text-gray-600">Taxa: {bank.rate}% a.a.</p>
+                                                <p className="font-semibold text-sm" style={{ color: T.text }}>{bank.name}</p>
+                                                <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Taxa: {bank.rate}% a.a.</p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-lg font-bold text-gray-900">{formatCurrency(payment)}</p>
-                                                <p className="text-xs text-gray-600">Total: {formatCurrency(total)}</p>
+                                                <p className="text-base font-bold" style={{ color: T.text }}>{fmt(pmt)}</p>
+                                                <p className="text-xs" style={{ color: T.textMuted }}>Total: {fmt(total)}</p>
                                             </div>
                                         </div>
                                     </div>

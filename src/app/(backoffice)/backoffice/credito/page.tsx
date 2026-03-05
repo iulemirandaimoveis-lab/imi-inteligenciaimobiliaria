@@ -1,16 +1,25 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import {
   Plus, DollarSign, Calculator, CheckCircle, Clock,
-  AlertCircle, User, Eye, Landmark, Percent, ArrowRight, FileX,
+  AlertCircle, User, Eye, Landmark, Percent, ArrowRight, FileX, Loader2,
 } from 'lucide-react'
 import Link from 'next/link'
 
 const supabase = createClient()
+
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
 
 interface CreditApplication {
   id: string
@@ -41,22 +50,17 @@ function useCreditApplications() {
   })
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-  pending:       { label: 'Pendente',      color: 'bg-gray-100 text-gray-700',    icon: Clock },
-  approved:      { label: 'Aprovado',      color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle },
-  under_review:  { label: 'Em Análise',    color: 'bg-blue-100 text-blue-700',    icon: Clock },
-  documents:     { label: 'Documentação',  color: 'bg-amber-100 text-amber-700',  icon: AlertCircle },
-  rejected:      { label: 'Recusado',      color: 'bg-red-100 text-red-700',      icon: AlertCircle },
-  // legacy PT values
-  aprovado:      { label: 'Aprovado',      color: 'bg-emerald-100 text-emerald-700', icon: CheckCircle },
-  analise:       { label: 'Em Análise',    color: 'bg-blue-100 text-blue-700',    icon: Clock },
-  documentacao:  { label: 'Documentação',  color: 'bg-amber-100 text-amber-700',  icon: AlertCircle },
-  recusado:      { label: 'Recusado',      color: 'bg-red-100 text-red-700',      icon: AlertCircle },
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
+  pending:       { label: 'Pendente',     color: '#94A3B8', bg: 'rgba(148,163,184,0.1)', icon: Clock },
+  approved:      { label: 'Aprovado',     color: '#4ADE80', bg: 'rgba(74,222,128,0.1)',  icon: CheckCircle },
+  under_review:  { label: 'Em Análise',   color: '#60A5FA', bg: 'rgba(96,165,250,0.1)',  icon: Clock },
+  documents:     { label: 'Documentação', color: '#FCD34D', bg: 'rgba(252,211,77,0.1)',  icon: AlertCircle },
+  rejected:      { label: 'Recusado',     color: '#F87171', bg: 'rgba(248,113,113,0.1)', icon: AlertCircle },
+  aprovado:      { label: 'Aprovado',     color: '#4ADE80', bg: 'rgba(74,222,128,0.1)',  icon: CheckCircle },
+  analise:       { label: 'Em Análise',   color: '#60A5FA', bg: 'rgba(96,165,250,0.1)',  icon: Clock },
+  documentacao:  { label: 'Documentação', color: '#FCD34D', bg: 'rgba(252,211,77,0.1)',  icon: AlertCircle },
+  recusado:      { label: 'Recusado',     color: '#F87171', bg: 'rgba(248,113,113,0.1)', icon: AlertCircle },
 }
-
-// ============================================================
-// SIMULADOR DE CRÉDITO
-// ============================================================
 
 function SimuladorCredito() {
   const [valorImovel, setValorImovel] = useState(600000)
@@ -96,99 +100,99 @@ function SimuladorCredito() {
   const totalPago = parcelasSimuladas.reduce((s, p) => s + p.parcela, 0)
   const totalJuros = totalPago - valorFinanciado
 
-  const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
+  const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
+
+  const inputS: React.CSSProperties = {
+    background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
+    height: '36px', borderRadius: '8px', padding: '0 10px 0 30px', fontSize: '13px', outline: 'none', width: '100%',
+  }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
-      <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-        <Calculator size={18} className="text-[#486581]" /> Simulador de Crédito Imobiliário
+    <div className="rounded-xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+      <h3 className="text-sm font-bold flex items-center gap-2" style={{ color: T.text }}>
+        <Calculator size={16} style={{ color: T.accent }} /> Simulador de Crédito Imobiliário
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="text-xs text-gray-500 block mb-1">Valor do Imóvel</label>
+          <label className="text-xs block mb-1" style={{ color: T.textMuted }}>Valor do Imóvel</label>
           <div className="relative">
-            <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
-            <input type="number" value={valorImovel} onChange={e => setValorImovel(Number(e.target.value))}
-              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]" />
+            <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2" size={13} style={{ color: T.textMuted }} />
+            <input type="number" value={valorImovel} onChange={e => setValorImovel(Number(e.target.value))} style={inputS} />
           </div>
         </div>
         <div>
-          <label className="text-xs text-gray-500 block mb-1">Entrada / FGTS</label>
+          <label className="text-xs block mb-1" style={{ color: T.textMuted }}>Entrada / FGTS</label>
           <div className="relative">
-            <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
-            <input type="number" value={entrada} onChange={e => setEntrada(Number(e.target.value))}
-              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]" />
+            <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2" size={13} style={{ color: T.textMuted }} />
+            <input type="number" value={entrada} onChange={e => setEntrada(Number(e.target.value))} style={inputS} />
           </div>
         </div>
         <div>
-          <label className="text-xs text-gray-500 block mb-1">Prazo (meses)</label>
+          <label className="text-xs block mb-1" style={{ color: T.textMuted }}>Prazo (meses)</label>
           <select value={prazo} onChange={e => setPrazo(Number(e.target.value))}
-            className="w-full h-9 px-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white">
+            style={{ ...inputS, padding: '0 10px' }}>
             {[60, 120, 180, 240, 300, 360, 420].map(p => <option key={p} value={p}>{p} meses ({p / 12} anos)</option>)}
           </select>
         </div>
         <div>
-          <label className="text-xs text-gray-500 block mb-1">Taxa de Juros (% a.a.)</label>
+          <label className="text-xs block mb-1" style={{ color: T.textMuted }}>Taxa de Juros (% a.a.)</label>
           <div className="relative">
-            <Percent className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
-            <input type="number" step="0.1" value={taxa} onChange={e => setTaxa(Number(e.target.value))}
-              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#334E68]" />
+            <Percent className="absolute left-2 top-1/2 -translate-y-1/2" size={13} style={{ color: T.textMuted }} />
+            <input type="number" step="0.1" value={taxa} onChange={e => setTaxa(Number(e.target.value))} style={inputS} />
           </div>
         </div>
       </div>
 
-      {/* Sistema de Amortização */}
       <div className="flex gap-2">
         {(['PRICE', 'SAC'] as const).map(s => (
           <button key={s} onClick={() => setSistema(s)}
-            className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all ${sistema === s ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'}`}>
+            className="flex-1 py-2 rounded-xl text-sm font-semibold transition-all"
+            style={{
+              background: sistema === s ? T.accent : T.elevated,
+              border: `1px solid ${sistema === s ? T.accent : T.border}`,
+              color: sistema === s ? '#fff' : T.textMuted,
+            }}>
             Sistema {s}
           </button>
         ))}
       </div>
 
-      {/* Resultados */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { l: 'Valor Financiado', v: formatCurrency(valorFinanciado), c: 'text-gray-900' },
-          { l: 'LTV', v: `${ltv.toFixed(0)}%`, c: ltv > 80 ? 'text-red-600' : 'text-emerald-600' },
-          { l: sistema === 'PRICE' ? 'Parcela Fixa' : '1ª Parcela', v: formatCurrency(primeiraParcela), c: 'text-[#486581] font-bold text-base' },
-          { l: sistema === 'SAC' ? 'Última Parcela' : 'Total Juros', v: sistema === 'SAC' ? formatCurrency(ultimaParcela) : formatCurrency(totalJuros), c: 'text-gray-900' },
+          { l: 'Valor Financiado', v: fmt(valorFinanciado), color: T.text },
+          { l: 'LTV', v: `${ltv.toFixed(0)}%`, color: ltv > 80 ? '#F87171' : '#4ADE80' },
+          { l: sistema === 'PRICE' ? 'Parcela Fixa' : '1ª Parcela', v: fmt(primeiraParcela), color: T.accent },
+          { l: sistema === 'SAC' ? 'Última Parcela' : 'Total Juros', v: sistema === 'SAC' ? fmt(ultimaParcela) : fmt(totalJuros), color: T.text },
         ].map(item => (
-          <div key={item.l} className="p-3 bg-gray-50 rounded-xl text-center">
-            <p className="text-xs text-gray-500 mb-0.5">{item.l}</p>
-            <p className={`text-base font-bold ${item.c}`}>{item.v}</p>
+          <div key={item.l} className="p-3 rounded-xl text-center" style={{ background: T.elevated }}>
+            <p className="text-xs mb-0.5" style={{ color: T.textMuted }}>{item.l}</p>
+            <p className="text-sm font-bold" style={{ color: item.color }}>{item.v}</p>
           </div>
         ))}
       </div>
 
-      {/* Renda mínima */}
-      <div className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-        <User size={16} className="text-amber-600 flex-shrink-0" />
-        <p className="text-sm text-amber-800">
-          Renda mínima estimada: <strong>{formatCurrency(primeiraParcela * 3)}/mês</strong> (comprometimento máx. 30%)
+      <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(252,211,77,0.08)', border: '1px solid rgba(252,211,77,0.2)' }}>
+        <User size={14} style={{ color: '#FCD34D' }} className="flex-shrink-0" />
+        <p className="text-xs" style={{ color: '#FCD34D' }}>
+          Renda mínima estimada: <strong>{fmt(primeiraParcela * 3)}/mês</strong> (comprometimento máx. 30%)
         </p>
       </div>
 
       <Link href="/backoffice/credito/novo"
-        className="flex items-center justify-center gap-2 h-10 w-full bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
-        Iniciar Processo de Crédito <ArrowRight size={16} />
+        className="flex items-center justify-center gap-2 h-10 w-full rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+        style={{ background: '#1E3A5F' }}>
+        Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
     </div>
   )
 }
 
-// ============================================================
-// PÁGINA PRINCIPAL
-// ============================================================
-
 export default function CreditoPage() {
   const [activeTab, setActiveTab] = useState<'operacoes' | 'simulador'>('simulador')
   const { data: operacoes, isLoading } = useCreditApplications()
 
-  const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
-
+  const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
   const list = operacoes ?? []
   const totalPortfolio = list.reduce((s, o) => s + (o.financed_amount ?? 0), 0)
   const isApproved = (s: string) => s === 'approved' || s === 'aprovado'
@@ -199,41 +203,46 @@ export default function CreditoPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Crédito Imobiliário</h1>
-          <p className="text-xs text-gray-500 mt-0.5">Assessoria e simulações</p>
+          <h1 className="text-xl font-bold" style={{ color: T.text }}>Crédito Imobiliário</h1>
+          <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Assessoria e simulações</p>
         </div>
         <Link href="/backoffice/credito/novo"
-          className="flex items-center gap-2 h-9 px-4 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
-          <Plus size={16} /> Nova Operação
+          className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white hover:opacity-90 transition-all"
+          style={{ background: '#1E3A5F' }}>
+          <Plus size={15} /> Nova Operação
         </Link>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { l: 'Portfólio Total', v: isLoading ? '—' : formatCurrency(totalPortfolio), icon: DollarSign, c: 'text-[#486581] bg-amber-50' },
-          { l: 'Aprovados',       v: isLoading ? '—' : list.filter(o => isApproved(o.status)).length, icon: CheckCircle, c: 'text-emerald-600 bg-emerald-50' },
-          { l: 'Em Análise',      v: isLoading ? '—' : list.filter(o => isReview(o.status)).length,   icon: Clock,        c: 'text-blue-600 bg-blue-50' },
-          { l: 'Documentação',    v: isLoading ? '—' : list.filter(o => isDocs(o.status)).length,     icon: AlertCircle,  c: 'text-amber-600 bg-amber-50' },
+          { l: 'Portfólio Total', v: isLoading ? '—' : fmt(totalPortfolio), icon: DollarSign, color: T.accent, bg: 'rgba(72,101,129,0.12)' },
+          { l: 'Aprovados',       v: isLoading ? '—' : list.filter(o => isApproved(o.status)).length, icon: CheckCircle, color: '#4ADE80', bg: 'rgba(74,222,128,0.1)' },
+          { l: 'Em Análise',      v: isLoading ? '—' : list.filter(o => isReview(o.status)).length,   icon: Clock,        color: '#60A5FA', bg: 'rgba(96,165,250,0.1)' },
+          { l: 'Documentação',    v: isLoading ? '—' : list.filter(o => isDocs(o.status)).length,     icon: AlertCircle,  color: '#FCD34D', bg: 'rgba(252,211,77,0.1)' },
         ].map(kpi => {
           const Icon = kpi.icon
           return (
-            <div key={kpi.l} className="bg-white rounded-xl border border-gray-100 p-4">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${kpi.c}`}>
-                <Icon size={16} />
+            <div key={kpi.l} className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2" style={{ background: kpi.bg }}>
+                <Icon size={16} style={{ color: kpi.color }} />
               </div>
-              <p className="text-xl font-bold text-gray-900">{kpi.v}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{kpi.l}</p>
+              <p className="text-xl font-bold" style={{ color: T.text }}>{kpi.v}</p>
+              <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{kpi.l}</p>
             </div>
           )
         })}
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b" style={{ borderColor: T.border }}>
         {[{ v: 'simulador', l: 'Simulador' }, { v: 'operacoes', l: 'Operações' }].map(tab => (
           <button key={tab.v} onClick={() => setActiveTab(tab.v as any)}
-            className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.v ? 'border-[#334E68] text-[#486581]' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+            className="px-5 py-3 text-sm font-medium border-b-2 transition-colors"
+            style={{
+              borderBottomColor: activeTab === tab.v ? T.accent : 'transparent',
+              color: activeTab === tab.v ? T.accent : T.textMuted,
+            }}>
             {tab.l}
           </button>
         ))}
@@ -244,67 +253,57 @@ export default function CreditoPage() {
       {activeTab === 'operacoes' && (
         <>
           {isLoading ? (
-            <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50 animate-pulse">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="flex items-center gap-4 p-4">
-                  <div className="w-10 h-10 rounded-xl bg-gray-100" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-3 w-32 bg-gray-100 rounded" />
-                    <div className="h-4 w-48 bg-gray-100 rounded" />
-                    <div className="h-3 w-64 bg-gray-100 rounded" />
-                  </div>
-                  <div className="hidden sm:block space-y-1 text-right">
-                    <div className="h-4 w-24 bg-gray-100 rounded ml-auto" />
-                    <div className="h-3 w-28 bg-gray-100 rounded ml-auto" />
-                  </div>
-                </div>
-              ))}
+            <div className="flex items-center justify-center h-48">
+              <Loader2 size={24} className="animate-spin" style={{ color: T.accent }} />
             </div>
           ) : list.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-100 p-12 text-center">
-              <FileX size={32} className="mx-auto mb-3 text-gray-300" />
-              <p className="text-sm font-semibold text-gray-700 mb-1">Nenhuma operação de crédito</p>
-              <p className="text-xs text-gray-400 mb-4">Cadastre a primeira operação de crédito</p>
+            <div className="flex flex-col items-center justify-center h-48 gap-4 rounded-xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <FileX size={32} className="opacity-30" style={{ color: T.textMuted }} />
+              <p className="text-sm font-semibold" style={{ color: T.textMuted }}>Nenhuma operação de crédito</p>
               <Link href="/backoffice/credito/novo"
-                className="inline-flex items-center gap-2 h-9 px-4 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
-                <Plus size={16} /> Nova Operação
+                className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white"
+                style={{ background: '#1E3A5F' }}>
+                <Plus size={14} /> Nova Operação
               </Link>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-100 divide-y divide-gray-50">
-              {list.map(op => {
+            <div className="rounded-xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              {list.map((op, i) => {
                 const stt = STATUS_CONFIG[op.status] ?? STATUS_CONFIG.pending
                 const StatusIcon = stt.icon
                 return (
-                  <div key={op.id} className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors group">
-                    <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
-                      <Landmark size={18} className="text-gray-500" />
+                  <div key={op.id}
+                    className="flex items-center gap-4 p-4 transition-colors hover:opacity-90 group"
+                    style={{ borderTop: i > 0 ? `1px solid ${T.border}` : 'none' }}>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: T.elevated }}>
+                      <Landmark size={16} style={{ color: T.textMuted }} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-xs font-mono text-gray-400">{op.protocol}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${stt.color}`}>
-                          <StatusIcon size={11} /> {stt.label}
+                        <span className="text-xs font-mono" style={{ color: T.textMuted }}>{op.protocol}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1"
+                          style={{ background: stt.bg, color: stt.color }}>
+                          <StatusIcon size={10} /> {stt.label}
                         </span>
                       </div>
-                      <p className="text-sm font-semibold text-gray-900">{op.client_name}</p>
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
-                        {op.system && <span>Sistema {op.system}</span>}
-                        {op.bank && <span>{op.bank}</span>}
-                        <span>{op.term_months / 12} anos</span>
+                      <p className="text-sm font-semibold" style={{ color: T.text }}>{op.client_name}</p>
+                      <div className="flex items-center gap-3 mt-0.5" style={{ color: T.textMuted }}>
+                        {op.system && <span className="text-xs">Sistema {op.system}</span>}
+                        {op.bank && <span className="text-xs">{op.bank}</span>}
+                        <span className="text-xs">{op.term_months / 12} anos</span>
                       </div>
                     </div>
                     <div className="hidden sm:block text-right">
-                      <p className="text-sm font-bold text-gray-900">{formatCurrency(op.financed_amount)}</p>
+                      <p className="text-sm font-bold" style={{ color: T.text }}>{fmt(op.financed_amount)}</p>
                       {op.monthly_payment && (
-                        <p className="text-xs text-gray-500">Parcela: {formatCurrency(op.monthly_payment)}/mês</p>
+                        <p className="text-xs" style={{ color: T.textMuted }}>Parcela: {fmt(op.monthly_payment)}/mês</p>
                       )}
                     </div>
-                    <div className="flex items-center gap-1 touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Link href={`/backoffice/credito/${op.id}`} className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-white transition-colors">
-                        <Eye size={14} />
-                      </Link>
-                    </div>
+                    <Link href={`/backoffice/credito/${op.id}`}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity"
+                      style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                      <Eye size={13} style={{ color: T.textMuted }} />
+                    </Link>
                   </div>
                 )
               })}

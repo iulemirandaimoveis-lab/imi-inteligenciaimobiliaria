@@ -10,6 +10,16 @@ import KanbanBoard from '@/components/backoffice/leads/KanbanBoard'
 import Input from '@/components/ui/Input'
 import { toast } from 'sonner'
 
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
+
 export default function LeadsKanbanPage() {
     const supabase = createClient()
     const [searchTerm, setSearchTerm] = useState('')
@@ -66,7 +76,7 @@ export default function LeadsKanbanPage() {
                                 leftIcon={<Search size={18} />}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="bg-white dark:bg-card-dark rounded-2xl"
+                                className="rounded-2xl"
                             />
                         </div>
                         <Button icon={<Plus size={18} />} className="whitespace-nowrap rounded-2xl">

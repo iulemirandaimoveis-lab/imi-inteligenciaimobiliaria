@@ -21,6 +21,16 @@ import {
   Trash2,
 } from 'lucide-react'
 
+const T = {
+  surface: 'var(--bo-surface)',
+  elevated: 'var(--bo-elevated)',
+  border: 'var(--bo-border)',
+  text: 'var(--bo-text)',
+  textMuted: 'var(--bo-text-muted)',
+  hover: 'var(--bo-hover)',
+  accent: '#486581',
+}
+
 // ⚠️ NÃO MODIFICAR - Unidades mockadas
 const unidadesData = {
   empreendimento: {
@@ -189,21 +199,25 @@ export default function ImoveisUnidadesPage() {
         <div className="flex items-start gap-4">
           <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}`)}
-            className="w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center transition-colors flex-shrink-0"
+            className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
+            style={{ border: `1px solid ${T.border}`, color: T.text }}
           >
             <ArrowLeft size={20} />
           </button>
 
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{unidadesData.empreendimento.name}</h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <h1 className="text-2xl font-bold" style={{ color: T.text }}>{unidadesData.empreendimento.name}</h1>
+            <p className="text-sm mt-1" style={{ color: T.textMuted }}>
               Gestão de unidades e disponibilidade
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 h-11 px-6 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+          <button
+            className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-colors"
+            style={{ border: `1px solid ${T.border}`, color: T.text }}
+          >
             <Download size={20} />
             <span className="hidden sm:inline">Exportar</span>
           </button>
@@ -219,47 +233,49 @@ export default function ImoveisUnidadesPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Total</p>
-          <p className="text-2xl font-bold text-gray-900">{unidadesData.empreendimento.totalUnidades}</p>
+        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <p className="text-xs mb-1" style={{ color: T.textMuted }}>Total</p>
+          <p className="text-2xl font-bold" style={{ color: T.text }}>{unidadesData.empreendimento.totalUnidades}</p>
         </div>
-        <div className="bg-white rounded-xl p-4 border">
+        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs text-green-600 mb-1">Disponíveis</p>
           <p className="text-2xl font-bold text-green-700">{unidadesData.empreendimento.disponiveis}</p>
-          <div className="h-1 bg-gray-100 rounded-full overflow-hidden mt-2">
+          <div className="h-1 rounded-full overflow-hidden mt-2" style={{ background: T.elevated }}>
             <div className="h-full bg-green-500" style={{ width: `${progressDisponiveis}%` }} />
           </div>
         </div>
-        <div className="bg-white rounded-xl p-4 border">
+        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs text-orange-600 mb-1">Reservadas</p>
           <p className="text-2xl font-bold text-orange-700">{unidadesData.empreendimento.reservadas}</p>
         </div>
-        <div className="bg-white rounded-xl p-4 border">
-          <p className="text-xs text-gray-600 mb-1">Vendidas</p>
-          <p className="text-2xl font-bold text-gray-700">{unidadesData.empreendimento.vendidas}</p>
-          <div className="h-1 bg-gray-100 rounded-full overflow-hidden mt-2">
+        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <p className="text-xs mb-1" style={{ color: T.textMuted }}>Vendidas</p>
+          <p className="text-2xl font-bold" style={{ color: T.text }}>{unidadesData.empreendimento.vendidas}</p>
+          <div className="h-1 rounded-full overflow-hidden mt-2" style={{ background: T.elevated }}>
             <div className="h-full bg-gray-500" style={{ width: `${progressVendidas}%` }} />
           </div>
         </div>
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-xl p-4 border">
+      <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
             <input
               type="text"
               placeholder="Buscar por código ou cliente..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full h-11 pl-10 pr-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+              className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+              style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+            className="h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
           >
             <option value="all">Todos os status</option>
             <option value="disponivel">Disponível</option>
@@ -269,7 +285,8 @@ export default function ImoveisUnidadesPage() {
           <select
             value={tipoFilter}
             onChange={(e) => setTipoFilter(e.target.value)}
-            className="h-11 px-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68] bg-white"
+            className="h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
+            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
           >
             <option value="all">Todos os tipos</option>
             <option value="Apartamento">Apartamento</option>
@@ -287,22 +304,23 @@ export default function ImoveisUnidadesPage() {
           return (
             <div
               key={unidade.id}
-              className={`bg-white rounded-xl p-4 border transition-all hover:shadow-lg cursor-pointer ${unidade.destaque ? 'ring-2 ring-[#334E68]' : ''
+              className={`rounded-xl p-4 transition-all hover:shadow-lg cursor-pointer ${unidade.destaque ? 'ring-2 ring-[#334E68]' : ''
                 }`}
+              style={{ background: T.surface, border: `1px solid ${T.border}` }}
               onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades/${unidade.id}`)}
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-bold text-gray-900">{unidade.codigo}</h3>
+                    <h3 className="font-bold" style={{ color: T.text }}>{unidade.codigo}</h3>
                     {unidade.destaque && (
                       <span className="px-2 py-0.5 bg-accent-50 text-[#0F0F1E] text-xs font-medium rounded">
                         Destaque
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-600">{unidade.tipo} • Andar {unidade.andar}</p>
+                  <p className="text-xs" style={{ color: T.textMuted }}>{unidade.tipo} • Andar {unidade.andar}</p>
                 </div>
                 <span className={`px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1 ${statusConfig.bg} ${statusConfig.color}`}>
                   <StatusIcon size={12} />
@@ -311,12 +329,12 @@ export default function ImoveisUnidadesPage() {
               </div>
 
               {/* Características */}
-              <div className="grid grid-cols-2 gap-2 mb-3 pb-3 border-b border-gray-100">
-                <div className="flex items-center gap-1.5 text-xs text-gray-600">
+              <div className="grid grid-cols-2 gap-2 mb-3 pb-3" style={{ borderBottom: `1px solid ${T.border}` }}>
+                <div className="flex items-center gap-1.5 text-xs" style={{ color: T.textMuted }}>
                   <Ruler size={12} />
                   <span>{unidade.area}m²</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                <div className="flex items-center gap-1.5 text-xs" style={{ color: T.textMuted }}>
                   <Home size={12} />
                   <span>{unidade.quartos}Q {unidade.banheiros}B</span>
                 </div>
@@ -324,18 +342,18 @@ export default function ImoveisUnidadesPage() {
 
               {/* Preço */}
               <div className="mb-3">
-                <p className="text-xs text-gray-600 mb-1">Valor</p>
-                <p className="text-xl font-bold text-gray-900">{formatPrice(unidade.preco)}</p>
+                <p className="text-xs mb-1" style={{ color: T.textMuted }}>Valor</p>
+                <p className="text-xl font-bold" style={{ color: T.text }}>{formatPrice(unidade.preco)}</p>
               </div>
 
               {/* Cliente/Data */}
               {(unidade.status === 'vendida' || unidade.status === 'reservada') && unidade.cliente && (
-                <div className="p-2 bg-gray-50 rounded-lg mb-3">
-                  <div className="flex items-center gap-1.5 text-xs text-gray-600 mb-1">
+                <div className="p-2 rounded-lg mb-3" style={{ background: T.elevated }}>
+                  <div className="flex items-center gap-1.5 text-xs mb-1" style={{ color: T.textMuted }}>
                     <User size={12} />
-                    <span className="font-medium text-gray-900">{unidade.cliente}</span>
+                    <span className="font-medium" style={{ color: T.text }}>{unidade.cliente}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                  <div className="flex items-center gap-1.5 text-xs" style={{ color: T.textMuted }}>
                     <Calendar size={12} />
                     <span>
                       {unidade.status === 'vendida'
@@ -348,13 +366,14 @@ export default function ImoveisUnidadesPage() {
               )}
 
               {/* Actions */}
-              <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+              <div className="flex items-center gap-2 pt-3" style={{ borderTop: `1px solid ${T.border}` }}>
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
                     router.push(`/backoffice/imoveis/${params.id}/unidades/${unidade.id}`)
                   }}
-                  className="flex-1 h-9 flex items-center justify-center gap-1.5 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
+                  className="flex-1 h-9 flex items-center justify-center gap-1.5 rounded-lg text-xs font-medium transition-colors"
+                  style={{ border: `1px solid ${T.border}`, color: T.text }}
                 >
                   <Eye size={14} />
                   Ver
@@ -364,7 +383,8 @@ export default function ImoveisUnidadesPage() {
                     e.stopPropagation()
                     router.push(`/backoffice/imoveis/${params.id}/unidades/${unidade.id}/editar`)
                   }}
-                  className="flex-1 h-9 flex items-center justify-center gap-1.5 border border-gray-200 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors"
+                  className="flex-1 h-9 flex items-center justify-center gap-1.5 rounded-lg text-xs font-medium transition-colors"
+                  style={{ border: `1px solid ${T.border}`, color: T.text }}
                 >
                   <Edit size={14} />
                   Editar
@@ -377,12 +397,12 @@ export default function ImoveisUnidadesPage() {
 
       {/* Empty State */}
       {filteredUnidades.length === 0 && (
-        <div className="bg-white rounded-xl border p-12 text-center">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Search size={32} className="text-gray-400" />
+        <div className="rounded-xl p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: T.elevated }}>
+            <Search size={32} style={{ color: T.textMuted }} />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma unidade encontrada</h3>
-          <p className="text-gray-600 mb-6">Tente ajustar os filtros ou adicionar uma nova unidade</p>
+          <h3 className="text-lg font-semibold mb-2" style={{ color: T.text }}>Nenhuma unidade encontrada</h3>
+          <p className="mb-6" style={{ color: T.textMuted }}>Tente ajustar os filtros ou adicionar uma nova unidade</p>
           <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades/nova`)}
             className="inline-flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E]"

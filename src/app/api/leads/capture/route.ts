@@ -1,15 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-function getSupabase() { return createClient(supabaseUrl, supabaseKey) }
-
-const DEFAULT_USER_ID = '00000000-0000-0000-0000-000000000000'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export async function POST(request: NextRequest) {
     try {
-        const supabase = getSupabase()
         const body = await request.json()
         const {
             name, email, phone, interest, development_id,
@@ -21,7 +14,7 @@ export async function POST(request: NextRequest) {
         }
 
         // 1. Create lead with full UTM attribution
-        const { data: lead, error: leadError } = await supabase
+        const { data: lead, error: leadError } = await supabaseAdmin
             .from('leads')
             .insert({
                 name,
@@ -49,7 +42,7 @@ export async function POST(request: NextRequest) {
 
         // 2. Link session to lead if sessionId provided
         if (sessionId) {
-            void supabase
+            void supabaseAdmin
                 .from('tracking_sessions')
                 .update({ lead_id: lead.id })
                 .eq('session_id', sessionId)
@@ -57,10 +50,10 @@ export async function POST(request: NextRequest) {
 
         // 3. Create notification for new lead
         const devName = development_id ? '(imóvel vinculado)' : ''
-        void supabase
+        void supabaseAdmin
             .from('notifications')
             .insert({
-                user_id: DEFAULT_USER_ID,
+                user_id: '00000000-0000-0000-0000-000000000000',
                 type: 'new_lead',
                 title: `📩 Novo lead: ${name}`,
                 message: `${email || phone} — Origem: ${attribution?.source || 'site direto'} ${devName}`.trim(),

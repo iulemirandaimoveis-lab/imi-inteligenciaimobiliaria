@@ -39,6 +39,16 @@ import {
     Pause,
 } from 'lucide-react'
 
+const T = {
+    surface: 'var(--bo-surface)',
+    elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
+    text: 'var(--bo-text)',
+    textMuted: 'var(--bo-text-muted)',
+    hover: 'var(--bo-hover)',
+    accent: '#486581',
+}
+
 // ⚠️ NÃO MODIFICAR - Fluxos de automação mockados contextualizados Recife
 const FLUXOS_AUTOMACAO = [
     {
@@ -124,8 +134,8 @@ export default function AutomacaoConteudoPage() {
                         <Bot size={28} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Automação de Conteúdo</h1>
-                        <p className="text-sm text-gray-600 mt-0.5">
+                        <h1 className="text-2xl font-bold" style={{ color: T.text }}>Automação de Conteúdo</h1>
+                        <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>
                             Configure agentes de IA para criar e agendar posts automaticamente
                         </p>
                     </div>
@@ -139,30 +149,30 @@ export default function AutomacaoConteudoPage() {
             {/* Stats e Insight */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="bg-white rounded-2xl p-5 border border-gray-100">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Carga de IA</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Carga de IA</p>
                         <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold text-gray-900">84%</p>
+                            <p className="text-3xl font-bold" style={{ color: T.text }}>84%</p>
                             <div className="w-16 h-8 bg-accent-50 rounded flex items-end p-1 gap-0.5">
                                 <div className="flex-1 bg-accent-200 h-1/2 rounded-full" />
                                 <div className="flex-1 bg-accent-300 h-3/4 rounded-full" />
                                 <div className="flex-1 bg-[#16162A] h-full rounded-full" />
                             </div>
                         </div>
-                        <p className="text-[10px] text-[#486581] font-medium mt-2">Capacidade otimizada</p>
+                        <p className="text-[10px] font-medium mt-2" style={{ color: T.accent }}>Capacidade otimizada</p>
                     </div>
-                    <div className="bg-white rounded-2xl p-5 border border-gray-100">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Posts Gerados</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Posts Gerados</p>
                         <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold text-gray-900">127</p>
+                            <p className="text-3xl font-bold" style={{ color: T.text }}>127</p>
                             <BarChart3 size={24} className="text-blue-500 mb-1" />
                         </div>
-                        <p className="text-[10px] text-gray-400 font-medium mt-2">Últimos 30 dias</p>
+                        <p className="text-[10px] font-medium mt-2" style={{ color: T.textMuted }}>Últimos 30 dias</p>
                     </div>
-                    <div className="bg-white rounded-2xl p-5 border border-gray-100">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Reach Orgânico</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Reach Orgânico</p>
                         <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold text-gray-900">+12%</p>
+                            <p className="text-3xl font-bold" style={{ color: T.text }}>+12%</p>
                             <TrendingUpIcon size={24} className="text-green-500 mb-1" />
                         </div>
                         <p className="text-[10px] text-green-600 font-medium mt-2">Powered by AI strategy</p>
@@ -185,48 +195,58 @@ export default function AutomacaoConteudoPage() {
             </div>
 
             {/* Lista de Pipelines */}
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="rounded-3xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4" style={{ borderBottom: `1px solid ${T.border}` }}>
                     <div className="relative flex-1 max-w-md">
-                        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                         <input
                             value={busca}
                             onChange={e => setBusca(e.target.value)}
                             placeholder="Buscar pipeline de automação..."
-                            className="w-full h-11 pl-11 pr-4 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-[#334E68]"
+                            className="w-full h-11 pl-11 pr-4 rounded-2xl text-sm focus:ring-2 focus:ring-[#334E68] border-none"
+                            style={{ background: T.elevated, color: T.text }}
                         />
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 h-11 px-4 bg-gray-50 text-gray-600 rounded-2xl text-xs font-bold hover:bg-gray-100 transition-all uppercase tracking-widest">
+                        <button
+                            className="flex items-center gap-2 h-11 px-4 rounded-2xl text-xs font-bold transition-all uppercase tracking-widest"
+                            style={{ background: T.elevated, color: T.textMuted }}
+                        >
                             <RefreshCw size={14} />
                             Forçar Sync Global
                         </button>
                     </div>
                 </div>
 
-                <div className="divide-y divide-gray-50">
+                <div>
                     {fluxosFiltrados.map(fluxo => (
-                        <div key={fluxo.id} className="p-6 flex flex-col md:flex-row md:items-center gap-6 group hover:bg-gray-50/50 transition-colors">
+                        <div
+                            key={fluxo.id}
+                            className="p-6 flex flex-col md:flex-row md:items-center gap-6 group transition-colors"
+                            style={{ borderBottom: `1px solid ${T.border}` }}
+                        >
                             <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-1">
-                                    <h3 className="text-base font-bold text-gray-900">{fluxo.nome}</h3>
+                                    <h3 className="text-base font-bold" style={{ color: T.text }}>{fluxo.nome}</h3>
                                     <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider ${fluxo.status === 'ativo' ? 'bg-green-50 text-green-700' :
                                             fluxo.status === 'pausado' ? 'bg-amber-50 text-amber-700' :
-                                                'bg-gray-100 text-gray-500'
-                                        }`}>
+                                                ''
+                                        }`}
+                                        style={fluxo.status === 'configurar' ? { background: T.elevated, color: T.textMuted } : {}}
+                                    >
                                         {fluxo.status}
                                     </span>
                                 </div>
-                                <p className="text-sm text-gray-500 leading-relaxed max-w-xl">{fluxo.desc}</p>
+                                <p className="text-sm leading-relaxed max-w-xl" style={{ color: T.textMuted }}>{fluxo.desc}</p>
                                 <div className="flex items-center gap-4 mt-3">
                                     <div className="flex items-center gap-1.5">
-                                        <Bot size={14} className="text-[#486581]" />
-                                        <span className="text-xs font-semibold text-gray-700">{fluxo.model}</span>
+                                        <Bot size={14} style={{ color: T.accent }} />
+                                        <span className="text-xs font-semibold" style={{ color: T.text }}>{fluxo.model}</span>
                                     </div>
-                                    <div className="h-4 w-px bg-gray-200" />
+                                    <div className="h-4 w-px" style={{ background: T.border }} />
                                     <div className="flex items-center gap-1.5">
-                                        <Calendar size={14} className="text-gray-400" />
-                                        <span className="text-xs text-gray-500 font-medium">Próximo: {fluxo.proximaExec}</span>
+                                        <Calendar size={14} style={{ color: T.textMuted }} />
+                                        <span className="text-xs font-medium" style={{ color: T.textMuted }}>Próximo: {fluxo.proximaExec}</span>
                                     </div>
                                 </div>
                             </div>
@@ -236,7 +256,12 @@ export default function AutomacaoConteudoPage() {
                                     {fluxo.canais.map(canal => {
                                         const Icon = CANAL_ICONS[canal]
                                         return (
-                                            <div key={canal} className="w-8 h-8 rounded-full bg-white border-2 border-gray-50 flex items-center justify-center text-gray-600 hover:text-[#486581] transition-colors shadow-sm" title={canal}>
+                                            <div
+                                                key={canal}
+                                                className="w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-colors"
+                                                style={{ background: T.elevated, border: `2px solid ${T.border}`, color: T.textMuted }}
+                                                title={canal}
+                                            >
                                                 <Icon size={14} />
                                             </div>
                                         )
@@ -244,8 +269,8 @@ export default function AutomacaoConteudoPage() {
                                 </div>
 
                                 <div className="text-right">
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Sucesso</p>
-                                    <p className="text-sm font-bold text-gray-900">{fluxo.sucesso_rate ? `${fluxo.sucesso_rate}%` : '—'}</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: T.textMuted }}>Sucesso</p>
+                                    <p className="text-sm font-bold" style={{ color: T.text }}>{fluxo.sucesso_rate ? `${fluxo.sucesso_rate}%` : '—'}</p>
                                 </div>
 
                                 <div className="flex items-center gap-2">
@@ -256,10 +281,16 @@ export default function AutomacaoConteudoPage() {
                                     >
                                         {fluxo.status === 'ativo' ? <Pause size={18} /> : <Play size={18} />}
                                     </button>
-                                    <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition-all">
+                                    <button
+                                        className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+                                        style={{ background: T.elevated, color: T.textMuted }}
+                                    >
                                         <Settings size={18} />
                                     </button>
-                                    <button className="w-10 h-10 flex items-center justify-center rounded-xl touch-always-visible opacity-0 group-hover:opacity-100 transition-all text-gray-400 hover:text-gray-600">
+                                    <button
+                                        className="w-10 h-10 flex items-center justify-center rounded-xl touch-always-visible opacity-0 group-hover:opacity-100 transition-all"
+                                        style={{ color: T.textMuted }}
+                                    >
                                         <MoreVertical size={18} />
                                     </button>
                                 </div>
@@ -268,8 +299,11 @@ export default function AutomacaoConteudoPage() {
                     ))}
                 </div>
 
-                <div className="p-4 bg-gray-50 border-t border-gray-100 text-center">
-                    <button className="text-xs font-bold text-gray-400 hover:text-[#486581] uppercase tracking-widest transition-colors flex items-center gap-2 mx-auto">
+                <div className="p-4 text-center" style={{ background: T.elevated, borderTop: `1px solid ${T.border}` }}>
+                    <button
+                        className="text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 mx-auto"
+                        style={{ color: T.textMuted }}
+                    >
                         Ver Logs de Automação Completos <ArrowRight size={14} />
                     </button>
                 </div>
