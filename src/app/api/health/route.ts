@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 // GET /api/health — System health check
 // Returns status of all critical services: database, storage, auth, ai
 import { NextResponse } from 'next/server'

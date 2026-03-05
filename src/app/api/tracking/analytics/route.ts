@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 // GET /api/tracking/analytics — Unified tracking analytics for the backoffice
 // Combines: page_views + tracking_sessions + link_events + leads
 import { NextRequest, NextResponse } from 'next/server'
