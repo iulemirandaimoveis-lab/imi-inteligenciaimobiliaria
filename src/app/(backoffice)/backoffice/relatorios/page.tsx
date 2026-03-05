@@ -144,8 +144,8 @@ export default function RelatoriosPage() {
             const relatorio = RELATORIOS.find(r => r.id === id)
             if (!relatorio) return
 
-            const module = relatorio.categoria === 'crm' ? 'crm' : relatorio.categoria
-            const res = await fetch(`/api/export?module=${module}`)
+            const moduleName = relatorio.categoria === 'crm' ? 'crm' : relatorio.categoria
+            const res = await fetch(`/api/export?module=${moduleName}`)
             if (!res.ok) throw new Error('Erro ao gerar relatório')
 
             const blob = await res.blob()
