@@ -263,8 +263,8 @@ export default function SettingsPage() {
                     style={(settings as any)[item.key] ? toggleCheckedStyle : toggleUncheckedStyle}
                   >
                     <span
-                      className="absolute top-[2px] w-5 h-5 rounded-full bg-white transition-all"
-                      style={{ left: (settings as any)[item.key] ? '22px' : '2px' }}
+                      className="absolute top-[2px] w-5 h-5 rounded-full transition-all"
+                      style={{ background: '#E8EDF2', left: (settings as any)[item.key] ? '22px' : '2px' }}
                     />
                   </button>
                 </div>
@@ -341,8 +341,8 @@ export default function SettingsPage() {
                   style={settings.twoFactorAuth ? toggleCheckedStyle : toggleUncheckedStyle}
                 >
                   <span
-                    className="absolute top-[2px] w-5 h-5 rounded-full bg-white transition-all"
-                    style={{ left: settings.twoFactorAuth ? '22px' : '2px' }}
+                    className="absolute top-[2px] w-5 h-5 rounded-full transition-all"
+                    style={{ background: '#E8EDF2', left: settings.twoFactorAuth ? '22px' : '2px' }}
                   />
                 </button>
               </div>

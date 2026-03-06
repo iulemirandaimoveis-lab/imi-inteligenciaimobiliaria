@@ -276,8 +276,10 @@ export default function EditarLeadPage() {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => router.back()}
-                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:bg-white/10"
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
                         style={{ border: `1px solid ${T.border}` }}
+                        onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                         <ArrowLeft size={20} style={{ color: T.text }} />
                     </button>
@@ -686,8 +688,10 @@ export default function EditarLeadPage() {
                             <button
                                 type="button"
                                 onClick={() => router.back()}
-                                className="w-full h-11 rounded-xl font-medium transition-colors hover:bg-white/10"
+                                className="w-full h-11 rounded-xl font-medium transition-colors"
                                 style={{ border: `1px solid ${T.border}`, color: T.text }}
+                                onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+                                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                             >
                                 Cancelar
                             </button>

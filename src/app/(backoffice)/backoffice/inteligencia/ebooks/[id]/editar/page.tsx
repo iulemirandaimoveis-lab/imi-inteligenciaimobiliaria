@@ -74,7 +74,7 @@ export default function EditarEbookPage() {
 
     const inputClass = "w-full h-10 px-3 rounded-xl text-sm outline-none transition-all"
     const inputStyle = {
-        background: 'var(--bo-input-bg)',
+        background: 'var(--bo-elevated)',
         border: '1px solid var(--bo-border)',
         color: 'var(--bo-text)',
     }

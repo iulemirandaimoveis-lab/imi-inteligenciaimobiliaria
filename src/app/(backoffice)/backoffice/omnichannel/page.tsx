@@ -37,11 +37,12 @@ export default function OmniChannelPage() {
         // Fetch real lead stats for the summary cards
         fetch('/api/leads')
             .then(r => r.json())
-            .then((data: any[]) => {
-                if (!Array.isArray(data)) return
+            .then((json: any) => {
+                // /api/leads returns { data: [...], pagination: {} }
+                const data = json?.data || (Array.isArray(json) ? json : [])
                 const today = new Date().toDateString()
-                const hoje = data.filter(l => new Date(l.created_at || '').toDateString() === today).length
-                const pendentes = data.filter(l => l.status === 'new' || l.status === 'warm' || !l.status).length
+                const hoje = data.filter((l: any) => new Date(l.created_at || '').toDateString() === today).length
+                const pendentes = data.filter((l: any) => l.status === 'new' || l.status === 'warm' || !l.status).length
                 setRealStats({ hoje, pendentes: Math.min(pendentes, 99) })
             })
             .catch(() => {})

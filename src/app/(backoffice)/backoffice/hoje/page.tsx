@@ -77,7 +77,8 @@ export default function HojePage() {
       fetch('/api/leads').then(r => r.json()).catch(() => []),
       fetch(`/api/agenda?month=${currentMonth}`).then(r => r.json()).catch(() => []),
     ]).then(([leadsData, eventsData]) => {
-      setLeads(Array.isArray(leadsData) ? leadsData : [])
+      // /api/leads returns { data: [...], pagination: {} } — extract .data
+      setLeads(leadsData?.data || (Array.isArray(leadsData) ? leadsData : []))
       setEvents(Array.isArray(eventsData) ? eventsData : [])
       setLoading(false)
     })

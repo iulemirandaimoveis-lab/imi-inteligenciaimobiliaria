@@ -153,10 +153,10 @@ export default function AutomacaoConteudoPage() {
                         <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Carga de IA</p>
                         <div className="flex items-end justify-between">
                             <p className="text-3xl font-bold" style={{ color: T.text }}>84%</p>
-                            <div className="w-16 h-8 bg-accent-50 rounded flex items-end p-1 gap-0.5">
-                                <div className="flex-1 bg-accent-200 h-1/2 rounded-full" />
-                                <div className="flex-1 bg-accent-300 h-3/4 rounded-full" />
-                                <div className="flex-1 bg-[#16162A] h-full rounded-full" />
+                            <div className="w-16 h-8 rounded flex items-end p-1 gap-0.5" style={{ background: T.elevated }}>
+                                <div className="flex-1 h-1/2 rounded-full" style={{ background: T.border }} />
+                                <div className="flex-1 h-3/4 rounded-full" style={{ background: T.textMuted }} />
+                                <div className="flex-1 h-full rounded-full" style={{ background: 'var(--bo-accent)' }} />
                             </div>
                         </div>
                         <p className="text-[10px] font-medium mt-2" style={{ color: T.accent }}>Capacidade otimizada</p>

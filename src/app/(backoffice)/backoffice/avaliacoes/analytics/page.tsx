@@ -152,7 +152,7 @@ export default function AvaliacoesAnalyticsPage() {
             {/* Strategic Distribution Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Market Segmentation Strategy */}
-                <Card className="shadow-elevated border-imi-50">
+                <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
                     <CardHeader title="Segmentação de Ativos Evaluated" subtitle="Distribuição por tipologia de imóvel" />
                     <CardBody className="p-8">
                         <div className="space-y-8">
@@ -160,10 +160,10 @@ export default function AvaliacoesAnalyticsPage() {
                                 <div key={item.type} className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-imi-50 flex items-center justify-center text-imi-400">
+                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: T.elevated, color: T.textMuted }}>
                                                 {item.type === 'Residencial' ? <Building2 size={18} /> : <Target size={18} />}
                                             </div>
-                                            <span className="text-sm font-black text-imi-900 uppercase tracking-wider">
+                                            <span className="text-sm font-black uppercase tracking-wider" style={{ color: T.text }}>
                                                 {item.type}
                                             </span>
                                         </div>
@@ -172,15 +172,15 @@ export default function AvaliacoesAnalyticsPage() {
                                             <Badge variant="neutral" size="sm">{item.count} laudos</Badge>
                                         </div>
                                     </div>
-                                    <div className="h-3 bg-imi-50 rounded-full overflow-hidden border border-imi-100">
+                                    <div className="h-3 rounded-full overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                         <div
                                             className="h-full bg-[#102A43] transition-all duration-1000 ease-smooth rounded-full"
                                             style={{ width: `${item.percentage}%` }}
                                         />
                                     </div>
                                     <div className="flex items-center justify-between mt-2">
-                                        <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest pl-1">
-                                            Ticket Médio Avaliado: <span className="text-imi-900">R$ {(item.avgValue / 1000).toFixed(0)}k</span>
+                                        <p className="text-[10px] font-black uppercase tracking-widest pl-1" style={{ color: T.textMuted }}>
+                                            Ticket Médio Avaliado: <span style={{ color: T.text }}>R$ {(item.avgValue / 1000).toFixed(0)}k</span>
                                         </p>
                                     </div>
                                 </div>
@@ -190,25 +190,25 @@ export default function AvaliacoesAnalyticsPage() {
                 </Card>
 
                 {/* NBR Methodology Adherence */}
-                <Card className="shadow-elevated border-imi-50">
+                <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
                     <CardHeader title="Metodologias (NBR 14653)" subtitle="Consistência técnica dos laudos emitidos" />
                     <CardBody className="p-8">
                         <div className="space-y-8">
                             {data.byMethod.map((item) => (
                                 <div key={item.method} className="space-y-3">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[11px] font-black text-imi-900 uppercase tracking-[0.1em]">
+                                        <span className="text-[11px] font-black uppercase tracking-[0.1em]" style={{ color: T.text }}>
                                             Método {item.method}
                                         </span>
                                         <div className="flex items-center gap-3">
-                                            <span className="text-xs font-black text-imi-400">{item.percentage}%</span>
+                                            <span className="text-xs font-black" style={{ color: T.textMuted }}>{item.percentage}%</span>
                                             <Badge variant="primary" size="sm" dot>{item.count}</Badge>
                                         </div>
                                     </div>
-                                    <div className="h-3 bg-imi-50 rounded-2xl overflow-hidden border border-imi-100/50">
+                                    <div className="h-3 rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                         <div
-                                            className="h-full bg-imi-950 transition-all duration-1000 ease-smooth rounded-2xl shadow-sm"
-                                            style={{ width: `${item.percentage}%` }}
+                                            className="h-full transition-all duration-1000 ease-smooth rounded-2xl shadow-sm"
+                                            style={{ width: `${item.percentage}%`, background: T.text }}
                                         />
                                     </div>
                                 </div>
@@ -219,7 +219,7 @@ export default function AvaliacoesAnalyticsPage() {
             </div>
 
             {/* Financial Velocity Timeline */}
-            <Card className="shadow-elevated border-imi-50">
+            <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
                 <CardHeader title="Trend de Billing & Produtividade" subtitle="Sazonalidade e volume semestral" />
                 <CardBody className="p-8">
                     <div className="space-y-6">
@@ -231,26 +231,26 @@ export default function AvaliacoesAnalyticsPage() {
                                 <div key={month.month} className="group">
                                     <div className="flex flex-col md:flex-row items-center gap-8">
                                         <div className="w-20 text-center md:text-left shrink-0">
-                                            <span className="text-xs font-black uppercase text-imi-900 group-hover:text-[var(--bo-accent)] transition-colors">
+                                            <span className="text-xs font-black uppercase group-hover:text-[var(--bo-accent)] transition-colors" style={{ color: T.text }}>
                                                 {month.month}
                                             </span>
                                         </div>
                                         <div className="flex-1 w-full relative">
-                                            <div className="h-12 bg-imi-50 rounded-2xl overflow-hidden border border-imi-100/50">
+                                            <div className="h-12 rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                                 <div
                                                     className="h-full bg-[#102A43]/10 border-r-4 border-[#334E68] transition-all duration-1000 ease-smooth"
                                                     style={{ width: `${percentage}%` }}
                                                 />
                                                 <div className="absolute inset-y-0 left-6 flex items-center gap-4">
-                                                    <span className="text-[10px] font-black text-imi-950 uppercase tracking-widest">{month.total} Demandas</span>
-                                                    <span className="w-1 h-1 bg-imi-300 rounded-full"></span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: T.text }}>{month.total} Demandas</span>
+                                                    <span className="w-1 h-1 rounded-full" style={{ background: T.border }}></span>
                                                     <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">{month.completed} Entregas</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="w-full md:w-32 text-right">
-                                            <p className="text-[9px] font-black text-imi-300 uppercase tracking-widest mb-1">Faturamento</p>
-                                            <p className="text-xl font-black text-imi-900">R$ {(month.revenue / 1000).toFixed(0)}k</p>
+                                            <p className="text-[9px] font-black uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Faturamento</p>
+                                            <p className="text-xl font-black" style={{ color: T.text }}>R$ {(month.revenue / 1000).toFixed(0)}k</p>
                                         </div>
                                     </div>
                                 </div>
@@ -263,18 +263,18 @@ export default function AvaliacoesAnalyticsPage() {
             {/* Bottom Intelligence Matrix */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Client Retention High-Performance */}
-                <Card className="shadow-elevated border-imi-50">
+                <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
                     <CardHeader title="Top Contratantes: B2B Strategy" subtitle="Fidelização por volume de ordens" />
                     <CardBody className="p-8">
                         <div className="space-y-4">
                             {data.topClients.map((client, index) => (
-                                <div key={client.name} className="flex items-center gap-6 p-6 bg-imi-50/50 rounded-3xl border border-imi-100/30 hover:border-accent-200 transition-all group" style={{ ['--hover-bg' as string]: T.hover }}>
-                                    <div className="w-12 h-12 rounded-2xl bg-imi-950 text-[var(--bo-accent)] flex items-center justify-center text-lg font-black shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                <div key={client.name} className="flex items-center gap-6 p-6 rounded-3xl transition-all group" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black shrink-0 shadow-lg group-hover:scale-110 transition-transform" style={{ background: T.surface, color: 'var(--bo-accent)' }}>
                                         {index + 1}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-base font-black text-imi-900 uppercase tracking-tight truncate">{client.name}</p>
-                                        <p className="text-[10px] font-bold text-imi-400 uppercase tracking-[0.2em] mt-1">
+                                        <p className="text-base font-black uppercase tracking-tight truncate" style={{ color: T.text }}>{client.name}</p>
+                                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] mt-1" style={{ color: T.textMuted }}>
                                             {client.count} Ordens de Avaliação
                                         </p>
                                     </div>
@@ -282,7 +282,7 @@ export default function AvaliacoesAnalyticsPage() {
                                         <p className="text-xl font-black" style={{ color: T.text }}>
                                             R$ {(client.revenue / 1000).toFixed(0)}k
                                         </p>
-                                        <p className="text-[9px] font-black text-imi-400 uppercase tracking-widest">Revenue Life-Time</p>
+                                        <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: T.textMuted }}>Revenue Life-Time</p>
                                     </div>
                                 </div>
                             ))}
@@ -291,7 +291,7 @@ export default function AvaliacoesAnalyticsPage() {
                 </Card>
 
                 {/* Geospatial Valuation Matrix */}
-                <Card className="shadow-elevated border-imi-50">
+                <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
                     <CardHeader title="Matriz de Valorização por Bairro" />
                     <CardBody className="p-8">
                         <div className="space-y-6">
@@ -302,19 +302,19 @@ export default function AvaliacoesAnalyticsPage() {
                                 return (
                                     <div key={item.neighborhood} className="space-y-2">
                                         <div className="flex items-center justify-between mb-1">
-                                            <span className="text-[11px] font-black text-imi-950 uppercase tracking-widest">
+                                            <span className="text-[11px] font-black uppercase tracking-widest" style={{ color: T.text }}>
                                                 {item.neighborhood}
                                             </span>
                                             <div className="flex items-center gap-3">
                                                 <span className="text-xs font-black text-green-600">
                                                     R$ {(item.avgValue / 1000).toFixed(0)}k
                                                 </span>
-                                                <Badge variant="neutral" size="sm" className="bg-imi-50 text-[10px]">
+                                                <Badge variant="neutral" size="sm" className="text-[10px]">
                                                     {item.count} Lds
                                                 </Badge>
                                             </div>
                                         </div>
-                                        <div className="h-4 bg-imi-50 rounded-2xl overflow-hidden border border-imi-100/50">
+                                        <div className="h-4 rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                             <div
                                                 className="h-full bg-green-500 transition-all duration-1000 ease-smooth rounded-full shadow-sm"
                                                 style={{ width: `${percentage}%` }}

@@ -307,7 +307,7 @@ export default function NovoConteudoPage() {
           <button
             onClick={salvarConteudo}
             disabled={!titulo || !corpo || salvo}
-            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl text-sm font-bold hover:bg-[#0F0F1E] disabled:opacity-50 transition-all shadow-lg shadow-blue-100"
+            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl text-sm font-bold hover:bg-[#0F0F1E] disabled:opacity-50 transition-all shadow-lg"
           >
             {salvo ? <Check size={18} /> : <Save size={18} />}
             {salvo ? 'Salvo com Sucesso!' : 'Salvar no Sistema'}
@@ -374,7 +374,7 @@ export default function NovoConteudoPage() {
           </div>
 
           {/* Assistente IA */}
-          <div className="bg-gradient-to-br from-[#243B53] to-[#0F0F1E] rounded-2xl p-5 shadow-lg shadow-blue-100 text-white">
+          <div className="bg-gradient-to-br from-[#243B53] to-[#0F0F1E] rounded-2xl p-5 shadow-lg text-white">
             <div className="flex items-center justify-between mb-4">
               <label className="text-[10px] font-bold text-white/70 uppercase tracking-widest">
                 Multi-Model Assistant
@@ -589,7 +589,7 @@ export default function NovoConteudoPage() {
                   <div className="flex flex-col sm:flex-row items-center gap-3 font-bold">
                     <button
                       onClick={() => aplicarSugestao(aiPanel.result)}
-                      className="flex items-center gap-2 h-12 px-6 bg-[#16162A] text-white rounded-2xl text-sm hover:bg-[#0F0F1E] w-full sm:flex-1 justify-center shadow-lg shadow-blue-100 transition-all"
+                      className="flex items-center gap-2 h-12 px-6 bg-[#16162A] text-white rounded-2xl text-sm hover:bg-[#0F0F1E] w-full sm:flex-1 justify-center shadow-lg transition-all"
                     >
                       <Check size={18} />
                       Aplicar no Texto
