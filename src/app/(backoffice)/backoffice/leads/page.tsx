@@ -66,24 +66,24 @@ export default function LeadsPage() {
   useEffect(() => {
     fetch('/api/leads')
       .then(r => r.ok ? r.json() : [])
-      .then((data: any[]) => {
-        if (Array.isArray(data)) {
-          setLeads(data.map((l: any) => ({
-            id: l.id,
-            name: l.name || 'Sem nome',
-            email: l.email || '',
-            phone: l.phone || '',
-            score: l.score ?? 50,
-            status: l.status || 'warm',
-            source: l.source || 'Site',
-            interest: l.interest || '',
-            location: l.city || '',
-            budget: l.budget ?? 'N/A',
-            created: l.created_at || new Date().toISOString(),
-            lastContact: l.updated_at || new Date().toISOString(),
-            ai_score: l.ai_score ?? undefined,
-          })))
-        }
+      .then((json: any) => {
+        // API returns { data: [...], pagination: {} } or [] on error
+        const data = json.data || (Array.isArray(json) ? json : [])
+        setLeads(data.map((l: any) => ({
+          id: l.id,
+          name: l.name || 'Sem nome',
+          email: l.email || '',
+          phone: l.phone || '',
+          score: l.score ?? 50,
+          status: l.status || 'warm',
+          source: l.source || 'Site',
+          interest: l.interest || '',
+          location: l.city || '',
+          budget: l.budget ?? 'N/A',
+          created: l.created_at || new Date().toISOString(),
+          lastContact: l.updated_at || new Date().toISOString(),
+          ai_score: l.ai_score ?? undefined,
+        })))
       })
       .catch(() => {})
       .finally(() => setLoading(false))

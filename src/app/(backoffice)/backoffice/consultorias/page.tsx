@@ -63,8 +63,10 @@ export default function ConsultoriasPage() {
     useEffect(() => {
         fetch('/api/consultorias')
             .then(r => r.json())
-            .then(data => {
-                if (Array.isArray(data)) setConsultorias(data)
+            .then(json => {
+                // API returns { data: [...], pagination: {} } or [] on error
+                const list = json.data || (Array.isArray(json) ? json : [])
+                setConsultorias(list)
             })
             .catch(() => {})
             .finally(() => setLoading(false))
