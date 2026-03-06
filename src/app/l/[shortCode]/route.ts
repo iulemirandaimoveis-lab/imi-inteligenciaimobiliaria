@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 function parseUserAgent(ua: string) {
     // Device type
@@ -32,10 +32,9 @@ export async function GET(
     { params }: { params: { shortCode: string } }
 ) {
     const shortCode = params.shortCode
-    const supabase = await createClient()
 
-    // 1. Find the tracked link
-    const { data: link, error } = await supabase
+    // 1. Find the tracked link (use admin to bypass RLS for anonymous QR scans)
+    const { data: link, error } = await supabaseAdmin
         .from('tracked_links')
         .select('*')
         .eq('short_code', shortCode)
@@ -82,7 +81,7 @@ export async function GET(
     if (reqCampaign) utms.campaign = reqCampaign
 
     // 6. Log tracking event (non-blocking — don't await to avoid delaying redirect)
-    void supabase
+    void supabaseAdmin
         .from('link_events')
         .insert({
             tracked_link_id: link.id,
@@ -101,8 +100,8 @@ export async function GET(
         })
 
     // 7. Increment click count (non-blocking)
-    void supabase
-        .rpc('increment_link_clicks', { link_id: link.id })
+    void supabaseAdmin
+        .rpc('increment_link_clicks', { link_id: link.id } as any)
 
     // 8. Build final redirect URL with UTM passthrough
     let finalUrl = targetUrl
