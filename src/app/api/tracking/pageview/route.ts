@@ -123,8 +123,10 @@ export async function POST(request: NextRequest) {
                     .limit(1)
 
                 if (!existingNotif || existingNotif.length === 0) {
+                    // Resolve admin user (first registered user = admin)
+                    const { data: adminProfile } = await supabaseAdmin.from('profiles').select('id').limit(1).single()
                     await supabaseAdmin.from('notifications').insert({
-                        user_id: '00000000-0000-0000-0000-000000000000',
+                        user_id: adminProfile?.id || null,
                         type: 'hot_lead',
                         title: '🔥 Visitante interessado detectado',
                         message: `Um visitante visualizou ${count} imóveis no site. Último: ${developmentSlug}. Dispositivo: ${deviceType}. Origem: ${utmSource || 'direto'}`,

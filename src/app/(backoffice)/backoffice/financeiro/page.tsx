@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   TrendingUp, TrendingDown, DollarSign, Plus, Loader2,
-  ArrowUpCircle, ArrowDownCircle, X, CheckCircle,
+  ArrowUpCircle, ArrowDownCircle, X, CheckCircle, Download,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -158,20 +158,41 @@ export default function FinanceiroPage() {
           title="Financeiro"
           subtitle="Receitas, despesas e fluxo de caixa"
           actions={
-            <button
-              onClick={() => setShowForm(true)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '6px',
-                height: '38px', padding: '0 18px', borderRadius: '12px',
-                fontSize: '13px', fontWeight: 700, color: '#fff',
-                background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
-                border: 'none', cursor: 'pointer',
-                boxShadow: '0 0 18px rgba(59,130,246,0.35)', flexShrink: 0,
-              }}
-            >
-              <Plus size={15} />
-              Novo Lançamento
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button
+                onClick={() => {
+                  const month = new Date().toISOString().slice(0, 7)
+                  const a = document.createElement('a')
+                  a.href = `/api/export?module=financeiro&month=${month}`
+                  a.download = `financeiro-${month}.csv`
+                  a.click()
+                }}
+                title="Exportar CSV do mês atual"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  height: '38px', padding: '0 14px', borderRadius: '12px',
+                  fontSize: '12px', fontWeight: 600, color: 'var(--bo-text-muted)',
+                  background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                  cursor: 'pointer', flexShrink: 0,
+                }}
+              >
+                <Download size={13} /> CSV
+              </button>
+              <button
+                onClick={() => setShowForm(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  height: '38px', padding: '0 18px', borderRadius: '12px',
+                  fontSize: '13px', fontWeight: 700, color: '#fff',
+                  background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+                  border: 'none', cursor: 'pointer',
+                  boxShadow: '0 0 18px rgba(59,130,246,0.35)', flexShrink: 0,
+                }}
+              >
+                <Plus size={15} />
+                Novo Lançamento
+              </button>
+            </div>
           }
         />
       </motion.div>

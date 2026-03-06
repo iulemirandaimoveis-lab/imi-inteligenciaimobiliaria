@@ -49,11 +49,16 @@ export async function POST(request: NextRequest) {
         }
 
         // 3. Create notification for new lead
+        // Resolve admin user_id (first user in auth system = admin Iule)
+        let adminId: string | null = null
+        const { data: adminUser } = await supabaseAdmin.from('profiles').select('id').limit(1).single()
+        if (adminUser) adminId = adminUser.id
+
         const devName = development_id ? '(imóvel vinculado)' : ''
         void supabaseAdmin
             .from('notifications')
             .insert({
-                user_id: '00000000-0000-0000-0000-000000000000',
+                user_id: adminId,
                 type: 'new_lead',
                 title: `📩 Novo lead: ${name}`,
                 message: `${email || phone} — Origem: ${attribution?.source || 'site direto'} ${devName}`.trim(),

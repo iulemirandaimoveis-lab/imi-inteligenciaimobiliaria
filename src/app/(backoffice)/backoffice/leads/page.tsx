@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Plus, Zap, TrendingUp, Users, Flame } from 'lucide-react'
+import { Search, Plus, Zap, TrendingUp, Users, Flame, Download } from 'lucide-react'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTabs'
@@ -135,19 +135,40 @@ export default function LeadsPage() {
           subtitle="Behavioral Intelligence Pipeline"
           live
           actions={
-            <motion.button
-              whileTap={{ scale: 0.93 }}
-              onClick={() => router.push('/backoffice/leads/novo')}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '6px',
-                height: '36px', padding: '0 14px', borderRadius: '10px',
-                fontSize: '12px', fontWeight: 700, color: '#fff',
-                background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
-                border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
-              }}
-            >
-              <Plus size={14} /> Novo Lead
-            </motion.button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <motion.button
+                whileTap={{ scale: 0.93 }}
+                onClick={() => {
+                  const a = document.createElement('a')
+                  a.href = '/api/export?module=leads'
+                  a.download = 'leads.csv'
+                  a.click()
+                }}
+                title="Exportar CSV"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  height: '36px', padding: '0 12px', borderRadius: '10px',
+                  fontSize: '12px', fontWeight: 600, color: 'var(--bo-text-muted)',
+                  background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                  cursor: 'pointer', whiteSpace: 'nowrap',
+                }}
+              >
+                <Download size={13} /> CSV
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.93 }}
+                onClick={() => router.push('/backoffice/leads/novo')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  height: '36px', padding: '0 14px', borderRadius: '10px',
+                  fontSize: '12px', fontWeight: 700, color: '#fff',
+                  background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
+                  border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+                }}
+              >
+                <Plus size={14} /> Novo Lead
+              </motion.button>
+            </div>
           }
         />
       </motion.div>
