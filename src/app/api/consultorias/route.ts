@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { parseBody, consultoriaSchema, consultoriaUpdateSchema } from '@/lib/schemas'
 
 export async function GET(request: NextRequest) {
     try {
@@ -56,13 +57,12 @@ export async function POST(req: NextRequest) {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const body = await req.json()
-
-        if (!body.tipo) return NextResponse.json({ error: 'tipo obrigatório' }, { status: 400 })
+        const parsed = await parseBody(req, consultoriaSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
 
         const { data, error } = await supabase
             .from('consultorias')
-            .insert({ ...body })
+            .insert({ ...parsed.data })
             .select()
             .single()
 
@@ -80,10 +80,9 @@ export async function PUT(req: NextRequest) {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const body = await req.json()
-        const { id, ...updates } = body
-
-        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+        const parsed = await parseBody(req, consultoriaUpdateSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const { id, ...updates } = parsed.data
 
         const { data, error } = await supabase
             .from('consultorias')

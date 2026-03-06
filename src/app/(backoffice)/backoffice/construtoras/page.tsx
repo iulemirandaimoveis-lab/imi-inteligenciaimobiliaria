@@ -1,6 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import ConstrutorasClient, { Developer } from './ConstrutorasClient'
 
+const T = {
+    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
+    gold: 'var(--bo-accent)',
+}
+
 export const dynamic = 'force-dynamic'
 
 export default async function BackofficeConstrutorasPage() {

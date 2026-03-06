@@ -21,6 +21,10 @@ export async function POST(request: Request) {
         }
 
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
 
         // Get development slug
         const { data: dev } = await supabase

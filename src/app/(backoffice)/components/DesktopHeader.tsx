@@ -120,7 +120,7 @@ function NotificationBell() {
                 <Bell size={16} />
                 {unread > 0 && (
                     <span
-                        className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 text-[8px] font-bold text-white rounded-full flex items-center justify-center"
+                        className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 text-[10px] font-bold text-white rounded-full flex items-center justify-center"
                         style={{ background: 'var(--accent-500)', boxShadow: '0 0 0 2px var(--bo-surface)' }}
                     >
                         {unread > 9 ? '9+' : unread}

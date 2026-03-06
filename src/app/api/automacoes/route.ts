@@ -29,8 +29,10 @@ export async function GET(req: NextRequest) {
             .select('*', { count: 'exact' })
             .order('created_at', { ascending: false })
 
+        // By default, exclude archived (deleted) workflows
         if (active === 'true') query = query.eq('is_active', true)
-        if (active === 'false') query = query.eq('is_active', false)
+        else if (active === 'false') query = query.eq('is_active', false)
+        else query = query.not('is_active', 'eq', false)
 
         query = query.range(offset, offset + limit - 1)
 
@@ -103,7 +105,7 @@ export async function PUT(req: NextRequest) {
     }
 }
 
-// DELETE — remove workflow
+// DELETE — soft delete workflow (is_active = false)
 export async function DELETE(req: NextRequest) {
     try {
         const supabase = await createClient()
@@ -113,7 +115,7 @@ export async function DELETE(req: NextRequest) {
 
         const { error } = await supabase
             .from('automation_workflows')
-            .delete()
+            .update({ is_active: false, updated_at: new Date().toISOString() })
             .eq('id', id)
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })

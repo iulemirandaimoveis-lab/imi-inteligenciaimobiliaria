@@ -12,6 +12,13 @@ import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'rec
 import Link from 'next/link'
 import { KPICard, MetricBar, StatusBadge, SectionHeader } from '../../components/ui'
 
+const T = {
+    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
+    gold: 'var(--bo-accent)',
+}
+
 // ── Animated counter ──────────────────────────────────────────
 function AnimNum({ value, prefix = '', suffix = '', decimals = 0 }: {
     value: number; prefix?: string; suffix?: string; decimals?: number

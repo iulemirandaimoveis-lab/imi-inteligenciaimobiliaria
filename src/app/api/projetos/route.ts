@@ -25,7 +25,9 @@ export async function GET(req: NextRequest) {
             .select('*')
             .order('created_at', { ascending: false })
 
+        // Filter by status if provided; otherwise exclude archived
         if (status) query = query.eq('status', status)
+        else query = query.not('status', 'eq', 'arquivado')
 
         const { data, error } = await query.limit(100)
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
@@ -98,7 +100,7 @@ export async function PUT(req: NextRequest) {
     }
 }
 
-// DELETE — remove projeto
+// DELETE — soft delete projeto (status = 'arquivado')
 export async function DELETE(req: NextRequest) {
     try {
         const supabase = await createClient()
@@ -108,7 +110,7 @@ export async function DELETE(req: NextRequest) {
 
         const { error } = await supabase
             .from('projetos')
-            .delete()
+            .update({ status: 'arquivado', updated_at: new Date().toISOString() })
             .eq('id', id)
 
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })

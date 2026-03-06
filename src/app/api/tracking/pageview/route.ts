@@ -1,6 +1,7 @@
 // POST /api/tracking/pageview — Records page views from the public website
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { limiters, getClientIP } from '@/lib/rate-limit'
 
 function parseUA(ua: string) {
     let deviceType = 'desktop'
@@ -30,6 +31,14 @@ function isBot(ua: string): boolean {
 
 export async function POST(request: NextRequest) {
     try {
+        const ip = getClientIP(request)
+
+        // Rate limiting: 30 pageviews / 10s per IP (generous for real users, blocks bots)
+        const rl = limiters.public(ip)
+        if (!rl.success) {
+            return NextResponse.json({ ok: true }) // Silently drop — never fail client-side tracking
+        }
+
         const body = await request.json()
         const {
             sessionId, pageUrl, pagePath, referrer,
@@ -46,8 +55,6 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: true, bot: true })
         }
 
-        const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-            request.headers.get('x-real-ip') || 'unknown'
         const { deviceType, browser, os } = parseUA(ua)
 
         // 1. Record page view

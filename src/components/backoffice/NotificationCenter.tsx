@@ -243,7 +243,7 @@ export default function NotificationCenter() {
                     />
 
                     {/* Panel */}
-                    <div className="absolute top-12 right-0 md:fixed md:top-20 md:right-4 w-96 max-h-[calc(100vh-6rem)] bg-white rounded-2xl shadow-2xl border border-imi-100 z-50 flex flex-col animate-in slide-in-from-top-4 duration-200 origin-top-right">
+                    <div className="absolute top-12 right-0 md:fixed md:top-20 md:right-4 w-[calc(100vw-2rem)] sm:w-96 max-h-[calc(100vh-6rem)] bg-white rounded-2xl shadow-2xl border border-imi-100 z-50 flex flex-col animate-in slide-in-from-top-4 duration-200 origin-top-right">
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-imi-100 sticky top-0 bg-white/95 backdrop-blur-sm z-10 rounded-t-2xl">
                             <div>

@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { limiters, getClientIP } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
     try {
+        // Rate limiting: 10 requests / 10s per IP (public endpoint)
+        const ip = getClientIP(request)
+        const rl = limiters.public(ip)
+        if (!rl.success) {
+            return NextResponse.json(
+                { error: 'Muitas requisições. Tente novamente em alguns segundos.' },
+                { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetTime - Date.now()) / 1000)) } }
+            )
+        }
+
         const body = await request.json()
         const {
             name, email, phone, interest, development_id,
@@ -11,6 +22,27 @@ export async function POST(request: NextRequest) {
 
         if (!name || (!email && !phone)) {
             return NextResponse.json({ error: 'Identificação básica obrigatória' }, { status: 400 })
+        }
+
+        // Deduplication: same email submitted within last 5 minutes → return existing lead
+        if (email) {
+            const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
+            const { data: existing } = await supabaseAdmin
+                .from('leads')
+                .select('id')
+                .eq('email', email)
+                .gte('created_at', fiveMinAgo)
+                .limit(1)
+                .maybeSingle()
+
+            if (existing) {
+                return NextResponse.json({
+                    success: true,
+                    lead_id: existing.id,
+                    message: 'Lead já registrado',
+                    deduplicated: true,
+                })
+            }
         }
 
         // 1. Create lead with full UTM attribution

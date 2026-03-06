@@ -3,6 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { parseBody, transactionSchema, transactionUpdateSchema } from '@/lib/schemas'
 
 async function getAuth() {
     const supabase = await createClient()
@@ -22,6 +23,9 @@ export async function GET(req: NextRequest) {
         const status = searchParams.get('status')
         const month  = searchParams.get('month') // YYYY-MM
         const id     = searchParams.get('id')
+        const page   = parseInt(searchParams.get('page') || '1')
+        const limit  = Math.min(parseInt(searchParams.get('limit') || '50'), 250)
+        const offset = (page - 1) * limit
 
         if (id) {
             const { data, error } = await supabase
@@ -35,8 +39,10 @@ export async function GET(req: NextRequest) {
 
         let query = supabase
             .from('financial_transactions')
-            .select('id, type, category, description, amount, due_date, paid_date, status, payment_method, notes, created_at')
+            .select('id, type, category, description, amount, due_date, paid_date, status, payment_method, notes, created_at', { count: 'exact' })
+            .not('status', 'eq', 'cancelado')
             .order('due_date', { ascending: false })
+            .range(offset, offset + limit - 1)
 
         if (type)   query = query.eq('type', type)
         if (status) query = query.eq('status', status)
@@ -48,9 +54,12 @@ export async function GET(req: NextRequest) {
             query = query.gte('due_date', start).lte('due_date', end)
         }
 
-        const { data, error } = await query.limit(200)
-        if (error) return NextResponse.json([], { status: 200 }) // graceful
-        return NextResponse.json(data || [])
+        const { data, error, count } = await query
+        if (error) return NextResponse.json({ data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 200 })
+        return NextResponse.json({
+            data: data || [],
+            pagination: { page, limit, total: count || 0, pages: Math.ceil((count || 0) / limit) },
+        })
 
     } catch {
         return NextResponse.json([], { status: 200 })
@@ -63,12 +72,9 @@ export async function POST(req: NextRequest) {
         const { supabase, user } = await getAuth()
         if (!supabase || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const body = await req.json()
-        const { type, category, description, amount, due_date, status, notes } = body
-
-        if (!type || !description || amount === undefined) {
-            return NextResponse.json({ error: 'type, description e amount são obrigatórios' }, { status: 400 })
-        }
+        const parsed = await parseBody(req, transactionSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const { type, category, description, amount, date, status, notes } = parsed.data
 
         const { data, error } = await supabase
             .from('financial_transactions')
@@ -77,8 +83,8 @@ export async function POST(req: NextRequest) {
                 type,
                 category: category || 'Outros',
                 description,
-                amount: parseFloat(String(amount)),
-                due_date: due_date || new Date().toISOString().split('T')[0],
+                amount,
+                due_date: date || new Date().toISOString().split('T')[0],
                 status: status || 'pendente',
                 notes: notes || null,
             })
@@ -99,12 +105,11 @@ export async function PUT(req: NextRequest) {
         const { supabase, user } = await getAuth()
         if (!supabase || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const body = await req.json()
-        const { id, ...rest } = body
+        const parsed = await parseBody(req, transactionUpdateSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const { id, ...rest } = parsed.data
 
-        if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
-
-        const updates: any = { ...rest, updated_at: new Date().toISOString() }
+        const updates = { ...rest, updated_at: new Date().toISOString() }
 
         const { data, error } = await supabase
             .from('financial_transactions')

@@ -1,9 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { parseBody, campanhaSchema, campanhaUpdateSchema } from '@/lib/schemas'
 
 export async function GET(request: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
 
@@ -45,12 +49,12 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient()
-        const body = await request.json()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
-        if (!body.name) return NextResponse.json({ error: 'name obrigatório' }, { status: 400 })
-        if (!body.channel && !body.platform) {
-            return NextResponse.json({ error: 'channel obrigatório' }, { status: 400 })
-        }
+        const parsed = await parseBody(request, campanhaSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const body = parsed.data
 
         const { data, error } = await supabase
             .from('campaigns')
@@ -79,9 +83,12 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
     try {
         const supabase = await createClient()
-        const body = await request.json()
-        const { id, ...updates } = body
-        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
+        const parsed = await parseBody(request, campanhaUpdateSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const { id, ...updates } = parsed.data
 
         const { data, error } = await supabase
             .from('campaigns')
@@ -101,6 +108,9 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
 

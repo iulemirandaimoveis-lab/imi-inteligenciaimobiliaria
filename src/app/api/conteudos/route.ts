@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { parseBody, conteudoSchema, conteudoUpdateSchema } from '@/lib/schemas'
 
 export async function GET(request: NextRequest) {
     try {
@@ -51,14 +52,12 @@ export async function POST(req: NextRequest) {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const body = await req.json()
-
-        if (!body.titulo) return NextResponse.json({ error: 'titulo obrigatório' }, { status: 400 })
-        if (!body.tipo) return NextResponse.json({ error: 'tipo obrigatório' }, { status: 400 })
+        const parsed = await parseBody(req, conteudoSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
 
         const { data, error } = await supabase
             .from('conteudos')
-            .insert({ ...body, user_id: user.id })
+            .insert({ ...parsed.data, user_id: user.id })
             .select()
             .single()
 
@@ -76,10 +75,9 @@ export async function PUT(req: NextRequest) {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const body = await req.json()
-        const { id, ...updates } = body
-
-        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+        const parsed = await parseBody(req, conteudoUpdateSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const { id, ...updates } = parsed.data
 
         const { data, error } = await supabase
             .from('conteudos')

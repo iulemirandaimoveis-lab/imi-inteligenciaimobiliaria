@@ -249,6 +249,8 @@ export default function LeadsKanbanBoard() {
     const [searchTerm, setSearchTerm] = useState('')
     const [showModal, setShowModal] = useState(false)
     const [modalStage, setModalStage] = useState<string>('new')
+    const [isMobile, setIsMobile] = useState(false)
+    const [activeTab, setActiveTab] = useState('new')
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -260,6 +262,13 @@ export default function LeadsKanbanBoard() {
 
     useEffect(() => {
         loadLeads()
+    }, [])
+
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 768)
+        check()
+        window.addEventListener('resize', check)
+        return () => window.removeEventListener('resize', check)
     }, [])
 
     const loadLeads = async () => {
@@ -407,35 +416,97 @@ export default function LeadsKanbanBoard() {
                 </button>
             </div>
 
-            {/* Kanban Board */}
-            <DndContext
-                sensors={sensors}
-                collisionDetection={closestCorners}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-            >
-                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-white/10">
-                    {groupedLeads.map(({ stage, leads }) => (
-                        <KanbanColumn
-                            key={stage.id}
-                            stage={stage}
-                            leads={leads}
-                            onAddLead={() => handleAddLead(stage.id)}
-                        />
-                    ))}
-                </div>
+            {/* Kanban Board — Mobile: tabs+lista, Desktop: DnD kanban */}
+            {isMobile ? (
+                <div className="space-y-4">
+                    {/* Status tabs */}
+                    <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+                        {STAGES.map(stage => {
+                            const count = groupedLeads.find(g => g.stage.id === stage.id)?.leads.length || 0
+                            return (
+                                <button
+                                    key={stage.id}
+                                    onClick={() => setActiveTab(stage.id)}
+                                    className={`flex-shrink-0 h-8 px-3 text-xs rounded-xl font-medium transition-all ${
+                                        activeTab === stage.id
+                                            ? `${stage.color} text-white shadow-sm`
+                                            : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400'
+                                    }`}
+                                >
+                                    {stage.name} ({count})
+                                </button>
+                            )
+                        })}
+                    </div>
 
-                <DragOverlay>
-                    {activeId ? (
-                        <div className="bg-white dark:bg-card-dark rounded-xl border-2 border-primary p-4 shadow-2xl opacity-90 rotate-3 cursor-grabbing w-[300px]">
-                            <div className="font-bold text-gray-900 dark:text-white mb-2">
-                                {leads.find(l => l.id === activeId)?.name}
+                    {/* Lista da coluna ativa */}
+                    <div className="space-y-3">
+                        {groupedLeads.find(g => g.stage.id === activeTab)?.leads.map(lead => (
+                            <div key={lead.id}
+                                className="bg-white dark:bg-card-dark rounded-xl border border-gray-100 dark:border-white/5 p-4"
+                            >
+                                <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="font-bold text-gray-900 dark:text-white truncate">{lead.name}</h4>
+                                        {lead.email && <p className="text-xs text-gray-500 mt-0.5 truncate">{lead.email}</p>}
+                                    </div>
+                                    <div className={`ml-2 flex-shrink-0 flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                                        lead.score >= 80 ? 'bg-green-100 text-green-700' :
+                                        lead.score >= 50 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+                                    }`}>
+                                        <TrendingUp size={10} />
+                                        {lead.score}
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                    {lead.capital > 0 && (
+                                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(lead.capital)}
+                                        </span>
+                                    )}
+                                    <span className="ml-auto">
+                                        {new Date(lead.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                                    </span>
+                                </div>
                             </div>
-                            <div className="text-xs text-primary font-medium">Movendo...</div>
-                        </div>
-                    ) : null}
-                </DragOverlay>
-            </DndContext>
+                        ))}
+                        {(groupedLeads.find(g => g.stage.id === activeTab)?.leads.length ?? 0) === 0 && (
+                            <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-white/10 rounded-xl text-gray-400 text-sm">
+                                Nenhum lead nesta etapa
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ) : (
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCorners}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                >
+                    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-white/10">
+                        {groupedLeads.map(({ stage, leads }) => (
+                            <KanbanColumn
+                                key={stage.id}
+                                stage={stage}
+                                leads={leads}
+                                onAddLead={() => handleAddLead(stage.id)}
+                            />
+                        ))}
+                    </div>
+
+                    <DragOverlay>
+                        {activeId ? (
+                            <div className="bg-white dark:bg-card-dark rounded-xl border-2 border-primary p-4 shadow-2xl opacity-90 rotate-3 cursor-grabbing w-[300px]">
+                                <div className="font-bold text-gray-900 dark:text-white mb-2">
+                                    {leads.find(l => l.id === activeId)?.name}
+                                </div>
+                                <div className="text-xs text-primary font-medium">Movendo...</div>
+                            </div>
+                        ) : null}
+                    </DragOverlay>
+                </DndContext>
+            )}
 
             {/* Modal - Renderizado condicionalmente para garantir que não pese na renderização inicial */}
             {showModal && (

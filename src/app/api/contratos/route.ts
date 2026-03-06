@@ -1,5 +1,37 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { parseBody } from '@/lib/schemas'
+import { z } from 'zod'
+
+// Contratos has a unique DB schema — custom local validation schemas
+const contratoBaseObject = z.object({
+    categoria: z.string().optional(),
+    modelo_nome: z.string().optional(),
+    status: z.string().optional(),
+    idioma: z.string().optional(),
+    contratante: z.record(z.any()).optional(),
+    contratado: z.record(z.any()).optional(),
+    dados_contrato: z.record(z.any()).optional(),
+    conteudo_markdown: z.string().optional(),
+    pdf_url: z.string().optional().nullable(),
+    docx_url: z.string().optional().nullable(),
+    drive_url: z.string().optional().nullable(),
+    criado_por: z.string().optional().nullable(),
+    criado_por_nome: z.string().optional().nullable(),
+    plataforma_assinatura: z.string().optional().nullable(),
+    signatarios: z.array(z.any()).optional(),
+    notas: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+})
+
+const contratoCreateSchema = contratoBaseObject.refine(
+    d => d.categoria || d.modelo_nome,
+    { message: 'categoria ou modelo_nome é obrigatório', path: ['categoria'] }
+)
+
+const contratoUpdateSchema = z.object({
+    id: z.string().uuid('ID inválido'),
+}).merge(contratoBaseObject.partial())
 
 export async function GET(request: NextRequest) {
     try {
@@ -55,11 +87,12 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient()
-        const body = await request.json()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
-        if (!body.categoria && !body.modelo_nome) {
-            return NextResponse.json({ error: 'Categoria ou modelo_nome obrigatório' }, { status: 400 })
-        }
+        const parsed = await parseBody(request, contratoCreateSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const body = parsed.data
 
         // Auto-generate contract number
         const numero = `CTR-${Date.now()}`
@@ -68,7 +101,7 @@ export async function POST(request: NextRequest) {
             .from('contratos')
             .insert({
                 numero,
-                modelo_id: body.modelo_id || null,
+                modelo_id: null,
                 modelo_nome: body.modelo_nome || null,
                 categoria: body.categoria || 'geral',
                 status: body.status || 'rascunho',
@@ -102,16 +135,18 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
     try {
         const supabase = await createClient()
-        const body = await request.json()
-        const { id, ...updates } = body
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
-        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+        const parsed = await parseBody(request, contratoUpdateSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const { id, ...updates } = parsed.data
 
-        updates.atualizado_em = new Date().toISOString()
+        const updatesToApply = { ...updates, atualizado_em: new Date().toISOString() }
 
         const { data, error } = await supabase
             .from('contratos')
-            .update(updates)
+            .update(updatesToApply)
             .eq('id', id)
             .select()
             .single()
@@ -126,6 +161,9 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
 

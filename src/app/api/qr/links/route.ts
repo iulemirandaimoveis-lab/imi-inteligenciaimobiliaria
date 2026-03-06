@@ -12,6 +12,7 @@ export async function GET(request: Request) {
             .from('tracked_links')
             .select('*')
             .order('created_at', { ascending: false })
+            .eq('is_active', true)
 
         if (developmentId) {
             query = query.eq('development_id', developmentId)
@@ -50,9 +51,10 @@ export async function DELETE(request: Request) {
 
         const supabase = await createClient()
 
+        // Soft delete: set is_active = false to preserve audit trail
         const { error } = await supabase
             .from('tracked_links')
-            .delete()
+            .update({ is_active: false, updated_at: new Date().toISOString() })
             .eq('id', id)
 
         if (error) {

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { logAudit, getRequestMeta } from '@/lib/governance'
+import { parseBody, leadSchema } from '@/lib/schemas'
 
 export async function GET(request: Request) {
     try {
@@ -82,25 +83,28 @@ function formatBudget(min: number | null, max: number | null): string {
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json()
         const supabase = await createClient()
         const { data: { session } } = await supabase.auth.getSession()
+
+        const parsed = await parseBody(request, leadSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const body = parsed.data
 
         const { data: lead, error } = await supabase
             .from('leads')
             .insert({
                 name: body.name,
-                email: body.email,
-                phone: body.phone,
-                source: body.source || body.origem || 'website',
+                email: body.email || null,
+                phone: body.phone || null,
+                source: body.source || 'website',
                 status: body.status || 'new',
                 ai_score: body.ai_score || 0,
                 ai_priority: body.ai_priority || 'medium',
                 development_id: body.development_id || null,
-                interest_type: body.interest_type || body.interesse || null,
-                interest_location: body.interest_location || body.localizacao || null,
-                budget_min: body.budget_min != null ? body.budget_min : null,
-                budget_max: body.budget_max != null && body.budget_max < 999999999 ? body.budget_max : null,
+                interest_type: body.interest_type || null,
+                interest_location: body.interest_location || null,
+                budget_min: body.budget_min ?? null,
+                budget_max: body.budget_max ?? null,
                 notes: body.notes || null,
             })
             .select()

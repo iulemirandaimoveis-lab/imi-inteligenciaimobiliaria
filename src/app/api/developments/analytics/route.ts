@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
         // 2. Get tracked links for this development
         const { data: trackedLinks } = await supabase
-            .from('tracking_links')
+            .from('tracked_links')
             .select('id, campaign_name, clicks, utm_params, created_at')
             .eq('development_id', developmentId)
 

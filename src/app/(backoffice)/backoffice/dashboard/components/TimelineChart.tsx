@@ -3,6 +3,13 @@
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
+const T = {
+    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
+    gold: 'var(--bo-accent)',
+}
+
 interface TimelineChartProps {
     data: Array<{ month: string; leads: number }>
 }
@@ -10,14 +17,14 @@ interface TimelineChartProps {
 export default function TimelineChart({ data }: TimelineChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="h-[300px] flex items-center justify-center text-imi-300 italic text-sm">
+            <div className="h-[200px] sm:h-[280px] lg:h-[300px] flex items-center justify-center text-imi-300 italic text-sm">
                 Aguardando dados temporais...
             </div>
         )
     }
 
     return (
-        <div className="h-[300px] w-full">
+        <div className="h-[200px] sm:h-[280px] lg:h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={data}>
                     <defs>

@@ -3,6 +3,13 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 
+const T = {
+    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
+    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
+    gold: 'var(--bo-accent)',
+}
+
 interface OriginsChartProps {
     data: Array<{ name: string; value: number }>
 }
@@ -12,14 +19,14 @@ const COLORS = ['#0F172A', '#EAB308', '#64748B', '#94A3B8', '#CBD5E1']
 export default function OriginsChart({ data }: OriginsChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="h-[300px] flex items-center justify-center text-imi-300 italic text-sm">
+            <div className="h-[200px] sm:h-[280px] lg:h-[300px] flex items-center justify-center text-imi-300 italic text-sm">
                 Aguardando dados de origem...
             </div>
         )
     }
 
     return (
-        <div className="h-[300px] w-full">
+        <div className="h-[200px] sm:h-[280px] lg:h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie

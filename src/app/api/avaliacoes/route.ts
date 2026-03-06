@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
     const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
     const status = searchParams.get('status')
@@ -50,6 +53,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
     const body = await request.json()
 
     const payload: Record<string, any> = {
@@ -105,6 +111,9 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
     const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
     const body = await request.json()
     const { id, ...updates } = body
 
@@ -125,6 +134,9 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
     const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
