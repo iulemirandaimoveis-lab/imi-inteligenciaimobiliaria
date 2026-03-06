@@ -13,17 +13,25 @@ interface HeaderProps {
     settings?: GlobalSettings
 }
 
-const NAV_ITEMS = [
+// Itens principais — sempre visíveis no desktop nav
+const NAV_MAIN = [
     { key: 'avaliacoes', label: 'Avaliações' },
     { key: 'imoveis', label: 'Imóveis' },
-    { key: 'construtoras', label: 'Construtoras' },
     { key: 'credito', label: 'Crédito' },
     { key: 'consultoria', label: 'Consultoria' },
     { key: 'inteligencia', label: 'Inteligência' },
+]
+
+// Itens secundários — dentro do dropdown "Mais ▾"
+const NAV_MORE = [
+    { key: 'construtoras', label: 'Construtoras' },
     { key: 'biblioteca', label: 'Biblioteca' },
     { key: 'sobre', label: 'Sobre' },
     { key: 'contato', label: 'Contato' },
 ]
+
+// Todos os itens para o drawer mobile
+const NAV_ITEMS = [...NAV_MAIN, ...NAV_MORE]
 
 const LANGS = [
     { code: 'pt', flag: '🇧🇷', label: 'PT' },
@@ -35,8 +43,21 @@ const LANGS = [
 
 export default function Header({ lang, settings }: HeaderProps) {
     const [open, setOpen] = useState(false)
+    const [moreOpen, setMoreOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const pathname = usePathname()
+    const moreRef = useRef<HTMLDivElement>(null)
+
+    // Fechar dropdown "Mais" ao clicar fora
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+                setMoreOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handler)
+        return () => document.removeEventListener('mousedown', handler)
+    }, [])
 
     // Lock body scroll when drawer is open
     useEffect(() => {
@@ -98,7 +119,8 @@ export default function Header({ lang, settings }: HeaderProps) {
 
                         {/* Desktop Nav */}
                         <nav className="hidden lg:flex items-center gap-0.5">
-                            {NAV_ITEMS.map((item) => {
+                            {/* Itens principais */}
+                            {NAV_MAIN.map((item) => {
                                 const active = isActive(item.key)
                                 return (
                                     <Link
@@ -120,6 +142,52 @@ export default function Header({ lang, settings }: HeaderProps) {
                                     </Link>
                                 )
                             })}
+
+                            {/* Dropdown "Mais ▾" */}
+                            <div ref={moreRef} className="relative">
+                                <button
+                                    onClick={() => setMoreOpen(v => !v)}
+                                    className={`flex items-center gap-1 px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-150 rounded-lg ${NAV_MORE.some(i => isActive(i.key))
+                                        ? 'text-[#1A1A1A]'
+                                        : 'text-[#6C757D] hover:text-[#1A1A1A] hover:bg-black/[0.03]'
+                                        }`}
+                                >
+                                    Mais
+                                    <ChevronDown
+                                        size={13}
+                                        className={`transition-transform duration-200 ${moreOpen ? 'rotate-180' : ''}`}
+                                    />
+                                </button>
+
+                                <AnimatePresence>
+                                    {moreOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                                            transition={{ duration: 0.15 }}
+                                            className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-black/[0.07] py-1.5 z-[50] overflow-hidden"
+                                        >
+                                            {NAV_MORE.map((item) => {
+                                                const active = isActive(item.key)
+                                                return (
+                                                    <Link
+                                                        key={item.key}
+                                                        href={`/${lang}/${item.key}`}
+                                                        onClick={() => setMoreOpen(false)}
+                                                        className={`flex items-center h-[40px] px-4 text-[13px] font-medium transition-colors duration-150 ${active
+                                                            ? 'text-[#1A1A1A] bg-[#F4F6F8] border-l-[3px] border-[#334E68] pl-[13px]'
+                                                            : 'text-[#495057] hover:text-[#1A1A1A] hover:bg-[#F8F9FA]'
+                                                            }`}
+                                                    >
+                                                        {item.label}
+                                                    </Link>
+                                                )
+                                            })}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         </nav>
 
                         {/* Desktop Right */}
