@@ -51,7 +51,14 @@ const SECTIONS: NavSection[] = [
                     { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: Users },
                 ]
             },
-            { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
+            {
+                label: 'Campanhas', icon: Megaphone,
+                children: [
+                    { label: 'Todas', href: '/backoffice/campanhas', icon: Megaphone },
+                    { label: 'Ads Performance', href: '/backoffice/campanhas/ads', icon: BarChart2 },
+                    { label: 'Nova', href: '/backoffice/campanhas/nova', icon: Megaphone },
+                ]
+            },
             { label: 'QR Tracking', href: '/backoffice/tracking/qr', icon: QrCode },
             { label: 'Omni Channel', href: '/backoffice/omnichannel', icon: Layers },
             { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },

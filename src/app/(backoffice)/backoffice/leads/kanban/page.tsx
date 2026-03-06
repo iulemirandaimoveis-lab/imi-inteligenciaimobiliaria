@@ -1,107 +1,364 @@
 'use client'
 
-import { useState } from 'react'
-import useSWR from 'swr'
+import { useState, useEffect, useRef } from 'react'
+import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp } from 'lucide-react'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Plus, Search } from 'lucide-react'
-import Button from '@/components/ui/Button'
-import PageHeader from '@/components/backoffice/PageHeader'
-import KanbanBoard from '@/components/backoffice/leads/KanbanBoard'
-import Input from '@/components/ui/Input'
-import { toast } from 'sonner'
 
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
+const supabase = createClient()
+
+// ── Pipeline stage config ─────────────────────────────────────────
+const STAGES = [
+    { key: 'novo',       label: 'NOVO LEAD',    dot: '#3B82F6', border: '#3B82F6', count: 0 },
+    { key: 'contatado',  label: 'CONTATADO',    dot: '#F59E0B', border: '#F59E0B', count: 0 },
+    { key: 'qualificado',label: 'QUALIFICADO',  dot: '#10B981', border: '#10B981', count: 0 },
+    { key: 'proposta',   label: 'PROPOSTA',     dot: '#8B5CF6', border: '#8B5CF6', count: 0 },
+    { key: 'negociacao', label: 'NEGOCIAÇÃO',   dot: '#F97316', border: '#F97316', count: 0 },
+    { key: 'ganho',      label: 'GANHO',        dot: '#22C55E', border: '#22C55E', count: 0 },
+]
+
+// Map DB status → pipeline stage
+function toStage(status: string): string {
+    if (!status) return 'novo'
+    const s = status.toLowerCase()
+    if (s === 'new' || s === 'novo') return 'novo'
+    if (s === 'contacted' || s === 'contatado' || s === 'cold') return 'contatado'
+    if (s === 'warm' || s === 'qualified' || s === 'qualificado') return 'qualificado'
+    if (s === 'proposal' || s === 'proposta') return 'proposta'
+    if (s === 'hot' || s === 'negociacao') return 'negociacao'
+    if (s === 'won' || s === 'ganho') return 'ganho'
+    return 'novo'
 }
 
-export default function LeadsKanbanPage() {
-    const supabase = createClient()
-    const [searchTerm, setSearchTerm] = useState('')
+function formatBudget(v: number | null): string | null {
+    if (!v) return null
+    if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
+    if (v >= 1_000) return `R$ ${(v / 1_000).toFixed(0)}k`
+    return `R$ ${v.toLocaleString('pt-BR')}`
+}
 
-    const { data: leads = [], mutate, isLoading } = useSWR('leads_kanban', async () => {
-        const { data, error } = await supabase
-            .from('leads')
-            .select('*')
-            .order('created_at', { ascending: false })
-        if (error) throw error
-        return data || []
-    })
+function getInitials(name: string): string {
+    return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
+}
 
-    const handleLeadMove = async (leadId: string, newStatus: string) => {
-        // Optimistic update
-        mutate((currentData: any) => {
-            return currentData.map((l: any) => l.id === leadId ? { ...l, status: newStatus } : l)
-        }, false)
+function timeAgo(iso: string | null): string {
+    if (!iso) return ''
+    const diff = Date.now() - new Date(iso).getTime()
+    const h = Math.floor(diff / 3600000)
+    const m = Math.floor(diff / 60000)
+    const d = Math.floor(diff / 86400000)
+    if (d > 0) return `${d}d atrás`
+    if (h > 0) return `${h}h atrás`
+    if (m > 0) return `${m}min`
+    return 'agora'
+}
 
-        try {
-            const { error } = await supabase
-                .from('leads')
-                .update({ status: newStatus })
-                .eq('id', leadId)
+function urgencyBadge(lead: any): { label: string; color: string; bg: string } | null {
+    const score = lead.score || 0
+    const status = (lead.status || '').toLowerCase()
+    if (score >= 85 || status === 'hot') return { label: 'URGENTE', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' }
+    if (score >= 60 || status === 'warm') return { label: 'QUENTE', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' }
+    return { label: 'NORMAL', color: '#6B7280', bg: 'rgba(107,114,128,0.12)' }
+}
 
-            if (error) throw error
-            toast.success('Status atualizado')
-        } catch (err) {
-            console.error(err)
-            toast.error('Erro ao mover lead')
-            mutate() // Revert
-        }
-    }
-
-    const filteredLeads = leads.filter((l: any) =>
-        l.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        l.email.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+// ── Card component ────────────────────────────────────────────────
+function LeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
+    const badge = urgencyBadge(lead)
+    const budget = formatBudget(lead.capital || lead.budget)
+    const initials = getInitials(lead.name || '?')
 
     return (
-        <div className="h-[calc(100vh-theme(spacing.32))] flex flex-col space-y-6">
-            <PageHeader
-                title="Pipeline Kanban"
-                description="Gerencie o fluxo de vendas arrastando os cards entre as etapas."
-                breadcrumbs={[
-                    { label: 'Leads', href: '/backoffice/leads' },
-                    { label: 'Pipeline' }
-                ]}
-                action={
-                    <div className="flex gap-3 w-full md:w-auto">
-                        <div className="hidden md:block w-64">
-                            <Input
-                                placeholder="Buscar lead..."
-                                leftIcon={<Search size={18} />}
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="rounded-2xl"
-                            />
-                        </div>
-                        <Button icon={<Plus size={18} />} className="whitespace-nowrap rounded-2xl">
-                            Novo Lead
-                        </Button>
-                    </div>
-                }
-            />
+        <Link href={`/backoffice/leads/${lead.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+            <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.01 }}
+                style={{
+                    background: 'var(--bo-elevated)',
+                    borderRadius: 16,
+                    padding: '14px 14px 12px',
+                    borderLeft: `3px solid ${stageColor}`,
+                    border: `1px solid var(--bo-border)`,
+                    borderLeftWidth: 3,
+                    borderLeftColor: stageColor,
+                    cursor: 'pointer',
+                    marginBottom: 8,
+                }}
+            >
+                {/* Name + urgency */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
+                    <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--bo-text)', lineHeight: 1.2 }}>
+                        {lead.name}
+                    </p>
+                    {badge && (
+                        <span style={{
+                            fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
+                            padding: '3px 7px', borderRadius: 6,
+                            color: badge.color, background: badge.bg,
+                            flexShrink: 0, whiteSpace: 'nowrap',
+                        }}>
+                            {badge.label}
+                        </span>
+                    )}
+                </div>
 
-            {/* Board Area */}
-            <div className="flex-1 overflow-hidden -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 pb-6">
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-full">
-                        <div className="relative w-12 h-12">
-                            <div className="absolute inset-0 border-4 border-primary/20 rounded-full" />
-                            <div className="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin" />
-                        </div>
-                    </div>
-                ) : (
-                    <KanbanBoard
-                        initialLeads={filteredLeads}
-                        onLeadMove={handleLeadMove}
-                    />
+                {/* Interest */}
+                {(lead.interest || lead.development?.name) && (
+                    <p style={{ fontSize: 11, fontStyle: 'italic', color: 'var(--bo-text-muted)', marginBottom: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {lead.interest || lead.development?.name}
+                    </p>
                 )}
+
+                {/* Budget */}
+                {budget && (
+                    <p style={{ fontSize: 15, fontWeight: 800, color: '#D4A929', marginBottom: 10, letterSpacing: '-0.3px' }}>
+                        {budget}
+                    </p>
+                )}
+
+                {/* Footer: time + avatar */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <Clock size={11} style={{ color: 'var(--bo-text-muted)' }} />
+                        <span style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}>
+                            {timeAgo(lead.created_at)}
+                        </span>
+                    </div>
+                    <div style={{
+                        width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                        background: 'linear-gradient(135deg, #486581, #334E68)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 9, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em',
+                    }}>
+                        {initials}
+                    </div>
+                </div>
+            </motion.div>
+        </Link>
+    )
+}
+
+// ── Main ──────────────────────────────────────────────────────────
+export default function PipelineKanbanPage() {
+    const [leads, setLeads] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+    const [busca, setBusca] = useState('')
+    const scrollRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        supabase
+            .from('leads')
+            .select('*, development:developments(name)')
+            .order('created_at', { ascending: false })
+            .limit(200)
+            .then(({ data }) => {
+                setLeads(data || [])
+                setLoading(false)
+            })
+    }, [])
+
+    // Group leads by stage
+    const filteredLeads = leads.filter(l =>
+        !busca || l.name?.toLowerCase().includes(busca.toLowerCase())
+    )
+
+    const byStage = STAGES.reduce<Record<string, any[]>>((acc, s) => {
+        acc[s.key] = filteredLeads.filter(l => toStage(l.status) === s.key)
+        return acc
+    }, {})
+
+    // KPIs
+    const totalBudget = leads.reduce((sum, l) => sum + (l.capital || l.budget || 0), 0)
+    const totalLeads = leads.length
+    const ganhoCount = byStage['ganho']?.length || 0
+
+    const formatTotal = (v: number) => {
+        if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
+        if (v >= 1_000) return `R$ ${(v / 1_000).toFixed(0)}k`
+        return `R$ ${v.toLocaleString('pt-BR')}`
+    }
+
+    return (
+        <div style={{ height: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+            {/* ── Header ── */}
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+                style={{ paddingBottom: 16, flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                    <div>
+                        <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--bo-text)', letterSpacing: '-0.3px' }}>
+                            Pipeline Comercial
+                        </h1>
+                        <p style={{ fontSize: 11, color: 'var(--bo-text-muted)', marginTop: 1 }}>CRM · Funil de Vendas</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                        <Link href="/backoffice/leads/novo" style={{
+                            display: 'flex', alignItems: 'center', gap: 6,
+                            height: 38, padding: '0 16px', borderRadius: 12,
+                            background: 'linear-gradient(135deg, #486581, #334E68)',
+                            color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                        }}>
+                            <Plus size={15} /> Novo Lead
+                        </Link>
+                    </div>
+                </div>
+
+                {/* KPI strip */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
+                    {[
+                        { label: 'TOTAL EM NEGOCIAÇÃO', value: loading ? '...' : formatTotal(totalBudget), color: 'var(--bo-text)' },
+                        { label: 'TICKETS ATIVOS', value: loading ? '...' : `${totalLeads} Leads`, color: 'var(--bo-text)' },
+                        { label: 'FECHAMENTOS', value: loading ? '...' : String(ganhoCount).padStart(2, '0'), color: '#22C55E' },
+                    ].map(kpi => (
+                        <div key={kpi.label} style={{
+                            padding: '10px 12px', borderRadius: 12,
+                            background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                        }}>
+                            <p style={{ fontSize: 8, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
+                                {kpi.label}
+                            </p>
+                            <p style={{ fontSize: 16, fontWeight: 800, color: kpi.color, letterSpacing: '-0.3px' }}>
+                                {kpi.value}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Search */}
+                <div style={{ position: 'relative' }}>
+                    <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--bo-text-muted)' }} />
+                    <input
+                        value={busca}
+                        onChange={e => setBusca(e.target.value)}
+                        placeholder="Buscar lead no pipeline..."
+                        style={{
+                            width: '100%', height: 42, paddingLeft: 36, paddingRight: 40,
+                            borderRadius: 12, background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                            color: 'var(--bo-text)', fontSize: 13, outline: 'none', boxSizing: 'border-box',
+                        }}
+                    />
+                    <button style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                        <Filter size={14} style={{ color: 'var(--bo-text-muted)' }} />
+                    </button>
+                </div>
+            </motion.div>
+
+            {/* ── Kanban Board (horizontal scroll) ── */}
+            <div
+                ref={scrollRef}
+                style={{
+                    display: 'flex', gap: 14, overflowX: 'auto', overflowY: 'hidden',
+                    paddingBottom: 16, flex: 1, alignItems: 'flex-start',
+                    scrollbarWidth: 'none',
+                }}
+                className="hide-scrollbar"
+            >
+                {STAGES.map((stage, si) => {
+                    const stageLeads = byStage[stage.key] || []
+                    return (
+                        <motion.div
+                            key={stage.key}
+                            initial={{ opacity: 0, x: si * 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: si * 0.06 }}
+                            style={{
+                                width: 280, minWidth: 280, flexShrink: 0,
+                                display: 'flex', flexDirection: 'column', gap: 0,
+                            }}
+                        >
+                            {/* Column header */}
+                            <div style={{
+                                display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10,
+                                padding: '8px 4px',
+                            }}>
+                                <div style={{ width: 8, height: 8, borderRadius: '50%', background: stage.dot, flexShrink: 0, boxShadow: `0 0 8px ${stage.dot}60` }} />
+                                <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--bo-text)', letterSpacing: '0.1em', textTransform: 'uppercase', flex: 1 }}>
+                                    {stage.label}
+                                </span>
+                                <span style={{
+                                    minWidth: 22, height: 22, borderRadius: '50%',
+                                    background: `${stage.dot}20`, border: `1px solid ${stage.dot}40`,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontSize: 10, fontWeight: 800, color: stage.dot,
+                                }}>
+                                    {stageLeads.length}
+                                </span>
+                                <button
+                                    style={{ width: 24, height: 24, borderRadius: 6, background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    onClick={() => {}}
+                                >
+                                    <Plus size={12} style={{ color: 'var(--bo-text-muted)' }} />
+                                </button>
+                            </div>
+
+                            {/* Cards container */}
+                            <div style={{
+                                background: 'var(--bo-surface)',
+                                border: '1px solid var(--bo-border)',
+                                borderRadius: 16, padding: 10,
+                                minHeight: 120,
+                                maxHeight: 'calc(100vh - 320px)',
+                                overflowY: 'auto',
+                                scrollbarWidth: 'thin',
+                            }}>
+                                {loading ? (
+                                    <div style={{ padding: '20px 0', textAlign: 'center' }}>
+                                        <div style={{ width: '100%', height: 60, borderRadius: 12, background: 'var(--bo-elevated)', opacity: 0.5, marginBottom: 8 }} />
+                                        <div style={{ width: '100%', height: 60, borderRadius: 12, background: 'var(--bo-elevated)', opacity: 0.3 }} />
+                                    </div>
+                                ) : stageLeads.length > 0 ? (
+                                    stageLeads.map(lead => (
+                                        <LeadCard key={lead.id} lead={lead} stageColor={stage.dot} />
+                                    ))
+                                ) : (
+                                    <div style={{ padding: '24px 8px', textAlign: 'center' }}>
+                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${stage.dot}10`, border: `1px dashed ${stage.dot}40`, margin: '0 auto 8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <Plus size={14} style={{ color: stage.dot, opacity: 0.5 }} />
+                                        </div>
+                                        <p style={{ fontSize: 11, color: 'var(--bo-text-muted)', opacity: 0.6 }}>Sem leads</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Column total budget */}
+                            {stageLeads.length > 0 && (
+                                <div style={{ padding: '6px 4px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <span style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</span>
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A929' }}>
+                                        {formatTotal(stageLeads.reduce((s, l) => s + (l.capital || l.budget || 0), 0))}
+                                    </span>
+                                </div>
+                            )}
+                        </motion.div>
+                    )
+                })}
             </div>
+
+            {/* ── AI insight strip ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                style={{
+                    display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
+                    background: 'linear-gradient(135deg, rgba(72,101,129,0.15), rgba(51,78,104,0.08))',
+                    borderRadius: 14, border: '1px solid rgba(72,101,129,0.2)',
+                    marginTop: 8, flexShrink: 0,
+                }}
+            >
+                <Zap size={16} style={{ color: '#486581', flexShrink: 0 }} />
+                <p style={{ fontSize: 12, color: 'var(--bo-text-muted)', flex: 1, lineHeight: 1.4 }}>
+                    <span style={{ color: 'var(--bo-text)', fontWeight: 600 }}>IA Pipeline:</span> {
+                        !loading && leads.length > 0
+                            ? `${byStage['negociacao']?.length || 0} leads em negociação, com potencial total de ${formatTotal(byStage['negociacao']?.reduce((s, l) => s + (l.capital || 0), 0) || 0)}.`
+                            : 'Carregando análise do pipeline...'
+                    }
+                </p>
+                <Link href="/backoffice/leads" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: '#486581', textDecoration: 'none', flexShrink: 0 }}>
+                    Ver todos <ChevronRight size={12} />
+                </Link>
+            </motion.div>
         </div>
     )
 }
