@@ -36,6 +36,7 @@ const SECTIONS: NavSection[] = [
             { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
             { label: 'Metas & Performance', href: '/backoffice/financeiro/metas', icon: Target },
             { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
+            { label: 'Global Intelligence', href: '/backoffice/relatorios/executivo', icon: Brain },
         ]
     },
     {
@@ -147,6 +148,7 @@ const SECTIONS: NavSection[] = [
             { label: 'Equipe', href: '/backoffice/equipe', icon: Users },
             { label: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
             { label: 'Configurações', href: '/backoffice/settings', icon: Settings },
+            { label: 'AI Settings', href: '/backoffice/settings/ia', icon: Brain },
         ]
     },
 ]
