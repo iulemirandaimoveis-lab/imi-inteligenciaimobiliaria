@@ -145,7 +145,7 @@ export default function AvaliacoesAnalyticsPage() {
                     value={`R$ ${(data.overview.totalRevenue / 1000).toFixed(0)}k`}
                     icon={<DollarSign />}
                     variant="success"
-                    className="bg-imi-950 border-imi-800 text-white shadow-glow"
+                    style={{ background: '#0D1117', border: '1px solid #334E68' }}
                 />
             </div>
 
@@ -329,37 +329,37 @@ export default function AvaliacoesAnalyticsPage() {
             </div>
 
             {/* Executive Summary Unit Economics */}
-            <Card className="bg-imi-950 border-imi-800 shadow-glow overflow-hidden relative">
+            <Card className="overflow-hidden relative" style={{ background: '#0D1117', border: '1px solid #334E68' }}>
                 <div className="absolute top-0 right-0 p-8 opacity-5">
                     <PieChart size={180} />
                 </div>
                 <CardHeader title="Executive Summary & Unit Economics" className="text-white border-white/10" />
                 <CardBody className="p-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        <div className="text-center p-8 bg-white/5 rounded-3xl border border-white/10">
-                            <p className="text-[10px] font-bold text-imi-400 uppercase tracking-widest mb-3">Efficiency Score</p>
+                        <div className="text-center p-8 rounded-3xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                            <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>Efficiency Score</p>
                             <p className="text-5xl font-black text-green-400 mb-2">
                                 {completionRate}<span className="text-xl">%</span>
                             </p>
-                            <p className="text-xs text-imi-500 font-bold uppercase tracking-widest">
-                                {data.overview.completed} Adregues / {data.overview.total} Demandas
+                            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                                {data.overview.completed} Entregas / {data.overview.total} Demandas
                             </p>
                         </div>
 
-                        <div className="text-center p-8 bg-white/5 rounded-3xl border border-white/10">
-                            <p className="text-[10px] font-bold text-imi-400 uppercase tracking-widest mb-3">Unit Billing Médio</p>
+                        <div className="text-center p-8 rounded-3xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                            <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>Unit Billing Médio</p>
                             <p className="text-5xl font-black text-[var(--bo-accent)] mb-2">
                                 <span className="text-xl">R$</span>{(data.overview.totalRevenue / data.overview.total).toFixed(0)}
                             </p>
-                            <p className="text-xs text-imi-500 font-bold uppercase tracking-widest">Por Laudo Emitido</p>
+                            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>Por Laudo Emitido</p>
                         </div>
 
-                        <div className="text-center p-8 bg-white/5 rounded-3xl border border-white/10">
-                            <p className="text-[10px] font-bold text-imi-400 uppercase tracking-widest mb-3">Escalabilidade Mensal</p>
+                        <div className="text-center p-8 rounded-3xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                            <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>Escalabilidade Mensal</p>
                             <p className="text-5xl font-black text-blue-400 mb-2">
                                 {(data.overview.total / 6).toFixed(1)}
                             </p>
-                            <p className="text-xs text-imi-500 font-bold uppercase tracking-widest">Avaliações / Mês (Histo)</p>
+                            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>Avaliações / Mês (Histo)</p>
                         </div>
                     </div>
                 </CardBody>

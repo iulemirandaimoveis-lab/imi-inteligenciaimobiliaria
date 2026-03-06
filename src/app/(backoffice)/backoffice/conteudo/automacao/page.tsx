@@ -228,11 +228,12 @@ export default function AutomacaoConteudoPage() {
                             <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-1">
                                     <h3 className="text-base font-bold" style={{ color: T.text }}>{fluxo.nome}</h3>
-                                    <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider ${fluxo.status === 'ativo' ? 'bg-green-50 text-green-700' :
-                                            fluxo.status === 'pausado' ? 'bg-amber-50 text-amber-700' :
-                                                ''
-                                        }`}
-                                        style={fluxo.status === 'configurar' ? { background: T.elevated, color: T.textMuted } : {}}
+                                    <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider"
+                                        style={
+                                            fluxo.status === 'ativo' ? { background: 'rgba(34,197,94,0.12)', color: '#4ade80' } :
+                                            fluxo.status === 'pausado' ? { background: 'rgba(245,158,11,0.12)', color: '#fbbf24' } :
+                                            { background: T.elevated, color: T.textMuted }
+                                        }
                                     >
                                         {fluxo.status}
                                     </span>
@@ -276,8 +277,11 @@ export default function AutomacaoConteudoPage() {
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => toggleStatus(fluxo.id)}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${fluxo.status === 'ativo' ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-green-50 text-green-600 hover:bg-green-100'
-                                            }`}
+                                        className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+                                        style={fluxo.status === 'ativo'
+                                            ? { background: 'rgba(245,158,11,0.12)', color: '#fbbf24' }
+                                            : { background: 'rgba(34,197,94,0.12)', color: '#4ade80' }
+                                        }
                                     >
                                         {fluxo.status === 'ativo' ? <Pause size={18} /> : <Play size={18} />}
                                     </button>
