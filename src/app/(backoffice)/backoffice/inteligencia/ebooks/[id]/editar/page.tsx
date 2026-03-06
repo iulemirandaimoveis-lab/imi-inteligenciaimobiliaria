@@ -148,7 +148,7 @@ export default function EditarEbookPage() {
                             <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>Exibe no site público</p>
                         </div>
                         <button type="button" onClick={() => set('is_published', !form.is_published)} className="w-10 h-5 rounded-full relative transition-colors" style={{ background: form.is_published ? 'var(--accent-500)' : 'var(--bo-border)' }}>
-                            <span className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all" style={{ left: form.is_published ? '22px' : '2px' }} />
+                            <span className="absolute top-0.5 w-4 h-4 rounded-full shadow transition-all" style={{ left: form.is_published ? '22px' : '2px', background: '#E8EDF2' }} />
                         </button>
                     </div>
                     <div>

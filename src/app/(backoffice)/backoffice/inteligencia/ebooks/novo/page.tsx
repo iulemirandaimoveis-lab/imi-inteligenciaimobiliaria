@@ -185,8 +185,8 @@ export default function NovoEbookPage() {
                             style={{ background: form.is_published ? 'var(--accent-500)' : 'var(--bo-border)' }}
                         >
                             <span
-                                className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all"
-                                style={{ left: form.is_published ? '22px' : '2px' }}
+                                className="absolute top-0.5 w-4 h-4 rounded-full shadow transition-all"
+                                style={{ left: form.is_published ? '22px' : '2px', background: '#E8EDF2' }}
                             />
                         </button>
                     </div>
