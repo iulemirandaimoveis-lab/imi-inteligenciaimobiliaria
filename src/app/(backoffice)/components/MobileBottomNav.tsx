@@ -13,17 +13,17 @@ import {
     Megaphone, BarChart2, Plug, TrendingUp, TrendingDown, CalendarDays,
     QrCode, Sparkles, Building, Search, Sun,
     Plus, UserPlus, CalendarPlus, ClipboardList,
+    ChevronRight, Inbox,
 } from 'lucide-react'
 
-// ── Task-based navigation ───────────────────────────────────────────
-// 3 main tabs + FAB in center + Mais button (5 visual positions)
+// ── Task-based navigation ─────────────────────────────────────────────
 const MAIN = [
-    { name: 'Hoje', href: '/backoffice/hoje', icon: Sun },
-    { name: 'Leads', href: '/backoffice/leads', icon: Users },
+    { name: 'Hoje',   href: '/backoffice/hoje',   icon: Sun },
+    { name: 'Leads',  href: '/backoffice/leads',  icon: Users },
     { name: 'Agenda', href: '/backoffice/agenda', icon: CalendarDays },
 ]
 
-// Quick-create actions (FAB sheet)
+// Quick-create actions for FAB sheet
 const QUICK_CREATE = [
     {
         label: 'Novo Lead',
@@ -46,8 +46,8 @@ const QUICK_CREATE = [
         desc: 'Cadastrar empreendimento',
         href: '/backoffice/imoveis/novo',
         icon: Building2,
-        color: 'var(--bo-accent)',
-        bg: 'rgba(51,78,104,0.12)',
+        color: '#486581',
+        bg: 'rgba(72,101,129,0.15)',
     },
     {
         label: 'Nova Avaliação',
@@ -59,86 +59,104 @@ const QUICK_CREATE = [
     },
 ]
 
-// Quick-access grid (drawer top)
+// Quick-access grid — color-coded per module
 const QUICK_ACCESS = [
-    { name: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
-    { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
-    { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
-    { name: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale },
-    { name: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
-    { name: 'Contratos', href: '/backoffice/contratos', icon: FileSignature },
-    { name: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
-    { name: 'Config.', href: '/backoffice/settings', icon: Settings },
+    { name: 'Dashboard',  href: '/backoffice/dashboard',  icon: LayoutDashboard, color: '#6B9EC4', bg: 'rgba(107,158,196,0.14)' },
+    { name: 'Imóveis',    href: '/backoffice/imoveis',    icon: Building2,        color: '#D4A929', bg: 'rgba(212,169,41,0.13)'  },
+    { name: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote,         color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+    { name: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale,            color: '#A78BFA', bg: 'rgba(167,139,250,0.12)' },
+    { name: 'Campanhas',  href: '/backoffice/campanhas',  icon: Megaphone,        color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
+    { name: 'Contratos',  href: '/backoffice/contratos',  icon: FileSignature,    color: '#4ECDC4', bg: 'rgba(78,205,196,0.12)'  },
+    { name: 'WhatsApp',   href: '/backoffice/whatsapp',   icon: MessageSquare,    color: '#4ADE80', bg: 'rgba(74,222,128,0.11)'  },
+    { name: 'Config.',    href: '/backoffice/settings',   icon: Settings,         color: '#94A3B8', bg: 'rgba(148,163,184,0.10)' },
 ]
 
+// Full nav groups — each section has its own accent color
 const GROUPS = [
     {
         label: 'Visão Executiva',
+        color: '#6B9EC4',
+        bg: 'rgba(107,158,196,0.12)',
         items: [
-            { name: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
+            { name: 'Dashboard',           href: '/backoffice/dashboard',        icon: LayoutDashboard },
             { name: 'Metas & Performance', href: '/backoffice/financeiro/metas', icon: Target },
-            { name: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
+            { name: 'Relatórios',          href: '/backoffice/relatorios',        icon: FileStack },
         ],
     },
     {
         label: 'Captação',
+        color: '#E8A87C',
+        bg: 'rgba(232,168,124,0.12)',
         items: [
-            { name: 'Leads', href: '/backoffice/leads', icon: Users },
-            { name: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
-            { name: 'QR Tracking', href: '/backoffice/tracking/qr', icon: QrCode },
-            { name: 'Omni Channel', href: '/backoffice/omnichannel', icon: Layers },
-            { name: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+            { name: 'Leads',       href: '/backoffice/leads',         icon: Users },
+            { name: 'Inbox IA',    href: '/backoffice/leads/inbox',   icon: Inbox },
+            { name: 'Campanhas',   href: '/backoffice/campanhas',     icon: Megaphone },
+            { name: 'QR Tracking', href: '/backoffice/tracking/qr',   icon: QrCode },
+            { name: 'Omni Channel',href: '/backoffice/omnichannel',   icon: Layers },
+            { name: 'WhatsApp',    href: '/backoffice/whatsapp',      icon: MessageSquare },
         ],
     },
     {
         label: 'Conversão',
+        color: '#6BB87B',
+        bg: 'rgba(107,184,123,0.12)',
         items: [
-            { name: 'Pipeline', href: '/backoffice/leads/pipeline', icon: TrendingUp },
+            { name: 'Pipeline',   href: '/backoffice/leads/pipeline',  icon: TrendingUp },
             { name: 'Simulações', href: '/backoffice/credito/simulador', icon: CreditCard },
-            { name: 'Agenda', href: '/backoffice/agenda', icon: CalendarDays },
+            { name: 'Agenda',     href: '/backoffice/agenda',           icon: CalendarDays },
         ],
     },
     {
         label: 'Portfólio',
+        color: '#D4A929',
+        bg: 'rgba(212,169,41,0.12)',
         items: [
-            { name: 'Imóveis', href: '/backoffice/imoveis', icon: Building2 },
-            { name: 'Construtoras', href: '/backoffice/construtoras', icon: Building },
-            { name: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
-            { name: 'Publicações', href: '/backoffice/conteudos', icon: FileText },
+            { name: 'Imóveis',     href: '/backoffice/imoveis',     icon: Building2 },
+            { name: 'Construtoras',href: '/backoffice/construtoras', icon: Building },
+            { name: 'Projetos',    href: '/backoffice/projetos',     icon: FolderOpen },
+            { name: 'Publicações', href: '/backoffice/conteudos',    icon: FileText },
         ],
     },
     {
         label: 'Operação',
+        color: '#4ECDC4',
+        bg: 'rgba(78,205,196,0.12)',
         items: [
-            { name: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale },
-            { name: 'Contratos', href: '/backoffice/contratos', icon: FileSignature },
-            { name: 'Consultoria', href: '/backoffice/consultorias', icon: Briefcase },
-            { name: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
+            { name: 'Avaliações',  href: '/backoffice/avaliacoes',  icon: Scale },
+            { name: 'Contratos',   href: '/backoffice/contratos',   icon: FileSignature },
+            { name: 'Consultoria', href: '/backoffice/consultorias',icon: Briefcase },
+            { name: 'Crédito',     href: '/backoffice/credito',     icon: CreditCard },
         ],
     },
     {
         label: 'Financeiro',
+        color: '#84CC16',
+        bg: 'rgba(132,204,22,0.10)',
         items: [
-            { name: 'Visão Geral', href: '/backoffice/financeiro', icon: Banknote },
-            { name: 'A Receber', href: '/backoffice/financeiro/receber', icon: TrendingUp },
-            { name: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: TrendingDown },
+            { name: 'Visão Geral', href: '/backoffice/financeiro',          icon: Banknote },
+            { name: 'A Receber',   href: '/backoffice/financeiro/receber',  icon: TrendingUp },
+            { name: 'A Pagar',     href: '/backoffice/financeiro/pagar',    icon: TrendingDown },
         ],
     },
     {
         label: 'Crescimento',
+        color: '#A78BFA',
+        bg: 'rgba(167,139,250,0.12)',
         items: [
-            { name: 'Automações', href: '/backoffice/automacoes', icon: Zap },
-            { name: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
-            { name: 'Analytics', href: '/backoffice/tracking', icon: BarChart2 },
-            { name: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles },
+            { name: 'Automações', href: '/backoffice/automacoes',      icon: Zap },
+            { name: 'Playbooks',  href: '/backoffice/playbooks',       icon: BookOpen },
+            { name: 'Analytics',  href: '/backoffice/tracking',        icon: BarChart2 },
+            { name: 'IA Criador', href: '/backoffice/conteudo/criador', icon: Sparkles },
         ],
     },
     {
         label: 'Configurações',
+        color: '#94A3B8',
+        bg: 'rgba(148,163,184,0.10)',
         items: [
-            { name: 'Equipe', href: '/backoffice/equipe', icon: Users },
-            { name: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
-            { name: 'Configurações', href: '/backoffice/settings', icon: Settings },
+            { name: 'Equipe',        href: '/backoffice/equipe',      icon: Users },
+            { name: 'Integrações',   href: '/backoffice/integracoes', icon: Plug },
+            { name: 'Configurações', href: '/backoffice/settings',    icon: Settings },
         ],
     },
 ]
@@ -152,22 +170,18 @@ export function MobileBottomNav() {
     const dragControls = useDragControls()
     const quickDragControls = useDragControls()
 
-    // Lock body scroll while any sheet is open
     useEffect(() => {
         document.body.style.overflow = (open || quickCreateOpen) ? 'hidden' : ''
         return () => { document.body.style.overflow = '' }
     }, [open, quickCreateOpen])
 
-    // Close on navigation
     useEffect(() => {
         setOpen(false)
         setQuickCreateOpen(false)
     }, [pathname])
 
-    // Clear search when drawer closes
     useEffect(() => { if (!open) setSearch('') }, [open])
 
-    // Filter groups based on search query
     const filtered = search.trim()
         ? GROUPS
             .map(g => ({
@@ -263,7 +277,7 @@ export function MobileBottomNav() {
                             </motion.button>
                         </div>
 
-                        {/* Last 1 main tab (Agenda) */}
+                        {/* Last main tab (Agenda) */}
                         {MAIN.slice(2).map(item => {
                             const active = !open && !quickCreateOpen && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
@@ -342,11 +356,10 @@ export function MobileBottomNav() {
                 </div>
             </div>
 
-            {/* ── Quick-Create Action Sheet ────────────────────────── */}
+            {/* ── Quick-Create Action Sheet ──────────────────────── */}
             <AnimatePresence>
                 {quickCreateOpen && (
                     <>
-                        {/* Backdrop */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -356,8 +369,6 @@ export function MobileBottomNav() {
                             style={{ background: 'rgba(7,9,13,0.75)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
                             onClick={() => setQuickCreateOpen(false)}
                         />
-
-                        {/* Sheet */}
                         <motion.div
                             drag="y"
                             dragControls={quickDragControls}
@@ -365,9 +376,7 @@ export function MobileBottomNav() {
                             dragConstraints={{ top: 0 }}
                             dragElastic={{ top: 0, bottom: 0.3 }}
                             onDragEnd={(_, info) => {
-                                if (info.offset.y > 80 || info.velocity.y > 400) {
-                                    setQuickCreateOpen(false)
-                                }
+                                if (info.offset.y > 80 || info.velocity.y > 400) setQuickCreateOpen(false)
                             }}
                             initial={{ y: '100%' }}
                             animate={{ y: 0 }}
@@ -433,6 +442,7 @@ export function MobileBottomNav() {
                                                     {item.desc}
                                                 </p>
                                             </div>
+                                            <ChevronRight size={14} style={{ color: 'var(--bo-border)', flexShrink: 0 }} />
                                         </Link>
                                     </motion.div>
                                 ))}
@@ -442,7 +452,7 @@ export function MobileBottomNav() {
                 )}
             </AnimatePresence>
 
-            {/* ── Full-screen Drawer ─────────────────────────────── */}
+            {/* ── Full Mais Drawer ───────────────────────────────── */}
             <AnimatePresence>
                 {open && (
                     <>
@@ -465,9 +475,7 @@ export function MobileBottomNav() {
                             dragConstraints={{ top: 0 }}
                             dragElastic={{ top: 0, bottom: 0.3 }}
                             onDragEnd={(_, info) => {
-                                if (info.offset.y > 100 || info.velocity.y > 400) {
-                                    setOpen(false)
-                                }
+                                if (info.offset.y > 100 || info.velocity.y > 400) setOpen(false)
                             }}
                             initial={{ y: '100%' }}
                             animate={{ y: 0 }}
@@ -479,12 +487,12 @@ export function MobileBottomNav() {
                                 border: '1px solid var(--bo-border)',
                                 borderBottom: 'none',
                                 boxShadow: 'var(--bo-shadow-elevated)',
-                                maxHeight: 'min(85dvh, 85vh)',
-                                height: 'min(85dvh, 85vh)',
+                                maxHeight: 'min(92dvh, 92vh)',
+                                height: 'min(92dvh, 92vh)',
                                 overflow: 'hidden',
                             }}
                         >
-                            {/* ── Drag Handle ── */}
+                            {/* Drag Handle */}
                             <div
                                 className="flex justify-center pt-3 pb-2 flex-shrink-0 touch-none cursor-grab active:cursor-grabbing"
                                 onPointerDown={e => dragControls.start(e)}
@@ -492,9 +500,9 @@ export function MobileBottomNav() {
                                 <div className="w-10 h-1 rounded-full" style={{ background: 'var(--bo-border)' }} />
                             </div>
 
-                            {/* ── Header — minimal, no IMI brand ── */}
+                            {/* Header */}
                             <div
-                                className="flex items-center justify-between px-5 py-3 flex-shrink-0"
+                                className="flex items-center justify-between px-5 py-2 flex-shrink-0"
                                 style={{ borderBottom: '1px solid var(--bo-border)' }}
                             >
                                 <span className="text-sm font-bold" style={{ color: 'var(--bo-text)' }}>Menu</span>
@@ -508,13 +516,13 @@ export function MobileBottomNav() {
                                 </motion.button>
                             </div>
 
-                            {/* ── User Profile strip (always visible) ── */}
+                            {/* User Profile Strip */}
                             <div
-                                className="flex items-center gap-3 px-5 py-3 flex-shrink-0"
+                                className="flex items-center gap-3 px-5 py-2 flex-shrink-0"
                                 style={{ borderBottom: '1px solid var(--bo-border)' }}
                             >
                                 <div
-                                    className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
                                     style={{ background: 'linear-gradient(135deg, var(--bo-accent-dim), var(--bo-accent))' }}
                                 >
                                     IM
@@ -524,7 +532,7 @@ export function MobileBottomNav() {
                                         Iule Miranda
                                     </p>
                                     <p className="text-[11px] font-medium truncate" style={{ color: 'var(--bo-accent)' }}>
-                                        Admin
+                                        Admin · IMI Inteligência Imobiliária
                                     </p>
                                 </div>
                                 <motion.button
@@ -535,16 +543,22 @@ export function MobileBottomNav() {
                                         await supabase.auth.signOut()
                                         router.push('/login')
                                     }}
-                                    className="flex items-center gap-2 px-3 h-9 rounded-xl text-sm font-semibold flex-shrink-0"
+                                    className="flex items-center gap-1.5 px-3 h-8 rounded-xl text-xs font-semibold flex-shrink-0"
                                     style={{ background: 'var(--s-cancel-bg)', color: 'var(--s-cancel)' }}
                                 >
-                                    <LogOut size={14} />
+                                    <LogOut size={12} />
                                     Sair
                                 </motion.button>
                             </div>
 
                             {/* ── Quick Access Grid ── */}
-                            <div className="px-4 pt-4 pb-2 flex-shrink-0">
+                            <div className="px-4 pt-2.5 pb-2 flex-shrink-0">
+                                <p
+                                    className="text-[10px] font-bold uppercase tracking-[0.1em] px-1 pb-2"
+                                    style={{ color: 'var(--bo-text-muted)', opacity: 0.6 }}
+                                >
+                                    Acesso Rápido
+                                </p>
                                 <div className="grid grid-cols-4 gap-1.5">
                                     {QUICK_ACCESS.map(item => {
                                         const active = pathname === item.href || pathname?.startsWith(item.href + '/')
@@ -553,18 +567,19 @@ export function MobileBottomNav() {
                                                 key={item.href}
                                                 href={item.href}
                                                 onClick={() => setOpen(false)}
-                                                className="hover-card flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all"
+                                                className="hover-card flex flex-col items-center gap-1.5 py-2.5 rounded-2xl transition-all"
                                                 style={{
-                                                    background: active ? 'var(--bo-active-bg)' : 'var(--bo-icon-bg)',
+                                                    background: active ? item.bg : 'var(--bo-icon-bg)',
+                                                    border: `1px solid ${active ? item.color + '60' : 'transparent'}`,
                                                 }}
                                             >
                                                 <item.icon
                                                     size={18}
-                                                    style={{ color: active ? 'var(--nav-active)' : 'var(--bo-text-muted)' }}
+                                                    style={{ color: item.color, opacity: active ? 1 : 0.8 }}
                                                 />
                                                 <span
-                                                    className="text-[10px] font-medium text-center leading-tight"
-                                                    style={{ color: active ? 'var(--nav-active)' : 'var(--bo-text-muted)' }}
+                                                    className="text-[9px] font-semibold text-center leading-tight px-0.5"
+                                                    style={{ color: active ? item.color : 'var(--bo-text-muted)' }}
                                                 >
                                                     {item.name}
                                                 </span>
@@ -574,11 +589,11 @@ export function MobileBottomNav() {
                                 </div>
                             </div>
 
-                            {/* Thin divider */}
+                            {/* Divider */}
                             <div className="mx-4 flex-shrink-0" style={{ height: 1, background: 'var(--bo-border)' }} />
 
                             {/* ── Search ── */}
-                            <div className="px-4 py-3 flex-shrink-0">
+                            <div className="px-4 py-2 flex-shrink-0">
                                 <div className="relative">
                                     <Search
                                         size={14}
@@ -587,7 +602,7 @@ export function MobileBottomNav() {
                                     />
                                     <input
                                         type="text"
-                                        placeholder="Buscar seção..."
+                                        placeholder="Buscar no menu..."
                                         value={search}
                                         onChange={e => setSearch(e.target.value)}
                                         className="w-full pl-9 pr-8 py-2.5 text-sm rounded-xl outline-none placeholder:opacity-50"
@@ -610,7 +625,10 @@ export function MobileBottomNav() {
                             </div>
 
                             {/* ── Menu Groups ── */}
-                            <div className="overflow-y-auto flex-1 pb-[calc(72px+env(safe-area-inset-bottom))]">
+                            <div
+                                className="overflow-y-auto flex-1"
+                                style={{ paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}
+                            >
                                 {filtered.length === 0 && (
                                     <div className="py-12 text-center px-6">
                                         <Search size={28} className="mx-auto mb-3 opacity-20" style={{ color: 'var(--bo-text-muted)' }} />
@@ -622,13 +640,23 @@ export function MobileBottomNav() {
                                 )}
 
                                 {filtered.map((group, gi) => (
-                                    <div key={group.label} className="pt-4">
-                                        <p
-                                            className="px-6 pb-2 text-[10px] font-bold uppercase tracking-[0.12em]"
-                                            style={{ color: 'var(--bo-text-muted)' }}
-                                        >
-                                            {group.label}
-                                        </p>
+                                    <div key={group.label} className="pt-3">
+                                        {/* Section label: colored dot + label + divider line */}
+                                        <div className="flex items-center gap-2.5 px-5 pb-1.5">
+                                            <div
+                                                className="w-2 h-2 rounded-full flex-shrink-0"
+                                                style={{ background: group.color }}
+                                            />
+                                            <p
+                                                className="text-[10px] font-bold uppercase tracking-[0.12em] flex-shrink-0"
+                                                style={{ color: 'var(--bo-text-muted)' }}
+                                            >
+                                                {group.label}
+                                            </p>
+                                            <div className="flex-1 h-px" style={{ background: 'var(--bo-border)' }} />
+                                        </div>
+
+                                        {/* Items */}
                                         {group.items.map((item, i) => {
                                             const active = pathname === item.href || pathname?.startsWith(item.href + '/')
                                             return (
@@ -636,29 +664,35 @@ export function MobileBottomNav() {
                                                     key={item.href}
                                                     initial={{ opacity: 0, x: -8 }}
                                                     animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: search ? 0 : (gi * 3 + i) * 0.018 }}
+                                                    transition={{ delay: search ? 0 : (gi * 6 + i) * 0.015 }}
                                                 >
                                                     <Link
                                                         href={item.href}
                                                         onClick={() => setOpen(false)}
-                                                        className="hover-card flex items-center gap-4 px-5 py-3 mx-2 rounded-xl transition-all"
+                                                        className="hover-card flex items-center gap-3 px-4 py-2.5 mx-2 mb-0.5 rounded-xl transition-all"
                                                         style={{
-                                                            background: active ? 'var(--bo-active-bg)' : 'transparent',
-                                                            color: active ? 'var(--nav-active)' : 'var(--bo-text-muted)',
+                                                            background: active ? group.bg : 'transparent',
                                                         }}
                                                     >
                                                         <div
                                                             className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                                                            style={{
-                                                                background: active ? 'var(--bo-hover)' : 'var(--bo-icon-bg)',
-                                                            }}
+                                                            style={{ background: group.bg }}
                                                         >
-                                                            <item.icon size={15} />
+                                                            <item.icon size={15} style={{ color: group.color }} />
                                                         </div>
-                                                        <span className="text-sm font-medium flex-1">{item.name}</span>
-                                                        {active && (
-                                                            <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--nav-active)' }} />
-                                                        )}
+                                                        <span
+                                                            className="text-sm font-medium flex-1"
+                                                            style={{ color: active ? 'var(--bo-text)' : 'var(--bo-text-muted)' }}
+                                                        >
+                                                            {item.name}
+                                                        </span>
+                                                        <ChevronRight
+                                                            size={13}
+                                                            style={{
+                                                                color: active ? group.color : 'var(--bo-border)',
+                                                                flexShrink: 0,
+                                                            }}
+                                                        />
                                                     </Link>
                                                 </motion.div>
                                             )
@@ -666,6 +700,7 @@ export function MobileBottomNav() {
                                     </div>
                                 ))}
 
+                                <div className="h-4" />
                             </div>
                         </motion.div>
                     </>

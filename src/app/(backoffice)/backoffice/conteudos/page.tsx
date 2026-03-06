@@ -56,7 +56,11 @@ export default function ConteudosPage() {
     useEffect(() => {
         fetch('/api/conteudos')
             .then(r => r.json())
-            .then(data => { if (Array.isArray(data)) setConteudos(data) })
+            .then(json => {
+                // API returns { data: [...], pagination: {} }
+                const list = json.data || (Array.isArray(json) ? json : [])
+                setConteudos(list)
+            })
             .catch(() => {})
             .finally(() => setLoading(false))
     }, [])
@@ -110,13 +114,13 @@ export default function ConteudosPage() {
                 </div>
                 <div className="flex items-center gap-2">
                     <motion.button whileTap={{ scale: 0.96 }}
-                        onClick={() => router.push('/backoffice/conteudos/ia')}
+                        onClick={() => router.push('/backoffice/conteudo/criador')}
                         className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold flex-shrink-0 transition-all"
                         style={{ background: T.elevated, border: `1px solid ${T.borderGold}`, color: T.gold }}>
                         <Sparkles size={15} /> Gerar com IA
                     </motion.button>
                     <motion.button whileTap={{ scale: 0.96 }}
-                        onClick={() => router.push('/backoffice/conteudos/novo')}
+                        onClick={() => router.push('/backoffice/conteudo/novo')}
                         className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold text-white flex-shrink-0"
                         style={{ background: T.gold }}>
                         <Plus size={15} /> Novo
@@ -257,9 +261,9 @@ export default function ConteudosPage() {
                             {!search && (
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                                     {[
-                                        { label: 'Post Social', icon: Instagram, href: '/backoffice/conteudos/ia?type=instagram' },
-                                        { label: 'Newsletter', icon: Mail, href: '/backoffice/conteudos/ia?type=email' },
-                                        { label: 'Artigo SEO', icon: FileText, href: '/backoffice/conteudos/ia?type=blog' },
+                                        { label: 'Post Social', icon: Instagram, href: '/backoffice/conteudo/criador?type=instagram' },
+                                        { label: 'Newsletter', icon: Mail, href: '/backoffice/conteudo/criador?type=email' },
+                                        { label: 'Artigo SEO', icon: FileText, href: '/backoffice/conteudo/criador?type=blog' },
                                     ].map(item => {
                                         const Icon = item.icon
                                         return (
@@ -303,7 +307,7 @@ export default function ConteudosPage() {
                         const Icon = item.icon
                         return (
                             <motion.button key={item.l} whileTap={{ scale: 0.96 }}
-                                onClick={() => router.push(`/backoffice/conteudos/ia?type=${item.type}`)}
+                                onClick={() => router.push(`/backoffice/conteudo/criador?type=${item.type}`)}
                                 className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-xs font-semibold transition-all hover-card"
                                 style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textSub }}
 >

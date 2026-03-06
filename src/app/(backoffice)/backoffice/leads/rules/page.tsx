@@ -44,7 +44,6 @@ const T = {
     accent: 'var(--bo-accent)',
 }
 
-// ⚠️ NÃO MODIFICAR - Regras mockadas contextualizadas Recife
 const REGRAS_INICIAIS = [
     {
         id: 1,
@@ -55,7 +54,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'comportamento',
         icone: Zap,
-        cor: 'text-orange-500 bg-orange-50 border-orange-100',
+        color: '#f97316',
         execucoes: 127,
     },
     {
@@ -67,7 +66,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'perfil',
         icone: Target,
-        cor: 'text-blue-600 bg-blue-50 border-blue-100',
+        color: '#3b82f6',
         execucoes: 89,
     },
     {
@@ -79,7 +78,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'localizacao',
         icone: MapPin,
-        cor: 'text-green-600 bg-green-50 border-green-100',
+        color: '#22c55e',
         execucoes: 201,
     },
     {
@@ -91,7 +90,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'localizacao',
         icone: MapPin,
-        cor: 'text-teal-600 bg-teal-50 border-teal-100',
+        color: '#14b8a6',
         execucoes: 145,
     },
     {
@@ -103,7 +102,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'comportamento',
         icone: Mail,
-        cor: 'text-purple-600 bg-purple-50 border-purple-100',
+        color: '#a855f7',
         execucoes: 64,
     },
     {
@@ -115,7 +114,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'comportamento',
         icone: MessageSquare,
-        cor: 'text-green-700 bg-green-50 border-green-100',
+        color: '#4ade80',
         execucoes: 43,
     },
     {
@@ -127,7 +126,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'comportamento',
         icone: Phone,
-        cor: 'text-blue-600 bg-blue-50 border-blue-100',
+        color: '#60a5fa',
         execucoes: 32,
     },
     {
@@ -139,7 +138,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'comportamento',
         icone: Eye,
-        cor: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)] border-[rgba(148,163,184,0.2)]',
+        color: '#94a3b8',
         execucoes: 312,
     },
     {
@@ -151,7 +150,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'produto',
         icone: Star,
-        cor: 'text-[var(--bo-accent)] bg-accent-50 border-accent-100',
+        color: 'var(--bo-accent)',
         execucoes: 78,
     },
     {
@@ -163,7 +162,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'decay',
         icone: TrendingUp,
-        cor: 'text-red-600 bg-red-50 border-red-100',
+        color: '#f87171',
         execucoes: 56,
     },
     {
@@ -175,7 +174,7 @@ const REGRAS_INICIAIS = [
         ativa: false,
         categoria: 'perfil',
         icone: Building,
-        cor: 'text-pink-600 bg-pink-50 border-pink-100',
+        color: '#f472b6',
         execucoes: 0,
     },
 ]
@@ -226,7 +225,7 @@ export default function LeadRulesPage() {
                 </div>
                 <button
                     className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium transition-colors"
-                    style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-600))' }}
+                    style={{ background: 'var(--bo-accent)' }}
                 >
                     <Plus size={18} />
                     Nova Regra
@@ -311,8 +310,9 @@ export default function LeadRulesPage() {
                         >
                             <div className="flex items-start gap-4">
                                 {/* Ícone */}
-                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 border ${regra.cor}`}>
-                                    <Icon size={22} />
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    style={{ background: `${regra.color}18`, border: `1px solid ${regra.color}30` }}>
+                                    <Icon size={22} style={{ color: regra.color }} />
                                 </div>
 
                                 {/* Info */}

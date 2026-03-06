@@ -78,8 +78,9 @@ export default function AutomacoesPage() {
         setLoading(true)
         try {
             const res = await fetch('/api/automacoes')
-            const data = await res.json()
-            setWorkflows(Array.isArray(data) ? data : [])
+            const json = await res.json()
+            // API returns { data: [...], pagination: {} }
+            setWorkflows(json.data || (Array.isArray(json) ? json : []))
         } catch { setWorkflows([]) }
         setLoading(false)
     }, [])

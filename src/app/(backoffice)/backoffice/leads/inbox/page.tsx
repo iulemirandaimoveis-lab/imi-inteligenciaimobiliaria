@@ -261,7 +261,7 @@ export default function LeadsInboxPage() {
                                 transition={{ delay: idx * 0.04, duration: 0.22 }}
                             >
                                 <button
-                                    onClick={() => router.push(`/backoffice/leads/${lead.id}`)}
+                                    onClick={() => router.push(`/backoffice/leads/inbox/${lead.id}`)}
                                     className="w-full text-left rounded-2xl p-4 transition-all hover:scale-[1.005] active:scale-[0.998]"
                                     style={{
                                         background: T.elevated,
