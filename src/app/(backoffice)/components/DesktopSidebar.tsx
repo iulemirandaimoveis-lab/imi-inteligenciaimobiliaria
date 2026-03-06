@@ -9,7 +9,7 @@ import {
     Zap, CreditCard, Briefcase, CalendarDays, QrCode, Sparkles,
     FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
-    Brain, BarChart3, LineChart
+    Brain, BarChart3, LineChart, Wand2, List
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -72,12 +72,20 @@ const SECTIONS: NavSection[] = [
                 label: 'Imóveis', icon: Building2,
                 children: [
                     { label: 'Portfólio', href: '/backoffice/imoveis', icon: Building2 },
+                    { label: 'Inventário', href: '/backoffice/imoveis/inventario', icon: List },
                     { label: 'Novo Imóvel', href: '/backoffice/imoveis/novo', icon: Building2 },
                 ]
             },
             { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building },
             { label: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
-            { label: 'Publicações', href: '/backoffice/conteudos', icon: FileText },
+            {
+                label: 'Conteúdo', icon: FileText,
+                children: [
+                    { label: 'Publicações', href: '/backoffice/conteudos', icon: FileText },
+                    { label: 'Criador IA', href: '/backoffice/conteudo/criador', icon: Wand2 },
+                    { label: 'Automação', href: '/backoffice/conteudo/automacao', icon: Zap },
+                ]
+            },
         ]
     },
     {

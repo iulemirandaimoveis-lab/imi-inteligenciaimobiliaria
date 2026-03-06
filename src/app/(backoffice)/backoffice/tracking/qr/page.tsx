@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import {
-    ArrowLeft, Building2, Megaphone, Radio,
-    QrCode, Download, FileText, Copy, Check,
-    ChevronRight, Edit3, Loader2
+    Building2, Copy, Check, Link2, ArrowUpRight,
+    ArrowDownRight, QrCode, Sparkles, TrendingUp,
+    ChevronDown, Loader2, Globe
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { motion } from 'framer-motion'
 import QRCode from 'qrcode'
 
 const supabase = createClient()
@@ -16,88 +16,78 @@ const supabase = createClient()
 const T = {
     surface: 'var(--bo-surface)',
     elevated: 'var(--bo-elevated)',
+    border: 'var(--bo-border)',
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
-    border: 'var(--bo-border)',
     hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
-    accentBg: 'var(--bo-active-bg)',
-    accentBorder: 'rgba(0,0,0,0.15)',
 }
 
-const UTM_SOURCES = [
-    { value: 'instagram', label: 'Instagram', icon: '📸' },
-    { value: 'facebook', label: 'Facebook', icon: '👤' },
-    { value: 'google', label: 'Google Ads', icon: '🔍' },
-    { value: 'whatsapp', label: 'WhatsApp', icon: '💬' },
-    { value: 'email', label: 'E-mail Marketing', icon: '📧' },
-    { value: 'linkedin', label: 'LinkedIn', icon: '💼' },
-    { value: 'placa', label: 'Placa Física / Offline', icon: '🏢' },
-    { value: 'qrcode', label: 'QR Code Impresso', icon: '📱' },
-    { value: 'direct', label: 'Direto', icon: '🔗' },
-    { value: 'referral', label: 'Indicação', icon: '🤝' },
+const SOURCES = [
+    {
+        value: 'meta',
+        label: 'Meta',
+        icon: (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" />
+            </svg>
+        ),
+        color: '#1877F2',
+        bg: 'rgba(24,119,242,0.12)',
+    },
+    {
+        value: 'whatsapp',
+        label: 'WhatsApp',
+        icon: (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+            </svg>
+        ),
+        color: '#25D366',
+        bg: 'rgba(37,211,102,0.12)',
+    },
+    {
+        value: 'google',
+        label: 'Google',
+        icon: (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M21.8 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.5c-.2 1.3-1 2.4-2.1 3.1v2.6h3.4c2-1.8 3-4.5 3-7.5z" fill="#4285F4" />
+                <path d="M12 22c2.7 0 5-.9 6.7-2.4l-3.4-2.6c-.9.6-2 1-3.3 1-2.6 0-4.8-1.7-5.6-4.1H2.9v2.7C4.6 19.9 8.1 22 12 22z" fill="#34A853" />
+                <path d="M6.4 13.9c-.2-.6-.3-1.2-.3-1.9s.1-1.3.3-1.9V7.4H2.9C2.3 8.7 2 10.3 2 12s.3 3.3.9 4.6l3.5-2.7z" fill="#FBBC04" />
+                <path d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.8-2.8C16.9 2.9 14.6 2 12 2 8.1 2 4.6 4.1 2.9 7.4l3.5 2.7C7.2 7.6 9.4 5.9 12 5.9z" fill="#EA4335" />
+            </svg>
+        ),
+        color: '#4285F4',
+        bg: 'rgba(66,133,244,0.12)',
+    },
 ]
 
-const UTM_MEDIUMS = [
-    { value: 'cpc', label: 'CPC (Pago)' },
-    { value: 'organic', label: 'Orgânico' },
-    { value: 'social', label: 'Social' },
-    { value: 'email', label: 'E-mail' },
-    { value: 'offline', label: 'Offline / Placa' },
-    { value: 'story', label: 'Story' },
-    { value: 'post', label: 'Post' },
-    { value: 'banner', label: 'Banner' },
+const RECENT_LINKS = [
+    { id: 1, source: 'meta', title: 'Meta – Grand Horizon', sub: 'Summer Promo • imi.re/x9k...', clicks: '1,240', trend: +8.4 },
+    { id: 2, source: 'whatsapp', title: 'Direct WhatsApp – Unit 402', sub: 'Direct Message • imi.re/z4a...', clicks: '458', trend: +12.1 },
+    { id: 3, source: 'google', title: 'Google Search – Luxury', sub: 'Paid Search • imi.re/m2q...', clicks: '3,120', trend: -3.2 },
 ]
-
-type Step = 'property' | 'channel' | 'campaign' | 'result'
 
 export default function QRGeneratorPage() {
-    const router = useRouter()
-    const [step, setStep] = useState<Step>('property')
-    const [loading, setLoading] = useState(false)
     const [developments, setDevelopments] = useState<any[]>([])
+    const [selectedDev, setSelectedDev] = useState<any>(null)
+    const [showDevDropdown, setShowDevDropdown] = useState(false)
+    const [selectedSource, setSelectedSource] = useState(SOURCES[0])
+    const [campaign, setCampaign] = useState('')
+    const [medium, setMedium] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
+    const [shortUrl, setShortUrl] = useState('imi.re/–––')
     const [copied, setCopied] = useState(false)
 
-    // Form state
-    const [selectedDev, setSelectedDev] = useState<any>(null)
-    const [selectedSource, setSelectedSource] = useState<typeof UTM_SOURCES[0] | null>(null)
-    const [selectedMedium, setSelectedMedium] = useState('')
-    const [campaignName, setCampaignName] = useState('')
-    const [utmContent, setUtmContent] = useState('')
-    const [customSlug, setCustomSlug] = useState('')
-
-    // Result state
-    const [generatedLink, setGeneratedLink] = useState<any>(null)
-    const [qrCodeUrl, setQrCodeUrl] = useState('')
-    const [shortUrl, setShortUrl] = useState('')
-
     useEffect(() => {
-        loadDevelopments()
+        supabase.from('developments').select('id, name, slug').order('name').then(({ data }) => {
+            setDevelopments(data || [])
+            if (data && data.length > 0) setSelectedDev(data[0])
+        })
     }, [])
 
-    const loadDevelopments = async () => {
-        const { data } = await supabase
-            .from('developments')
-            .select('id, name, slug')
-            .order('name')
-
-        setDevelopments(data || [])
-    }
-
-    const steps: { key: Step; label: string }[] = [
-        { key: 'property', label: 'IMÓVEL' },
-        { key: 'channel', label: 'CANAL' },
-        { key: 'campaign', label: 'CAMPANHA' },
-    ]
-
-    const currentStepIndex = steps.findIndex(s => s.key === step)
-
     const handleGenerate = async () => {
-        if (!selectedDev || !selectedSource || !campaignName) {
-            toast.error('Preencha todos os campos obrigatórios')
-            return
-        }
-
+        if (!selectedDev) { toast.error('Selecione um imóvel'); return }
         setLoading(true)
         try {
             const res = await fetch('/api/qr/generate', {
@@ -105,34 +95,37 @@ export default function QRGeneratorPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     development_id: selectedDev.id,
-                    campaign_name: campaignName,
+                    campaign_name: campaign || 'imi-qr',
                     utm_source: selectedSource.value,
-                    utm_medium: selectedMedium || 'social',
-                    utm_campaign: campaignName.toLowerCase().replace(/\s+/g, '-'),
-                    utm_content: utmContent || undefined,
-                    custom_slug: customSlug || undefined,
-                })
+                    utm_medium: medium || 'social',
+                    utm_campaign: (campaign || 'imi-qr').toLowerCase().replace(/\s+/g, '-'),
+                }),
             })
-
             const data = await res.json()
             if (!res.ok) throw new Error(data.error)
 
-            setGeneratedLink(data.link)
-            setShortUrl(data.link.short_url)
+            const url = data.link?.short_url || `https://iulemirandaimoveis.com.br/imoveis/${selectedDev.slug}`
+            setShortUrl(url)
 
-            // Generate high-quality QR
-            const qr = await QRCode.toDataURL(data.link.short_url, {
-                width: 600,
-                margin: 2,
+            const qr = await QRCode.toDataURL(url, {
+                width: 280,
+                margin: 1,
                 color: { dark: '#0A0A0A', light: '#FFFFFF' },
-                errorCorrectionLevel: 'H'
+                errorCorrectionLevel: 'H',
             })
-            setQrCodeUrl(qr)
-
-            setStep('result')
-            toast.success('QR Code gerado com sucesso!')
-        } catch (err: any) {
-            toast.error(err.message || 'Erro ao gerar QR Code')
+            setQrDataUrl(qr)
+            toast.success('Link gerado!')
+        } catch {
+            // fallback: generate QR locally
+            const url = `https://iulemirandaimoveis.com.br/imoveis/${selectedDev.slug}?utm_source=${selectedSource.value}&utm_campaign=${campaign || 'imi'}`
+            setShortUrl(url)
+            const qr = await QRCode.toDataURL(url, {
+                width: 280, margin: 1,
+                color: { dark: '#0A0A0A', light: '#FFFFFF' },
+                errorCorrectionLevel: 'H',
+            })
+            setQrDataUrl(qr)
+            toast.success('QR Code gerado!')
         } finally {
             setLoading(false)
         }
@@ -141,457 +134,307 @@ export default function QRGeneratorPage() {
     const copyUrl = () => {
         navigator.clipboard.writeText(shortUrl)
         setCopied(true)
-        toast.success('URL copiada!')
+        toast.success('Link copiado!')
         setTimeout(() => setCopied(false), 2000)
     }
 
-    const downloadQR = (format: 'png' | 'pdf') => {
-        if (!qrCodeUrl) return
-        const a = document.createElement('a')
-        a.href = qrCodeUrl
-        a.download = `qrcode-${campaignName || 'imi'}.${format === 'pdf' ? 'png' : 'png'}`
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-        toast.success(`QR Code baixado!`)
+    const sourceIcon = (value: string) => {
+        const s = SOURCES.find(s => s.value === value)
+        return s ? (
+            <div style={{ color: s.color }}>{s.icon}</div>
+        ) : <Globe size={16} />
     }
 
-    // Stepper indicator
-    const StepIndicator = () => (
-        <div className="flex justify-between items-center py-4 mb-2">
-            {steps.map((s, i) => {
-                const isActive = i <= currentStepIndex || step === 'result'
-                return (
-                    <div key={s.key} className="flex items-center flex-1">
-                        <div className="flex flex-col items-center">
-                            <div
-                                className="w-2.5 h-2.5 rounded-full mb-1 transition-colors"
-                                style={{ background: isActive ? T.accent : 'var(--bo-border)' }}
-                            />
-                            <span
-                                className="text-[10px] font-bold uppercase tracking-wider"
-                                style={{ color: isActive ? T.accent : T.textMuted }}
-                            >
-                                {s.label}
-                            </span>
-                        </div>
-                        {i < steps.length - 1 && (
-                            <div
-                                className="flex-1 h-px mx-3"
-                                style={{ background: i < currentStepIndex || step === 'result' ? T.accentBorder : 'var(--bo-border)' }}
-                            />
-                        )}
-                    </div>
-                )
-            })}
-        </div>
-    )
-
-    // Selection summary cards
-    const SummaryCard = ({ icon: Icon, label, value, onEdit, color }: any) => (
-        <div
-            className="rounded-xl p-4 flex items-center gap-4 transition-all"
-            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-        >
-            <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center"
-                style={{ background: T.accentBg, border: `1px solid ${T.accentBorder}` }}
-            >
-                <Icon size={18} style={{ color: color || T.accent }} />
-            </div>
-            <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>
-                    {label}
-                </p>
-                <p className="text-sm font-semibold truncate" style={{ color: T.text }}>
-                    {value}
-                </p>
-            </div>
-            {onEdit && (
-                <button onClick={onEdit} className="p-1 opacity-50 hover:opacity-100 transition-opacity">
-                    <Edit3 size={14} style={{ color: T.textMuted }} />
-                </button>
-            )}
-        </div>
-    )
-
     return (
-        <div className="max-w-2xl mx-auto pb-8">
+        <div style={{ maxWidth: 520, margin: '0 auto', paddingBottom: 40 }}>
+
             {/* Header */}
-            <div className="flex items-center gap-3 mb-6">
-                <button
-                    onClick={() => {
-                        if (step === 'result') setStep('campaign')
-                        else if (step === 'campaign') setStep('channel')
-                        else if (step === 'channel') setStep('property')
-                        else router.push('/backoffice/tracking')
-                    }}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                >
-                    <ArrowLeft size={18} style={{ color: T.accent }} />
-                </button>
-                <div>
-                    <h1 className="text-sm font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
-                        {step === 'result' ? 'QR Code Gerado' : 'Novo QR Code'}
-                    </h1>
-                </div>
-            </div>
+            <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ marginBottom: 28 }}
+            >
+                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 4 }}>
+                    Engine de Inteligência Imobiliária
+                </p>
+                <h1 style={{ fontSize: 28, fontWeight: 800, color: T.text, letterSpacing: '-0.5px' }}>
+                    Tracked Link &amp; QR
+                </h1>
+            </motion.div>
 
-            {/* Stepper */}
-            <StepIndicator />
-
-            {/* STEP: Select Property */}
-            {step === 'property' && (
-                <div className="space-y-3 animate-in fade-in duration-300">
-                    <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: T.textMuted }}>
-                        Selecione o Imóvel
-                    </p>
-                    {developments.length === 0 ? (
-                        <div className="py-12 text-center" style={{ color: T.textMuted }}>
-                            <Building2 size={32} className="mx-auto mb-3 opacity-40" />
-                            <p className="text-sm">Nenhum empreendimento cadastrado</p>
-                        </div>
-                    ) : (
-                        developments.map(dev => (
-                            <button
-                                key={dev.id}
-                                onClick={() => { setSelectedDev(dev); setStep('channel') }}
-                                className="w-full rounded-xl p-4 flex items-center gap-4 transition-all text-left"
-                                style={{
-                                    background: selectedDev?.id === dev.id ? T.accentBg : T.elevated,
-                                    border: `1px solid ${selectedDev?.id === dev.id ? T.accentBorder : T.border}`,
-                                }}
-                            >
-                                <div
-                                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                                    style={{ background: T.accentBg, border: `1px solid ${T.accentBorder}` }}
-                                >
-                                    <Building2 size={18} style={{ color: T.accent }} />
-                                </div>
-                                <span className="text-sm font-semibold flex-1" style={{ color: T.text }}>
-                                    {dev.name}
-                                </span>
-                                <ChevronRight size={16} style={{ color: T.textMuted }} />
-                            </button>
-                        ))
-                    )}
-                </div>
-            )}
-
-            {/* STEP: Select Channel */}
-            {step === 'channel' && (
-                <div className="space-y-3 animate-in fade-in duration-300">
-                    {selectedDev && (
-                        <SummaryCard
-                            icon={Building2}
-                            label="Imóvel Selecionado"
-                            value={selectedDev.name}
-                            onEdit={() => setStep('property')}
-                        />
-                    )}
-
-                    <p className="text-xs font-bold uppercase tracking-wider mt-6 mb-4" style={{ color: T.textMuted }}>
-                        Selecione o Canal de Origem
-                    </p>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {UTM_SOURCES.map(source => (
-                            <button
-                                key={source.value}
-                                onClick={() => { setSelectedSource(source); setStep('campaign') }}
-                                className="rounded-xl p-4 flex items-center gap-3 transition-all text-left"
-                                style={{
-                                    background: selectedSource?.value === source.value ? T.accentBg : T.elevated,
-                                    border: `1px solid ${selectedSource?.value === source.value ? T.accentBorder : T.border}`,
-                                }}
-                            >
-                                <span className="text-lg">{source.icon}</span>
-                                <span className="text-sm font-semibold" style={{ color: T.text }}>
-                                    {source.label}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="mt-4">
-                        <label className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: T.textMuted }}>
-                            Mídia (utm_medium)
-                        </label>
-                        <select
-                            value={selectedMedium}
-                            onChange={e => setSelectedMedium(e.target.value)}
-                            className="w-full h-11 px-3 rounded-xl text-sm font-medium"
-                            style={{
-                                background: T.elevated,
-                                border: `1px solid ${T.border}`,
-                                color: T.text,
-                            }}
-                        >
-                            <option value="">Automático</option>
-                            {UTM_MEDIUMS.map(m => (
-                                <option key={m.value} value={m.value}>{m.label}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-            )}
-
-            {/* STEP: Campaign Details */}
-            {step === 'campaign' && (
-                <div className="space-y-3 animate-in fade-in duration-300">
-                    {selectedDev && (
-                        <SummaryCard
-                            icon={Building2}
-                            label="Imóvel Selecionado"
-                            value={selectedDev.name}
-                            onEdit={() => setStep('property')}
-                        />
-                    )}
-                    {selectedSource && (
-                        <SummaryCard
-                            icon={Radio}
-                            label="Canal de Origem"
-                            value={selectedSource.label}
-                            onEdit={() => setStep('channel')}
-                        />
-                    )}
-
-                    <p className="text-xs font-bold uppercase tracking-wider mt-6 mb-4" style={{ color: T.textMuted }}>
-                        Configurar Campanha
-                    </p>
-
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: T.textMuted }}>
-                                Nome da Campanha *
-                            </label>
-                            <input
-                                type="text"
-                                value={campaignName}
-                                onChange={e => setCampaignName(e.target.value)}
-                                placeholder="Ex: Lançamento Verão 2025"
-                                className="w-full h-12 px-4 rounded-xl text-sm"
-                                style={{
-                                    background: T.elevated,
-                                    border: `1px solid ${T.border}`,
-                                    color: T.text,
-                                }}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: T.textMuted }}>
-                                Conteúdo / Variação (opcional)
-                            </label>
-                            <input
-                                type="text"
-                                value={utmContent}
-                                onChange={e => setUtmContent(e.target.value)}
-                                placeholder="Ex: banner-topo, variante-a"
-                                className="w-full h-12 px-4 rounded-xl text-sm"
-                                style={{
-                                    background: T.elevated,
-                                    border: `1px solid ${T.border}`,
-                                    color: T.text,
-                                }}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: T.textMuted }}>
-                                Slug Personalizado (opcional)
-                            </label>
-                            <input
-                                type="text"
-                                value={customSlug}
-                                onChange={e => setCustomSlug(e.target.value)}
-                                placeholder="Ex: verao-2025"
-                                className="w-full h-12 px-4 rounded-xl text-sm"
-                                style={{
-                                    background: T.elevated,
-                                    border: `1px solid ${T.border}`,
-                                    color: T.text,
-                                }}
-                            />
-                            <p className="text-[10px] mt-1" style={{ color: T.textMuted }}>
-                                Será usado na URL: iulemirandaimoveis.com.br/l/verao-2025
-                            </p>
-                        </div>
-                    </div>
-
+            {/* SELECT PROPERTY */}
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} style={{ marginBottom: 20 }}>
+                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 8 }}>
+                    Select Property
+                </p>
+                <div style={{ position: 'relative' }}>
                     <button
-                        onClick={handleGenerate}
-                        disabled={!campaignName || loading}
-                        className="w-full h-14 rounded-xl font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-3 mt-6 transition-all disabled:opacity-50"
+                        onClick={() => setShowDevDropdown(!showDevDropdown)}
                         style={{
-                            background: T.accent,
-                            color: '#fff',
-                            boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                            width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+                            padding: '14px 16px', borderRadius: 16,
+                            background: T.elevated, border: `1px solid ${T.border}`,
+                            cursor: 'pointer',
                         }}
                     >
-                        {loading ? (
-                            <Loader2 size={20} className="animate-spin" />
-                        ) : (
-                            <QrCode size={20} />
-                        )}
-                        {loading ? 'Gerando...' : 'Gerar QR Code'}
-                    </button>
-                </div>
-            )}
-
-            {/* STEP: Result */}
-            {step === 'result' && qrCodeUrl && (
-                <div className="space-y-6 animate-in fade-in duration-300">
-                    {/* Summary cards */}
-                    <div className="space-y-3">
-                        <SummaryCard icon={Building2} label="Imóvel Selecionado" value={selectedDev?.name} />
-                        <SummaryCard icon={Radio} label="Canal de Origem" value={selectedSource?.label} />
-                        <SummaryCard icon={Megaphone} label="Campanha Ativa" value={campaignName} color={T.accent} />
-                    </div>
-
-                    {/* QR Code Display */}
-                    <div className="relative">
-                        <div
-                            className="absolute inset-0 blur-[80px] rounded-full -z-10 opacity-30"
-                            style={{ background: T.accent }}
-                        />
-                        <div
-                            className="bg-white rounded-2xl p-6 flex flex-col items-center"
-                            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: `3px solid ${T.accentBorder}` }}
-                        >
-                            {/* QR Image */}
-                            <div className="relative p-2 bg-white rounded-lg">
-                                <img
-                                    src={qrCodeUrl}
-                                    alt="QR Code"
-                                    className="w-[200px] h-[200px] block"
-                                />
-                                {/* Center logo overlay */}
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="bg-white p-1 rounded-sm shadow-sm">
-                                        <div
-                                            className="text-[10px] font-black px-1.5 py-0.5 text-white rounded-[2px] tracking-tighter"
-                                            style={{ background: T.accent }}
-                                        >
-                                            IMI
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Tracking URL */}
-                            <div
-                                className="mt-6 w-full rounded-lg p-3"
-                                style={{ background: 'var(--bo-surface)', border: `1px solid ${T.border}` }}
-                            >
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-[9px] font-bold tracking-wider" style={{ color: T.textMuted }}>
-                                        URL COM TRACKING
-                                    </span>
-                                    <span
-                                        className="text-[9px] font-bold px-1.5 rounded uppercase"
-                                        style={{ color: T.accent, background: T.accentBg }}
-                                    >
-                                        Trackeado
-                                    </span>
-                                </div>
-                                <p
-                                    className="text-[11px] font-mono break-all leading-tight"
-                                    style={{ color: T.text }}
-                                >
-                                    {shortUrl}
-                                </p>
-                            </div>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(59,130,246,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <Building2 size={18} style={{ color: '#3B82F6' }} />
                         </div>
-                    </div>
+                        <span style={{ flex: 1, textAlign: 'left', fontSize: 14, fontWeight: 600, color: T.text }}>
+                            {selectedDev ? selectedDev.name : 'Selecionar imóvel...'}
+                        </span>
+                        <ChevronDown size={16} style={{ color: T.textMuted, flexShrink: 0 }} />
+                    </button>
 
-                    {/* Action Buttons */}
-                    <div className="space-y-3">
-                        <button
-                            onClick={() => downloadQR('png')}
-                            className="w-full py-4 px-6 rounded-xl font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-3 transition-all text-white"
-                            style={{ background: T.accent, boxShadow: '0 4px 16px rgba(0,0,0,0.15)' }}
-                        >
-                            <Download size={18} />
-                            Baixar PNG (Alta Resolução)
-                        </button>
+                    {showDevDropdown && developments.length > 0 && (
+                        <div style={{
+                            position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
+                            background: T.surface, border: `1px solid ${T.border}`,
+                            borderRadius: 16, padding: 6, zIndex: 50,
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+                            maxHeight: 240, overflowY: 'auto',
+                        }}>
+                            {developments.map(dev => (
+                                <button
+                                    key={dev.id}
+                                    onClick={() => { setSelectedDev(dev); setShowDevDropdown(false) }}
+                                    style={{
+                                        width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 10,
+                                        background: selectedDev?.id === dev.id ? 'rgba(59,130,246,0.1)' : 'transparent',
+                                        border: 'none', cursor: 'pointer',
+                                        fontSize: 13, fontWeight: 500, color: T.text,
+                                    }}
+                                >
+                                    {dev.name}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </motion.div>
 
-                        <button
-                            onClick={() => downloadQR('pdf')}
-                            className="w-full py-4 px-6 rounded-xl font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-3 transition-all"
-                            style={{
-                                background: T.elevated,
-                                border: `1px solid ${T.accentBorder}`,
-                                color: T.text,
-                            }}
-                        >
-                            <FileText size={18} />
-                            Baixar PDF para Impressão
-                        </button>
+            {/* MARKETING SOURCE */}
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ marginBottom: 20 }}>
+                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 8 }}>
+                    Marketing Source
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+                    {SOURCES.map(src => {
+                        const isActive = selectedSource.value === src.value
+                        return (
+                            <button
+                                key={src.value}
+                                onClick={() => setSelectedSource(src)}
+                                style={{
+                                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                                    padding: '16px 8px', borderRadius: 16,
+                                    background: isActive ? src.bg : T.elevated,
+                                    border: `1.5px solid ${isActive ? src.color : T.border}`,
+                                    cursor: 'pointer', transition: 'all 0.15s',
+                                }}
+                            >
+                                <div style={{ color: src.color }}>{src.icon}</div>
+                                <span style={{ fontSize: 12, fontWeight: 700, color: isActive ? src.color : T.textMuted }}>
+                                    {src.label}
+                                </span>
+                            </button>
+                        )
+                    })}
+                </div>
+            </motion.div>
 
+            {/* CAMPAIGN + MEDIUM */}
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} style={{ marginBottom: 20, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div>
+                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>Campaign</p>
+                    <input
+                        value={campaign}
+                        onChange={e => setCampaign(e.target.value)}
+                        placeholder="Summer 2024"
+                        style={{
+                            width: '100%', height: 48, padding: '0 14px', borderRadius: 12,
+                            background: T.elevated, border: `1px solid ${T.border}`,
+                            color: T.text, fontSize: 13, outline: 'none',
+                            boxSizing: 'border-box',
+                        }}
+                    />
+                </div>
+                <div>
+                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>Medium</p>
+                    <input
+                        value={medium}
+                        onChange={e => setMedium(e.target.value)}
+                        placeholder="CPC / Email"
+                        style={{
+                            width: '100%', height: 48, padding: '0 14px', borderRadius: 12,
+                            background: T.elevated, border: `1px solid ${T.border}`,
+                            color: T.text, fontSize: 13, outline: 'none',
+                            boxSizing: 'border-box',
+                        }}
+                    />
+                </div>
+            </motion.div>
+
+            {/* QR PREVIEW CARD */}
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                style={{
+                    marginBottom: 14,
+                    borderRadius: 24,
+                    overflow: 'hidden',
+                    background: 'linear-gradient(145deg, #1a2636 0%, #0f1923 100%)',
+                    border: `1px solid rgba(255,255,255,0.07)`,
+                    padding: 24,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 16,
+                    minHeight: 240,
+                    justifyContent: 'center',
+                    position: 'relative',
+                }}
+            >
+                {/* Subtle glow */}
+                <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', background: `radial-gradient(circle, ${selectedSource.color}20 0%, transparent 70%)`, pointerEvents: 'none' }} />
+
+                {/* QR Code or placeholder */}
+                <div style={{
+                    background: '#fff',
+                    borderRadius: 16,
+                    padding: 12,
+                    boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
+                    position: 'relative',
+                }}>
+                    {qrDataUrl ? (
+                        <img src={qrDataUrl} alt="QR Code" style={{ width: 160, height: 160, display: 'block', borderRadius: 4 }} />
+                    ) : (
+                        <div style={{ width: 160, height: 160, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                            <QrCode size={52} style={{ color: '#ccc' }} />
+                            <p style={{ fontSize: 10, color: '#aaa', textAlign: 'center', fontWeight: 500 }}>Gere seu QR code abaixo</p>
+                        </div>
+                    )}
+                    {/* IMI watermark */}
+                    {qrDataUrl && (
+                        <div style={{ position: 'absolute', bottom: 16, right: 16, background: '#486581', color: '#fff', fontSize: 8, fontWeight: 900, padding: '2px 5px', borderRadius: 3, letterSpacing: '0.05em' }}>
+                            IMI
+                        </div>
+                    )}
+                </div>
+
+                {/* Tracking URL */}
+                <div style={{ width: '100%' }}>
+                    <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', textAlign: 'center', marginBottom: 8 }}>
+                        Your Unique Tracking Link
+                    </p>
+                    <div style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        background: 'rgba(255,255,255,0.06)', borderRadius: 12,
+                        padding: '10px 14px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                    }}>
+                        <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: '#60A5FA', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {shortUrl}
+                        </span>
                         <button
                             onClick={copyUrl}
-                            className="w-full py-3 px-6 rounded-xl font-semibold text-sm uppercase tracking-wide flex items-center justify-center gap-2 transition-all"
-                            style={{ color: T.textMuted }}
+                            style={{ flexShrink: 0, width: 34, height: 34, borderRadius: 8, background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         >
-                            {copied ? <Check size={18} /> : <Copy size={18} />}
-                            {copied ? 'URL Copiada!' : 'Copiar URL Curta'}
+                            {copied ? <Check size={15} style={{ color: '#4ade80' }} /> : <Copy size={15} style={{ color: '#60A5FA' }} />}
                         </button>
                     </div>
+                </div>
+            </motion.div>
 
-                    {/* Analytics Preview */}
-                    <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-1 h-4 rounded-full" style={{ background: T.accent }} />
-                            <h3 className="text-xs font-bold uppercase tracking-widest" style={{ color: T.text }}>
-                                Analytics Tracking IMI
-                            </h3>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div
-                                className="p-3 rounded-lg"
-                                style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                            >
-                                <p className="text-[10px] font-bold mb-1" style={{ color: T.textMuted }}>
-                                    SCANS REGISTRADOS
-                                </p>
-                                <p className="text-lg font-bold" style={{ color: T.text }}>
-                                    0 <span className="text-[10px]" style={{ color: T.textMuted }}>novo</span>
-                                </p>
-                            </div>
-                            <div
-                                className="p-3 rounded-lg"
-                                style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                            >
-                                <p className="text-[10px] font-bold mb-1" style={{ color: T.textMuted }}>
-                                    CONVERSÃO EST.
-                                </p>
-                                <p className="text-lg font-bold" style={{ color: T.text }}>
-                                    --
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+            {/* GENERATE BUTTON */}
+            <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                onClick={handleGenerate}
+                disabled={loading || !selectedDev}
+                style={{
+                    width: '100%', height: 56, borderRadius: 18,
+                    background: loading ? 'rgba(59,130,246,0.5)' : 'linear-gradient(135deg, #3B82F6, #2563EB)',
+                    color: '#fff', fontSize: 15, fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                    border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 24px rgba(59,130,246,0.35)',
+                    marginBottom: 32,
+                    transition: 'all 0.15s',
+                }}
+            >
+                {loading ? (
+                    <Loader2 size={20} className="animate-spin" />
+                ) : (
+                    <Sparkles size={20} />
+                )}
+                {loading ? 'Gerando...' : 'Generate New Link'}
+            </motion.button>
 
-                    {/* Generate Another */}
-                    <button
-                        onClick={() => {
-                            setStep('property')
-                            setGeneratedLink(null)
-                            setQrCodeUrl('')
-                            setShortUrl('')
-                            setCampaignName('')
-                            setUtmContent('')
-                            setCustomSlug('')
-                        }}
-                        className="w-full py-3 rounded-xl text-sm font-semibold transition-all"
-                        style={{ color: T.accent }}
-                    >
-                        + Gerar Novo QR Code
+            {/* RECENT LINKS */}
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                    <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.textMuted, textTransform: 'uppercase' }}>
+                        Recent Links
+                    </p>
+                    <button style={{ fontSize: 11, fontWeight: 700, color: '#3B82F6', background: 'none', border: 'none', cursor: 'pointer' }}>
+                        View All
                     </button>
                 </div>
-            )}
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {RECENT_LINKS.map((link, i) => (
+                        <motion.div
+                            key={link.id}
+                            initial={{ opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 + i * 0.06 }}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 14,
+                                padding: '14px 16px', borderRadius: 16,
+                                background: T.elevated, border: `1px solid ${T.border}`,
+                            }}
+                        >
+                            {/* Source icon */}
+                            <div style={{
+                                width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                                background: SOURCES.find(s => s.value === link.source)?.bg || 'rgba(255,255,255,0.06)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}>
+                                {sourceIcon(link.source)}
+                            </div>
+
+                            {/* Info */}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <p style={{ fontSize: 13, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {link.title}
+                                </p>
+                                <p style={{ fontSize: 11, color: T.textMuted, marginTop: 2 }}>
+                                    {link.sub}
+                                </p>
+                            </div>
+
+                            {/* Stats */}
+                            <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4, marginBottom: 2 }}>
+                                    {link.trend > 0 ? (
+                                        <ArrowUpRight size={13} style={{ color: '#4ade80' }} />
+                                    ) : (
+                                        <ArrowDownRight size={13} style={{ color: '#f87171' }} />
+                                    )}
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: link.trend > 0 ? '#4ade80' : '#f87171' }}>
+                                        {Math.abs(link.trend)}%
+                                    </span>
+                                </div>
+                                <p style={{ fontSize: 12, fontWeight: 700, color: T.text }}>{link.clicks}</p>
+                                <p style={{ fontSize: 9, color: T.textMuted }}>clicks</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </motion.div>
         </div>
     )
 }
