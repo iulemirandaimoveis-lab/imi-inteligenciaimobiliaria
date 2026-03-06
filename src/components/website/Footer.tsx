@@ -93,7 +93,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium break-all">{settings?.companyEmail || 'contato@iulemirandaimoveis.com.br'}</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
                                 </a>
 
                                 <a
@@ -105,7 +105,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium">{settings?.companyPhone || '+55 81 99723-0455'}</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium">{settings?.companyPhone || '+55 81 9 9723-0455'}</span>
                                 </a>
 
                                 <a
@@ -114,10 +114,10 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl group"
                                 >
-                                    <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
+                                    <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#0A66C2] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium">LinkedIn</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors text-[12px] sm:text-[13px] font-medium">LinkedIn</span>
                                 </a>
                             </div>
                         </div>

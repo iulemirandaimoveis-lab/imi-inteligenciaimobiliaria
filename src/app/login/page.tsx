@@ -113,86 +113,111 @@ export default function LoginPage() {
                 </div>
             </div>
 
-            {/* Right Side - Login Form */}
-            <div className="w-full lg:w-[40%] flex items-center justify-center p-8 relative bg-white dark:bg-[#0D0F14]">
-                <div className="w-full max-w-md">
+            {/* Right Side - Login Form (sempre dark) */}
+            <div className="w-full lg:w-[40%] flex items-center justify-center p-8 relative" style={{ background: '#0D1117' }}>
+                {/* Subtle grid overlay */}
+                <div className="absolute inset-0 opacity-[0.025] bg-[url('/grid.svg')]" />
+                {/* Glow */}
+                <div className="absolute top-1/4 right-0 w-64 h-64 rounded-full blur-[120px]" style={{ background: 'rgba(72,101,129,0.15)' }} />
+
+                <div className="w-full max-w-md relative z-10">
                     {/* Brand Header Mobile */}
                     <div className="lg:hidden mb-12 flex flex-col items-center">
                         <div className="flex items-center gap-3">
                             <span
-                                className="text-2xl font-bold tracking-tight transition-colors text-imi-900 dark:text-white"
+                                className="text-2xl font-bold tracking-tight text-white"
                                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                             >
                                 IMI
                             </span>
-                            <div className="h-6 w-px bg-imi-200 dark:bg-white/20"></div>
-                            <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.15em] leading-[1.1] text-imi-500 dark:text-gray-400">
+                            <div className="h-6 w-px" style={{ background: 'rgba(255,255,255,0.2)' }} />
+                            <span className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.15em] leading-[1.1]" style={{ color: 'rgba(255,255,255,0.4)' }}>
                                 Inteligência<br />Imobiliária
                             </span>
                         </div>
                     </div>
 
                     <div className="mb-10 text-center lg:text-left">
-                        <h1 className="text-4xl font-display font-bold text-imi-900 dark:text-white mb-3">Bem-vindo</h1>
-                        <p className="text-imi-500 dark:text-gray-400 font-medium">Insira suas credenciais para acessar o painel administrativo.</p>
+                        <h1 className="text-4xl font-display font-bold text-white mb-3">Bem-vindo</h1>
+                        <p className="font-medium" style={{ color: 'rgba(255,255,255,0.45)' }}>Insira suas credenciais para acessar o painel.</p>
                     </div>
 
-                    <form onSubmit={handleLogin} className="space-y-6">
+                    <form onSubmit={handleLogin} className="space-y-5">
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-imi-500 dark:text-gray-500 uppercase tracking-widest ml-1">E-mail Corporativo</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest ml-1" style={{ color: 'rgba(255,255,255,0.4)' }}>E-mail</label>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full h-14 px-6 bg-imi-50 dark:bg-white/5 border border-imi-100 dark:border-white/5 rounded-2xl text-imi-900 dark:text-white placeholder:text-imi-400 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
-                                placeholder="colaborador@imi.com.br"
+                                className="w-full h-14 px-5 rounded-2xl text-white font-medium transition-all focus:outline-none"
+                                style={{
+                                    background: 'rgba(255,255,255,0.04)',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    caretColor: '#486581',
+                                }}
+                                onFocus={e => e.currentTarget.style.borderColor = 'rgba(72,101,129,0.6)'}
+                                onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
+                                placeholder="seu@email.com.br"
                                 required
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-black text-imi-500 dark:text-gray-500 uppercase tracking-widest ml-1">Senha de Acesso</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest ml-1" style={{ color: 'rgba(255,255,255,0.4)' }}>Senha</label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full h-14 px-6 bg-imi-50 dark:bg-white/5 border border-imi-100 dark:border-white/5 rounded-2xl text-imi-900 dark:text-white placeholder:text-imi-400 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium"
+                                    className="w-full h-14 px-5 rounded-2xl text-white font-medium transition-all focus:outline-none"
+                                    style={{
+                                        background: 'rgba(255,255,255,0.04)',
+                                        border: '1px solid rgba(255,255,255,0.08)',
+                                        caretColor: '#486581',
+                                    }}
+                                    onFocus={e => e.currentTarget.style.borderColor = 'rgba(72,101,129,0.6)'}
+                                    onBlur={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
                                     placeholder="••••••••"
                                     required
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-6 top-1/2 -translate-y-1/2 text-imi-400 dark:text-gray-400 hover:text-primary transition-colors"
+                                    className="absolute right-5 top-1/2 -translate-y-1/2 transition-colors"
+                                    style={{ color: 'rgba(255,255,255,0.3)' }}
+                                    onMouseEnter={e => (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.7)'}
+                                    onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.3)'}
                                 >
-                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                 </button>
                             </div>
                         </div>
 
                         {error && (
-                            <div className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-2xl p-4 animate-shake">
-                                <p className="text-red-600 dark:text-red-400 text-xs font-bold text-center uppercase tracking-wider">{error}</p>
+                            <div className="rounded-2xl p-4" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)' }}>
+                                <p className="text-red-400 text-xs font-bold text-center uppercase tracking-wider">{error}</p>
                             </div>
                         )}
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full h-16 bg-primary dark:bg-primary text-background-dark rounded-3xl font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 shadow-glow disabled:shadow-none flex items-center justify-center gap-3 mt-4"
+                            className="w-full h-[56px] rounded-2xl font-bold text-[15px] transition-all disabled:opacity-40 flex items-center justify-center gap-3 mt-2"
+                            style={{ background: 'linear-gradient(135deg, #334E68 0%, #102A43 100%)', color: '#fff', letterSpacing: '0.03em' }}
+                            onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLButtonElement).style.opacity = '0.9' }}
+                            onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = '1'}
                         >
                             {loading ? (
-                                <Loader2 className="animate-spin" size={24} />
+                                <Loader2 className="animate-spin" size={20} />
                             ) : (
                                 'Acessar Backoffice'
                             )}
                         </button>
                     </form>
 
-                    <div className="mt-12 text-center text-sm">
-                        <Link href="/" className="text-gray-500 hover:text-primary font-bold transition-colors uppercase tracking-widest text-[10px]">
-                            ← Voltar para o Site Principal
+                    <div className="mt-10 text-center">
+                        <Link href="/" className="font-bold transition-colors uppercase tracking-widest text-[10px]" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                            ← Voltar para o Site
                         </Link>
                     </div>
                 </div>
