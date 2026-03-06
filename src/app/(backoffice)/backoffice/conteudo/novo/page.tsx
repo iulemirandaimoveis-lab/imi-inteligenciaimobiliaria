@@ -58,12 +58,12 @@ const T = {
 
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
 const TIPOS_CONTEUDO = [
-  { id: 'blog', label: 'Artigo Blog', icon: FileText, desc: 'SEO-friendly, 800-2000 palavras', color: 'text-blue-600 bg-blue-50' },
-  { id: 'email', label: 'E-mail Marketing', icon: Mail, desc: 'Newsletter, follow-up, prospecção', color: 'text-green-600 bg-green-50' },
-  { id: 'instagram', label: 'Post Instagram', icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars', color: 'text-pink-600 bg-pink-50' },
-  { id: 'linkedin', label: 'Post LinkedIn', icon: Linkedin, desc: 'Artigo ou post profissional', color: 'text-blue-700 bg-blue-50' },
-  { id: 'facebook', label: 'Post Facebook', icon: Facebook, desc: 'Post com engajamento', color: 'text-indigo-600 bg-indigo-50' },
-  { id: 'landing', label: 'Landing Page Copy', icon: Globe, desc: 'Hero, benefícios, CTA', color: 'text-[var(--bo-accent)] bg-accent-50' },
+  { id: 'blog',      label: 'Artigo Blog',       icon: FileText,  desc: 'SEO-friendly, 800-2000 palavras',     color: '#3B82F6', bg: 'rgba(59,130,246,0.12)'  },
+  { id: 'email',     label: 'E-mail Marketing',  icon: Mail,      desc: 'Newsletter, follow-up, prospecção',   color: '#4ADE80', bg: 'rgba(74,222,128,0.12)'  },
+  { id: 'instagram', label: 'Post Instagram',    icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars',  color: '#F472B6', bg: 'rgba(244,114,182,0.12)' },
+  { id: 'linkedin',  label: 'Post LinkedIn',     icon: Linkedin,  desc: 'Artigo ou post profissional',         color: '#60A5FA', bg: 'rgba(96,165,250,0.12)'  },
+  { id: 'facebook',  label: 'Post Facebook',     icon: Facebook,  desc: 'Post com engajamento',                color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
+  { id: 'landing',   label: 'Landing Page Copy', icon: Globe,     desc: 'Hero, benefícios, CTA',              color: '#FBBF24', bg: 'rgba(251,191,36,0.12)'  },
 ]
 
 // ⚠️ NÃO MODIFICAR - Templates por tipo
@@ -201,7 +201,7 @@ export default function NovoConteudoPage() {
   const [charCount, setCharCount] = useState(0)
 
   const tipoAtual = TIPOS_CONTEUDO.find(t => t.id === tipo) || TIPOS_CONTEUDO[0]
-  const TipoIcon = tipoAtual.icon
+  const TipoIcon = tipoAtual.icon as React.ElementType
 
   const usarTemplate = () => {
     const tpl = TEMPLATES[tipo]
@@ -325,26 +325,29 @@ export default function NovoConteudoPage() {
             </label>
             <div className="space-y-2">
               {TIPOS_CONTEUDO.map(t => {
-                const Icon = t.icon
+                const Icon = t.icon as React.ElementType
+                const isActive = tipo === t.id
                 return (
                   <button
                     key={t.id}
                     onClick={() => setTipo(t.id)}
-                    className={`w-full flex items-center gap-4 p-3.5 rounded-2xl text-left transition-all group ${tipo === t.id
-                      ? 'bg-accent-50 border border-accent-100 shadow-sm'
-                      : 'border border-transparent'
-                      }`}
-                    style={tipo !== t.id ? { borderColor: 'transparent' } : {}}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: '14px',
+                      padding: '12px 14px', borderRadius: '16px', textAlign: 'left',
+                      cursor: 'pointer', transition: 'all 0.15s', border: 'none',
+                      background: isActive ? `${t.bg}` : 'transparent',
+                      outline: isActive ? `1px solid ${t.color}40` : '1px solid transparent',
+                    }}
                   >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110 ${t.color}`}>
-                      <Icon size={20} />
+                    <div style={{ width: '38px', height: '38px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: t.bg, color: t.color }}>
+                      <Icon size={19} />
                     </div>
                     <div>
-                      <p className="text-sm font-bold leading-tight" style={{ color: T.text }}>{t.label}</p>
-                      <p className="text-[10px] font-medium mt-0.5" style={{ color: T.textMuted }}>{t.desc}</p>
+                      <p style={{ fontSize: '13px', fontWeight: 700, color: T.text, lineHeight: 1.3 }}>{t.label}</p>
+                      <p style={{ fontSize: '10px', fontWeight: 500, color: T.textMuted, marginTop: '2px' }}>{t.desc}</p>
                     </div>
-                    {tipo === t.id && (
-                      <div className="ml-auto w-2 h-2 bg-[#16162A] rounded-full" />
+                    {isActive && (
+                      <div style={{ marginLeft: 'auto', width: '8px', height: '8px', borderRadius: '50%', background: t.color, flexShrink: 0 }} />
                     )}
                   </button>
                 )
@@ -413,7 +416,7 @@ export default function NovoConteudoPage() {
               {/* Campo título */}
               <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${tipoAtual.color}`}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
                     <TipoIcon size={16} />
                   </div>
                   <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
@@ -463,8 +466,8 @@ export default function NovoConteudoPage() {
                       ? 'Escreva sua legenda luxuosa aqui...\n\nUse quebras de linha e emojis estrategicamente.\n\n#BoaViagem #IMIAntlantis'
                       : 'Comece a estruturar seu conteúdo estratégico...'
                   }
-                  className="w-full h-[500px] px-8 py-6 text-sm focus:outline-none resize-none leading-relaxed font-sans scrollbar-thin scrollbar-thumb-gray-200"
-                  style={{ background: T.surface, color: T.text }}
+                  className="w-full h-[500px] px-8 py-6 text-sm focus:outline-none resize-none leading-relaxed font-sans"
+                  style={{ background: T.surface, color: T.text, scrollbarWidth: 'thin' } as React.CSSProperties}
                 />
 
                 {/* Status bar */}
@@ -503,7 +506,7 @@ export default function NovoConteudoPage() {
               </div>
 
               <div className="flex items-center gap-3 mb-8">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tipoAtual.color}`}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
                   <TipoIcon size={20} />
                 </div>
                 <div>

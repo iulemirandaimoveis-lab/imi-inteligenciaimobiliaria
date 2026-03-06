@@ -139,7 +139,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'comportamento',
         icone: Eye,
-        cor: 'text-gray-400 bg-gray-400/10 border-gray-400/20',
+        cor: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)] border-[rgba(148,163,184,0.2)]',
         execucoes: 312,
     },
     {

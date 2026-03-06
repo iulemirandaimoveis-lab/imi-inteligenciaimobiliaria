@@ -45,6 +45,8 @@ const SECTIONS: NavSection[] = [
                 label: 'Leads', icon: Users,
                 children: [
                     { label: 'Todos os Leads', href: '/backoffice/leads', icon: Users },
+                    { label: 'Inbox IA', href: '/backoffice/leads/inbox', icon: Sparkles },
+                    { label: 'Comportamento', href: '/backoffice/leads/behavior', icon: BarChart3 },
                     { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: Users },
                 ]
             },

@@ -172,11 +172,11 @@ const AUDIT_LOGS = [
 
 const ACAO_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
   login: { label: 'Login', icon: LogIn, color: 'text-blue-400 bg-blue-500/10' },
-  logout: { label: 'Logout', icon: LogOut, color: 'text-gray-400 bg-gray-500/10' },
+  logout: { label: 'Logout', icon: LogOut, color: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)]' },
   create: { label: 'Criação', icon: Plus, color: 'text-green-400 bg-green-500/10' },
   update: { label: 'Edição', icon: Edit, color: 'text-orange-400 bg-orange-500/10' },
   delete: { label: 'Exclusão', icon: Trash2, color: 'text-red-400 bg-red-500/10' },
-  view: { label: 'Visualização', icon: Eye, color: 'text-gray-400 bg-gray-500/10' },
+  view: { label: 'Visualização', icon: Eye, color: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)]' },
   export: { label: 'Exportação', icon: Download, color: 'text-purple-400 bg-purple-500/10' },
   sync: { label: 'Sync', icon: Settings, color: 'text-blue-400 bg-blue-500/10' },
   backup: { label: 'Backup', icon: Shield, color: 'text-green-400 bg-green-500/10' },
