@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import {
-    Building2, Copy, Check, Link2, ArrowUpRight,
-    ArrowDownRight, QrCode, Sparkles, TrendingUp,
-    ChevronDown, Loader2, Globe
+    Building2, Copy, Check, Link2,
+    QrCode, Sparkles,
+    ChevronDown, Loader2, Globe, Trash2
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
@@ -61,11 +61,16 @@ const SOURCES = [
     },
 ]
 
-const RECENT_LINKS = [
-    { id: 1, source: 'meta', title: 'Meta – Grand Horizon', sub: 'Summer Promo • imi.re/x9k...', clicks: '1,240', trend: +8.4 },
-    { id: 2, source: 'whatsapp', title: 'Direct WhatsApp – Unit 402', sub: 'Direct Message • imi.re/z4a...', clicks: '458', trend: +12.1 },
-    { id: 3, source: 'google', title: 'Google Search – Luxury', sub: 'Paid Search • imi.re/m2q...', clicks: '3,120', trend: -3.2 },
-]
+function sourceIcon(value: string) {
+    const s = SOURCES.find(s => s.value === value)
+    return s ? (
+        <div style={{ color: s.color }}>{s.icon}</div>
+    ) : <Globe size={16} />
+}
+
+function sourceBg(value: string) {
+    return SOURCES.find(s => s.value === value)?.bg || 'rgba(255,255,255,0.06)'
+}
 
 export default function QRGeneratorPage() {
     const [developments, setDevelopments] = useState<any[]>([])
@@ -79,11 +84,29 @@ export default function QRGeneratorPage() {
     const [shortUrl, setShortUrl] = useState('imi.re/–––')
     const [copied, setCopied] = useState(false)
 
+    // Real tracked links from DB
+    const [recentLinks, setRecentLinks] = useState<any[]>([])
+    const [linksLoading, setLinksLoading] = useState(true)
+
+    const fetchLinks = async () => {
+        setLinksLoading(true)
+        try {
+            const res = await fetch('/api/qr/links')
+            const data = await res.json()
+            setRecentLinks(data.links || [])
+        } catch {
+            setRecentLinks([])
+        } finally {
+            setLinksLoading(false)
+        }
+    }
+
     useEffect(() => {
         supabase.from('developments').select('id, name, slug').order('name').then(({ data }) => {
             setDevelopments(data || [])
             if (data && data.length > 0) setSelectedDev(data[0])
         })
+        fetchLinks()
     }, [])
 
     const handleGenerate = async () => {
@@ -95,16 +118,16 @@ export default function QRGeneratorPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     development_id: selectedDev.id,
-                    campaign_name: campaign || 'imi-qr',
+                    campaign_name: campaign || `${selectedSource.value}-qr`,
                     utm_source: selectedSource.value,
                     utm_medium: medium || 'social',
                     utm_campaign: (campaign || 'imi-qr').toLowerCase().replace(/\s+/g, '-'),
                 }),
             })
             const data = await res.json()
-            if (!res.ok) throw new Error(data.error)
+            if (!res.ok) throw new Error(data.error || 'Erro ao gerar link')
 
-            const url = data.link?.short_url || `https://iulemirandaimoveis.com.br/imoveis/${selectedDev.slug}`
+            const url = data.link?.short_url || `https://www.iulemirandaimoveis.com.br/imoveis/${selectedDev.slug}`
             setShortUrl(url)
 
             const qr = await QRCode.toDataURL(url, {
@@ -114,20 +137,23 @@ export default function QRGeneratorPage() {
                 errorCorrectionLevel: 'H',
             })
             setQrDataUrl(qr)
-            toast.success('Link gerado!')
-        } catch {
-            // fallback: generate QR locally
-            const url = `https://iulemirandaimoveis.com.br/imoveis/${selectedDev.slug}?utm_source=${selectedSource.value}&utm_campaign=${campaign || 'imi'}`
-            setShortUrl(url)
-            const qr = await QRCode.toDataURL(url, {
-                width: 280, margin: 1,
-                color: { dark: '#0A0A0A', light: '#FFFFFF' },
-                errorCorrectionLevel: 'H',
-            })
-            setQrDataUrl(qr)
-            toast.success('QR Code gerado!')
+            toast.success('Link trackeado gerado!')
+            // Refresh list
+            fetchLinks()
+        } catch (err: any) {
+            toast.error(err.message || 'Erro ao gerar link trackeado')
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleDeleteLink = async (id: string) => {
+        try {
+            await fetch(`/api/qr/links?id=${id}`, { method: 'DELETE' })
+            setRecentLinks(prev => prev.filter(l => l.id !== id))
+            toast.success('Link removido')
+        } catch {
+            toast.error('Erro ao remover link')
         }
     }
 
@@ -136,13 +162,6 @@ export default function QRGeneratorPage() {
         setCopied(true)
         toast.success('Link copiado!')
         setTimeout(() => setCopied(false), 2000)
-    }
-
-    const sourceIcon = (value: string) => {
-        const s = SOURCES.find(s => s.value === value)
-        return s ? (
-            <div style={{ color: s.color }}>{s.icon}</div>
-        ) : <Globe size={16} />
     }
 
     return (
@@ -165,7 +184,7 @@ export default function QRGeneratorPage() {
             {/* SELECT PROPERTY */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} style={{ marginBottom: 20 }}>
                 <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 8 }}>
-                    Select Property
+                    Imóvel
                 </p>
                 <div style={{ position: 'relative' }}>
                     <button
@@ -216,7 +235,7 @@ export default function QRGeneratorPage() {
             {/* MARKETING SOURCE */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ marginBottom: 20 }}>
                 <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 8 }}>
-                    Marketing Source
+                    Canal de Marketing
                 </p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                     {SOURCES.map(src => {
@@ -246,11 +265,11 @@ export default function QRGeneratorPage() {
             {/* CAMPAIGN + MEDIUM */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} style={{ marginBottom: 20, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div>
-                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>Campaign</p>
+                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>Campanha</p>
                     <input
                         value={campaign}
                         onChange={e => setCampaign(e.target.value)}
-                        placeholder="Summer 2024"
+                        placeholder="Ex: Verão 2025"
                         style={{
                             width: '100%', height: 48, padding: '0 14px', borderRadius: 12,
                             background: T.elevated, border: `1px solid ${T.border}`,
@@ -260,7 +279,7 @@ export default function QRGeneratorPage() {
                     />
                 </div>
                 <div>
-                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>Medium</p>
+                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>Meio</p>
                     <input
                         value={medium}
                         onChange={e => setMedium(e.target.value)}
@@ -326,7 +345,7 @@ export default function QRGeneratorPage() {
                 {/* Tracking URL */}
                 <div style={{ width: '100%' }}>
                     <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', textAlign: 'center', marginBottom: 8 }}>
-                        Your Unique Tracking Link
+                        Link Trackeado
                     </p>
                     <div style={{
                         display: 'flex', alignItems: 'center', gap: 8,
@@ -370,70 +389,91 @@ export default function QRGeneratorPage() {
                 ) : (
                     <Sparkles size={20} />
                 )}
-                {loading ? 'Gerando...' : 'Generate New Link'}
+                {loading ? 'Gerando...' : 'Gerar Link + QR Code'}
             </motion.button>
 
             {/* RECENT LINKS */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                     <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.textMuted, textTransform: 'uppercase' }}>
-                        Recent Links
+                        Links Recentes
                     </p>
-                    <button style={{ fontSize: 11, fontWeight: 700, color: '#3B82F6', background: 'none', border: 'none', cursor: 'pointer' }}>
-                        View All
-                    </button>
+                    {recentLinks.length > 0 && (
+                        <span style={{ fontSize: 11, color: T.textMuted }}>
+                            {recentLinks.length} link{recentLinks.length !== 1 ? 's' : ''}
+                        </span>
+                    )}
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {RECENT_LINKS.map((link, i) => (
-                        <motion.div
-                            key={link.id}
-                            initial={{ opacity: 0, x: -8 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3 + i * 0.06 }}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: 14,
-                                padding: '14px 16px', borderRadius: 16,
-                                background: T.elevated, border: `1px solid ${T.border}`,
-                            }}
-                        >
-                            {/* Source icon */}
-                            <div style={{
-                                width: 40, height: 40, borderRadius: 12, flexShrink: 0,
-                                background: SOURCES.find(s => s.value === link.source)?.bg || 'rgba(255,255,255,0.06)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            }}>
-                                {sourceIcon(link.source)}
-                            </div>
-
-                            {/* Info */}
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <p style={{ fontSize: 13, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    {link.title}
-                                </p>
-                                <p style={{ fontSize: 11, color: T.textMuted, marginTop: 2 }}>
-                                    {link.sub}
-                                </p>
-                            </div>
-
-                            {/* Stats */}
-                            <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 4, marginBottom: 2 }}>
-                                    {link.trend > 0 ? (
-                                        <ArrowUpRight size={13} style={{ color: '#4ade80' }} />
-                                    ) : (
-                                        <ArrowDownRight size={13} style={{ color: '#f87171' }} />
-                                    )}
-                                    <span style={{ fontSize: 11, fontWeight: 700, color: link.trend > 0 ? '#4ade80' : '#f87171' }}>
-                                        {Math.abs(link.trend)}%
-                                    </span>
+                {linksLoading ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
+                        <Loader2 size={20} style={{ color: T.textMuted }} className="animate-spin" />
+                    </div>
+                ) : recentLinks.length === 0 ? (
+                    <div style={{
+                        padding: '32px 24px', borderRadius: 16,
+                        background: T.elevated, border: `1px solid ${T.border}`,
+                        textAlign: 'center',
+                    }}>
+                        <Link2 size={28} style={{ color: T.textMuted, margin: '0 auto 12px' }} />
+                        <p style={{ fontSize: 13, color: T.textMuted, fontWeight: 500 }}>
+                            Nenhum link gerado ainda
+                        </p>
+                        <p style={{ fontSize: 11, color: T.textMuted, marginTop: 4, opacity: 0.7 }}>
+                            Gere seu primeiro link acima
+                        </p>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {recentLinks.slice(0, 8).map((link, i) => (
+                            <motion.div
+                                key={link.id}
+                                initial={{ opacity: 0, x: -8 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3 + i * 0.04 }}
+                                style={{
+                                    display: 'flex', alignItems: 'center', gap: 14,
+                                    padding: '12px 16px', borderRadius: 16,
+                                    background: T.elevated, border: `1px solid ${T.border}`,
+                                }}
+                            >
+                                {/* Source icon */}
+                                <div style={{
+                                    width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+                                    background: sourceBg(link.utm_source),
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                }}>
+                                    {sourceIcon(link.utm_source)}
                                 </div>
-                                <p style={{ fontSize: 12, fontWeight: 700, color: T.text }}>{link.clicks}</p>
-                                <p style={{ fontSize: 9, color: T.textMuted }}>clicks</p>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+
+                                {/* Info */}
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <p style={{ fontSize: 13, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {link.campaign_name || link.utm_campaign || 'Sem nome'}
+                                    </p>
+                                    <p style={{ fontSize: 11, color: T.textMuted, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {link.short_url || link.short_code}
+                                    </p>
+                                </div>
+
+                                {/* Stats + Delete */}
+                                <div style={{ textAlign: 'right', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    <div>
+                                        <p style={{ fontSize: 13, fontWeight: 700, color: T.text }}>{link.clicks ?? 0}</p>
+                                        <p style={{ fontSize: 9, color: T.textMuted }}>clicks</p>
+                                    </div>
+                                    <button
+                                        onClick={() => handleDeleteLink(link.id)}
+                                        style={{ width: 30, height: 30, borderRadius: 8, background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.4 }}
+                                        title="Remover link"
+                                    >
+                                        <Trash2 size={13} style={{ color: T.text }} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                )}
             </motion.div>
         </div>
     )

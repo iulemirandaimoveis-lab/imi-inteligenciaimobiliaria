@@ -218,7 +218,7 @@ export function MobileBottomNav() {
                                 <Link key={item.href} href={item.href} className="flex-1">
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="relative flex flex-col items-center justify-center py-2.5 w-full"
+                                        className="relative flex flex-col items-center justify-center py-2 w-full"
                                     >
                                         <AnimatePresence>
                                             {active && (
@@ -234,12 +234,12 @@ export function MobileBottomNav() {
                                             )}
                                         </AnimatePresence>
                                         <item.icon
-                                            size={18}
+                                            size={16}
                                             className="relative transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="relative text-[11px] font-medium mt-0.5 transition-colors duration-150"
+                                            className="relative text-[10px] font-medium mt-0.5 transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
@@ -284,7 +284,7 @@ export function MobileBottomNav() {
                                 <Link key={item.href} href={item.href} className="flex-1">
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="relative flex flex-col items-center justify-center py-2.5 w-full"
+                                        className="relative flex flex-col items-center justify-center py-2 w-full"
                                     >
                                         <AnimatePresence>
                                             {active && (
@@ -300,12 +300,12 @@ export function MobileBottomNav() {
                                             )}
                                         </AnimatePresence>
                                         <item.icon
-                                            size={18}
+                                            size={16}
                                             className="relative transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="relative text-[11px] font-medium mt-0.5 transition-colors duration-150"
+                                            className="relative text-[10px] font-medium mt-0.5 transition-colors duration-150"
                                             style={{ color: active ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
@@ -322,7 +322,7 @@ export function MobileBottomNav() {
                                 setQuickCreateOpen(false)
                                 setOpen(!open)
                             }}
-                            className="relative flex-1 flex flex-col items-center justify-center py-2.5"
+                            className="relative flex-1 flex flex-col items-center justify-center py-2"
                         >
                             <AnimatePresence>
                                 {open && (
@@ -341,12 +341,12 @@ export function MobileBottomNav() {
                                 className="relative"
                             >
                                 {open
-                                    ? <X size={20} style={{ color: 'var(--nav-active)' }} />
-                                    : <MoreHorizontal size={20} style={{ color: 'var(--nav-inactive)' }} />
+                                    ? <X size={17} style={{ color: 'var(--nav-active)' }} />
+                                    : <MoreHorizontal size={17} style={{ color: 'var(--nav-inactive)' }} />
                                 }
                             </motion.span>
                             <span
-                                className="relative text-[11px] font-semibold mt-1 transition-colors"
+                                className="relative text-[10px] font-semibold mt-0.5 transition-colors"
                                 style={{ color: open ? 'var(--nav-active)' : 'var(--nav-inactive)' }}
                             >
                                 Mais
@@ -591,38 +591,6 @@ export function MobileBottomNav() {
 
                             {/* Divider */}
                             <div className="mx-4 flex-shrink-0" style={{ height: 1, background: 'var(--bo-border)' }} />
-
-                            {/* ── Search ── */}
-                            <div className="px-4 py-2 flex-shrink-0">
-                                <div className="relative">
-                                    <Search
-                                        size={14}
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                                        style={{ color: 'var(--bo-text-muted)' }}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Buscar no menu..."
-                                        value={search}
-                                        onChange={e => setSearch(e.target.value)}
-                                        className="w-full pl-9 pr-8 py-2.5 text-sm rounded-xl outline-none placeholder:opacity-50"
-                                        style={{
-                                            background: 'var(--bo-icon-bg)',
-                                            border: '1px solid var(--bo-border)',
-                                            color: 'var(--bo-text)',
-                                        }}
-                                    />
-                                    {search && (
-                                        <button
-                                            onClick={() => setSearch('')}
-                                            className="absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full"
-                                            style={{ background: 'var(--bo-border)' }}
-                                        >
-                                            <X size={10} style={{ color: 'var(--bo-text-muted)' }} />
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
 
                             {/* ── Menu Groups ── */}
                             <div

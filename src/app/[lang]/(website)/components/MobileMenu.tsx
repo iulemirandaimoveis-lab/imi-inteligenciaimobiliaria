@@ -32,7 +32,7 @@ export default function MobileMenu({
 
     const languages = [
         { code: 'pt', label: 'Português', flag: '🇧🇷' },
-        { code: 'en', label: 'English', flag: '🇺🇸' },
+        { code: 'en', label: 'English', flag: '🇬🇧' },
         { code: 'ja', label: 'JP', flag: '🇯🇵' },
         { code: 'ar', label: 'AR', flag: '🇸🇦' },
         { code: 'es', label: 'ES', flag: '🇪🇸' },

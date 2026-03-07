@@ -141,7 +141,8 @@ export default function MobileHeader() {
                     background: 'var(--header-bg)',
                     backdropFilter: 'blur(20px)',
                     WebkitBackdropFilter: 'blur(20px)',
-                    borderBottom: '1px solid var(--bo-border)',
+                    borderBottom: '1px solid var(--bo-border-strong)',
+                    boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
                 }}
             >
                 <div className="relative flex items-center h-14 px-2">
@@ -159,14 +160,14 @@ export default function MobileHeader() {
                         ) : (
                             <Link
                                 href="/backoffice/hoje"
-                                className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                                className="flex items-center gap-1.5 px-2 h-9 rounded-xl transition-all"
                                 style={{ background: 'var(--bo-elevated)' }}
                             >
                                 <span
-                                    className="text-base font-bold"
+                                    className="text-sm font-bold"
                                     style={{ color: 'var(--nav-active)', fontFamily: "'Playfair Display', Georgia, serif" }}
                                 >
-                                    ◆
+                                    IMI
                                 </span>
                             </Link>
                         )}
@@ -189,8 +190,18 @@ export default function MobileHeader() {
                         </AnimatePresence>
                     </div>
 
-                    {/* Right: Actions — apenas Bell + ThemeToggle, search fica no drawer Mais */}
+                    {/* Right: Search + Theme + Bell */}
                     <div className="ml-auto flex items-center gap-0.5 flex-shrink-0">
+                        {/* Search — opens CommandPalette */}
+                        <motion.button
+                            whileTap={{ scale: 0.88 }}
+                            onClick={triggerSearch}
+                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                            style={{ background: 'transparent' }}
+                        >
+                            <Search size={16} style={{ color: 'var(--bo-text-muted)' }} />
+                        </motion.button>
+
                         {/* Theme Toggle */}
                         <ThemeToggle size="sm" />
 

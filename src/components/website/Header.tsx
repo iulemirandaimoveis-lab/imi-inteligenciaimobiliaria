@@ -35,7 +35,7 @@ const NAV_ITEMS = [...NAV_MAIN, ...NAV_MORE]
 
 const LANGS = [
     { code: 'pt', flag: '🇧🇷', label: 'PT' },
-    { code: 'en', flag: '🇺🇸', label: 'EN' },
+    { code: 'en', flag: '🇬🇧', label: 'EN' },
     { code: 'es', flag: '🇪🇸', label: 'ES' },
     { code: 'ja', flag: '🇯🇵', label: 'JP' },
     { code: 'ar', flag: '🇸🇦', label: 'AR' },

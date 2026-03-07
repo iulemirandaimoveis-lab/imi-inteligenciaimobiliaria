@@ -324,7 +324,8 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
 }
 
 function PlaceholderCover({ title, pilar }: { title: string; pilar: string | null }) {
-    const color = pilar ? PILAR_COLORS[pilar] : { text: '#486581', bg: 'rgba(72,101,129,0.1)' }
+    const colorLookup = pilar ? PILAR_COLORS[pilar] : null
+    const color = colorLookup ?? { text: '#486581', bg: 'rgba(72,101,129,0.1)', border: 'rgba(72,101,129,0.2)' }
     const initials = title
         .split(' ')
         .filter(w => w.length > 3)

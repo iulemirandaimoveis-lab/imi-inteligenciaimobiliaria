@@ -17,7 +17,7 @@ const NAV_COLS = [
             { label: 'Avaliações', href: 'avaliacoes' },
             { label: 'Imóveis', href: 'imoveis' },
             { label: 'Crédito', href: 'credito' },
-            { label: 'Consultoria', href: 'consultoria' },
+            { label: 'Consultoria', href: 'consultorias' },
             { label: 'Inteligência', href: 'inteligencia' },
             { label: 'Projetos', href: 'projetos' },
         ],
@@ -28,7 +28,7 @@ const NAV_COLS = [
             { label: 'Sobre', href: 'sobre' },
             { label: 'Contato', href: 'contato' },
             { label: 'Construtoras', href: 'construtoras' },
-            { label: 'Blog', href: 'conteudo' },
+            { label: 'Biblioteca', href: 'biblioteca' },
         ],
     },
     {
@@ -43,9 +43,9 @@ const NAV_COLS = [
 const LANGS = [
     { code: 'pt', label: 'PT' },
     { code: 'en', label: 'EN' },
+    { code: 'es', label: 'ES' },
     { code: 'ja', label: 'JP' },
     { code: 'ar', label: 'AR' },
-    { code: 'es', label: 'ES' },
 ]
 
 export default function Footer({ lang, settings }: FooterProps) {
@@ -105,7 +105,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium">{settings?.companyPhone || '+55 81 9 9723-0455'}</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium">{settings?.companyPhone || '+55 (81) 9 9723-0455'}</span>
                                 </a>
 
                                 <a
@@ -117,7 +117,7 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#0A66C2] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
                                         <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors text-[12px] sm:text-[13px] font-medium">LinkedIn</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors text-[12px] sm:text-[13px] font-medium">linkedin.com/in/iule-miranda</span>
                                 </a>
                             </div>
                         </div>
