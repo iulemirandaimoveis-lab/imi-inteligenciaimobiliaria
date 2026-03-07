@@ -85,13 +85,13 @@ export default function Footer({ lang, settings }: FooterProps) {
                                 CRECI 17933 | CNAI 53290
                             </p>
 
-                            <div className="space-y-1.5">
+                            <div className="space-y-[6px]">
                                 <a
                                     href={`mailto:${settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}`}
-                                    className="flex items-center gap-2 hover:bg-white/[0.04] transition-all duration-200 p-1.5 rounded-lg group"
+                                    className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-7 h-7 bg-[#1A1E2A] rounded-lg flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] transition-colors border border-white/[0.04]">
-                                        <Mail className="w-3.5 h-3.5" />
+                                    <div className="w-[28px] h-[28px] bg-[#1A1E2A] rounded-md flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] transition-colors border border-white/[0.04]">
+                                        <Mail className="w-[14px] h-[14px]" />
                                     </div>
                                     <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[11px] font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
                                 </a>
@@ -100,10 +100,10 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-2 hover:bg-white/[0.04] transition-all duration-200 p-1.5 rounded-lg group"
+                                    className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-7 h-7 bg-[#1A1E2A] rounded-lg flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] transition-colors border border-white/[0.04]">
-                                        <MessageCircle className="w-3.5 h-3.5" />
+                                    <div className="w-[28px] h-[28px] bg-[#1A1E2A] rounded-md flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] transition-colors border border-white/[0.04]">
+                                        <MessageCircle className="w-[14px] h-[14px]" />
                                     </div>
                                     <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[11px] font-medium">{settings?.companyPhone || '+55 (81) 9 9723-0455'}</span>
                                 </a>
@@ -112,10 +112,10 @@ export default function Footer({ lang, settings }: FooterProps) {
                                     href="https://www.linkedin.com/in/iule-miranda-imoveis"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-2 hover:bg-white/[0.04] transition-all duration-200 p-1.5 rounded-lg group"
+                                    className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-7 h-7 bg-[#1A1E2A] rounded-lg flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors border border-white/[0.04]">
-                                        <Linkedin className="w-3.5 h-3.5" />
+                                    <div className="w-[28px] h-[28px] bg-[#1A1E2A] rounded-md flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors border border-white/[0.04]">
+                                        <Linkedin className="w-[14px] h-[14px]" />
                                     </div>
                                     <span className="text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors text-[11px] font-medium">linkedin.com/in/iule-miranda</span>
                                 </a>
