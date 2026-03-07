@@ -103,7 +103,10 @@ export async function DELETE(request: NextRequest) {
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
 
-        const { error } = await supabase.from('market_reports').delete().eq('id', id)
+        const { error } = await supabase
+            .from('market_reports')
+            .update({ is_published: false, updated_at: new Date().toISOString() })
+            .eq('id', id)
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json({ success: true })
     } catch (err: any) {
