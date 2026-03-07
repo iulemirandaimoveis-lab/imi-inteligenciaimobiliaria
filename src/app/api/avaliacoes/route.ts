@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { avaliacaoSchema, avaliacaoUpdateSchema } from '@/lib/schemas'
 
 export async function GET(request: NextRequest) {
     const supabase = await createClient()
@@ -99,6 +100,15 @@ export async function POST(request: NextRequest) {
         if (payload[key] === undefined) delete payload[key]
     })
 
+    // Validate normalized payload
+    const parsed = avaliacaoSchema.partial().safeParse(payload)
+    if (!parsed.success) {
+        return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+    }
+    if (!payload.endereco) {
+        return NextResponse.json({ error: 'Endereço é obrigatório' }, { status: 400 })
+    }
+
     const { data, error } = await supabase
         .from('avaliacoes')
         .insert(payload)
@@ -118,6 +128,11 @@ export async function PUT(request: NextRequest) {
     const { id, ...updates } = body
 
     if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+
+    const parsed = avaliacaoUpdateSchema.partial().safeParse({ id, ...updates })
+    if (!parsed.success) {
+        return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.flatten() }, { status: 400 })
+    }
 
     updates.updated_at = new Date().toISOString()
 
