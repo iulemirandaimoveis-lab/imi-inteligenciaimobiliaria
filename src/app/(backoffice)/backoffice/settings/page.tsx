@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTheme } from 'next-themes'
 import {
   User,
@@ -11,6 +11,8 @@ import {
   Save,
   Loader2,
   CheckCircle,
+  Upload,
+  Building2,
 } from 'lucide-react'
 
 const T = {
@@ -28,6 +30,7 @@ interface SettingsData {
   companyEmail: string
   companyPhone: string
   companyAddress: string
+  logoUrl: string
   emailNotifications: boolean
   pushNotifications: boolean
   weeklyReport: boolean
@@ -49,11 +52,15 @@ export default function SettingsPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [saveError, setSaveError] = useState('')
 
+  const logoInputRef = useRef<HTMLInputElement>(null)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
+
   const [settings, setSettings] = useState<SettingsData>({
     companyName: 'Iule Miranda Imóveis',
     companyEmail: 'iulemirandaimoveis@gmail.com',
     companyPhone: '+55 81 9 9723-0455',
     companyAddress: 'Av. Boa Viagem, Recife - PE',
+    logoUrl: '',
     emailNotifications: true,
     pushNotifications: true,
     weeklyReport: true,
@@ -72,6 +79,27 @@ export default function SettingsPage() {
     setSaveError('')
   }
 
+  const handleLogoUpload = async (file: File) => {
+    if (!file || !file.type.startsWith('image/')) return
+    setUploadingLogo(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      if (!res.ok) throw new Error('Falha no upload')
+      const data = await res.json()
+      const url = data.url || data.publicUrl || data.path
+      if (url) {
+        handleChange('logoUrl', url)
+        try { localStorage.setItem('imi-company-logo', url) } catch {}
+      }
+    } catch (e: any) {
+      setSaveError('Erro ao fazer upload da logo: ' + (e.message || ''))
+    } finally {
+      setUploadingLogo(false)
+    }
+  }
+
   useEffect(() => {
     setMounted(true)
     const fetchSettings = async () => {
@@ -81,9 +109,13 @@ export default function SettingsPage() {
           const data = await res.json()
           if (data.settings && Object.keys(data.settings).length > 0) {
             setSettings(prev => ({ ...prev, ...data.settings }))
-            // Sync saved theme with next-themes
+            // Sync theme only once on load (do NOT use setTheme on every render)
             if (data.settings.theme && ['light', 'dark', 'system'].includes(data.settings.theme)) {
               setTheme(data.settings.theme)
+            }
+            // Cache logo in localStorage for the mobile header
+            if (data.settings.logoUrl) {
+              try { localStorage.setItem('imi-company-logo', data.settings.logoUrl) } catch {}
             }
           }
         }
@@ -207,7 +239,65 @@ export default function SettingsPage() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Informações da Empresa</h3>
-              <p className="text-sm" style={{ color: T.textMuted }}>Dados básicos da sua imobiliária</p>
+              <p className="text-sm" style={{ color: T.textMuted }}>Dados básicos da sua imobiliária · preparado para white-label</p>
+            </div>
+
+            {/* Logo Upload */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: T.textMuted }}>
+                Logo da Empresa
+              </label>
+              <div className="flex items-center gap-4">
+                {/* Preview */}
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                >
+                  {settings.logoUrl ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
+                  ) : (
+                    <Building2 size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
+                  )}
+                </div>
+                {/* Upload button */}
+                <div className="flex-1">
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={e => { if (e.target.files?.[0]) handleLogoUpload(e.target.files[0]) }}
+                  />
+                  <button
+                    onClick={() => logoInputRef.current?.click()}
+                    disabled={uploadingLogo}
+                    className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-all disabled:opacity-50"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                  >
+                    {uploadingLogo ? (
+                      <><Loader2 size={15} className="animate-spin" /> Enviando...</>
+                    ) : (
+                      <><Upload size={15} /> {settings.logoUrl ? 'Trocar Logo' : 'Fazer Upload'}</>
+                    )}
+                  </button>
+                  <p className="text-xs mt-1.5" style={{ color: T.textMuted }}>
+                    PNG, SVG ou JPG. Aparece no header mobile e futuramente em documentos.
+                  </p>
+                  {settings.logoUrl && (
+                    <button
+                      onClick={() => {
+                        handleChange('logoUrl', '')
+                        try { localStorage.removeItem('imi-company-logo') } catch {}
+                      }}
+                      className="text-xs mt-1"
+                      style={{ color: '#E57373' }}
+                    >
+                      Remover logo
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -286,10 +376,13 @@ export default function SettingsPage() {
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
                   Tema
                 </label>
+                {/* FIX: use settings.theme (not `theme` from next-themes) so ThemeToggle
+                    in the header doesn't hijack this dropdown. setTheme() only on explicit
+                    user selection here. It's applied permanently on "Salvar". */}
                 <select
-                  value={theme}
+                  value={settings.theme}
                   onChange={(e) => {
-                    handleChange('theme', e.target.value)
+                    handleChange('theme', e.target.value as SettingsData['theme'])
                     setTheme(e.target.value)
                   }}
                   className="w-full h-11 px-4 rounded-xl text-sm outline-none"

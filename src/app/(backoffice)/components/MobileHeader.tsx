@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Bell, X, ChevronRight, ChevronLeft } from 'lucide-react'
+import { Bell, X, ChevronRight, ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import ThemeToggle from './ThemeToggle'
 
@@ -116,9 +116,14 @@ export default function MobileHeader() {
     // Close on route change
     useEffect(() => { setNotifOpen(false) }, [pathname])
 
-    const triggerSearch = () => {
-        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))
-    }
+    // Load company logo from localStorage (set when settings are saved)
+    const [companyLogo, setCompanyLogo] = useState<string | null>(null)
+    useEffect(() => {
+        try {
+            const logo = localStorage.getItem('imi-company-logo')
+            if (logo) setCompanyLogo(logo)
+        } catch {}
+    }, [])
 
     const markAllRead = async () => {
         try {
@@ -146,7 +151,7 @@ export default function MobileHeader() {
                 }}
             >
                 <div className="relative flex items-center h-14 px-2">
-                    {/* Left: back button or app icon */}
+                    {/* Left: back button or brand logo */}
                     <div className="w-12 flex items-center justify-center flex-shrink-0">
                         {isSubPage ? (
                             <motion.button
@@ -160,15 +165,24 @@ export default function MobileHeader() {
                         ) : (
                             <Link
                                 href="/backoffice/hoje"
-                                className="flex items-center gap-1.5 px-2 h-9 rounded-xl transition-all"
-                                style={{ background: 'var(--bo-elevated)' }}
+                                className="flex items-center justify-center w-9 h-9 rounded-xl overflow-hidden transition-all"
+                                style={{ background: companyLogo ? 'transparent' : 'var(--bo-elevated)' }}
                             >
-                                <span
-                                    className="text-sm font-bold"
-                                    style={{ color: 'var(--nav-active)', fontFamily: "'Playfair Display', Georgia, serif" }}
-                                >
-                                    IMI
-                                </span>
+                                {companyLogo ? (
+                                    /* eslint-disable-next-line @next/next/no-img-element */
+                                    <img
+                                        src={companyLogo}
+                                        alt="Logo"
+                                        className="w-full h-full object-contain"
+                                    />
+                                ) : (
+                                    <span
+                                        className="text-sm font-bold"
+                                        style={{ color: 'var(--nav-active)', fontFamily: "'Playfair Display', Georgia, serif" }}
+                                    >
+                                        IMI
+                                    </span>
+                                )}
                             </Link>
                         )}
                     </div>
@@ -190,18 +204,8 @@ export default function MobileHeader() {
                         </AnimatePresence>
                     </div>
 
-                    {/* Right: Search + Theme + Bell */}
+                    {/* Right: Theme + Bell */}
                     <div className="ml-auto flex items-center gap-0.5 flex-shrink-0">
-                        {/* Search — opens CommandPalette */}
-                        <motion.button
-                            whileTap={{ scale: 0.88 }}
-                            onClick={triggerSearch}
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
-                            style={{ background: 'transparent' }}
-                        >
-                            <Search size={16} style={{ color: 'var(--bo-text-muted)' }} />
-                        </motion.button>
-
                         {/* Theme Toggle */}
                         <ThemeToggle size="sm" />
 
