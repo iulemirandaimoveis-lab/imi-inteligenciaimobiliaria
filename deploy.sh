@@ -10,7 +10,7 @@ DOMAINS=("www.iulemirandaimoveis.com.br" "iulemirandaimoveis.com.br")
 echo "🚀 Iniciando deploy de produção..."
 
 # Deploy e captura a URL do novo deployment
-DEPLOY_URL=$(npx vercel deploy --prod --scope "$TEAM" --yes 2>&1 | grep "Production:" | awk '{print $2}')
+DEPLOY_URL=$(npx vercel deploy --prod --scope "$TEAM" --yes 2>&1 | grep -o 'https://youthful-fermi-[a-z0-9]*-iulemirandaimoveis-labs-projects\.vercel\.app' | tail -1)
 
 if [ -z "$DEPLOY_URL" ]; then
   echo "❌ Erro: não foi possível obter a URL do deployment"
