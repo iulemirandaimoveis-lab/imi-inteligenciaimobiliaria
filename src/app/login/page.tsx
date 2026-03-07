@@ -202,13 +202,13 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full h-[56px] rounded-2xl font-bold text-[15px] transition-all disabled:opacity-40 flex items-center justify-center gap-3 mt-2"
-                            style={{ background: 'linear-gradient(135deg, #334E68 0%, #102A43 100%)', color: '#fff', letterSpacing: '0.03em' }}
-                            onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLButtonElement).style.opacity = '0.9' }}
-                            onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.opacity = '1'}
+                            className="w-full h-[56px] rounded-2xl font-black text-[15px] transition-all disabled:opacity-40 flex items-center justify-center gap-3 mt-2"
+                            style={{ background: '#FFFFFF', color: '#102A43', letterSpacing: '0.04em' }}
+                            onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLButtonElement).style.background = '#F0F4F8' }}
+                            onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background = '#FFFFFF'}
                         >
                             {loading ? (
-                                <Loader2 className="animate-spin" size={20} />
+                                <Loader2 className="animate-spin" size={20} style={{ color: '#102A43' }} />
                             ) : (
                                 'Acessar Backoffice'
                             )}

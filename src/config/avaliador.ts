@@ -12,7 +12,7 @@ export const AVALIADOR = {
   endereco: 'Recife, Pernambuco — Brasil',
   cep: '50000-000',
   telefone: '(81) 9 9723-0455',
-  email: 'contato@iulemirandaimoveis.com.br',
+  email: 'iulemirandaimoveis@gmail.com',
   logo: '/logo-imi.png',
   site: 'www.iulemirandaimoveis.com.br',
 

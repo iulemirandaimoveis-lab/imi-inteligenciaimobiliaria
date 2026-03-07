@@ -50,9 +50,9 @@ export default function Drawer({ open, setOpen }: Props) {
                     } shadow-2xl flex flex-col`}
             >
                 {/* Header */}
-                <div className="px-6 py-5 flex items-center justify-between border-b border-neutral-100">
+                <div className="px-5 py-4 flex items-center justify-between border-b border-neutral-100">
                     <div className="flex items-center gap-3">
-                        <span className="text-2xl font-serif font-black tracking-tight text-black">
+                        <span className="text-xl font-serif font-black tracking-tight text-black">
                             IMI
                         </span>
                         <div className="h-5 w-px bg-neutral-200" />
@@ -62,15 +62,15 @@ export default function Drawer({ open, setOpen }: Props) {
                     </div>
                     <button
                         onClick={() => setOpen(false)}
-                        className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-neutral-100 transition-colors"
+                        className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-neutral-100 transition-colors"
                     >
-                        <X size={22} strokeWidth={1.5} className="text-neutral-500" />
+                        <X size={20} strokeWidth={1.5} className="text-neutral-500" />
                     </button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 overflow-y-auto px-4 py-4">
-                    <ul className="space-y-1">
+                <nav className="flex-1 overflow-y-auto px-3.5 py-3">
+                    <ul className="space-y-0.5">
                         {NAV_ITEMS.map(item => {
                             // Adjust href for current language
                             const href = item.href.replace('/pt/', `/${currentLang}/`)
@@ -82,8 +82,8 @@ export default function Drawer({ open, setOpen }: Props) {
                                     <Link
                                         href={href}
                                         onClick={() => setOpen(false)}
-                                        className={`block py-3 px-4 rounded-xl text-[16px] font-bold transition-all ${isActive
-                                                ? 'bg-neutral-100 text-black border-l-[3px] border-[#334E68] pl-[13px]'
+                                        className={`block py-2.5 px-3.5 rounded-xl text-[14px] font-semibold transition-all ${isActive
+                                                ? 'bg-neutral-100 text-black border-l-[3px] border-[#334E68] pl-[11px]'
                                                 : 'text-neutral-600 hover:bg-neutral-50 hover:text-black'
                                             }`}
                                     >
@@ -99,7 +99,7 @@ export default function Drawer({ open, setOpen }: Props) {
                         href="https://wa.me/5581997230455"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block w-full mt-6 bg-[#1e1e2f] text-white py-4 rounded-xl font-bold text-center shadow-lg hover:bg-black transition-all active:scale-[0.98]"
+                        className="block w-full mt-5 bg-[#1e1e2f] text-white py-3 rounded-xl font-bold text-sm text-center shadow-lg hover:bg-black transition-all active:scale-[0.98]"
                     >
                         Falar pelo WhatsApp
                     </a>

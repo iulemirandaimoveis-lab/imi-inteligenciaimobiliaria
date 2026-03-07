@@ -62,7 +62,7 @@ export default function ContactPage() {
         {
             icon: MapPin,
             title: 'Endereço',
-            content: 'João Pessoa, Paraíba - Brasil',
+            content: 'Recife, Pernambuco - Brasil',
             link: null
         },
         {
@@ -74,8 +74,8 @@ export default function ContactPage() {
         {
             icon: Mail,
             title: 'Email',
-            content: 'contato@iulemirandaimoveis.com.br',
-            link: 'mailto:contato@iulemirandaimoveis.com.br'
+            content: 'iulemirandaimoveis@gmail.com',
+            link: 'mailto:iulemirandaimoveis@gmail.com'
         }
     ]
 

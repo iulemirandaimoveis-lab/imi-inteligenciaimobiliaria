@@ -44,17 +44,59 @@ const TOP_AGENTS = [
 export default function RelatoriosExecutivoPage() {
   const [period, setPeriod] = useState<Period>('monthly')
   const [loading, setLoading] = useState(true)
-  const [pipeline, setPipeline] = useState('12.4')
-  const [conversion, setConversion] = useState('4.82')
-  const [totalLeads, setTotalLeads] = useState(355)
+  const [pipeline, setPipeline] = useState('—')
+  const [conversion, setConversion] = useState('—')
+  const [totalLeads, setTotalLeads] = useState(0)
+  const [wonLeads, setWonLeads] = useState(0)
+  const [totalProperties, setTotalProperties] = useState(0)
+  const [monthRevenue, setMonthRevenue] = useState(0)
 
   useEffect(() => {
     const load = async () => {
       setLoading(true)
       try {
         const supabase = createClient()
-        const { count } = await supabase.from('leads').select('*', { count: 'exact', head: true })
-        if (count) setTotalLeads(count)
+        const now = new Date()
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+
+        const [
+          { count: leadsCount },
+          { count: wonCount },
+          { count: propsCount },
+          { data: revenues },
+        ] = await Promise.all([
+          supabase.from('leads').select('*', { count: 'exact', head: true }),
+          supabase.from('leads').select('*', { count: 'exact', head: true }).in('status', ['won', 'ganho']),
+          supabase.from('developments').select('*', { count: 'exact', head: true }).neq('status_commercial', 'archived'),
+          supabase.from('financial_transactions').select('amount').eq('type', 'receita').gte('date', monthStart),
+        ])
+
+        const total = leadsCount || 0
+        const won = wonCount || 0
+        setTotalLeads(total)
+        setWonLeads(won)
+        setTotalProperties(propsCount || 0)
+
+        if (revenues) {
+          const rev = revenues.reduce((s: number, r: any) => s + (Number(r.amount) || 0), 0)
+          setMonthRevenue(rev)
+        }
+
+        if (total > 0) {
+          const conv = ((won / total) * 100).toFixed(1)
+          setConversion(conv)
+        }
+
+        // Pipeline estimate: budget from active hot leads
+        const { data: hotLeads } = await supabase
+          .from('leads')
+          .select('capital, budget')
+          .in('status', ['hot', 'warm', 'negociacao', 'proposta', 'qualified', 'qualificado'])
+        if (hotLeads && hotLeads.length > 0) {
+          const pipeVal = hotLeads.reduce((s: number, l: any) => s + (l.capital || l.budget || 0), 0)
+          if (pipeVal >= 1_000_000) setPipeline((pipeVal / 1_000_000).toFixed(1))
+          else if (pipeVal > 0) setPipeline((pipeVal / 1_000).toFixed(0) + 'k')
+        }
       } catch { /* use defaults */ }
       setLoading(false)
     }
@@ -118,7 +160,7 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── KPI Cards ────────────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
           {/* Pipeline */}
           <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
@@ -130,12 +172,9 @@ export default function RelatoriosExecutivoPage() {
               </span>
             </div>
             <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '6px' }}>
-              {loading ? '—' : `R$ ${pipeline}M`}
+              {loading ? '—' : pipeline === '—' ? '—' : `R$ ${pipeline}${pipeline.includes('k') ? '' : 'M'}`}
             </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <TrendingUp size={12} color="#4ADE80" />
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#4ADE80' }}>+12.4% vs mês ant.</span>
-            </div>
+            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>Leads quentes em negociação</p>
           </div>
 
           {/* Conversion */}
@@ -149,12 +188,43 @@ export default function RelatoriosExecutivoPage() {
               </span>
             </div>
             <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '6px' }}>
-              {loading ? '—' : `${conversion}%`}
+              {loading ? '—' : conversion === '—' ? '—' : `${conversion}%`}
             </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <TrendingDown size={12} color="#F87171" />
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#F87171' }}>-0.5% vs mês ant.</span>
+            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{wonLeads} fechamentos de {totalLeads} leads</p>
+          </div>
+
+          {/* Total Leads */}
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Users size={14} color="#4ADE80" />
+              </div>
+              <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Total Leads
+              </span>
             </div>
+            <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '6px' }}>
+              {loading ? '—' : totalLeads.toLocaleString('pt-BR')}
+            </p>
+            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>Base total da plataforma</p>
+          </div>
+
+          {/* Receita do Mês */}
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <TrendingUp size={14} color="#FBBF24" />
+              </div>
+              <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                Receita / Mês
+              </span>
+            </div>
+            <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '6px' }}>
+              {loading ? '—' : monthRevenue > 0
+                ? `R$ ${monthRevenue >= 1000 ? (monthRevenue / 1000).toFixed(0) + 'k' : monthRevenue.toLocaleString('pt-BR')}`
+                : '—'}
+            </p>
+            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{totalProperties} imóveis no portfólio</p>
           </div>
         </div>
       </motion.div>
