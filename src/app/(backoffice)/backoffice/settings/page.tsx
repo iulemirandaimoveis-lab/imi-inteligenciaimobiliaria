@@ -50,10 +50,10 @@ export default function SettingsPage() {
   const [saveError, setSaveError] = useState('')
 
   const [settings, setSettings] = useState<SettingsData>({
-    companyName: 'Iu Lê Miranda Imóveis',
-    companyEmail: 'contato@iulemirandaimoveis.com.br',
-    companyPhone: '(81) 99999-9999',
-    companyAddress: 'Av. Boa Viagem, 3500 - Boa Viagem, Recife - PE',
+    companyName: 'Iule Miranda Imóveis',
+    companyEmail: 'iulemirandaimoveis@gmail.com',
+    companyPhone: '+55 81 9 9723-0455',
+    companyAddress: 'Av. Boa Viagem, Recife - PE',
     emailNotifications: true,
     pushNotifications: true,
     weeklyReport: true,

@@ -189,19 +189,10 @@ export default function MobileHeader() {
                         </AnimatePresence>
                     </div>
 
-                    {/* Right: Actions */}
+                    {/* Right: Actions — apenas Bell + ThemeToggle, search fica no drawer Mais */}
                     <div className="ml-auto flex items-center gap-0.5 flex-shrink-0">
                         {/* Theme Toggle */}
                         <ThemeToggle size="sm" />
-
-                        {/* Search */}
-                        <button
-                            onClick={triggerSearch}
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
-                            style={{ background: 'transparent' }}
-                        >
-                            <Search size={18} style={{ color: 'var(--bo-text-muted)' }} />
-                        </button>
 
                         {/* Notifications */}
                         <button

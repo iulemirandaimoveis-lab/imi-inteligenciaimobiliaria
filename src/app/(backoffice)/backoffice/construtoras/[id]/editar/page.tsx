@@ -136,7 +136,7 @@ export default function EditarConstrutoraPage() {
       // Upload new logo if selected
       if (logoFile) {
         const { uploadFile } = await import('@/lib/supabase-storage')
-        const result = await uploadFile(logoFile, 'developers', `${params.id}`)
+        const result = await uploadFile(logoFile, 'media', `developers/${params.id}`)
         if (result.error) {
           toast.error(`Erro no upload do logo: ${result.error}`)
         } else {

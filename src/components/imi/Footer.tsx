@@ -17,6 +17,7 @@ const NAV_COLS = [
         links: [
             { label: 'Sobre', href: '/pt/sobre' },
             { label: 'Construtoras', href: '/pt/construtoras' },
+            { label: 'Biblioteca', href: '/pt/biblioteca' },
             { label: 'Contato', href: '/pt/contato' },
         ],
     },
@@ -42,14 +43,14 @@ export default function Footer() {
                     <div className="md:col-span-5">
                         <div className="flex items-center gap-3 mb-5">
                             <span
-                                className="text-2xl font-bold tracking-tight text-white"
+                                className="text-2xl font-black tracking-tight text-white"
                                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
                             >
                                 IMI
                             </span>
-                            <div className="h-5 w-px bg-white/15" />
-                            <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400 font-semibold leading-tight">
-                                Inteligência<br />Imobiliária
+                            <div className="h-6 w-px bg-white/15" />
+                            <span className="text-[11px] uppercase tracking-[2px] text-slate-400 font-bold">
+                                Inteligência Imobiliária
                             </span>
                         </div>
 
@@ -76,7 +77,8 @@ export default function Footer() {
                                 href="https://www.linkedin.com/in/iule-miranda"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 mt-3 text-[#0077b5] hover:text-[#00a0dc] transition-colors text-sm font-medium"
+                                className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98]"
+                                style={{ background: '#0A66C2' }}
                             >
                                 <Linkedin className="w-4 h-4" />
                                 LinkedIn

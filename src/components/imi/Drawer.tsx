@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { X } from 'lucide-react'
+import { X, Linkedin } from 'lucide-react'
 
 interface Props {
     open: boolean
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
     { label: 'Consultoria', href: '/pt/consultoria' },
     { label: 'Inteligência', href: '/pt/inteligencia' },
     { label: 'Conteúdo', href: '/pt/conteudo' },
+    { label: 'Biblioteca', href: '/pt/biblioteca' },
     { label: 'Sobre', href: '/pt/sobre' },
     { label: 'Contato', href: '/pt/contato' },
 ]
@@ -126,13 +127,39 @@ export default function Drawer({ open, setOpen }: Props) {
                 </nav>
 
                 {/* Footer card */}
-                <div className="p-4 bg-neutral-50 border-t border-neutral-100">
-                    <div className="bg-white rounded-2xl p-5 text-center shadow-sm border border-neutral-100">
-                        <p className="font-black text-base text-neutral-900">Iule Miranda</p>
-                        <div className="h-0.5 w-8 bg-[#102A43] mx-auto my-2 rounded-full" />
-                        <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">
+                <div className="px-3 py-3 bg-neutral-50 border-t border-neutral-100">
+                    <div className="bg-white rounded-xl px-4 py-3 text-center shadow-sm border border-neutral-100">
+                        <p className="font-black text-sm text-neutral-900">Iule Miranda</p>
+                        <div className="h-0.5 w-6 bg-[#102A43] mx-auto my-1.5 rounded-full" />
+                        <p className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider mb-2">
                             CRECI 17933 | CNAI 53290
                         </p>
+                        <div className="space-y-1 text-[11px] text-neutral-500">
+                            <a
+                                href="https://wa.me/5581997230455"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block hover:text-neutral-800 transition-colors"
+                            >
+                                +55 81 9 9723-0455
+                            </a>
+                            <a
+                                href="mailto:iulemirandaimoveis@gmail.com"
+                                className="block hover:text-neutral-800 transition-colors"
+                            >
+                                iulemirandaimoveis@gmail.com
+                            </a>
+                        </div>
+                        <a
+                            href="https://www.linkedin.com/in/iule-miranda"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 mt-2.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold text-white transition-all"
+                            style={{ background: '#0A66C2' }}
+                        >
+                            <Linkedin className="w-3 h-3" />
+                            LinkedIn
+                        </a>
                     </div>
                 </div>
             </div>

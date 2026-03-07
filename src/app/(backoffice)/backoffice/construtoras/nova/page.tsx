@@ -86,7 +86,7 @@ export default function NovaConstrutora() {
       let logoUrl: string | null = null
       if (logoFile) {
         const { uploadFile } = await import('@/lib/supabase-storage')
-        const result = await uploadFile(logoFile, 'developers', `new-${Date.now()}`)
+        const result = await uploadFile(logoFile, 'media', `developers/new-${Date.now()}`)
         if (result.error) toast.error(`Erro no upload do logo: ${result.error}`)
         else logoUrl = result.url
       }
