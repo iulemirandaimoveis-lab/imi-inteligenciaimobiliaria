@@ -48,10 +48,15 @@ export default function NovaConsultoriaPage() {
   const handleSubmit = async () => {
     setLoading(true)
     try {
+      // Convert numeric string fields to proper types before sending
+      const payload = {
+        ...form,
+        honorarios: form.honorarios ? Number(form.honorarios) : null,
+      }
       const response = await fetch('/api/consultorias', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Erro ao salvar')

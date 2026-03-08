@@ -235,10 +235,25 @@ export default function NovaCampanhaPage() {
     setIsSubmitting(true)
 
     try {
+      // Map camelCase form state → snake_case API payload
+      const payload = {
+        name: formData.name,
+        channel: formData.channel,
+        objective: formData.objective || null,
+        status: 'draft',
+        budget: formData.budget ? Number(formData.budget) : null,
+        daily_budget: formData.dailyBudget ? Number(formData.dailyBudget) : null,
+        start_date: formData.startDate || null,
+        end_date: formData.endDate || null,
+        utm_source: formData.utmSource || null,
+        utm_medium: formData.utmMedium || null,
+        utm_campaign: formData.utmCampaign || null,
+      }
+
       const response = await fetch('/api/campanhas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
