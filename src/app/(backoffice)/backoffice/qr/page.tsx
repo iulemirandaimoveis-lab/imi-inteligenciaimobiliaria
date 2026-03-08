@@ -95,7 +95,7 @@ export default function QRPage() {
 
     const createTrackedLink = () => {
         if (!url.trim()) { toast.error('Insira uma URL'); return }
-        const id = Math.random().toString(36).slice(2, 8).toUpperCase()
+        const id = crypto.randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase()
         const target = url.startsWith('http') ? url : `https://${url}`
         const newLink: TrackedLink = {
             id,

@@ -3,15 +3,13 @@
 import { useState, useEffect } from 'react'
 import {
     Sparkles, Building2, Instagram, Linkedin, Mail,
-    ChevronDown, Copy, Check, Calendar, Clock,
-    Loader2, RefreshCw, Wand2, Bot, ImageIcon,
+    ChevronDown, Copy, Check, Calendar,
+    Loader2, Wand2, Bot, ImageIcon,
     Hash, MessageSquare
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
-
-const supabase = createClient()
 
 const T = {
     surface: 'var(--bo-surface)',
@@ -44,26 +42,14 @@ const OUTPUT_TABS = [
     { key: 'prompt', label: 'Image Prompt IA' },
 ]
 
-const UPCOMING: { day: string; num: number }[] = [
-    { day: 'HOJE', num: 14 },
-    { day: 'TER', num: 15 },
-    { day: 'QUA', num: 16 },
-    { day: 'QUI', num: 17 },
-    { day: 'SEX', num: 18 },
-]
-
-// Mock output per tema
-const MOCK_OUTPUTS: Record<string, { legenda: string; reels: string; prompt: string }> = {
-    'lancamento-luxo': {
-        legenda: `A exclusividade encontra o horizonte na Vila Nova Conceição. 🏠✨\n\nEsta cobertura linear não é apenas um endereço, é um manifesto de sucesso e inteligência mobiliária. Com acabamentos em mármore italiano e automação completa, cada detalhe foi curado para quem não aceita o comum.\n\n#IMI #ImóveisDeLuxo #InvestimentoInteligente #VilaNovaConceiçao\n\n💬 Chamada para Ação (CTA):\n"Clique no link da bio para o tour privativo exclusivo."`,
-        reels: `[0:00] Drone shot da fachada ao amanhecer\n[0:03] Corte para sala com pé-direito duplo\n[0:06] Close no mármore italiano da cozinha\n[0:09] Varanda com vista 180°\n[0:12] Narrador: "Imagine acordar com esta vista todos os dias..."\n[0:16] CTA: "Link na bio para tour exclusivo"\n[0:20] Fim com logo IMI`,
-        prompt: `"Cinematic interior photography of a minimalist luxury penthouse, warm golden hour lighting, floor-to-ceiling windows showing São Paulo skyline, 8k resolution, Architectural Digest style."`,
-    },
-    'default': {
-        legenda: `Descubra o imóvel dos seus sonhos com inteligência imobiliária. 🏡\n\nNo mercado de Recife, cada metro quadrado conta uma história. Conheça os empreendimentos selecionados pela IMI.\n\n#Recife #ImoveisRecife #IMI #InvestimentoImobiliario\n\n💬 CTA: "Fale com a IMI agora mesmo pelo link na bio."`,
-        reels: `[0:00] Establishing shot do bairro\n[0:04] Tour pelo imóvel\n[0:10] Entrevista com cliente satisfeito\n[0:18] CTA com link na bio\n[0:20] Logo IMI`,
-        prompt: `"Professional real estate photography, warm natural lighting, modern architecture, Recife coastline in background, magazine quality, wide angle lens."`,
-    },
+function getUpcomingDays() {
+    const days = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
+    const today = new Date()
+    return Array.from({ length: 5 }, (_, i) => {
+        const d = new Date(today)
+        d.setDate(today.getDate() + i)
+        return { day: i === 0 ? 'HOJE' : days[d.getDay()], num: d.getDate() }
+    })
 }
 
 export default function CriadorIAPage() {
@@ -77,9 +63,11 @@ export default function CriadorIAPage() {
     const [generating, setGenerating] = useState(false)
     const [output, setOutput] = useState<{ legenda: string; reels: string; prompt: string } | null>(null)
     const [copied, setCopied] = useState<string | null>(null)
+    const UPCOMING = getUpcomingDays()
 
     useEffect(() => {
-        supabase.from('developments').select('id, name, slug, price_min').order('name').then(({ data }) => {
+        const supabase = createClient()
+        supabase.from('developments').select('id, name, slug, price_min, neighborhood').order('name').then(({ data }) => {
             setDevelopments(data || [])
             if (data && data.length > 0) setSelectedDev(data[0])
         })
@@ -88,13 +76,33 @@ export default function CriadorIAPage() {
     const handleGenerate = async () => {
         if (!selectedDev) { toast.error('Selecione um imóvel'); return }
         setGenerating(true)
-        // Simulate AI generation (replace with real AI call)
-        await new Promise(r => setTimeout(r, 2200))
-        const key = tema.value in MOCK_OUTPUTS ? tema.value : 'default'
-        setOutput(MOCK_OUTPUTS[key])
-        setOutputTab('legenda')
-        setGenerating(false)
-        toast.success('Conteúdo gerado com IA IMI!')
+        try {
+            const res = await fetch('/api/claude/generate-social-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tema: tema.label,
+                    canal: activeCanal.value,
+                    development: {
+                        name: selectedDev.name,
+                        price_min: selectedDev.price_min,
+                        neighborhood: selectedDev.neighborhood,
+                    },
+                }),
+            })
+            if (!res.ok) {
+                const err = await res.json()
+                throw new Error(err.error || 'Erro ao gerar')
+            }
+            const data = await res.json()
+            setOutput({ legenda: data.legenda, reels: data.reels, prompt: data.prompt })
+            setOutputTab('legenda')
+            toast.success('Conteúdo gerado com IA IMI!')
+        } catch (e: any) {
+            toast.error('Erro ao gerar: ' + e.message)
+        } finally {
+            setGenerating(false)
+        }
     }
 
     const copyText = (text: string, key: string) => {

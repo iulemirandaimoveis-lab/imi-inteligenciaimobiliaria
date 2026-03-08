@@ -56,7 +56,7 @@ export default function AvaliacaoIAPage() {
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || [])
         const newFiles: UploadedFile[] = files.map(file => ({
-            id: Math.random().toString(36).substr(2, 9),
+            id: crypto.randomUUID().slice(0, 9),
             name: file.name,
             type: file.type.startsWith('image/') ? 'image' : 'document',
             size: file.size,
