@@ -1,35 +1,9 @@
-// ============================================
-// BLOCO 4 — SCRIPT 8: TRILHA DE AUDITORIA (LOGS)
-// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
-// ============================================
-
-/**
- * SALVAR EM: src/app/(backoffice)/backoffice/relatorios/audit/page.tsx
- */
-
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
-  Shield,
-  Search,
-  Filter,
-  User,
-  Home,
-  FileText,
-  Settings,
-  Trash2,
-  Plus,
-  Edit,
-  Eye,
-  LogIn,
-  LogOut,
-  Download,
-  ChevronDown,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Lock,
+  Shield, Search, User, Settings, Trash2, Plus, Edit, Eye,
+  LogIn, LogOut, Download, AlertTriangle, CheckCircle, Clock, Lock,
 } from 'lucide-react'
 
 const T = {
@@ -42,161 +16,157 @@ const T = {
   accent: 'var(--bo-accent)',
 }
 
-// ⚠️ NÃO MODIFICAR - Registros de auditoria mockados contextualizados
-const AUDIT_LOGS = [
-  {
-    id: 1,
-    usuario: 'Iule Miranda',
-    email: 'iule@imiatlantica.com.br',
-    acao: 'login',
-    modulo: 'auth',
-    descricao: 'Login realizado com sucesso',
-    ip: '187.103.45.21',
-    dispositivo: 'Chrome 121 · macOS',
-    severidade: 'info',
-    timestamp: '2026-02-19T14:32:10',
-  },
-  {
-    id: 2,
-    usuario: 'Iule Miranda',
-    email: 'iule@imiatlantica.com.br',
-    acao: 'create',
-    modulo: 'imoveis',
-    descricao: 'Novo imóvel criado: Ocean Blue Cobertura 1201 — R$ 2,8M',
-    ip: '187.103.45.21',
-    dispositivo: 'Chrome 121 · macOS',
-    severidade: 'success',
-    timestamp: '2026-02-19T14:45:22',
-    entidade_id: 'imo_8821',
-  },
-  {
-    id: 3,
-    usuario: 'Ana Paula Ferreira',
-    email: 'anapaula@imiatlantica.com.br',
-    acao: 'update',
-    modulo: 'leads',
-    descricao: 'Lead Maria Santos Silva atualizado: status alterado para "Proposta enviada"',
-    ip: '189.77.34.198',
-    dispositivo: 'Safari · iPhone 15',
-    severidade: 'info',
-    timestamp: '2026-02-19T13:15:05',
-    entidade_id: 'lead_0042',
-  },
-  {
-    id: 4,
-    usuario: 'Carlos Eduardo Silva',
-    email: 'carlos@imiatlantica.com.br',
-    acao: 'export',
-    modulo: 'relatorios',
-    descricao: 'Relatório financeiro Q4/2025 exportado em PDF',
-    ip: '192.168.1.45',
-    dispositivo: 'Chrome 121 · Windows',
-    severidade: 'warning',
-    timestamp: '2026-02-19T11:30:00',
-  },
-  {
-    id: 5,
-    usuario: 'Iule Miranda',
-    email: 'iule@imiatlantica.com.br',
-    acao: 'delete',
-    modulo: 'campanhas',
-    descricao: 'Campanha "Verão 2025 — Setúbal" excluída permanentemente',
-    ip: '187.103.45.21',
-    dispositivo: 'Chrome 121 · macOS',
-    severidade: 'danger',
-    timestamp: '2026-02-18T16:55:12',
-    entidade_id: 'camp_0091',
-  },
-  {
-    id: 6,
-    usuario: 'Ana Paula Ferreira',
-    email: 'anapaula@imiatlantica.com.br',
-    acao: 'create',
-    modulo: 'avaliacoes',
-    descricao: 'Nova avaliação criada: Villa Jardins Lote 7 — NBR 14653',
-    ip: '189.77.34.198',
-    dispositivo: 'Safari · iPhone 15',
-    severidade: 'success',
-    timestamp: '2026-02-18T10:22:44',
-    entidade_id: 'aval_0153',
-  },
-  {
-    id: 7,
-    usuario: 'Sistema',
-    email: 'sistema@imiatlantica.com.br',
-    acao: 'sync',
-    modulo: 'integracoes',
-    descricao: 'Sync automático Meta Ads — 847 eventos importados',
-    ip: '10.0.0.1',
-    dispositivo: 'Cron Job · Servidor',
-    severidade: 'info',
-    timestamp: '2026-02-19T06:00:00',
-  },
-  {
-    id: 8,
-    usuario: 'Iule Miranda',
-    email: 'iule@imiatlantica.com.br',
-    acao: 'update',
-    modulo: 'settings',
-    descricao: 'Permissão do usuário Carlos Eduardo alterada: viewer → editor',
-    ip: '187.103.45.21',
-    dispositivo: 'Chrome 121 · macOS',
-    severidade: 'warning',
-    timestamp: '2026-02-17T09:10:33',
-  },
-  {
-    id: 9,
-    usuario: 'Carlos Eduardo Silva',
-    email: 'carlos@imiatlantica.com.br',
-    acao: 'view',
-    modulo: 'leads',
-    descricao: 'Visualizou lista completa de leads (482 registros)',
-    ip: '192.168.1.45',
-    dispositivo: 'Chrome 121 · Windows',
-    severidade: 'info',
-    timestamp: '2026-02-17T08:45:00',
-  },
-  {
-    id: 10,
-    usuario: 'Sistema',
-    email: 'sistema@imiatlantica.com.br',
-    acao: 'backup',
-    modulo: 'sistema',
-    descricao: 'Backup automático do banco de dados — 2.3GB — Supabase Storage',
-    ip: '10.0.0.1',
-    dispositivo: 'Cron Job · Servidor',
-    severidade: 'success',
-    timestamp: '2026-02-19T03:00:00',
-  },
-]
+// DB action → UI action
+function mapAction(action: string): string {
+  switch (action?.toUpperCase()) {
+    case 'INSERT': return 'create'
+    case 'UPDATE': return 'update'
+    case 'DELETE': return 'delete'
+    default: return action?.toLowerCase() || 'view'
+  }
+}
+
+// DB action → severidade
+function mapSeveridade(action: string): string {
+  switch (action?.toUpperCase()) {
+    case 'INSERT': return 'success'
+    case 'UPDATE': return 'info'
+    case 'DELETE': return 'danger'
+    default: return 'info'
+  }
+}
+
+// DB entity_type → UI modulo
+function mapModulo(entityType: string): string {
+  const map: Record<string, string> = {
+    leads: 'leads',
+    developments: 'imoveis',
+    contratos: 'contratos',
+    financial_transactions: 'financeiro',
+    campaigns: 'campanhas',
+    automation_workflows: 'automacoes',
+    avaliacoes: 'avaliacoes',
+    consultorias: 'consultorias',
+    conteudos: 'conteudos',
+    settings: 'settings',
+    notifications: 'sistema',
+    playbooks: 'settings',
+    brokers: 'equipe',
+    developers: 'construtoras',
+    projetos: 'projetos',
+  }
+  return map[entityType] || entityType || 'sistema'
+}
+
+function extractName(data: any): string | null {
+  if (!data) return null
+  return data.nome || data.name || data.titulo || data.title || data.email || null
+}
+
+function buildDescricao(action: string, entityType: string, newData: any, oldData: any): string {
+  const acao = mapAction(action)
+  const nome = extractName(newData) || extractName(oldData)
+  const modulo = mapModulo(entityType)
+  const acaoLabels: Record<string, string> = { create: 'criado', update: 'atualizado', delete: 'excluído' }
+  const acaoLabel = acaoLabels[acao] || acao
+  if (nome) return `${modulo.charAt(0).toUpperCase() + modulo.slice(1)} ${acaoLabel}: ${nome}`
+  return `Registro ${acaoLabel} em ${modulo}`
+}
+
+function parseDevice(userAgent: string | null): string {
+  if (!userAgent) return 'Desconhecido'
+  if (userAgent.includes('iPhone')) return 'iPhone · Safari'
+  if (userAgent.includes('Android')) return 'Android · Chrome'
+  if (userAgent.includes('Windows')) return 'Windows · Chrome'
+  if (userAgent.includes('Mac')) return 'macOS · Chrome'
+  if (userAgent.includes('curl')) return 'API · curl'
+  return userAgent.slice(0, 30)
+}
+
+interface RawAuditLog {
+  id: string
+  user_id: string | null
+  action: string
+  entity_type: string
+  entity_id: string | null
+  old_data: any
+  new_data: any
+  ip_address: string | null
+  user_agent: string | null
+  created_at: string
+}
+
+interface UILog {
+  id: string
+  usuario: string
+  acao: string
+  modulo: string
+  descricao: string
+  ip: string
+  dispositivo: string
+  severidade: string
+  timestamp: string
+  entidade_id: string | null
+}
+
+function transformLog(raw: RawAuditLog): UILog {
+  const usuario = raw.user_id ? `ID: ${raw.user_id.slice(0, 8)}…` : 'Sistema'
+  return {
+    id: raw.id,
+    usuario,
+    acao: mapAction(raw.action),
+    modulo: mapModulo(raw.entity_type),
+    descricao: buildDescricao(raw.action, raw.entity_type, raw.new_data, raw.old_data),
+    ip: raw.ip_address || '—',
+    dispositivo: parseDevice(raw.user_agent),
+    severidade: mapSeveridade(raw.action),
+    timestamp: raw.created_at,
+    entidade_id: raw.entity_id,
+  }
+}
 
 const ACAO_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  login: { label: 'Login', icon: LogIn, color: 'text-blue-400 bg-blue-500/10' },
-  logout: { label: 'Logout', icon: LogOut, color: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)]' },
-  create: { label: 'Criação', icon: Plus, color: 'text-green-400 bg-green-500/10' },
-  update: { label: 'Edição', icon: Edit, color: 'text-orange-400 bg-orange-500/10' },
-  delete: { label: 'Exclusão', icon: Trash2, color: 'text-red-400 bg-red-500/10' },
-  view: { label: 'Visualização', icon: Eye, color: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)]' },
-  export: { label: 'Exportação', icon: Download, color: 'text-purple-400 bg-purple-500/10' },
-  sync: { label: 'Sync', icon: Settings, color: 'text-blue-400 bg-blue-500/10' },
-  backup: { label: 'Backup', icon: Shield, color: 'text-green-400 bg-green-500/10' },
+  login:  { label: 'Login',         icon: LogIn,    color: 'text-blue-400 bg-blue-500/10' },
+  logout: { label: 'Logout',        icon: LogOut,   color: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)]' },
+  create: { label: 'Criação',       icon: Plus,     color: 'text-green-400 bg-green-500/10' },
+  update: { label: 'Edição',        icon: Edit,     color: 'text-orange-400 bg-orange-500/10' },
+  delete: { label: 'Exclusão',      icon: Trash2,   color: 'text-red-400 bg-red-500/10' },
+  view:   { label: 'Visualização',  icon: Eye,      color: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)]' },
+  export: { label: 'Exportação',    icon: Download, color: 'text-purple-400 bg-purple-500/10' },
+  sync:   { label: 'Sync',          icon: Settings, color: 'text-blue-400 bg-blue-500/10' },
+  backup: { label: 'Backup',        icon: Shield,   color: 'text-green-400 bg-green-500/10' },
 }
 
 const SEVERIDADE_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  info: { label: 'Info', color: 'bg-blue-500/10 text-blue-400', icon: CheckCircle },
+  info:    { label: 'Info',    color: 'bg-blue-500/10 text-blue-400',   icon: CheckCircle },
   success: { label: 'Sucesso', color: 'bg-green-500/10 text-green-400', icon: CheckCircle },
   warning: { label: 'Atenção', color: 'bg-amber-500/10 text-amber-400', icon: AlertTriangle },
-  danger: { label: 'Crítico', color: 'bg-red-500/10 text-red-400', icon: AlertTriangle },
+  danger:  { label: 'Crítico', color: 'bg-red-500/10 text-red-400',     icon: AlertTriangle },
 }
 
-const MODULOS = ['todos', 'auth', 'imoveis', 'leads', 'campanhas', 'avaliacoes', 'financeiro', 'integracoes', 'settings', 'relatorios', 'sistema']
+const MODULOS = ['todos', 'auth', 'imoveis', 'leads', 'campanhas', 'avaliacoes', 'financeiro', 'contratos', 'automacoes', 'settings', 'sistema']
 
 export default function AuditPage() {
+  const [logs, setLogs] = useState<UILog[]>([])
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(true)
   const [busca, setBusca] = useState('')
   const [moduloFiltro, setModuloFiltro] = useState('todos')
   const [severidadeFiltro, setSeveridadeFiltro] = useState<string | null>(null)
 
-  const logsFiltrados = AUDIT_LOGS.filter(log => {
+  useEffect(() => {
+    fetch('/api/audit?limit=100')
+      .then(r => r.json())
+      .then(json => {
+        const raw: RawAuditLog[] = json.data || []
+        setLogs(raw.map(transformLog))
+        setTotal(json.total ?? raw.length)
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
+
+  const logsFiltrados = logs.filter(log => {
     const matchBusca =
       log.usuario.toLowerCase().includes(busca.toLowerCase()) ||
       log.descricao.toLowerCase().includes(busca.toLowerCase()) ||
@@ -207,23 +177,43 @@ export default function AuditPage() {
   })
 
   const stats = {
-    total: AUDIT_LOGS.length,
-    criticos: AUDIT_LOGS.filter(l => l.severidade === 'danger').length,
-    atencao: AUDIT_LOGS.filter(l => l.severidade === 'warning').length,
-    usuarios: [...new Set(AUDIT_LOGS.map(l => l.usuario))].length,
+    total,
+    criticos: logs.filter(l => l.severidade === 'danger').length,
+    atencao: logs.filter(l => l.severidade === 'warning').length,
+    usuarios: [...new Set(logs.map(l => l.usuario))].length,
+  }
+
+  const exportCSV = () => {
+    const headers = ['ID', 'Usuário', 'Ação', 'Módulo', 'Descrição', 'IP', 'Dispositivo', 'Status', 'Timestamp']
+    const rows = logsFiltrados.map(l => [
+      l.id,
+      l.usuario,
+      l.acao,
+      l.modulo,
+      `"${l.descricao.replace(/"/g, '""')}"`,
+      l.ip,
+      l.dispositivo,
+      l.severidade,
+      l.timestamp,
+    ])
+    const csv = [headers, ...rows].map(r => r.join(',')).join('\n')
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `audit-log-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   const formatTimestamp = (iso: string) =>
-    new Date(iso).toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
+    new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
 
   const getInitials = (nome: string) =>
     nome === 'Sistema'
       ? 'SYS'
+      : nome.startsWith('ID:')
+      ? nome.slice(4, 6).toUpperCase()
       : nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
 
   return (
@@ -237,7 +227,9 @@ export default function AuditPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors"
+          <button
+            onClick={exportCSV}
+            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors"
             style={{ background: T.elevated, color: T.text, border: `1px solid ${T.border}` }}>
             <Download size={16} />
             Exportar CSV
@@ -248,10 +240,10 @@ export default function AuditPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total de Eventos', value: stats.total, textColor: T.text, bg: T.elevated, icon: Shield },
-          { label: 'Críticos', value: stats.criticos, textColor: '#F87171', bg: 'rgba(239,68,68,0.08)', icon: AlertTriangle },
-          { label: 'Atenção', value: stats.atencao, textColor: '#FCD34D', bg: 'rgba(245,158,11,0.08)', icon: AlertTriangle },
-          { label: 'Usuários Ativos', value: stats.usuarios, textColor: '#60A5FA', bg: 'rgba(59,130,246,0.08)', icon: User },
+          { label: 'Total de Eventos',  value: loading ? '…' : stats.total,    textColor: T.text,      bg: T.elevated,                      icon: Shield },
+          { label: 'Críticos',          value: loading ? '…' : stats.criticos,  textColor: '#F87171',   bg: 'rgba(239,68,68,0.08)',           icon: AlertTriangle },
+          { label: 'Atenção',           value: loading ? '…' : stats.atencao,   textColor: '#FCD34D',   bg: 'rgba(245,158,11,0.08)',          icon: AlertTriangle },
+          { label: 'Usuários Ativos',   value: loading ? '…' : stats.usuarios,  textColor: '#60A5FA',   bg: 'rgba(59,130,246,0.08)',          icon: User },
         ].map(s => {
           const Icon = s.icon
           return (
@@ -266,7 +258,7 @@ export default function AuditPage() {
         })}
       </div>
 
-      {/* Barra de busca e filtros */}
+      {/* Filtros */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
@@ -279,7 +271,6 @@ export default function AuditPage() {
           />
         </div>
 
-        {/* Filtro módulo */}
         <select
           value={moduloFiltro}
           onChange={e => setModuloFiltro(e.target.value)}
@@ -293,16 +284,12 @@ export default function AuditPage() {
           ))}
         </select>
 
-        {/* Filtro severidade */}
         <div className="flex items-center gap-2">
           {Object.entries(SEVERIDADE_CONFIG).map(([k, v]) => (
             <button
               key={k}
               onClick={() => setSeveridadeFiltro(severidadeFiltro === k ? null : k)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${severidadeFiltro === k
-                ? `${v.color} border-current`
-                : ''
-                }`}
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${severidadeFiltro === k ? `${v.color} border-current` : ''}`}
               style={severidadeFiltro !== k ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted } : {}}
             >
               {v.label}
@@ -311,7 +298,7 @@ export default function AuditPage() {
         </div>
       </div>
 
-      {/* Tabela de logs */}
+      {/* Tabela */}
       <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         {/* Cabeçalho */}
         <div className="grid grid-cols-12 gap-4 px-4 py-3" style={{ background: T.elevated, borderBottom: `1px solid ${T.border}` }}>
@@ -324,7 +311,30 @@ export default function AuditPage() {
 
         {/* Linhas */}
         <div>
-          {logsFiltrados.length === 0 ? (
+          {loading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="grid grid-cols-12 gap-4 px-4 py-4 animate-pulse items-center"
+                style={{ borderTop: i > 0 ? `1px solid ${T.border}` : 'none' }}>
+                <div className="col-span-3 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full" style={{ background: T.elevated }} />
+                  <div className="flex-1 space-y-1.5">
+                    <div className="h-3 rounded" style={{ background: T.elevated, width: '70%' }} />
+                    <div className="h-2 rounded" style={{ background: T.elevated, width: '50%' }} />
+                  </div>
+                </div>
+                <div className="col-span-2"><div className="h-6 w-20 rounded-lg" style={{ background: T.elevated }} /></div>
+                <div className="col-span-4 space-y-1.5">
+                  <div className="h-3 rounded" style={{ background: T.elevated, width: '90%' }} />
+                  <div className="h-3 rounded" style={{ background: T.elevated, width: '60%' }} />
+                </div>
+                <div className="col-span-1"><div className="h-6 w-16 rounded-lg" style={{ background: T.elevated }} /></div>
+                <div className="col-span-2 space-y-1.5">
+                  <div className="h-3 rounded" style={{ background: T.elevated, width: '80%' }} />
+                  <div className="h-2 rounded" style={{ background: T.elevated, width: '60%' }} />
+                </div>
+              </div>
+            ))
+          ) : logsFiltrados.length === 0 ? (
             <div className="text-center py-12">
               <Shield size={40} className="mx-auto mb-3" style={{ color: T.textMuted, opacity: 0.3 }} />
               <p className="font-medium" style={{ color: T.textMuted }}>Nenhum evento encontrado</p>
@@ -332,7 +342,7 @@ export default function AuditPage() {
           ) : (
             logsFiltrados.map((log, index) => {
               const acaoCfg = ACAO_CONFIG[log.acao] || ACAO_CONFIG['view']
-              const sevCfg = SEVERIDADE_CONFIG[log.severidade]
+              const sevCfg = SEVERIDADE_CONFIG[log.severidade] || SEVERIDADE_CONFIG['info']
               const AcaoIcon = acaoCfg.icon
               const SevIcon = sevCfg.icon
 
@@ -340,6 +350,7 @@ export default function AuditPage() {
                 <div key={log.id}
                   className="grid grid-cols-12 gap-4 px-4 py-4 transition-colors items-center"
                   style={{ borderTop: index > 0 ? `1px solid ${T.border}` : 'none' }}>
+
                   {/* Usuário */}
                   <div className="col-span-3 flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full text-[10px] font-bold flex items-center justify-center flex-shrink-0"
@@ -366,15 +377,15 @@ export default function AuditPage() {
                   {/* Descrição */}
                   <div className="col-span-4">
                     <p className="text-xs leading-relaxed line-clamp-2" style={{ color: T.textMuted }}>{log.descricao}</p>
-                    {(log as any).entidade_id && (
+                    {log.entidade_id && (
                       <p className="text-[10px] font-mono mt-1 px-1.5 py-0.5 rounded inline-block"
                         style={{ background: T.elevated, color: T.textMuted }}>
-                        ID: {(log as any).entidade_id}
+                        ID: {log.entidade_id.slice(0, 12)}…
                       </p>
                     )}
                   </div>
 
-                  {/* Status / Severidade */}
+                  {/* Severidade */}
                   <div className="col-span-1">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold ${sevCfg.color}`}>
                       <SevIcon size={12} />
@@ -399,7 +410,7 @@ export default function AuditPage() {
         {/* Footer */}
         <div className="px-4 py-3 flex items-center justify-between" style={{ borderTop: `1px solid ${T.border}`, background: T.elevated }}>
           <span className="text-xs font-medium" style={{ color: T.textMuted }}>
-            {logsFiltrados.length} de {AUDIT_LOGS.length} eventos registrados
+            {loading ? 'Carregando…' : `${logsFiltrados.length} de ${total} eventos registrados`}
           </span>
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
             <Lock size={12} />

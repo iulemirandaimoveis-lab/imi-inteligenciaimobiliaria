@@ -71,8 +71,9 @@ export default function FinanceiroPage() {
     try {
       const res = await fetch('/api/financeiro')
       if (res.ok) {
-        const data = await res.json()
-        setTransactions(data)
+        const json = await res.json()
+        // API returns { data: [], pagination: {} }
+        setTransactions(Array.isArray(json) ? json : (json.data ?? []))
       }
     } catch (err) {
       console.error(err)

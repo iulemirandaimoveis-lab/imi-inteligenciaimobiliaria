@@ -35,6 +35,11 @@ export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname
     const origin = request.headers.get('origin')
 
+    // 0. QR short-link redirects: /l/:shortCode — public, no locale, no auth
+    if (pathname.startsWith('/l/')) {
+        return NextResponse.next()
+    }
+
     // 1. Handle API/Backoffice/Login with Supabase Auth (ignore locale)
     if (
         pathname.startsWith('/backoffice') ||

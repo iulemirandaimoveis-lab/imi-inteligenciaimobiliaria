@@ -98,21 +98,22 @@ export default function LeadsPage() {
 
   // ── Stats ──────────────────────────────────────────────────────
   const stats = useMemo(() => ({
-    total: leads.length,
-    hot:   leads.filter(l => l.status === 'hot').length,
-    warm:  leads.filter(l => l.status === 'warm').length,
-    cold:  leads.filter(l => l.status === 'cold').length,
-    avg:   leads.length > 0
+    total:       leads.length,
+    hot:         leads.filter(l => l.status === 'hot' || l.status === 'negotiation').length,
+    qualified:   leads.filter(l => l.status === 'qualified').length,
+    new:         leads.filter(l => l.status === 'new' || l.status === 'contacted').length,
+    avg:         leads.length > 0
       ? Math.round(leads.reduce((a, l) => a + l.score, 0) / leads.length)
       : 0,
   }), [leads])
 
   // ── Filter tabs ────────────────────────────────────────────────
   const FILTER_TABS: FilterTab[] = [
-    { id: 'all',  label: 'Todos',  count: stats.total },
-    { id: 'hot',  label: 'HOT',   count: stats.hot,  dotColor: 'var(--s-hot)' },
-    { id: 'warm', label: 'Warm',  count: stats.warm, dotColor: 'var(--s-warm)' },
-    { id: 'cold', label: 'Cold',  count: stats.cold, dotColor: 'var(--s-cold)' },
+    { id: 'all',         label: 'Todos',      count: stats.total },
+    { id: 'hot',         label: 'HOT',        count: leads.filter(l => l.status === 'hot').length, dotColor: 'var(--s-hot)' },
+    { id: 'negotiation', label: 'Negociação', count: leads.filter(l => l.status === 'negotiation').length, dotColor: 'var(--s-warm)' },
+    { id: 'qualified',   label: 'Qualificado', count: stats.qualified },
+    { id: 'new',         label: 'Novo',       count: leads.filter(l => l.status === 'new').length },
   ]
 
   // ── Filtered list ──────────────────────────────────────────────
@@ -125,6 +126,7 @@ export default function LeadsPage() {
         || l.phone.includes(q)
         || l.interest.toLowerCase().includes(q)
       const matchFilter = activeFilter === 'all' || l.status === activeFilter
+        || (activeFilter === 'new' && l.status === 'contacted')
       return matchSearch && matchFilter
     })
   }, [leads, search, activeFilter])
@@ -202,10 +204,11 @@ export default function LeadsPage() {
           icon={<Flame size={10} />}
         />
         <KPICard
-          label="Warm"
-          value={stats.warm}
+          label="Qualif."
+          value={stats.qualified}
           accent="warm"
           size="sm"
+          icon={<TrendingUp size={10} />}
         />
         <KPICard
           label="AI Score"

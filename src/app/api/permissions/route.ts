@@ -7,6 +7,9 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(request: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { searchParams } = new URL(request.url)
         const role = searchParams.get('role')
         const moduleName = searchParams.get('module')
@@ -56,6 +59,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const body = await request.json()
         const { role, module: moduleName, action, allowed } = body
 
@@ -81,6 +87,9 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const body = await request.json()
         const { role, module: moduleName, action, allowed } = body
 
@@ -107,6 +116,9 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
         const role = searchParams.get('role')

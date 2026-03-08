@@ -9,7 +9,7 @@ import {
     Zap, CreditCard, Briefcase, CalendarDays, QrCode, Sparkles,
     FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
-    Brain, BarChart3, LineChart, Wand2, List
+    Brain, BarChart3, LineChart, Wand2, List, Shield
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -162,8 +162,16 @@ const SECTIONS: NavSection[] = [
         items: [
             { label: 'Equipe', href: '/backoffice/equipe', icon: Users },
             { label: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
-            { label: 'Configurações', href: '/backoffice/settings', icon: Settings },
-            { label: 'AI Settings', href: '/backoffice/settings/ia', icon: Brain },
+            {
+                label: 'Configurações', icon: Settings,
+                children: [
+                    { label: 'Geral', href: '/backoffice/settings', icon: Settings },
+                    { label: 'Corretores', href: '/backoffice/settings/corretores', icon: Users },
+                    { label: 'Permissões', href: '/backoffice/settings/permissoes', icon: Shield },
+                    { label: 'Logs do Sistema', href: '/backoffice/settings/logs', icon: FileText },
+                    { label: 'Configurações IA', href: '/backoffice/settings/ia', icon: Brain },
+                ]
+            },
         ]
     },
 ]

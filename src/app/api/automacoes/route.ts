@@ -1,11 +1,15 @@
 // src/app/api/automacoes/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { automacaoSchema, parseBody } from '@/lib/schemas'
 
 // GET — list automation workflows
 export async function GET(req: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
         const active = searchParams.get('active') // 'true' or 'false'
@@ -56,10 +60,12 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const supabase = await createClient()
-        const body = await req.json()
-        const { name, description, trigger_type, config, is_active } = body
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
-        if (!name) return NextResponse.json({ error: 'name é obrigatório' }, { status: 400 })
+        const parsed = await parseBody(req, automacaoSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const { name, description, trigger_type, config, is_active } = parsed.data
 
         const { data, error } = await supabase
             .from('automation_workflows')
@@ -85,6 +91,9 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const body = await req.json()
         const { id, ...updates } = body
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
@@ -109,6 +118,9 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })

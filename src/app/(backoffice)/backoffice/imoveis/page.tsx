@@ -5,13 +5,8 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Plus, Search, Grid3X3, List, Building2, MapPin, Bed, Bath, Car, Ruler, DollarSign, Star, MoreHorizontal, Eye, Edit, CheckCircle, Clock, AlertCircle, Tag, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
-
-const T = {
-    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { PageIntelHeader, KPICard } from '../../components/ui'
+import { T, ctaGradient, ctaShadow } from '../../lib/theme'
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     disponivel: { label: 'Disponível', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
@@ -38,6 +33,21 @@ interface Imovel {
     preco: number;
     construtora: string | null;
     visitas: number;
+    liquidez: number;
+}
+
+function LiquidezBadge({ score }: { score: number }) {
+    const color = score >= 75 ? '#34d399' : score >= 55 ? '#a3e635' : score >= 40 ? '#fbbf24' : '#f87171'
+    const label = score >= 75 ? 'Alta' : score >= 55 ? 'Média' : score >= 40 ? 'Moderada' : 'Baixa'
+    return (
+        <div className="flex items-center gap-1.5">
+            <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: 'var(--bo-border)' }}>
+                <div className="h-full rounded-full transition-all" style={{ width: `${score}%`, background: color }} />
+            </div>
+            <span className="text-[10px] font-bold tabular-nums" style={{ color }}>{score}%</span>
+            <span className="text-[10px]" style={{ color: 'var(--bo-text-muted)' }}>{label}</span>
+        </div>
+    )
 }
 
 const fmtPreco = (v: number, tipo: string) => {
@@ -86,7 +96,7 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                     </span>
                     <div className="flex items-center gap-1.5">
                         {imovel.destaque && (
-                            <Star size={14} style={{ fill: T.gold, color: T.gold }} />
+                            <Star size={14} style={{ fill: T.accent, color: T.accent }} />
                         )}
                         <span className="text-[10px] font-medium" style={{ color: T.textDim }}>
                             {imovel.visitas} views
@@ -108,20 +118,20 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                 {/* Specs */}
                 {imovel.quartos > 0 && (
                     <div className="flex items-center gap-3 mb-3">
-                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
+                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textMuted }}>
                             <Bed size={11} /> {imovel.quartos}q
                         </span>
-                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
+                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textMuted }}>
                             <Bath size={11} /> {imovel.banheiros}b
                         </span>
-                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
+                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textMuted }}>
                             <Ruler size={11} /> {imovel.area.toLocaleString('pt-BR')}m²
                         </span>
                     </div>
                 )}
 
                 <div className="flex items-center justify-between">
-                    <p className="text-base font-bold" style={{ color: T.gold }}>
+                    <p className="text-base font-bold" style={{ color: T.accent }}>
                         {fmtPreco(imovel.preco, imovel.tipo)}
                     </p>
                     {imovel.construtora && (
@@ -129,6 +139,14 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                             {imovel.construtora}
                         </p>
                     )}
+                </div>
+
+                {/* Liquidez Score */}
+                <div className="mt-3 pt-3" style={{ borderTop: `1px solid var(--bo-border)` }}>
+                    <p className="text-[9px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>
+                        Índice de Liquidez IMI
+                    </p>
+                    <LiquidezBadge score={imovel.liquidez} />
                 </div>
             </div>
         </motion.div>
@@ -145,31 +163,57 @@ export default function ImoveisPage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const fetchProperties = async () => {
+        const fetchData = async () => {
             try {
-                const res = await fetch('/api/developments')
-                if (res.ok) {
-                    const data = await res.json()
+                const [propsRes, leadsRes] = await Promise.all([
+                    fetch('/api/developments'),
+                    fetch('/api/leads?limit=200'),
+                ])
+
+                // Build lead stats per development
+                type LeadStats = { hot: number; warm: number; total: number; won: number }
+                const leadsMap: Record<string, LeadStats> = {}
+                if (leadsRes.ok) {
+                    const ld = await leadsRes.json()
+                    const leads: any[] = ld.data || ld || []
+                    leads.forEach((l: any) => {
+                        const devId = l.development_id
+                        if (!devId) return
+                        if (!leadsMap[devId]) leadsMap[devId] = { hot: 0, warm: 0, total: 0, won: 0 }
+                        leadsMap[devId].total++
+                        if (l.status === 'negotiating') leadsMap[devId].hot++
+                        if (l.status === 'qualified') leadsMap[devId].warm++
+                        if (l.status === 'won') leadsMap[devId].won++
+                    })
+                }
+
+                if (propsRes.ok) {
+                    const data = await propsRes.json()
                     if (Array.isArray(data) && data.length > 0) {
                         const formatted = data
                             .filter((d: any) => d.status !== 'arquivado' && d.status_comercial !== 'archived')
-                            .map((d: any) => ({
-                                id: d.id,
-                                codigo: d.slug ? `IMI-${d.slug.substring(0, 8).toUpperCase()}` : `IMI-${String(d.id).substring(0, 8)}`,
-                                status: d.status || 'disponivel',
-                                destaque: !!d.is_highlighted,
-                                tipo: d.type || d.tipo || d.property_type || 'Imóvel',
-                                titulo: d.name || 'Empreendimento',
-                                bairro: d.neighborhood || d.region || 'Localização',
-                                area: d.private_area || d.area_from || 0,
-                                quartos: d.bedrooms || 0,
-                                banheiros: d.bathrooms || 0,
-                                vagas: d.parking_spaces || 0,
-                                preco: d.price_min || d.price_from || 0,
-                                construtora: d.developer || d.developers?.name || null,
-                                visitas: d.views || 0,
-                                image: d.image || (Array.isArray(d.gallery_images) && d.gallery_images[0]) || null,
-                            }))
+                            .map((d: any) => {
+                                const s = leadsMap[d.id] || { hot: 0, warm: 0, total: 0, won: 0 }
+                                const liquidez = Math.min(97, 22 + s.hot * 13 + s.warm * 8 + s.total * 3 + s.won * 16)
+                                return {
+                                    id: d.id,
+                                    codigo: d.slug ? `IMI-${d.slug.substring(0, 8).toUpperCase()}` : `IMI-${String(d.id).substring(0, 8)}`,
+                                    status: d.status || 'disponivel',
+                                    destaque: !!d.is_highlighted,
+                                    tipo: d.type || d.tipo || d.property_type || 'Imóvel',
+                                    titulo: d.name || 'Empreendimento',
+                                    bairro: d.neighborhood || d.region || 'Localização',
+                                    area: d.private_area || d.area_from || 0,
+                                    quartos: d.bedrooms || 0,
+                                    banheiros: d.bathrooms || 0,
+                                    vagas: d.parking_spaces || 0,
+                                    preco: d.price_min || d.price_from || 0,
+                                    construtora: d.developer || d.developers?.name || null,
+                                    visitas: d.views || 0,
+                                    image: d.image || (Array.isArray(d.gallery_images) && d.gallery_images[0]) || null,
+                                    liquidez,
+                                }
+                            })
                         setImoveis(formatted)
                         setLoading(false)
                         return
@@ -181,13 +225,14 @@ export default function ImoveisPage() {
             setImoveis([])
             setLoading(false)
         }
-        fetchProperties()
+        fetchData()
     }, [])
 
     const total = imoveis.length
     const destaquesCount = imoveis.filter(i => i.destaque).length
     const lancamentosCount = imoveis.filter(i => i.status === 'lancamento').length
     const disponiveis = imoveis.filter(i => i.status === 'disponivel').length
+    const vgvEstimado = imoveis.reduce((sum, i) => sum + (i.preco || 0), 0)
 
     const filtered = imoveis.filter(im => {
         const q = search.toLowerCase()
@@ -197,7 +242,7 @@ export default function ImoveisPage() {
     })
 
     if (loading) return (
-        <div className="space-y-5 max-w-7xl mx-auto">
+        <div className="space-y-5">
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <div className="skeleton h-6 w-56 mb-2" />
@@ -230,55 +275,51 @@ export default function ImoveisPage() {
         </div>
     )
 
+    const fmtVGV = (v: number) => {
+        if (v >= 1_000_000_000) return `R$ ${(v / 1_000_000_000).toFixed(1).replace('.', ',')}B`
+        if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
+        if (v >= 1000) return `R$ ${Math.round(v / 1000)}k`
+        return v > 0 ? `R$ ${v.toLocaleString('pt-BR')}` : '—'
+    }
+
     const STATS = [
-        { label: 'VGV Global (Est.)', value: 'R$ 1.2B', icon: DollarSign },
+        { label: 'VGV Global (Est.)', value: fmtVGV(vgvEstimado), icon: DollarSign },
         { label: 'Lançamentos', value: lancamentosCount, icon: Tag },
         { label: 'Em Destaque', value: destaquesCount, icon: Star },
         { label: 'Disponíveis', value: disponiveis, icon: CheckCircle },
     ]
 
     return (
-        <div className="space-y-5 max-w-7xl mx-auto">
+        <div className="space-y-5">
 
             {/* Header */}
-            <motion.div
-                initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="flex items-start justify-between gap-4"
-            >
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Portfólio / Empreendimentos</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>Gestão Global IMI · {total} ativos comerciais listados</p>
-                </div>
-                <motion.button
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => router.push('/backoffice/imoveis/novo')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'var(--bo-accent)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
-                >
-                    <Plus size={16} /> Novo Empreendimento
-                </motion.button>
-            </motion.div>
+            <PageIntelHeader
+                moduleLabel="IMOVEIS"
+                title="Portfólio / Empreendimentos"
+                subtitle={`Gestão Global IMI · ${total} ativos comerciais listados`}
+                actions={
+                    <motion.button
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => router.push('/backoffice/imoveis/novo')}
+                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                        style={{ background: ctaGradient, boxShadow: ctaShadow }}
+                    >
+                        <Plus size={16} /> <span className="hidden sm:inline">Novo Empreendimento</span>
+                    </motion.button>
+                }
+            />
 
             {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                 {STATS.map((s, i) => (
-                    <motion.div
+                    <KPICard
                         key={s.label}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="stat-card rounded-2xl p-4"
-                        style={{
-                            background: T.elevated,
-                            border: `1px solid ${T.borderGold}`,
-                        }}
-                    >
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'var(--bo-active-bg)' }}>
-                            <s.icon size={16} style={{ color: T.gold }} />
-                        </div>
-                        <p className="text-xl font-bold" style={{ color: T.text }}>{s.value}</p>
-                        <p className="text-xs mt-0.5" style={{ color: T.textDim }}>{s.label}</p>
-                    </motion.div>
+                        label={s.label}
+                        value={String(s.value)}
+                        icon={<s.icon size={16} />}
+                        accent="blue"
+                        size="sm"
+                    />
                 ))}
             </div>
 
@@ -296,7 +337,7 @@ export default function ImoveisPage() {
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, caretColor: T.gold }}
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, caretColor: T.accent }}
                             onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
                             onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
                         />
@@ -378,12 +419,12 @@ export default function ImoveisPage() {
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
                             >
                                 <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bo-active-bg)' }}>
-                                    <Building2 size={20} style={{ color: T.gold }} />
+                                    <Building2 size={20} style={{ color: T.accent }} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
-                                        {im.destaque && <Star size={12} style={{ fill: T.gold, color: T.gold, flexShrink: 0 }} />}
+                                        {im.destaque && <Star size={12} style={{ fill: T.accent, color: T.accent, flexShrink: 0 }} />}
                                     </div>
                                     <p className="text-xs" style={{ color: T.textDim }}>{im.codigo} · {im.bairro} · {im.area.toLocaleString('pt-BR')}m²</p>
                                 </div>
@@ -391,7 +432,7 @@ export default function ImoveisPage() {
                                     <span className="text-[10px] font-bold px-2 py-1 rounded-full" style={{ color: s.text, background: s.bg }}>
                                         {s.label}
                                     </span>
-                                    <p className="text-sm font-bold hidden sm:block" style={{ color: T.gold }}>
+                                    <p className="text-sm font-bold hidden sm:block" style={{ color: T.accent }}>
                                         {fmtPreco(im.preco, im.tipo)}
                                     </p>
                                 </div>

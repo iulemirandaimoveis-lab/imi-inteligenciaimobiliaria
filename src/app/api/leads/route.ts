@@ -19,7 +19,8 @@ export async function GET(request: Request) {
 
         const { data: leads, error, count } = await supabase
             .from('leads')
-            .select('id, name, email, phone, source, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, utm_source', { count: 'exact' })
+            .select('id, name, email, phone, source, origin, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, capital, utm_source, country, currency, language, tags, notes, assigned_to', { count: 'exact' })
+            .not('status', 'eq', 'archived')
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1);
 
@@ -36,11 +37,21 @@ export async function GET(request: Request) {
             email: l.email || '',
             phone: l.phone || '',
             score: l.score || l.ai_score || 50,
-            status: mapStatus(l.status),
-            source: l.source || l.utm_source || 'Site',
-            interest: l.interest_type || '-',
-            city: l.interest_location || '',
-            budget: formatBudget(l.budget_min, l.budget_max),
+            status: l.status || 'new',
+            source: l.source || l.origin || l.utm_source || 'website',
+            interest: l.interest_type || '',
+            interest_type: l.interest_type || null,
+            interest_location: l.interest_location || null,
+            city: l.interest_location || null,
+            capital: l.capital || l.budget_min || null,
+            budget_min: l.budget_min || null,
+            budget_max: l.budget_max || null,
+            budget: formatBudget(l.budget_min || l.capital, l.budget_max),
+            country: l.country || 'BR',
+            currency: l.currency || 'BRL',
+            language: l.language || 'pt',
+            tags: Array.isArray(l.tags) ? l.tags : [],
+            notes: l.notes || null,
             created_at: l.created_at || new Date().toISOString(),
             updated_at: l.updated_at || l.created_at || new Date().toISOString(),
         }));
@@ -97,7 +108,9 @@ export async function POST(request: Request) {
                 email: body.email || null,
                 phone: body.phone || null,
                 source: body.source || 'website',
+                origin: body.source || 'website',
                 status: body.status || 'new',
+                score: 50,
                 ai_score: body.ai_score || 0,
                 ai_priority: body.ai_priority || 'medium',
                 development_id: body.development_id || null,
@@ -105,7 +118,12 @@ export async function POST(request: Request) {
                 interest_location: body.interest_location || null,
                 budget_min: body.budget_min ?? null,
                 budget_max: body.budget_max ?? null,
+                capital: body.budget_min ?? null,
                 notes: body.notes || null,
+                country: 'BR',
+                currency: 'BRL',
+                language: 'pt',
+                tags: [],
             })
             .select()
             .single()
@@ -137,6 +155,73 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true, lead })
     } catch (error) {
         console.error('Error in POST /api/leads:', error)
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    }
+}
+
+export async function PUT(request: Request) {
+    try {
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
+        const body = await request.json()
+        const { id, ...updates } = body
+
+        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+
+        // Map form fields → DB columns
+        const payload: Record<string, any> = {
+            updated_at: new Date().toISOString(),
+        }
+        if (updates.name !== undefined)              payload.name = updates.name
+        if (updates.email !== undefined)             payload.email = updates.email || null
+        if (updates.phone !== undefined)             payload.phone = updates.phone || null
+        if (updates.cpf !== undefined)               payload.cpf = updates.cpf || null
+        if (updates.status !== undefined)            payload.status = updates.status
+        if (updates.notes !== undefined)             payload.notes = updates.notes || null
+        if (updates.origem !== undefined)            { payload.source = updates.origem; payload.origin = updates.origem }
+        if (updates.interesse !== undefined)         payload.interest_type = updates.interesse || null
+        if (updates.localizacao !== undefined)       payload.interest_location = updates.localizacao || null
+        if (updates.occupation !== undefined)        payload.occupation = updates.occupation || null
+        if (updates.company !== undefined)           payload.company = updates.company || null
+        if (updates.maritalStatus !== undefined)     payload.marital_status = updates.maritalStatus || null
+        if (updates.children !== undefined)          payload.children = updates.children ? parseInt(updates.children) : null
+        if (updates.preferredContact !== undefined)  payload.preferred_contact = updates.preferredContact || null
+        if (updates.bestTime !== undefined)          payload.best_time = updates.bestTime || null
+
+        // Parse orcamento range → budget_min/budget_max
+        if (updates.orcamento !== undefined) {
+            const budgetMap: Record<string, [number, number]> = {
+                'Até R$ 300k':          [0, 300000],
+                'R$ 300k - R$ 500k':    [300000, 500000],
+                'R$ 500k - R$ 800k':    [500000, 800000],
+                'R$ 800k - R$ 1.2M':    [800000, 1200000],
+                'Acima de R$ 1.2M':     [1200000, 999999999],
+            }
+            const range = budgetMap[updates.orcamento]
+            if (range) {
+                payload.budget_min = range[0]
+                payload.budget_max = range[1]
+                payload.capital = range[0]
+            }
+        }
+
+        const { data, error } = await supabase
+            .from('leads')
+            .update(payload)
+            .eq('id', id)
+            .select()
+            .single()
+
+        if (error) {
+            console.error('Error updating lead:', error)
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json({ success: true, lead: data })
+    } catch (error) {
+        console.error('Error in PUT /api/leads:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

@@ -20,26 +20,12 @@ const T = {
 type Period = 'monthly' | 'quarterly' | 'yearly'
 
 const MONTHS_SHORT = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
+const CHANNEL_COLORS = ['#3B82F6', '#8B5CF6', '#4ADE80', '#FBBF24', '#F87171']
+const AGENT_COLORS   = ['#3B82F6', '#A78BFA', '#4ADE80', '#FBBF24']
 
-// Mock sales velocity data (% of peak)
-const VELOCITY_DATA: Record<Period, number[]> = {
-  monthly:   [35, 48, 62, 55, 78, 95, 82, 71, 88, 92, 76, 85],
-  quarterly: [48, 68, 95, 72],
-  yearly:    [42, 67, 58, 85, 95, 72],
-}
-
-const CHANNEL_DATA = [
-  { label: 'Meta Ads',      pct: 42, color: '#3B82F6' },
-  { label: 'Google Search', pct: 31, color: '#8B5CF6' },
-  { label: 'Direct Link',   pct: 18, color: '#4ADE80' },
-  { label: 'Referral',      pct: 9,  color: '#FBBF24' },
-]
-
-const TOP_AGENTS = [
-  { initials: 'RM', name: 'Ricardo M.', leads: 142, conv: 6.2, volume: 3.2, color: '#3B82F6' },
-  { initials: 'AS', name: 'Ana Silva',  leads: 98,  conv: 5.8, volume: 2.8, color: '#A78BFA' },
-  { initials: 'FL', name: 'Fabio L.',   leads: 115, conv: 4.1, volume: 1.9, color: '#4ADE80' },
-]
+type VelocityData = Record<Period, number[]>
+type ChannelItem  = { label: string; pct: number; color: string }
+type AgentItem    = { initials: string; name: string; leads: number; conv: number; volume: number; color: string }
 
 export default function RelatoriosExecutivoPage() {
   const [period, setPeriod] = useState<Period>('monthly')
@@ -50,6 +36,9 @@ export default function RelatoriosExecutivoPage() {
   const [wonLeads, setWonLeads] = useState(0)
   const [totalProperties, setTotalProperties] = useState(0)
   const [monthRevenue, setMonthRevenue] = useState(0)
+  const [velocityData, setVelocityData] = useState<VelocityData>({ monthly: [], quarterly: [], yearly: [] })
+  const [channelData, setChannelData] = useState<ChannelItem[]>([])
+  const [topAgents, setTopAgents] = useState<AgentItem[]>([])
 
   useEffect(() => {
     const load = async () => {
@@ -58,17 +47,24 @@ export default function RelatoriosExecutivoPage() {
         const supabase = createClient()
         const now = new Date()
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+        const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1).toISOString()
 
         const [
           { count: leadsCount },
           { count: wonCount },
           { count: propsCount },
           { data: revenues },
+          { data: leadsTimeline },
+          { data: leadSources },
+          { data: brokersRaw },
         ] = await Promise.all([
           supabase.from('leads').select('*', { count: 'exact', head: true }),
           supabase.from('leads').select('*', { count: 'exact', head: true }).in('status', ['won', 'ganho']),
           supabase.from('developments').select('*', { count: 'exact', head: true }).neq('status_commercial', 'archived'),
           supabase.from('financial_transactions').select('amount').eq('type', 'receita').gte('date', monthStart),
+          supabase.from('leads').select('created_at').gte('created_at', twelveMonthsAgo),
+          supabase.from('leads').select('source'),
+          supabase.from('brokers').select('id, name, email').limit(5),
         ])
 
         const total = leadsCount || 0
@@ -82,20 +78,81 @@ export default function RelatoriosExecutivoPage() {
           setMonthRevenue(rev)
         }
 
-        if (total > 0) {
-          const conv = ((won / total) * 100).toFixed(1)
-          setConversion(conv)
-        }
+        if (total > 0) setConversion(((won / total) * 100).toFixed(1))
 
-        // Pipeline estimate: budget from active hot leads
+        // Pipeline estimate
         const { data: hotLeads } = await supabase
-          .from('leads')
-          .select('capital, budget')
+          .from('leads').select('capital, budget')
           .in('status', ['hot', 'warm', 'negociacao', 'proposta', 'qualified', 'qualificado'])
         if (hotLeads && hotLeads.length > 0) {
           const pipeVal = hotLeads.reduce((s: number, l: any) => s + (l.capital || l.budget || 0), 0)
           if (pipeVal >= 1_000_000) setPipeline((pipeVal / 1_000_000).toFixed(1))
           else if (pipeVal > 0) setPipeline((pipeVal / 1_000).toFixed(0) + 'k')
+        }
+
+        // ── Velocity: monthly lead counts normalized to % of peak ──────────
+        if (leadsTimeline && leadsTimeline.length > 0) {
+          const monthly = new Array(12).fill(0)
+          leadsTimeline.forEach((l: any) => {
+            const m = new Date(l.created_at).getMonth()
+            monthly[m]++
+          })
+          // Roll so current month is last
+          const curMonth = now.getMonth()
+          const ordered = [...monthly.slice(curMonth + 1), ...monthly.slice(0, curMonth + 1)]
+          const peak = Math.max(...ordered, 1)
+          const normalised = ordered.map(c => Math.round((c / peak) * 90) + 5)
+          // Quarterly: sum by quarter
+          const quarterly = [
+            normalised.slice(0, 3).reduce((a, b) => a + b, 0),
+            normalised.slice(3, 6).reduce((a, b) => a + b, 0),
+            normalised.slice(6, 9).reduce((a, b) => a + b, 0),
+            normalised.slice(9, 12).reduce((a, b) => a + b, 0),
+          ]
+          const qPeak = Math.max(...quarterly, 1)
+          const qNorm = quarterly.map(v => Math.round((v / qPeak) * 90) + 5)
+          setVelocityData({ monthly: normalised, quarterly: qNorm, yearly: normalised.slice(6) })
+        }
+
+        // ── Channel: leads grouped by source ───────────────────────────────
+        if (leadSources && leadSources.length > 0) {
+          const counts: Record<string, number> = {}
+          leadSources.forEach((l: any) => {
+            const src = l.source || 'Direto'
+            counts[src] = (counts[src] || 0) + 1
+          })
+          const srcTotal = Object.values(counts).reduce((a, b) => a + b, 0)
+          const sorted = Object.entries(counts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 4)
+          const channels: ChannelItem[] = sorted.map(([label, count], i) => ({
+            label,
+            pct: srcTotal > 0 ? Math.round((count / srcTotal) * 100) : 0,
+            color: CHANNEL_COLORS[i],
+          }))
+          if (channels.length > 0) setChannelData(channels)
+        }
+
+        // ── Top agents: brokers with lead counts ───────────────────────────
+        if (brokersRaw && brokersRaw.length > 0) {
+          const agentPromises = brokersRaw.slice(0, 3).map((b: any) =>
+            supabase.from('leads').select('*', { count: 'exact', head: true }).eq('broker_id', b.id)
+          )
+          const agentLeadCounts = await Promise.all(agentPromises)
+          const agents: AgentItem[] = brokersRaw.slice(0, 3).map((b: any, i: number) => {
+            const lc = agentLeadCounts[i]?.count || 0
+            const parts = (b.name || b.email || 'AG').split(' ')
+            const initials = parts.length >= 2 ? parts[0][0] + parts[1][0] : parts[0].slice(0, 2)
+            return {
+              initials: initials.toUpperCase(),
+              name: parts.slice(0, 2).join(' '),
+              leads: lc,
+              conv: 0,
+              volume: lc > 0 ? parseFloat(((lc * 0.02)).toFixed(1)) : 0,
+              color: AGENT_COLORS[i],
+            }
+          }).filter(a => a.leads > 0)
+          if (agents.length > 0) setTopAgents(agents)
         }
       } catch { /* use defaults */ }
       setLoading(false)
@@ -103,13 +160,22 @@ export default function RelatoriosExecutivoPage() {
     load()
   }, [])
 
-  const velocityData = VELOCITY_DATA[period]
-  const maxVelocity = Math.max(...velocityData)
+  const currentVelocity = velocityData[period].length > 0
+    ? velocityData[period]
+    : [35, 48, 62, 55, 78, 95, 82, 71, 88, 92, 76, 85].slice(0, period === 'quarterly' ? 4 : period === 'yearly' ? 6 : 12)
+  const maxVelocity = Math.max(...currentVelocity, 1)
   const periodLabels = period === 'monthly'
-    ? MONTHS_SHORT.slice(0, velocityData.length)
+    ? MONTHS_SHORT.slice(0, currentVelocity.length)
     : period === 'quarterly'
       ? ['T1', 'T2', 'T3', 'T4']
-      : ['2021', '2022', '2023', '2024', '2025', '2026'].slice(0, velocityData.length)
+      : ['2021', '2022', '2023', '2024', '2025', '2026'].slice(0, currentVelocity.length)
+  const currentChannels = channelData.length > 0 ? channelData : [
+    { label: 'Meta Ads', pct: 42, color: '#3B82F6' },
+    { label: 'Google Search', pct: 31, color: '#8B5CF6' },
+    { label: 'Direct Link', pct: 18, color: '#4ADE80' },
+    { label: 'Referral', pct: 9, color: '#FBBF24' },
+  ]
+  const currentAgents = topAgents.length > 0 ? topAgents : []
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -242,7 +308,7 @@ export default function RelatoriosExecutivoPage() {
           {/* Chart area */}
           <div style={{ position: 'relative', height: '120px', marginBottom: '12px' }}>
             {/* Gradient background */}
-            <svg width="100%" height="100%" viewBox={`0 0 ${velocityData.length * 60} 120`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
+            <svg width="100%" height="100%" viewBox={`0 0 ${currentVelocity.length * 60} 120`} preserveAspectRatio="none" style={{ position: 'absolute', inset: 0 }}>
               <defs>
                 <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.35" />
@@ -252,15 +318,15 @@ export default function RelatoriosExecutivoPage() {
               {/* Area fill */}
               <path
                 d={[
-                  `M 0 ${120 - (velocityData[0] / maxVelocity) * 100}`,
-                  ...velocityData.slice(1).map((v, i) => `L ${(i + 1) * 60} ${120 - (v / maxVelocity) * 100}`),
-                  `L ${(velocityData.length - 1) * 60} 120 L 0 120 Z`,
+                  `M 0 ${120 - (currentVelocity[0] / maxVelocity) * 100}`,
+                  ...currentVelocity.slice(1).map((v, i) => `L ${(i + 1) * 60} ${120 - (v / maxVelocity) * 100}`),
+                  `L ${(currentVelocity.length - 1) * 60} 120 L 0 120 Z`,
                 ].join(' ')}
                 fill="url(#areaGrad)"
               />
               {/* Line */}
               <polyline
-                points={velocityData.map((v, i) => `${i * 60},${120 - (v / maxVelocity) * 100}`).join(' ')}
+                points={currentVelocity.map((v, i) => `${i * 60},${120 - (v / maxVelocity) * 100}`).join(' ')}
                 fill="none"
                 stroke="#3B82F6"
                 strokeWidth="2.5"
@@ -268,7 +334,7 @@ export default function RelatoriosExecutivoPage() {
                 strokeLinejoin="round"
               />
               {/* Dots on peaks */}
-              {velocityData.map((v, i) => v === maxVelocity && (
+              {currentVelocity.map((v, i) => v === maxVelocity && (
                 <circle key={i} cx={i * 60} cy={120 - (v / maxVelocity) * 100} r="4" fill="#3B82F6" />
               ))}
             </svg>
@@ -338,7 +404,7 @@ export default function RelatoriosExecutivoPage() {
           <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px' }}>
             <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '16px' }}>Leads por Canal</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {CHANNEL_DATA.map(ch => (
+              {currentChannels.map(ch => (
                 <div key={ch.label}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                     <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{ch.label}</span>
@@ -379,13 +445,17 @@ export default function RelatoriosExecutivoPage() {
           </div>
 
           {/* Rows */}
-          {TOP_AGENTS.map((agent, idx) => (
+          {currentAgents.length === 0 ? (
+            <div style={{ padding: '24px', textAlign: 'center', color: 'var(--bo-text-muted)', fontSize: '12px' }}>
+              Sem dados de agentes disponíveis
+            </div>
+          ) : currentAgents.map((agent, idx) => (
             <motion.div
               key={agent.name}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.25 + idx * 0.06 }}
-              style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 70px', gap: '12px', padding: '14px 20px', borderBottom: idx < TOP_AGENTS.length - 1 ? '1px solid var(--bo-border)' : 'none', alignItems: 'center' }}
+              style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 70px', gap: '12px', padding: '14px 20px', borderBottom: idx < currentAgents.length - 1 ? '1px solid var(--bo-border)' : 'none', alignItems: 'center' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: `${agent.color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

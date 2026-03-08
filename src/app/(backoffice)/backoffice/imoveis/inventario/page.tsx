@@ -4,13 +4,11 @@ import { useState, useEffect } from 'react'
 import {
     Building2, Bed, Bath, Maximize2, TrendingUp,
     TrendingDown, Plus, Search, Filter, BarChart2,
-    CheckCircle, XCircle, Clock, Star
+    Eye, ExternalLink,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-
-const supabase = createClient()
 
 const T = {
     surface: 'var(--bo-surface)',
@@ -39,37 +37,39 @@ const TYPE_FILTERS = [
 ]
 
 const VIEW_TABS = [
-    { key: 'listings', label: 'All Listings' },
+    { key: 'listings', label: 'Listagem' },
     { key: 'performance', label: 'Performance' },
 ]
 
-// Mock performance data per property
-function mockPerf() {
-    return {
-        leads: Math.floor(Math.random() * 80) + 5,
-        views: Math.floor(Math.random() * 2000) + 100,
-        occupancy: Math.floor(Math.random() * 40) + 60,
-        trend: Math.random() > 0.4 ? +(Math.random() * 15).toFixed(1) : -(Math.random() * 8).toFixed(1),
-    }
-}
-
 export default function InventarioPage() {
     const [developments, setDevelopments] = useState<any[]>([])
+    const [viewCounts, setViewCounts] = useState<Record<string, number>>({})
     const [loading, setLoading] = useState(true)
     const [activeType, setActiveType] = useState('all')
     const [activeView, setActiveView] = useState<'listings' | 'performance'>('listings')
     const [busca, setBusca] = useState('')
-    const [perfs] = useState<Record<string, ReturnType<typeof mockPerf>>>({})
 
     useEffect(() => {
-        supabase
-            .from('developments')
-            .select('id, name, slug, price_min, price_max, tipo, type, status_commercial, status_comercial, gallery_images, bedrooms, bathrooms, area')
-            .order('created_at', { ascending: false })
-            .then(({ data }) => {
-                setDevelopments(data || [])
-                setLoading(false)
-            })
+        const supabase = createClient()
+        Promise.all([
+            supabase
+                .from('developments')
+                .select('id, name, slug, price_min, price_max, tipo, type, status_commercial, status_comercial, gallery_images, bedrooms, bathrooms, area, views')
+                .order('created_at', { ascending: false }),
+            supabase
+                .from('page_views')
+                .select('development_slug')
+                .not('development_slug', 'is', null),
+        ]).then(([{ data: devs }, { data: pv }]) => {
+            setDevelopments(devs || [])
+            // Aggregate view counts by slug
+            const counts: Record<string, number> = {}
+            for (const row of pv || []) {
+                if (row.development_slug) counts[row.development_slug] = (counts[row.development_slug] || 0) + 1
+            }
+            setViewCounts(counts)
+            setLoading(false)
+        })
     }, [])
 
     const filtered = developments.filter(d => {
@@ -96,9 +96,8 @@ export default function InventarioPage() {
         return null
     }
 
-    const getPerf = (id: string) => {
-        if (!perfs[id]) (perfs as any)[id] = mockPerf()
-        return (perfs as any)[id]
+    const getViews = (d: any) => {
+        return viewCounts[d.slug] || d.views || 0
     }
 
     return (
@@ -316,15 +315,15 @@ export default function InventarioPage() {
             {!loading && filtered.length > 0 && activeView === 'performance' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {/* Header row */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px 80px 80px 100px', gap: 8, padding: '0 16px', marginBottom: 4 }}>
-                        {['Imóvel', 'Leads', 'Visitas', 'Ocup.%', 'Tendência'].map(h => (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 120px', gap: 8, padding: '0 16px', marginBottom: 4 }}>
+                        {['Imóvel', 'Visitas (30d)', 'Analytics'].map(h => (
                             <p key={h} style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{h}</p>
                         ))}
                     </div>
 
                     {filtered.map((d, i) => {
                         const status = getStatus(d)
-                        const perf = getPerf(d.id)
+                        const views = getViews(d)
                         const image = getImage(d)
 
                         return (
@@ -334,17 +333,12 @@ export default function InventarioPage() {
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.04 }}
                             >
-                                <Link href={`/backoffice/imoveis/${d.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-                                    <div style={{
-                                        display: 'grid', gridTemplateColumns: '1fr 80px 80px 80px 100px',
-                                        gap: 8, alignItems: 'center',
-                                        padding: '14px 16px', borderRadius: 16,
-                                        background: T.elevated, border: `1px solid ${T.border}`,
-                                        cursor: 'pointer', transition: 'background 0.15s',
-                                    }}
-                                        onMouseEnter={e => (e.currentTarget as any).style.background = T.hover}
-                                        onMouseLeave={e => (e.currentTarget as any).style.background = T.elevated}
-                                    >
+                                <div style={{
+                                    display: 'grid', gridTemplateColumns: '1fr 100px 120px',
+                                    gap: 8, alignItems: 'center',
+                                    padding: '14px 16px', borderRadius: 16,
+                                    background: T.elevated, border: `1px solid ${T.border}`,
+                                }}>
                                         {/* Property info */}
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
                                             <div style={{ width: 44, height: 44, borderRadius: 10, overflow: 'hidden', flexShrink: 0, background: T.surface }}>
@@ -366,37 +360,25 @@ export default function InventarioPage() {
                                             </div>
                                         </div>
 
-                                        {/* Leads */}
-                                        <div>
-                                            <p style={{ fontSize: 15, fontWeight: 700, color: T.text }}>{perf.leads}</p>
+                                        {/* Views — real from page_views */}
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            <Eye size={14} style={{ color: T.textMuted }} />
+                                            <p style={{ fontSize: 15, fontWeight: 700, color: T.text }}>
+                                                {views.toLocaleString('pt-BR')}
+                                            </p>
                                         </div>
 
-                                        {/* Views */}
+                                        {/* Link to full analytics */}
                                         <div>
-                                            <p style={{ fontSize: 15, fontWeight: 700, color: T.text }}>{perf.views.toLocaleString('pt-BR')}</p>
-                                        </div>
-
-                                        {/* Occupancy */}
-                                        <div>
-                                            <p style={{ fontSize: 15, fontWeight: 700, color: T.text }}>{perf.occupancy}%</p>
-                                            <div style={{ width: '100%', height: 3, borderRadius: 2, background: T.border, marginTop: 4, overflow: 'hidden' }}>
-                                                <div style={{ height: '100%', width: `${perf.occupancy}%`, background: perf.occupancy > 70 ? '#4ade80' : '#facc15', borderRadius: 2 }} />
-                                            </div>
-                                        </div>
-
-                                        {/* Trend */}
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                            {perf.trend > 0 ? (
-                                                <TrendingUp size={15} style={{ color: '#4ade80' }} />
-                                            ) : (
-                                                <TrendingDown size={15} style={{ color: '#f87171' }} />
-                                            )}
-                                            <span style={{ fontSize: 13, fontWeight: 700, color: perf.trend > 0 ? '#4ade80' : '#f87171' }}>
-                                                {perf.trend > 0 ? '+' : ''}{perf.trend}%
-                                            </span>
+                                            <Link
+                                                href={`/backoffice/imoveis/${d.id}/analytics`}
+                                                style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: 'var(--bo-accent)', textDecoration: 'none' }}
+                                                onClick={e => e.stopPropagation()}
+                                            >
+                                                <BarChart2 size={13} /> Ver analytics <ExternalLink size={10} />
+                                            </Link>
                                         </div>
                                     </div>
-                                </Link>
                             </motion.div>
                         )
                     })}

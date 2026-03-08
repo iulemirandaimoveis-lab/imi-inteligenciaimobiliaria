@@ -90,6 +90,7 @@ interface FormData {
 
     // Step 3: Status
     status_commercial: string
+    is_highlighted: boolean
 
     // Step 4: Mídia
     images: File[]
@@ -225,6 +226,7 @@ export default function NovoImovelPage() {
         totalUnits: '', availableUnits: '', deliveryDate: '',
         description: '',
         status_commercial: 'published',
+        is_highlighted: false,
         images: [], logo: null,
         floorPlans: [], brochure: null,
         videoUrl: '', videoShort: '',
@@ -365,9 +367,11 @@ export default function NovoImovelPage() {
                 pricePerSqm: formData.pricePerSqm, totalUnits: formData.totalUnits,
                 availableUnits: formData.availableUnits, deliveryDate: formData.deliveryDate,
                 description: formData.description,
+                status_commercial: formData.status_commercial,
+                is_highlighted: formData.is_highlighted,
                 videoUrl: formData.videoUrl, videoShort: formData.videoShort,
             }
-            if (Object.values(draft).some(v => v && v !== 'Brasil' && (typeof v === 'string' ? v.trim() : v.length > 0))) {
+            if (Object.values(draft).some(v => v && v !== 'Brasil' && (typeof v === 'boolean' ? v : typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.length > 0 : false))) {
                 localStorage.setItem('imi-draft-imovel', JSON.stringify(draft))
                 setDraftSaved(true)
                 setTimeout(() => setDraftSaved(false), 2000)
@@ -465,7 +469,7 @@ export default function NovoImovelPage() {
             let imageUrls: string[] = []
             if (formData.images.length > 0) {
                 toast.info(`Enviando ${formData.images.length} foto(s)...`)
-                const results = await uploadMultipleFiles(formData.images, 'developments', 'gallery')
+                const results = await uploadMultipleFiles(formData.images, 'media', 'developments/gallery')
                 imageUrls = results.filter(r => !r.error).map(r => r.url)
                 const fails = results.filter(r => r.error).length
                 if (fails > 0) toast.warning(`${fails} foto(s) falharam`)
@@ -474,7 +478,7 @@ export default function NovoImovelPage() {
             let floorPlanUrls: string[] = []
             if (formData.floorPlans.length > 0) {
                 toast.info(`Enviando ${formData.floorPlans.length} planta(s)...`)
-                const results = await uploadMultipleFiles(formData.floorPlans, 'developments', 'plantas')
+                const results = await uploadMultipleFiles(formData.floorPlans, 'media', 'developments/plantas')
                 floorPlanUrls = results.filter(r => !r.error).map(r => r.url)
             }
 
@@ -509,6 +513,7 @@ export default function NovoImovelPage() {
                 deliveryDate: formData.deliveryDate,
                 description: formData.description,
                 status_commercial: formData.status_commercial,
+                is_highlighted: formData.is_highlighted,
                 gallery_images: imageUrls,
                 image: imageUrls[0] || null,
                 floor_plans: floorPlanUrls,
@@ -538,10 +543,18 @@ export default function NovoImovelPage() {
         }
     }
 
+    const getCurrencyConfig = () => {
+        const c = formData.country.toLowerCase()
+        if (c.includes('usa') || c.includes('united states') || c.includes('estados unidos') || c.includes('eua')) return { code: 'USD', locale: 'en-US', symbol: 'US$' }
+        if (c.includes('saudi') || c.includes('arabia') || c.includes('saudita') || c.includes('ksa')) return { code: 'SAR', locale: 'ar-SA', symbol: 'SAR' }
+        return { code: 'BRL', locale: 'pt-BR', symbol: 'R$' }
+    }
+
     const formatCurrency = (value: string) => {
         const nums = value.replace(/\D/g, '')
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency', currency: 'BRL', minimumFractionDigits: 0,
+        const { code, locale } = getCurrencyConfig()
+        return new Intl.NumberFormat(locale, {
+            style: 'currency', currency: code, minimumFractionDigits: 0,
         }).format(Number(nums))
     }
 
@@ -899,12 +912,13 @@ export default function NovoImovelPage() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
-                                <Label required>Preço Mínimo (R$)</Label>
+                                <Label required>Preço Mínimo ({getCurrencyConfig().symbol})</Label>
                                 <Input
                                     icon={DollarSign} type="number"
                                     value={formData.priceMin}
                                     onChange={v => handleChange('priceMin', v)}
-                                    placeholder="450000" error={errors.priceMin}
+                                    placeholder={getCurrencyConfig().code === 'BRL' ? '450000' : getCurrencyConfig().code === 'USD' ? '250000' : '937500'}
+                                    error={errors.priceMin}
                                 />
                                 {formData.priceMin && (
                                     <p className="text-[11px] mt-1" style={{ color: T.textMuted }}>
@@ -913,12 +927,13 @@ export default function NovoImovelPage() {
                                 )}
                             </div>
                             <div>
-                                <Label required>Preço Máximo (R$)</Label>
+                                <Label required>Preço Máximo ({getCurrencyConfig().symbol})</Label>
                                 <Input
                                     icon={DollarSign} type="number"
                                     value={formData.priceMax}
                                     onChange={v => handleChange('priceMax', v)}
-                                    placeholder="680000" error={errors.priceMax}
+                                    placeholder={getCurrencyConfig().code === 'BRL' ? '680000' : getCurrencyConfig().code === 'USD' ? '450000' : '1687500'}
+                                    error={errors.priceMax}
                                 />
                                 {formData.priceMax && (
                                     <p className="text-[11px] mt-1" style={{ color: T.textMuted }}>
@@ -927,7 +942,7 @@ export default function NovoImovelPage() {
                                 )}
                             </div>
                             <div>
-                                <Label>Preço por m²</Label>
+                                <Label>Preço por m² ({getCurrencyConfig().symbol})</Label>
                                 <Input
                                     type="number"
                                     value={formData.pricePerSqm}
@@ -981,6 +996,30 @@ export default function NovoImovelPage() {
                                     placeholder="Status de publicação"
                                 />
                             </div>
+                        </div>
+
+                        {/* Destaque na Home */}
+                        <div className="rounded-xl p-4 flex items-center justify-between" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: formData.is_highlighted ? 'rgba(245,158,11,0.15)' : T.elevated }}>
+                                    <Star size={16} style={{ color: formData.is_highlighted ? '#f59e0b' : T.textMuted }} />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-semibold" style={{ color: T.text }}>Destaque na Página Inicial</p>
+                                    <p className="text-xs" style={{ color: T.textMuted }}>Aparece na seção "Empreendimentos em Destaque" do site público</p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => handleChange('is_highlighted', !formData.is_highlighted)}
+                                className="relative w-11 h-6 rounded-full transition-all flex-shrink-0"
+                                style={{ background: formData.is_highlighted ? '#f59e0b' : T.border }}
+                            >
+                                <div
+                                    className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-200"
+                                    style={{ left: formData.is_highlighted ? '22px' : '2px' }}
+                                />
+                            </button>
                         </div>
 
                         {/* Description */}

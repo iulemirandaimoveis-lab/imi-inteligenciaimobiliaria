@@ -4,9 +4,13 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET() {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { data, error } = await supabase
             .from('team_members')
             .select('*')
+            .neq('status', 'inactive')
             .order('name', { ascending: true })
 
         if (error) throw error
@@ -20,6 +24,9 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const body = await request.json()
         const { name, email, phone, role, status } = body
 
@@ -54,6 +61,9 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const body = await request.json()
         const { id, name, email, phone, role, status } = body
 
@@ -86,6 +96,9 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
 
@@ -95,7 +108,7 @@ export async function DELETE(request: Request) {
 
         const { error } = await supabase
             .from('team_members')
-            .delete()
+            .update({ status: 'inactive', updated_at: new Date().toISOString() })
             .eq('id', id)
 
         if (error) throw error

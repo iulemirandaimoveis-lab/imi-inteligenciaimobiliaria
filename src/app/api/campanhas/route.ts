@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
         const { data, error, count } = await supabase
             .from('campaigns')
             .select('*', { count: 'exact' })
+            .not('status', 'eq', 'cancelled')
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1)
 
@@ -68,7 +69,9 @@ export async function POST(request: NextRequest) {
                 end_date: body.end_date || null,
                 objective: body.objective || null,
                 utm_source: body.utm_source || null,
+                utm_medium: body.utm_medium || null,
                 utm_campaign: body.utm_campaign || null,
+                created_by: user.id,
             })
             .select()
             .single()

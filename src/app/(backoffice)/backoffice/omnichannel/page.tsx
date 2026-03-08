@@ -2,19 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { Layers, MessageSquare, Mail, Phone, Instagram, ExternalLink, RefreshCw } from 'lucide-react'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    hover: 'var(--bo-hover)',
-    border: 'var(--bo-border)',
-    borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    textTertiary: 'var(--bo-text-tertiary, var(--bo-text-muted))',
-    gold: 'var(--bo-accent)',
-    shadow: 'var(--bo-shadow)',
-}
+import { PageIntelHeader } from '../../components/ui'
+import { T } from '../../lib/theme'
 
 const channels = [
     { name: 'WhatsApp', icon: MessageSquare, status: 'Ativo', color: '#25D366', href: '/backoffice/whatsapp' },
@@ -51,42 +40,39 @@ export default function OmniChannelPage() {
     return (
         <div className="space-y-5">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                    <h1 className="text-xl sm:text-2xl font-bold" style={{ color: T.text }}>
-                        Omni Channel
-                    </h1>
-                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>
-                        Central unificada de comunicação com leads e clientes.
-                    </p>
-                </div>
-                {hasChatwoot && (
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => setActiveView('overview')}
-                            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
-                            style={{
-                                background: activeView === 'overview' ? T.gold : T.hover,
-                                color: activeView === 'overview' ? '#fff' : T.textMuted,
-                                border: `1px solid ${activeView === 'overview' ? T.gold : T.border}`,
-                            }}
-                        >
-                            Canais
-                        </button>
-                        <button
-                            onClick={() => setActiveView('chatwoot')}
-                            className="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
-                            style={{
-                                background: activeView === 'chatwoot' ? T.gold : T.hover,
-                                color: activeView === 'chatwoot' ? '#fff' : T.textMuted,
-                                border: `1px solid ${activeView === 'chatwoot' ? T.gold : T.border}`,
-                            }}
-                        >
-                            <Layers size={14} /> Chatwoot
-                        </button>
-                    </div>
-                )}
-            </div>
+            <PageIntelHeader
+                moduleLabel="OMNICHANNEL"
+                title="Omni Channel"
+                subtitle="Central unificada de comunicação com leads e clientes"
+                actions={
+                    hasChatwoot ? (
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setActiveView('overview')}
+                                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
+                                style={{
+                                    background: activeView === 'overview' ? T.accent : T.hover,
+                                    color: activeView === 'overview' ? '#fff' : T.textMuted,
+                                    border: `1px solid ${activeView === 'overview' ? T.accent : T.border}`,
+                                }}
+                            >
+                                Canais
+                            </button>
+                            <button
+                                onClick={() => setActiveView('chatwoot')}
+                                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+                                style={{
+                                    background: activeView === 'chatwoot' ? T.accent : T.hover,
+                                    color: activeView === 'chatwoot' ? '#fff' : T.textMuted,
+                                    border: `1px solid ${activeView === 'chatwoot' ? T.accent : T.border}`,
+                                }}
+                            >
+                                <Layers size={14} /> Chatwoot
+                            </button>
+                        </div>
+                    ) : undefined
+                }
+            />
 
             {/* ═══════ OVERVIEW VIEW ═══════ */}
             {activeView === 'overview' && (
@@ -122,7 +108,7 @@ export default function OmniChannelPage() {
                                         className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full"
                                         style={{
                                             background: ch.status === 'Ativo' ? 'var(--s-done-bg)' : T.hover,
-                                            color: ch.status === 'Ativo' ? 'var(--s-done)' : T.textTertiary,
+                                            color: ch.status === 'Ativo' ? 'var(--s-done)' : T.textMuted,
                                         }}
                                     >
                                         {ch.status}
@@ -143,7 +129,7 @@ export default function OmniChannelPage() {
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                             <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
                                 style={{ background: 'var(--bo-active-bg)' }}>
-                                <Layers size={24} style={{ color: T.gold }} />
+                                <Layers size={24} style={{ color: T.accent }} />
                             </div>
                             <div className="flex-1">
                                 <h3 className="text-sm font-bold" style={{ color: T.text }}>
@@ -175,7 +161,7 @@ export default function OmniChannelPage() {
                                     # No seu .env.local ou Vercel Environment Variables:
                                 </p>
                                 <code className="text-xs font-mono block p-3 rounded-lg"
-                                    style={{ background: T.elevated, color: T.gold, border: `1px solid ${T.border}` }}>
+                                    style={{ background: T.elevated, color: T.accent, border: `1px solid ${T.border}` }}>
                                     NEXT_PUBLIC_CHATWOOT_URL=https://seu-chatwoot.exemplo.com
                                 </code>
                             </div>
@@ -183,16 +169,16 @@ export default function OmniChannelPage() {
                     </div>
 
                     {/* Stats Summary */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                         {[
-                            { label: 'Leads Hoje', value: String(realStats.hoje), color: T.gold },
+                            { label: 'Leads Hoje', value: String(realStats.hoje), color: T.accent },
                             { label: 'Tempo Médio', value: '—', color: 'var(--s-cold)' },
                             { label: 'Satisfação', value: '—', color: 'var(--s-done)' },
                             { label: 'Pendentes', value: String(realStats.pendentes), color: 'var(--s-hot)' },
                         ].map(stat => (
-                            <div key={stat.label} className="rounded-xl p-4"
+                            <div key={stat.label} className="rounded-2xl p-4"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                <p className="text-lg sm:text-xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
+                                <p className="text-lg font-bold" style={{ color: stat.color }}>{stat.value}</p>
                                 <p className="text-[10px] font-medium mt-0.5" style={{ color: T.textMuted }}>{stat.label}</p>
                             </div>
                         ))}
@@ -207,7 +193,7 @@ export default function OmniChannelPage() {
                     <div className="flex items-center justify-between px-4 py-2"
                         style={{ borderBottom: `1px solid ${T.border}` }}>
                         <div className="flex items-center gap-2">
-                            <Layers size={14} style={{ color: T.gold }} />
+                            <Layers size={14} style={{ color: T.accent }} />
                             <span className="text-xs font-semibold" style={{ color: T.text }}>Chatwoot Dashboard</span>
                         </div>
                         <div className="flex items-center gap-1">

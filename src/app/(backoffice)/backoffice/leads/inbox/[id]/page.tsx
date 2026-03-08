@@ -60,6 +60,37 @@ function getAbordagem(lead: any, score: number): string {
     return `${firstName} necessita qualificação adicional. Foco em entender necessidades específicas e orçamento real antes de apresentar opções. Estratégia nurturing recomendada.`
 }
 
+function generateBotResponse(userMessage: string, lead: any, score: number): string {
+    const firstName = lead?.name?.split(' ')[0] || 'cliente'
+    const lower = userMessage.toLowerCase()
+
+    if (lower.includes('visita') || lower.includes('conhecer') || lower.includes('ver o imóvel') || lower.includes('agendar')) {
+        return `Ótimo, ${firstName}! Tenho disponibilidade amanhã e depois de amanhã. Qual período funciona melhor para você — manhã (9h–12h) ou tarde (14h–18h)?`
+    }
+    if (lower.includes('preço') || lower.includes('valor') || lower.includes('custo') || lower.includes('quanto custa') || lower.includes('orçamento')) {
+        return `Com base no perfil de ${firstName}, as melhores opções estão dentro da faixa de interesse. Posso preparar uma seleção personalizada com plantas e tabela de preços. Você prefere receber por e-mail ou WhatsApp?`
+    }
+    if (lower.includes('financiar') || lower.includes('financiamento') || lower.includes('parcela') || lower.includes('entrada')) {
+        return `Trabalhamos com as principais instituições financeiras e conseguimos condições diferenciadas. Posso fazer uma simulação pré-aprovada para ${firstName} sem compromisso. Qual é o valor de entrada disponível?`
+    }
+    if (lower.includes('planta') || lower.includes('metragem') || lower.includes('m²') || lower.includes('área')) {
+        return `Temos plantas de 2 a 4 suítes com metragens entre 80m² e 220m². Posso enviar os layouts disponíveis agora. Qual configuração mais se encaixa no seu estilo de vida?`
+    }
+    if (lower.includes('sim') || lower.includes('ok') || lower.includes('claro') || lower.includes('ótimo') || lower.includes('pode') || lower.includes('quero')) {
+        return score >= 80
+            ? `Perfeito! Já separei as melhores opções para o perfil de ${firstName}. Vou enviar o tour virtual agora. Posso também bloquear uma unidade por 24h — é comum para clientes com esse nível de interesse.`
+            : `Ótimo, ${firstName}! Vou organizar as informações e preparo um material completo. Você prefere receber por WhatsApp ou e-mail?`
+    }
+    if (lower.includes('não') || lower.includes('nao') || lower.includes('não tenho') || lower.includes('impossível')) {
+        return `Entendo, ${firstName}. Sem problema! Posso reagendar para quando for mais conveniente. Qual é o melhor momento da semana para você?`
+    }
+
+    // Default: contextual based on score
+    return score >= 80
+        ? `Entendido, ${firstName}! Com base no seu perfil, já identifiquei as melhores opções disponíveis agora. Posso agendar uma apresentação exclusiva essa semana. O que acha de uma visita rápida de 30 minutos?`
+        : `Compreendi! Vou preparar uma curadoria personalizada para ${firstName} com as opções mais alinhadas ao seu perfil. Você prefere receber por WhatsApp ou e-mail?`
+}
+
 function buildMessages(lead: any) {
     if (!lead) return []
     const firstName = lead.name?.split(' ')[0] || 'Cliente'
@@ -130,21 +161,41 @@ export default function LeadInboxDetailPage() {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (!chatInput.trim() || !assumed) return
+        const userMsg = chatInput.trim()
         const now = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-        setMessages(prev => [...prev, { id: Date.now(), role: 'user' as const, text: chatInput, time: now }])
+        setMessages(prev => [...prev, { id: Date.now(), role: 'user' as const, text: userMsg, time: now }])
         setChatInput('')
         setSending(true)
-        setTimeout(() => {
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                role: 'bot' as const,
-                text: 'Entendido! Vou verificar as melhores opções para o seu perfil e retorno com as recomendações em instantes.',
-                time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-            }])
-            setSending(false)
-        }, 1400)
+
+        // Try real AI response first, fall back to contextual local generation
+        let botText = ''
+        try {
+            const res = await fetch('/api/ai/router', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    task_type: 'resposta_chat',
+                    prompt: `Você é um assistente de qualificação imobiliária da IMI. O lead se chama ${lead?.name}, interesse: ${lead?.interest_type || 'imóveis premium'}, orçamento: R$ ${lead?.budget_min ? (lead.budget_min / 1000).toFixed(0) + 'k' : 'não informado'}. O corretor enviou: "${userMsg}". Responda de forma breve e natural (1-2 frases), como o assistente IA responderia ao lead para avançar na qualificação.`,
+                    context: 'Assistente de qualificação IMI — tom profissional e objetivo.',
+                }),
+            })
+            const data = await res.json()
+            if (data.success && data.result) botText = data.result
+        } catch { /* fallback abaixo */ }
+
+        if (!botText) {
+            botText = generateBotResponse(userMsg, lead, getScore(lead))
+        }
+
+        setMessages(prev => [...prev, {
+            id: Date.now() + 1,
+            role: 'bot' as const,
+            text: botText,
+            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        }])
+        setSending(false)
     }
 
     if (loading) {

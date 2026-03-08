@@ -15,6 +15,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import {
   FileText,
   Sparkles,
@@ -266,10 +267,34 @@ export default function NovoConteudoPage() {
   }
 
   const salvarConteudo = async () => {
+    if (!titulo.trim()) {
+      toast.error('Adicione um título antes de salvar')
+      return
+    }
     setSalvo(true)
-    setTimeout(() => {
-      router.push('/backoffice/conteudos')
-    }, 1500)
+    try {
+      const res = await fetch('/api/conteudos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          titulo: titulo.trim(),
+          tipo,
+          canal: tipo,
+          status: 'rascunho',
+          conteudo: corpo,
+          tags: [],
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Erro ao salvar')
+      }
+      toast.success('Conteúdo salvo com sucesso!')
+      setTimeout(() => router.push('/backoffice/conteudos'), 800)
+    } catch (err: any) {
+      toast.error(err.message || 'Erro ao salvar conteúdo')
+      setSalvo(false)
+    }
   }
 
   const formatShortDate = () => {

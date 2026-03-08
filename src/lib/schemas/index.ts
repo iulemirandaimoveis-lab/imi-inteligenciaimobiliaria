@@ -44,6 +44,7 @@ const campanhaBaseObject = z.object({
     end_date: z.string().optional().nullable(),
     objective: z.string().optional().nullable(),
     utm_source: z.string().optional().nullable(),
+    utm_medium: z.string().optional().nullable(),
     utm_campaign: z.string().optional().nullable(),
 })
 
@@ -75,14 +76,28 @@ export const contratoUpdateSchema = contratoSchema.partial().extend({
 // ─── CONSULTORIAS ────────────────────────────────────────────────────────────
 
 export const consultoriaSchema = z.object({
-    titulo: z.string().min(2, 'Título obrigatório'),
+    // Dados do cliente
+    cliente_nome: z.string().min(2, 'Nome obrigatório'),
+    cliente_email: z.string().email().optional().or(z.literal('')),
+    cliente_telefone: z.string().optional(),
+    cliente_tipo: z.enum(['PF', 'PJ']).default('PF'),
+    // Escopo
     tipo: z.string().optional(),
     descricao: z.string().optional(),
-    status: z.string().optional(),
-    cliente_nome: z.string().optional(),
-    cliente_email: z.string().email().optional().or(z.literal('')),
-    valor: z.number().nonnegative().optional().nullable(),
-    data_agendamento: z.string().optional().nullable(),
+    objetivo: z.string().optional(),
+    // Localização
+    cidade: z.string().optional(),
+    estado: z.string().optional(),
+    // Honorários
+    honorarios: z.number().nonnegative().optional().nullable(),
+    forma_pagamento: z.string().optional(),
+    honorarios_status: z.string().optional().default('pendente'),
+    // Prazos
+    data_inicio: z.string().optional().nullable(),
+    data_prev_conclusao: z.string().optional().nullable(),
+    // Extras
+    observacoes: z.string().optional(),
+    status: z.string().optional().default('ativo'),
 })
 
 export const consultoriaUpdateSchema = consultoriaSchema.partial().extend({

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 import {
     ArrowLeft,
     User,
@@ -86,25 +88,17 @@ const statusOptions = [
     { value: 'perdido', label: 'Perdido', color: 'red' },
 ]
 
-// Mock data (seria carregado do Supabase via ID)
-const mockLeadData = {
-    id: 1,
-    name: 'Maria Santos Silva',
-    email: 'maria.santos@gmail.com',
-    phone: '(81) 99845-3421',
-    cpf: '123.456.789-00',
-    origem: 'Instagram',
-    interesse: 'Apartamento',
-    localizacao: 'Boa Viagem',
-    orcamento: 'R$ 500k - R$ 800k',
-    status: 'qualificado',
-    occupation: 'Médica Cardiologista',
-    company: 'Hospital Português',
-    maritalStatus: 'Casada',
-    children: 2,
-    preferredContact: 'WhatsApp',
-    bestTime: 'Tarde (14h-17h)',
-    notes: 'Interessada em empreendimentos próximos ao mar. Preferência por acabamento premium.',
+const supabase = createClient()
+
+// Helper: convert budget_min/budget_max numbers to faixa label
+function getBudgetLabel(budgetMin: number | null, budgetMax: number | null): string {
+    if (!budgetMin && !budgetMax) return ''
+    if (budgetMax && budgetMax <= 300000) return 'Até R$ 300k'
+    if (budgetMin && budgetMin >= 300000 && budgetMax && budgetMax <= 500000) return 'R$ 300k - R$ 500k'
+    if (budgetMin && budgetMin >= 500000 && budgetMax && budgetMax <= 800000) return 'R$ 500k - R$ 800k'
+    if (budgetMin && budgetMin >= 800000 && budgetMax && budgetMax <= 1200000) return 'R$ 800k - R$ 1.2M'
+    if (budgetMin && budgetMin >= 1200000) return 'Acima de R$ 1.2M'
+    return ''
 }
 
 export default function EditarLeadPage() {
@@ -136,17 +130,45 @@ export default function EditarLeadPage() {
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [score, setScore] = useState(0)
 
-    // Load data on mount
+    // Load real lead data on mount
     useEffect(() => {
-        // Simulate loading from Supabase
-        setTimeout(() => {
-            setFormData({
-                ...mockLeadData,
-                children: mockLeadData.children.toString(),
-            })
-            setIsLoading(false)
-            calculateScore()
-        }, 500)
+        async function fetchLead() {
+            try {
+                const { data, error } = await supabase
+                    .from('leads')
+                    .select('*')
+                    .eq('id', params.id)
+                    .single()
+
+                if (error || !data) throw new Error('Lead não encontrado')
+
+                setFormData({
+                    name: data.name || '',
+                    email: data.email || '',
+                    phone: data.phone || '',
+                    cpf: data.cpf || '',
+                    origem: data.source || data.origin || '',
+                    interesse: data.interest_type || '',
+                    localizacao: data.interest_location || '',
+                    orcamento: getBudgetLabel(data.budget_min ?? data.capital ?? null, data.budget_max ?? null),
+                    status: data.status || '',
+                    occupation: data.occupation || '',
+                    company: data.company || '',
+                    maritalStatus: data.marital_status || '',
+                    children: data.children != null ? String(data.children) : '',
+                    preferredContact: data.preferred_contact || '',
+                    bestTime: data.best_time || '',
+                    notes: data.notes || '',
+                })
+            } catch (err: any) {
+                toast.error('Erro ao carregar lead')
+                router.push('/backoffice/leads')
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        if (params.id) fetchLead()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params.id])
 
     // Auto-calculate lead score

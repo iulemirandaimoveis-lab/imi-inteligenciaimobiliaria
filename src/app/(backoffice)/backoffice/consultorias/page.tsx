@@ -7,14 +7,8 @@ import {
     Briefcase, Plus, Search, Eye, Edit, Clock,
     CheckCircle2, DollarSign, Calendar, MapPin,
 } from 'lucide-react'
-
-// ── Theme tokens ──────────────────────────────────────────────
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { PageIntelHeader, KPICard, FilterTabs } from '../../components/ui'
+import { T, ctaGradient, ctaShadow } from '../../lib/theme'
 
 // ── Types ─────────────────────────────────────────────────────
 interface Consultoria {
@@ -86,17 +80,25 @@ export default function ConsultoriasPage() {
     const emAndamento = consultorias.filter(c => c.status === 'em_andamento').length
     const propostas = consultorias.filter(c => c.status === 'proposta').length
 
+    const filterTabs = [
+        { id: 'todos', label: 'Todos', count: consultorias.length },
+        { id: 'em_andamento', label: 'Em Andamento', count: emAndamento },
+        { id: 'proposta', label: 'Propostas', count: propostas },
+        { id: 'concluida', label: 'Concluídas', count: consultorias.filter(c => c.status === 'concluida').length },
+    ]
+
     if (loading) {
         return (
-            <div className="space-y-5 max-w-7xl mx-auto">
+            <div className="space-y-5">
                 <div className="flex items-start justify-between gap-4">
                     <div>
+                        <div className="skeleton h-3 w-24 mb-2" />
                         <div className="skeleton h-6 w-32 mb-2" />
                         <div className="skeleton h-4 w-48" />
                     </div>
                     <div className="skeleton h-10 w-40 rounded-xl" />
                 </div>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                     {[...Array(4)].map((_, i) => (
                         <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 80}ms` }}>
                             <div className="skeleton h-3 w-20 mb-3" />
@@ -118,49 +120,31 @@ export default function ConsultoriasPage() {
     }
 
     return (
-        <div className="space-y-5 max-w-7xl mx-auto">
+        <div className="space-y-5">
 
             {/* Header */}
-            <motion.div
-                initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="flex items-start justify-between gap-4"
-            >
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Consultorias</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>Gestão de projetos e honorários</p>
-                </div>
-                <motion.button
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => router.push('/backoffice/consultorias/nova')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: T.gold }}
-                >
-                    <Plus size={16} /> Nova Consultoria
-                </motion.button>
-            </motion.div>
+            <PageIntelHeader
+                moduleLabel="CONSULTORIAS"
+                title="Consultorias"
+                subtitle="Gestão de projetos e honorários"
+                actions={
+                    <motion.button
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => router.push('/backoffice/consultorias/nova')}
+                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                        style={{ background: ctaGradient, boxShadow: ctaShadow }}
+                    >
+                        <Plus size={16} /> <span className="hidden sm:inline">Nova Consultoria</span>
+                    </motion.button>
+                }
+            />
 
             {/* KPIs */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                {[
-                    { l: 'Total Portfólio', v: fmtCurrency(totalHonorarios), icon: DollarSign, color: T.gold },
-                    { l: 'Honorários Recebidos', v: fmtCurrency(recebido), icon: CheckCircle2, color: '#6BB87B' },
-                    { l: 'Em Andamento', v: emAndamento, icon: Clock, color: 'var(--bo-accent)' },
-                    { l: 'Propostas Abertas', v: propostas, icon: Briefcase, color: '#B87BB8' },
-                ].map((kpi, i) => {
-                    const Icon = kpi.icon
-                    return (
-                        <motion.div
-                            key={kpi.l}
-                            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.06, duration: 0.35 }}
-                            className="rounded-2xl p-4"
-                            style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}
-                        >
-                            <p className="text-xs font-medium mb-1" style={{ color: T.textSub }}>{kpi.l}</p>
-                            <p className="text-2xl font-bold" style={{ color: kpi.color }}>{kpi.v}</p>
-                        </motion.div>
-                    )
-                })}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+                <KPICard label="Total Portfólio" value={fmtCurrency(totalHonorarios)} icon={<DollarSign size={16} />} accent="blue" size="sm" />
+                <KPICard label="Hon. Recebidos" value={fmtCurrency(recebido)} icon={<CheckCircle2 size={16} />} accent="green" size="sm" />
+                <KPICard label="Em Andamento" value={String(emAndamento)} icon={<Clock size={16} />} accent="warm" size="sm" />
+                <KPICard label="Propostas" value={String(propostas)} icon={<Briefcase size={16} />} accent="ai" size="sm" />
             </div>
 
             {/* Filtros */}
@@ -179,47 +163,28 @@ export default function ConsultoriasPage() {
                                 background: T.elevated,
                                 border: `1px solid ${T.border}`,
                                 color: T.text,
-                                caretColor: T.gold,
+                                caretColor: T.accent,
                             }}
                             onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
                             onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
                         />
                     </div>
-                    <div className="flex items-center gap-1.5 overflow-x-auto flex-shrink-0">
-                        {['todos', 'em_andamento', 'proposta', 'concluida'].map(s => (
-                            <button
-                                key={s}
-                                onClick={() => setFiltroStatus(s)}
-                                className="px-3.5 h-10 rounded-xl text-xs font-semibold transition-all whitespace-nowrap"
-                                style={{
-                                    background: filtroStatus === s
-                                        ? (s === 'todos' ? T.gold : STATUS_CFG[s]?.bg || T.elevated)
-                                        : T.elevated,
-                                    color: filtroStatus === s
-                                        ? (s === 'todos' ? 'white' : STATUS_CFG[s]?.text || T.textSub)
-                                        : T.textDim,
-                                    border: `1px solid ${filtroStatus === s ? T.borderGold : T.border}`,
-                                }}
-                            >
-                                {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.l}
-                            </button>
-                        ))}
-                    </div>
+                    <FilterTabs tabs={filterTabs} active={filtroStatus} onChange={setFiltroStatus} />
                 </div>
             </div>
 
             {/* Lista */}
             <div className="space-y-2">
                 {filtered.map((c, i) => {
-                    const stt = STATUS_CFG[c.status] || { l: c.status, text: T.textSub, bg: T.elevated }
-                    const hon = HON_CFG[c.honorarios_status] || { l: c.honorarios_status, color: T.textSub }
+                    const stt = STATUS_CFG[c.status] || { l: c.status, text: T.textMuted, bg: T.elevated }
+                    const hon = HON_CFG[c.honorarios_status] || { l: c.honorarios_status, color: T.textMuted }
                     return (
                         <motion.div
                             key={c.id}
                             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.03 }}
                             className="rounded-2xl cursor-pointer transition-all hover-card"
-                            style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                             onClick={() => router.push(`/backoffice/consultorias/${c.id}`)}
 
                         >
@@ -228,7 +193,7 @@ export default function ConsultoriasPage() {
                                     className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                                     style={{ background: 'rgba(72,101,129,0.12)' }}
                                 >
-                                    <Briefcase size={18} style={{ color: T.gold }} />
+                                    <Briefcase size={18} style={{ color: T.accent }} />
                                 </div>
 
                                 <div className="flex-1 min-w-0">
@@ -249,7 +214,7 @@ export default function ConsultoriasPage() {
                                                 {c.tipo && (
                                                     <span
                                                         className="text-[10px] px-2 py-0.5 rounded-full"
-                                                        style={{ color: T.textSub, background: T.elevated }}
+                                                        style={{ color: T.textMuted, background: T.elevated }}
                                                     >
                                                         {TIPO_LABEL[c.tipo] || c.tipo}
                                                     </span>
@@ -299,7 +264,7 @@ export default function ConsultoriasPage() {
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={() => router.push(`/backoffice/consultorias/${c.id}`)}
                                                 className="h-7 px-3 rounded-lg text-[11px] font-medium flex items-center gap-1 transition-all"
-                                                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}
+                                                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
                                             >
                                                 <Eye size={11} /> Ver
                                             </motion.button>
@@ -307,7 +272,7 @@ export default function ConsultoriasPage() {
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={() => router.push(`/backoffice/consultorias/${c.id}/editar`)}
                                                 className="h-7 px-3 rounded-lg text-[11px] font-medium flex items-center gap-1 transition-all"
-                                                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}
+                                                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
                                             >
                                                 <Edit size={11} /> Editar
                                             </motion.button>
@@ -337,7 +302,7 @@ export default function ConsultoriasPage() {
                                 whileTap={{ scale: 0.96 }}
                                 onClick={() => router.push('/backoffice/consultorias/nova')}
                                 className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
-                                style={{ background: T.gold }}
+                                style={{ background: ctaGradient, boxShadow: ctaShadow }}
                             >
                                 <Plus size={14} /> Nova Consultoria
                             </motion.button>

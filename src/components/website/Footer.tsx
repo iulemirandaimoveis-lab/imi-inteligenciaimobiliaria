@@ -79,45 +79,45 @@ export default function Footer({ lang, settings }: FooterProps) {
                         </p>
 
                         {/* Credentials card */}
-                        <div className="border-l-[4px] border-[#334E68] bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-2xl p-4 lg:p-8 mb-6 lg:mb-8">
-                            <p className="font-bold text-white text-[16px] mb-1">Iule Miranda</p>
-                            <p className="text-[#486581] text-[10px] font-bold uppercase tracking-[0.2em] mb-4 lg:mb-6">
+                        <div className="border-l-[3px] border-[#334E68] bg-gradient-to-br from-white/[0.04] to-transparent rounded-r-xl p-3 lg:p-4 mb-4 lg:mb-6">
+                            <p className="font-bold text-white text-[13px] lg:text-[14px] mb-0.5">Iule Miranda</p>
+                            <p className="text-[#486581] text-[9px] font-bold uppercase tracking-[0.2em] mb-3">
                                 CRECI 17933 | CNAI 53290
                             </p>
 
-                            <div className="space-y-2.5 sm:space-y-4">
+                            <div className="space-y-[6px]">
                                 <a
                                     href={`mailto:${settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}`}
-                                    className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl group"
+                                    className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
-                                        <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    <div className="w-[28px] h-[28px] bg-[#1A1E2A] rounded-md flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#486581] transition-colors border border-white/[0.04]">
+                                        <Mail className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[11px] font-medium break-all">{settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}</span>
                                 </a>
 
                                 <a
                                     href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl group"
+                                    className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
-                                        <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    <div className="w-[28px] h-[28px] bg-[#1A1E2A] rounded-md flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#6BB87B] transition-colors border border-white/[0.04]">
+                                        <MessageCircle className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[12px] sm:text-[13px] font-medium">{settings?.companyPhone || '+55 (81) 9 9723-0455'}</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-white transition-colors text-[11px] font-medium">{settings?.companyPhone || '+55 (81) 9 9723-0455'}</span>
                                 </a>
 
                                 <a
                                     href="https://www.linkedin.com/in/iule-miranda-imoveis"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.03] hover:border-white/[0.08] transition-all duration-300 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl group"
+                                    className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
-                                    <div className="w-9 h-9 sm:w-12 sm:h-12 bg-[#1A1E2A] rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#0A66C2] group-hover:scale-105 transition-all duration-300 shadow-sm border border-white/[0.02]">
-                                        <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
+                                    <div className="w-[28px] h-[28px] bg-[#1A1E2A] rounded-md flex items-center justify-center flex-shrink-0 text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors border border-white/[0.04]">
+                                        <Linkedin className="w-[14px] h-[14px]" />
                                     </div>
-                                    <span className="text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors text-[12px] sm:text-[13px] font-medium">linkedin.com/in/iule-miranda</span>
+                                    <span className="text-[#9CA3AF] group-hover:text-[#0A66C2] transition-colors text-[11px] font-medium">linkedin.com/in/iule-miranda</span>
                                 </a>
                             </div>
                         </div>

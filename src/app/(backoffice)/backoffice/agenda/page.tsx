@@ -42,32 +42,7 @@ const EVENT_TYPES: Record<string, { label: string; color: string; bg: string; ic
 
 const DIAS_SEMANA_CURTO = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
 
-const SMART_SUGGESTIONS = [
-  {
-    id: 1,
-    title: 'Lead Quente – Agendar Follow-up',
-    desc: 'Carlos Henrique visitou o Reserva Imperial 3× esta semana. Janela ideal: 14:30–15:00.',
-    action: 'Agendar Agora',
-    icon: Zap,
-    color: '#FF3131',
-  },
-  {
-    id: 2,
-    title: 'Reunião Construtora – Pendente há 18 dias',
-    desc: 'Sem reunião de alinhamento com Moura Dubeux. Recomendado: Quarta 10:00–11:00.',
-    action: 'Criar Reunião',
-    icon: Users,
-    color: '#4ADE80',
-  },
-  {
-    id: 3,
-    title: 'Vistoria Urgente – Apto 1204-A',
-    desc: 'Contrato assinado há 3 dias sem vistoria agendada. Não pode esperar.',
-    action: 'Agendar Vistoria',
-    icon: Home,
-    color: '#FBBF24',
-  },
-]
+// Smart suggestions computed dynamically from real leads — see useEffect below
 
 export default function AgendaPage() {
   const [events, setEvents] = useState<CalendarEvent[]>([])
@@ -76,7 +51,8 @@ export default function AgendaPage() {
   const [selectedDay, setSelectedDay] = useState(() => new Date().toISOString().split('T')[0])
   const [showModal, setShowModal] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [dismissed, setDismissed] = useState<number[]>([])
+  const [dismissed, setDismissed] = useState<string[]>([])
+  const [smartSuggestions, setSmartSuggestions] = useState<{id:string;title:string;desc:string;action:string;icon:any;color:string}[]>([])
 
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date()
@@ -104,6 +80,52 @@ export default function AgendaPage() {
   }, [currentMonth])
 
   useEffect(() => { fetchEvents() }, [fetchEvents])
+
+  // Load dismissed from localStorage + compute smart suggestions from real leads
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('imi-agenda-dismissed')
+      if (saved) setDismissed(JSON.parse(saved))
+    } catch { /* ignore */ }
+
+    fetch('/api/leads?limit=30')
+      .then(r => r.json())
+      .then(data => {
+        const leads: any[] = Array.isArray(data) ? data : (data.data ?? [])
+        const suggestions: typeof smartSuggestions = []
+
+        const hotLead = leads.find(l => (l.ai_score ?? 0) >= 70 && ['novo', 'contatado'].includes(l.status ?? ''))
+        if (hotLead) suggestions.push({
+          id: `hot-${hotLead.id}`,
+          title: 'Lead Quente – Agendar Follow-up',
+          desc: `${hotLead.name} tem score ${hotLead.ai_score ?? '—'} e aguarda contato. Ideal para agendamento imediato.`,
+          action: 'Agendar Agora', icon: Zap, color: 'var(--s-hot)',
+        })
+
+        const qualified = leads.find(l => l.status === 'qualificado' && !suggestions.find(s => s.id.includes(l.id)))
+        if (qualified) suggestions.push({
+          id: `qual-${qualified.id}`,
+          title: 'Lead Qualificado – Proposta Pendente',
+          desc: `${qualified.name} está qualificado e aguarda proposta ou reunião formal.`,
+          action: 'Criar Reunião', icon: Users, color: 'var(--s-done)',
+        })
+
+        const recent = leads.find(l => {
+          const diff = Date.now() - new Date(l.created_at ?? 0).getTime()
+          return diff < 86400000 * 3 && !suggestions.find(s => s.id.includes(l.id))
+        })
+        if (recent) suggestions.push({
+          id: `new-${recent.id}`,
+          title: 'Novo Lead – Primeiro Contato',
+          desc: `${recent.name} se cadastrou há menos de 3 dias. Janela ideal para primeiro contato.`,
+          action: 'Agendar Ligação', icon: Phone, color: 'var(--bo-accent)',
+        })
+
+        setSmartSuggestions(suggestions.slice(0, 3))
+      })
+      .catch(() => { /* silently skip if leads API unavailable */ })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // ── Week strip helpers ────────────────────────────────────────────────────
   const getWeekDays = () => {
@@ -201,7 +223,12 @@ export default function AgendaPage() {
     outline: 'none', boxSizing: 'border-box',
   }
 
-  const activeSuggestions = SMART_SUGGESTIONS.filter(s => !dismissed.includes(s.id))
+  const activeSuggestions = smartSuggestions.filter(s => !dismissed.includes(s.id))
+  const dismissSuggestion = (id: string) => {
+    const next = [...dismissed, id]
+    setDismissed(next)
+    try { localStorage.setItem('imi-agenda-dismissed', JSON.stringify(next)) } catch { /* ignore */ }
+  }
 
   const selectedDayLabel = isToday(selectedDay)
     ? 'Hoje'
@@ -264,7 +291,7 @@ export default function AgendaPage() {
               onClick={() => setShowModal(true)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
-                height: '38px', padding: '0 16px', borderRadius: '12px',
+                height: '44px', padding: '0 16px', borderRadius: '12px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
                 background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
                 border: 'none', cursor: 'pointer',
@@ -516,7 +543,7 @@ export default function AgendaPage() {
                             Aceitar
                           </button>
                           <button
-                            onClick={() => setDismissed(prev => [...prev, sug.id])}
+                            onClick={() => dismissSuggestion(sug.id)}
                             style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', background: 'transparent', border: 'none', cursor: 'pointer' }}
                           >
                             <X size={14} color="var(--bo-text-muted)" />

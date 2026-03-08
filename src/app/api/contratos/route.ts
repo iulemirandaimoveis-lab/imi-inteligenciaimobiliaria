@@ -36,6 +36,9 @@ const contratoUpdateSchema = z.object({
 export async function GET(request: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
         const status = searchParams.get('status')
@@ -64,6 +67,9 @@ export async function GET(request: NextRequest) {
 
         if (status && status !== 'todos') {
             query = query.eq('status', status)
+        } else {
+            // Exclude soft-deleted contracts by default
+            query = query.not('status', 'eq', 'cancelado')
         }
 
         query = query.range(offset, offset + limit - 1)
@@ -113,7 +119,7 @@ export async function POST(request: NextRequest) {
                 pdf_url: body.pdf_url || null,
                 docx_url: body.docx_url || null,
                 drive_url: body.drive_url || null,
-                criado_por: body.criado_por || null,
+                criado_por: user.id,
                 criado_por_nome: body.criado_por_nome || null,
                 plataforma_assinatura: body.plataforma_assinatura || null,
                 signatarios: body.signatarios || [],

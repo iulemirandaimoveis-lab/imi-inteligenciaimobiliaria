@@ -392,7 +392,7 @@ export default function HojePage() {
                 id={l.id}
                 name={l.name || 'Sem nome'}
                 status="hot"
-                score={l.ai_score ?? Math.floor(70 + Math.random() * 25)}
+                score={l.ai_score ?? 75}
                 aiState="qualifying"
                 aiSummary={
                   l.interest

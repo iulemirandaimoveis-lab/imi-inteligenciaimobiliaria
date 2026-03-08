@@ -8,18 +8,11 @@ import {
   AlertCircle, User, Eye, Landmark, Percent, ArrowRight, FileX, Loader2,
 } from 'lucide-react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { PageIntelHeader, KPICard } from '../../components/ui'
+import { T, ctaGradient, ctaShadow } from '../../lib/theme'
 
 const supabase = createClient()
-
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  hover: 'var(--bo-hover)',
-  accent: 'var(--bo-accent)',
-}
 
 interface CreditApplication {
   id: string
@@ -108,7 +101,7 @@ function SimuladorCredito() {
   }
 
   return (
-    <div className="rounded-xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+    <div className="rounded-2xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
       <h3 className="text-sm font-bold flex items-center gap-2" style={{ color: T.text }}>
         <Calculator size={16} style={{ color: T.accent }} /> Simulador de Crédito Imobiliário
       </h3>
@@ -181,7 +174,7 @@ function SimuladorCredito() {
 
       <Link href="/backoffice/credito/novo"
         className="flex items-center justify-center gap-2 h-10 w-full rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-        style={{ background: '#1E3A5F' }}>
+        style={{ background: ctaGradient, boxShadow: ctaShadow }}>
         Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
     </div>
@@ -200,38 +193,29 @@ export default function CreditoPage() {
   const isDocs = (s: string) => s === 'documents' || s === 'documentacao'
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: T.text }}>Crédito Imobiliário</h1>
-          <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Assessoria e simulações</p>
-        </div>
-        <Link href="/backoffice/credito/novo"
-          className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white hover:opacity-90 transition-all"
-          style={{ background: '#1E3A5F' }}>
-          <Plus size={15} /> Nova Operação
-        </Link>
-      </div>
+    <div className="space-y-5">
+      <PageIntelHeader
+        moduleLabel="CRÉDITO IMOBILIÁRIO"
+        title="Crédito Imobiliário"
+        subtitle="Assessoria e simulações"
+        actions={
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            onClick={() => window.location.href = '/backoffice/credito/novo'}
+            className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+            style={{ background: ctaGradient, boxShadow: ctaShadow }}
+          >
+            <Plus size={16} /> <span className="hidden sm:inline">Nova Operação</span>
+          </motion.button>
+        }
+      />
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { l: 'Portfólio Total', v: isLoading ? '—' : fmt(totalPortfolio), icon: DollarSign, color: T.accent, bg: 'rgba(72,101,129,0.12)' },
-          { l: 'Aprovados',       v: isLoading ? '—' : list.filter(o => isApproved(o.status)).length, icon: CheckCircle, color: '#4ADE80', bg: 'rgba(74,222,128,0.1)' },
-          { l: 'Em Análise',      v: isLoading ? '—' : list.filter(o => isReview(o.status)).length,   icon: Clock,        color: '#60A5FA', bg: 'rgba(96,165,250,0.1)' },
-          { l: 'Documentação',    v: isLoading ? '—' : list.filter(o => isDocs(o.status)).length,     icon: AlertCircle,  color: '#FCD34D', bg: 'rgba(252,211,77,0.1)' },
-        ].map(kpi => {
-          const Icon = kpi.icon
-          return (
-            <div key={kpi.l} className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2" style={{ background: kpi.bg }}>
-                <Icon size={16} style={{ color: kpi.color }} />
-              </div>
-              <p className="text-xl font-bold" style={{ color: T.text }}>{kpi.v}</p>
-              <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{kpi.l}</p>
-            </div>
-          )
-        })}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+        <KPICard label="Portfólio Total" value={isLoading ? '—' : fmt(totalPortfolio)} icon={<DollarSign size={16} />} accent="blue" size="sm" />
+        <KPICard label="Aprovados" value={isLoading ? '—' : String(list.filter(o => isApproved(o.status)).length)} icon={<CheckCircle size={16} />} accent="green" size="sm" />
+        <KPICard label="Em Análise" value={isLoading ? '—' : String(list.filter(o => isReview(o.status)).length)} icon={<Clock size={16} />} accent="cold" size="sm" />
+        <KPICard label="Documentação" value={isLoading ? '—' : String(list.filter(o => isDocs(o.status)).length)} icon={<AlertCircle size={16} />} accent="warm" size="sm" />
       </div>
 
       {/* Tabs */}
@@ -253,21 +237,30 @@ export default function CreditoPage() {
       {activeTab === 'operacoes' && (
         <>
           {isLoading ? (
-            <div className="flex items-center justify-center h-48">
-              <Loader2 size={24} className="animate-spin" style={{ color: T.accent }} />
+            <div className="space-y-2">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
+                  <div className="skeleton w-10 h-10 rounded-xl flex-shrink-0" />
+                  <div className="flex-1">
+                    <div className="skeleton h-4 w-40 mb-2" />
+                    <div className="skeleton h-3 w-56" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : list.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-48 gap-4 rounded-xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-              <FileX size={32} className="opacity-30" style={{ color: T.textMuted }} />
-              <p className="text-sm font-semibold" style={{ color: T.textMuted }}>Nenhuma operação de crédito</p>
+            <div className="empty-state rounded-2xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+              <div className="empty-state-icon"><FileX size={24} /></div>
+              <p className="empty-state-title">Nenhuma operação de crédito</p>
+              <p className="empty-state-desc">Registre operações de crédito para acompanhar o processo.</p>
               <Link href="/backoffice/credito/novo"
-                className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white"
-                style={{ background: '#1E3A5F' }}>
+                className="mt-4 flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
+                style={{ background: ctaGradient, boxShadow: ctaShadow }}>
                 <Plus size={14} /> Nova Operação
               </Link>
             </div>
           ) : (
-            <div className="rounded-xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               {list.map((op, i) => {
                 const stt = STATUS_CONFIG[op.status] ?? STATUS_CONFIG.pending
                 const StatusIcon = stt.icon
@@ -300,7 +293,7 @@ export default function CreditoPage() {
                       )}
                     </div>
                     <Link href={`/backoffice/credito/${op.id}`}
-                      className="w-8 h-8 rounded-lg flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="w-9 h-9 rounded-xl flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                       style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                       <Eye size={13} style={{ color: T.textMuted }} />
                     </Link>

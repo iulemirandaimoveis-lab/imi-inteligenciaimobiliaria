@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 
         const { data, error } = await supabase
             .from('consultorias')
-            .insert({ ...parsed.data })
+            .insert({ ...parsed.data, consultor_id: user.id })
             .select()
             .single()
 

@@ -6,6 +6,8 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(req: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const { searchParams } = new URL(req.url)
         const page = parseInt(searchParams.get('page') || '1')
         const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 250)
@@ -35,6 +37,8 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const body = await req.json()
         const { id, read_all } = body
 
@@ -63,7 +67,8 @@ export async function PUT(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const supabase = await createClient()
-        const { data: { user } } = await supabase.auth.getUser()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const body = await req.json()
         const { type, title, message, data: extraData } = body
         if (!title) return NextResponse.json({ error: 'title é obrigatório' }, { status: 400 })

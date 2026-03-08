@@ -7,6 +7,9 @@ import { revalidatePath } from 'next/cache'
 export async function GET() {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         // Try to fetch existing settings
         const { data: settings, error } = await supabase
             .from('settings')
@@ -26,6 +29,7 @@ export async function GET() {
             companyEmail: settings.company_email || '',
             companyPhone: settings.company_phone || '',
             companyAddress: settings.company_address || '',
+            logoUrl: settings.logo_url || '',
             emailNotifications: settings.email_notifications ?? true,
             pushNotifications: settings.push_notifications ?? true,
             weeklyReport: settings.weekly_report ?? true,
@@ -37,6 +41,7 @@ export async function GET() {
             googleAnalytics: settings.google_analytics || '',
             facebookPixel: settings.facebook_pixel || '',
             whatsappApi: settings.whatsapp_api || '',
+            aiConfig: settings.ai_config || {},
         } : {}
 
         return NextResponse.json({ settings: formattedSettings })
@@ -49,6 +54,8 @@ export async function GET() {
 export async function POST(request: Request) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const data = await request.json()
 
         const payload = {
@@ -56,6 +63,7 @@ export async function POST(request: Request) {
             company_email: data.companyEmail || null,
             company_phone: data.companyPhone || null,
             company_address: data.companyAddress || null,
+            logo_url: data.logoUrl || null,
             email_notifications: data.emailNotifications ?? true,
             push_notifications: data.pushNotifications ?? true,
             weekly_report: data.weeklyReport ?? true,
@@ -67,6 +75,7 @@ export async function POST(request: Request) {
             google_analytics: data.googleAnalytics || null,
             facebook_pixel: data.facebookPixel || null,
             whatsapp_api: data.whatsappApi || null,
+            ai_config: data.aiConfig ? data.aiConfig : undefined,
             updated_at: new Date().toISOString(),
         }
 

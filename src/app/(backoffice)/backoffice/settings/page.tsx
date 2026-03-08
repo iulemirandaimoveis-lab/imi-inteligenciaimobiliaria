@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTheme } from 'next-themes'
 import {
   User,
@@ -11,23 +11,18 @@ import {
   Save,
   Loader2,
   CheckCircle,
+  Upload,
+  Building2,
 } from 'lucide-react'
-
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  hover: 'var(--bo-hover)',
-  accent: 'var(--bo-accent)',
-}
+import { PageIntelHeader } from '../../components/ui'
+import { T, ctaGradient, ctaShadow } from '../../lib/theme'
 
 interface SettingsData {
   companyName: string
   companyEmail: string
   companyPhone: string
   companyAddress: string
+  logoUrl: string
   emailNotifications: boolean
   pushNotifications: boolean
   weeklyReport: boolean
@@ -49,11 +44,15 @@ export default function SettingsPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [saveError, setSaveError] = useState('')
 
+  const logoInputRef = useRef<HTMLInputElement>(null)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
+
   const [settings, setSettings] = useState<SettingsData>({
     companyName: 'Iule Miranda Imóveis',
     companyEmail: 'iulemirandaimoveis@gmail.com',
     companyPhone: '+55 81 9 9723-0455',
     companyAddress: 'Av. Boa Viagem, Recife - PE',
+    logoUrl: '',
     emailNotifications: true,
     pushNotifications: true,
     weeklyReport: true,
@@ -72,6 +71,31 @@ export default function SettingsPage() {
     setSaveError('')
   }
 
+  const handleLogoUpload = async (file: File) => {
+    if (!file || !file.type.startsWith('image/')) return
+    setUploadingLogo(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      // upload to media bucket under company/ folder
+      const res = await fetch('/api/upload?folder=company', { method: 'POST', body: fd })
+      if (!res.ok) throw new Error('Falha no upload')
+      const json = await res.json()
+      // API returns { success, data: { url, fileName, ... } }
+      const url = json.data?.url || json.url || json.publicUrl || json.path
+      if (url) {
+        handleChange('logoUrl', url)
+        try { localStorage.setItem('imi-company-logo', url) } catch {}
+      } else {
+        throw new Error('URL da imagem não retornada')
+      }
+    } catch (e: any) {
+      setSaveError('Erro ao fazer upload da logo: ' + (e.message || ''))
+    } finally {
+      setUploadingLogo(false)
+    }
+  }
+
   useEffect(() => {
     setMounted(true)
     const fetchSettings = async () => {
@@ -81,9 +105,12 @@ export default function SettingsPage() {
           const data = await res.json()
           if (data.settings && Object.keys(data.settings).length > 0) {
             setSettings(prev => ({ ...prev, ...data.settings }))
-            // Sync saved theme with next-themes
-            if (data.settings.theme && ['light', 'dark', 'system'].includes(data.settings.theme)) {
-              setTheme(data.settings.theme)
+            // NOTE: Do NOT call setTheme() here — it would change the user's
+            // current theme just by visiting this page (the bug). Theme is
+            // only applied when the user explicitly changes it in the dropdown.
+            // Cache logo in localStorage for the mobile header
+            if (data.settings.logoUrl) {
+              try { localStorage.setItem('imi-company-logo', data.settings.logoUrl) } catch {}
             }
           }
         }
@@ -92,7 +119,7 @@ export default function SettingsPage() {
       }
     }
     fetchSettings()
-  }, [setTheme])
+  }, [])
 
   if (!mounted) return null
 
@@ -144,31 +171,29 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: T.text }}>Configurações</h1>
-          <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>
-            Gerencie as preferências e configurações do sistema
-          </p>
-        </div>
-
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
-          style={{ background: T.accent, boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
-        >
-          {isSaving ? (
-            <><Loader2 size={16} className="animate-spin" /> Salvando...</>
-          ) : showSuccess ? (
-            <><CheckCircle size={16} /> Salvo!</>
-          ) : (
-            <><Save size={16} /> Salvar Alterações</>
-          )}
-        </button>
-      </div>
+      <PageIntelHeader
+        moduleLabel="CONFIGURAÇÕES"
+        title="Configurações"
+        subtitle="Gerencie as preferências e configurações do sistema"
+        actions={
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
+            style={{ background: ctaGradient, boxShadow: ctaShadow }}
+          >
+            {isSaving ? (
+              <><Loader2 size={16} className="animate-spin" /> <span className="hidden sm:inline">Salvando...</span></>
+            ) : showSuccess ? (
+              <><CheckCircle size={16} /> <span className="hidden sm:inline">Salvo!</span></>
+            ) : (
+              <><Save size={16} /> <span className="hidden sm:inline">Salvar Alterações</span></>
+            )}
+          </button>
+        }
+      />
 
       {/* Error banner */}
       {saveError && (
@@ -207,7 +232,65 @@ export default function SettingsPage() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-bold mb-1" style={{ color: T.text }}>Informações da Empresa</h3>
-              <p className="text-sm" style={{ color: T.textMuted }}>Dados básicos da sua imobiliária</p>
+              <p className="text-sm" style={{ color: T.textMuted }}>Dados básicos da sua imobiliária · preparado para white-label</p>
+            </div>
+
+            {/* Logo Upload */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: T.textMuted }}>
+                Logo da Empresa
+              </label>
+              <div className="flex items-center gap-4">
+                {/* Preview */}
+                <div
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+                  style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                >
+                  {settings.logoUrl ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={settings.logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
+                  ) : (
+                    <Building2 size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
+                  )}
+                </div>
+                {/* Upload button */}
+                <div className="flex-1">
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={e => { if (e.target.files?.[0]) handleLogoUpload(e.target.files[0]) }}
+                  />
+                  <button
+                    onClick={() => logoInputRef.current?.click()}
+                    disabled={uploadingLogo}
+                    className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-all disabled:opacity-50"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                  >
+                    {uploadingLogo ? (
+                      <><Loader2 size={15} className="animate-spin" /> Enviando...</>
+                    ) : (
+                      <><Upload size={15} /> {settings.logoUrl ? 'Trocar Logo' : 'Fazer Upload'}</>
+                    )}
+                  </button>
+                  <p className="text-xs mt-1.5" style={{ color: T.textMuted }}>
+                    PNG, SVG ou JPG. Aparece no header mobile e futuramente em documentos.
+                  </p>
+                  {settings.logoUrl && (
+                    <button
+                      onClick={() => {
+                        handleChange('logoUrl', '')
+                        try { localStorage.removeItem('imi-company-logo') } catch {}
+                      }}
+                      className="text-xs mt-1"
+                      style={{ color: '#E57373' }}
+                    >
+                      Remover logo
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -286,10 +369,13 @@ export default function SettingsPage() {
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
                   Tema
                 </label>
+                {/* FIX: use settings.theme (not `theme` from next-themes) so ThemeToggle
+                    in the header doesn't hijack this dropdown. setTheme() only on explicit
+                    user selection here. It's applied permanently on "Salvar". */}
                 <select
-                  value={theme}
+                  value={settings.theme}
                   onChange={(e) => {
-                    handleChange('theme', e.target.value)
+                    handleChange('theme', e.target.value as SettingsData['theme'])
                     setTheme(e.target.value)
                   }}
                   className="w-full h-11 px-4 rounded-xl text-sm outline-none"

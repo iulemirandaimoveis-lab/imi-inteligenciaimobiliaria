@@ -1,6 +1,5 @@
 'use client'
 // hooks/use-leads-complete.ts
-// Hooks completos para gestão de leads
 
 import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -17,16 +16,29 @@ export interface Lead {
     score: number
     source: string
     interest: string
+    interest_type: string | null
+    interest_location: string | null
     capital: number | null
+    budget_min: number | null
+    budget_max: number | null
     development_id: string | null
     message: string | null
+    notes: string | null
     assigned_to: string | null
     tags: string[]
+    country: string
+    currency: string
+    language: string
+    city: string | null
+    state: string | null
+    nationality: string | null
+    investment_goal: string | null
+    experience_level: string | null
     created_at: string
     updated_at: string
     last_interaction_at: string | null
     development?: any
-    assigned_user?: any
+    interactions?: any[]
 }
 
 export interface LeadFilters {
@@ -42,79 +54,91 @@ export interface LeadFilters {
     tags?: string[]
     date_from?: string
     date_to?: string
+    country?: string
 }
 
-/**
- * Hook para listar leads com filtros
- */
+const LEAD_SELECT = `
+  id, name, email, phone, status, score, ai_score, source, origin,
+  interest_type, interest_location, capital, budget_min, budget_max,
+  development_id, message, notes, assigned_to, tags,
+  country, currency, language, city, state, nationality,
+  investment_goal, experience_level, utm_source,
+  created_at, updated_at, last_interaction_at,
+  development:developments(id, name, slug)
+`
+
+function mapLead(l: any): Lead {
+    return {
+        id: l.id,
+        name: l.name || 'Sem nome',
+        email: l.email || '',
+        phone: l.phone || l.whatsapp || '',
+        status: l.status || 'new',
+        score: l.score || l.ai_score || 50,
+        source: l.source || l.origin || l.utm_source || 'website',
+        interest: l.interest_type || '',
+        interest_type: l.interest_type || null,
+        interest_location: l.interest_location || null,
+        capital: l.capital || l.budget_min || null,
+        budget_min: l.budget_min || null,
+        budget_max: l.budget_max || null,
+        development_id: l.development_id || null,
+        message: l.message || null,
+        notes: l.notes || null,
+        assigned_to: l.assigned_to || null,
+        tags: Array.isArray(l.tags) ? l.tags : [],
+        country: l.country || 'BR',
+        currency: l.currency || 'BRL',
+        language: l.language || 'pt',
+        city: l.city || l.interest_location || null,
+        state: l.state || null,
+        nationality: l.nationality || null,
+        investment_goal: l.investment_goal || null,
+        experience_level: l.experience_level || null,
+        created_at: l.created_at || new Date().toISOString(),
+        updated_at: l.updated_at || l.created_at || new Date().toISOString(),
+        last_interaction_at: l.last_interaction_at || null,
+        development: l.development || null,
+        interactions: l.interactions || [],
+    }
+}
+
 export function useLeads(filters: LeadFilters = {}) {
     const { data, error, mutate: revalidate } = useSWR(
         ['leads', JSON.stringify(filters)],
         async () => {
-            let query = (supabase as any)
+            let query = supabase
                 .from('leads')
-                .select(`
-          *,
-          development:developments(id, name),
-          assigned_user:auth.users(id, name)
-        `, { count: 'exact' })
+                .select(LEAD_SELECT, { count: 'exact' })
 
-            // Aplicar filtros
             if (filters.search) {
                 query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,phone.ilike.%${filters.search}%`)
             }
-
             if (filters.status && filters.status !== 'all') {
                 query = query.eq('status', filters.status)
             }
-
             if (filters.source && filters.source !== 'all') {
                 query = query.eq('source', filters.source)
             }
-
-            if (filters.score_min) {
-                query = query.gte('score', filters.score_min)
-            }
-
-            if (filters.score_max) {
-                query = query.lte('score', filters.score_max)
-            }
-
-            if (filters.capital_min) {
-                query = query.gte('capital', filters.capital_min)
-            }
-
-            if (filters.capital_max) {
-                query = query.lte('capital', filters.capital_max)
-            }
-
-            if (filters.assigned_to) {
-                query = query.eq('assigned_to', filters.assigned_to)
-            }
-
-            if (filters.development_id) {
-                query = query.eq('development_id', filters.development_id)
-            }
-
+            if (filters.score_min) query = query.gte('score', filters.score_min)
+            if (filters.score_max) query = query.lte('score', filters.score_max)
+            if (filters.capital_min) query = query.gte('capital', filters.capital_min)
+            if (filters.capital_max) query = query.lte('capital', filters.capital_max)
+            if (filters.assigned_to) query = query.eq('assigned_to', filters.assigned_to)
+            if (filters.development_id) query = query.eq('development_id', filters.development_id)
+            if (filters.country) query = query.eq('country', filters.country)
             if (filters.tags && filters.tags.length > 0) {
                 query = query.contains('tags', filters.tags)
             }
-
-            if (filters.date_from) {
-                query = query.gte('created_at', filters.date_from)
-            }
-
-            if (filters.date_to) {
-                query = query.lte('created_at', filters.date_to)
-            }
+            if (filters.date_from) query = query.gte('created_at', filters.date_from)
+            if (filters.date_to) query = query.lte('created_at', filters.date_to)
 
             query = query.order('created_at', { ascending: false })
 
             const { data, error, count } = await query
-
             if (error) throw error
 
-            return { data: data as Lead[], count }
+            return { data: (data || []).map(mapLead), count: count || 0 }
         }
     )
 
@@ -127,26 +151,21 @@ export function useLeads(filters: LeadFilters = {}) {
     }
 }
 
-/**
- * Hook para buscar um lead específico
- */
 export function useLead(id: string | null) {
     const { data, error, mutate: revalidate } = useSWR(
         id ? ['lead', id] : null,
         async () => {
-            const { data, error } = await (supabase as any)
+            const { data, error } = await supabase
                 .from('leads')
                 .select(`
-          *,
-          development:developments(*),
-          assigned_user:auth.users(id, name),
-          interactions:lead_interactions(*)
-        `)
-                .eq('id', id)
+                  ${LEAD_SELECT},
+                  interactions:lead_interactions(id, interaction_type, title, description, outcome, created_at)
+                `)
+                .eq('id', id!)
                 .single()
 
             if (error) throw error
-            return data as Lead
+            return mapLead(data)
         }
     )
 
@@ -158,9 +177,6 @@ export function useLead(id: string | null) {
     }
 }
 
-/**
- * Hook para operações CRUD de leads
- */
 export function useLeadActions() {
     const [loading, setLoading] = useState(false)
 
@@ -170,7 +186,23 @@ export function useLeadActions() {
             const { data: result, error } = await supabase
                 .from('leads')
                 .insert({
-                    ...data,
+                    name: data.name,
+                    email: data.email || null,
+                    phone: data.phone || null,
+                    source: data.source || 'website',
+                    status: data.status || 'new',
+                    score: data.score || 50,
+                    capital: data.capital || null,
+                    budget_min: data.budget_min || null,
+                    budget_max: data.budget_max || null,
+                    interest_type: data.interest_type || null,
+                    interest_location: data.interest_location || null,
+                    development_id: data.development_id || null,
+                    notes: data.notes || null,
+                    tags: data.tags || [],
+                    country: data.country || 'BR',
+                    currency: data.currency || 'BRL',
+                    language: data.language || 'pt',
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 })
@@ -178,9 +210,8 @@ export function useLeadActions() {
                 .single()
 
             if (error) throw error
-
             mutate((key) => Array.isArray(key) && key[0] === 'leads')
-            return result as Lead
+            return mapLead(result)
         } finally {
             setLoading(false)
         }
@@ -191,19 +222,15 @@ export function useLeadActions() {
         try {
             const { data: result, error } = await supabase
                 .from('leads')
-                .update({
-                    ...data,
-                    updated_at: new Date().toISOString()
-                })
+                .update({ ...data, updated_at: new Date().toISOString() })
                 .eq('id', id)
                 .select()
                 .single()
 
             if (error) throw error
-
             mutate(['lead', id])
             mutate((key) => Array.isArray(key) && key[0] === 'leads')
-            return result as Lead
+            return mapLead(result)
         } finally {
             setLoading(false)
         }
@@ -214,11 +241,10 @@ export function useLeadActions() {
         try {
             const { error } = await supabase
                 .from('leads')
-                .delete()
+                .update({ status: 'archived', updated_at: new Date().toISOString() })
                 .eq('id', id)
 
             if (error) throw error
-
             mutate((key) => Array.isArray(key) && key[0] === 'leads')
         } finally {
             setLoading(false)
@@ -248,18 +274,15 @@ export function useLeadActions() {
     }
 }
 
-/**
- * Hook para estatísticas de leads
- */
 export function useLeadStats() {
     const { data, error } = useSWR('lead-stats', async () => {
         const { data, error } = await supabase
             .from('leads')
-            .select('status, score, capital, source, created_at')
+            .select('status, score, capital, source, country, created_at')
+            .not('status', 'eq', 'archived')
 
         if (error) throw error
 
-        // Calcular estatísticas
         const now = new Date()
         const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1)
         const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
@@ -268,6 +291,7 @@ export function useLeadStats() {
             total: data.length,
             byStatus: {} as Record<string, number>,
             bySource: {} as Record<string, number>,
+            byCountry: {} as Record<string, number>,
             avgScore: 0,
             totalCapital: 0,
             thisMonth: 0,
@@ -276,42 +300,29 @@ export function useLeadStats() {
         }
 
         data.forEach(lead => {
-            // Por status
             stats.byStatus[lead.status] = (stats.byStatus[lead.status] || 0) + 1
-
-            // Por fonte
-            stats.bySource[lead.source] = (stats.bySource[lead.source] || 0) + 1
-
-            // Score médio
+            const src = lead.source || 'website'
+            stats.bySource[src] = (stats.bySource[src] || 0) + 1
+            const ctry = lead.country || 'BR'
+            stats.byCountry[ctry] = (stats.byCountry[ctry] || 0) + 1
             stats.avgScore += lead.score || 0
-
-            // Capital total
             stats.totalCapital += lead.capital || 0
-
-            // Este mês
             const leadDate = new Date(lead.created_at)
             if (leadDate >= thisMonth) stats.thisMonth++
             if (leadDate >= lastMonth && leadDate < thisMonth) stats.lastMonth++
         })
 
-        stats.avgScore = data.length > 0 ? stats.avgScore / data.length : 0
+        stats.avgScore = data.length > 0 ? Math.round(stats.avgScore / data.length) : 0
         stats.conversionRate = data.length > 0
-            ? ((stats.byStatus['won'] || 0) / data.length) * 100
+            ? Math.round(((stats.byStatus['won'] || 0) / data.length) * 100)
             : 0
 
         return stats
     })
 
-    return {
-        stats: data,
-        isLoading: !error && !data,
-        isError: error
-    }
+    return { stats: data, isLoading: !error && !data, isError: error }
 }
 
-/**
- * Hook para operações em lote
- */
 export function useBulkLeadActions() {
     const [loading, setLoading] = useState(false)
 
@@ -322,9 +333,7 @@ export function useBulkLeadActions() {
                 .from('leads')
                 .update({ status, updated_at: new Date().toISOString() })
                 .in('id', ids)
-
             if (error) throw error
-
             mutate((key) => Array.isArray(key) && key[0] === 'leads')
         } finally {
             setLoading(false)
@@ -338,9 +347,7 @@ export function useBulkLeadActions() {
                 .from('leads')
                 .update({ assigned_to: userId, updated_at: new Date().toISOString() })
                 .in('id', ids)
-
             if (error) throw error
-
             mutate((key) => Array.isArray(key) && key[0] === 'leads')
         } finally {
             setLoading(false)
@@ -352,91 +359,29 @@ export function useBulkLeadActions() {
         try {
             const { error } = await supabase
                 .from('leads')
-                .delete()
+                .update({ status: 'archived', updated_at: new Date().toISOString() })
                 .in('id', ids)
-
             if (error) throw error
-
             mutate((key) => Array.isArray(key) && key[0] === 'leads')
         } finally {
             setLoading(false)
         }
     }, [])
 
-    const bulkAddTags = useCallback(async (ids: string[], tags: string[]) => {
-        setLoading(true)
-        try {
-            // Buscar leads atuais
-            const { data: leads, error: fetchError } = await supabase
-                .from('leads')
-                .select('id, tags')
-                .in('id', ids)
-
-            if (fetchError) throw fetchError
-
-            // Atualizar cada lead
-            const updates = leads.map(lead => ({
-                id: lead.id,
-                tags: [...new Set([...(lead.tags || []), ...tags])]
-            }))
-
-            const { data: upsertData, error } = await supabase
-                .from('leads')
-                .upsert(updates)
-
-            if (error) throw error
-
-            mutate((key) => Array.isArray(key) && key[0] === 'leads')
-        } finally {
-            setLoading(false)
-        }
-    }, [])
-
-    return {
-        bulkUpdateStatus,
-        bulkAssign,
-        bulkDelete,
-        bulkAddTags,
-        loading
-    }
+    return { bulkUpdateStatus, bulkAssign, bulkDelete, loading }
 }
 
-/**
- * Hook para exportar leads
- */
 export function useLeadExport() {
     const exportToCSV = useCallback((leads: Lead[]) => {
-        const headers = [
-            'Nome',
-            'Email',
-            'Telefone',
-            'Status',
-            'Score',
-            'Fonte',
-            'Capital',
-            'Interesse',
-            'Empreendimento',
-            'Data Criação'
-        ]
-
+        const headers = ['Nome', 'Email', 'Telefone', 'Status', 'Score', 'Fonte', 'Capital', 'Interesse', 'País', 'Empreendimento', 'Data Criação']
         const rows = leads.map(lead => [
-            lead.name,
-            lead.email,
-            lead.phone,
-            lead.status,
-            lead.score,
-            lead.source,
-            lead.capital || '',
-            lead.interest || '',
+            lead.name, lead.email, lead.phone, lead.status, lead.score,
+            lead.source, lead.capital || '', lead.interest || '',
+            lead.country || 'BR',
             lead.development?.name || '',
             new Date(lead.created_at).toLocaleDateString('pt-BR')
         ])
-
-        const csv = [
-            headers.join(','),
-            ...rows.map(row => row.join(','))
-        ].join('\\n')
-
+        const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n')
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
         const link = document.createElement('a')
         link.href = URL.createObjectURL(blob)

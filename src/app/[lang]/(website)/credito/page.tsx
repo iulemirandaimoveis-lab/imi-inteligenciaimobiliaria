@@ -89,7 +89,7 @@ export default function CreditPage() {
             {/* HERO */}
             <section className="relative bg-[#141420] overflow-hidden">
                 <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#102A43]/[0.07] blur-[80px]" />
+                <div className="absolute top-0 right-0 w-[200px] h-[200px] sm:w-[500px] sm:h-[500px] -translate-y-1/3 translate-x-1/3 rounded-full bg-[#102A43]/[0.07] blur-[80px]" />
                 <div className="relative z-10 container-custom py-20 lg:py-28">
                     <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl">
                         <div className="flex items-center gap-3 mb-6">

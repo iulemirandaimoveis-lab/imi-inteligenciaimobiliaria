@@ -1,0 +1,83 @@
+name: Deploy to Production
+
+# Deploys to youthful-fermi.vercel.app + aliases www.iulemirandaimoveis.com.br
+# on every push to the youthful-fermi branch.
+#
+# SETUP (one-time): Add VERCEL_TOKEN to GitHub repo Secrets:
+#   GitHub repo → Settings → Secrets and variables → Actions → New repository secret
+#   Name: VERCEL_TOKEN
+#   Value: Personal access token from https://vercel.com/account/tokens
+#
+# NOTE: If VERCEL_TOKEN is not set, the Vercel Git Integration handles
+# deployment automatically (no action needed from this workflow).
+
+on:
+  push:
+    branches:
+      - youthful-fermi
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false   # Never cancel a running deploy
+
+jobs:
+  deploy:
+    name: Vercel Production Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      VERCEL_ORG_ID: team_ffkeAKopLLbEJTI8tZqY9Mi6
+      VERCEL_PROJECT_ID: prj_nE6k1NpX6Q8uvL8rKcB68Pzp835T
+
+    steps:
+      - name: Check VERCEL_TOKEN
+        id: check_token
+        run: |
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "has_token=false" >> $GITHUB_OUTPUT
+            echo "⚠️  VERCEL_TOKEN secret not set — skipping CLI deploy."
+            echo "   Vercel Git Integration will handle deployment automatically."
+            echo "   To enable this workflow: Settings → Secrets → Add VERCEL_TOKEN"
+          else
+            echo "has_token=true" >> $GITHUB_OUTPUT
+            echo "✅ VERCEL_TOKEN found — proceeding with CLI deploy."
+          fi
+
+      - name: Checkout
+        if: steps.check_token.outputs.has_token == 'true'
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        if: steps.check_token.outputs.has_token == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Vercel CLI
+        if: steps.check_token.outputs.has_token == 'true'
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel Environment Variables
+        if: steps.check_token.outputs.has_token == 'true'
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project
+        if: steps.check_token.outputs.has_token == 'true'
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel Production
+        if: steps.check_token.outputs.has_token == 'true'
+        id: deploy
+        run: |
+          DEPLOY_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} 2>&1 | grep -o 'https://youthful-fermi-[^[:space:]]*' | tail -1)
+          echo "DEPLOY_URL=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "✅ Deployed to: $DEPLOY_URL"
+
+      - name: Alias custom domain
+        if: steps.check_token.outputs.has_token == 'true'
+        run: |
+          vercel alias set "${{ steps.deploy.outputs.DEPLOY_URL }}" "www.iulemirandaimoveis.com.br" --token=${{ secrets.VERCEL_TOKEN }} --scope team_ffkeAKopLLbEJTI8tZqY9Mi6
+          vercel alias set "${{ steps.deploy.outputs.DEPLOY_URL }}" "iulemirandaimoveis.com.br" --token=${{ secrets.VERCEL_TOKEN }} --scope team_ffkeAKopLLbEJTI8tZqY9Mi6
+          echo "✅ Production live at https://www.iulemirandaimoveis.com.br"

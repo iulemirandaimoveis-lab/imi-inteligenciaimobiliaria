@@ -7,6 +7,8 @@ export async function GET(request: Request) {
         const developmentId = searchParams.get('development_id')
 
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
         let query = supabase
             .from('tracked_links')
@@ -50,6 +52,8 @@ export async function DELETE(request: Request) {
         }
 
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
         // Soft delete: set is_active = false to preserve audit trail
         const { error } = await supabase
