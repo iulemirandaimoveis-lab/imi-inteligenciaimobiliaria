@@ -38,6 +38,7 @@ export async function GET() {
             googleAnalytics: settings.google_analytics || '',
             facebookPixel: settings.facebook_pixel || '',
             whatsappApi: settings.whatsapp_api || '',
+            aiConfig: settings.ai_config || {},
         } : {}
 
         return NextResponse.json({ settings: formattedSettings })
@@ -71,6 +72,7 @@ export async function POST(request: Request) {
             google_analytics: data.googleAnalytics || null,
             facebook_pixel: data.facebookPixel || null,
             whatsapp_api: data.whatsappApi || null,
+            ai_config: data.aiConfig ? data.aiConfig : undefined,
             updated_at: new Date().toISOString(),
         }
 

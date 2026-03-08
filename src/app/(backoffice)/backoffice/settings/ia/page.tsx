@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   Bot, Zap, Calendar, AlertTriangle, Check,
@@ -53,11 +53,42 @@ export default function IASettingsPage() {
     linkedinReport: false,
   })
 
+  // Load saved AI config on mount
+  useEffect(() => {
+    async function loadAIConfig() {
+      try {
+        const res = await fetch('/api/settings')
+        if (!res.ok) return
+        const { settings } = await res.json()
+        if (settings?.aiConfig && Object.keys(settings.aiConfig).length > 0) {
+          const ai = settings.aiConfig
+          if (ai.tone) setTone(ai.tone)
+          if (ai.weights) setWeights(ai.weights)
+          if (ai.rules) setRules(ai.rules)
+          if (ai.contentAutomation) setContentAutomation(ai.contentAutomation)
+        }
+      } catch { /* keep defaults */ }
+    }
+    loadAIConfig()
+  }, [])
+
   const handleSave = async () => {
     setSaving(true)
-    await new Promise(r => setTimeout(r, 1200))
-    toast.success('Configuração de IA salva com sucesso!')
-    setSaving(false)
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          aiConfig: { tone, weights, rules, contentAutomation },
+        }),
+      })
+      if (!res.ok) throw new Error('Erro ao salvar')
+      toast.success('Configuração de IA salva com sucesso!')
+    } catch {
+      toast.error('Erro ao salvar configuração')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const ScoreSlider = ({

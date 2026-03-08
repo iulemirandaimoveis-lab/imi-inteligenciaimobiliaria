@@ -1,20 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import {
     Plus,
     Search,
     Building2,
     Eye,
     Edit,
-    Trash2,
     TrendingUp,
     TrendingDown,
-    DollarSign,
-    Calendar,
-    Download,
+    Loader2,
+    Landmark,
 } from 'lucide-react'
+
+const supabase = createClient()
 
 const T = {
     surface: 'var(--bo-surface)',
@@ -26,122 +27,81 @@ const T = {
     accent: 'var(--bo-accent)',
 }
 
-// ⚠️ NÃO MODIFICAR - Contas bancárias mockadas
-const contasData = [
-    {
-        id: 1,
-        banco: 'Banco do Brasil',
-        agencia: '3456-7',
-        conta: '12345-6',
-        tipo: 'Corrente',
-        saldo: 1850000,
-        saldoAnterior: 1720000,
-        variacao: 7.6,
-        titular: 'Iule Miranda Imóveis LTDA',
-        cnpj: '12.345.678/0001-99',
-        gerente: 'Carlos Mendonça',
-        telefoneGerente: '(81) 3456-7890',
-        ativa: true,
-        ultimaMovimentacao: '2026-02-17T15:30:00',
-    },
-    {
-        id: 2,
-        banco: 'Caixa Econômica Federal',
-        agencia: '0123',
-        conta: '98765-4',
-        tipo: 'Poupança',
-        saldo: 650000,
-        saldoAnterior: 620000,
-        variacao: 4.8,
-        titular: 'Iule Miranda Imóveis LTDA',
-        cnpj: '12.345.678/0001-99',
-        gerente: 'Fernanda Lima',
-        telefoneGerente: '(81) 3123-4567',
-        ativa: true,
-        ultimaMovimentacao: '2026-02-16T10:20:00',
-    },
-    {
-        id: 3,
-        banco: 'Santander',
-        agencia: '4567',
-        conta: '11111-2',
-        tipo: 'Corrente',
-        saldo: 347500,
-        saldoAnterior: 380000,
-        variacao: -8.6,
-        titular: 'Iule Miranda Imóveis LTDA',
-        cnpj: '12.345.678/0001-99',
-        gerente: 'Roberto Silva',
-        telefoneGerente: '(81) 3789-0123',
-        ativa: true,
-        ultimaMovimentacao: '2026-02-17T14:15:00',
-    },
-    {
-        id: 4,
-        banco: 'Itaú',
-        agencia: '7890',
-        conta: '22222-8',
-        tipo: 'Investimento',
-        saldo: 520000,
-        saldoAnterior: 500000,
-        variacao: 4.0,
-        titular: 'Iule Miranda Imóveis LTDA',
-        cnpj: '12.345.678/0001-99',
-        gerente: 'Patricia Costa',
-        telefoneGerente: '(81) 3234-5678',
-        ativa: true,
-        ultimaMovimentacao: '2026-02-15T09:00:00',
-    },
-    {
-        id: 5,
-        banco: 'Bradesco',
-        agencia: '1234',
-        conta: '33333-0',
-        tipo: 'Corrente',
-        saldo: 0,
-        saldoAnterior: 125000,
-        variacao: -100,
-        titular: 'Iule Miranda Imóveis LTDA',
-        cnpj: '12.345.678/0001-99',
-        gerente: 'João Santos',
-        telefoneGerente: '(81) 3345-6789',
-        ativa: false,
-        ultimaMovimentacao: '2025-12-20T16:45:00',
-    },
-]
+interface BankAccount {
+    id: string
+    banco: string
+    agencia: string | null
+    conta: string | null
+    tipo: string | null
+    saldo: number
+    saldo_anterior: number | null
+    titular: string | null
+    cnpj: string | null
+    gerente: string | null
+    telefone_gerente: string | null
+    is_active: boolean
+    ultima_movimentacao: string | null
+    created_at: string
+}
 
 export default function ContasBancariasPage() {
     const router = useRouter()
+    const [contas, setContas] = useState<BankAccount[]>([])
+    const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
     const [tipoFilter, setTipoFilter] = useState('all')
 
-    const filteredContas = contasData.filter(conta => {
+    useEffect(() => {
+        async function fetchContas() {
+            const { data, error } = await supabase
+                .from('bank_accounts')
+                .select('*')
+                .order('created_at', { ascending: false })
+
+            if (!error && data) setContas(data as BankAccount[])
+            setLoading(false)
+        }
+        fetchContas()
+    }, [])
+
+    const filteredContas = contas.filter(conta => {
         const matchesSearch =
             conta.banco.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            conta.conta.includes(searchTerm)
+            (conta.conta || '').includes(searchTerm)
         const matchesTipo = tipoFilter === 'all' || conta.tipo === tipoFilter
         return matchesSearch && matchesTipo
     })
 
-    const contasAtivas = contasData.filter(c => c.ativa)
-    const saldoTotal = contasAtivas.reduce((acc, c) => acc + c.saldo, 0)
+    const contasAtivas = contas.filter(c => c.is_active)
+    const saldoTotal = contasAtivas.reduce((acc, c) => acc + (c.saldo || 0), 0)
 
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-            minimumFractionDigits: 0,
-        }).format(price)
-    }
+    const formatPrice = (price: number) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(price)
 
-    const getTimeAgo = (dateStr: string) => {
+    const getTimeAgo = (dateStr: string | null) => {
+        if (!dateStr) return 'Sem movimentação'
         const now = new Date()
         const past = new Date(dateStr)
         const diffMinutes = Math.floor((now.getTime() - past.getTime()) / 60000)
-
         if (diffMinutes < 60) return `${diffMinutes}min atrás`
         if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h atrás`
         return `${Math.floor(diffMinutes / 1440)}d atrás`
+    }
+
+    const getVariacao = (conta: BankAccount) => {
+        if (!conta.saldo_anterior || conta.saldo_anterior === 0) return 0
+        return ((conta.saldo - conta.saldo_anterior) / conta.saldo_anterior) * 100
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" style={{ color: T.accent }} />
+                    <p style={{ color: T.textMuted }}>Carregando contas...</p>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -169,19 +129,19 @@ export default function ContasBancariasPage() {
                     <p className="text-2xl font-bold" style={{ color: T.text }}>{contasAtivas.length}</p>
                 </div>
                 <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1 text-green-500">Saldo Total</p>
-                    <p className="text-2xl font-bold text-green-500">{formatPrice(saldoTotal)}</p>
+                    <p className="text-xs mb-1 text-green-400">Saldo Total</p>
+                    <p className="text-2xl font-bold text-green-400">{formatPrice(saldoTotal)}</p>
                 </div>
                 <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-xs mb-1" style={{ color: T.textMuted }}>Média por Conta</p>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>
-                        {formatPrice(saldoTotal / contasAtivas.length)}
+                        {contasAtivas.length > 0 ? formatPrice(saldoTotal / contasAtivas.length) : '—'}
                     </p>
                 </div>
                 <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-xs mb-1" style={{ color: T.textMuted }}>Inativas</p>
                     <p className="text-2xl font-bold text-red-400">
-                        {contasData.filter(c => !c.ativa).length}
+                        {contas.filter(c => !c.is_active).length}
                     </p>
                 </div>
             </div>
@@ -215,139 +175,161 @@ export default function ContasBancariasPage() {
             </div>
 
             {/* Lista de Contas */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {filteredContas.map((conta) => {
-                    const variacaoPositiva = conta.variacao >= 0
+            {filteredContas.length > 0 ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {filteredContas.map((conta) => {
+                        const variacao = getVariacao(conta)
+                        const variacaoPositiva = variacao >= 0
 
-                    return (
-                        <div
-                            key={conta.id}
-                            className="rounded-2xl p-6 transition-all hover:brightness-105 cursor-pointer"
-                            style={{
-                                background: conta.ativa ? T.surface : T.elevated,
-                                border: `1px solid ${T.border}`,
-                            }}
-                            onClick={() => router.push(`/backoffice/financeiro/contas/${conta.id}`)}
-                        >
-                            {/* Header */}
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="flex items-start gap-3">
-                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center"
-                                        style={{ background: conta.ativa ? `${T.accent}15` : T.elevated }}>
-                                        <Building2 size={24} style={{ color: conta.ativa ? T.accent : T.textMuted }} />
+                        return (
+                            <div
+                                key={conta.id}
+                                className="rounded-2xl p-6 transition-all hover:brightness-105 cursor-pointer"
+                                style={{
+                                    background: conta.is_active ? T.surface : T.elevated,
+                                    border: `1px solid ${T.border}`,
+                                }}
+                                onClick={() => router.push(`/backoffice/financeiro/contas/${conta.id}`)}
+                            >
+                                {/* Header */}
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-12 h-12 rounded-xl flex items-center justify-center"
+                                            style={{ background: conta.is_active ? `${T.accent}15` : T.elevated }}>
+                                            <Building2 size={24} style={{ color: conta.is_active ? T.accent : T.textMuted }} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold mb-1" style={{ color: T.text }}>{conta.banco}</h3>
+                                            <p className="text-sm" style={{ color: T.textMuted }}>
+                                                {conta.agencia ? `Ag ${conta.agencia}` : ''}{conta.conta ? ` • CC ${conta.conta}` : ''}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold mb-1" style={{ color: T.text }}>{conta.banco}</h3>
-                                        <p className="text-sm" style={{ color: T.textMuted }}>
-                                            Ag {conta.agencia} • CC {conta.conta}
+                                    <div className="flex items-center gap-2">
+                                        {conta.is_active ? (
+                                            <span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">Ativa</span>
+                                        ) : (
+                                            <span className="px-2 py-1 text-xs font-medium rounded"
+                                                style={{ background: T.elevated, color: T.textMuted }}>Inativa</span>
+                                        )}
+                                        {conta.tipo && (
+                                            <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs font-medium rounded">
+                                                {conta.tipo}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Saldo */}
+                                <div className="mb-4 pb-4" style={{ borderBottom: `1px solid ${T.border}` }}>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Saldo Atual</p>
+                                    <div className="flex items-end justify-between">
+                                        <p className="text-3xl font-bold"
+                                            style={{ color: conta.is_active ? T.text : T.textMuted }}>
+                                            {formatPrice(conta.saldo)}
                                         </p>
+                                        {conta.saldo_anterior != null && conta.saldo_anterior > 0 && (
+                                            <div className={`flex items-center gap-1 text-sm font-medium ${variacaoPositiva ? 'text-green-400' : 'text-red-400'}`}>
+                                                {variacaoPositiva ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                                                {Math.abs(variacao).toFixed(1)}%
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    {conta.ativa ? (
-                                        <span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">
-                                            Ativa
-                                        </span>
-                                    ) : (
-                                        <span className="px-2 py-1 text-xs font-medium rounded"
-                                            style={{ background: T.elevated, color: T.textMuted }}>
-                                            Inativa
-                                        </span>
+                                    {conta.saldo_anterior != null && conta.saldo_anterior > 0 && (
+                                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>
+                                            Anterior: {formatPrice(conta.saldo_anterior)}
+                                        </p>
                                     )}
-                                    <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs font-medium rounded">
-                                        {conta.tipo}
-                                    </span>
                                 </div>
-                            </div>
 
-                            {/* Saldo */}
-                            <div className="mb-4 pb-4" style={{ borderBottom: `1px solid ${T.border}` }}>
-                                <p className="text-xs mb-1" style={{ color: T.textMuted }}>Saldo Atual</p>
-                                <div className="flex items-end justify-between">
-                                    <p className="text-3xl font-bold"
-                                        style={{ color: conta.ativa ? T.text : T.textMuted }}>
-                                        {formatPrice(conta.saldo)}
-                                    </p>
-                                    <div className={`flex items-center gap-1 text-sm font-medium ${variacaoPositiva ? 'text-green-400' : 'text-red-400'
-                                        }`}>
-                                        {variacaoPositiva ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                                        {Math.abs(conta.variacao).toFixed(1)}%
+                                {/* Info */}
+                                {(conta.titular || conta.gerente) && (
+                                    <div className="space-y-3 mb-4">
+                                        {conta.titular && (
+                                            <div>
+                                                <p className="text-xs mb-1" style={{ color: T.textMuted }}>Titular</p>
+                                                <p className="text-sm font-medium" style={{ color: T.text }}>{conta.titular}</p>
+                                                {conta.cnpj && (
+                                                    <p className="text-xs" style={{ color: T.textMuted }}>{conta.cnpj}</p>
+                                                )}
+                                            </div>
+                                        )}
+                                        {conta.gerente && (
+                                            <div>
+                                                <p className="text-xs mb-1" style={{ color: T.textMuted }}>Gerente</p>
+                                                <p className="text-sm font-medium" style={{ color: T.text }}>{conta.gerente}</p>
+                                                {conta.telefone_gerente && (
+                                                    <p className="text-xs" style={{ color: T.textMuted }}>{conta.telefone_gerente}</p>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Footer */}
+                                <div className="flex items-center justify-between pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
+                                    <span className="text-xs" style={{ color: T.textMuted }}>
+                                        Última movimentação: {getTimeAgo(conta.ultima_movimentacao)}
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                router.push(`/backoffice/financeiro/contas/${conta.id}/extrato`)
+                                            }}
+                                            className="p-2 rounded-lg transition-colors"
+                                            style={{ color: T.textMuted }}
+                                            onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                            title="Ver extrato"
+                                        >
+                                            <Eye size={16} />
+                                        </button>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                router.push(`/backoffice/financeiro/contas/${conta.id}/editar`)
+                                            }}
+                                            className="p-2 rounded-lg transition-colors"
+                                            style={{ color: T.textMuted }}
+                                            onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
+                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                            title="Editar conta"
+                                        >
+                                            <Edit size={16} />
+                                        </button>
                                     </div>
                                 </div>
-                                <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                                    Anterior: {formatPrice(conta.saldoAnterior)}
-                                </p>
                             </div>
-
-                            {/* Info */}
-                            <div className="space-y-3 mb-4">
-                                <div>
-                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Titular</p>
-                                    <p className="text-sm font-medium" style={{ color: T.text }}>{conta.titular}</p>
-                                    <p className="text-xs" style={{ color: T.textMuted }}>{conta.cnpj}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Gerente</p>
-                                    <p className="text-sm font-medium" style={{ color: T.text }}>{conta.gerente}</p>
-                                    <p className="text-xs" style={{ color: T.textMuted }}>{conta.telefoneGerente}</p>
-                                </div>
-                            </div>
-
-                            {/* Footer */}
-                            <div className="flex items-center justify-between pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
-                                <span className="text-xs" style={{ color: T.textMuted }}>
-                                    Última movimentação: {getTimeAgo(conta.ultimaMovimentacao)}
-                                </span>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            router.push(`/backoffice/financeiro/contas/${conta.id}/extrato`)
-                                        }}
-                                        className="p-2 rounded-lg transition-colors"
-                                        style={{ color: T.textMuted }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                                    >
-                                        <Eye size={16} />
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            router.push(`/backoffice/financeiro/contas/${conta.id}/editar`)
-                                        }}
-                                        className="p-2 rounded-lg transition-colors"
-                                        style={{ color: T.textMuted }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                                    >
-                                        <Edit size={16} />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
-
-            {/* Empty State */}
-            {filteredContas.length === 0 && (
+                        )
+                    })}
+                </div>
+            ) : (
+                /* Empty State */
                 <div className="rounded-xl p-12 text-center"
-                    style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    style={{ background: T.surface, border: `1px dashed ${T.border}` }}>
                     <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                         style={{ background: T.elevated }}>
-                        <Search size={32} style={{ color: T.textMuted }} />
+                        <Landmark size={32} style={{ color: T.textMuted }} />
                     </div>
-                    <h3 className="text-lg font-semibold mb-2" style={{ color: T.text }}>Nenhuma conta encontrada</h3>
-                    <p className="mb-6" style={{ color: T.textMuted }}>Tente ajustar os filtros ou adicionar uma nova conta</p>
-                    <button
-                        onClick={() => router.push('/backoffice/financeiro/contas/nova')}
-                        className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium hover:brightness-110 transition-colors"
-                        style={{ background: T.accent }}
-                    >
-                        <Plus size={20} />
-                        Nova Conta
-                    </button>
+                    <h3 className="text-lg font-semibold mb-2" style={{ color: T.text }}>
+                        {searchTerm || tipoFilter !== 'all' ? 'Nenhuma conta encontrada' : 'Nenhuma conta cadastrada'}
+                    </h3>
+                    <p className="mb-6 text-sm" style={{ color: T.textMuted }}>
+                        {searchTerm || tipoFilter !== 'all'
+                            ? 'Tente ajustar os filtros de busca'
+                            : 'Adicione suas contas bancárias para gerenciar saldos e movimentações'}
+                    </p>
+                    {!searchTerm && tipoFilter === 'all' && (
+                        <button
+                            onClick={() => router.push('/backoffice/financeiro/contas/nova')}
+                            className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium hover:brightness-110 transition-colors"
+                            style={{ background: T.accent }}
+                        >
+                            <Plus size={20} />
+                            Nova Conta
+                        </button>
+                    )}
                 </div>
             )}
         </div>

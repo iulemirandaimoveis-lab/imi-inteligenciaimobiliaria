@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import {
     ArrowLeft,
     DollarSign,
@@ -11,7 +12,6 @@ import {
     FileText,
     Download,
     Mail,
-    Phone,
     User,
     Building2,
     CheckCircle,
@@ -23,7 +23,12 @@ import {
     Calculator,
     Percent,
     CreditCard,
+    Loader2,
+    AlertTriangle,
 } from 'lucide-react'
+import { toast } from 'sonner'
+
+const supabase = createClient()
 
 const T = {
     surface: 'var(--bo-surface)',
@@ -35,91 +40,79 @@ const T = {
     accent: 'var(--bo-accent)',
 }
 
-// Mock data (seria carregado do Supabase)
-const mockCreditData = {
-    id: 'CRD-2026-001',
-    protocol: 'CRD-2026-001',
-    status: 'approved',
-    createdAt: '2026-02-01',
-
-    // Cliente
-    client: {
-        name: 'Carlos Eduardo Silva',
-        email: 'carlos.silva@email.com',
-        phone: '(81) 99876-5432',
-        cpf: '123.456.789-00',
-        income: 15000,
-        occupation: 'Engenheiro Civil',
-    },
-
-    // Imóvel
-    property: {
-        address: 'Av. Boa Viagem, 3500 - Apto 802',
-        type: 'Apartamento',
-        saleValue: 680000,
-        area: 95,
-        bedrooms: 3,
-        bathrooms: 2,
-    },
-
-    // Financiamento
-    financing: {
-        bank: 'Caixa Econômica Federal',
-        financedAmount: 544000,
-        downPayment: 136000,
-        term: 360,
-        interestRate: 9.5,
-        monthlyPayment: 4589.20,
-        system: 'SAC',
-        ltv: 80,
-        dti: 30.6,
-    },
-
-    // Documentos
-    documents: [
-        { name: 'RG e CPF', status: 'approved', uploadedAt: '2026-02-01' },
-        { name: 'Comprovante de Renda', status: 'approved', uploadedAt: '2026-02-01' },
-        { name: 'Comprovante de Residência', status: 'approved', uploadedAt: '2026-02-02' },
-        { name: 'Certidão de Casamento', status: 'approved', uploadedAt: '2026-02-02' },
-        { name: 'FGTS', status: 'pending', uploadedAt: '2026-02-03' },
-    ],
-
-    // Timeline
-    timeline: [
-        { date: '2026-02-01', event: 'Solicitação criada', status: 'completed' },
-        { date: '2026-02-02', event: 'Documentos enviados', status: 'completed' },
-        { date: '2026-02-05', event: 'Análise de crédito iniciada', status: 'completed' },
-        { date: '2026-02-08', event: 'Aprovado pela Caixa', status: 'completed' },
-        { date: '2026-02-15', event: 'Aguardando assinatura', status: 'current' },
-        { date: '2026-02-20', event: 'Liberação dos recursos', status: 'pending' },
-    ],
+interface CreditApplication {
+    id: string
+    protocol: string
+    status: string
+    created_at: string
+    client_name: string
+    client_email: string | null
+    client_phone: string | null
+    client_cpf: string | null
+    client_income: number | null
+    client_occupation: string | null
+    property_address: string | null
+    property_type: string | null
+    property_value: number
+    property_area: number | null
+    bank: string | null
+    financed_amount: number
+    down_payment: number | null
+    term_months: number
+    interest_rate: number | null
+    monthly_payment: number | null
+    system: string | null
+    ltv: number | null
+    dti: number | null
+    documents: Array<{ name: string; status: string; uploadedAt?: string }> | null
+    timeline: Array<{ date: string; event: string; status: string }> | null
 }
 
 export default function CreditoDetalhesPage() {
     const router = useRouter()
     const params = useParams()
+    const [credit, setCredit] = useState<CreditApplication | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
     const [showAmortization, setShowAmortization] = useState(false)
 
-    const credit = mockCreditData
+    useEffect(() => {
+        async function fetchCredit() {
+            try {
+                const { data, error } = await supabase
+                    .from('credit_applications')
+                    .select('*')
+                    .eq('id', params.id)
+                    .single()
+                if (error) throw new Error(error.message)
+                setCredit(data as CreditApplication)
+            } catch (err: any) {
+                setError(err.message || 'Crédito não encontrado')
+            } finally {
+                setLoading(false)
+            }
+        }
+        if (params.id) fetchCredit()
+    }, [params.id])
 
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-            minimumFractionDigits: 2,
-        }).format(value)
-    }
+    const formatCurrency = (value: number) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(value)
 
     const getStatusBadge = (status: string) => {
-        const badges = {
-            approved: { label: 'Aprovado', color: 'bg-green-100 text-green-700', icon: CheckCircle },
-            pending: { label: 'Pendente', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
-            rejected: { label: 'Rejeitado', color: 'bg-red-100 text-red-700', icon: XCircle },
-            analysis: { label: 'Em Análise', color: 'bg-blue-100 text-blue-700', icon: AlertCircle },
+        const badges: Record<string, { label: string; color: string; icon: React.ElementType }> = {
+            approved:     { label: 'Aprovado',     color: 'bg-green-100 text-green-700',  icon: CheckCircle },
+            aprovado:     { label: 'Aprovado',     color: 'bg-green-100 text-green-700',  icon: CheckCircle },
+            pending:      { label: 'Pendente',     color: 'bg-yellow-100 text-yellow-700', icon: Clock },
+            pendente:     { label: 'Pendente',     color: 'bg-yellow-100 text-yellow-700', icon: Clock },
+            rejected:     { label: 'Rejeitado',    color: 'bg-red-100 text-red-700',       icon: XCircle },
+            recusado:     { label: 'Rejeitado',    color: 'bg-red-100 text-red-700',       icon: XCircle },
+            under_review: { label: 'Em Análise',   color: 'bg-blue-100 text-blue-700',     icon: AlertCircle },
+            analise:      { label: 'Em Análise',   color: 'bg-blue-100 text-blue-700',     icon: AlertCircle },
+            documents:    { label: 'Documentação', color: 'bg-purple-100 text-purple-700', icon: FileText },
+            documentacao: { label: 'Documentação', color: 'bg-purple-100 text-purple-700', icon: FileText },
         }
-        const badge = badges[status as keyof typeof badges] || badges.pending
+        const badge = badges[status] || badges.pending
         const Icon = badge.icon
-
         return (
             <span className={`px-3 py-1.5 ${badge.color} rounded-lg text-sm font-medium flex items-center gap-2 w-fit`}>
                 <Icon size={16} />
@@ -128,35 +121,59 @@ export default function CreditoDetalhesPage() {
         )
     }
 
-    // Gerar tabela de amortização (primeiros 12 meses)
-    const generateAmortization = () => {
-        const { financedAmount, interestRate, term } = credit.financing
+    const generateAmortization = (financedAmount: number, interestRate: number, term: number) => {
         const monthlyRate = interestRate / 100 / 12
         const amortization = financedAmount / term
-
         return Array.from({ length: 12 }, (_, i) => {
-            const month = i + 1
             const balance = financedAmount - (amortization * i)
             const interest = balance * monthlyRate
             const payment = amortization + interest
             const newBalance = balance - amortization
-
-            return {
-                month,
-                payment,
-                amortization,
-                interest,
-                balance: newBalance,
-            }
+            return { month: i + 1, payment, amortization, interest, balance: newBalance }
         })
     }
 
-    const amortizationTable = generateAmortization()
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" style={{ color: T.accent }} />
+                    <p style={{ color: T.textMuted }}>Carregando crédito...</p>
+                </div>
+            </div>
+        )
+    }
+
+    if (error || !credit) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="text-center">
+                    <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-red-400" />
+                    <h2 className="text-lg font-bold mb-2" style={{ color: T.text }}>Erro ao carregar</h2>
+                    <p className="text-sm mb-4" style={{ color: T.textMuted }}>{error || 'Crédito não encontrado'}</p>
+                    <button
+                        onClick={() => router.push('/backoffice/credito')}
+                        className="px-4 py-2 rounded-xl text-white text-sm font-medium"
+                        style={{ backgroundColor: T.accent }}
+                    >
+                        Voltar para lista
+                    </button>
+                </div>
+            </div>
+        )
+    }
+
+    const amortizationTable = (credit.interest_rate && credit.financed_amount && credit.term_months)
+        ? generateAmortization(credit.financed_amount, credit.interest_rate, credit.term_months)
+        : []
+
+    const documents = Array.isArray(credit.documents) ? credit.documents : []
+    const timeline = Array.isArray(credit.timeline) ? credit.timeline : []
 
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between flex-wrap gap-4">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => router.back()}
@@ -167,8 +184,10 @@ export default function CreditoDetalhesPage() {
                     </button>
                     <div>
                         <h1 className="text-2xl font-bold" style={{ color: T.text }}>Crédito Imobiliário</h1>
-                        <div className="flex items-center gap-3 mt-2">
-                            <span className="text-sm font-medium" style={{ color: T.textMuted }}>Protocolo: {credit.protocol}</span>
+                        <div className="flex items-center gap-3 mt-2 flex-wrap">
+                            <span className="text-sm font-medium" style={{ color: T.textMuted }}>
+                                Protocolo: {credit.protocol}
+                            </span>
                             <span style={{ color: T.border }}>•</span>
                             {getStatusBadge(credit.status)}
                         </div>
@@ -177,83 +196,81 @@ export default function CreditoDetalhesPage() {
 
                 <div className="flex items-center gap-3">
                     <button
+                        onClick={() => toast.info('Exportação em desenvolvimento')}
                         className="h-10 px-4 rounded-xl font-medium flex items-center gap-2"
                         style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
                     >
                         <Download size={18} />
                         Exportar
                     </button>
-                    <button
-                        className="h-10 px-4 rounded-xl font-medium flex items-center gap-2"
-                        style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
-                    >
-                        <Mail size={18} />
-                        Enviar Email
-                    </button>
+                    {credit.client_email && (
+                        <a
+                            href={`mailto:${credit.client_email}`}
+                            className="h-10 px-4 rounded-xl font-medium flex items-center gap-2"
+                            style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
+                        >
+                            <Mail size={18} />
+                            Enviar Email
+                        </a>
+                    )}
                 </div>
             </div>
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Valor do Imóvel */}
                 <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                            <Home size={20} className="text-blue-600" />
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center">
+                            <Home size={20} className="text-blue-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Valor do Imóvel</p>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>
-                        {formatCurrency(credit.property.saleValue)}
+                        {formatCurrency(credit.property_value)}
                     </p>
                 </div>
 
-                {/* Financiado */}
                 <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-                            <DollarSign size={20} className="text-green-600" />
+                        <div className="w-10 h-10 rounded-xl bg-green-500/15 flex items-center justify-center">
+                            <DollarSign size={20} className="text-green-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Valor Financiado</p>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>
-                        {formatCurrency(credit.financing.financedAmount)}
+                        {formatCurrency(credit.financed_amount)}
                     </p>
-                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                        LTV: {credit.financing.ltv}%
-                    </p>
+                    {credit.ltv != null && (
+                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>LTV: {credit.ltv}%</p>
+                    )}
                 </div>
 
-                {/* Parcela */}
                 <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                            <CreditCard size={20} className="text-purple-600" />
+                        <div className="w-10 h-10 rounded-xl bg-purple-500/15 flex items-center justify-center">
+                            <CreditCard size={20} className="text-purple-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Parcela Mensal</p>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>
-                        {formatCurrency(credit.financing.monthlyPayment)}
+                        {credit.monthly_payment ? formatCurrency(credit.monthly_payment) : '—'}
                     </p>
-                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                        {credit.financing.term} meses
-                    </p>
+                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>{credit.term_months} meses</p>
                 </div>
 
-                {/* Taxa */}
                 <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
-                            <Percent size={20} className="text-orange-600" />
+                        <div className="w-10 h-10 rounded-xl bg-orange-500/15 flex items-center justify-center">
+                            <Percent size={20} className="text-orange-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Taxa de Juros</p>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>
-                        {credit.financing.interestRate}% a.a.
+                        {credit.interest_rate ? `${credit.interest_rate}% a.a.` : '—'}
                     </p>
-                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                        Sistema {credit.financing.system}
-                    </p>
+                    {credit.system && (
+                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>Sistema {credit.system}</p>
+                    )}
                 </div>
             </div>
 
@@ -264,244 +281,289 @@ export default function CreditoDetalhesPage() {
                     {/* Dados do Cliente */}
                     <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                            <User size={20} className="text-blue-600" />
+                            <User size={20} className="text-blue-400" />
                             Dados do Cliente
                         </h3>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Nome Completo</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.client.name}</p>
+                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.client_name}</p>
                             </div>
-                            <div>
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>CPF</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.client.cpf}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Email</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.client.email}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Telefone</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.client.phone}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Profissão</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.client.occupation}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Renda Mensal</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{formatCurrency(credit.client.income)}</p>
-                            </div>
+                            {credit.client_cpf && (
+                                <div>
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>CPF</p>
+                                    <p className="text-sm font-medium font-mono" style={{ color: T.text }}>{credit.client_cpf}</p>
+                                </div>
+                            )}
+                            {credit.client_email && (
+                                <div>
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Email</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>{credit.client_email}</p>
+                                </div>
+                            )}
+                            {credit.client_phone && (
+                                <div>
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Telefone</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>{credit.client_phone}</p>
+                                </div>
+                            )}
+                            {credit.client_occupation && (
+                                <div>
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Profissão</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>{credit.client_occupation}</p>
+                                </div>
+                            )}
+                            {credit.client_income && (
+                                <div>
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Renda Mensal</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>{formatCurrency(credit.client_income)}</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     {/* Dados do Imóvel */}
                     <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                            <Building2 size={20} className="text-green-600" />
+                            <Building2 size={20} className="text-green-400" />
                             Dados do Imóvel
                         </h3>
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="col-span-2">
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Endereço</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.property.address}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Tipo</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.property.type}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Área</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.property.area}m²</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Quartos</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.property.bedrooms}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Banheiros</p>
-                                <p className="text-sm font-medium" style={{ color: T.text }}>{credit.property.bathrooms}</p>
-                            </div>
+                            {credit.property_address && (
+                                <div className="col-span-2">
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Endereço</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>{credit.property_address}</p>
+                                </div>
+                            )}
+                            {credit.property_type && (
+                                <div>
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Tipo</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>{credit.property_type}</p>
+                                </div>
+                            )}
+                            {credit.property_area && (
+                                <div>
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Área</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>{credit.property_area}m²</p>
+                                </div>
+                            )}
+                            {credit.bank && (
+                                <div>
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Banco</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>{credit.bank}</p>
+                                </div>
+                            )}
+                            {credit.down_payment && (
+                                <div>
+                                    <p className="text-xs font-medium mb-1" style={{ color: T.textMuted }}>Entrada</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>{formatCurrency(credit.down_payment)}</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     {/* Tabela de Amortização */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: T.text }}>
-                                <Calculator size={20} className="text-purple-600" />
-                                Tabela de Amortização
-                            </h3>
-                            <button
-                                onClick={() => setShowAmortization(!showAmortization)}
-                                className="flex items-center gap-2 text-sm font-medium text-blue-500 hover:text-blue-400"
-                            >
-                                {showAmortization ? 'Ocultar' : 'Mostrar'} tabela
-                                {showAmortization ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                            </button>
-                        </div>
-
-                        {showAmortization && (
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead>
-                                        <tr style={{ borderBottom: `1px solid ${T.border}` }}>
-                                            <th className="text-left py-3 px-2 font-medium" style={{ color: T.textMuted }}>Mês</th>
-                                            <th className="text-right py-3 px-2 font-medium" style={{ color: T.textMuted }}>Parcela</th>
-                                            <th className="text-right py-3 px-2 font-medium" style={{ color: T.textMuted }}>Amortização</th>
-                                            <th className="text-right py-3 px-2 font-medium" style={{ color: T.textMuted }}>Juros</th>
-                                            <th className="text-right py-3 px-2 font-medium" style={{ color: T.textMuted }}>Saldo</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {amortizationTable.map((row) => (
-                                            <tr key={row.month} style={{ borderBottom: `1px solid ${T.border}` }}>
-                                                <td className="py-3 px-2 font-medium" style={{ color: T.text }}>{row.month}</td>
-                                                <td className="text-right py-3 px-2" style={{ color: T.text }}>{formatCurrency(row.payment)}</td>
-                                                <td className="text-right py-3 px-2" style={{ color: T.textMuted }}>{formatCurrency(row.amortization)}</td>
-                                                <td className="text-right py-3 px-2" style={{ color: T.textMuted }}>{formatCurrency(row.interest)}</td>
-                                                <td className="text-right py-3 px-2 font-medium" style={{ color: T.text }}>{formatCurrency(row.balance)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                                <p className="text-xs mt-4" style={{ color: T.textMuted }}>
-                                    Mostrando primeiros 12 meses de {credit.financing.term} meses totais
-                                </p>
+                    {amortizationTable.length > 0 && (
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-bold flex items-center gap-2" style={{ color: T.text }}>
+                                    <Calculator size={20} className="text-purple-400" />
+                                    Tabela de Amortização
+                                </h3>
+                                <button
+                                    onClick={() => setShowAmortization(!showAmortization)}
+                                    className="flex items-center gap-2 text-sm font-medium text-blue-400 hover:text-blue-300"
+                                >
+                                    {showAmortization ? 'Ocultar' : 'Mostrar'} tabela
+                                    {showAmortization ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                </button>
                             </div>
-                        )}
-                    </div>
+
+                            {showAmortization && (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                                                <th className="text-left py-3 px-2 font-medium" style={{ color: T.textMuted }}>Mês</th>
+                                                <th className="text-right py-3 px-2 font-medium" style={{ color: T.textMuted }}>Parcela</th>
+                                                <th className="text-right py-3 px-2 font-medium" style={{ color: T.textMuted }}>Amortização</th>
+                                                <th className="text-right py-3 px-2 font-medium" style={{ color: T.textMuted }}>Juros</th>
+                                                <th className="text-right py-3 px-2 font-medium" style={{ color: T.textMuted }}>Saldo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {amortizationTable.map((row) => (
+                                                <tr key={row.month} style={{ borderBottom: `1px solid ${T.border}` }}>
+                                                    <td className="py-3 px-2 font-medium" style={{ color: T.text }}>{row.month}</td>
+                                                    <td className="text-right py-3 px-2" style={{ color: T.text }}>{formatCurrency(row.payment)}</td>
+                                                    <td className="text-right py-3 px-2" style={{ color: T.textMuted }}>{formatCurrency(row.amortization)}</td>
+                                                    <td className="text-right py-3 px-2" style={{ color: T.textMuted }}>{formatCurrency(row.interest)}</td>
+                                                    <td className="text-right py-3 px-2 font-medium" style={{ color: T.text }}>{formatCurrency(row.balance)}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    <p className="text-xs mt-4" style={{ color: T.textMuted }}>
+                                        Mostrando primeiros 12 meses de {credit.term_months} meses totais
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Right Column */}
                 <div className="space-y-6">
                     {/* Análise de Risco */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                            <TrendingUp size={20} className="text-orange-600" />
-                            Análise de Risco
-                        </h3>
-
-                        <div className="space-y-4">
-                            {/* LTV */}
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <p className="text-sm font-medium" style={{ color: T.textMuted }}>LTV (Loan to Value)</p>
-                                    <p className="text-sm font-bold" style={{ color: T.text }}>{credit.financing.ltv}%</p>
-                                </div>
-                                <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                                    <div
-                                        className={`h-full ${credit.financing.ltv <= 80 ? 'bg-green-500' : 'bg-orange-500'}`}
-                                        style={{ width: `${credit.financing.ltv}%` }}
-                                    />
-                                </div>
-                                <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                                    {credit.financing.ltv <= 80 ? 'Dentro do limite recomendado' : 'Acima do limite'}
-                                </p>
-                            </div>
-
-                            {/* DTI */}
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <p className="text-sm font-medium" style={{ color: T.textMuted }}>DTI (Debt to Income)</p>
-                                    <p className="text-sm font-bold" style={{ color: T.text }}>{credit.financing.dti}%</p>
-                                </div>
-                                <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                                    <div
-                                        className={`h-full ${credit.financing.dti <= 30 ? 'bg-green-500' : 'bg-orange-500'}`}
-                                        style={{ width: `${credit.financing.dti}%` }}
-                                    />
-                                </div>
-                                <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                                    {credit.financing.dti <= 30 ? 'Comprometimento saudável' : 'Comprometimento elevado'}
-                                </p>
-                            </div>
-
-                            {/* Entrada */}
-                            <div className="pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
-                                <div className="flex items-center justify-between">
-                                    <p className="text-sm font-medium" style={{ color: T.textMuted }}>Entrada</p>
-                                    <p className="text-sm font-bold" style={{ color: T.text }}>{formatCurrency(credit.financing.downPayment)}</p>
-                                </div>
-                                <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                                    {((credit.financing.downPayment / credit.property.saleValue) * 100).toFixed(0)}% do valor total
-                                </p>
+                    {(credit.ltv != null || credit.dti != null) && (
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
+                                <TrendingUp size={20} className="text-orange-400" />
+                                Análise de Risco
+                            </h3>
+                            <div className="space-y-4">
+                                {credit.ltv != null && (
+                                    <div>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <p className="text-sm font-medium" style={{ color: T.textMuted }}>LTV (Loan to Value)</p>
+                                            <p className="text-sm font-bold" style={{ color: T.text }}>{credit.ltv}%</p>
+                                        </div>
+                                        <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                            <div
+                                                className={`h-full ${credit.ltv <= 80 ? 'bg-green-500' : 'bg-orange-500'}`}
+                                                style={{ width: `${Math.min(credit.ltv, 100)}%` }}
+                                            />
+                                        </div>
+                                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>
+                                            {credit.ltv <= 80 ? 'Dentro do limite recomendado' : 'Acima do limite'}
+                                        </p>
+                                    </div>
+                                )}
+                                {credit.dti != null && (
+                                    <div>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <p className="text-sm font-medium" style={{ color: T.textMuted }}>DTI (Debt to Income)</p>
+                                            <p className="text-sm font-bold" style={{ color: T.text }}>{credit.dti}%</p>
+                                        </div>
+                                        <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                            <div
+                                                className={`h-full ${credit.dti <= 30 ? 'bg-green-500' : 'bg-orange-500'}`}
+                                                style={{ width: `${Math.min(credit.dti, 100)}%` }}
+                                            />
+                                        </div>
+                                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>
+                                            {credit.dti <= 30 ? 'Comprometimento saudável' : 'Comprometimento elevado'}
+                                        </p>
+                                    </div>
+                                )}
+                                {credit.down_payment && (
+                                    <div className="pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
+                                        <div className="flex items-center justify-between">
+                                            <p className="text-sm font-medium" style={{ color: T.textMuted }}>Entrada</p>
+                                            <p className="text-sm font-bold" style={{ color: T.text }}>{formatCurrency(credit.down_payment)}</p>
+                                        </div>
+                                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>
+                                            {((credit.down_payment / credit.property_value) * 100).toFixed(0)}% do valor total
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Documentos */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                            <FileText size={20} className="text-blue-600" />
-                            Documentos
-                        </h3>
-
-                        <div className="space-y-3">
-                            {credit.documents.map((doc, index) => (
-                                <div key={index} className="flex items-center justify-between p-3 rounded-xl" style={{ background: T.elevated }}>
-                                    <div className="flex items-center gap-3">
-                                        <FileText size={18} style={{ color: T.textMuted }} />
-                                        <div>
-                                            <p className="text-sm font-medium" style={{ color: T.text }}>{doc.name}</p>
-                                            <p className="text-xs" style={{ color: T.textMuted }}>{doc.uploadedAt}</p>
+                    {documents.length > 0 && (
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
+                                <FileText size={20} className="text-blue-400" />
+                                Documentos
+                            </h3>
+                            <div className="space-y-3">
+                                {documents.map((doc, index) => (
+                                    <div key={index} className="flex items-center justify-between p-3 rounded-xl" style={{ background: T.elevated }}>
+                                        <div className="flex items-center gap-3">
+                                            <FileText size={18} style={{ color: T.textMuted }} />
+                                            <div>
+                                                <p className="text-sm font-medium" style={{ color: T.text }}>{doc.name}</p>
+                                                {doc.uploadedAt && (
+                                                    <p className="text-xs" style={{ color: T.textMuted }}>{doc.uploadedAt}</p>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                    {doc.status === 'approved' ? (
-                                        <CheckCircle size={18} className="text-green-600" />
-                                    ) : (
-                                        <Clock size={18} className="text-yellow-600" />
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Timeline */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
-                            <Calendar size={20} className="text-purple-600" />
-                            Timeline
-                        </h3>
-
-                        <div className="space-y-4">
-                            {credit.timeline.map((item, index) => (
-                                <div key={index} className="flex gap-3">
-                                    <div className="flex flex-col items-center">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.status === 'completed' ? 'bg-green-100' :
-                                                item.status === 'current' ? 'bg-blue-100' :
-                                                    ''
-                                            }`}
-                                            style={item.status === 'pending' ? { background: T.elevated } : undefined}
-                                        >
-                                            {item.status === 'completed' ? (
-                                                <CheckCircle size={16} className="text-green-600" />
-                                            ) : item.status === 'current' ? (
-                                                <Clock size={16} className="text-blue-600" />
-                                            ) : (
-                                                <div className="w-2 h-2 rounded-full" style={{ background: T.textMuted }} />
-                                            )}
-                                        </div>
-                                        {index < credit.timeline.length - 1 && (
-                                            <div className={`w-0.5 h-8 ${item.status === 'completed' ? 'bg-green-200' : ''
-                                                }`}
-                                                style={item.status !== 'completed' ? { background: T.border } : undefined}
-                                            />
+                                        {doc.status === 'approved' ? (
+                                            <CheckCircle size={18} className="text-green-500" />
+                                        ) : (
+                                            <Clock size={18} className="text-yellow-500" />
                                         )}
                                     </div>
-                                    <div className="flex-1 pb-4">
-                                        <p className={`text-sm font-medium ${item.status === 'current' ? 'text-blue-500' : ''
-                                            }`}
-                                            style={item.status !== 'current' ? { color: T.text } : undefined}
-                                        >
-                                            {item.event}
-                                        </p>
-                                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>{item.date}</p>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
+
+                    {/* Timeline */}
+                    {timeline.length > 0 ? (
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
+                                <Calendar size={20} className="text-purple-400" />
+                                Timeline
+                            </h3>
+                            <div className="space-y-4">
+                                {timeline.map((item, index) => (
+                                    <div key={index} className="flex gap-3">
+                                        <div className="flex flex-col items-center">
+                                            <div
+                                                className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                                    item.status === 'completed' ? 'bg-green-500/15' :
+                                                    item.status === 'current'   ? 'bg-blue-500/15' : ''
+                                                }`}
+                                                style={item.status === 'pending' ? { background: T.elevated } : undefined}
+                                            >
+                                                {item.status === 'completed' ? (
+                                                    <CheckCircle size={16} className="text-green-500" />
+                                                ) : item.status === 'current' ? (
+                                                    <Clock size={16} className="text-blue-400" />
+                                                ) : (
+                                                    <div className="w-2 h-2 rounded-full" style={{ background: T.textMuted }} />
+                                                )}
+                                            </div>
+                                            {index < timeline.length - 1 && (
+                                                <div
+                                                    className={`w-0.5 h-8 ${item.status === 'completed' ? 'bg-green-500/30' : ''}`}
+                                                    style={item.status !== 'completed' ? { background: T.border } : undefined}
+                                                />
+                                            )}
+                                        </div>
+                                        <div className="flex-1 pb-4">
+                                            <p
+                                                className={`text-sm font-medium`}
+                                                style={{ color: item.status === 'current' ? '#60A5FA' : T.text }}
+                                            >
+                                                {item.event}
+                                            </p>
+                                            <p className="text-xs mt-1" style={{ color: T.textMuted }}>{item.date}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        /* Timeline vazia — info básica */
+                        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
+                                <Calendar size={20} className="text-purple-400" />
+                                Informações
+                            </h3>
+                            <div className="space-y-3">
+                                <div>
+                                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Criado em</p>
+                                    <p className="text-sm font-medium" style={{ color: T.text }}>
+                                        {new Date(credit.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
