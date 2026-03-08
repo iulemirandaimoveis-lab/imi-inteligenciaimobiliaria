@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-
-export const runtime = 'edge'
+import { limiters } from '@/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
     try {
@@ -9,6 +8,14 @@ export async function POST(request: NextRequest) {
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        const rl = limiters.ai(user.id)
+        if (!rl.success) {
+            return NextResponse.json(
+                { error: 'Limite de geração IA atingido. Aguarde 1 minuto.' },
+                { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetTime - Date.now()) / 1000)) } }
+            )
         }
 
         const body = await request.json()

@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(req: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const { searchParams } = new URL(req.url)
         const month = searchParams.get('month') // YYYY-MM
         const id = searchParams.get('id')
@@ -35,6 +37,8 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const body = await req.json()
         const { title, description, event_type, start_time, end_time, all_day, location, color, related_type, related_id } = body
         if (!title || !start_time) return NextResponse.json({ error: 'title e start_time são obrigatórios' }, { status: 400 })
@@ -56,6 +60,8 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const body = await req.json()
         const { id, ...updates } = body
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
@@ -71,6 +77,8 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const { searchParams } = new URL(req.url)
         const id = searchParams.get('id')
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })

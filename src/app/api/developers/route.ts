@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
     const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
@@ -30,6 +32,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     const body = await request.json()
 
     // Generate slug from name
@@ -74,6 +78,8 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
     const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     const body = await request.json()
     const { id, ...updates } = body
     if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
@@ -94,6 +100,8 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
     const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
