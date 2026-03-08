@@ -171,7 +171,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
             <section className="relative bg-[#141420] pt-20 pb-14 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
                 {/* Gold glow orb */}
                 <div
-                    className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full pointer-events-none"
+                    className="absolute top-1/4 right-1/4 w-[200px] h-[200px] sm:w-[500px] sm:h-[500px] rounded-full pointer-events-none"
                     style={{
                         background: 'radial-gradient(circle, rgba(26,26,46,0.08) 0%, transparent 70%)',
                         filter: 'blur(60px)',

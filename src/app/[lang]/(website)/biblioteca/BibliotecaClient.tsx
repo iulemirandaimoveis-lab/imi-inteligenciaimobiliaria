@@ -50,7 +50,7 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
             <section className="relative overflow-hidden pt-28 pb-16 lg:pt-36 lg:pb-20">
                 {/* Background glow */}
                 <div
-                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[400px] pointer-events-none"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[200px] sm:w-[700px] sm:h-[400px] pointer-events-none"
                     style={{
                         background: 'radial-gradient(ellipse at top, rgba(51,78,104,0.18) 0%, transparent 70%)',
                         filter: 'blur(60px)',

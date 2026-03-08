@@ -64,6 +64,9 @@ export async function GET(request: NextRequest) {
 
         if (status && status !== 'todos') {
             query = query.eq('status', status)
+        } else {
+            // Exclude soft-deleted contracts by default
+            query = query.not('status', 'eq', 'cancelado')
         }
 
         query = query.range(offset, offset + limit - 1)
