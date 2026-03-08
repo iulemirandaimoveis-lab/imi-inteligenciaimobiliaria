@@ -19,7 +19,8 @@ export async function GET(request: Request) {
 
         const { data: leads, error, count } = await supabase
             .from('leads')
-            .select('id, name, email, phone, source, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, utm_source', { count: 'exact' })
+            .select('id, name, email, phone, source, origin, status, score, ai_score, interest_type, interest_location, created_at, updated_at, budget_min, budget_max, capital, utm_source, country, currency, language, tags, notes, assigned_to', { count: 'exact' })
+            .not('status', 'eq', 'archived')
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1);
 
@@ -36,11 +37,21 @@ export async function GET(request: Request) {
             email: l.email || '',
             phone: l.phone || '',
             score: l.score || l.ai_score || 50,
-            status: mapStatus(l.status),
-            source: l.source || l.utm_source || 'Site',
-            interest: l.interest_type || '-',
-            city: l.interest_location || '',
-            budget: formatBudget(l.budget_min, l.budget_max),
+            status: l.status || 'new',
+            source: l.source || l.origin || l.utm_source || 'website',
+            interest: l.interest_type || '',
+            interest_type: l.interest_type || null,
+            interest_location: l.interest_location || null,
+            city: l.interest_location || null,
+            capital: l.capital || l.budget_min || null,
+            budget_min: l.budget_min || null,
+            budget_max: l.budget_max || null,
+            budget: formatBudget(l.budget_min || l.capital, l.budget_max),
+            country: l.country || 'BR',
+            currency: l.currency || 'BRL',
+            language: l.language || 'pt',
+            tags: Array.isArray(l.tags) ? l.tags : [],
+            notes: l.notes || null,
             created_at: l.created_at || new Date().toISOString(),
             updated_at: l.updated_at || l.created_at || new Date().toISOString(),
         }));
@@ -97,7 +108,9 @@ export async function POST(request: Request) {
                 email: body.email || null,
                 phone: body.phone || null,
                 source: body.source || 'website',
+                origin: body.source || 'website',
                 status: body.status || 'new',
+                score: 50,
                 ai_score: body.ai_score || 0,
                 ai_priority: body.ai_priority || 'medium',
                 development_id: body.development_id || null,
@@ -105,7 +118,12 @@ export async function POST(request: Request) {
                 interest_location: body.interest_location || null,
                 budget_min: body.budget_min ?? null,
                 budget_max: body.budget_max ?? null,
+                capital: body.budget_min ?? null,
                 notes: body.notes || null,
+                country: 'BR',
+                currency: 'BRL',
+                language: 'pt',
+                tags: [],
             })
             .select()
             .single()
