@@ -147,7 +147,7 @@ export default function RelatoriosExecutivoPage() {
               initials: initials.toUpperCase(),
               name: parts.slice(0, 2).join(' '),
               leads: lc,
-              conv: lc > 0 ? parseFloat(((Math.random() * 3) + 3).toFixed(1)) : 0,
+              conv: 0,
               volume: lc > 0 ? parseFloat(((lc * 0.02)).toFixed(1)) : 0,
               color: AGENT_COLORS[i],
             }

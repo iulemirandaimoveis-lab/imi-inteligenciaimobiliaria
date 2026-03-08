@@ -188,6 +188,7 @@ export default function ImoveisPage() {
     const destaquesCount = imoveis.filter(i => i.destaque).length
     const lancamentosCount = imoveis.filter(i => i.status === 'lancamento').length
     const disponiveis = imoveis.filter(i => i.status === 'disponivel').length
+    const vgvEstimado = imoveis.reduce((sum, i) => sum + (i.preco || 0), 0)
 
     const filtered = imoveis.filter(im => {
         const q = search.toLowerCase()
@@ -230,8 +231,15 @@ export default function ImoveisPage() {
         </div>
     )
 
+    const fmtVGV = (v: number) => {
+        if (v >= 1_000_000_000) return `R$ ${(v / 1_000_000_000).toFixed(1).replace('.', ',')}B`
+        if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
+        if (v >= 1000) return `R$ ${Math.round(v / 1000)}k`
+        return v > 0 ? `R$ ${v.toLocaleString('pt-BR')}` : '—'
+    }
+
     const STATS = [
-        { label: 'VGV Global (Est.)', value: 'R$ 1.2B', icon: DollarSign },
+        { label: 'VGV Global (Est.)', value: fmtVGV(vgvEstimado), icon: DollarSign },
         { label: 'Lançamentos', value: lancamentosCount, icon: Tag },
         { label: 'Em Destaque', value: destaquesCount, icon: Star },
         { label: 'Disponíveis', value: disponiveis, icon: CheckCircle },
