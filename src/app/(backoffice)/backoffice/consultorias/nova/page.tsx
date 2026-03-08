@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Briefcase, Save, User, DollarSign, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import Link from 'next/link'
 
 const T = {
@@ -60,9 +61,10 @@ export default function NovaConsultoriaPage() {
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
+      toast.success('Consultoria criada com sucesso!')
       router.push('/backoffice/consultorias')
-    } catch (error) {
-      console.error('Erro ao salvar consultoria:', error)
+    } catch (error: any) {
+      toast.error(error?.message || 'Erro ao criar consultoria')
     } finally {
       setLoading(false)
     }

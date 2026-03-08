@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import {
   ArrowLeft,
   ArrowRight,
@@ -258,9 +259,10 @@ export default function NovaCampanhaPage() {
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Erro ao salvar')
 
+      toast.success('Campanha criada com sucesso!')
       router.push('/backoffice/campanhas')
-    } catch (error) {
-      console.error('Erro ao salvar campanha:', error)
+    } catch (error: any) {
+      toast.error(error?.message || 'Erro ao criar campanha')
       setIsSubmitting(false)
     }
   }
