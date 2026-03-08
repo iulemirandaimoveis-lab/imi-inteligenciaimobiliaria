@@ -83,15 +83,19 @@ export default function SettingsPage() {
     if (!file || !file.type.startsWith('image/')) return
     setUploadingLogo(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      const fd = new FormData()
+      fd.append('file', file)
+      // upload to media bucket under company/ folder
+      const res = await fetch('/api/upload?folder=company', { method: 'POST', body: fd })
       if (!res.ok) throw new Error('Falha no upload')
-      const data = await res.json()
-      const url = data.url || data.publicUrl || data.path
+      const json = await res.json()
+      // API returns { success, data: { url, fileName, ... } }
+      const url = json.data?.url || json.url || json.publicUrl || json.path
       if (url) {
         handleChange('logoUrl', url)
         try { localStorage.setItem('imi-company-logo', url) } catch {}
+      } else {
+        throw new Error('URL da imagem não retornada')
       }
     } catch (e: any) {
       setSaveError('Erro ao fazer upload da logo: ' + (e.message || ''))
@@ -109,10 +113,9 @@ export default function SettingsPage() {
           const data = await res.json()
           if (data.settings && Object.keys(data.settings).length > 0) {
             setSettings(prev => ({ ...prev, ...data.settings }))
-            // Sync theme only once on load (do NOT use setTheme on every render)
-            if (data.settings.theme && ['light', 'dark', 'system'].includes(data.settings.theme)) {
-              setTheme(data.settings.theme)
-            }
+            // NOTE: Do NOT call setTheme() here — it would change the user's
+            // current theme just by visiting this page (the bug). Theme is
+            // only applied when the user explicitly changes it in the dropdown.
             // Cache logo in localStorage for the mobile header
             if (data.settings.logoUrl) {
               try { localStorage.setItem('imi-company-logo', data.settings.logoUrl) } catch {}
@@ -124,7 +127,7 @@ export default function SettingsPage() {
       }
     }
     fetchSettings()
-  }, [setTheme])
+  }, [])
 
   if (!mounted) return null
 
