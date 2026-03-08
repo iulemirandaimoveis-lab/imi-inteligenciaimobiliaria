@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         const ip = getClientIP(request)
 
         // Rate limiting: 30 pageviews / 10s per IP (generous for real users, blocks bots)
-        const rl = limiters.public(ip)
+        const rl = await limiters.public(ip)
         if (!rl.success) {
             return NextResponse.json({ ok: true }) // Silently drop — never fail client-side tracking
         }

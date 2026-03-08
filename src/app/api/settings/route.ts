@@ -7,6 +7,9 @@ import { revalidatePath } from 'next/cache'
 export async function GET() {
     try {
         const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
         // Try to fetch existing settings
         const { data: settings, error } = await supabase
             .from('settings')

@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     try {
         // Rate limiting: 10 requests / 10s per IP (public endpoint)
         const ip = getClientIP(request)
-        const rl = limiters.public(ip)
+        const rl = await limiters.public(ip)
         if (!rl.success) {
             return NextResponse.json(
                 { error: 'Muitas requisições. Tente novamente em alguns segundos.' },

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
 
-        const rl = limiters.ai(user.id)
+        const rl = await limiters.ai(user.id)
         if (!rl.success) {
             return NextResponse.json(
                 { error: 'Limite de geração IA atingido. Aguarde 1 minuto.' },

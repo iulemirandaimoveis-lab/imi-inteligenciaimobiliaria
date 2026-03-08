@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
                 utm_source: body.utm_source || null,
                 utm_medium: body.utm_medium || null,
                 utm_campaign: body.utm_campaign || null,
+                created_by: user.id,
             })
             .select()
             .single()
