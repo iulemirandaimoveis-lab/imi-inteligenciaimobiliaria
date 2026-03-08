@@ -22,6 +22,7 @@ import {
   Star,
   Globe,
   FileText,
+  QrCode,
 } from 'lucide-react'
 
 const T = {
@@ -165,6 +166,19 @@ export default function ImovelDetalhesPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              const propertyUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/pt/imoveis/${data.slug || params.id}`
+              const name = encodeURIComponent(data.name || 'Imóvel')
+              router.push(`/backoffice/tracking/qr?propertyId=${params.id}&propertyName=${name}&propertyUrl=${encodeURIComponent(propertyUrl)}`)
+            }}
+            className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
+            style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
+            title="QR Tracking"
+          >
+            <QrCode size={16} />
+            <span className="hidden sm:inline">QR</span>
+          </button>
           <button
             onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
             className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-semibold text-white"

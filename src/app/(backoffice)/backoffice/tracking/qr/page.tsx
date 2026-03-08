@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import {
     Building2, Copy, Check, Link2,
     QrCode, Sparkles,
-    ChevronDown, Loader2, Globe, Trash2
+    ChevronDown, Loader2, Globe, Trash2, MapPin
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
@@ -27,7 +28,7 @@ const SOURCES = [
         value: 'meta',
         label: 'Meta',
         icon: (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" />
             </svg>
         ),
@@ -38,7 +39,7 @@ const SOURCES = [
         value: 'whatsapp',
         label: 'WhatsApp',
         icon: (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
             </svg>
         ),
@@ -49,7 +50,7 @@ const SOURCES = [
         value: 'google',
         label: 'Google',
         icon: (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M21.8 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.5c-.2 1.3-1 2.4-2.1 3.1v2.6h3.4c2-1.8 3-4.5 3-7.5z" fill="#4285F4" />
                 <path d="M12 22c2.7 0 5-.9 6.7-2.4l-3.4-2.6c-.9.6-2 1-3.3 1-2.6 0-4.8-1.7-5.6-4.1H2.9v2.7C4.6 19.9 8.1 22 12 22z" fill="#34A853" />
                 <path d="M6.4 13.9c-.2-.6-.3-1.2-.3-1.9s.1-1.3.3-1.9V7.4H2.9C2.3 8.7 2 10.3 2 12s.3 3.3.9 4.6l3.5-2.7z" fill="#FBBC04" />
@@ -58,6 +59,36 @@ const SOURCES = [
         ),
         color: '#4285F4',
         bg: 'rgba(66,133,244,0.12)',
+    },
+    {
+        value: 'placa',
+        label: 'Placa Física',
+        icon: <MapPin size={20} />,
+        color: '#F59E0B',
+        bg: 'rgba(245,158,11,0.12)',
+    },
+    {
+        value: 'email',
+        label: 'Email',
+        icon: (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+        ),
+        color: '#8B5CF6',
+        bg: 'rgba(139,92,246,0.12)',
+    },
+    {
+        value: 'instagram',
+        label: 'Instagram',
+        icon: (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+            </svg>
+        ),
+        color: '#E1306C',
+        bg: 'rgba(225,48,108,0.12)',
     },
 ]
 
@@ -73,6 +104,10 @@ function sourceBg(value: string) {
 }
 
 export default function QRGeneratorPage() {
+    const searchParams = useSearchParams()
+    const prefilledPropertyId = searchParams.get('propertyId')
+    const prefilledPropertyName = searchParams.get('propertyName')
+
     const [developments, setDevelopments] = useState<any[]>([])
     const [selectedDev, setSelectedDev] = useState<any>(null)
     const [showDevDropdown, setShowDevDropdown] = useState(false)
@@ -83,12 +118,14 @@ export default function QRGeneratorPage() {
     const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
     const [shortUrl, setShortUrl] = useState('imi.re/–––')
     const [copied, setCopied] = useState(false)
+    // Per-link copy state: key = link.id
+    const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null)
 
     // Real tracked links from DB
     const [recentLinks, setRecentLinks] = useState<any[]>([])
     const [linksLoading, setLinksLoading] = useState(true)
 
-    const fetchLinks = async () => {
+    const fetchLinks = useCallback(async () => {
         setLinksLoading(true)
         try {
             const res = await fetch('/api/qr/links')
@@ -99,15 +136,24 @@ export default function QRGeneratorPage() {
         } finally {
             setLinksLoading(false)
         }
-    }
+    }, [])
 
     useEffect(() => {
         supabase.from('developments').select('id, name, slug').order('name').then(({ data }) => {
-            setDevelopments(data || [])
-            if (data && data.length > 0) setSelectedDev(data[0])
+            const devs = data || []
+            setDevelopments(devs)
+            // If navigated from a property page, pre-select that property
+            if (prefilledPropertyId) {
+                const match = devs.find((d: any) => d.id === prefilledPropertyId)
+                if (match) {
+                    setSelectedDev(match)
+                    return
+                }
+            }
+            if (devs.length > 0) setSelectedDev(devs[0])
         })
         fetchLinks()
-    }, [])
+    }, [prefilledPropertyId, fetchLinks])
 
     const handleGenerate = async () => {
         if (!selectedDev) { toast.error('Selecione um imóvel'); return }
@@ -164,6 +210,13 @@ export default function QRGeneratorPage() {
         setTimeout(() => setCopied(false), 2000)
     }
 
+    const copyLinkUrl = (linkId: string, url: string) => {
+        navigator.clipboard.writeText(url)
+        setCopiedLinkId(linkId)
+        toast.success('Link copiado!')
+        setTimeout(() => setCopiedLinkId(null), 2000)
+    }
+
     return (
         <div style={{ maxWidth: 520, margin: '0 auto', paddingBottom: 40 }}>
 
@@ -180,6 +233,24 @@ export default function QRGeneratorPage() {
                     Tracked Link &amp; QR
                 </h1>
             </motion.div>
+
+            {/* Pre-fill banner when navigated from a property */}
+            {prefilledPropertyId && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{
+                        marginBottom: 20, padding: '10px 16px', borderRadius: 12,
+                        background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.25)',
+                        display: 'flex', alignItems: 'center', gap: 10,
+                    }}
+                >
+                    <Building2 size={14} style={{ color: '#3B82F6', flexShrink: 0 }} />
+                    <p style={{ fontSize: 12, color: '#3B82F6', fontWeight: 500 }}>
+                        Gerando QR para: <strong>{prefilledPropertyName ? decodeURIComponent(prefilledPropertyName) : 'Imóvel selecionado'}</strong>
+                    </p>
+                </motion.div>
+            )}
 
             {/* SELECT PROPERTY */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} style={{ marginBottom: 20 }}>
@@ -237,7 +308,7 @@ export default function QRGeneratorPage() {
                 <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 8 }}>
                     Canal de Marketing
                 </p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
                     {SOURCES.map(src => {
                         const isActive = selectedSource.value === src.value
                         return (
@@ -456,12 +527,28 @@ export default function QRGeneratorPage() {
                                     </p>
                                 </div>
 
-                                {/* Stats + Delete */}
-                                <div style={{ textAlign: 'right', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
-                                    <div>
+                                {/* Stats + Copy + Delete */}
+                                <div style={{ textAlign: 'right', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <div style={{ marginRight: 4 }}>
                                         <p style={{ fontSize: 13, fontWeight: 700, color: T.text }}>{link.clicks ?? 0}</p>
                                         <p style={{ fontSize: 9, color: T.textMuted }}>clicks</p>
                                     </div>
+                                    <button
+                                        onClick={() => copyLinkUrl(link.id, link.short_url || '')}
+                                        style={{
+                                            width: 30, height: 30, borderRadius: 8,
+                                            background: copiedLinkId === link.id ? 'rgba(34,197,94,0.15)' : T.hover,
+                                            border: 'none', cursor: 'pointer',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            transition: 'all 0.2s',
+                                        }}
+                                        title="Copiar link"
+                                    >
+                                        {copiedLinkId === link.id
+                                            ? <Check size={13} style={{ color: '#22c55e' }} />
+                                            : <Copy size={13} style={{ color: T.textMuted }} />
+                                        }
+                                    </button>
                                     <button
                                         onClick={() => handleDeleteLink(link.id)}
                                         style={{ width: 30, height: 30, borderRadius: 8, background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.4 }}
