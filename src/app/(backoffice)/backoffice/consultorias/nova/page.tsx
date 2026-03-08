@@ -2,16 +2,24 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Briefcase, Save, User, DollarSign } from 'lucide-react'
+import { ArrowLeft, Briefcase, Save, User, DollarSign, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
 const T = {
   bg: 'var(--bo-surface)',
   card: 'var(--bo-elevated)',
   border: 'var(--bo-border)',
+  borderActive: 'var(--bo-border-gold)',
   text: 'var(--bo-text)',
   sub: 'var(--bo-text-muted)',
+  accent: 'var(--bo-accent)',
+  activeBg: 'var(--bo-active-bg)',
 }
+
+const BTN_PRIMARY = {
+  background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+  boxShadow: '0 0 18px rgba(59,130,246,0.30)',
+} as const
 
 const TIPOS = [
   { v: 'estrategica', l: 'Consultoria Estratégica', desc: 'Posicionamento, expansão, análise de portfólio' },
@@ -57,6 +65,9 @@ export default function NovaConsultoriaPage() {
 
   const steps = ['Cliente', 'Tipo & Escopo', 'Honorários']
 
+  const inputClass = 'w-full h-11 px-3 rounded-xl text-sm focus:outline-none focus:border-[var(--bo-border-gold)]'
+  const inputStyle = { background: T.bg, border: `1px solid ${T.border}`, color: T.text }
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
@@ -77,9 +88,9 @@ export default function NovaConsultoriaPage() {
         {steps.map((s, i) => (
           <div key={s} className="flex items-center flex-1">
             <div className={`flex items-center gap-2 flex-1 ${i < steps.length - 1 ? 'mr-0' : ''}`}>
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors`}
+              <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors"
                 style={{
-                  background: step > i + 1 ? '#10b981' : step === i + 1 ? '#102A43' : 'var(--bo-elevated)',
+                  background: step > i + 1 ? 'var(--s-done)' : step === i + 1 ? 'var(--bo-accent)' : 'var(--bo-elevated)',
                   color: step > i + 1 || step === i + 1 ? '#fff' : T.sub,
                 }}>
                 {step > i + 1 ? '✓' : i + 1}
@@ -89,7 +100,7 @@ export default function NovaConsultoriaPage() {
             </div>
             {i < steps.length - 1 && (
               <div className="h-px flex-1 mx-3"
-                style={{ background: step > i + 1 ? '#6ee7b7' : T.border }} />
+                style={{ background: step > i + 1 ? 'var(--s-done)' : T.border }} />
             )}
           </div>
         ))}
@@ -109,11 +120,11 @@ export default function NovaConsultoriaPage() {
             <div className="flex gap-2">
               {['PF', 'PJ'].map(t => (
                 <button key={t} onClick={() => set('cliente_tipo', t)}
-                  className="flex-1 h-9 rounded-xl text-sm font-medium transition-colors"
+                  className="flex-1 h-10 rounded-xl text-sm font-medium transition-colors"
                   style={{
-                    background: form.cliente_tipo === t ? '#141420' : T.card,
-                    color: form.cliente_tipo === t ? '#fff' : T.text,
-                    border: `1px solid ${form.cliente_tipo === t ? '#141420' : T.border}`,
+                    background: form.cliente_tipo === t ? T.activeBg : T.card,
+                    color: form.cliente_tipo === t ? T.text : T.sub,
+                    border: `1px solid ${form.cliente_tipo === t ? T.borderActive : T.border}`,
                   }}>
                   {t === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
                 </button>
@@ -130,8 +141,8 @@ export default function NovaConsultoriaPage() {
                   <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>{f.l}</label>
                   <input value={(form as any)[f.k]} onChange={e => set(f.k, e.target.value)}
                     placeholder={f.placeholder}
-                    className="w-full h-10 px-3 rounded-xl text-sm focus:outline-none focus:border-[#334E68]"
-                    style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }} />
+                    className={inputClass}
+                    style={inputStyle} />
                 </div>
               ))}
 
@@ -140,14 +151,14 @@ export default function NovaConsultoriaPage() {
                   <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Cidade</label>
                   <input value={form.cidade} onChange={e => set('cidade', e.target.value)}
                     placeholder="Recife"
-                    className="w-full h-10 px-3 rounded-xl text-sm focus:outline-none focus:border-[#334E68]"
-                    style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }} />
+                    className={inputClass}
+                    style={inputStyle} />
                 </div>
                 <div>
                   <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Estado</label>
                   <select value={form.estado} onChange={e => set('estado', e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl text-sm focus:outline-none focus:border-[#334E68]"
-                    style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }}>
+                    className={inputClass}
+                    style={inputStyle}>
                     {['PE', 'RJ', 'SP', 'BA', 'CE', 'MG', 'RS', 'PR', 'SC', 'GO', 'DF'].map(e => <option key={e}>{e}</option>)}
                   </select>
                 </div>
@@ -170,8 +181,8 @@ export default function NovaConsultoriaPage() {
                 <button key={t.v} onClick={() => set('tipo', t.v)}
                   className="w-full text-left p-3 rounded-xl transition-all"
                   style={{
-                    border: `1px solid ${form.tipo === t.v ? '#334E68' : T.border}`,
-                    background: form.tipo === t.v ? 'rgba(51,78,104,0.15)' : T.bg,
+                    border: `1px solid ${form.tipo === t.v ? T.borderActive : T.border}`,
+                    background: form.tipo === t.v ? T.activeBg : T.bg,
                   }}>
                   <p className="text-sm font-medium" style={{ color: T.text }}>{t.l}</p>
                   <p className="text-xs mt-0.5" style={{ color: T.sub }}>{t.desc}</p>
@@ -183,16 +194,16 @@ export default function NovaConsultoriaPage() {
               <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Descrição do Projeto</label>
               <textarea value={form.descricao} onChange={e => set('descricao', e.target.value)}
                 rows={3} placeholder="Descreva o contexto, o imóvel ou empreendimento envolvido, e o escopo esperado…"
-                className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-[#334E68] resize-none"
-                style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }} />
+                className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
+                style={inputStyle} />
             </div>
 
             <div>
               <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Objetivo Principal do Cliente</label>
               <textarea value={form.objetivo} onChange={e => set('objetivo', e.target.value)}
                 rows={2} placeholder="O que o cliente precisa resolver ou decidir com esta consultoria?"
-                className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-[#334E68] resize-none"
-                style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }} />
+                className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
+                style={inputStyle} />
             </div>
           </>
         )}
@@ -210,15 +221,15 @@ export default function NovaConsultoriaPage() {
                 <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Valor dos Honorários (R$)</label>
                 <input value={form.honorarios} onChange={e => set('honorarios', e.target.value)}
                   type="number" placeholder="8500"
-                  className="w-full h-10 px-3 rounded-xl text-sm focus:outline-none focus:border-[#334E68]"
-                  style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }} />
+                  className={inputClass}
+                  style={inputStyle} />
               </div>
 
               <div>
                 <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Forma de Pagamento</label>
                 <select value={form.forma_pagamento} onChange={e => set('forma_pagamento', e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl text-sm focus:outline-none focus:border-[#334E68]"
-                  style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }}>
+                  className={inputClass}
+                  style={inputStyle}>
                   <option value="a_vista">À Vista</option>
                   <option value="parcelado_2x">2x</option>
                   <option value="parcelado_3x">3x</option>
@@ -230,8 +241,8 @@ export default function NovaConsultoriaPage() {
               <div>
                 <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Status Honorários</label>
                 <select value={form.honorarios_status} onChange={e => set('honorarios_status', e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl text-sm focus:outline-none focus:border-[#334E68]"
-                  style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }}>
+                  className={inputClass}
+                  style={inputStyle}>
                   <option value="pendente">Pendente</option>
                   <option value="parcial">Parcialmente Pago</option>
                   <option value="pago">Pago</option>
@@ -241,23 +252,23 @@ export default function NovaConsultoriaPage() {
               <div>
                 <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Data de Início</label>
                 <input type="date" value={form.data_inicio} onChange={e => set('data_inicio', e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl text-sm focus:outline-none focus:border-[#334E68]"
-                  style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }} />
+                  className={inputClass}
+                  style={inputStyle} />
               </div>
 
               <div>
                 <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Previsão de Conclusão</label>
                 <input type="date" value={form.data_prev_conclusao} onChange={e => set('data_prev_conclusao', e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl text-sm focus:outline-none focus:border-[#334E68]"
-                  style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }} />
+                  className={inputClass}
+                  style={inputStyle} />
               </div>
 
               <div className="sm:col-span-2">
                 <label className="block text-xs font-medium mb-1" style={{ color: T.sub }}>Observações Internas</label>
                 <textarea value={form.observacoes} onChange={e => set('observacoes', e.target.value)}
                   rows={3} placeholder="Notas sobre o cliente, contexto sensível, histórico de negociação…"
-                  className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-[#334E68] resize-none"
-                  style={{ background: T.bg, border: `1px solid ${T.border}`, color: T.text }} />
+                  className="w-full px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-[var(--bo-border-gold)] resize-none"
+                  style={inputStyle} />
               </div>
             </div>
 
@@ -286,18 +297,20 @@ export default function NovaConsultoriaPage() {
       {/* Navigation */}
       <div className="flex justify-between">
         <button onClick={() => step > 1 ? setStep(s => s - 1) : router.push('/backoffice/consultorias')}
-          className="h-10 px-5 rounded-xl text-sm font-medium transition-colors hover-card"
+          className="h-11 px-5 rounded-xl text-sm font-medium transition-colors hover-card"
           style={{ border: `1px solid ${T.border}`, color: T.text }}>
           {step === 1 ? 'Cancelar' : 'Voltar'}
         </button>
         {step < 3
           ? <button onClick={() => setStep(s => s + 1)}
-            className="h-10 px-6 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
+            className="h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+            style={BTN_PRIMARY}>
             Continuar
           </button>
           : <button onClick={handleSubmit} disabled={loading}
-            className="h-10 px-6 bg-[#141420] text-white rounded-xl text-sm font-semibold hover:bg-[#1f1f30] disabled:opacity-60 flex items-center gap-2 transition-colors">
-            {loading ? 'Salvando…' : <><Save size={15} /> Criar Consultoria</>}
+            className="h-11 px-6 rounded-xl text-sm font-semibold text-white disabled:opacity-60 flex items-center gap-2 transition-all hover:opacity-90"
+            style={BTN_PRIMARY}>
+            {loading ? <><Loader2 size={15} className="animate-spin" /> Salvando…</> : <><Save size={15} /> Criar Consultoria</>}
           </button>
         }
       </div>
