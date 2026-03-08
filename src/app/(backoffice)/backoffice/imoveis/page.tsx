@@ -38,6 +38,21 @@ interface Imovel {
     preco: number;
     construtora: string | null;
     visitas: number;
+    liquidez: number;
+}
+
+function LiquidezBadge({ score }: { score: number }) {
+    const color = score >= 75 ? '#34d399' : score >= 55 ? '#a3e635' : score >= 40 ? '#fbbf24' : '#f87171'
+    const label = score >= 75 ? 'Alta' : score >= 55 ? 'Média' : score >= 40 ? 'Moderada' : 'Baixa'
+    return (
+        <div className="flex items-center gap-1.5">
+            <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: 'var(--bo-border)' }}>
+                <div className="h-full rounded-full transition-all" style={{ width: `${score}%`, background: color }} />
+            </div>
+            <span className="text-[10px] font-bold tabular-nums" style={{ color }}>{score}%</span>
+            <span className="text-[10px]" style={{ color: 'var(--bo-text-muted)' }}>{label}</span>
+        </div>
+    )
 }
 
 const fmtPreco = (v: number, tipo: string) => {
@@ -130,6 +145,14 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                         </p>
                     )}
                 </div>
+
+                {/* Liquidez Score */}
+                <div className="mt-3 pt-3" style={{ borderTop: `1px solid var(--bo-border)` }}>
+                    <p className="text-[9px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>
+                        Índice de Liquidez IMI
+                    </p>
+                    <LiquidezBadge score={imovel.liquidez} />
+                </div>
             </div>
         </motion.div>
         </Link>
@@ -145,31 +168,57 @@ export default function ImoveisPage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const fetchProperties = async () => {
+        const fetchData = async () => {
             try {
-                const res = await fetch('/api/developments')
-                if (res.ok) {
-                    const data = await res.json()
+                const [propsRes, leadsRes] = await Promise.all([
+                    fetch('/api/developments'),
+                    fetch('/api/leads?limit=200'),
+                ])
+
+                // Build lead stats per development
+                type LeadStats = { hot: number; warm: number; total: number; won: number }
+                const leadsMap: Record<string, LeadStats> = {}
+                if (leadsRes.ok) {
+                    const ld = await leadsRes.json()
+                    const leads: any[] = ld.data || ld || []
+                    leads.forEach((l: any) => {
+                        const devId = l.development_id
+                        if (!devId) return
+                        if (!leadsMap[devId]) leadsMap[devId] = { hot: 0, warm: 0, total: 0, won: 0 }
+                        leadsMap[devId].total++
+                        if (l.status === 'negotiating') leadsMap[devId].hot++
+                        if (l.status === 'qualified') leadsMap[devId].warm++
+                        if (l.status === 'won') leadsMap[devId].won++
+                    })
+                }
+
+                if (propsRes.ok) {
+                    const data = await propsRes.json()
                     if (Array.isArray(data) && data.length > 0) {
                         const formatted = data
                             .filter((d: any) => d.status !== 'arquivado' && d.status_comercial !== 'archived')
-                            .map((d: any) => ({
-                                id: d.id,
-                                codigo: d.slug ? `IMI-${d.slug.substring(0, 8).toUpperCase()}` : `IMI-${String(d.id).substring(0, 8)}`,
-                                status: d.status || 'disponivel',
-                                destaque: !!d.is_highlighted,
-                                tipo: d.type || d.tipo || d.property_type || 'Imóvel',
-                                titulo: d.name || 'Empreendimento',
-                                bairro: d.neighborhood || d.region || 'Localização',
-                                area: d.private_area || d.area_from || 0,
-                                quartos: d.bedrooms || 0,
-                                banheiros: d.bathrooms || 0,
-                                vagas: d.parking_spaces || 0,
-                                preco: d.price_min || d.price_from || 0,
-                                construtora: d.developer || d.developers?.name || null,
-                                visitas: d.views || 0,
-                                image: d.image || (Array.isArray(d.gallery_images) && d.gallery_images[0]) || null,
-                            }))
+                            .map((d: any) => {
+                                const s = leadsMap[d.id] || { hot: 0, warm: 0, total: 0, won: 0 }
+                                const liquidez = Math.min(97, 22 + s.hot * 13 + s.warm * 8 + s.total * 3 + s.won * 16)
+                                return {
+                                    id: d.id,
+                                    codigo: d.slug ? `IMI-${d.slug.substring(0, 8).toUpperCase()}` : `IMI-${String(d.id).substring(0, 8)}`,
+                                    status: d.status || 'disponivel',
+                                    destaque: !!d.is_highlighted,
+                                    tipo: d.type || d.tipo || d.property_type || 'Imóvel',
+                                    titulo: d.name || 'Empreendimento',
+                                    bairro: d.neighborhood || d.region || 'Localização',
+                                    area: d.private_area || d.area_from || 0,
+                                    quartos: d.bedrooms || 0,
+                                    banheiros: d.bathrooms || 0,
+                                    vagas: d.parking_spaces || 0,
+                                    preco: d.price_min || d.price_from || 0,
+                                    construtora: d.developer || d.developers?.name || null,
+                                    visitas: d.views || 0,
+                                    image: d.image || (Array.isArray(d.gallery_images) && d.gallery_images[0]) || null,
+                                    liquidez,
+                                }
+                            })
                         setImoveis(formatted)
                         setLoading(false)
                         return
@@ -181,7 +230,7 @@ export default function ImoveisPage() {
             setImoveis([])
             setLoading(false)
         }
-        fetchProperties()
+        fetchData()
     }, [])
 
     const total = imoveis.length
