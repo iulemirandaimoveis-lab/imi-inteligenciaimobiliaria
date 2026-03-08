@@ -1,14 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronDown, ChevronRight, CheckCircle2, Circle, Clock } from 'lucide-react'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { ChevronDown, ChevronRight, CheckCircle2, Circle, Clock, BookOpen } from 'lucide-react'
+import { PageIntelHeader, FilterTabs } from '../../components/ui'
+import { T } from '../../lib/theme'
 
 interface PlaybookStep {
     id: number
@@ -58,34 +53,36 @@ export default function PlaybooksPage() {
     const filtered = filtro === 'todos' ? playbooks : playbooks.filter(p => p.category === filtro)
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5">
             {/* Header */}
-            <div>
-                <h1 className="text-xl font-bold" style={{ color: T.text }}>Playbooks Operacionais</h1>
-                <p className="text-xs mt-0.5" style={{ color: T.textSub }}>SOPs e checklists para operações padrão IMI</p>
-            </div>
+            <PageIntelHeader
+                moduleLabel="PLAYBOOKS"
+                title="Playbooks Operacionais"
+                subtitle="SOPs e checklists para operações padrão IMI"
+            />
 
             {/* Filtros */}
-            <div className="flex gap-2 flex-wrap">
-                {categorias.map(c => (
-                    <button key={c} onClick={() => setFiltro(c)}
-                        className="h-8 px-3 rounded-xl text-xs font-medium border transition-colors"
-                        style={{
-                            background: filtro === c ? T.gold : 'transparent',
-                            color: filtro === c ? 'white' : T.textSub,
-                            borderColor: filtro === c ? T.gold : T.border,
-                        }}>
-                        {c === 'todos' ? 'Todos' : c}
-                    </button>
-                ))}
-            </div>
+            <FilterTabs
+                tabs={categorias.map(c => ({
+                    id: c,
+                    label: c === 'todos' ? 'Todos' : c,
+                    count: c === 'todos' ? playbooks.length : playbooks.filter(p => p.category === c).length,
+                }))}
+                active={filtro}
+                onChange={setFiltro}
+            />
 
             {/* Loading state */}
             {loading && (
                 <div className="space-y-3">
                     {[1, 2, 3].map(i => (
-                        <div key={i} className="rounded-2xl h-20 animate-pulse"
-                            style={{ background: T.surface, border: `1px solid ${T.border}` }} />
+                        <div key={i} className="skeleton-card p-4 flex items-center gap-3" style={{ animationDelay: `${i * 80}ms` }}>
+                            <div className="skeleton w-10 h-10 rounded-xl flex-shrink-0" />
+                            <div className="flex-1">
+                                <div className="skeleton h-4 w-40 mb-2" />
+                                <div className="skeleton h-3 w-56" />
+                            </div>
+                        </div>
                     ))}
                 </div>
             )}
@@ -95,7 +92,7 @@ export default function PlaybooksPage() {
                 <div className="rounded-2xl p-8 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-2xl mb-2">📋</p>
                     <p className="text-sm font-semibold" style={{ color: T.text }}>Nenhum playbook encontrado</p>
-                    <p className="text-xs mt-1" style={{ color: T.textSub }}>
+                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
                         {filtro !== 'todos' ? `Nenhum SOP na categoria "${filtro}"` : 'Adicione seu primeiro SOP'}
                     </p>
                 </div>
@@ -124,7 +121,7 @@ export default function PlaybooksPage() {
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <p className="text-sm font-bold" style={{ color: T.text }}>{pb.name}</p>
                                             <span className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-                                                style={{ background: 'rgba(72,101,129,0.12)', color: T.gold }}>
+                                                style={{ background: 'rgba(72,101,129,0.12)', color: T.accent }}>
                                                 {pb.category}
                                             </span>
                                             {pb.norm_reference && (
@@ -136,25 +133,25 @@ export default function PlaybooksPage() {
                                         </div>
                                         <div className="flex items-center gap-3 mt-1">
                                             {pb.estimated_time && (
-                                                <span className="flex items-center gap-1 text-xs" style={{ color: T.textSub }}>
+                                                <span className="flex items-center gap-1 text-xs" style={{ color: T.textMuted }}>
                                                     <Clock size={11} /> {pb.estimated_time}
                                                 </span>
                                             )}
-                                            <span className="text-xs" style={{ color: T.textSub }}>{steps.length} etapas</span>
+                                            <span className="text-xs" style={{ color: T.textMuted }}>{steps.length} etapas</span>
                                             {done.size > 0 && (
-                                                <span className="text-xs font-medium" style={{ color: T.gold }}>{pct}% concluído</span>
+                                                <span className="text-xs font-medium" style={{ color: T.accent }}>{pct}% concluído</span>
                                             )}
                                         </div>
                                         {done.size > 0 && (
                                             <div className="h-1 rounded-full mt-2 overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
                                                 <div className="h-full rounded-full transition-all"
-                                                    style={{ width: `${pct}%`, background: T.gold }} />
+                                                    style={{ width: `${pct}%`, background: T.accent }} />
                                             </div>
                                         )}
                                     </div>
                                     {isOpen
-                                        ? <ChevronDown size={16} style={{ color: T.textSub }} className="flex-shrink-0" />
-                                        : <ChevronRight size={16} style={{ color: T.textSub }} className="flex-shrink-0" />
+                                        ? <ChevronDown size={16} style={{ color: T.textMuted }} className="flex-shrink-0" />
+                                        : <ChevronRight size={16} style={{ color: T.textMuted }} className="flex-shrink-0" />
                                     }
                                 </button>
 
@@ -173,18 +170,18 @@ export default function PlaybooksPage() {
                                                     <button onClick={() => toggleStep(pb.id, step.id)} className="mt-0.5 flex-shrink-0">
                                                         {isConcluida
                                                             ? <CheckCircle2 size={18} style={{ color: '#6BB87B' }} />
-                                                            : <Circle size={18} style={{ color: T.textSub }} />
+                                                            : <Circle size={18} style={{ color: T.textMuted }} />
                                                         }
                                                     </button>
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-xs font-bold" style={{ color: T.textSub }}>#{i + 1}</span>
+                                                            <span className="text-xs font-bold" style={{ color: T.textMuted }}>#{i + 1}</span>
                                                             <p className="text-sm font-semibold"
-                                                                style={{ color: isConcluida ? T.textSub : T.text, textDecoration: isConcluida ? 'line-through' : 'none' }}>
+                                                                style={{ color: isConcluida ? T.textMuted : T.text, textDecoration: isConcluida ? 'line-through' : 'none' }}>
                                                                 {step.titulo}
                                                             </p>
                                                         </div>
-                                                        <p className="text-xs mt-0.5 leading-relaxed" style={{ color: T.textSub }}>{step.desc}</p>
+                                                        <p className="text-xs mt-0.5 leading-relaxed" style={{ color: T.textMuted }}>{step.desc}</p>
                                                     </div>
                                                 </div>
                                             )
@@ -199,8 +196,8 @@ export default function PlaybooksPage() {
 
             {/* Info */}
             <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}>
-                <p className="text-xs font-semibold mb-1" style={{ color: T.gold }}>Playbooks Customizados</p>
-                <p className="text-xs leading-relaxed" style={{ color: T.textSub }}>
+                <p className="text-xs font-semibold mb-1" style={{ color: T.accent }}>Playbooks Customizados</p>
+                <p className="text-xs leading-relaxed" style={{ color: T.textMuted }}>
                     Os playbooks são checklists interativos — marque cada etapa como concluída durante a execução.
                     Novos SOPs podem ser adicionados conforme o crescimento operacional da IMI. O progresso é salvo localmente na sessão.
                 </p>

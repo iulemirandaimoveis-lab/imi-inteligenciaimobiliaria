@@ -14,16 +14,8 @@ import {
   Upload,
   Building2,
 } from 'lucide-react'
-
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  hover: 'var(--bo-hover)',
-  accent: 'var(--bo-accent)',
-}
+import { PageIntelHeader } from '../../components/ui'
+import { T, ctaGradient, ctaShadow } from '../../lib/theme'
 
 interface SettingsData {
   companyName: string
@@ -179,31 +171,29 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: T.text }}>Configurações</h1>
-          <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>
-            Gerencie as preferências e configurações do sistema
-          </p>
-        </div>
-
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
-          style={{ background: T.accent, boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
-        >
-          {isSaving ? (
-            <><Loader2 size={16} className="animate-spin" /> Salvando...</>
-          ) : showSuccess ? (
-            <><CheckCircle size={16} /> Salvo!</>
-          ) : (
-            <><Save size={16} /> Salvar Alterações</>
-          )}
-        </button>
-      </div>
+      <PageIntelHeader
+        moduleLabel="CONFIGURAÇÕES"
+        title="Configurações"
+        subtitle="Gerencie as preferências e configurações do sistema"
+        actions={
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
+            style={{ background: ctaGradient, boxShadow: ctaShadow }}
+          >
+            {isSaving ? (
+              <><Loader2 size={16} className="animate-spin" /> <span className="hidden sm:inline">Salvando...</span></>
+            ) : showSuccess ? (
+              <><CheckCircle size={16} /> <span className="hidden sm:inline">Salvo!</span></>
+            ) : (
+              <><Save size={16} /> <span className="hidden sm:inline">Salvar Alterações</span></>
+            )}
+          </button>
+        }
+      />
 
       {/* Error banner */}
       {saveError && (

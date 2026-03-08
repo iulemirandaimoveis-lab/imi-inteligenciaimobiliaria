@@ -5,13 +5,8 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Plus, Search, Grid3X3, List, Building2, MapPin, Bed, Bath, Car, Ruler, DollarSign, Star, MoreHorizontal, Eye, Edit, CheckCircle, Clock, AlertCircle, Tag, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
-
-const T = {
-    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { PageIntelHeader, KPICard } from '../../components/ui'
+import { T, ctaGradient, ctaShadow } from '../../lib/theme'
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     disponivel: { label: 'Disponível', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
@@ -101,7 +96,7 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                     </span>
                     <div className="flex items-center gap-1.5">
                         {imovel.destaque && (
-                            <Star size={14} style={{ fill: T.gold, color: T.gold }} />
+                            <Star size={14} style={{ fill: T.accent, color: T.accent }} />
                         )}
                         <span className="text-[10px] font-medium" style={{ color: T.textDim }}>
                             {imovel.visitas} views
@@ -123,20 +118,20 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                 {/* Specs */}
                 {imovel.quartos > 0 && (
                     <div className="flex items-center gap-3 mb-3">
-                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
+                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textMuted }}>
                             <Bed size={11} /> {imovel.quartos}q
                         </span>
-                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
+                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textMuted }}>
                             <Bath size={11} /> {imovel.banheiros}b
                         </span>
-                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textSub }}>
+                        <span className="text-[11px] flex items-center gap-1" style={{ color: T.textMuted }}>
                             <Ruler size={11} /> {imovel.area.toLocaleString('pt-BR')}m²
                         </span>
                     </div>
                 )}
 
                 <div className="flex items-center justify-between">
-                    <p className="text-base font-bold" style={{ color: T.gold }}>
+                    <p className="text-base font-bold" style={{ color: T.accent }}>
                         {fmtPreco(imovel.preco, imovel.tipo)}
                     </p>
                     {imovel.construtora && (
@@ -247,7 +242,7 @@ export default function ImoveisPage() {
     })
 
     if (loading) return (
-        <div className="space-y-5 max-w-7xl mx-auto">
+        <div className="space-y-5">
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <div className="skeleton h-6 w-56 mb-2" />
@@ -295,47 +290,36 @@ export default function ImoveisPage() {
     ]
 
     return (
-        <div className="space-y-5 max-w-7xl mx-auto">
+        <div className="space-y-5">
 
             {/* Header */}
-            <motion.div
-                initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="flex items-start justify-between gap-4"
-            >
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Portfólio / Empreendimentos</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>Gestão Global IMI · {total} ativos comerciais listados</p>
-                </div>
-                <motion.button
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => router.push('/backoffice/imoveis/novo')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'var(--bo-accent)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
-                >
-                    <Plus size={16} /> Novo Empreendimento
-                </motion.button>
-            </motion.div>
+            <PageIntelHeader
+                moduleLabel="IMOVEIS"
+                title="Portfólio / Empreendimentos"
+                subtitle={`Gestão Global IMI · ${total} ativos comerciais listados`}
+                actions={
+                    <motion.button
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => router.push('/backoffice/imoveis/novo')}
+                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                        style={{ background: ctaGradient, boxShadow: ctaShadow }}
+                    >
+                        <Plus size={16} /> <span className="hidden sm:inline">Novo Empreendimento</span>
+                    </motion.button>
+                }
+            />
 
             {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                 {STATS.map((s, i) => (
-                    <motion.div
+                    <KPICard
                         key={s.label}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="stat-card rounded-2xl p-4"
-                        style={{
-                            background: T.elevated,
-                            border: `1px solid ${T.borderGold}`,
-                        }}
-                    >
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3" style={{ background: 'var(--bo-active-bg)' }}>
-                            <s.icon size={16} style={{ color: T.gold }} />
-                        </div>
-                        <p className="text-xl font-bold" style={{ color: T.text }}>{s.value}</p>
-                        <p className="text-xs mt-0.5" style={{ color: T.textDim }}>{s.label}</p>
-                    </motion.div>
+                        label={s.label}
+                        value={String(s.value)}
+                        icon={<s.icon size={16} />}
+                        accent="blue"
+                        size="sm"
+                    />
                 ))}
             </div>
 
@@ -353,7 +337,7 @@ export default function ImoveisPage() {
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, caretColor: T.gold }}
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, caretColor: T.accent }}
                             onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
                             onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
                         />
@@ -435,12 +419,12 @@ export default function ImoveisPage() {
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
                             >
                                 <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bo-active-bg)' }}>
-                                    <Building2 size={20} style={{ color: T.gold }} />
+                                    <Building2 size={20} style={{ color: T.accent }} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
-                                        {im.destaque && <Star size={12} style={{ fill: T.gold, color: T.gold, flexShrink: 0 }} />}
+                                        {im.destaque && <Star size={12} style={{ fill: T.accent, color: T.accent, flexShrink: 0 }} />}
                                     </div>
                                     <p className="text-xs" style={{ color: T.textDim }}>{im.codigo} · {im.bairro} · {im.area.toLocaleString('pt-BR')}m²</p>
                                 </div>
@@ -448,7 +432,7 @@ export default function ImoveisPage() {
                                     <span className="text-[10px] font-bold px-2 py-1 rounded-full" style={{ color: s.text, background: s.bg }}>
                                         {s.label}
                                     </span>
-                                    <p className="text-sm font-bold hidden sm:block" style={{ color: T.gold }}>
+                                    <p className="text-sm font-bold hidden sm:block" style={{ color: T.accent }}>
                                         {fmtPreco(im.preco, im.tipo)}
                                     </p>
                                 </div>
