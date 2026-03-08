@@ -9,7 +9,9 @@
         "lint": "next lint",
         "type-check": "tsc --noEmit",
         "test": "jest",
-        "test:watch": "jest --watch"
+        "test:watch": "jest --watch",
+        "deploy": "bash deploy.sh",
+        "deploy:prod": "bash deploy.sh"
     },
     "dependencies": {
         "@anthropic-ai/sdk": "^0.74.0",
