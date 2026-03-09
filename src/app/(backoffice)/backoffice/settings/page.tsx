@@ -484,6 +484,101 @@ export default function SettingsPage() {
                 </div>
               ))}
             </div>
+
+            {/* Map Provider Section */}
+            <div style={{
+              marginTop: '28px', padding: '20px', borderRadius: '16px',
+              background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                <div>
+                  <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '3px' }}>
+                    🗺️ Mapa Imobiliário
+                  </p>
+                  <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>
+                    Provedor de mapas usado nas páginas de empreendimentos
+                  </p>
+                </div>
+                <span style={{
+                  fontSize: '10px', fontWeight: 700, padding: '3px 10px', borderRadius: '8px',
+                  background: 'rgba(0,178,127,0.15)', color: '#00B27F',
+                  border: '1px solid rgba(0,178,127,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em',
+                }}>
+                  {process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? 'Mapbox Ativo' : 'MapLibre Ativo'}
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                {/* MapLibre option */}
+                <div style={{
+                  padding: '14px', borderRadius: '12px',
+                  background: !process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? 'rgba(0,178,127,0.08)' : 'var(--bo-surface)',
+                  border: `1px solid ${!process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? 'rgba(0,178,127,0.3)' : 'var(--bo-border)'}`,
+                }}>
+                  <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '4px' }}>
+                    MapLibre + CARTO
+                  </p>
+                  <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', lineHeight: '1.5' }}>
+                    Open source, gratuito, sem API key. Tiles CARTO dark-matter. Recomendado.
+                  </p>
+                  <p style={{ fontSize: '10px', color: '#00B27F', marginTop: '6px', fontWeight: 600 }}>✓ Ativo por padrão</p>
+                </div>
+
+                {/* Mapbox option */}
+                <div style={{
+                  padding: '14px', borderRadius: '12px',
+                  background: process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? 'rgba(59,130,246,0.08)' : 'var(--bo-surface)',
+                  border: `1px solid ${process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? 'rgba(59,130,246,0.3)' : 'var(--bo-border)'}`,
+                }}>
+                  <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '4px' }}>
+                    Mapbox GL
+                  </p>
+                  <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', lineHeight: '1.5' }}>
+                    Estilos premium. Requer conta Mapbox e token.
+                  </p>
+                  <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)', marginTop: '6px', fontWeight: 600, fontFamily: 'monospace' }}>
+                    NEXT_PUBLIC_MAPBOX_TOKEN=pk.ey…
+                  </p>
+                </div>
+              </div>
+
+              <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginTop: '10px', lineHeight: '1.6' }}>
+                Para usar Mapbox, defina a variável <code style={{ fontFamily: 'monospace', background: 'var(--bo-surface)', padding: '1px 5px', borderRadius: '4px' }}>NEXT_PUBLIC_MAPBOX_TOKEN</code> no Vercel.
+                Sem ela, o mapa usa MapLibre + OpenStreetMap automaticamente.
+              </p>
+            </div>
+
+            {/* Pix / Fintech Section */}
+            <div style={{
+              marginTop: '16px', padding: '20px', borderRadius: '16px',
+              background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+            }}>
+              <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '3px' }}>
+                ⚡ Pix &amp; Fintech
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', marginBottom: '14px' }}>
+                Configuração do provedor de cobranças Pix
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                {[
+                  { label: 'ASAAS_API_KEY', hint: 'Chave da API Asaas ($aact_…)' },
+                  { label: 'PIX_KEY', hint: 'Chave Pix (email, CPF, CNPJ, aleatória)' },
+                  { label: 'PIX_MERCHANT_NAME', hint: 'Nome do recebedor (máx. 25 chars)' },
+                  { label: 'PIX_MERCHANT_CITY', hint: 'Cidade do recebedor (máx. 15 chars)' },
+                ].map(item => (
+                  <div key={item.label} style={{
+                    padding: '10px 12px', borderRadius: '10px',
+                    background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+                  }}>
+                    <p style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'monospace', color: 'var(--bo-accent)', marginBottom: '2px' }}>{item.label}</p>
+                    <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{item.hint}</p>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginTop: '10px' }}>
+                Configure no painel Vercel em <em>Settings → Environment Variables</em>. Sem <code style={{ fontFamily: 'monospace', background: 'var(--bo-surface)', padding: '1px 5px', borderRadius: '4px' }}>ASAAS_API_KEY</code>, o Pix gera QR localmente (EMV).
+              </p>
+            </div>
           </div>
         )}
       </div>

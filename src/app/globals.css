@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Mapbox GL CSS */
+/* Map GL CSS — MapLibre (default, free) + Mapbox (optional fallback) */
+@import 'maplibre-gl/dist/maplibre-gl.css';
 @import 'mapbox-gl/dist/mapbox-gl.css';
 
 /* ============================================================ */
