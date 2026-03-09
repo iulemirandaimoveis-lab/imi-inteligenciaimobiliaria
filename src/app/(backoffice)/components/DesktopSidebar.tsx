@@ -160,6 +160,7 @@ const SECTIONS: NavSection[] = [
     {
         label: 'Configurações',
         items: [
+            { label: 'Organização', href: '/backoffice/organizacao', icon: Building },
             { label: 'Equipe', href: '/backoffice/equipe', icon: Users },
             { label: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
             {

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'next/navigation'
-import { BadgeCheck, Scale, FileText, TrendingUp, MessageCircle } from 'lucide-react'
+import { BadgeCheck, Scale, FileText, TrendingUp, MessageCircle, ArrowRight, Home, Building2, Globe } from 'lucide-react'
 import { ButtonPrimary, ButtonGhost } from '@/components/website/Buttons'
 
 interface HeroProps {
@@ -138,6 +138,40 @@ export default function Hero({ dict }: HeroProps) {
                 {dict.cta_whatsapp || 'Falar com especialista'}
               </ButtonGhost>
             </motion.div>
+
+            {/* Quick Property Filter Widget */}
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { delay: 0.7, duration: 0.5 } } }}
+              className="mt-8 sm:mt-10"
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/30 mb-3">Explorar portfólio</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: 'Alto Padrão', icon: Building2, href: `/${lang}/imoveis` },
+                  { label: 'Dubai', icon: Globe, href: `/${lang}/imoveis?pais=dubai` },
+                  { label: 'Pronta Entrega', icon: Home, href: `/${lang}/imoveis?status=ready` },
+                ].map(item => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="group flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-white/60 hover:text-white transition-all duration-200"
+                    style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)' }}
+                  >
+                    <item.icon size={11} />
+                    {item.label}
+                    <ArrowRight size={10} className="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all duration-200" />
+                  </Link>
+                ))}
+                <Link
+                  href={`/${lang}/imoveis`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-[#0A1017] transition-all duration-200 hover:opacity-90"
+                  style={{ background: 'rgba(200,166,90,0.95)' }}
+                >
+                  Ver todos
+                  <ArrowRight size={10} />
+                </Link>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -153,10 +187,10 @@ export default function Hero({ dict }: HeroProps) {
           >
             {STATS.map(stat => (
               <div key={stat.label} className="flex flex-col items-center px-3 sm:px-4 py-2 sm:py-0 text-center">
-                <span className="text-xl sm:text-3xl font-bold" style={{ color: '#486581' }}>
+                <span className="text-xl sm:text-3xl font-bold text-white">
                   <StatCounter to={stat.value} suffix={stat.suffix} />
                 </span>
-                <span className="text-[10px] sm:text-xs text-white/50 mt-0.5 leading-snug">{stat.label}</span>
+                <span className="text-[10px] sm:text-xs text-white/40 mt-0.5 leading-snug">{stat.label}</span>
               </div>
             ))}
           </motion.div>

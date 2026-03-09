@@ -41,12 +41,22 @@ const DEFAULT_HREFS = [
 
 const LS_KEY = 'imi-nav-shortcuts'
 
-// Quick-create actions
+// Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
     { label: 'Novo Lead',      desc: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
     { label: 'Novo Evento',    desc: 'Agendar compromisso',      href: '/backoffice/agenda',          icon: CalendarPlus, color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)'  },
     { label: 'Novo Imóvel',    desc: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: '#486581', bg: 'rgba(72,101,129,0.15)'  },
     { label: 'Nova Avaliação', desc: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+]
+
+// Context-sensitive FAB map — route prefix → primary action
+// When tapped, FAB navigates directly to the action for the current section
+const CONTEXT_FAB: { prefix: string; href: string; label: string; Icon: any }[] = [
+    { prefix: '/backoffice/leads',        href: '/backoffice/leads/novo',      label: 'Novo Lead',      Icon: UserPlus     },
+    { prefix: '/backoffice/avaliacoes',   href: '/backoffice/avaliacoes/nova', label: 'Nova Avaliação', Icon: ClipboardList },
+    { prefix: '/backoffice/imoveis',      href: '/backoffice/imoveis/novo',    label: 'Novo Imóvel',    Icon: Building2    },
+    { prefix: '/backoffice/campanhas',    href: '/backoffice/campanhas/nova',  label: 'Nova Campanha',  Icon: Megaphone    },
+    { prefix: '/backoffice/contratos',    href: '/backoffice/contratos/novo',  label: 'Novo Contrato',  Icon: FileSignature },
 ]
 
 // Full nav groups
@@ -214,6 +224,11 @@ export function MobileBottomNav() {
     const leftShortcuts  = shortcuts.slice(0, 2)
     const rightShortcuts = shortcuts.slice(2, 4)
 
+    // Resolve context-sensitive FAB for current route
+    const contextFab = pathname
+        ? CONTEXT_FAB.find(c => pathname === c.prefix || pathname.startsWith(c.prefix + '/'))
+        : null
+
     const togglePin = (href: string) => {
         setTempPinned(prev => {
             if (prev.includes(href)) return prev.filter(h => h !== href)
@@ -290,11 +305,17 @@ export function MobileBottomNav() {
                             )
                         })}
 
-                        {/* Center FAB — mega menu */}
-                        <div className="flex-shrink-0 flex items-center justify-center px-3">
+                        {/* Center FAB — context-sensitive or mega-menu */}
+                        <div className="flex-shrink-0 flex flex-col items-center justify-center px-3">
                             <motion.button
                                 whileTap={{ scale: 0.88 }}
-                                onClick={() => setOpen(v => !v)}
+                                onClick={() => {
+                                    if (contextFab && !open) {
+                                        router.push(contextFab.href)
+                                    } else {
+                                        setOpen(v => !v)
+                                    }
+                                }}
                                 className="flex items-center justify-center rounded-2xl"
                                 style={{
                                     width: 52,
@@ -306,13 +327,58 @@ export function MobileBottomNav() {
                                         : '0 4px 20px rgba(0,0,0,0.35)',
                                 }}
                             >
-                                <motion.div
-                                    animate={{ rotate: open ? 45 : 0 }}
-                                    transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
-                                >
-                                    <Plus size={22} color="white" strokeWidth={2.5} />
-                                </motion.div>
+                                <AnimatePresence mode="wait">
+                                    {open ? (
+                                        <motion.div
+                                            key="close"
+                                            initial={{ rotate: -45, opacity: 0 }}
+                                            animate={{ rotate: 0, opacity: 1 }}
+                                            exit={{ rotate: 45, opacity: 0 }}
+                                            transition={{ duration: 0.18 }}
+                                        >
+                                            <X size={22} color="white" strokeWidth={2.5} />
+                                        </motion.div>
+                                    ) : contextFab ? (
+                                        <motion.div
+                                            key={contextFab.prefix}
+                                            initial={{ scale: 0.7, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            exit={{ scale: 0.7, opacity: 0 }}
+                                            transition={{ duration: 0.18 }}
+                                        >
+                                            <contextFab.Icon size={20} color="white" strokeWidth={2} />
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="plus"
+                                            initial={{ scale: 0.7, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            exit={{ scale: 0.7, opacity: 0 }}
+                                            transition={{ duration: 0.18 }}
+                                        >
+                                            <Plus size={22} color="white" strokeWidth={2.5} />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </motion.button>
+                            {/* Context label under FAB */}
+                            {contextFab && !open && (
+                                <motion.span
+                                    initial={{ opacity: 0, y: 2 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    className="text-[9px] font-semibold mt-0.5 text-center leading-tight"
+                                    style={{ color: 'var(--bo-accent)', maxWidth: 56 }}
+                                >
+                                    {contextFab.label}
+                                </motion.span>
+                            )}
+                            {!contextFab && !open && (
+                                <span className="text-[9px] font-semibold mt-0.5"
+                                    style={{ color: 'var(--nav-inactive)' }}>
+                                    Criar
+                                </span>
+                            )}
                         </div>
 
                         {/* Right 2 shortcuts */}

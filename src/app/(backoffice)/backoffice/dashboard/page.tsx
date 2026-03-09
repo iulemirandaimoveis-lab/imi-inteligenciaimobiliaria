@@ -22,7 +22,7 @@ export default async function DashboardPage() {
     const supabase = await createClient()
 
     const now = new Date()
-    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1)
+    const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1)
     const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000)
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
@@ -37,20 +37,20 @@ export default async function DashboardPage() {
         leadsParadosResult,
         leadsHojeResult,
     ] = await Promise.all([
-        // Leads dos últimos 6 meses (para gráfico)
+        // Leads dos últimos 12 meses (para gráfico com período variável)
         supabase
             .from('leads')
             .select('id, source, status, created_at, updated_at')
-            .gte('created_at', sixMonthsAgo.toISOString()),
+            .gte('created_at', twelveMonthsAgo.toISOString()),
 
         // Contagem total de leads
         supabase.from('leads').select('*', { count: 'exact', head: true }),
 
-        // Avaliações dos últimos 6 meses (para gráfico de receita)
+        // Avaliações dos últimos 12 meses (para gráfico de receita)
         supabase
             .from('avaliacoes')
             .select('id, status, honorarios, created_at')
-            .gte('created_at', sixMonthsAgo.toISOString()),
+            .gte('created_at', twelveMonthsAgo.toISOString()),
 
         // Todas as avaliações para stats globais
         supabase.from('avaliacoes').select('status, honorarios'),
@@ -100,9 +100,9 @@ export default async function DashboardPage() {
         .order('created_at', { ascending: false })
         .limit(5)
 
-    // ── Processar dados do gráfico (últimos 6 meses) ──────────────
+    // ── Processar dados do gráfico (últimos 12 meses) ─────────────
     const chartData = []
-    for (let i = 5; i >= 0; i--) {
+    for (let i = 11; i >= 0; i--) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
         const mStart = startOfMonth(d).toISOString()
         const mEnd = endOfMonth(d).toISOString()

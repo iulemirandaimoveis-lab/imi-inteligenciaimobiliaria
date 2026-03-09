@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   TrendingUp, TrendingDown, DollarSign, Plus, Loader2,
-  ArrowUpCircle, ArrowDownCircle, X, CheckCircle, Download,
+  ArrowUpCircle, ArrowDownCircle, X, CheckCircle, Download, Zap,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -12,6 +12,7 @@ import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTabs'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
+import PixChargeModal from './components/PixChargeModal'
 
 const T = {
     surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
@@ -55,6 +56,7 @@ export default function FinanceiroPage() {
   const [tipoFilter, setTipoFilter] = useState('todos')
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [pixTx, setPixTx] = useState<Transaction | null>(null)
 
   const [form, setForm] = useState({
     type: 'receita' as 'receita' | 'despesa',
@@ -305,17 +307,33 @@ export default function FinanceiroPage() {
                       {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
                     </p>
                     {t.status === 'pendente' && (
-                      <button
-                        onClick={() => markPaid(t.id)}
-                        title="Marcar como pago"
-                        style={{
-                          width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          background: 'var(--s-done-bg)', border: 'none', cursor: 'pointer',
-                        }}
-                      >
-                        <CheckCircle size={16} color="var(--s-done)" />
-                      </button>
+                      <>
+                        {/* Pix charge button */}
+                        <button
+                          onClick={() => setPixTx(t)}
+                          title="Gerar cobrança Pix"
+                          style={{
+                            width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            background: 'rgba(0,178,127,0.12)', border: '1px solid rgba(0,178,127,0.25)',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <Zap size={15} color="#00B27F" />
+                        </button>
+                        {/* Mark paid manually */}
+                        <button
+                          onClick={() => markPaid(t.id)}
+                          title="Marcar como pago"
+                          style={{
+                            width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            background: 'var(--s-done-bg)', border: 'none', cursor: 'pointer',
+                          }}
+                        >
+                          <CheckCircle size={16} color="var(--s-done)" />
+                        </button>
+                      </>
                     )}
                   </div>
                 </motion.div>
@@ -325,7 +343,22 @@ export default function FinanceiroPage() {
         )}
       </motion.div>
 
-      {/* Modal */}
+      {/* Pix Charge Modal */}
+      {pixTx && (
+        <PixChargeModal
+          transactionId={pixTx.id}
+          amount={Number(pixTx.amount)}
+          description={pixTx.description}
+          onClose={() => setPixTx(null)}
+          onConfirmed={() => {
+            toast.success('Pagamento Pix confirmado! Lançamento atualizado.')
+            setPixTx(null)
+            fetchTransactions()
+          }}
+        />
+      )}
+
+      {/* Nova Transação Modal */}
       {showForm && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)' }}>
           <motion.div

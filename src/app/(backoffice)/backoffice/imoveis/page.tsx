@@ -7,6 +7,7 @@ import { Plus, Search, Grid3X3, List, Building2, MapPin, Bed, Bath, Car, Ruler, 
 import Link from 'next/link'
 import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T, ctaGradient, ctaShadow } from '../../lib/theme'
+import { calcPricePerSqm } from '@/lib/utils'
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     disponivel: { label: 'Disponível', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
@@ -69,9 +70,9 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
             className="hover-card rounded-2xl overflow-hidden cursor-pointer group transition-all"
             style={{ background: T.surface, border: `1px solid ${T.border}` }}
         >
-            {/* Image */}
+            {/* Image — 16:9 aspect ratio (PropTech standard) */}
             <div
-                className="relative h-36 flex items-end p-3"
+                className="relative aspect-[16/9] flex items-end p-3"
                 style={{
                     background: imovel.image ? undefined : 'var(--bo-elevated)',
                     borderBottom: `1px solid ${T.border}`,
@@ -130,12 +131,19 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                     </div>
                 )}
 
-                <div className="flex items-center justify-between">
-                    <p className="text-base font-bold" style={{ color: T.accent }}>
-                        {fmtPreco(imovel.preco, imovel.tipo)}
-                    </p>
+                <div className="flex items-end justify-between">
+                    <div>
+                        <p className="text-base font-bold leading-tight" style={{ color: T.accent }}>
+                            {fmtPreco(imovel.preco, imovel.tipo)}
+                        </p>
+                        {imovel.area > 0 && imovel.preco > 0 && (
+                            <p className="text-[10px] mt-0.5" style={{ color: T.textDim }}>
+                                {calcPricePerSqm(imovel.preco, imovel.area)}
+                            </p>
+                        )}
+                    </div>
                     {imovel.construtora && (
-                        <p className="text-[10px] truncate max-w-[100px]" style={{ color: T.textDim }}>
+                        <p className="text-[10px] truncate max-w-[90px]" style={{ color: T.textDim }}>
                             {imovel.construtora}
                         </p>
                     )}

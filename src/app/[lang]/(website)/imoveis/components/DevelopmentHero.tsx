@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Building2, MapPin, Calendar, FileText } from 'lucide-react';
+import { Building2, MapPin, Calendar, FileText, Bed, Ruler } from 'lucide-react';
 import { Development } from '../types/development';
 import { motion } from 'framer-motion';
 import { slideUp, staggerContainer } from '@/lib/animations';
@@ -35,7 +35,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                         alt={development.name}
                         fill
                         priority
-                        className="object-cover opacity-50"
+                        className="object-cover opacity-70"
                         sizes="100vw"
                     />
                 ) : (
@@ -123,16 +123,47 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             )}
                         </motion.div>
 
-                        {/* Price */}
+                        {/* Price + Specs */}
                         <motion.div variants={slideUp} className="mt-10">
-                            <p className="text-[10px] text-[#627D98] mb-1.5 uppercase tracking-[0.25em] font-bold">A partir de</p>
-                            <p
-                                className="text-3xl sm:text-4xl md:text-[44px] font-bold text-white tracking-tight"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                            >
-                                <span className="text-base md:text-xl mr-2 font-sans font-normal text-[#627D98]">R$</span>
-                                {formatPrice(development.priceRange.min)}
-                            </p>
+                            {development.priceRange.min > 0 ? (
+                                <>
+                                    <p className="text-[10px] text-[#627D98] mb-1.5 uppercase tracking-[0.25em] font-bold">A partir de</p>
+                                    <p
+                                        className="text-3xl sm:text-4xl md:text-[44px] font-bold text-white tracking-tight mb-5"
+                                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                    >
+                                        <span className="text-base md:text-xl mr-2 font-sans font-normal text-[#627D98]">R$</span>
+                                        {formatPrice(development.priceRange.min)}
+                                    </p>
+                                </>
+                            ) : (
+                                <div className="mb-5" />
+                            )}
+
+                            {/* Specs pills */}
+                            <div className="flex flex-wrap gap-2">
+                                {development.specs?.bedroomsRange && development.specs.bedroomsRange !== '—' && (
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-sm"
+                                        style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                                        <Bed size={11} className="text-white/50" />
+                                        <span className="text-xs font-semibold text-white/80">{development.specs.bedroomsRange} quartos</span>
+                                    </div>
+                                )}
+                                {development.specs?.areaRange && development.specs.areaRange !== '—' && (
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-sm"
+                                        style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                                        <Ruler size={11} className="text-white/50" />
+                                        <span className="text-xs font-semibold text-white/80">{development.specs.areaRange}</span>
+                                    </div>
+                                )}
+                                {development.tags?.length > 0 && (
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-sm"
+                                        style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                                        <Building2 size={11} className="text-white/50" />
+                                        <span className="text-xs font-semibold text-white/80 capitalize">{development.tags[0]}</span>
+                                    </div>
+                                )}
+                            </div>
                         </motion.div>
                     </motion.div>
                 </div>

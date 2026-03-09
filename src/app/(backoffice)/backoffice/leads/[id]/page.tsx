@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   ArrowLeft, Phone, Mail, MapPin, Building2, DollarSign,
   Calendar, Edit, MessageSquare, FileText,
   Clock, TrendingUp, Eye, MousePointerClick,
-  AlertCircle, Send, Globe, MoreVertical,
+  AlertCircle, Send, Globe, MoreVertical, Sparkles, Loader2,
 } from 'lucide-react'
 import { useLead } from '@/hooks/use-leads-complete'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
@@ -95,6 +95,23 @@ export default function LeadDetailPage() {
   const { lead, isLoading, isError } = useLead(id ?? null)
   const [activeTab, setActiveTab] = useState<'timeline' | 'history' | 'notes'>('timeline')
   const [note, setNote] = useState('')
+  const [aiAnalysis, setAiAnalysis] = useState<any>(null)
+  const [aiLoading, setAiLoading] = useState(false)
+
+  // Fire Claude analysis once lead loads
+  useEffect(() => {
+    if (!lead) return
+    setAiLoading(true)
+    fetch('/api/ai/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'lead', data: lead }),
+    })
+      .then(r => r.json())
+      .then(res => { if (res.analysis) setAiAnalysis(res.analysis) })
+      .catch(() => {})
+      .finally(() => setAiLoading(false))
+  }, [lead?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) return <LoadingSkeleton />
 
@@ -126,20 +143,24 @@ export default function LeadDetailPage() {
   const aiIntentPct  = lead.score ?? 0
   const leadStatus   = lead.status || 'cold'
 
-  // AI insight text
-  const aiInsight = lead.score >= 85
-    ? `${lead.name.split(' ')[0]} demonstra intenção de compra muito alta (score ${lead.score}). Abordagem proativa com proposta personalizada é a ação recomendada.`
-    : lead.score >= 70
-    ? `Score moderado (${lead.score}). Qualificar interesse específico antes de apresentar proposta. ${devName ? `Interesse em ${devName}.` : ''}`
-    : `Lead em aquecimento (score ${lead.score}). Nutrição com conteúdo e follow-up consistente recomendados.`
+  // AI insight — real Claude analysis with heuristic fallback
+  const aiInsight = aiAnalysis?.insight ?? (
+    lead.score >= 85
+      ? `${lead.name.split(' ')[0]} demonstra intenção de compra muito alta (score ${lead.score}). Abordagem proativa com proposta personalizada é a ação recomendada.`
+      : lead.score >= 70
+      ? `Score moderado (${lead.score}). Qualificar interesse específico antes de apresentar proposta.${devName ? ` Interesse em ${devName}.` : ''}`
+      : `Lead em aquecimento (score ${lead.score}). Nutrição com conteúdo e follow-up consistente recomendados.`
+  )
 
-  const nextAction = lead.status === 'hot' || lead.status === 'qualified'
-    ? 'Apresentar proposta personalizada'
-    : lead.status === 'warm' || lead.status === 'contacted'
-    ? 'Agendar visita ou apresentação'
-    : lead.status === 'proposal'
-    ? 'Follow-up na proposta enviada'
-    : 'Qualificar necessidade do lead'
+  const nextAction = aiAnalysis?.nextAction ?? (
+    lead.status === 'hot' || lead.status === 'qualified'
+      ? 'Apresentar proposta personalizada'
+      : lead.status === 'warm' || lead.status === 'contacted'
+      ? 'Agendar visita ou apresentação'
+      : lead.status === 'proposal'
+      ? 'Follow-up na proposta enviada'
+      : 'Qualificar necessidade do lead'
+  )
 
   // Build timeline
   const timeline = [
@@ -385,13 +406,51 @@ export default function LeadDetailPage() {
         transition={{ delay: 0.10 }}
       >
         <AIInsightCard
-          title="AI Insight Strategy"
+          title={aiLoading ? 'Analisando com IA...' : 'AI Insight Strategy'}
           variant="gold"
-          nextStep={nextAction}
+          nextStep={aiLoading ? undefined : nextAction}
         >
-          <span style={{ color: 'var(--bo-text)', fontSize: '12px', lineHeight: 1.65 }}>
-            {aiInsight}
-          </span>
+          {aiLoading ? (
+            <div className="flex items-center gap-2" style={{ color: 'var(--bo-text-muted)', fontSize: '12px' }}>
+              <Loader2 size={12} className="animate-spin" />
+              Consultando Claude AI...
+            </div>
+          ) : (
+            <>
+              <span style={{ color: 'var(--bo-text)', fontSize: '12px', lineHeight: 1.65 }}>
+                {aiInsight}
+              </span>
+              {aiAnalysis && (
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {aiAnalysis.urgency && (
+                    <span style={{
+                      fontSize: '10px', fontWeight: 700,
+                      color: aiAnalysis.urgency === 'alta' ? '#EF4444' : aiAnalysis.urgency === 'media' ? '#F59E0B' : '#6B7280',
+                      background: aiAnalysis.urgency === 'alta' ? 'rgba(239,68,68,0.12)' : aiAnalysis.urgency === 'media' ? 'rgba(245,158,11,0.12)' : 'rgba(107,114,128,0.12)',
+                      padding: '2px 8px', borderRadius: '6px',
+                    }}>
+                      Urgência {aiAnalysis.urgency}
+                    </span>
+                  )}
+                  {aiAnalysis.approach && (
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--imi-blue-bright)', background: 'rgba(59,130,246,0.12)', padding: '2px 8px', borderRadius: '6px' }}>
+                      via {aiAnalysis.approach}
+                    </span>
+                  )}
+                  {aiAnalysis.estimatedTimeline && (
+                    <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', padding: '2px 8px', background: 'rgba(255,255,255,0.04)', borderRadius: '6px' }}>
+                      ⏱ {aiAnalysis.estimatedTimeline}
+                    </span>
+                  )}
+                  {aiAnalysis.keyRisk && (
+                    <span style={{ fontSize: '10px', color: '#E8A87C', padding: '2px 8px', background: 'rgba(232,168,124,0.08)', borderRadius: '6px' }}>
+                      ⚠ {aiAnalysis.keyRisk}
+                    </span>
+                  )}
+                </div>
+              )}
+            </>
+          )}
         </AIInsightCard>
       </motion.div>
 

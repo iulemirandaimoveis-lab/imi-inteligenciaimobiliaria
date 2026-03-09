@@ -1,15 +1,17 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import {
     Building2, Copy, Check, Link2,
     QrCode, Sparkles,
-    ChevronDown, Loader2, Globe, Trash2, MapPin
+    ChevronDown, Loader2, Globe, Trash2, MapPin,
+    Download, RefreshCw, Eye, BarChart2, ExternalLink,
+    TrendingUp, Clock,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import QRCode from 'qrcode'
 
 const supabase = createClient()
@@ -17,10 +19,12 @@ const supabase = createClient()
 const T = {
     surface: 'var(--bo-surface)',
     elevated: 'var(--bo-elevated)',
+    card: 'var(--bo-card)',
     border: 'var(--bo-border)',
     text: 'var(--bo-text)',
     textMuted: 'var(--bo-text-muted)',
     hover: 'var(--bo-hover)',
+    accent: 'var(--bo-accent)',
 }
 
 const SOURCES = [
@@ -103,6 +107,20 @@ function sourceBg(value: string) {
     return SOURCES.find(s => s.value === value)?.bg || 'rgba(255,255,255,0.06)'
 }
 
+function sourceColor(value: string) {
+    return SOURCES.find(s => s.value === value)?.color || '#60A5FA'
+}
+
+function timeAgo(iso: string) {
+    const diff = Date.now() - new Date(iso).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 1) return 'agora'
+    if (mins < 60) return `${mins}m`
+    const hrs = Math.floor(mins / 60)
+    if (hrs < 24) return `${hrs}h`
+    return `${Math.floor(hrs / 24)}d`
+}
+
 export default function QRGeneratorPage() {
     const searchParams = useSearchParams()
     const prefilledPropertyId = searchParams.get('propertyId')
@@ -116,33 +134,48 @@ export default function QRGeneratorPage() {
     const [medium, setMedium] = useState('')
     const [loading, setLoading] = useState(false)
     const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
-    const [shortUrl, setShortUrl] = useState('imi.re/–––')
+    const [shortUrl, setShortUrl] = useState('')
+    const [generatedLinkId, setGeneratedLinkId] = useState<string | null>(null)
     const [copied, setCopied] = useState(false)
-    // Per-link copy state: key = link.id
     const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null)
 
     // Real tracked links from DB
     const [recentLinks, setRecentLinks] = useState<any[]>([])
     const [linksLoading, setLinksLoading] = useState(true)
+    const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+    const [refreshing, setRefreshing] = useState(false)
+    const pollRef = useRef<NodeJS.Timeout | null>(null)
 
-    const fetchLinks = useCallback(async () => {
-        setLinksLoading(true)
+    const fetchLinks = useCallback(async (silent = false) => {
+        if (!silent) setLinksLoading(true)
+        else setRefreshing(true)
         try {
             const res = await fetch('/api/qr/links')
             const data = await res.json()
             setRecentLinks(data.links || [])
+            setLastRefresh(new Date())
         } catch {
             setRecentLinks([])
         } finally {
             setLinksLoading(false)
+            setRefreshing(false)
         }
     }, [])
+
+    // Auto-refresh every 30s to show updated click counts
+    useEffect(() => {
+        pollRef.current = setInterval(() => {
+            fetchLinks(true)
+        }, 30000)
+        return () => {
+            if (pollRef.current) clearInterval(pollRef.current)
+        }
+    }, [fetchLinks])
 
     useEffect(() => {
         supabase.from('developments').select('id, name, slug').order('name').then(({ data }) => {
             const devs = data || []
             setDevelopments(devs)
-            // If navigated from a property page, pre-select that property
             if (prefilledPropertyId) {
                 const match = devs.find((d: any) => d.id === prefilledPropertyId)
                 if (match) {
@@ -175,22 +208,31 @@ export default function QRGeneratorPage() {
 
             const url = data.link?.short_url || `https://www.iulemirandaimoveis.com.br/imoveis/${selectedDev.slug}`
             setShortUrl(url)
+            setGeneratedLinkId(data.link?.id || null)
 
             const qr = await QRCode.toDataURL(url, {
-                width: 280,
-                margin: 1,
+                width: 400,
+                margin: 2,
                 color: { dark: '#0A0A0A', light: '#FFFFFF' },
                 errorCorrectionLevel: 'H',
             })
             setQrDataUrl(qr)
             toast.success('Link trackeado gerado!')
-            // Refresh list
             fetchLinks()
         } catch (err: any) {
             toast.error(err.message || 'Erro ao gerar link trackeado')
         } finally {
             setLoading(false)
         }
+    }
+
+    const handleDownloadQR = () => {
+        if (!qrDataUrl) return
+        const a = document.createElement('a')
+        a.href = qrDataUrl
+        a.download = `qr-${selectedDev?.name?.toLowerCase().replace(/\s+/g, '-') || 'link'}-${selectedSource.value}.png`
+        a.click()
+        toast.success('QR Code baixado!')
     }
 
     const handleDeleteLink = async (id: string) => {
@@ -204,6 +246,7 @@ export default function QRGeneratorPage() {
     }
 
     const copyUrl = () => {
+        if (!shortUrl) return
         navigator.clipboard.writeText(shortUrl)
         setCopied(true)
         toast.success('Link copiado!')
@@ -217,8 +260,14 @@ export default function QRGeneratorPage() {
         setTimeout(() => setCopiedLinkId(null), 2000)
     }
 
+    // Totals
+    const totalClicks = recentLinks.reduce((sum, l) => sum + (l.clicks || 0), 0)
+    const topSource = recentLinks.length > 0
+        ? recentLinks.reduce((best, l) => (l.clicks || 0) > (best.clicks || 0) ? l : best, recentLinks[0])
+        : null
+
     return (
-        <div style={{ maxWidth: 520, margin: '0 auto', paddingBottom: 40 }}>
+        <div style={{ maxWidth: 560, margin: '0 auto', paddingBottom: 40 }}>
 
             {/* Header */}
             <motion.div
@@ -227,14 +276,40 @@ export default function QRGeneratorPage() {
                 style={{ marginBottom: 28 }}
             >
                 <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 4 }}>
-                    Engine de Inteligência Imobiliária
+                    Engine de Rastreamento
                 </p>
                 <h1 style={{ fontSize: 28, fontWeight: 800, color: T.text, letterSpacing: '-0.5px' }}>
-                    Tracked Link &amp; QR
+                    QR Tracking
                 </h1>
             </motion.div>
 
-            {/* Pre-fill banner when navigated from a property */}
+            {/* Stats strip — only show if there are links */}
+            {recentLinks.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ marginBottom: 20, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}
+                >
+                    {[
+                        { label: 'Links Ativos', value: recentLinks.length, icon: <QrCode size={14} />, color: '#60A5FA' },
+                        { label: 'Total Cliques', value: totalClicks, icon: <Eye size={14} />, color: '#4ADE80' },
+                        { label: 'Melhor Canal', value: topSource ? (SOURCES.find(s => s.value === topSource.utm_source)?.label || topSource.utm_source || '—') : '—', icon: <TrendingUp size={14} />, color: '#F59E0B' },
+                    ].map(stat => (
+                        <div key={stat.label} style={{
+                            padding: '12px 14px', borderRadius: 14,
+                            background: T.elevated, border: `1px solid ${T.border}`,
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                                <span style={{ color: stat.color }}>{stat.icon}</span>
+                                <p style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{stat.label}</p>
+                            </div>
+                            <p style={{ fontSize: 18, fontWeight: 800, color: T.text }}>{stat.value}</p>
+                        </div>
+                    ))}
+                </motion.div>
+            )}
+
+            {/* Pre-fill banner */}
             {prefilledPropertyId && (
                 <motion.div
                     initial={{ opacity: 0, scale: 0.97 }}
@@ -279,7 +354,7 @@ export default function QRGeneratorPage() {
                     {showDevDropdown && developments.length > 0 && (
                         <div style={{
                             position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
-                            background: T.surface, border: `1px solid ${T.border}`,
+                            background: T.card || T.surface, border: `1px solid ${T.border}`,
                             borderRadius: 16, padding: 6, zIndex: 50,
                             boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
                             maxHeight: 240, overflowY: 'auto',
@@ -317,14 +392,14 @@ export default function QRGeneratorPage() {
                                 onClick={() => setSelectedSource(src)}
                                 style={{
                                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                                    padding: '16px 8px', borderRadius: 16,
+                                    padding: '14px 8px', borderRadius: 14,
                                     background: isActive ? src.bg : T.elevated,
                                     border: `1.5px solid ${isActive ? src.color : T.border}`,
                                     cursor: 'pointer', transition: 'all 0.15s',
                                 }}
                             >
                                 <div style={{ color: src.color }}>{src.icon}</div>
-                                <span style={{ fontSize: 12, fontWeight: 700, color: isActive ? src.color : T.textMuted }}>
+                                <span style={{ fontSize: 11, fontWeight: 700, color: isActive ? src.color : T.textMuted }}>
                                     {src.label}
                                 </span>
                             </button>
@@ -354,7 +429,7 @@ export default function QRGeneratorPage() {
                     <input
                         value={medium}
                         onChange={e => setMedium(e.target.value)}
-                        placeholder="CPC / Email"
+                        placeholder="CPC / Social"
                         style={{
                             width: '100%', height: 48, padding: '0 14px', borderRadius: 12,
                             background: T.elevated, border: `1px solid ${T.border}`,
@@ -374,7 +449,7 @@ export default function QRGeneratorPage() {
                     marginBottom: 14,
                     borderRadius: 24,
                     overflow: 'hidden',
-                    background: 'linear-gradient(145deg, #1a2636 0%, #0f1923 100%)',
+                    background: '#0d1520',
                     border: `1px solid rgba(255,255,255,0.07)`,
                     padding: 24,
                     display: 'flex',
@@ -386,23 +461,28 @@ export default function QRGeneratorPage() {
                     position: 'relative',
                 }}
             >
-                {/* Subtle glow */}
-                <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', background: `radial-gradient(circle, ${selectedSource.color}20 0%, transparent 70%)`, pointerEvents: 'none' }} />
+                {/* Subtle color glow from selected source */}
+                <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, borderRadius: '50%', background: `radial-gradient(circle, ${selectedSource.color}18 0%, transparent 70%)`, pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', bottom: -30, left: -30, width: 120, height: 120, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-                {/* QR Code or placeholder */}
+                {/* QR Code */}
                 <div style={{
                     background: '#fff',
                     borderRadius: 16,
                     padding: 12,
-                    boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
+                    boxShadow: '0 8px 40px rgba(0,0,0,0.5)',
                     position: 'relative',
                 }}>
                     {qrDataUrl ? (
                         <img src={qrDataUrl} alt="QR Code" style={{ width: 160, height: 160, display: 'block', borderRadius: 4 }} />
                     ) : (
                         <div style={{ width: 160, height: 160, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                            <QrCode size={52} style={{ color: '#ccc' }} />
-                            <p style={{ fontSize: 10, color: '#aaa', textAlign: 'center', fontWeight: 500 }}>Gere seu QR code abaixo</p>
+                            <div style={{ opacity: 0.15, display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 4 }}>
+                                {Array.from({ length: 25 }).map((_, i) => (
+                                    <div key={i} style={{ width: 24, height: 24, background: Math.random() > 0.5 ? '#333' : 'transparent', borderRadius: 3 }} />
+                                ))}
+                            </div>
+                            <p style={{ position: 'absolute', fontSize: 11, color: '#aaa', textAlign: 'center', fontWeight: 500 }}>Selecione e gere</p>
                         </div>
                     )}
                     {/* IMI watermark */}
@@ -413,28 +493,43 @@ export default function QRGeneratorPage() {
                     )}
                 </div>
 
-                {/* Tracking URL */}
-                <div style={{ width: '100%' }}>
-                    <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', textAlign: 'center', marginBottom: 8 }}>
-                        Link Trackeado
-                    </p>
-                    <div style={{
-                        display: 'flex', alignItems: 'center', gap: 8,
-                        background: 'rgba(255,255,255,0.06)', borderRadius: 12,
-                        padding: '10px 14px',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                    }}>
-                        <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: '#60A5FA', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {shortUrl}
-                        </span>
-                        <button
-                            onClick={copyUrl}
-                            style={{ flexShrink: 0, width: 34, height: 34, borderRadius: 8, background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(59,130,246,0.3)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        >
-                            {copied ? <Check size={15} style={{ color: '#4ade80' }} /> : <Copy size={15} style={{ color: '#60A5FA' }} />}
-                        </button>
+                {/* Short URL display */}
+                {shortUrl ? (
+                    <div style={{ width: '100%' }}>
+                        <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', textAlign: 'center', marginBottom: 8 }}>
+                            Link Trackeado · Ativo
+                        </p>
+                        <div style={{
+                            display: 'flex', alignItems: 'center', gap: 8,
+                            background: 'rgba(255,255,255,0.06)', borderRadius: 12,
+                            padding: '10px 14px',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                        }}>
+                            <span style={{ flex: 1, fontSize: 12, fontWeight: 700, color: '#60A5FA', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {shortUrl.replace('https://www.iulemirandaimoveis.com.br', 'imi.com.br')}
+                            </span>
+                            <button
+                                onClick={copyUrl}
+                                style={{ flexShrink: 0, width: 30, height: 30, borderRadius: 8, background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                title="Copiar link"
+                            >
+                                {copied ? <Check size={13} style={{ color: '#4ade80' }} /> : <Copy size={13} style={{ color: '#60A5FA' }} />}
+                            </button>
+                            <button
+                                onClick={handleDownloadQR}
+                                disabled={!qrDataUrl}
+                                style={{ flexShrink: 0, width: 30, height: 30, borderRadius: 8, background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: qrDataUrl ? 1 : 0.4 }}
+                                title="Baixar QR Code"
+                            >
+                                <Download size={13} style={{ color: '#4ade80' }} />
+                            </button>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
+                        Configure e gere seu link rastreado abaixo
+                    </p>
+                )}
             </motion.div>
 
             {/* GENERATE BUTTON */}
@@ -446,11 +541,10 @@ export default function QRGeneratorPage() {
                 disabled={loading || !selectedDev}
                 style={{
                     width: '100%', height: 56, borderRadius: 18,
-                    background: loading ? 'rgba(59,130,246,0.5)' : 'var(--bo-accent)',
+                    background: loading || !selectedDev ? 'rgba(59,130,246,0.4)' : T.accent,
                     color: '#fff', fontSize: 15, fontWeight: 700,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                    border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 24px rgba(59,130,246,0.35)',
+                    border: 'none', cursor: loading || !selectedDev ? 'not-allowed' : 'pointer',
                     marginBottom: 32,
                     transition: 'all 0.15s',
                 }}
@@ -467,13 +561,29 @@ export default function QRGeneratorPage() {
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                     <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', color: T.textMuted, textTransform: 'uppercase' }}>
-                        Links Recentes
+                        Links Rastreados
                     </p>
-                    {recentLinks.length > 0 && (
-                        <span style={{ fontSize: 11, color: T.textMuted }}>
-                            {recentLinks.length} link{recentLinks.length !== 1 ? 's' : ''}
-                        </span>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        {lastRefresh && (
+                            <span style={{ fontSize: 10, color: T.textMuted, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                <Clock size={10} />
+                                {timeAgo(lastRefresh.toISOString())}
+                            </span>
+                        )}
+                        <button
+                            onClick={() => fetchLinks(true)}
+                            disabled={refreshing}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textMuted, display: 'flex', alignItems: 'center' }}
+                            title="Atualizar"
+                        >
+                            <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
+                        </button>
+                        {recentLinks.length > 0 && (
+                            <span style={{ fontSize: 11, color: T.textMuted }}>
+                                {recentLinks.length} link{recentLinks.length !== 1 ? 's' : ''}
+                            </span>
+                        )}
+                    </div>
                 </div>
 
                 {linksLoading ? (
@@ -486,79 +596,111 @@ export default function QRGeneratorPage() {
                         background: T.elevated, border: `1px solid ${T.border}`,
                         textAlign: 'center',
                     }}>
-                        <Link2 size={28} style={{ color: T.textMuted, margin: '0 auto 12px' }} />
+                        <QrCode size={28} style={{ color: T.textMuted, margin: '0 auto 12px' }} />
                         <p style={{ fontSize: 13, color: T.textMuted, fontWeight: 500 }}>
                             Nenhum link gerado ainda
                         </p>
                         <p style={{ fontSize: 11, color: T.textMuted, marginTop: 4, opacity: 0.7 }}>
-                            Gere seu primeiro link acima
+                            Gere seu primeiro link rastreado acima
                         </p>
                     </div>
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        {recentLinks.slice(0, 8).map((link, i) => (
-                            <motion.div
-                                key={link.id}
-                                initial={{ opacity: 0, x: -8 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3 + i * 0.04 }}
-                                style={{
-                                    display: 'flex', alignItems: 'center', gap: 14,
-                                    padding: '12px 16px', borderRadius: 16,
-                                    background: T.elevated, border: `1px solid ${T.border}`,
-                                }}
-                            >
-                                {/* Source icon */}
-                                <div style={{
-                                    width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-                                    background: sourceBg(link.utm_source),
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                }}>
-                                    {sourceIcon(link.utm_source)}
-                                </div>
-
-                                {/* Info */}
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                    <p style={{ fontSize: 13, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                        {link.campaign_name || link.utm_campaign || 'Sem nome'}
-                                    </p>
-                                    <p style={{ fontSize: 11, color: T.textMuted, marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                        {link.short_url || link.short_code}
-                                    </p>
-                                </div>
-
-                                {/* Stats + Copy + Delete */}
-                                <div style={{ textAlign: 'right', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <div style={{ marginRight: 4 }}>
-                                        <p style={{ fontSize: 13, fontWeight: 700, color: T.text }}>{link.clicks ?? 0}</p>
-                                        <p style={{ fontSize: 9, color: T.textMuted }}>clicks</p>
-                                    </div>
-                                    <button
-                                        onClick={() => copyLinkUrl(link.id, link.short_url || '')}
+                        <AnimatePresence>
+                            {recentLinks.slice(0, 10).map((link, i) => {
+                                const isNew = generatedLinkId === link.id
+                                return (
+                                    <motion.div
+                                        key={link.id}
+                                        initial={{ opacity: 0, x: isNew ? 0 : -8, scale: isNew ? 0.96 : 1 }}
+                                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                                        exit={{ opacity: 0, x: 8 }}
+                                        transition={{ delay: isNew ? 0 : 0.3 + i * 0.04 }}
                                         style={{
-                                            width: 30, height: 30, borderRadius: 8,
-                                            background: copiedLinkId === link.id ? 'rgba(34,197,94,0.15)' : T.hover,
-                                            border: 'none', cursor: 'pointer',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            transition: 'all 0.2s',
+                                            display: 'flex', alignItems: 'center', gap: 12,
+                                            padding: '12px 14px', borderRadius: 16,
+                                            background: isNew ? `${sourceColor(link.utm_source)}10` : T.elevated,
+                                            border: `1px solid ${isNew ? `${sourceColor(link.utm_source)}30` : T.border}`,
+                                            transition: 'background 0.3s',
                                         }}
-                                        title="Copiar link"
                                     >
-                                        {copiedLinkId === link.id
-                                            ? <Check size={13} style={{ color: '#22c55e' }} />
-                                            : <Copy size={13} style={{ color: T.textMuted }} />
-                                        }
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeleteLink(link.id)}
-                                        style={{ width: 30, height: 30, borderRadius: 8, background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.4 }}
-                                        title="Remover link"
-                                    >
-                                        <Trash2 size={13} style={{ color: T.text }} />
-                                    </button>
-                                </div>
-                            </motion.div>
-                        ))}
+                                        {/* Source icon */}
+                                        <div style={{
+                                            width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                                            background: sourceBg(link.utm_source),
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        }}>
+                                            {sourceIcon(link.utm_source)}
+                                        </div>
+
+                                        {/* Info */}
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <p style={{ fontSize: 13, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                {link.campaign_name || link.utm_campaign || 'Sem nome'}
+                                            </p>
+                                            <p style={{ fontSize: 11, color: T.textMuted, marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                imi.com.br/l/{link.short_code}
+                                            </p>
+                                        </div>
+
+                                        {/* Clicks + actions */}
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                                            {/* Click count with bar */}
+                                            <div style={{ textAlign: 'center', minWidth: 36 }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 3, justifyContent: 'flex-end' }}>
+                                                    <BarChart2 size={10} style={{ color: link.clicks > 0 ? '#4ADE80' : T.textMuted }} />
+                                                    <p style={{ fontSize: 14, fontWeight: 800, color: link.clicks > 0 ? '#4ADE80' : T.text, lineHeight: 1 }}>{link.clicks ?? 0}</p>
+                                                </div>
+                                                <p style={{ fontSize: 9, color: T.textMuted, marginTop: 1 }}>cliques</p>
+                                            </div>
+
+                                            {/* Copy */}
+                                            <button
+                                                onClick={() => copyLinkUrl(link.id, link.short_url || '')}
+                                                style={{
+                                                    width: 28, height: 28, borderRadius: 8,
+                                                    background: copiedLinkId === link.id ? 'rgba(34,197,94,0.15)' : T.hover,
+                                                    border: 'none', cursor: 'pointer',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                }}
+                                                title="Copiar link"
+                                            >
+                                                {copiedLinkId === link.id
+                                                    ? <Check size={12} style={{ color: '#22c55e' }} />
+                                                    : <Copy size={12} style={{ color: T.textMuted }} />
+                                                }
+                                            </button>
+
+                                            {/* Open link */}
+                                            <a
+                                                href={link.short_url || '#'}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                    width: 28, height: 28, borderRadius: 8,
+                                                    background: T.hover,
+                                                    border: 'none', cursor: 'pointer',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    textDecoration: 'none',
+                                                }}
+                                                title="Abrir link"
+                                            >
+                                                <ExternalLink size={12} style={{ color: T.textMuted }} />
+                                            </a>
+
+                                            {/* Delete */}
+                                            <button
+                                                onClick={() => handleDeleteLink(link.id)}
+                                                style={{ width: 28, height: 28, borderRadius: 8, background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.35 }}
+                                                title="Remover link"
+                                            >
+                                                <Trash2 size={12} style={{ color: T.text }} />
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )
+                            })}
+                        </AnimatePresence>
                     </div>
                 )}
             </motion.div>

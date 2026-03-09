@@ -2,17 +2,19 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import {
     ArrowLeft, FileText, MapPin, Bed, Bath, Ruler, Car,
     DollarSign, Calendar, CheckCircle, Award, User, Phone, Mail,
-    Download, Edit, Loader2, AlertTriangle, Trash2, Home
+    Download, Edit, Loader2, AlertTriangle, Trash2, Home,
+    TrendingUp, BarChart2, Sparkles,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
 const T = {
-    surface: 'var(--bo-surface)', surfaceAlt: 'var(--bo-surface-alt)',
+    surface: 'var(--bo-surface)', surfaceAlt: 'var(--bo-surface-alt)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-dim)',
     accent: 'var(--bo-accent)',
 }
 
@@ -35,6 +37,9 @@ export default function AvaliacaoDetalhesPage() {
     const [activeTab, setActiveTab] = useState<'overview' | 'info'>('overview')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [deleting, setDeleting] = useState(false)
+    const [comps, setComps] = useState<{ count: number; avgM2: number; minM2: number; maxM2: number } | null>(null)
+    const [aiAnalysis, setAiAnalysis] = useState<any>(null)
+    const [aiLoading, setAiLoading] = useState(false)
 
     useEffect(() => {
         async function fetchAvaliacao() {
@@ -43,6 +48,17 @@ export default function AvaliacaoDetalhesPage() {
                 if (!res.ok) throw new Error('Falha ao carregar avaliação')
                 const result = await res.json()
                 setData(result)
+                // Fire Claude analysis
+                setAiLoading(true)
+                fetch('/api/ai/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'avaliacao', data: result }),
+                })
+                    .then(r => r.json())
+                    .then(res2 => { if (res2.analysis) setAiAnalysis(res2.analysis) })
+                    .catch(() => {})
+                    .finally(() => setAiLoading(false))
             } catch (err: any) {
                 setError(err.message)
             } finally {
@@ -51,6 +67,35 @@ export default function AvaliacaoDetalhesPage() {
         }
         fetchAvaliacao()
     }, [params.id])
+
+    // Fetch neighborhood comps from developments table
+    useEffect(() => {
+        if (!data?.bairro) return
+        const supabase = createClient()
+        supabase
+            .from('developments')
+            .select('price_min, price_max, area_min_sqm, area_max_sqm')
+            .eq('bairro', data.bairro)
+            .eq('status_commercial', 'published')
+            .then(({ data: devs }) => {
+                if (!devs?.length) return
+                const prices = devs
+                    .map(d => {
+                        const price = (Number(d.price_min || 0) + Number(d.price_max || d.price_min || 0)) / 2
+                        const area = (Number(d.area_min_sqm || 0) + Number(d.area_max_sqm || d.area_min_sqm || 0)) / 2
+                        return area > 0 ? price / area : 0
+                    })
+                    .filter(p => p > 1000 && p < 100000) // sanity range
+                if (prices.length < 2) return
+                const avg = prices.reduce((s, p) => s + p, 0) / prices.length
+                setComps({
+                    count: prices.length,
+                    avgM2: Math.round(avg),
+                    minM2: Math.round(Math.min(...prices)),
+                    maxM2: Math.round(Math.max(...prices)),
+                })
+            })
+    }, [data?.bairro])
 
     const handleDelete = async () => {
         setDeleting(true)
@@ -106,6 +151,21 @@ export default function AvaliacaoDetalhesPage() {
 
     const sc = STATUS_CFG[data.status] || STATUS_CFG.em_andamento
     const caracteristicas = Array.isArray(data.caracteristicas) ? data.caracteristicas : []
+
+    // Value range derived values for confidence bar
+    const rangeMin = Number(data.valor_minimo || 0)
+    const rangeMax = Number(data.valor_maximo || 0)
+    const rangeEst = Number(data.valor_estimado || 0)
+    const hasRange = rangeMin > 0 && rangeMax > 0 && rangeEst > 0 && rangeMax > rangeMin
+    const rangePct = hasRange
+        ? Math.max(5, Math.min(95, ((rangeEst - rangeMin) / (rangeMax - rangeMin)) * 100))
+        : 50
+    const rangeSpread = hasRange ? ((rangeMax - rangeMin) / rangeEst * 100) : 0
+    const rangeConf = rangeSpread < 10
+        ? { label: 'Alta Confiança', color: '#10B981', bg: 'rgba(16,185,129,0.12)' }
+        : rangeSpread < 20
+        ? { label: 'Média Confiança', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' }
+        : { label: 'Confiança Baixa', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' }
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
@@ -183,32 +243,52 @@ export default function AvaliacaoDetalhesPage() {
             {/* KPIs */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {data.valor_estimado && (
-                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Valor Avaliado</p>
-                        <p className="text-xl font-bold" style={{ color: '#10B981' }}>{formatPrice(Number(data.valor_estimado))}</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-start justify-between mb-3">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Valor Avaliado</p>
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.12)' }}>
+                                <TrendingUp size={14} style={{ color: '#10B981' }} />
+                            </div>
+                        </div>
+                        <p className="text-lg font-bold leading-tight" style={{ color: '#10B981' }}>{formatPrice(Number(data.valor_estimado))}</p>
                     </div>
                 )}
                 {data.valor_m2 && (
-                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Preço/m²</p>
-                        <p className="text-xl font-bold" style={{ color: 'var(--bo-accent)' }}>{formatPrice(Number(data.valor_m2))}</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-start justify-between mb-3">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Preço/m²</p>
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(139,92,246,0.12)' }}>
+                                <BarChart2 size={14} style={{ color: '#8B5CF6' }} />
+                            </div>
+                        </div>
+                        <p className="text-lg font-bold leading-tight" style={{ color: 'var(--bo-accent)' }}>{formatPrice(Number(data.valor_m2))}/m²</p>
                     </div>
                 )}
                 {data.area_privativa && (
-                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Área</p>
-                        <p className="text-xl font-bold" style={{ color: T.text }}>{data.area_privativa}m²</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-start justify-between mb-3">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Área Privativa</p>
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.08)' }}>
+                                <Ruler size={14} style={{ color: '#10B981' }} />
+                            </div>
+                        </div>
+                        <p className="text-lg font-bold leading-tight" style={{ color: T.text }}>{data.area_privativa} m²</p>
                     </div>
                 )}
                 {data.honorarios && (
-                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Honorários</p>
-                        <p className="text-xl font-bold" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-start justify-between mb-3">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Honorários</p>
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(245,158,11,0.12)' }}>
+                                <DollarSign size={14} style={{ color: '#F59E0B' }} />
+                            </div>
+                        </div>
+                        <p className="text-lg font-bold leading-tight" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
                         {data.honorarios_status && (
-                            <p className="text-[10px] font-bold mt-1" style={{
+                            <p className="text-[10px] font-bold mt-1.5" style={{
                                 color: data.honorarios_status === 'pago' ? '#6BB87B' : data.honorarios_status === 'parcial' ? 'var(--bo-accent)' : '#E8A87C'
                             }}>
-                                {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
+                                ● {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
                             </p>
                         )}
                     </div>
@@ -299,30 +379,178 @@ export default function AvaliacaoDetalhesPage() {
                             </div>
                         )}
 
-                        {/* Value Range */}
+                        {/* Value Range — Zillow-style confidence bar */}
                         {(data.valor_minimo || data.valor_maximo || data.valor_estimado) && (
                             <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                                <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Intervalo de Valores</h2>
-                                <div className="space-y-2 text-sm">
-                                    {data.valor_minimo && (
-                                        <div className="flex justify-between">
-                                            <span style={{ color: T.textMuted }}>Mínimo</span>
-                                            <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_minimo))}</span>
-                                        </div>
-                                    )}
-                                    {data.valor_estimado && (
-                                        <div className="flex justify-between">
-                                            <span style={{ color: T.textMuted }}>Avaliado</span>
-                                            <span className="font-bold" style={{ color: T.accent }}>{formatPrice(Number(data.valor_estimado))}</span>
-                                        </div>
-                                    )}
-                                    {data.valor_maximo && (
-                                        <div className="flex justify-between">
-                                            <span style={{ color: T.textMuted }}>Máximo</span>
-                                            <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_maximo))}</span>
-                                        </div>
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-lg font-bold" style={{ color: T.text }}>Intervalo de Valores</h2>
+                                    {hasRange && (
+                                        <span className="text-xs font-bold px-3 py-1 rounded-full"
+                                            style={{ color: rangeConf.color, background: rangeConf.bg }}>
+                                            {rangeConf.label}
+                                        </span>
                                     )}
                                 </div>
+
+                                {hasRange ? (
+                                    <>
+                                        {/* Range bar with floating label */}
+                                        <div className="pt-14 relative mb-1">
+                                            {/* Floating estimated value label above marker */}
+                                            <div className="absolute top-0 text-center pointer-events-none"
+                                                style={{ left: `${rangePct}%`, transform: 'translateX(-50%)' }}>
+                                                <p className="text-sm font-bold whitespace-nowrap" style={{ color: '#10B981' }}>
+                                                    {formatPrice(rangeEst)}
+                                                </p>
+                                                <p className="text-[10px] mb-1" style={{ color: T.textDim }}>Avaliado</p>
+                                                <div className="mx-auto w-px h-3" style={{ background: 'rgba(16,185,129,0.45)' }} />
+                                            </div>
+
+                                            {/* Gradient bar */}
+                                            <div className="relative h-3 rounded-full"
+                                                style={{ background: 'rgba(99,102,241,0.12)' }}>
+                                                {/* Filled portion */}
+                                                <div className="absolute inset-y-0 left-0 rounded-full"
+                                                    style={{
+                                                        width: `${rangePct}%`,
+                                                        background: 'linear-gradient(to right, #3B82F6, #8B5CF6)',
+                                                    }} />
+                                                {/* Marker dot */}
+                                                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 w-5 h-5 rounded-full flex items-center justify-center"
+                                                    style={{
+                                                        left: `${rangePct}%`,
+                                                        background: 'white',
+                                                        border: '2.5px solid #10B981',
+                                                        boxShadow: '0 2px 8px rgba(16,185,129,0.4)',
+                                                    }}>
+                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#10B981' }} />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Min / Max labels */}
+                                        <div className="flex justify-between mt-3">
+                                            <div>
+                                                <p className="text-xs font-semibold" style={{ color: T.text }}>{formatPrice(rangeMin)}</p>
+                                                <p className="text-[10px]" style={{ color: T.textDim }}>Mínimo</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xs font-semibold" style={{ color: T.text }}>{formatPrice(rangeMax)}</p>
+                                                <p className="text-[10px]" style={{ color: T.textDim }}>Máximo</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Stats strip */}
+                                        <div className="grid grid-cols-2 gap-3 mt-5 pt-4"
+                                            style={{ borderTop: `1px solid ${T.border}` }}>
+                                            <div className="rounded-xl p-3 text-center"
+                                                style={{ background: 'rgba(99,102,241,0.06)' }}>
+                                                <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Spread</p>
+                                                <p className="text-sm font-bold" style={{ color: T.text }}>{rangeSpread.toFixed(1)}%</p>
+                                            </div>
+                                            <div className="rounded-xl p-3 text-center"
+                                                style={{ background: 'rgba(99,102,241,0.06)' }}>
+                                                <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Margem</p>
+                                                <p className="text-sm font-bold" style={{ color: T.text }}>
+                                                    ±{((rangeMax - rangeEst) / rangeEst * 100).toFixed(1)}%
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    /* Fallback: show available values as rows */
+                                    <div className="space-y-2 text-sm">
+                                        {data.valor_minimo && (
+                                            <div className="flex justify-between">
+                                                <span style={{ color: T.textMuted }}>Mínimo</span>
+                                                <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_minimo))}</span>
+                                            </div>
+                                        )}
+                                        {data.valor_estimado && (
+                                            <div className="flex justify-between">
+                                                <span style={{ color: T.textMuted }}>Avaliado</span>
+                                                <span className="font-bold" style={{ color: '#10B981' }}>{formatPrice(Number(data.valor_estimado))}</span>
+                                            </div>
+                                        )}
+                                        {data.valor_maximo && (
+                                            <div className="flex justify-between">
+                                                <span style={{ color: T.textMuted }}>Máximo</span>
+                                                <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_maximo))}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        {/* Neighborhood price benchmark — Comparativo de Bairro */}
+                        {comps && data.valor_m2 && (
+                            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <div className="flex items-center justify-between mb-5">
+                                    <h2 className="text-lg font-bold" style={{ color: T.text }}>Comparativo de Bairro</h2>
+                                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full"
+                                        style={{ background: 'rgba(72,101,129,0.12)', color: T.textMuted }}>
+                                        {comps.count} empreend. em {data.bairro}
+                                    </span>
+                                </div>
+
+                                {/* Price/m² comparison grid */}
+                                <div className="grid grid-cols-3 gap-3 mb-4">
+                                    <div className="rounded-xl p-3 text-center"
+                                        style={{ background: 'rgba(16,185,129,0.06)' }}>
+                                        <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Mín. Bairro</p>
+                                        <p className="text-sm font-bold" style={{ color: T.text }}>
+                                            R$ {comps.minM2.toLocaleString('pt-BR')}
+                                        </p>
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>/m²</p>
+                                    </div>
+                                    <div className="rounded-xl p-3 text-center"
+                                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                                        <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Média Bairro</p>
+                                        <p className="text-sm font-bold" style={{ color: T.accent }}>
+                                            R$ {comps.avgM2.toLocaleString('pt-BR')}
+                                        </p>
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>/m²</p>
+                                    </div>
+                                    <div className="rounded-xl p-3 text-center"
+                                        style={{ background: 'rgba(239,68,68,0.06)' }}>
+                                        <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Máx. Bairro</p>
+                                        <p className="text-sm font-bold" style={{ color: T.text }}>
+                                            R$ {comps.maxM2.toLocaleString('pt-BR')}
+                                        </p>
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>/m²</p>
+                                    </div>
+                                </div>
+
+                                {/* Verdict: this property vs neighborhood avg */}
+                                {(() => {
+                                    const propM2 = Number(data.valor_m2)
+                                    const ratio = propM2 / comps.avgM2
+                                    const isPremium = ratio > 1.1
+                                    const isBelowMarket = ratio < 0.9
+                                    const verdictLabel = isPremium
+                                        ? `${((ratio - 1) * 100).toFixed(0)}% acima da média`
+                                        : isBelowMarket
+                                        ? `${((1 - ratio) * 100).toFixed(0)}% abaixo da média`
+                                        : 'Na média do bairro'
+                                    const verdictColor = isPremium ? '#F59E0B' : isBelowMarket ? '#10B981' : '#3B82F6'
+                                    return (
+                                        <div className="flex items-center gap-3 p-3 rounded-xl"
+                                            style={{ background: `${verdictColor}12`, border: `1px solid ${verdictColor}30` }}>
+                                            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                style={{ background: `${verdictColor}20` }}>
+                                                <MapPin size={15} style={{ color: verdictColor }} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs font-bold" style={{ color: verdictColor }}>
+                                                    {verdictLabel}
+                                                </p>
+                                                <p className="text-[10px] mt-0.5" style={{ color: T.textDim }}>
+                                                    Este imóvel: R$ {propM2.toLocaleString('pt-BR')}/m² · Média {data.bairro}: R$ {comps.avgM2.toLocaleString('pt-BR')}/m²
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )
+                                })()}
                             </div>
                         )}
                     </div>
@@ -389,6 +617,57 @@ export default function AvaliacaoDetalhesPage() {
                                     </div>
                                 )}
                             </div>
+                        </div>
+
+                        {/* AI Intelligence Card */}
+                        <div className="rounded-2xl p-5" style={{ background: T.surface, border: '1px solid var(--bo-border-gold)' }}>
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(200,166,90,0.15)' }}>
+                                    {aiLoading ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--imi-ai-gold)' }} /> : <Sparkles size={13} style={{ color: 'var(--imi-ai-gold)' }} />}
+                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--imi-ai-gold)' }}>
+                                    AI Valuation Intelligence
+                                </span>
+                            </div>
+                            {aiLoading ? (
+                                <p className="text-xs" style={{ color: T.textMuted }}>Analisando imóvel com Claude AI...</p>
+                            ) : aiAnalysis ? (
+                                <>
+                                    <p className="text-xs mb-3" style={{ color: T.text, lineHeight: 1.65 }}>{aiAnalysis.insight}</p>
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                        {aiAnalysis.investmentGrade && (
+                                            <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                                <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Grau Invest.</p>
+                                                <p className="text-lg font-bold" style={{
+                                                    color: aiAnalysis.investmentGrade === 'A' ? '#10B981' : aiAnalysis.investmentGrade === 'B' ? '#3B82F6' : aiAnalysis.investmentGrade === 'C' ? '#F59E0B' : '#EF4444'
+                                                }}>{aiAnalysis.investmentGrade}</p>
+                                            </div>
+                                        )}
+                                        {aiAnalysis.marketTrend && (
+                                            <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                                <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Tendência</p>
+                                                <p className="text-sm font-bold" style={{
+                                                    color: aiAnalysis.marketTrend === 'alta' ? '#10B981' : aiAnalysis.marketTrend === 'queda' ? '#EF4444' : '#F59E0B'
+                                                }}>{aiAnalysis.marketTrend}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    {aiAnalysis.priceAnalysis && (
+                                        <p className="text-[11px] mb-2" style={{ color: T.textMuted }}>💰 {aiAnalysis.priceAnalysis}</p>
+                                    )}
+                                    {aiAnalysis.recommendation && (
+                                        <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
+                                            <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Recomendação</p>
+                                            <p className="text-xs" style={{ color: T.text }}>{aiAnalysis.recommendation}</p>
+                                        </div>
+                                    )}
+                                    {aiAnalysis.keyFactor && (
+                                        <p className="text-[11px] mt-2" style={{ color: T.textMuted }}>🔑 {aiAnalysis.keyFactor}</p>
+                                    )}
+                                </>
+                            ) : (
+                                <p className="text-xs" style={{ color: T.textMuted }}>Análise IA não disponível.</p>
+                            )}
                         </div>
 
                         {/* Timeline */}

@@ -1,33 +1,16 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { motion } from 'framer-motion'
 import {
-    Plus,
-    Search,
-    Play,
-    Pause,
-    Zap,
-    Mail,
-    MessageSquare,
-    Calendar,
-    Users,
-    FileText,
-    TrendingUp,
-    Loader2,
-    X,
-    Settings,
+    Plus, Search, Play, Pause, Zap,
+    Mail, MessageSquare, Calendar, Users,
+    FileText, TrendingUp, X,
 } from 'lucide-react'
 import { toast } from 'sonner'
-
-/* ── Design tokens ─────────────────────────── */
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    accent: 'var(--bo-accent)',
-}
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 interface Workflow {
     id: string
@@ -40,6 +23,26 @@ interface Workflow {
     run_count: number
     created_at: string
     updated_at: string | null
+}
+
+// ── Loading skeleton ─────────────────────────────────────────────────
+function AutomacoesSkeleton() {
+    return (
+        <div className="space-y-5">
+            <div style={{ height: 56, background: 'var(--bo-card)', borderRadius: 14, opacity: 0.5, width: '50%' }} />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {[0,1,2,3].map(i => (
+                    <div key={i} style={{ height: 72, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.4 - i * 0.05 }} />
+                ))}
+            </div>
+            <div style={{ height: 44, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.35 }} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {[0,1,2,3].map(i => (
+                    <div key={i} style={{ height: 160, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.3 - i * 0.04 }} />
+                ))}
+            </div>
+        </div>
+    )
 }
 
 const TRIGGER_ICONS: Record<string, any> = {
@@ -162,52 +165,72 @@ export default function AutomacoesPage() {
     const getIcon = (t: string) => TRIGGER_ICONS[t] || Zap
     const getColor = (t: string) => TRIGGER_COLORS[t] || '#6B7280'
 
+    if (loading) return <AutomacoesSkeleton />
+
     return (
-        <div>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        <div className="space-y-5">
 
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold" style={{ color: 'var(--bo-text)' }}>IA & Automações</h1>
-                        <p className="text-sm mt-1" style={{ color: 'var(--bo-text-muted)' }}>Workflows automáticos e inteligência artificial</p>
-                    </div>
-                    <button onClick={() => setShowModal(true)}
-                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold transition" style={{ background: "var(--bo-accent)" }}>
-                        <Plus size={20} /> Nova Automação
-                    </button>
-                </div>
+            {/* ── Header ─────────────────────────────────── */}
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+                <PageIntelHeader
+                    moduleLabel="IA & AUTOMAÇÕES"
+                    title="Automações"
+                    subtitle="Workflows automáticos · Inteligência artificial"
+                    live
+                    actions={
+                        <button
+                            onClick={() => setShowModal(true)}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: '6px',
+                                height: '36px', padding: '0 14px', borderRadius: '10px',
+                                fontSize: '12px', fontWeight: 700, color: '#fff',
+                                background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
+                                border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
+                                boxShadow: '0 0 14px rgba(59,130,246,0.3)',
+                            }}
+                        >
+                            <Plus size={14} />
+                            <span className="hidden sm:inline">Nova Automação</span>
+                            <span className="sm:hidden">Nova</span>
+                        </button>
+                    }
+                />
+            </motion.div>
 
-                {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {[
-                        { l: 'Total', v: stats.total, color: 'var(--bo-accent)' },
-                        { l: 'Ativas', v: stats.ativas, color: '#22C55E' },
-                        { l: 'Pausadas', v: stats.pausadas, color: '#F59E0B' },
-                        { l: 'Execuções Total', v: stats.execucoesTotal, color: '#8B5CF6' },
-                    ].map(s => (
-                        <div key={s.l} className="rounded-2xl p-4" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
-                            <p className="text-xs mb-1" style={{ color: 'var(--bo-text-muted)' }}>{s.l}</p>
-                            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.v}</p>
-                        </div>
-                    ))}
-                </div>
+            {/* ── KPI Strip ──────────────────────────────── */}
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.06 }}
+                className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+            >
+                <KPICard label="Total"          value={stats.total}          accent="blue"  size="sm" icon={<Zap size={11} />} />
+                <KPICard label="Ativas"         value={stats.ativas}         accent="green" size="sm" icon={<Play size={11} />} />
+                <KPICard label="Pausadas"       value={stats.pausadas}       accent="warm"  size="sm" icon={<Pause size={11} />} />
+                <KPICard label="Execuções"      value={stats.execucoesTotal} accent="ai"    size="sm" icon={<TrendingUp size={11} />} />
+            </motion.div>
 
-                {/* Search */}
-                <div className="rounded-2xl p-4" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
-                    <div className="relative">
-                        <Search style={{ color: 'var(--bo-text-muted)' }} className="absolute left-3 top-1/2 -translate-y-1/2" size={20} />
-                        <input type="text" placeholder="Buscar automações..."
-                            value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }} />
-                    </div>
-                </div>
+            {/* ── Search ─────────────────────────────────── */}
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.10 }}
+                className="relative"
+            >
+                <Search style={{ color: 'var(--bo-text-muted)' }} className="absolute left-3 top-1/2 -translate-y-1/2" size={16} />
+                <input
+                    type="text"
+                    placeholder="Buscar automações..."
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    className="w-full h-11 pl-10 pr-4 rounded-2xl"
+                    style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)', outline: 'none' }}
+                />
+            </motion.div>
 
-                {loading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-[var(--bo-accent)]" size={32} />
-                    </div>
-                ) : filtered.length === 0 ? (
+            {/* ── List ───────────────────────────────────── */}
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}>
+            {filtered.length === 0 ? (
                     <div className="rounded-2xl p-12 text-center" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
                         <Zap size={48} className="mx-auto mb-4" style={{ color: 'var(--bo-text-muted)', opacity: 0.3 }} />
                         <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--bo-text)' }}>Nenhuma automação encontrada</h3>
@@ -287,7 +310,7 @@ export default function AutomacoesPage() {
                                                 : <Play size={16} className="text-green-400" />}
                                         </button>
                                         <button onClick={() => handleDelete(wf.id, wf.name)}
-                                            className="touch-always-visible opacity-0 group-hover:opacity-100 p-2 hover:bg-red-500/10 rounded-lg transition">
+                                            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-2 hover:bg-red-500/10 rounded-lg transition">
                                             <X size={16} className="text-red-400" />
                                         </button>
                                     </div>
@@ -296,7 +319,7 @@ export default function AutomacoesPage() {
                         })}
                     </div>
                 )}
-            </div>
+            </motion.div>
 
             {/* Create Modal */}
             {showModal && (
@@ -344,8 +367,9 @@ export default function AutomacoesPage() {
                                 Cancelar
                             </button>
                             <button onClick={handleCreate} disabled={saving || !form.name}
-                                className="flex-1 h-11 text-white rounded-xl font-semibold transition disabled:opacity-40" style={{ background: "var(--bo-accent)" }}>
-                                {saving ? <Loader2 className="animate-spin mx-auto" size={20} /> : 'Criar Automação'}
+                                className="flex-1 h-11 text-white rounded-xl font-semibold transition disabled:opacity-40"
+                                style={{ background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)' }}>
+                                {saving ? 'Salvando...' : 'Criar Automação'}
                             </button>
                         </div>
                     </div>

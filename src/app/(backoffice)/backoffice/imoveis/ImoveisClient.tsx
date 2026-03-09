@@ -11,6 +11,16 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
+import dynamic from 'next/dynamic'
+
+const PropertyMap = dynamic(() => import('@/components/maps/PropertyMap'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: '480px', background: 'var(--bo-card)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ color: 'var(--bo-text-muted)', fontSize: 13 }}>Carregando mapa...</div>
+    </div>
+  ),
+})
 
 const T = {
     surface: 'var(--bo-surface)',
@@ -33,7 +43,7 @@ const STATUS_CONFIG = {
 }
 
 export default function ImoveisClient({ developments }: { developments: Development[] }) {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid')
   const [search, setSearch] = useState('')
   const [operacao, setOperacao] = useState('todos')
   const [tipo, setTipo] = useState('todos')
@@ -123,6 +133,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
             <div className="flex rounded-xl overflow-hidden shrink-0" style={{ border: `1px solid ${T.border}` }}>
               <button onClick={() => setViewMode('grid')}
                 className="w-10 h-10 flex items-center justify-center transition-colors"
+                title="Grade"
                 style={viewMode === 'grid'
                   ? { background: T.text, color: T.surface }
                   : { background: T.elevated, color: T.textMuted }
@@ -131,11 +142,21 @@ export default function ImoveisClient({ developments }: { developments: Developm
               </button>
               <button onClick={() => setViewMode('list')}
                 className="w-10 h-10 flex items-center justify-center transition-colors"
+                title="Lista"
                 style={viewMode === 'list'
                   ? { background: T.text, color: T.surface }
                   : { background: T.elevated, color: T.textMuted }
                 }>
                 <List size={16} />
+              </button>
+              <button onClick={() => setViewMode('map')}
+                className="w-10 h-10 flex items-center justify-center transition-colors"
+                title="Mapa"
+                style={viewMode === 'map'
+                  ? { background: 'var(--imi-blue)', color: 'white' }
+                  : { background: T.elevated, color: T.textMuted }
+                }>
+                <Map size={16} />
               </button>
             </div>
           </div>
@@ -178,6 +199,17 @@ export default function ImoveisClient({ developments }: { developments: Developm
       </div>
 
       <p className="text-xs font-medium" style={{ color: T.textMuted }}>{filtered.length} imóveis/empreendimentos encontrados</p>
+
+      {/* Map View */}
+      {viewMode === 'map' && (
+        <PropertyMap
+          developments={filtered}
+          height="480px"
+          lang="pt"
+          darkMode={true}
+          className="w-full"
+        />
+      )}
 
       {/* Grid View */}
       {viewMode === 'grid' && (
@@ -257,7 +289,7 @@ export default function ImoveisClient({ developments }: { developments: Developm
       )}
 
       {/* List View */}
-      {viewMode === 'list' && (
+      {viewMode === 'list' && filtered.length > 0 && (
         <div className="rounded-xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           {filtered.map((im, idx) => {
             const statusKey = im.status as keyof typeof STATUS_CONFIG;

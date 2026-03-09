@@ -6,7 +6,7 @@ import {
     ArrowLeft, Target, TrendingUp, TrendingDown, Users,
     DollarSign, Eye, Edit, Play, Pause, BarChart3,
     Instagram, Facebook, Globe, Mail, MessageSquare,
-    Loader2, ChevronRight, Link as LinkIcon,
+    Loader2, ChevronRight, Link as LinkIcon, Sparkles, Brain,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -56,12 +56,27 @@ export default function CampanhaDetalhesPage() {
     const [campanha, setCampanha] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState<'overview' | 'metricas'>('overview')
+    const [aiAnalysis, setAiAnalysis] = useState<any>(null)
+    const [aiLoading, setAiLoading] = useState(false)
 
     useEffect(() => {
         fetch(`/api/campanhas?id=${id}`)
             .then(r => r.json())
             .then(data => {
-                if (!data.error) setCampanha(data)
+                if (!data.error) {
+                    setCampanha(data)
+                    // Fire Claude analysis immediately after loading
+                    setAiLoading(true)
+                    fetch('/api/ai/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'campanha', data }),
+                    })
+                        .then(r => r.json())
+                        .then(res => { if (res.analysis) setAiAnalysis(res.analysis) })
+                        .catch(() => {})
+                        .finally(() => setAiLoading(false))
+                }
             })
             .catch(() => {})
             .finally(() => setLoading(false))
@@ -188,6 +203,55 @@ export default function CampanhaDetalhesPage() {
                     </div>
                 </div>
             )}
+
+            {/* AI Insight Card */}
+            <div className="rounded-2xl p-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border-gold)' }}>
+                <div className="flex items-center gap-2 mb-3">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(var(--imi-ai-gold-rgb),0.12)' }}>
+                        {aiLoading ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--imi-ai-gold)' }} /> : <Sparkles size={13} style={{ color: 'var(--imi-ai-gold)' }} />}
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--imi-ai-gold)' }}>
+                        {aiLoading ? 'Analisando com Claude AI...' : 'AI Campaign Intelligence'}
+                    </span>
+                </div>
+                {aiLoading ? (
+                    <p className="text-xs" style={{ color: T.textSub }}>Processando dados da campanha...</p>
+                ) : aiAnalysis ? (
+                    <>
+                        <p className="text-sm mb-3" style={{ color: T.text, lineHeight: 1.65 }}>{aiAnalysis.insight}</p>
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                            {aiAnalysis.status && (
+                                <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                    <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textSub }}>Performance</p>
+                                    <p className="text-sm font-bold" style={{
+                                        color: aiAnalysis.status === 'excelente' ? '#10B981' : aiAnalysis.status === 'bom' ? '#3B82F6' : aiAnalysis.status === 'regular' ? '#F59E0B' : '#EF4444'
+                                    }}>{aiAnalysis.status}</p>
+                                </div>
+                            )}
+                            {aiAnalysis.score != null && (
+                                <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                    <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textSub }}>Eficiência IA</p>
+                                    <p className="text-sm font-bold" style={{ color: T.gold }}>{aiAnalysis.score}/100</p>
+                                </div>
+                            )}
+                        </div>
+                        {aiAnalysis.nextAction && (
+                            <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--bo-border)' }}>
+                                <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: T.textSub }}>Próxima Ação</p>
+                                <p className="text-xs font-medium" style={{ color: T.text }}>{aiAnalysis.nextAction}</p>
+                            </div>
+                        )}
+                        {(aiAnalysis.cplAnalysis || aiAnalysis.budgetSuggestion) && (
+                            <div className="mt-2 space-y-1.5">
+                                {aiAnalysis.cplAnalysis && <p className="text-xs" style={{ color: T.textSub }}>💡 {aiAnalysis.cplAnalysis}</p>}
+                                {aiAnalysis.budgetSuggestion && <p className="text-xs" style={{ color: T.textSub }}>💰 {aiAnalysis.budgetSuggestion}</p>}
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <p className="text-xs" style={{ color: T.textSub }}>Análise IA não disponível para esta campanha.</p>
+                )}
+            </div>
 
             {/* UTM info if present */}
             {(campanha.utm_source || campanha.utm_campaign) && (
