@@ -97,7 +97,10 @@ export default function PixChargeModal({
         setTimeout(() => setCopied(false), 3000)
     }
 
-    const providerLabel = charge?.provider === 'asaas' ? 'Asaas' : 'Gerado localmente'
+    const providerLabel =
+        charge?.provider === 'abacatepay' ? 'AbacatePay'
+        : charge?.provider === 'asaas' ? 'Asaas'
+        : 'Gerado localmente'
 
     return (
         <div

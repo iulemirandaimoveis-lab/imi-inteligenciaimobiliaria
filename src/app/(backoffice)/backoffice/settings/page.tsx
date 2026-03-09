@@ -611,6 +611,40 @@ export default function SettingsPage() {
                 Configure no painel Vercel em <em>Settings → Environment Variables</em>. Sem <code style={{ fontFamily: 'monospace', background: 'var(--bo-surface)', padding: '1px 5px', borderRadius: '4px' }}>ASAAS_API_KEY</code>, o Pix gera QR localmente (EMV).
               </p>
             </div>
+
+            {/* AbacatePay Section */}
+            <div style={{
+              marginTop: '16px', padding: '20px', borderRadius: '16px',
+              background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                <span style={{ fontSize: '16px' }}>🥑</span>
+                <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)' }}>
+                  AbacatePay
+                </p>
+              </div>
+              <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', marginBottom: '14px' }}>
+                Gateway nacional — Pix QR Code + link de cobrança com Pix e Cartão. Prioridade sobre Asaas quando configurado.
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                {[
+                  { label: 'ABACATEPAY_TOKEN', hint: 'Bearer token do painel AbacatePay' },
+                ].map(({ label, hint }) => (
+                  <div key={label} style={{
+                    padding: '12px 14px', borderRadius: '10px',
+                    background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+                  }}>
+                    <code style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--bo-accent)' }}>{label}</code>
+                    <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)', marginTop: '2px' }}>{hint}</p>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginTop: '10px' }}>
+                Endpoints usados: <code style={{ fontFamily: 'monospace', background: 'var(--bo-surface)', padding: '1px 5px', borderRadius: '4px' }}>POST /v1/pixQrCode/create</code> (Pix direto) e{' '}
+                <code style={{ fontFamily: 'monospace', background: 'var(--bo-surface)', padding: '1px 5px', borderRadius: '4px' }}>POST /v1/billing/create</code> (link com Pix+Cartão via <code style={{ fontFamily: 'monospace', background: 'var(--bo-surface)', padding: '1px 5px', borderRadius: '4px' }}>/api/abacate-pay</code>).
+                Webhook: aponte <strong>billing.paid</strong> e <strong>pix.paid</strong> para <code style={{ fontFamily: 'monospace', background: 'var(--bo-surface)', padding: '1px 5px', borderRadius: '4px' }}>https://www.iulemirandaimoveis.com.br/api/pix/webhook</code>.
+              </p>
+            </div>
           </div>
         )}
       </div>

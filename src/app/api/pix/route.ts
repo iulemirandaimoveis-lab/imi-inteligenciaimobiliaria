@@ -57,6 +57,72 @@ function generateTxId(): string {
     return Array.from({ length: 25 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
 }
 
+// ─── AbacatePay API ──────────────────────────────────────────────────────────
+const ABACATE_BASE = 'https://api.abacatepay.com/v1'
+
+interface AbacatePixResponse {
+    data?: {
+        id: string
+        brCode: string
+        brCodeBase64: string // "data:image/png;base64,..."
+        status: string
+        expiresAt?: string
+        amount: number
+        devMode?: boolean
+    }
+    error?: string | null
+}
+
+async function abacateCreatePixCharge(
+    amount: number,
+    description?: string,
+    debtorName?: string
+): Promise<{ externalId: string; pixCopyPaste: string; qrCodeBase64: string; expiresAt: string | null; rawResponse: Record<string, unknown> }> {
+    const token = process.env.ABACATEPAY_TOKEN!
+    const expiresIn = 3600 // 1 hour
+
+    const body: Record<string, unknown> = {
+        amount: Math.round(amount * 100), // AbacatePay expects centavos
+        expiresIn,
+    }
+    if (description) body.description = description.slice(0, 140)
+    if (debtorName) {
+        // AbacatePay allows inline customer creation
+        body.customer = {
+            name: debtorName,
+            // cellphone/email/taxId optional without CPF validation
+        }
+    }
+
+    const res = await fetch(`${ABACATE_BASE}/pixQrCode/create`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify(body),
+    })
+
+    const json: AbacatePixResponse = await res.json()
+    if (json.error) throw new Error(`AbacatePay API: ${json.error}`)
+    if (!json.data?.id) throw new Error(`AbacatePay: resposta inválida — ${JSON.stringify(json)}`)
+
+    const d = json.data
+    // Strip data URI prefix if present ("data:image/png;base64,")
+    const qrCodeBase64 = d.brCodeBase64.includes(',')
+        ? d.brCodeBase64.split(',')[1]
+        : d.brCodeBase64
+
+    return {
+        externalId: d.id,
+        pixCopyPaste: d.brCode,
+        qrCodeBase64,
+        expiresAt: d.expiresAt ?? new Date(Date.now() + expiresIn * 1000).toISOString(),
+        rawResponse: json as Record<string, unknown>,
+    }
+}
+
 // ─── Asaas API ───────────────────────────────────────────────────────────────
 const ASAAS_BASE =
     process.env.ASAAS_SANDBOX === 'true'
@@ -129,7 +195,11 @@ export async function POST(req: Request) {
         }
 
         const txid = generateTxId()
-        const provider = process.env.ASAAS_API_KEY ? 'asaas' : 'local'
+        const provider = process.env.ABACATEPAY_TOKEN
+            ? 'abacatepay'
+            : process.env.ASAAS_API_KEY
+                ? 'asaas'
+                : 'local'
         const pixKey = process.env.PIX_KEY || 'contato@iulemiranda.com.br'
         const merchantName = process.env.PIX_MERCHANT_NAME || 'Iule Miranda'
         const merchantCity = process.env.PIX_MERCHANT_CITY || 'Recife'
@@ -141,7 +211,18 @@ export async function POST(req: Request) {
         let expiresAt: string | null = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
         let rawResponse: Record<string, unknown> = {}
 
-        if (provider === 'asaas') {
+        if (provider === 'abacatepay') {
+            const abacate = await abacateCreatePixCharge(
+                Number(amount),
+                description || 'Pagamento IMI',
+                debtorName
+            )
+            pixCopyPaste = abacate.pixCopyPaste
+            qrCodeBase64 = abacate.qrCodeBase64
+            externalId = abacate.externalId
+            expiresAt = abacate.expiresAt
+            rawResponse = abacate.rawResponse
+        } else if (provider === 'asaas') {
             const asaas = await asaasCreateCharge(
                 Number(amount),
                 description || 'Pagamento IMI',
