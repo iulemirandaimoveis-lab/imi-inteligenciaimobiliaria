@@ -367,7 +367,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                             onClick={handleAnalyze}
                             disabled={!propertyForm.address.trim()}
                             className="flex items-center gap-2 h-11 px-8 rounded-xl font-medium transition-all disabled:opacity-40"
-                            style={{ background: 'linear-gradient(135deg, #5B21B6, #8B5CF6)', color: 'white' }}
+                            style={{ background: 'var(--bo-accent)', color: 'white' }}
                         >
                             <Sparkles size={18} />
                             Analisar com IA

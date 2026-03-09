@@ -316,13 +316,12 @@ export async function DELETE(request: Request) {
 
         if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
 
-        // Soft delete: archive in both status columns
+        // Soft delete: set to private (constraint-safe)
         const { data, error } = await supabase
             .from('developments')
             .update({
-                status_comercial: 'archived',
-                status_commercial: 'archived',
-                status: 'arquivado',
+                status_comercial: 'privado',
+                status_commercial: 'private',
                 updated_at: new Date().toISOString(),
                 updated_by: user.id,
             })

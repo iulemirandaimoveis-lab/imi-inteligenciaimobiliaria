@@ -222,7 +222,7 @@ export default function NovoEbookPage() {
                         type="submit"
                         disabled={saving}
                         className="flex items-center gap-2 h-9 px-5 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-60"
-                        style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-600))' }}
+                        style={{ background: 'var(--accent-500)' }}
                     >
                         {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                         Salvar

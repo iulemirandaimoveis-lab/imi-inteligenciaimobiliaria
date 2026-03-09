@@ -134,7 +134,7 @@ function LeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
                     </div>
                     <div style={{
                         width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-                        background: 'linear-gradient(135deg, #486581, #334E68)',
+                        background: 'var(--bo-accent)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: 9, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em',
                     }}>
@@ -203,7 +203,7 @@ export default function PipelineKanbanPage() {
                         <Link href="/backoffice/leads/novo" style={{
                             display: 'flex', alignItems: 'center', gap: 6,
                             height: 38, padding: '0 16px', borderRadius: 12,
-                            background: 'linear-gradient(135deg, #486581, #334E68)',
+                            background: 'var(--bo-accent)',
                             color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none',
                         }}>
                             <Plus size={15} /> Novo Lead

@@ -226,7 +226,7 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                 }}
             >
                 <div className="w-6 h-6 rounded-full text-[10px] font-bold text-white flex items-center justify-center flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}>
+                    style={{ background: 'var(--accent-500)' }}>
                     IM
                 </div>
                 <span className="hidden sm:block text-xs font-medium" style={{ color: 'var(--bo-text)' }}>Iule</span>
@@ -255,7 +255,7 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
                             <div className="px-4 py-4" style={{ borderBottom: '1px solid var(--bo-border)' }}>
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 rounded-full text-sm font-bold text-white flex items-center justify-center"
-                                        style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}>
+                                        style={{ background: 'var(--accent-500)' }}>
                                         IM
                                     </div>
                                     <div>

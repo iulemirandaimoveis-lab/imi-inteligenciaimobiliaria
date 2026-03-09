@@ -1,12 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import EquipeClient from './EquipeClient'
 
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+// T object unused in server component (EquipeClient owns the UI)
+
 
 export default async function EquipePage() {
     const supabase = await createClient()

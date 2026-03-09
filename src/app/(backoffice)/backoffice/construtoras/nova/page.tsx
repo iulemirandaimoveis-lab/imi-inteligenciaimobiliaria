@@ -308,7 +308,7 @@ export default function NovaConstrutora() {
           </button>
           <button type="submit" disabled={loading}
             className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50 hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)', boxShadow: '0 0 18px rgba(59,130,246,0.30)' }}>
+            style={{ background: 'var(--bo-accent)' }}>
             {loading ? <><Loader2 size={15} className="animate-spin" /> Salvando...</> : <><Save size={15} /> Salvar Construtora</>}
           </button>
         </div>

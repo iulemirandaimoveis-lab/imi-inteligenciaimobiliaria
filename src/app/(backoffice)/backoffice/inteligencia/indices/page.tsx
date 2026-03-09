@@ -201,7 +201,7 @@ export default function IndicesBackofficePage() {
                                     </div>
                                     <div className="flex gap-3 justify-end">
                                         <button onClick={() => setEditingId(null)} className="h-8 px-4 rounded-lg text-sm" style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-icon-bg)' }}>Cancelar</button>
-                                        <button onClick={() => saveEdit(idx.id)} disabled={saving} className="flex items-center gap-2 h-8 px-4 rounded-lg text-sm font-semibold text-white disabled:opacity-60" style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-600))' }}>
+                                        <button onClick={() => saveEdit(idx.id)} disabled={saving} className="flex items-center gap-2 h-8 px-4 rounded-lg text-sm font-semibold text-white disabled:opacity-60" style={{ background: 'var(--accent-500)' }}>
                                             {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
                                             Salvar
                                         </button>

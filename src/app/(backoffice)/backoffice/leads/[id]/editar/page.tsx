@@ -693,7 +693,7 @@ export default function EditarLeadPage() {
                                 type="submit"
                                 disabled={isSubmitting}
                                 className="w-full h-11 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-600))' }}
+                                style={{ background: 'var(--accent-500)' }}
                             >
                                 {isSubmitting ? (
                                     <>

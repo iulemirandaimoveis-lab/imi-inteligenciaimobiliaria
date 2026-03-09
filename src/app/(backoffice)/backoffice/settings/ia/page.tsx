@@ -159,7 +159,7 @@ export default function IASettingsPage() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 18px rgba(99,102,241,0.4)', flexShrink: 0 }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: 'var(--bo-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Bot size={22} color="#fff" />
             </div>
             <div>
@@ -363,7 +363,7 @@ export default function IASettingsPage() {
           disabled={saving}
           style={{
             width: '100%', height: '52px', borderRadius: '16px', border: 'none', cursor: saving ? 'not-allowed' : 'pointer',
-            background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+            background: 'var(--bo-accent)',
             color: '#fff', fontSize: '15px', fontWeight: 800, letterSpacing: '0.02em',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
             boxShadow: '0 0 24px rgba(59,130,246,0.4)',

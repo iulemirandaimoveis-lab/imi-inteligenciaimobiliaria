@@ -107,8 +107,8 @@ const featuresOptions = [
 const T = {
   surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
   border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-  text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-  gold: 'var(--bo-accent)',
+  text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+  accent: 'var(--bo-accent)',
 }
 
 export default function EditarImovelPage() {
@@ -323,8 +323,7 @@ export default function EditarImovelPage() {
       const updatePayload: Record<string, any> = {
         id: params.id,
         name: formData.name,
-        tipo: formData.type,
-        property_type: formData.type,
+        type: formData.type,
         neighborhood: formData.location || null,
         address: formData.address || null,
         developer: formData.developer || null,
@@ -346,7 +345,6 @@ export default function EditarImovelPage() {
         delivery_date: formData.deliveryDate ? new Date(formData.deliveryDate).toISOString() : null,
         status: formData.status,
         status_commercial: formData.status_commercial,
-        status_comercial: formData.status_commercial,
         is_highlighted: formData.is_highlighted,
         gallery_images: allImages,
         image: allImages[0] || null,
@@ -395,7 +393,7 @@ export default function EditarImovelPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <Loader2 size={48} className="animate-spin mx-auto mb-4" style={{ color: T.gold }} />
+          <Loader2 size={48} className="animate-spin mx-auto mb-4" style={{ color: T.accent }} />
           <p style={{ color: T.textDim }}>Carregando dados do empreendimento...</p>
         </div>
       </div>
@@ -431,10 +429,10 @@ export default function EditarImovelPage() {
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
-                    style={{ background: isCompleted ? '#6BB87B' : isActive ? T.gold : T.elevated, color: isCompleted || isActive ? 'white' : T.textDim }}>
+                    style={{ background: isCompleted ? '#6BB87B' : isActive ? T.accent : T.elevated, color: isCompleted || isActive ? 'white' : T.textDim }}>
                     {isCompleted ? <Check size={24} /> : <StepIcon size={24} />}
                   </div>
-                  <p className="text-sm font-medium mt-2" style={{ color: isActive ? T.gold : isCompleted ? '#6BB87B' : T.textDim }}>{step.label}</p>
+                  <p className="text-sm font-medium mt-2" style={{ color: isActive ? T.accent : isCompleted ? '#6BB87B' : T.textDim }}>{step.label}</p>
                 </div>
                 {index < steps.length - 1 && (
                   <div className="h-1 flex-1 mx-4 rounded-full" style={{ background: currentStep > step.number ? '#6BB87B' : T.border }} />
@@ -444,7 +442,7 @@ export default function EditarImovelPage() {
           })}
         </div>
         <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-          <div className="h-full transition-all duration-300" style={{ width: `${progress}%`, background: T.gold }} />
+          <div className="h-full transition-all duration-300" style={{ width: `${progress}%`, background: T.accent }} />
         </div>
       </div>
 
@@ -456,13 +454,13 @@ export default function EditarImovelPage() {
             <h2 className="text-xl font-bold" style={{ color: T.text }}>Informações Básicas</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Nome do Empreendimento *</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Nome do Empreendimento *</label>
                 <input type="text" value={formData.name} onChange={e => handleChange('name', e.target.value)}
                   className={inputStyle} style={{ ...inputBg, borderColor: errors.name ? '#EF4444' : T.border }} />
                 {errors.name && <p className="mt-1 text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errors.name}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Tipo de Imóvel *</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Tipo de Imóvel *</label>
                 <select value={formData.type} onChange={e => handleChange('type', e.target.value)}
                   className={inputStyle} style={{ ...inputBg, borderColor: errors.type ? '#EF4444' : T.border }}>
                   <option value="">Selecione...</option>
@@ -471,13 +469,13 @@ export default function EditarImovelPage() {
                 {errors.type && <p className="mt-1 text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errors.type}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Status</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Status</label>
                 <select value={formData.status} onChange={e => handleChange('status', e.target.value)} className={inputStyle} style={inputBg}>
                   {statusOptions.map(s => <option key={s} value={s}>{s.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Visibilidade no Site</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Visibilidade no Site</label>
                 <select value={formData.status_commercial} onChange={e => handleChange('status_commercial', e.target.value)} className={inputStyle} style={inputBg}>
                   <option value="published">Publicado (visível)</option>
                   <option value="draft">Rascunho (oculto)</option>
@@ -487,23 +485,23 @@ export default function EditarImovelPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Bairro / Região</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Bairro / Região</label>
                 <input type="text" value={formData.location} onChange={e => handleChange('location', e.target.value)} placeholder="Boa Viagem, Brickell, Downtown..." className={inputStyle} style={inputBg} />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Construtora</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Construtora</label>
                 <input type="text" value={formData.developer} onChange={e => handleChange('developer', e.target.value)} className={inputStyle} style={inputBg} />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Endereço Completo</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Endereço Completo</label>
                 <input type="text" value={formData.address} onChange={e => handleChange('address', e.target.value)} className={inputStyle} style={inputBg} />
               </div>
               <div className="md:col-span-2">
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium" style={{ color: T.textSub }}>Descrição</label>
+                  <label className="block text-sm font-medium" style={{ color: T.textMuted }}>Descrição</label>
                   <button type="button" onClick={generateDescription} disabled={aiGenerating}
                     className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg text-[11px] font-semibold transition-all disabled:opacity-60"
-                    style={{ background: 'rgba(72,101,129,0.12)', color: T.gold, border: '1px solid rgba(72,101,129,0.3)' }}>
+                    style={{ background: 'rgba(72,101,129,0.12)', color: T.accent, border: '1px solid rgba(72,101,129,0.3)' }}>
                     {aiGenerating ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
                     {aiGenerating ? 'Gerando...' : 'Gerar com IA'}
                   </button>
@@ -535,7 +533,7 @@ export default function EditarImovelPage() {
                 { field: 'floor', label: 'Andar', icon: Maximize, type: 'text' },
               ].map(({ field, label, icon: Icon, type }) => (
                 <div key={field}>
-                  <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>{label}</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>{label}</label>
                   <div className="relative">
                     <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textDim }} />
                     <input type={type} value={(formData as any)[field]} onChange={e => handleChange(field as keyof FormData, e.target.value)}
@@ -545,14 +543,14 @@ export default function EditarImovelPage() {
               ))}
             </div>
             <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
-              <label className="block text-sm font-medium mb-4" style={{ color: T.textSub }}>Características do Condomínio</label>
+              <label className="block text-sm font-medium mb-4" style={{ color: T.textMuted }}>Características do Condomínio</label>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {featuresOptions.map(feature => (
                   <button key={feature} type="button" onClick={() => toggleFeature(feature)}
                     className="h-10 px-4 rounded-lg text-sm font-medium transition-all"
                     style={{
-                      background: formData.features.includes(feature) ? T.gold : T.elevated,
-                      color: formData.features.includes(feature) ? 'white' : T.textSub,
+                      background: formData.features.includes(feature) ? T.accent : T.elevated,
+                      color: formData.features.includes(feature) ? 'white' : T.textMuted,
                       border: `1px solid ${formData.features.includes(feature) ? T.borderGold : T.border}`,
                     }}>
                     {feature}
@@ -578,7 +576,7 @@ export default function EditarImovelPage() {
                 { field: 'availableUnits', label: 'Unidades Disponíveis', icon: null, type: 'number', errKey: '' },
               ].map(({ field, label, icon: Icon, type, errKey }) => (
                 <div key={field}>
-                  <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>{label}</label>
+                  <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>{label}</label>
                   <div className="relative">
                     {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textDim }} />}
                     <input type={type} value={(formData as any)[field]} onChange={e => handleChange(field as keyof FormData, e.target.value)}
@@ -603,7 +601,7 @@ export default function EditarImovelPage() {
             {formData.existingImages.length > 0 && (
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="block text-sm font-medium" style={{ color: T.textSub }}>Imagens Atuais ({formData.existingImages.length})</label>
+                  <label className="block text-sm font-medium" style={{ color: T.textMuted }}>Imagens Atuais ({formData.existingImages.length})</label>
                   <span className="text-[11px]" style={{ color: T.textDim }}>★ = imagem de capa</span>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -636,7 +634,7 @@ export default function EditarImovelPage() {
 
             {/* ── Upload New Photos ── */}
             <div>
-              <label className="block text-sm font-medium mb-3" style={{ color: T.textSub }}>Adicionar Novas Fotos</label>
+              <label className="block text-sm font-medium mb-3" style={{ color: T.textMuted }}>Adicionar Novas Fotos</label>
               <label className="block cursor-pointer">
                 <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
                 <div className="border-2 border-dashed rounded-2xl p-8 text-center transition-all hover:opacity-80" style={{ borderColor: T.border }}>
@@ -662,7 +660,7 @@ export default function EditarImovelPage() {
 
             {/* ── Video YouTube ── */}
             <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
-              <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Vídeo Principal (YouTube)</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Vídeo Principal (YouTube)</label>
               <div className="relative">
                 <Play className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textDim }} />
                 <input type="url" value={formData.videoUrl} onChange={e => handleChange('videoUrl', e.target.value)}
@@ -688,7 +686,7 @@ export default function EditarImovelPage() {
 
             {/* ── Short / Reels ── */}
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Short / Reels (YouTube Shorts)</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Short / Reels (YouTube Shorts)</label>
               <div className="relative">
                 <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2" size={18} style={{ color: T.textDim }} />
                 <input type="url" value={formData.videoShort} onChange={e => handleChange('videoShort', e.target.value)}
@@ -699,7 +697,7 @@ export default function EditarImovelPage() {
 
             {/* ── Floor Plans ── */}
             <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
-              <label className="block text-sm font-medium mb-3" style={{ color: T.textSub }}>Plantas do Imóvel</label>
+              <label className="block text-sm font-medium mb-3" style={{ color: T.textMuted }}>Plantas do Imóvel</label>
               {formData.existingFloorPlans.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                   {formData.existingFloorPlans.map((url, index) => (
@@ -742,12 +740,12 @@ export default function EditarImovelPage() {
 
             {/* ── Brochure PDF ── */}
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: T.textSub }}>Brochure / Material Digital</label>
+              <label className="block text-sm font-medium mb-2" style={{ color: T.textMuted }}>Brochure / Material Digital</label>
               {formData.existingBrochure && !formData.brochure && (
                 <div className="flex items-center gap-3 p-4 rounded-xl mb-3" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                  <FileText size={20} style={{ color: T.gold }} />
+                  <FileText size={20} style={{ color: T.accent }} />
                   <a href={formData.existingBrochure} target="_blank" rel="noopener noreferrer"
-                    className="text-sm font-medium underline flex-1 truncate" style={{ color: T.gold }}>
+                    className="text-sm font-medium underline flex-1 truncate" style={{ color: T.accent }}>
                     Brochure atual
                   </a>
                   <button type="button" onClick={() => handleChange('existingBrochure', '')}
@@ -761,7 +759,7 @@ export default function EditarImovelPage() {
                 <div className="border-2 border-dashed rounded-xl p-5 transition-all hover:opacity-80" style={{ borderColor: T.border }}>
                   {formData.brochure ? (
                     <div className="flex items-center gap-3">
-                      <FileText size={20} style={{ color: T.gold }} />
+                      <FileText size={20} style={{ color: T.accent }} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate" style={{ color: T.text }}>{formData.brochure.name}</p>
                         <p className="text-xs" style={{ color: T.textDim }}>{(formData.brochure.size / 1024 / 1024).toFixed(1)} MB</p>
@@ -799,7 +797,7 @@ export default function EditarImovelPage() {
         {currentStep < 4 ? (
           <button type="button" onClick={handleNext}
             className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium text-white transition-colors"
-            style={{ background: T.gold }}>
+            style={{ background: T.accent }}>
             Próximo <ArrowRight size={20} />
           </button>
         ) : (

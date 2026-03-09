@@ -79,7 +79,7 @@ export default function EbooksPage() {
                 <Link
                     href="/backoffice/inteligencia/ebooks/novo"
                     className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-semibold text-white transition-all"
-                    style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-600))' }}
+                    style={{ background: 'var(--accent-500)' }}
                 >
                     <Plus size={15} />
                     Novo Ebook

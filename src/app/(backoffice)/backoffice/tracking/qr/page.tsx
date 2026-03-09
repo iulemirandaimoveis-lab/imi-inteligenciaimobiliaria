@@ -446,7 +446,7 @@ export default function QRGeneratorPage() {
                 disabled={loading || !selectedDev}
                 style={{
                     width: '100%', height: 56, borderRadius: 18,
-                    background: loading ? 'rgba(59,130,246,0.5)' : 'linear-gradient(135deg, #3B82F6, #2563EB)',
+                    background: loading ? 'rgba(59,130,246,0.5)' : 'var(--bo-accent)',
                     color: '#fff', fontSize: 15, fontWeight: 700,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
                     border: 'none', cursor: loading ? 'not-allowed' : 'pointer',

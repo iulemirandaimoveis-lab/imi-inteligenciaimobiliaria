@@ -41,8 +41,7 @@ const T = {
 }
 
 const BTN_PRIMARY = {
-  background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
-  boxShadow: '0 0 18px rgba(59,130,246,0.30)',
+  background: 'var(--bo-accent)',
 } as const
 
 type Step = 1 | 2 | 3

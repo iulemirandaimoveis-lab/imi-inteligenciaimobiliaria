@@ -246,7 +246,7 @@ export default function AgendaPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{
               width: '44px', height: '44px', borderRadius: '14px', flexShrink: 0,
-              background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+              background: 'var(--bo-accent)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 0 18px rgba(59,130,246,0.35)',
             }}>
@@ -293,7 +293,7 @@ export default function AgendaPage() {
                 display: 'flex', alignItems: 'center', gap: '6px',
                 height: '44px', padding: '0 16px', borderRadius: '12px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
-                background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+                background: 'var(--bo-accent)',
                 border: 'none', cursor: 'pointer',
                 boxShadow: '0 0 18px rgba(59,130,246,0.35)',
               }}
@@ -683,7 +683,7 @@ export default function AgendaPage() {
                 <button
                   onClick={handleCreate}
                   disabled={saving || !form.title || !form.start_time}
-                  style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1 }}
+                  style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1 }}
                 >
                   {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={16} />}
                   {saving ? 'Salvando...' : 'Criar Evento'}

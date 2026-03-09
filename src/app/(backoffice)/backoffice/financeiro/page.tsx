@@ -192,9 +192,9 @@ export default function FinanceiroPage() {
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '38px', padding: '0 18px', borderRadius: '12px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
-                  background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+                  background: 'var(--bo-accent)',
                   border: 'none', cursor: 'pointer',
-                  boxShadow: '0 0 18px rgba(59,130,246,0.35)', flexShrink: 0,
+                  flexShrink: 0,
                 }}
               >
                 <Plus size={15} />
@@ -255,7 +255,7 @@ export default function FinanceiroPage() {
                 marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
                 height: '38px', padding: '0 18px', borderRadius: '12px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
-                background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+                background: 'var(--bo-accent)',
                 border: 'none', cursor: 'pointer',
               }}
             >
@@ -402,7 +402,7 @@ export default function FinanceiroPage() {
                 Cancelar
               </button>
               <button onClick={handleSubmit} disabled={saving}
-                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', color: '#fff', background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.7 : 1 }}>
+                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.7 : 1 }}>
                 {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={16} />}
                 {saving ? 'Salvando...' : 'Salvar'}
               </button>

@@ -134,7 +134,7 @@ export default function DashboardClient({
                     whileTap={{ scale: 0.96 }}
                     onClick={() => router.push('/backoffice/avaliacoes/nova')}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #3B82F6, #2563EB)' }}
+                    style={{ background: 'var(--bo-accent)' }}
                 >
                     <Plus size={15} />
                     <span className="hidden sm:inline">Nova Avaliação</span>

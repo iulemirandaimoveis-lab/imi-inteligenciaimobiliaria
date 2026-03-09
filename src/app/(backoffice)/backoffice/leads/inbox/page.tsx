@@ -375,7 +375,7 @@ export default function LeadsInboxPage() {
             <Link
                 href="/backoffice/leads/novo"
                 className="fixed bottom-24 right-5 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #486581 0%, #3B5A77 100%)', zIndex: 50 }}
+                style={{ background: 'var(--bo-accent)', zIndex: 50 }}
             >
                 <Plus size={22} color="white" />
             </Link>
