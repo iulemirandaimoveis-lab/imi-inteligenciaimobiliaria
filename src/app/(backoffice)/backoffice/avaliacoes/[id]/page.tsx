@@ -5,14 +5,15 @@ import { useParams, useRouter } from 'next/navigation'
 import {
     ArrowLeft, FileText, MapPin, Bed, Bath, Ruler, Car,
     DollarSign, Calendar, CheckCircle, Award, User, Phone, Mail,
-    Download, Edit, Loader2, AlertTriangle, Trash2, Home
+    Download, Edit, Loader2, AlertTriangle, Trash2, Home,
+    TrendingUp, BarChart2,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
 const T = {
     surface: 'var(--bo-surface)', surfaceAlt: 'var(--bo-surface-alt)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-dim)',
     accent: 'var(--bo-accent)',
 }
 
@@ -107,6 +108,21 @@ export default function AvaliacaoDetalhesPage() {
     const sc = STATUS_CFG[data.status] || STATUS_CFG.em_andamento
     const caracteristicas = Array.isArray(data.caracteristicas) ? data.caracteristicas : []
 
+    // Value range derived values for confidence bar
+    const rangeMin = Number(data.valor_minimo || 0)
+    const rangeMax = Number(data.valor_maximo || 0)
+    const rangeEst = Number(data.valor_estimado || 0)
+    const hasRange = rangeMin > 0 && rangeMax > 0 && rangeEst > 0 && rangeMax > rangeMin
+    const rangePct = hasRange
+        ? Math.max(5, Math.min(95, ((rangeEst - rangeMin) / (rangeMax - rangeMin)) * 100))
+        : 50
+    const rangeSpread = hasRange ? ((rangeMax - rangeMin) / rangeEst * 100) : 0
+    const rangeConf = rangeSpread < 10
+        ? { label: 'Alta Confiança', color: '#10B981', bg: 'rgba(16,185,129,0.12)' }
+        : rangeSpread < 20
+        ? { label: 'Média Confiança', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' }
+        : { label: 'Confiança Baixa', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' }
+
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             {/* Header */}
@@ -183,32 +199,52 @@ export default function AvaliacaoDetalhesPage() {
             {/* KPIs */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {data.valor_estimado && (
-                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Valor Avaliado</p>
-                        <p className="text-xl font-bold" style={{ color: '#10B981' }}>{formatPrice(Number(data.valor_estimado))}</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-start justify-between mb-3">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Valor Avaliado</p>
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.12)' }}>
+                                <TrendingUp size={14} style={{ color: '#10B981' }} />
+                            </div>
+                        </div>
+                        <p className="text-lg font-bold leading-tight" style={{ color: '#10B981' }}>{formatPrice(Number(data.valor_estimado))}</p>
                     </div>
                 )}
                 {data.valor_m2 && (
-                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Preço/m²</p>
-                        <p className="text-xl font-bold" style={{ color: 'var(--bo-accent)' }}>{formatPrice(Number(data.valor_m2))}</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-start justify-between mb-3">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Preço/m²</p>
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(139,92,246,0.12)' }}>
+                                <BarChart2 size={14} style={{ color: '#8B5CF6' }} />
+                            </div>
+                        </div>
+                        <p className="text-lg font-bold leading-tight" style={{ color: 'var(--bo-accent)' }}>{formatPrice(Number(data.valor_m2))}/m²</p>
                     </div>
                 )}
                 {data.area_privativa && (
-                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Área</p>
-                        <p className="text-xl font-bold" style={{ color: T.text }}>{data.area_privativa}m²</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-start justify-between mb-3">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Área Privativa</p>
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.08)' }}>
+                                <Ruler size={14} style={{ color: '#10B981' }} />
+                            </div>
+                        </div>
+                        <p className="text-lg font-bold leading-tight" style={{ color: T.text }}>{data.area_privativa} m²</p>
                     </div>
                 )}
                 {data.honorarios && (
-                    <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.textMuted }}>Honorários</p>
-                        <p className="text-xl font-bold" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
+                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-start justify-between mb-3">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Honorários</p>
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(245,158,11,0.12)' }}>
+                                <DollarSign size={14} style={{ color: '#F59E0B' }} />
+                            </div>
+                        </div>
+                        <p className="text-lg font-bold leading-tight" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
                         {data.honorarios_status && (
-                            <p className="text-[10px] font-bold mt-1" style={{
+                            <p className="text-[10px] font-bold mt-1.5" style={{
                                 color: data.honorarios_status === 'pago' ? '#6BB87B' : data.honorarios_status === 'parcial' ? 'var(--bo-accent)' : '#E8A87C'
                             }}>
-                                {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
+                                ● {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
                             </p>
                         )}
                     </div>
@@ -299,30 +335,107 @@ export default function AvaliacaoDetalhesPage() {
                             </div>
                         )}
 
-                        {/* Value Range */}
+                        {/* Value Range — Zillow-style confidence bar */}
                         {(data.valor_minimo || data.valor_maximo || data.valor_estimado) && (
                             <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                                <h2 className="text-lg font-bold mb-4" style={{ color: T.text }}>Intervalo de Valores</h2>
-                                <div className="space-y-2 text-sm">
-                                    {data.valor_minimo && (
-                                        <div className="flex justify-between">
-                                            <span style={{ color: T.textMuted }}>Mínimo</span>
-                                            <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_minimo))}</span>
-                                        </div>
-                                    )}
-                                    {data.valor_estimado && (
-                                        <div className="flex justify-between">
-                                            <span style={{ color: T.textMuted }}>Avaliado</span>
-                                            <span className="font-bold" style={{ color: T.accent }}>{formatPrice(Number(data.valor_estimado))}</span>
-                                        </div>
-                                    )}
-                                    {data.valor_maximo && (
-                                        <div className="flex justify-between">
-                                            <span style={{ color: T.textMuted }}>Máximo</span>
-                                            <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_maximo))}</span>
-                                        </div>
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-lg font-bold" style={{ color: T.text }}>Intervalo de Valores</h2>
+                                    {hasRange && (
+                                        <span className="text-xs font-bold px-3 py-1 rounded-full"
+                                            style={{ color: rangeConf.color, background: rangeConf.bg }}>
+                                            {rangeConf.label}
+                                        </span>
                                     )}
                                 </div>
+
+                                {hasRange ? (
+                                    <>
+                                        {/* Range bar with floating label */}
+                                        <div className="pt-14 relative mb-1">
+                                            {/* Floating estimated value label above marker */}
+                                            <div className="absolute top-0 text-center pointer-events-none"
+                                                style={{ left: `${rangePct}%`, transform: 'translateX(-50%)' }}>
+                                                <p className="text-sm font-bold whitespace-nowrap" style={{ color: '#10B981' }}>
+                                                    {formatPrice(rangeEst)}
+                                                </p>
+                                                <p className="text-[10px] mb-1" style={{ color: T.textDim }}>Avaliado</p>
+                                                <div className="mx-auto w-px h-3" style={{ background: 'rgba(16,185,129,0.45)' }} />
+                                            </div>
+
+                                            {/* Gradient bar */}
+                                            <div className="relative h-3 rounded-full"
+                                                style={{ background: 'rgba(99,102,241,0.12)' }}>
+                                                {/* Filled portion */}
+                                                <div className="absolute inset-y-0 left-0 rounded-full"
+                                                    style={{
+                                                        width: `${rangePct}%`,
+                                                        background: 'linear-gradient(to right, #3B82F6, #8B5CF6)',
+                                                    }} />
+                                                {/* Marker dot */}
+                                                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 w-5 h-5 rounded-full flex items-center justify-center"
+                                                    style={{
+                                                        left: `${rangePct}%`,
+                                                        background: 'white',
+                                                        border: '2.5px solid #10B981',
+                                                        boxShadow: '0 2px 8px rgba(16,185,129,0.4)',
+                                                    }}>
+                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#10B981' }} />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Min / Max labels */}
+                                        <div className="flex justify-between mt-3">
+                                            <div>
+                                                <p className="text-xs font-semibold" style={{ color: T.text }}>{formatPrice(rangeMin)}</p>
+                                                <p className="text-[10px]" style={{ color: T.textDim }}>Mínimo</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xs font-semibold" style={{ color: T.text }}>{formatPrice(rangeMax)}</p>
+                                                <p className="text-[10px]" style={{ color: T.textDim }}>Máximo</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Stats strip */}
+                                        <div className="grid grid-cols-2 gap-3 mt-5 pt-4"
+                                            style={{ borderTop: `1px solid ${T.border}` }}>
+                                            <div className="rounded-xl p-3 text-center"
+                                                style={{ background: 'rgba(99,102,241,0.06)' }}>
+                                                <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Spread</p>
+                                                <p className="text-sm font-bold" style={{ color: T.text }}>{rangeSpread.toFixed(1)}%</p>
+                                            </div>
+                                            <div className="rounded-xl p-3 text-center"
+                                                style={{ background: 'rgba(99,102,241,0.06)' }}>
+                                                <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Margem</p>
+                                                <p className="text-sm font-bold" style={{ color: T.text }}>
+                                                    ±{((rangeMax - rangeEst) / rangeEst * 100).toFixed(1)}%
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    /* Fallback: show available values as rows */
+                                    <div className="space-y-2 text-sm">
+                                        {data.valor_minimo && (
+                                            <div className="flex justify-between">
+                                                <span style={{ color: T.textMuted }}>Mínimo</span>
+                                                <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_minimo))}</span>
+                                            </div>
+                                        )}
+                                        {data.valor_estimado && (
+                                            <div className="flex justify-between">
+                                                <span style={{ color: T.textMuted }}>Avaliado</span>
+                                                <span className="font-bold" style={{ color: '#10B981' }}>{formatPrice(Number(data.valor_estimado))}</span>
+                                            </div>
+                                        )}
+                                        {data.valor_maximo && (
+                                            <div className="flex justify-between">
+                                                <span style={{ color: T.textMuted }}>Máximo</span>
+                                                <span className="font-medium" style={{ color: T.text }}>{formatPrice(Number(data.valor_maximo))}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
