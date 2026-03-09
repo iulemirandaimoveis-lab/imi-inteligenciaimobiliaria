@@ -8,9 +8,19 @@ import DevelopmentCard from './components/DevelopmentCard';
 import AdvancedFilter, { FilterState } from './components/AdvancedFilter';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import { MessageCircle, Search } from 'lucide-react';
+import { MessageCircle, Search, Grid3X3, Map } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import LeadCaptureModal from './components/LeadCaptureModal';
+import dynamic from 'next/dynamic';
+
+const PropertyMap = dynamic(() => import('@/components/maps/PropertyMap'), {
+    ssr: false,
+    loading: () => (
+        <div style={{ height: '560px', background: '#141420', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ color: '#9CA3AF', fontSize: 14 }}>Carregando mapa...</div>
+        </div>
+    ),
+});
 
 interface ImoveisClientProps {
     initialDevelopments: Development[];
@@ -32,6 +42,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [ctaTarget, setCtaTarget] = useState<'off-market' | 'general'>('general');
+    const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
 
     const handleCTAClick = (target: 'off-market' | 'general') => {
         setCtaTarget(target);
@@ -247,15 +258,54 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 {mainGridDevelopments.length} {mainGridDevelopments.length === 1 ? 'resultado' : 'resultados'} encontrados
                             </span>
                         </div>
+                        {/* View mode toggle */}
+                        <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                            <button
+                                onClick={() => setViewMode('grid')}
+                                className="flex items-center gap-2 h-8 px-3 rounded-lg text-xs font-semibold transition-all"
+                                style={viewMode === 'grid'
+                                    ? { background: '#102A43', color: 'white' }
+                                    : { color: '#6B7280' }
+                                }
+                            >
+                                <Grid3X3 size={13} />
+                                <span className="hidden sm:inline">Grade</span>
+                            </button>
+                            <button
+                                onClick={() => setViewMode('map')}
+                                className="flex items-center gap-2 h-8 px-3 rounded-lg text-xs font-semibold transition-all"
+                                style={viewMode === 'map'
+                                    ? { background: '#102A43', color: 'white' }
+                                    : { color: '#6B7280' }
+                                }
+                            >
+                                <Map size={13} />
+                                <span className="hidden sm:inline">Mapa</span>
+                            </button>
+                        </div>
                     </motion.div>
 
-                    {mainGridDevelopments.length > 0 ? (
+                    {/* MAP VIEW */}
+                    {viewMode === 'map' && (
+                        <div className="mb-10">
+                            <PropertyMap
+                                developments={filteredDevelopments}
+                                height="560px"
+                                lang={lang}
+                                darkMode={true}
+                                className="w-full"
+                            />
+                        </div>
+                    )}
+
+                    {/* GRID VIEW */}
+                    {viewMode === 'grid' && mainGridDevelopments.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
                             {mainGridDevelopments.map((dev, index) => (
                                 <DevelopmentCard key={dev.id} development={dev} index={index} lang={lang} />
                             ))}
                         </div>
-                    ) : (
+                    ) : viewMode === 'grid' && (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}

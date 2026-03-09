@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mapbox GL CSS */
+@import 'mapbox-gl/dist/mapbox-gl.css';
+
 /* ============================================================ */
 /*  IMI — DESIGN SYSTEM v3.0                                    */
 /*  Institutional Premium · Navy Accent · Bespoke Elegance      */
