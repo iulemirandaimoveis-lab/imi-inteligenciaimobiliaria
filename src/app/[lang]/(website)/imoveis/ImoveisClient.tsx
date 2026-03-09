@@ -198,11 +198,11 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         className="max-w-4xl"
                     >
                         <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
-                            <div className="w-8 h-px bg-[#102A43]" />
-                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Portfólio 2026</span>
+                            <div className="w-8 h-px" style={{ background: '#C8A65A' }} />
+                            <span className="font-bold uppercase tracking-[0.25em] text-[11px]" style={{ color: '#C8A65A' }}>Portfólio 2026</span>
                         </motion.div>
                         <motion.h1 variants={slideUp} className="text-[32px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                            Curadoria de <br /><span className="text-[#486581] italic">Empreendimentos</span>
+                            Curadoria de <br /><span className="italic" style={{ color: '#627D98' }}>Empreendimentos</span>
                         </motion.h1>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl font-light leading-relaxed max-w-2xl">
                             Seleção técnica dos melhores ativos imobiliários. Do luxo absoluto à alta rentabilidade em compactos, nos principais hubs de valorização.
@@ -253,8 +253,8 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         className="mb-10 flex items-center justify-between"
                     >
                         <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-[#102A43]" />
-                            <span className="text-[#9CA3AF] font-bold uppercase tracking-widest text-xs">
+                            <div className="w-2 h-2 rounded-full" style={{ background: '#C8A65A' }} />
+                            <span className="font-bold uppercase tracking-widest text-xs" style={{ color: '#9CA3AF' }}>
                                 {mainGridDevelopments.length} {mainGridDevelopments.length === 1 ? 'resultado' : 'resultados'} encontrados
                             </span>
                         </div>
@@ -264,7 +264,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 onClick={() => setViewMode('grid')}
                                 className="flex items-center gap-2 h-8 px-3 rounded-lg text-xs font-semibold transition-all"
                                 style={viewMode === 'grid'
-                                    ? { background: '#102A43', color: 'white' }
+                                    ? { background: 'rgba(200,166,90,0.2)', color: '#C8A65A', border: '1px solid rgba(200,166,90,0.3)' }
                                     : { color: '#6B7280' }
                                 }
                             >
@@ -275,7 +275,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 onClick={() => setViewMode('map')}
                                 className="flex items-center gap-2 h-8 px-3 rounded-lg text-xs font-semibold transition-all"
                                 style={viewMode === 'map'
-                                    ? { background: '#102A43', color: 'white' }
+                                    ? { background: 'rgba(200,166,90,0.2)', color: '#C8A65A', border: '1px solid rgba(200,166,90,0.3)' }
                                     : { color: '#6B7280' }
                                 }
                             >
