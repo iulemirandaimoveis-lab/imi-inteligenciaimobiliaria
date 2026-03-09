@@ -161,7 +161,7 @@ export async function POST() {
         const { error: upsertErr } = await supabase
           .from('campaigns')
           .upsert({
-            user_id: user.id,
+            created_by: user.id,
             name: mc.name,
             channel,
             status: dbStatus,
@@ -189,7 +189,7 @@ export async function POST() {
           const { error: fallbackErr } = await supabase
             .from('campaigns')
             .upsert({
-              user_id: user.id,
+              created_by: user.id,
               name: mc.name,
               channel,
               status: dbStatus,

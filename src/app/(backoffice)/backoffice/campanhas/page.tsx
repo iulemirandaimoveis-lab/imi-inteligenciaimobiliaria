@@ -76,15 +76,16 @@ function useCampanhas(filters: { search?: string; status?: string; type?: string
 }
 
 const CHANNEL_MAP: Record<string, { label: string; icon: React.ElementType; color: string }> = {
-  google_ads: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },
+  google: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },
   facebook: { label: 'Facebook', icon: Facebook, color: '#6366F1' },
   instagram: { label: 'Instagram', icon: Instagram, color: '#F472B6' },
   email: { label: 'Email', icon: Mail, color: '#22D3EE' },
   whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: '#4ADE80' },
-  sms: { label: 'SMS', icon: MessageSquare, color: '#FBBF24' },
+  site: { label: 'Site', icon: Globe, color: '#34D399' },
+  // Legacy keys for backward compat
+  google_ads: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },
   organic: { label: 'Orgânico', icon: TrendingUp, color: '#34D399' },
   referral: { label: 'Indicação', icon: Users, color: '#A78BFA' },
-  event: { label: 'Evento', icon: Target, color: '#FB923C' },
   other: { label: 'Outro', icon: BarChart3, color: '#8B949E' },
 }
 
@@ -247,10 +248,10 @@ export default function CampanhasPage() {
     { id: 'all', label: 'Todos os canais' },
     { id: 'instagram', label: 'Instagram' },
     { id: 'facebook', label: 'Facebook' },
-    { id: 'google_ads', label: 'Google Ads' },
+    { id: 'google', label: 'Google Ads' },
     { id: 'email', label: 'Email' },
     { id: 'whatsapp', label: 'WhatsApp' },
-    { id: 'organic', label: 'Orgânico' },
+    { id: 'site', label: 'Site' },
   ]
 
   return (
