@@ -7,7 +7,7 @@ import {
     ArrowLeft, FileText, MapPin, Bed, Bath, Ruler, Car,
     DollarSign, Calendar, CheckCircle, Award, User, Phone, Mail,
     Download, Edit, Loader2, AlertTriangle, Trash2, Home,
-    TrendingUp, BarChart2,
+    TrendingUp, BarChart2, Sparkles,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -38,6 +38,8 @@ export default function AvaliacaoDetalhesPage() {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [comps, setComps] = useState<{ count: number; avgM2: number; minM2: number; maxM2: number } | null>(null)
+    const [aiAnalysis, setAiAnalysis] = useState<any>(null)
+    const [aiLoading, setAiLoading] = useState(false)
 
     useEffect(() => {
         async function fetchAvaliacao() {
@@ -46,6 +48,17 @@ export default function AvaliacaoDetalhesPage() {
                 if (!res.ok) throw new Error('Falha ao carregar avaliação')
                 const result = await res.json()
                 setData(result)
+                // Fire Claude analysis
+                setAiLoading(true)
+                fetch('/api/ai/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'avaliacao', data: result }),
+                })
+                    .then(r => r.json())
+                    .then(res2 => { if (res2.analysis) setAiAnalysis(res2.analysis) })
+                    .catch(() => {})
+                    .finally(() => setAiLoading(false))
             } catch (err: any) {
                 setError(err.message)
             } finally {
@@ -604,6 +617,57 @@ export default function AvaliacaoDetalhesPage() {
                                     </div>
                                 )}
                             </div>
+                        </div>
+
+                        {/* AI Intelligence Card */}
+                        <div className="rounded-2xl p-5" style={{ background: T.surface, border: '1px solid var(--bo-border-gold)' }}>
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(200,166,90,0.15)' }}>
+                                    {aiLoading ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--imi-ai-gold)' }} /> : <Sparkles size={13} style={{ color: 'var(--imi-ai-gold)' }} />}
+                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--imi-ai-gold)' }}>
+                                    AI Valuation Intelligence
+                                </span>
+                            </div>
+                            {aiLoading ? (
+                                <p className="text-xs" style={{ color: T.textMuted }}>Analisando imóvel com Claude AI...</p>
+                            ) : aiAnalysis ? (
+                                <>
+                                    <p className="text-xs mb-3" style={{ color: T.text, lineHeight: 1.65 }}>{aiAnalysis.insight}</p>
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                        {aiAnalysis.investmentGrade && (
+                                            <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                                <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Grau Invest.</p>
+                                                <p className="text-lg font-bold" style={{
+                                                    color: aiAnalysis.investmentGrade === 'A' ? '#10B981' : aiAnalysis.investmentGrade === 'B' ? '#3B82F6' : aiAnalysis.investmentGrade === 'C' ? '#F59E0B' : '#EF4444'
+                                                }}>{aiAnalysis.investmentGrade}</p>
+                                            </div>
+                                        )}
+                                        {aiAnalysis.marketTrend && (
+                                            <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                                <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Tendência</p>
+                                                <p className="text-sm font-bold" style={{
+                                                    color: aiAnalysis.marketTrend === 'alta' ? '#10B981' : aiAnalysis.marketTrend === 'queda' ? '#EF4444' : '#F59E0B'
+                                                }}>{aiAnalysis.marketTrend}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    {aiAnalysis.priceAnalysis && (
+                                        <p className="text-[11px] mb-2" style={{ color: T.textMuted }}>💰 {aiAnalysis.priceAnalysis}</p>
+                                    )}
+                                    {aiAnalysis.recommendation && (
+                                        <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
+                                            <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Recomendação</p>
+                                            <p className="text-xs" style={{ color: T.text }}>{aiAnalysis.recommendation}</p>
+                                        </div>
+                                    )}
+                                    {aiAnalysis.keyFactor && (
+                                        <p className="text-[11px] mt-2" style={{ color: T.textMuted }}>🔑 {aiAnalysis.keyFactor}</p>
+                                    )}
+                                </>
+                            ) : (
+                                <p className="text-xs" style={{ color: T.textMuted }}>Análise IA não disponível.</p>
+                            )}
                         </div>
 
                         {/* Timeline */}
