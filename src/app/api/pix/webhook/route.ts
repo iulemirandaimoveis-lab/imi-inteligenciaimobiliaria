@@ -1,5 +1,23 @@
 import { NextResponse } from 'next/server'
+import { createHmac, timingSafeEqual } from 'crypto'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+
+// ─── AbacatePay HMAC-SHA256 signature validation ─────────────────────────────
+async function validateAbacateSignature(req: Request, rawBody: string): Promise<boolean> {
+    const secret = process.env.ABACATEPAY_WEBHOOK_SECRET
+    if (!secret) return true // skip validation if not configured (dev mode)
+
+    const signature = req.headers.get('x-webhook-signature')
+    if (!signature) return false
+
+    const expected = createHmac('sha256', secret).update(rawBody, 'utf8').digest('hex')
+
+    try {
+        return timingSafeEqual(Buffer.from(signature), Buffer.from(expected))
+    } catch {
+        return false
+    }
+}
 
 // ─── Asaas event → our status mapping ────────────────────────────────────────
 const ASAAS_STATUS_MAP: Record<string, string> = {
@@ -65,15 +83,24 @@ async function applyChargeUpdate(externalId: string, newStatus: string, rawBody:
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json()
+        // Read raw body once (needed for HMAC validation)
+        const rawBody = await req.text()
+        const body = JSON.parse(rawBody) as Record<string, unknown>
 
         // ── AbacatePay webhook ──────────────────────────────────────────────
-        // AbacatePay sends { event: "pix.paid", data: { id: "pix_char_..." } }
+        // Payload: { event: "pix.paid", data: { id: "pix_char_..." } }
         if (body.event && (body.event as string).includes('.')) {
+            // Validate HMAC-SHA256 signature
+            const valid = await validateAbacateSignature(req, rawBody)
+            if (!valid) {
+                console.warn('[pix/webhook] Invalid AbacatePay signature')
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+            }
+
             const newStatus = ABACATE_STATUS_MAP[body.event as string]
             if (!newStatus) return NextResponse.json({ ok: true })
 
-            const chargeId = body.data?.id as string | undefined
+            const chargeId = (body.data as Record<string, unknown>)?.id as string | undefined
             if (!chargeId) return NextResponse.json({ ok: true })
 
             await applyChargeUpdate(chargeId, newStatus, body)
@@ -87,12 +114,12 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const { event, payment } = body
+        const { event, payment } = body as { event?: string; payment?: { billingType?: string; id?: string } }
         if (!event || payment?.billingType !== 'PIX') {
             return NextResponse.json({ ok: true })
         }
 
-        const newStatus = ASAAS_STATUS_MAP[event as string]
+        const newStatus = ASAAS_STATUS_MAP[event]
         if (!newStatus) return NextResponse.json({ ok: true })
 
         await applyChargeUpdate(payment.id as string, newStatus, body)
