@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import {
     ArrowLeft, FileText, MapPin, Bed, Bath, Ruler, Car,
     DollarSign, Calendar, CheckCircle, Award, User, Phone, Mail,
@@ -11,7 +12,7 @@ import {
 import { toast } from 'sonner'
 
 const T = {
-    surface: 'var(--bo-surface)', surfaceAlt: 'var(--bo-surface-alt)',
+    surface: 'var(--bo-surface)', surfaceAlt: 'var(--bo-surface-alt)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-dim)',
     accent: 'var(--bo-accent)',
@@ -36,6 +37,7 @@ export default function AvaliacaoDetalhesPage() {
     const [activeTab, setActiveTab] = useState<'overview' | 'info'>('overview')
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [deleting, setDeleting] = useState(false)
+    const [comps, setComps] = useState<{ count: number; avgM2: number; minM2: number; maxM2: number } | null>(null)
 
     useEffect(() => {
         async function fetchAvaliacao() {
@@ -52,6 +54,35 @@ export default function AvaliacaoDetalhesPage() {
         }
         fetchAvaliacao()
     }, [params.id])
+
+    // Fetch neighborhood comps from developments table
+    useEffect(() => {
+        if (!data?.bairro) return
+        const supabase = createClient()
+        supabase
+            .from('developments')
+            .select('price_min, price_max, area_min_sqm, area_max_sqm')
+            .eq('bairro', data.bairro)
+            .eq('status_commercial', 'published')
+            .then(({ data: devs }) => {
+                if (!devs?.length) return
+                const prices = devs
+                    .map(d => {
+                        const price = (Number(d.price_min || 0) + Number(d.price_max || d.price_min || 0)) / 2
+                        const area = (Number(d.area_min_sqm || 0) + Number(d.area_max_sqm || d.area_min_sqm || 0)) / 2
+                        return area > 0 ? price / area : 0
+                    })
+                    .filter(p => p > 1000 && p < 100000) // sanity range
+                if (prices.length < 2) return
+                const avg = prices.reduce((s, p) => s + p, 0) / prices.length
+                setComps({
+                    count: prices.length,
+                    avgM2: Math.round(avg),
+                    minM2: Math.round(Math.min(...prices)),
+                    maxM2: Math.round(Math.max(...prices)),
+                })
+            })
+    }, [data?.bairro])
 
     const handleDelete = async () => {
         setDeleting(true)
@@ -436,6 +467,77 @@ export default function AvaliacaoDetalhesPage() {
                                         )}
                                     </div>
                                 )}
+                            </div>
+                        )}
+                        {/* Neighborhood price benchmark — Comparativo de Bairro */}
+                        {comps && data.valor_m2 && (
+                            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                <div className="flex items-center justify-between mb-5">
+                                    <h2 className="text-lg font-bold" style={{ color: T.text }}>Comparativo de Bairro</h2>
+                                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full"
+                                        style={{ background: 'rgba(72,101,129,0.12)', color: T.textMuted }}>
+                                        {comps.count} empreend. em {data.bairro}
+                                    </span>
+                                </div>
+
+                                {/* Price/m² comparison grid */}
+                                <div className="grid grid-cols-3 gap-3 mb-4">
+                                    <div className="rounded-xl p-3 text-center"
+                                        style={{ background: 'rgba(16,185,129,0.06)' }}>
+                                        <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Mín. Bairro</p>
+                                        <p className="text-sm font-bold" style={{ color: T.text }}>
+                                            R$ {comps.minM2.toLocaleString('pt-BR')}
+                                        </p>
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>/m²</p>
+                                    </div>
+                                    <div className="rounded-xl p-3 text-center"
+                                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                                        <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Média Bairro</p>
+                                        <p className="text-sm font-bold" style={{ color: T.accent }}>
+                                            R$ {comps.avgM2.toLocaleString('pt-BR')}
+                                        </p>
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>/m²</p>
+                                    </div>
+                                    <div className="rounded-xl p-3 text-center"
+                                        style={{ background: 'rgba(239,68,68,0.06)' }}>
+                                        <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textDim }}>Máx. Bairro</p>
+                                        <p className="text-sm font-bold" style={{ color: T.text }}>
+                                            R$ {comps.maxM2.toLocaleString('pt-BR')}
+                                        </p>
+                                        <p className="text-[10px]" style={{ color: T.textDim }}>/m²</p>
+                                    </div>
+                                </div>
+
+                                {/* Verdict: this property vs neighborhood avg */}
+                                {(() => {
+                                    const propM2 = Number(data.valor_m2)
+                                    const ratio = propM2 / comps.avgM2
+                                    const isPremium = ratio > 1.1
+                                    const isBelowMarket = ratio < 0.9
+                                    const verdictLabel = isPremium
+                                        ? `${((ratio - 1) * 100).toFixed(0)}% acima da média`
+                                        : isBelowMarket
+                                        ? `${((1 - ratio) * 100).toFixed(0)}% abaixo da média`
+                                        : 'Na média do bairro'
+                                    const verdictColor = isPremium ? '#F59E0B' : isBelowMarket ? '#10B981' : '#3B82F6'
+                                    return (
+                                        <div className="flex items-center gap-3 p-3 rounded-xl"
+                                            style={{ background: `${verdictColor}12`, border: `1px solid ${verdictColor}30` }}>
+                                            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                style={{ background: `${verdictColor}20` }}>
+                                                <MapPin size={15} style={{ color: verdictColor }} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs font-bold" style={{ color: verdictColor }}>
+                                                    {verdictLabel}
+                                                </p>
+                                                <p className="text-[10px] mt-0.5" style={{ color: T.textDim }}>
+                                                    Este imóvel: R$ {propM2.toLocaleString('pt-BR')}/m² · Média {data.bairro}: R$ {comps.avgM2.toLocaleString('pt-BR')}/m²
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )
+                                })()}
                             </div>
                         )}
                     </div>
