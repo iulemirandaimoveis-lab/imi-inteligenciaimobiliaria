@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, useInView, useMotionValue, useSpring } from 'framer-motion'
 import {
@@ -64,6 +64,15 @@ interface Props {
     alertas: Alerta[]
 }
 
+type Period = '1M' | '3M' | '6M' | '1A'
+
+const PERIOD_OPTS: { label: string; value: Period; months: number }[] = [
+    { label: '1M', value: '1M', months: 1 },
+    { label: '3M', value: '3M', months: 3 },
+    { label: '6M', value: '6M', months: 6 },
+    { label: '1A', value: '1A', months: 12 },
+]
+
 const fmt = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
@@ -72,6 +81,11 @@ export default function DashboardClient({
     imoveisCount, chartData, canalPerformance, alertas,
 }: Props) {
     const router = useRouter()
+    const [period, setPeriod] = useState<Period>('6M')
+
+    // Slice chart data based on selected period
+    const periodMonths = PERIOD_OPTS.find(p => p.value === period)?.months ?? 6
+    const filteredChartData = chartData.slice(-periodMonths)
 
     const now = new Date()
     const dayNames   = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado']
@@ -236,28 +250,45 @@ export default function DashboardClient({
                     transition={{ delay: 0.22, duration: 0.4 }}
                     className="md:col-span-2 lg:col-span-2 intel-card"
                 >
-                    <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-start justify-between gap-3 mb-4">
                         <div>
                             <SectionHeader title="Performance" />
-                            <p className="text-[10px] mt-0.5" style={{ color: 'var(--bo-text-muted)' }}>últimos 6 meses</p>
+                            <div className="flex items-center gap-3 text-[11px] mt-1">
+                                <span className="flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full inline-block"
+                                        style={{ background: '#3B82F6' }} />
+                                    <span style={{ color: 'var(--bo-text-muted)' }}>Leads</span>
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full inline-block"
+                                        style={{ background: '#22C55E' }} />
+                                    <span style={{ color: 'var(--bo-text-muted)' }}>Receita</span>
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-3 text-[11px]">
-                            <span className="flex items-center gap-1.5">
-                                <span className="w-2.5 h-2.5 rounded-full inline-block"
-                                    style={{ background: '#3B82F6' }} />
-                                <span style={{ color: 'var(--bo-text-muted)' }}>Leads</span>
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                                <span className="w-2.5 h-2.5 rounded-full inline-block"
-                                    style={{ background: 'var(--s-done)' }} />
-                                <span style={{ color: 'var(--bo-text-muted)' }}>Receita</span>
-                            </span>
+                        {/* Period tabs */}
+                        <div className="flex items-center gap-0.5 flex-shrink-0 p-0.5 rounded-xl"
+                            style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
+                            {PERIOD_OPTS.map(opt => (
+                                <button
+                                    key={opt.value}
+                                    onClick={() => setPeriod(opt.value)}
+                                    className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
+                                    style={{
+                                        background: period === opt.value ? 'var(--bo-elevated)' : 'transparent',
+                                        color: period === opt.value ? 'var(--bo-text)' : 'var(--bo-text-muted)',
+                                        boxShadow: period === opt.value ? '0 1px 3px rgba(0,0,0,0.2)' : 'none',
+                                    }}
+                                >
+                                    {opt.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
                     <div style={{ height: 150 }}>
-                        {chartData.length > 0 ? (
+                        {filteredChartData.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+                                <AreaChart data={filteredChartData} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                                     <defs>
                                         <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%"  stopColor="#3B82F6" stopOpacity={0.22} />
@@ -296,7 +327,7 @@ export default function DashboardClient({
                         ) : (
                             <div className="h-full flex items-center justify-center">
                                 <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
-                                    Sem dados suficientes
+                                    Sem dados para o período
                                 </p>
                             </div>
                         )}

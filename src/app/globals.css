@@ -75,6 +75,7 @@
   --bo-text: #111827;
   --bo-text-muted: #6b7280;
   --bo-text-tertiary: #9ca3af;
+  --bo-text-dim: #9ca3af;
   --bo-text-accent: #334E68;
   --bo-text-accent-dim: #486581;
   --bo-hover: rgba(0, 0, 0, 0.04);
@@ -111,6 +112,7 @@
   --bo-text: #E8EDF2;
   --bo-text-muted: #8B949E;
   --bo-text-tertiary: #475569;
+  --bo-text-dim: #5b6879;
   --bo-text-accent: #60A5FA;
   --bo-text-accent-dim: #2563EB;
   --bo-hover: rgba(255, 255, 255, 0.045);
