@@ -3,18 +3,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Calendar, Clock, MapPin, Plus, X, Loader2,
+  Calendar, Clock, MapPin, Plus, X,
   ChevronLeft, ChevronRight, Video, Navigation,
   Home, FileText, Users, Bot, Check, Zap, Phone,
 } from 'lucide-react'
 import { toast } from 'sonner'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 interface CalendarEvent {
   id: string
@@ -41,6 +36,31 @@ const EVENT_TYPES: Record<string, { label: string; color: string; bg: string; ic
 }
 
 const DIAS_SEMANA_CURTO = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
+
+// ── Loading skeleton ─────────────────────────────────────────────────
+function AgendaSkeleton() {
+  return (
+    <div className="space-y-5">
+      {/* Week strip skeleton */}
+      <div style={{ height: 120, background: 'var(--bo-card)', borderRadius: 18, opacity: 0.5 }} />
+      {/* Day events skeleton */}
+      <div style={{ borderRadius: 18, overflow: 'hidden', background: 'var(--bo-card)', opacity: 0.45 }}>
+        <div style={{ height: 52, borderBottom: '1px solid var(--bo-border)' }} />
+        {[0, 1, 2].map(i => (
+          <div key={i} className="flex items-center gap-4 px-5 py-4" style={{ borderBottom: i < 2 ? '1px solid var(--bo-border)' : 'none' }}>
+            <div style={{ width: 46, height: 40, borderRadius: 10, background: 'var(--bo-elevated)', opacity: 0.6 }} />
+            <div style={{ width: 3, height: 40, borderRadius: 2, background: 'var(--bo-border)' }} />
+            <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--bo-elevated)', opacity: 0.5 }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ height: 14, width: '60%', background: 'var(--bo-elevated)', borderRadius: 6, marginBottom: 6, opacity: 0.7 }} />
+              <div style={{ height: 11, width: '35%', background: 'var(--bo-elevated)', borderRadius: 4, opacity: 0.4 }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 // Smart suggestions computed dynamically from real leads — see useEffect below
 
@@ -236,73 +256,61 @@ export default function AgendaPage() {
         weekday: 'long', day: 'numeric', month: 'long',
       })
 
+  if (loading) return <AgendaSkeleton />
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="space-y-5">
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-          {/* Title */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '44px', height: '44px', borderRadius: '14px', flexShrink: 0,
-              background: 'var(--bo-accent)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 18px rgba(59,130,246,0.35)',
-            }}>
-              <Calendar size={22} color="#fff" />
-            </div>
-            <div>
-              <h1 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.2 }}>
-                Agenda
-              </h1>
-              <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', marginTop: '2px', textTransform: 'capitalize' }}>
-                {monthLabel}
-              </p>
-            </div>
-          </div>
+        <PageIntelHeader
+          moduleLabel="AGENDA"
+          title="Agenda"
+          subtitle={monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1)}
+          actions={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {/* Day / Week toggle */}
+              <div style={{
+                display: 'flex', background: 'var(--bo-elevated)',
+                border: '1px solid var(--bo-border)', borderRadius: '12px', padding: '3px',
+              }}>
+                {(['day', 'week'] as const).map(mode => (
+                  <button
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    style={{
+                      height: '30px', padding: '0 12px', borderRadius: '9px',
+                      fontSize: '12px', fontWeight: 700, cursor: 'pointer', border: 'none',
+                      transition: 'all 0.2s',
+                      background: viewMode === mode ? 'var(--imi-blue)' : 'transparent',
+                      color: viewMode === mode ? '#fff' : 'var(--bo-text-muted)',
+                    }}
+                  >
+                    {mode === 'day' ? 'Dia' : 'Semana'}
+                  </button>
+                ))}
+              </div>
 
-          {/* Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Day / Week toggle */}
-            <div style={{
-              display: 'flex', background: 'var(--bo-elevated)',
-              border: '1px solid var(--bo-border)', borderRadius: '12px', padding: '3px',
-            }}>
-              {(['day', 'week'] as const).map(mode => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  style={{
-                    height: '32px', padding: '0 14px', borderRadius: '9px',
-                    fontSize: '12px', fontWeight: 700, cursor: 'pointer', border: 'none',
-                    transition: 'all 0.2s',
-                    background: viewMode === mode ? '#3B82F6' : 'transparent',
-                    color: viewMode === mode ? '#fff' : 'var(--bo-text-muted)',
-                  }}
-                >
-                  {mode === 'day' ? 'Dia' : 'Semana'}
-                </button>
-              ))}
+              {/* New event */}
+              <button
+                onClick={() => setShowModal(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  height: '36px', padding: '0 14px', borderRadius: '10px',
+                  fontSize: '12px', fontWeight: 700, color: '#fff',
+                  background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
+                  border: 'none', cursor: 'pointer',
+                  boxShadow: '0 0 14px rgba(59,130,246,0.3)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Plus size={14} />
+                <span className="hidden sm:inline">Novo Evento</span>
+                <span className="sm:hidden">Novo</span>
+              </button>
             </div>
-
-            {/* New event */}
-            <button
-              onClick={() => setShowModal(true)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '6px',
-                height: '44px', padding: '0 16px', borderRadius: '12px',
-                fontSize: '13px', fontWeight: 700, color: '#fff',
-                background: 'var(--bo-accent)',
-                border: 'none', cursor: 'pointer',
-                boxShadow: '0 0 18px rgba(59,130,246,0.35)',
-              }}
-            >
-              <Plus size={15} />
-              Novo Evento
-            </button>
-          </div>
-        </div>
+          }
+        />
       </motion.div>
 
       {/* ── Week Strip ──────────────────────────────────────────────────── */}
@@ -370,13 +378,7 @@ export default function AgendaPage() {
         </div>
       </motion.div>
 
-      {/* ── Loading ──────────────────────────────────────────────────────── */}
-      {loading ? (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
-          <Loader2 size={28} color="#3B82F6" style={{ animation: 'spin 1s linear infinite' }} />
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* ── Day Events + Suggestions + Week Overview ────────────────────── */}
 
           {/* ── Day Events ────────────────────────────────────────────────── */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
@@ -609,10 +611,8 @@ export default function AgendaPage() {
               </div>
             </motion.div>
           )}
-        </div>
-      )}
 
-      {/* ── Create Event Modal ───────────────────────────────────────────── */}
+      {/* ── Create Event Modal ──────────────────────────────────────────────── */}
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -685,7 +685,7 @@ export default function AgendaPage() {
                   disabled={saving || !form.title || !form.start_time}
                   style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1 }}
                 >
-                  {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={16} />}
+                  <Plus size={16} />
                   {saving ? 'Salvando...' : 'Criar Evento'}
                 </button>
               </div>
