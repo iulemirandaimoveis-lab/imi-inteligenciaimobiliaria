@@ -14,15 +14,10 @@ import {
 } from 'recharts'
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
+import { PageIntelHeader, FilterTabs } from '../../components/ui'
+import { T } from '../../lib/theme'
 
 const supabase = createClient()
-
-const T = {
-    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
 
 const FUNNEL_STAGES = [
     { key: 'new', label: 'Novos', color: 'var(--bo-accent)' },
@@ -166,13 +161,12 @@ export default function RelatoriosPage() {
     }
 
     return (
-        <div className="space-y-5 max-w-5xl mx-auto">
-
-            {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-                <h1 className="text-xl font-bold" style={{ color: T.text }}>Relatórios & Analytics</h1>
-                <p className="text-sm mt-0.5" style={{ color: T.textDim }}>Dados reais • Atualizado em tempo real</p>
-            </motion.div>
+        <div className="space-y-5">
+            <PageIntelHeader
+                moduleLabel="RELATÓRIOS"
+                title="Relatórios & Analytics"
+                subtitle="Dados reais · Atualizado em tempo real"
+            />
 
             {/* Tabs */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}
@@ -283,19 +277,15 @@ export default function RelatoriosPage() {
             {tab === 'relatorios' && (
                 <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
                     {/* Category filter */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
-                        {CATEGORIAS.map(cat => (
-                            <button key={cat} onClick={() => setCatAtiva(cat)}
-                                className="px-3.5 h-9 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
-                                style={{
-                                    background: catAtiva === cat ? 'var(--bo-accent)' : T.surface,
-                                    color: catAtiva === cat ? 'white' : T.textDim,
-                                    border: `1px solid ${catAtiva === cat ? T.borderGold : T.border}`,
-                                }}>
-                                {cat}
-                            </button>
-                        ))}
-                    </div>
+                    <FilterTabs
+                        tabs={CATEGORIAS.map(cat => ({
+                            id: cat,
+                            label: cat,
+                            count: cat === 'Todos' ? RELATORIOS.length : RELATORIOS.filter(r => r.categoria === CAT_KEYS[cat]).length,
+                        }))}
+                        active={catAtiva}
+                        onChange={setCatAtiva}
+                    />
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {filtrados.map((r, i) => {
@@ -312,7 +302,7 @@ export default function RelatoriosPage() {
                                     <div className="flex items-start gap-4">
                                         <div className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
                                             style={{ background: cat?.bg || 'var(--bo-active-bg)' }}>
-                                            <r.icon size={20} style={{ color: cat?.text || T.gold }} />
+                                            <r.icon size={20} style={{ color: cat?.text || T.accent }} />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-1">
