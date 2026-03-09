@@ -548,6 +548,38 @@ export default function SettingsPage() {
               </p>
             </div>
 
+            {/* Meta Ads Section */}
+            <div style={{
+              marginTop: '16px', padding: '20px', borderRadius: '16px',
+              background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+            }}>
+              <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '3px' }}>
+                📣 Meta Ads — Facebook & Instagram
+              </p>
+              <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', marginBottom: '14px' }}>
+                Sincronize campanhas reais do Meta Business com o painel de campanhas
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                {[
+                  { label: 'META_ACCESS_TOKEN', hint: 'Token de acesso do sistema Meta Business (nunca expira)' },
+                  { label: 'META_AD_ACCOUNT_ID', hint: 'ID da conta de anúncios — formato: act_XXXXXXXXX' },
+                ].map(item => (
+                  <div key={item.label} style={{
+                    padding: '10px 12px', borderRadius: '10px',
+                    background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+                  }}>
+                    <p style={{ fontSize: '10px', fontWeight: 700, fontFamily: 'monospace', color: 'var(--bo-accent)', marginBottom: '2px' }}>{item.label}</p>
+                    <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{item.hint}</p>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginTop: '10px', lineHeight: '1.6' }}>
+                Configure em <em>Vercel → Settings → Environment Variables</em>. Após configurar, o botão{' '}
+                <strong style={{ color: 'var(--bo-text)' }}>Sincronizar Meta</strong> aparece na página de Campanhas
+                e importa dados reais de impressões, cliques, leads e gastos via Graph API v20.0.
+              </p>
+            </div>
+
             {/* Pix / Fintech Section */}
             <div style={{
               marginTop: '16px', padding: '20px', borderRadius: '16px',

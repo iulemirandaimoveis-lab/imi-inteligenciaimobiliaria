@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Search, Plus, TrendingUp, DollarSign, Users,
   MousePointer, Target, BarChart3,
   Instagram, Facebook, Globe, Mail, MessageSquare, Zap,
+  RefreshCw, CheckCircle2, AlertCircle, Wifi,
 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -47,6 +48,14 @@ export interface Campaign {
   utm_source: string | null
   utm_campaign: string | null
   created_at: string
+}
+
+function useMetaStatus() {
+  return useSWR('meta-ads-status', async () => {
+    const res = await fetch('/api/meta-ads')
+    const data = await res.json()
+    return data as { connected: boolean; count?: number; error?: string }
+  }, { revalidateOnFocus: false })
 }
 
 function useCampanhas(filters: { search?: string; status?: string; type?: string }) {
@@ -176,8 +185,28 @@ export default function CampanhasPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
+  const [syncing, setSyncing] = useState(false)
+  const [syncResult, setSyncResult] = useState<{ success?: boolean; synced?: number; error?: string } | null>(null)
 
-  const { data: campanhas, isLoading } = useCampanhas({ search, status: statusFilter, type: typeFilter })
+  const { data: metaStatus } = useMetaStatus()
+  const { data: campanhas, isLoading, mutate: refetch } = useCampanhas({ search, status: statusFilter, type: typeFilter })
+
+  const syncMeta = useCallback(async () => {
+    setSyncing(true)
+    setSyncResult(null)
+    try {
+      const res = await fetch('/api/meta-ads', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro na sincronização')
+      setSyncResult({ success: true, synced: data.synced })
+      refetch()
+    } catch (err) {
+      setSyncResult({ success: false, error: err instanceof Error ? err.message : 'Erro' })
+    } finally {
+      setSyncing(false)
+      setTimeout(() => setSyncResult(null), 5000)
+    }
+  }, [refetch])
 
   const totalBudget = campanhas?.reduce((s, c) => s + (c.budget || 0), 0) ?? 0
   const totalSpent = campanhas?.reduce((s, c) => s + (c.spent || 0), 0) ?? 0
@@ -234,23 +263,89 @@ export default function CampanhasPage() {
           subtitle="Performance e gestão de campanhas de marketing"
           live
           actions={
-            <button
-              onClick={() => router.push('/backoffice/campanhas/nova')}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '6px',
-                height: '38px', padding: '0 18px', borderRadius: '12px',
-                fontSize: '13px', fontWeight: 700, color: '#fff',
-                background: 'var(--bo-accent)',
-                border: 'none', cursor: 'pointer',
-                flexShrink: 0,
-              }}
-            >
-              <Plus size={15} />
-              Nova Campanha
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+              {/* Meta connection badge */}
+              {metaStatus && (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '5px',
+                  fontSize: '10px', fontWeight: 700, padding: '4px 10px',
+                  borderRadius: '8px',
+                  background: metaStatus.connected ? 'rgba(0,178,127,0.1)' : 'rgba(148,163,184,0.08)',
+                  color: metaStatus.connected ? 'var(--s-done)' : 'var(--bo-text-muted)',
+                  border: `1px solid ${metaStatus.connected ? 'rgba(0,178,127,0.25)' : 'var(--bo-border)'}`,
+                }}>
+                  <Wifi size={10} />
+                  {metaStatus.connected ? `Meta · ${metaStatus.count ?? 0} camps.` : 'Meta desconectado'}
+                </span>
+              )}
+              {/* Sync Meta button — only if connected */}
+              {metaStatus?.connected && (
+                <button
+                  onClick={syncMeta}
+                  disabled={syncing}
+                  title="Sincronizar campanhas do Meta Ads"
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '5px',
+                    height: '38px', padding: '0 14px', borderRadius: '12px',
+                    fontSize: '12px', fontWeight: 700,
+                    color: syncing ? 'var(--bo-text-muted)' : 'var(--bo-text)',
+                    background: 'var(--bo-elevated)',
+                    border: '1px solid var(--bo-border)',
+                    cursor: syncing ? 'not-allowed' : 'pointer',
+                    opacity: syncing ? 0.75 : 1,
+                    flexShrink: 0,
+                  }}
+                >
+                  <RefreshCw size={13} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
+                  <span className="hidden sm:inline">{syncing ? 'Sincronizando…' : 'Sincronizar Meta'}</span>
+                </button>
+              )}
+              <button
+                onClick={() => router.push('/backoffice/campanhas/nova')}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  height: '38px', padding: '0 18px', borderRadius: '12px',
+                  fontSize: '13px', fontWeight: 700, color: '#fff',
+                  background: 'var(--bo-accent)',
+                  border: 'none', cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                <Plus size={15} />
+                <span className="hidden sm:inline">Nova Campanha</span>
+              </button>
+            </div>
           }
         />
       </motion.div>
+
+      {/* Sync result toast */}
+      <AnimatePresence>
+        {syncResult && (
+          <motion.div
+            key="sync-toast"
+            initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              padding: '10px 16px', borderRadius: '12px',
+              background: syncResult.success ? 'rgba(0,178,127,0.1)' : 'rgba(248,113,113,0.1)',
+              border: `1px solid ${syncResult.success ? 'rgba(0,178,127,0.25)' : 'rgba(248,113,113,0.25)'}`,
+            }}
+          >
+            {syncResult.success
+              ? <CheckCircle2 size={15} style={{ color: 'var(--s-done)', flexShrink: 0 }} />
+              : <AlertCircle size={15} style={{ color: 'var(--s-hot)', flexShrink: 0 }} />
+            }
+            <p style={{ fontSize: '12px', fontWeight: 600, color: syncResult.success ? 'var(--s-done)' : 'var(--s-hot)' }}>
+              {syncResult.success
+                ? `✓ ${syncResult.synced} campanha(s) sincronizada(s) do Meta Ads`
+                : `Erro: ${syncResult.error}`
+              }
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
       <motion.div
         initial={{ opacity: 0, y: 8 }}
