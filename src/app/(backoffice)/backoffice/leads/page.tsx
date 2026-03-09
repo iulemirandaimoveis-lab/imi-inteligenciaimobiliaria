@@ -171,7 +171,7 @@ export default function LeadsPage() {
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '36px', padding: '0 14px', borderRadius: '10px',
                   fontSize: '12px', fontWeight: 700, color: '#fff',
-                  background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
+                  background: 'var(--bo-accent)',
                   border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
                 }}
               >
@@ -314,7 +314,7 @@ export default function LeadsPage() {
                   onClick={() => router.push('/backoffice/leads/novo')}
                   style={{
                     fontSize: '12px', fontWeight: 700, color: '#fff',
-                    background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
+                    background: 'var(--bo-accent)',
                     border: 'none', padding: '8px 18px', borderRadius: '10px', cursor: 'pointer',
                   }}
                 >

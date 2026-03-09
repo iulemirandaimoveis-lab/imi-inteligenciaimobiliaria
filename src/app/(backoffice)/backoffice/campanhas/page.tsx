@@ -240,9 +240,9 @@ export default function CampanhasPage() {
                 display: 'flex', alignItems: 'center', gap: '6px',
                 height: '38px', padding: '0 18px', borderRadius: '12px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
-                background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
+                background: 'var(--bo-accent)',
                 border: 'none', cursor: 'pointer',
-                boxShadow: '0 0 18px rgba(59,130,246,0.35)', flexShrink: 0,
+                flexShrink: 0,
               }}
             >
               <Plus size={15} />
@@ -327,8 +327,8 @@ export default function CampanhasPage() {
               marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
               height: '38px', padding: '0 18px', borderRadius: '12px',
               fontSize: '13px', fontWeight: 700, color: '#fff',
-              background: 'linear-gradient(135deg, #3B82F6 0%, #6366F1 100%)',
-              border: 'none', cursor: 'pointer', boxShadow: '0 0 18px rgba(59,130,246,0.3)',
+              background: 'var(--bo-accent)',
+              border: 'none', cursor: 'pointer', 
             }}
           >
             <Plus size={15} />Nova Campanha

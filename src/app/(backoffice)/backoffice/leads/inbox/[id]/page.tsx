@@ -500,7 +500,7 @@ export default function LeadInboxDetailPage() {
                                         borderRadius: isBot ? '4px 16px 16px 16px' : '16px 4px 16px 16px',
                                         background: isBot
                                             ? 'rgba(255,255,255,0.05)'
-                                            : 'linear-gradient(135deg, #3B82F6, #2563EB)',
+                                            : 'var(--bo-accent)',
                                     }}>
                                         <p style={{
                                             fontSize: 13, lineHeight: 1.6,
@@ -627,7 +627,7 @@ export default function LeadInboxDetailPage() {
                             flex: 1, height: 52, borderRadius: 16, textDecoration: 'none',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                             fontSize: 14, fontWeight: 700, color: '#ffffff',
-                            background: 'linear-gradient(135deg, #3B82F6, #2563EB)',
+                            background: 'var(--bo-accent)',
                             boxShadow: '0 4px 20px rgba(59,130,246,0.35)',
                         }}
                     >

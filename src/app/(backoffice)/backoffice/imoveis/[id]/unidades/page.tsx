@@ -129,7 +129,7 @@ export default function ImoveisUnidadesPage() {
                     <button
                         onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
                         className="flex items-center gap-2 h-10 px-5 text-white rounded-xl font-medium text-sm"
-                        style={{ background: 'linear-gradient(135deg, #3B82F6, #2563EB)', boxShadow: '0 4px 12px rgba(59,130,246,0.3)' }}
+                        style={{ background: 'var(--bo-accent)', boxShadow: '0 4px 12px rgba(59,130,246,0.3)' }}
                     >
                         <Plus size={16} />
                         <span className="hidden sm:inline">Nova Unidade</span>

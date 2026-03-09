@@ -254,7 +254,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             style={{
                 color: isActive ? '#ffffff' : 'var(--sidebar-text)',
                 background: isActive
-                    ? 'linear-gradient(135deg, var(--accent-500), var(--accent-600))'
+                    ? 'var(--accent-500)'
                     : 'transparent',
                 fontWeight: isActive ? 600 : 400,
                 boxShadow: isActive ? '0 2px 12px rgba(0,0,0,0.15)' : 'none',
@@ -358,7 +358,7 @@ export function DesktopSidebar() {
                     >
                         <div
                             className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-white"
-                            style={{ background: 'linear-gradient(135deg, var(--accent-500), var(--accent-700))' }}
+                            style={{ background: 'var(--accent-500)' }}
                         >
                             IM
                         </div>

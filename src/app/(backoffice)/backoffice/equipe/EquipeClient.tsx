@@ -10,15 +10,13 @@ import {
 import { toast } from 'sonner'
 
 const T = {
-    bg: 'transparent',
     surface: 'var(--bo-surface)',
     elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)',
-    borderGold: 'var(--bo-border-gold)',
     text: 'var(--bo-text)',
-    textSub: 'var(--bo-text-muted)',
+    textMuted: 'var(--bo-text-muted)',
     textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
+    accent: 'var(--bo-accent)',
 }
 
 type UserRole = 'admin' | 'manager' | 'agent' | 'viewer' | string
@@ -162,8 +160,17 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
         }
     }
 
-    const handleDelete = async (member: TeamMember) => {
+    const [confirmDelete, setConfirmDelete] = useState<TeamMember | null>(null)
+
+    const handleDeleteConfirm = (member: TeamMember) => {
         setMenuOpen(null)
+        setConfirmDelete(member)
+    }
+
+    const handleDelete = async () => {
+        if (!confirmDelete) return
+        const member = confirmDelete
+        setConfirmDelete(null)
         setDeleting(member.id)
         try {
             const res = await fetch(`/api/equipe?id=${member.id}`, { method: 'DELETE' })
@@ -397,7 +404,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                                 </button>
                                                 <div style={{ height: '1px', background: T.border }} />
                                                 <button
-                                                    onClick={() => handleDelete(member)}
+                                                    onClick={() => handleDeleteConfirm(member)}
                                                     className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-left transition-colors hover:bg-red-500/10">
                                                     <Trash2 size={13} style={{ color: '#E57373' }} />
                                                     <span style={{ color: '#E57373' }}>Remover</span>
@@ -566,6 +573,48 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
             {menuOpen && (
                 <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(null)} />
             )}
+
+            {/* Delete Confirmation Dialog */}
+            <AnimatePresence>
+                {confirmDelete && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+                            onClick={() => setConfirmDelete(null)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.92 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.92 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+                        >
+                            <div className="pointer-events-auto rounded-2xl p-6 w-full max-w-sm text-center"
+                                style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                                <Trash2 size={28} className="mx-auto mb-3" style={{ color: '#E57373' }} />
+                                <h3 className="text-base font-bold mb-1" style={{ color: T.text }}>Remover membro?</h3>
+                                <p className="text-sm mb-5" style={{ color: T.textDim }}>
+                                    <strong>{confirmDelete.name}</strong> será removido da equipe. Esta ação não pode ser desfeita.
+                                </p>
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => setConfirmDelete(null)}
+                                        className="flex-1 h-10 rounded-xl text-sm font-medium"
+                                        style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textMuted }}>
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        onClick={handleDelete}
+                                        className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
+                                        style={{ background: '#E57373' }}>
+                                        Remover
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     )
 }

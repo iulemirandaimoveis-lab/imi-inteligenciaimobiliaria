@@ -124,7 +124,7 @@ export default function CriadorIAPage() {
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 2 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 12, background: 'linear-gradient(135deg, #6366F1, #8B5CF6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--bo-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Bot size={20} style={{ color: '#fff' }} />
                     </div>
                     <div>
@@ -306,7 +306,7 @@ export default function CriadorIAPage() {
                 disabled={generating}
                 style={{
                     width: '100%', height: 52, borderRadius: 16,
-                    background: generating ? 'rgba(99,102,241,0.5)' : 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                    background: generating ? 'rgba(99,102,241,0.5)' : 'var(--bo-accent)',
                     color: '#fff', fontSize: 15, fontWeight: 700,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
                     border: 'none', cursor: generating ? 'not-allowed' : 'pointer',
@@ -404,7 +404,7 @@ export default function CriadorIAPage() {
                                 <button
                                     style={{
                                         flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 700,
-                                        background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                                        background: 'var(--bo-accent)',
                                         color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                                         border: 'none', boxShadow: '0 4px 12px rgba(99,102,241,0.3)',
                                     }}

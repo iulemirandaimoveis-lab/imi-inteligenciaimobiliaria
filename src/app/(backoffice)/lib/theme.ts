@@ -16,9 +16,11 @@ export const T = {
     shadow: 'var(--bo-shadow)',
 }
 
-/** Standard CTA button gradient (Intelligence Suite pattern) */
-export const ctaGradient = 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)'
-export const ctaShadow = '0 4px 15px rgba(99,102,241,0.3)'
+/** Standard CTA button — solid accent, no gradients */
+export const ctaColor = T.accent
+export const ctaShadow = 'none'
+/** @deprecated use ctaColor instead */
+export const ctaGradient = T.accent
 
 /** Common inline styles */
 export const cardStyle = {

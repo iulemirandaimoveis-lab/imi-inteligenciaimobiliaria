@@ -116,7 +116,7 @@ export default function InventarioPage() {
                         style={{
                             display: 'flex', alignItems: 'center', gap: 8,
                             height: 44, padding: '0 20px', borderRadius: 14,
-                            background: 'linear-gradient(135deg, #3B82F6, #2563EB)',
+                            background: 'var(--bo-accent)',
                             color: '#fff', fontSize: 13, fontWeight: 700,
                             textDecoration: 'none', boxShadow: '0 4px 16px rgba(59,130,246,0.3)',
                         }}

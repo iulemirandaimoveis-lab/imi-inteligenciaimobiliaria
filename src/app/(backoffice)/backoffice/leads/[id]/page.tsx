@@ -573,11 +573,20 @@ export default function LeadDetailPage() {
                 />
                 <button
                   disabled={!note.trim()}
+                  onClick={async () => {
+                    if (!note.trim() || !id) return
+                    try {
+                      await fetch('/api/leads/interactions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ lead_id: id, interaction_type: 'note', notes: note.trim() }),
+                      })
+                      setNote('')
+                    } catch { /* silent */ }
+                  }}
                   style={{
                     width: '42px', height: '42px', borderRadius: '10px',
-                    background: note.trim()
-                      ? 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)'
-                      : 'rgba(255,255,255,0.05)',
+                    background: note.trim() ? 'var(--bo-accent)' : 'rgba(255,255,255,0.05)',
                     border: 'none', cursor: note.trim() ? 'pointer' : 'default',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     opacity: note.trim() ? 1 : 0.4,

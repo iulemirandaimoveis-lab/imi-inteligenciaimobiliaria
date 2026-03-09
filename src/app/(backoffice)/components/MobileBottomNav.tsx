@@ -145,7 +145,7 @@ function UserStrip({ onClose, router }: { onClose: () => void; router: ReturnTyp
         >
             <div
                 className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, var(--bo-accent-dim), var(--bo-accent))' }}
+                style={{ background: 'var(--bo-accent)' }}
             >
                 {userInfo.initials}
             </div>
@@ -300,9 +300,7 @@ export function MobileBottomNav() {
                                     width: 52,
                                     height: 52,
                                     marginTop: '-18px',
-                                    background: open
-                                        ? 'linear-gradient(135deg, var(--bo-accent), var(--bo-accent-dim))'
-                                        : 'linear-gradient(135deg, var(--bo-accent-dim), var(--bo-accent))',
+                                    background: 'var(--bo-accent)',
                                     boxShadow: open
                                         ? '0 4px 24px rgba(72,101,129,0.5)'
                                         : '0 4px 20px rgba(0,0,0,0.35)',

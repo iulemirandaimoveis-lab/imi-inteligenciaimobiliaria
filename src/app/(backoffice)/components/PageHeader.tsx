@@ -137,7 +137,7 @@ export default function PageHeader({
                         transition={{ delay: 0.2, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                         className="mt-4 h-px"
                         style={{
-                            background: 'linear-gradient(90deg, var(--bo-surface) 0%, var(--bo-hover) 40%, transparent 100%)',
+                            background: 'var(--bo-border)',
                         }}
                     />
                 </div>

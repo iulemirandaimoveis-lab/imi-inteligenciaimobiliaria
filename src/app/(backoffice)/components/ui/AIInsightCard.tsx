@@ -142,7 +142,7 @@ export function AIInsightCard({
             fontSize: '12px',
             fontWeight: 700,
             color: '#fff',
-            background: `linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)`,
+            background: 'var(--bo-accent)',
             border: 'none',
             cursor: 'pointer',
             transition: 'opacity 0.15s',

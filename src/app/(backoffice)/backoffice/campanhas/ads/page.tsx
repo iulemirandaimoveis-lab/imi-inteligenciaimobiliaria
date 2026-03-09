@@ -290,7 +290,7 @@ export default function AdsPerformancePage() {
                     <Link href="/backoffice/campanhas/nova" style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                         height: 52, borderRadius: 16,
-                        background: 'linear-gradient(135deg, #3B82F6, #2563EB)',
+                        background: 'var(--bo-accent)',
                         color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none',
                         boxShadow: '0 4px 20px rgba(59,130,246,0.3)',
                     }}>
