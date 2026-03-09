@@ -45,15 +45,15 @@ function useCreditApplications() {
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
-  pending:       { label: 'Pendente',     color: '#94A3B8', bg: 'rgba(148,163,184,0.1)', icon: Clock },
-  approved:      { label: 'Aprovado',     color: '#4ADE80', bg: 'rgba(74,222,128,0.1)',  icon: CheckCircle },
-  under_review:  { label: 'Em Análise',   color: '#60A5FA', bg: 'rgba(96,165,250,0.1)',  icon: Clock },
-  documents:     { label: 'Documentação', color: '#FCD34D', bg: 'rgba(252,211,77,0.1)',  icon: AlertCircle },
-  rejected:      { label: 'Recusado',     color: '#F87171', bg: 'rgba(248,113,113,0.1)', icon: AlertCircle },
-  aprovado:      { label: 'Aprovado',     color: '#4ADE80', bg: 'rgba(74,222,128,0.1)',  icon: CheckCircle },
-  analise:       { label: 'Em Análise',   color: '#60A5FA', bg: 'rgba(96,165,250,0.1)',  icon: Clock },
-  documentacao:  { label: 'Documentação', color: '#FCD34D', bg: 'rgba(252,211,77,0.1)',  icon: AlertCircle },
-  recusado:      { label: 'Recusado',     color: '#F87171', bg: 'rgba(248,113,113,0.1)', icon: AlertCircle },
+  pending:       { label: 'Pendente',     color: 'var(--bo-text-muted)', bg: 'rgba(148,163,184,0.08)', icon: Clock },
+  approved:      { label: 'Aprovado',     color: 'var(--s-done)',        bg: 'var(--s-done-bg)',       icon: CheckCircle },
+  under_review:  { label: 'Em Análise',   color: 'var(--s-cold)',        bg: 'var(--s-cold-bg)',       icon: Clock },
+  documents:     { label: 'Documentação', color: 'var(--s-warm)',        bg: 'var(--s-warm-bg)',       icon: AlertCircle },
+  rejected:      { label: 'Recusado',     color: 'var(--s-hot)',         bg: 'var(--s-hot-bg)',        icon: AlertCircle },
+  aprovado:      { label: 'Aprovado',     color: 'var(--s-done)',        bg: 'var(--s-done-bg)',       icon: CheckCircle },
+  analise:       { label: 'Em Análise',   color: 'var(--s-cold)',        bg: 'var(--s-cold-bg)',       icon: Clock },
+  documentacao:  { label: 'Documentação', color: 'var(--s-warm)',        bg: 'var(--s-warm-bg)',       icon: AlertCircle },
+  recusado:      { label: 'Recusado',     color: 'var(--s-hot)',         bg: 'var(--s-hot-bg)',        icon: AlertCircle },
 }
 
 function SimuladorCredito() {
@@ -107,12 +107,12 @@ function SimuladorCredito() {
       : netYield >= 4 ? 'B'
       : netYield >= 3 ? 'C' : 'D'
   const gradeMeta = investGrade === 'A'
-      ? { label: 'Excelente', color: '#10B981', bg: 'rgba(16,185,129,0.1)', desc: 'Ótimo retorno com baixo risco de exposição' }
+      ? { label: 'Excelente', color: 'var(--s-done)', bg: 'var(--s-done-bg)', desc: 'Ótimo retorno com baixo risco de exposição' }
       : investGrade === 'B'
-      ? { label: 'Bom', color: '#3B82F6', bg: 'rgba(59,130,246,0.1)', desc: 'Retorno atrativo dentro da média de mercado' }
+      ? { label: 'Bom', color: 'var(--s-cold)', bg: 'var(--s-cold-bg)', desc: 'Retorno atrativo dentro da média de mercado' }
       : investGrade === 'C'
-      ? { label: 'Moderado', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', desc: 'Retorno abaixo da média — avaliar viabilidade' }
-      : { label: 'Alto Risco', color: '#EF4444', bg: 'rgba(239,68,68,0.1)', desc: 'Yield insuficiente — revisar parâmetros' }
+      ? { label: 'Moderado', color: 'var(--s-warm)', bg: 'var(--s-warm-bg)', desc: 'Retorno abaixo da média — avaliar viabilidade' }
+      : { label: 'Alto Risco', color: 'var(--s-hot)', bg: 'var(--s-hot-bg)', desc: 'Yield insuficiente — revisar parâmetros' }
 
   const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
@@ -175,7 +175,7 @@ function SimuladorCredito() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { l: 'Valor Financiado', v: fmt(valorFinanciado), color: T.text },
-          { l: 'LTV', v: `${ltv.toFixed(0)}%`, color: ltv > 80 ? '#F87171' : '#4ADE80' },
+          { l: 'LTV', v: `${ltv.toFixed(0)}%`, color: ltv > 80 ? 'var(--s-hot)' : 'var(--s-done)' },
           { l: sistema === 'PRICE' ? 'Parcela Fixa' : '1ª Parcela', v: fmt(primeiraParcela), color: T.accent },
           { l: sistema === 'SAC' ? 'Última Parcela' : 'Total Juros', v: sistema === 'SAC' ? fmt(ultimaParcela) : fmt(totalJuros), color: T.text },
         ].map(item => (
@@ -186,9 +186,9 @@ function SimuladorCredito() {
         ))}
       </div>
 
-      <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(252,211,77,0.08)', border: '1px solid rgba(252,211,77,0.2)' }}>
-        <User size={14} style={{ color: '#FCD34D' }} className="flex-shrink-0" />
-        <p className="text-xs" style={{ color: '#FCD34D' }}>
+      <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--s-warm-bg)', border: '1px solid rgba(245,158,11,0.2)' }}>
+        <User size={14} style={{ color: 'var(--s-warm)' }} className="flex-shrink-0" />
+        <p className="text-xs" style={{ color: 'var(--s-warm)' }}>
           Renda mínima estimada: <strong>{fmt(primeiraParcela * 3)}/mês</strong> (comprometimento máx. 30%)
         </p>
       </div>
@@ -239,12 +239,12 @@ function SimuladorCredito() {
             {
               l: 'Cash Flow Mensal',
               v: (cashFlow >= 0 ? '+' : '') + fmt(cashFlow) + '/mês',
-              color: cashFlow >= 0 ? '#4ADE80' : '#F87171',
+              color: cashFlow >= 0 ? 'var(--s-done)' : 'var(--s-hot)',
             },
             {
               l: 'Yield Líquido',
               v: `${netYield.toFixed(2)}% a.a.`,
-              color: netYield >= 4 ? '#4ADE80' : netYield >= 3 ? T.accent : '#F87171',
+              color: netYield >= 4 ? 'var(--s-done)' : netYield >= 3 ? T.accent : 'var(--s-hot)',
             },
             {
               l: 'Payback',

@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Layers, MessageSquare, Mail, Phone, Instagram, ExternalLink, RefreshCw } from 'lucide-react'
-import { PageIntelHeader } from '../../components/ui'
+import { Layers, MessageSquare, Mail, Phone, Instagram, ExternalLink, RefreshCw, Users, Clock, Star, AlertCircle } from 'lucide-react'
+import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
 
 const channels = [
@@ -170,18 +170,10 @@ export default function OmniChannelPage() {
 
                     {/* Stats Summary */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
-                        {[
-                            { label: 'Leads Hoje', value: String(realStats.hoje), color: T.accent },
-                            { label: 'Tempo Médio', value: '—', color: 'var(--s-cold)' },
-                            { label: 'Satisfação', value: '—', color: 'var(--s-done)' },
-                            { label: 'Pendentes', value: String(realStats.pendentes), color: 'var(--s-hot)' },
-                        ].map(stat => (
-                            <div key={stat.label} className="rounded-2xl p-4"
-                                style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                <p className="text-lg font-bold" style={{ color: stat.color }}>{stat.value}</p>
-                                <p className="text-[10px] font-medium mt-0.5" style={{ color: T.textMuted }}>{stat.label}</p>
-                            </div>
-                        ))}
+                        <KPICard label="Leads Hoje" value={String(realStats.hoje)} icon={<Users size={16} />} accent="blue" size="sm" />
+                        <KPICard label="Tempo Médio" value="—" icon={<Clock size={16} />} accent="cold" size="sm" />
+                        <KPICard label="Satisfação" value="—" icon={<Star size={16} />} accent="green" size="sm" />
+                        <KPICard label="Pendentes" value={String(realStats.pendentes)} icon={<AlertCircle size={16} />} accent="hot" size="sm" />
                     </div>
                 </>
             )}
