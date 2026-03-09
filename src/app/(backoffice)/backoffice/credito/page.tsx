@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import {
   Plus, DollarSign, Calculator, CheckCircle, Clock,
   AlertCircle, User, Eye, Landmark, Percent, ArrowRight, FileX, Loader2,
+  TrendingUp, Award,
 } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -61,6 +62,8 @@ function SimuladorCredito() {
   const [prazo, setPrazo] = useState(360)
   const [taxa, setTaxa] = useState(10.5)
   const [sistema, setSistema] = useState<'PRICE' | 'SAC'>('PRICE')
+  const [yieldAnual, setYieldAnual] = useState(4.5)    // % yield bruto esperado a.a.
+  const [despesasMensais, setDespesasMensais] = useState(1200) // cond + IPTU + manutenção
 
   const valorFinanciado = valorImovel - entrada
   const ltv = (valorFinanciado / valorImovel) * 100
@@ -92,6 +95,24 @@ function SimuladorCredito() {
   const ultimaParcela = parcelasSimuladas[parcelasSimuladas.length - 1]?.parcela || 0
   const totalPago = parcelasSimuladas.reduce((s, p) => s + p.parcela, 0)
   const totalJuros = totalPago - valorFinanciado
+
+  // ── Investment analysis ───────────────────────────────────────────
+  const aluguelMensal = Math.round(valorImovel * yieldAnual / 100 / 12)
+  const cashFlow = aluguelMensal - despesasMensais - primeiraParcela
+  const netYield = ((aluguelMensal - despesasMensais) * 12 / valorImovel) * 100
+  const paybackAnos = aluguelMensal > despesasMensais
+      ? valorImovel / ((aluguelMensal - despesasMensais) * 12)
+      : Infinity
+  const investGrade = netYield >= 5 && ltv <= 70 ? 'A'
+      : netYield >= 4 ? 'B'
+      : netYield >= 3 ? 'C' : 'D'
+  const gradeMeta = investGrade === 'A'
+      ? { label: 'Excelente', color: '#10B981', bg: 'rgba(16,185,129,0.1)', desc: 'Ótimo retorno com baixo risco de exposição' }
+      : investGrade === 'B'
+      ? { label: 'Bom', color: '#3B82F6', bg: 'rgba(59,130,246,0.1)', desc: 'Retorno atrativo dentro da média de mercado' }
+      : investGrade === 'C'
+      ? { label: 'Moderado', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', desc: 'Retorno abaixo da média — avaliar viabilidade' }
+      : { label: 'Alto Risco', color: '#EF4444', bg: 'rgba(239,68,68,0.1)', desc: 'Yield insuficiente — revisar parâmetros' }
 
   const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
@@ -177,6 +198,89 @@ function SimuladorCredito() {
         style={{ background: ctaGradient, boxShadow: ctaShadow }}>
         Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
+
+      {/* ─── Investment Analysis Panel ──────────────────────────── */}
+      <div className="rounded-xl p-4 space-y-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+        <div className="flex items-center gap-2">
+          <TrendingUp size={14} style={{ color: T.accent }} />
+          <p className="text-xs font-bold uppercase tracking-wide" style={{ color: T.text }}>
+            Análise de Investimento
+          </p>
+          <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
+            style={{ background: 'rgba(72,101,129,0.15)', color: T.textMuted }}>
+            Simulação
+          </span>
+        </div>
+
+        {/* Yield + Despesas inputs */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs block mb-1" style={{ color: T.textMuted }}>Yield Bruto Esperado (% a.a.)</label>
+            <div className="relative">
+              <Percent className="absolute left-2 top-1/2 -translate-y-1/2" size={13} style={{ color: T.textMuted }} />
+              <input type="number" step="0.1" min="0" max="20" value={yieldAnual}
+                onChange={e => setYieldAnual(Number(e.target.value))} style={inputS} />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs block mb-1" style={{ color: T.textMuted }}>Despesas/Mês (Cond + IPTU)</label>
+            <div className="relative">
+              <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2" size={13} style={{ color: T.textMuted }} />
+              <input type="number" value={despesasMensais}
+                onChange={e => setDespesasMensais(Number(e.target.value))} style={inputS} />
+            </div>
+          </div>
+        </div>
+
+        {/* Metrics grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {[
+            { l: 'Aluguel Estimado', v: fmt(aluguelMensal) + '/mês', color: T.text },
+            {
+              l: 'Cash Flow Mensal',
+              v: (cashFlow >= 0 ? '+' : '') + fmt(cashFlow) + '/mês',
+              color: cashFlow >= 0 ? '#4ADE80' : '#F87171',
+            },
+            {
+              l: 'Yield Líquido',
+              v: `${netYield.toFixed(2)}% a.a.`,
+              color: netYield >= 4 ? '#4ADE80' : netYield >= 3 ? T.accent : '#F87171',
+            },
+            {
+              l: 'Payback',
+              v: isFinite(paybackAnos) ? `${paybackAnos.toFixed(0)} anos` : '—',
+              color: T.textMuted,
+            },
+          ].map(item => (
+            <div key={item.l} className="p-3 rounded-xl text-center" style={{ background: T.surface }}>
+              <p className="text-[10px] mb-0.5" style={{ color: T.textMuted }}>{item.l}</p>
+              <p className="text-xs font-bold" style={{ color: item.color }}>{item.v}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Investment Grade badge */}
+        <div className="flex items-center gap-3 p-3 rounded-xl"
+          style={{ background: gradeMeta.bg, border: `1px solid ${gradeMeta.color}30` }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 text-xl font-black"
+            style={{ background: gradeMeta.bg, color: gradeMeta.color, border: `2px solid ${gradeMeta.color}50` }}>
+            {investGrade}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold" style={{ color: gradeMeta.color }}>
+              Grau {investGrade} — {gradeMeta.label}
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: gradeMeta.color + 'aa' }}>
+              {gradeMeta.desc}
+            </p>
+          </div>
+          <Award size={18} style={{ color: gradeMeta.color + '80', flexShrink: 0 }} />
+        </div>
+
+        <p className="text-[10px] text-center" style={{ color: T.textMuted }}>
+          * Estimativa baseada em yield/despesas informados. Valores reais podem variar.
+        </p>
+      </div>
     </div>
   )
 }
