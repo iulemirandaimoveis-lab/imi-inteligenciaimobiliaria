@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, SlidersHorizontal, ChevronDown, Check, MapPin, Building, BedDouble, DollarSign, Zap } from 'lucide-react';
+import { X, SlidersHorizontal, ChevronDown, Check, MapPin, Building, BedDouble, DollarSign, Zap, Search, ArrowUpDown } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
@@ -43,6 +43,18 @@ const TYPE_OPTIONS = [
     { label: 'Cobertura', value: 'cobertura' },
     { label: 'Garden', value: 'garden' },
 ];
+
+const SORT_OPTIONS: { label: string; value: FilterState['sort'] }[] = [
+    { label: 'Relevância', value: 'relevant' },
+    { label: 'Menor Preço', value: 'price-asc' },
+    { label: 'Maior Preço', value: 'price-desc' },
+    { label: 'Mais Recente', value: 'newest' },
+];
+
+const SORT_LABEL: Record<string, string> = {
+    relevant: 'Relevância', 'price-asc': 'Menor Preço',
+    'price-desc': 'Maior Preço', newest: 'Mais Recente',
+};
 
 // ── Price formatting ──────────────────────────────────────────────────────────
 function fmtPrice(v: number): string {
@@ -217,7 +229,18 @@ export default function AdvancedFilter({
 }: AdvancedFilterProps) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const [dropdownSearch, setDropdownSearch] = useState<Record<string, string>>({});
     const [mobileFilters, setMobileFilters] = useState<FilterState>(filters);
+
+    const getSearch = (key: string) => dropdownSearch[key] ?? '';
+    const setSearch = (key: string, val: string) =>
+        setDropdownSearch(prev => ({ ...prev, [key]: val }));
+
+    // Clear search on dropdown close
+    const openDropdown = (key: string) => {
+        setSearch(key, '');
+        setActiveDropdown(activeDropdown === key ? null : key);
+    };
 
     // Lock body scroll
     useEffect(() => {
@@ -308,22 +331,31 @@ export default function AdvancedFilter({
                                     icon={MapPin}
                                     active={activeDropdown === 'location'}
                                     hasValue={!!filters.location}
-                                    onClick={() => setActiveDropdown(activeDropdown === 'location' ? null : 'location')}
+                                    onClick={() => openDropdown('location')}
                                 />
                                 {activeDropdown === 'location' && (
-                                    <DropdownPanel width={240}>
+                                    <DropdownPanel width={256} maxH={320}>
+                                        {locations.length > 4 && (
+                                            <SearchInput
+                                                value={getSearch('location')}
+                                                onChange={v => setSearch('location', v)}
+                                                placeholder="Buscar cidade..."
+                                            />
+                                        )}
                                         <DropdownItem
                                             label="Todas as localizações"
                                             active={!filters.location}
                                             onClick={() => { updateFilter('location', null); setActiveDropdown(null); }}
                                         />
-                                        {locations.map(loc => (
-                                            <DropdownItem
-                                                key={loc} label={loc}
-                                                active={filters.location === loc}
-                                                onClick={() => { updateFilter('location', loc); setActiveDropdown(null); }}
-                                            />
-                                        ))}
+                                        {locations
+                                            .filter(loc => loc.toLowerCase().includes(getSearch('location').toLowerCase()))
+                                            .map(loc => (
+                                                <DropdownItem
+                                                    key={loc} label={loc}
+                                                    active={filters.location === loc}
+                                                    onClick={() => { updateFilter('location', loc); setActiveDropdown(null); }}
+                                                />
+                                            ))}
                                     </DropdownPanel>
                                 )}
                             </div>
@@ -336,22 +368,31 @@ export default function AdvancedFilter({
                                         icon={MapPin}
                                         active={activeDropdown === 'neighborhood'}
                                         hasValue={!!filters.neighborhood}
-                                        onClick={() => setActiveDropdown(activeDropdown === 'neighborhood' ? null : 'neighborhood')}
+                                        onClick={() => openDropdown('neighborhood')}
                                     />
                                     {activeDropdown === 'neighborhood' && (
-                                        <DropdownPanel width={240} maxH={280}>
+                                        <DropdownPanel width={256} maxH={300}>
+                                            {neighborhoods.length > 4 && (
+                                                <SearchInput
+                                                    value={getSearch('neighborhood')}
+                                                    onChange={v => setSearch('neighborhood', v)}
+                                                    placeholder="Buscar bairro..."
+                                                />
+                                            )}
                                             <DropdownItem
                                                 label="Todos os bairros"
                                                 active={!filters.neighborhood}
                                                 onClick={() => { updateFilter('neighborhood', null); setActiveDropdown(null); }}
                                             />
-                                            {neighborhoods.map(h => (
-                                                <DropdownItem
-                                                    key={h} label={h}
-                                                    active={filters.neighborhood === h}
-                                                    onClick={() => { updateFilter('neighborhood', h); setActiveDropdown(null); }}
-                                                />
-                                            ))}
+                                            {neighborhoods
+                                                .filter(h => h.toLowerCase().includes(getSearch('neighborhood').toLowerCase()))
+                                                .map(h => (
+                                                    <DropdownItem
+                                                        key={h} label={h}
+                                                        active={filters.neighborhood === h}
+                                                        onClick={() => { updateFilter('neighborhood', h); setActiveDropdown(null); }}
+                                                    />
+                                                ))}
                                         </DropdownPanel>
                                     )}
                                 </div>
@@ -367,7 +408,7 @@ export default function AdvancedFilter({
                                     icon={Zap}
                                     active={activeDropdown === 'status'}
                                     hasValue={filters.status.length > 0}
-                                    onClick={() => setActiveDropdown(activeDropdown === 'status' ? null : 'status')}
+                                    onClick={() => openDropdown('status')}
                                 />
                                 {activeDropdown === 'status' && (
                                     <DropdownPanel width={220}>
@@ -406,7 +447,7 @@ export default function AdvancedFilter({
                                     icon={Building}
                                     active={activeDropdown === 'type'}
                                     hasValue={filters.type.length > 0}
-                                    onClick={() => setActiveDropdown(activeDropdown === 'type' ? null : 'type')}
+                                    onClick={() => openDropdown('type')}
                                 />
                                 {activeDropdown === 'type' && (
                                     <DropdownPanel width={210}>
@@ -442,7 +483,7 @@ export default function AdvancedFilter({
                                     icon={BedDouble}
                                     active={activeDropdown === 'bedrooms'}
                                     hasValue={!!filters.bedrooms}
-                                    onClick={() => setActiveDropdown(activeDropdown === 'bedrooms' ? null : 'bedrooms')}
+                                    onClick={() => openDropdown('bedrooms')}
                                 />
                                 {activeDropdown === 'bedrooms' && (
                                     <DropdownPanel width={190}>
@@ -473,7 +514,7 @@ export default function AdvancedFilter({
                                     icon={DollarSign}
                                     active={activeDropdown === 'price'}
                                     hasValue={filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice}
-                                    onClick={() => setActiveDropdown(activeDropdown === 'price' ? null : 'price')}
+                                    onClick={() => openDropdown('price')}
                                 />
                                 {activeDropdown === 'price' && (
                                     <motion.div
@@ -487,6 +528,29 @@ export default function AdvancedFilter({
                                             onChange={v => updateFilter('priceRange', v)}
                                         />
                                     </motion.div>
+                                )}
+                            </div>
+
+                            {/* Sort */}
+                            <div className="relative ml-auto">
+                                <FilterButton
+                                    label={SORT_LABEL[filters.sort] || 'Ordenar'}
+                                    icon={ArrowUpDown}
+                                    active={activeDropdown === 'sort'}
+                                    hasValue={filters.sort !== 'relevant'}
+                                    onClick={() => openDropdown('sort')}
+                                />
+                                {activeDropdown === 'sort' && (
+                                    <DropdownPanel width={190}>
+                                        {SORT_OPTIONS.map(opt => (
+                                            <DropdownItem
+                                                key={opt.value}
+                                                label={opt.label}
+                                                active={filters.sort === opt.value}
+                                                onClick={() => { updateFilter('sort', opt.value); setActiveDropdown(null); }}
+                                            />
+                                        ))}
+                                    </DropdownPanel>
                                 )}
                             </div>
 
@@ -691,6 +755,28 @@ export default function AdvancedFilter({
                                         onChange={v => updateMobileFilter('priceRange', v)}
                                     />
                                 </div>
+
+                                {/* Ordenação */}
+                                <div>
+                                    <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Ordenação</h3>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {SORT_OPTIONS.map(opt => (
+                                            <button
+                                                key={opt.value}
+                                                onClick={() => updateMobileFilter('sort', opt.value)}
+                                                className={cn(
+                                                    "px-4 py-3 rounded-xl text-[13px] font-semibold border flex justify-between items-center transition-all",
+                                                    mobileFilters.sort === opt.value
+                                                        ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581]"
+                                                        : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
+                                                )}
+                                            >
+                                                {opt.label}
+                                                {mobileFilters.sort === opt.value && <Check className="w-4 h-4 text-[#486581]" />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Footer */}
@@ -720,6 +806,22 @@ export default function AdvancedFilter({
 }
 
 // ── Reusable sub-components ───────────────────────────────────────────────────
+
+function SearchInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+    return (
+        <div className="relative mb-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6B7280] pointer-events-none" />
+            <input
+                autoFocus
+                type="text"
+                value={value}
+                onChange={e => onChange(e.target.value)}
+                placeholder={placeholder || 'Buscar...'}
+                className="w-full pl-8 pr-3 py-2 bg-white/5 border border-white/10 rounded-xl text-[13px] text-white placeholder-[#6B7280] outline-none focus:border-[#334E68] transition-colors"
+            />
+        </div>
+    );
+}
 
 interface FilterButtonProps {
     label: string;
