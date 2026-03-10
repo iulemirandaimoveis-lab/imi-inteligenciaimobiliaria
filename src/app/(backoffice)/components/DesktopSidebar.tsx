@@ -60,7 +60,7 @@ const SECTIONS: NavSection[] = [
                 ]
             },
             { label: 'QR Tracking', href: '/backoffice/tracking/qr', icon: QrCode },
-            { label: 'Omni Channel', href: '/backoffice/omnichannel', icon: Layers },
+            { label: 'Social Inbox', href: '/backoffice/omnichannel/inbox', icon: Layers },
             { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
         ]
     },
