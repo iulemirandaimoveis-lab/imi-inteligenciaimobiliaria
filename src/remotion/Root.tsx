@@ -12,7 +12,8 @@ export const RemotionRoot: React.FC = () => {
             {/* 9:16 — TikTok / Instagram Reels / YouTube Shorts */}
             <Composition
                 id="PropertyShowcase"
-                component={PropertyShowcase}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                component={PropertyShowcase as any}
                 durationInFrames={450}   // 15s
                 fps={30}
                 width={1080}
@@ -23,7 +24,8 @@ export const RemotionRoot: React.FC = () => {
             {/* 1:1 — Instagram / Facebook */}
             <Composition
                 id="MarketReport"
-                component={MarketReport}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                component={MarketReport as any}
                 durationInFrames={300}   // 10s
                 fps={30}
                 width={1080}
