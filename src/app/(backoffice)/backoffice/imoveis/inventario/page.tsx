@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import {
     Building2, Bed, Bath, Maximize2, TrendingUp,
     TrendingDown, Plus, Search, Filter, BarChart2,
@@ -238,7 +239,7 @@ export default function InventarioPage() {
                                         {/* Image */}
                                         <div style={{ height: 180, position: 'relative', overflow: 'hidden', background: T.surface }}>
                                             {image ? (
-                                                <img src={image} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <Image src={image} alt={d.name} fill className="object-cover" />
                                             ) : (
                                                 <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                     <Building2 size={40} style={{ color: T.textMuted, opacity: 0.3 }} />
@@ -341,9 +342,9 @@ export default function InventarioPage() {
                                 }}>
                                         {/* Property info */}
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                                            <div style={{ width: 44, height: 44, borderRadius: 10, overflow: 'hidden', flexShrink: 0, background: T.surface }}>
+                                            <div style={{ position: 'relative', width: 44, height: 44, borderRadius: 10, overflow: 'hidden', flexShrink: 0, background: T.surface }}>
                                                 {image ? (
-                                                    <img src={image} alt={d.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    <Image src={image} alt={d.name} fill className="object-cover" />
                                                 ) : (
                                                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                         <Building2 size={18} style={{ color: T.textMuted, opacity: 0.4 }} />

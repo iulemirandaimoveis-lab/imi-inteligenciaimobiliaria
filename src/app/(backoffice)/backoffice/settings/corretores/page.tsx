@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { UserCircle, Search, Plus, Shield, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useBrokers, updateBrokerStatus } from '@/hooks/use-brokers'
@@ -127,10 +128,10 @@ export default function CorretoresPage() {
                                         style={{ borderTop: i > 0 ? `1px solid ${T.border}` : 'none' }}>
                                         <td className="px-5 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden"
+                                                <div className="relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden"
                                                     style={{ background: 'rgba(72,101,129,0.15)', color: T.accent }}>
                                                     {broker.avatar_url
-                                                        ? <img src={broker.avatar_url} alt={broker.name} className="w-full h-full object-cover" />
+                                                        ? <Image src={broker.avatar_url} alt={broker.name} fill className="object-cover" />
                                                         : broker.name.charAt(0)}
                                                 </div>
                                                 <div>

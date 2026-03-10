@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { Building2, Plus, MapPin, TrendingUp, Eye, Users, DollarSign, BarChart2, Loader2, X } from 'lucide-react'
 
 const T = {
@@ -174,10 +175,10 @@ export default function ProjetosPage() {
                                 <div key={p.id} className="overflow-hidden rounded-2xl transition-all"
                                     style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                     {/* Image placeholder */}
-                                    <div className="h-36 flex items-center justify-center relative"
+                                    <div className="h-36 flex items-center justify-center relative overflow-hidden"
                                         style={{ background: T.elevated }}>
                                         {p.imagem_url ? (
-                                            <img src={p.imagem_url} alt={p.nome} className="w-full h-full object-cover" />
+                                            <Image src={p.imagem_url} alt={p.nome} fill className="object-cover" />
                                         ) : (
                                             <Building2 size={48} style={{ color: T.textMuted, opacity: 0.3 }} />
                                         )}

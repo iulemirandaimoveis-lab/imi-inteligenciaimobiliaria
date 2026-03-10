@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import NextImage from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import {
     ArrowLeft, Share2, MoreHorizontal, Eye, Clock,
@@ -145,7 +146,7 @@ export default function ImovelHeatmapPage() {
             >
                 {coverImage && (
                     <div className="relative h-32 overflow-hidden">
-                        <img src={coverImage} alt={development?.name} className="w-full h-full object-cover" />
+                        <NextImage src={coverImage} alt={development?.name ?? ''} fill className="object-cover" />
                         <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.7))' }} />
                         <div className="absolute bottom-3 left-4">
                             <p className="text-white font-bold text-sm">{development?.name}</p>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -193,11 +194,11 @@ export default function ConstrutoraDetalhesPage() {
           <div className="flex items-start gap-4">
             {/* Logo */}
             <div
-              className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+              className="relative w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
               style={{ border: `1px solid ${T.border}`, background: T.surfaceAlt }}
             >
               {data.logo_url ? (
-                <img src={data.logo_url} alt={data.name} className="w-full h-full object-contain p-1" />
+                <Image src={data.logo_url} alt={data.name} fill className="object-contain p-1" />
               ) : (
                 <Building2 size={28} style={{ color: T.textMuted }} />
               )}
@@ -508,11 +509,11 @@ export default function ConstrutoraDetalhesPage() {
                 <div className="flex items-start gap-4">
                   {/* Image */}
                   <div
-                    className="w-20 h-20 rounded-xl flex-shrink-0 overflow-hidden flex items-center justify-center"
+                    className="relative w-20 h-20 rounded-xl flex-shrink-0 overflow-hidden flex items-center justify-center"
                     style={{ backgroundColor: T.surfaceAlt }}
                   >
                     {dev.image ? (
-                      <img src={dev.image} alt={dev.name} className="w-full h-full object-cover" />
+                      <Image src={dev.image} alt={dev.name} fill className="object-cover" />
                     ) : (
                       <ImageIcon size={24} style={{ color: T.textMuted }} />
                     )}

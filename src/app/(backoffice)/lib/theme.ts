@@ -19,8 +19,6 @@ export const T = {
 /** Standard CTA button — solid accent, no gradients */
 export const ctaColor = T.accent
 export const ctaShadow = 'none'
-/** @deprecated use ctaColor instead */
-export const ctaGradient = T.accent
 
 /** Common inline styles */
 export const cardStyle = {
