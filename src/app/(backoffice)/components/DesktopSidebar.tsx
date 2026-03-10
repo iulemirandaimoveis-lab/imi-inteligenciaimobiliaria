@@ -9,7 +9,7 @@ import {
     Zap, CreditCard, Briefcase, CalendarDays, QrCode, Sparkles,
     FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
-    Brain, BarChart3, LineChart, Wand2, List, Shield, Video
+    Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -90,6 +90,7 @@ const SECTIONS: NavSection[] = [
                 children: [
                     { label: 'Publicações', href: '/backoffice/conteudos', icon: FileText },
                     { label: 'Criador IA', href: '/backoffice/conteudo/criador', icon: Wand2 },
+                    { label: 'eBook IA', href: '/backoffice/conteudo/ebook', icon: BookMarked },
                     { label: 'Vídeo IA', href: '/backoffice/conteudo/video', icon: Video },
                     { label: 'Automação', href: '/backoffice/conteudo/automacao', icon: Zap },
                 ]
