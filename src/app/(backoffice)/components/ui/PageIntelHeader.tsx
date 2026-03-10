@@ -32,20 +32,36 @@ export function PageIntelHeader({
       <div className="flex flex-col gap-1 min-w-0 flex-1">
         {/* Module micro-label */}
         <div className="flex items-center gap-2">
+          {/* Accent dot */}
+          <span style={{
+            width: 4,
+            height: 4,
+            borderRadius: '50%',
+            background: 'var(--imi-blue-bright)',
+            flexShrink: 0,
+            boxShadow: '0 0 6px var(--imi-blue-bright)',
+            display: 'inline-block',
+          }} />
+
           <span
             style={{
               fontSize: '9px',
               fontWeight: 700,
               color: 'var(--imi-blue-bright)',
               textTransform: 'uppercase',
-              letterSpacing: '0.1em',
+              letterSpacing: '0.12em',
             }}
           >
             {moduleLabel}
           </span>
 
           {live && (
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+              style={{
+                background: 'rgba(74,222,128,0.10)',
+                border: '1px solid rgba(74,222,128,0.20)',
+              }}
+            >
               <span className="live-dot" />
               <span
                 style={{
@@ -56,20 +72,21 @@ export function PageIntelHeader({
                   letterSpacing: '0.05em',
                 }}
               >
-                IA EM TEMPO REAL
+                IA ATIVA
               </span>
             </span>
           )}
         </div>
 
-        {/* Title */}
+        {/* Title — gradient text */}
         <h1
+          className="gradient-text"
           style={{
-            fontSize: '20px',
-            fontWeight: 700,
-            color: 'var(--bo-text)',
+            fontSize: '22px',
+            fontWeight: 800,
             lineHeight: 1.2,
-            letterSpacing: '-0.01em',
+            letterSpacing: '-0.02em',
+            margin: 0,
           }}
         >
           {title}

@@ -89,10 +89,10 @@ export default function DashboardClient({
     const dateStr = `${dayNames[now.getDay()]}, ${now.getDate()} de ${monthNames[now.getMonth()]}`
 
     const ACTIONS = [
-        { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale },
-        { label: 'Novo Lead',       href: '/backoffice/leads/novo',      icon: Users },
-        { label: 'Novo Imóvel',     href: '/backoffice/imoveis/novo',    icon: Building2 },
-        { label: 'Ver Relatórios',  href: '/backoffice/relatorios',      icon: BarChart2 },
+        { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale,    color: 'rgba(59,130,246,0.14)',  fg: 'var(--imi-blue-bright)' },
+        { label: 'Novo Lead',       href: '/backoffice/leads/novo',      icon: Users,    color: 'rgba(74,222,128,0.12)',  fg: 'var(--s-done)' },
+        { label: 'Novo Imóvel',     href: '/backoffice/imoveis/novo',    icon: Building2,color: 'rgba(34,211,238,0.12)',  fg: 'var(--s-cold)' },
+        { label: 'Ver Relatórios',  href: '/backoffice/relatorios',      icon: BarChart2,color: 'rgba(251,191,36,0.12)',  fg: 'var(--s-warm)' },
     ]
 
     const alertaIcon: Record<string, any> = {
@@ -117,7 +117,13 @@ export default function DashboardClient({
                 className="flex items-start justify-between gap-4"
             >
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-1.5">
+                        <span style={{
+                            width: 4, height: 4, borderRadius: '50%',
+                            background: 'var(--imi-blue-bright)',
+                            boxShadow: '0 0 6px var(--imi-blue-bright)',
+                            display: 'inline-block', flexShrink: 0,
+                        }} />
                         <span style={{
                             fontSize: '9px', fontWeight: 700,
                             color: 'var(--imi-blue-bright)',
@@ -125,15 +131,22 @@ export default function DashboardClient({
                         }}>
                             INTELLIGENCE OS
                         </span>
-                        <span style={{
-                            width: 6, height: 6, borderRadius: '50%',
-                            background: 'var(--imi-ai-green)',
-                            boxShadow: '0 0 6px var(--imi-ai-green)',
-                            display: 'inline-block',
-                            animation: 'live-dot 1.6s ease-in-out infinite',
-                        }} />
+                        <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{
+                            background: 'rgba(74,222,128,0.10)',
+                            border: '1px solid rgba(74,222,128,0.20)',
+                        }}>
+                            <span className="live-dot" />
+                            <span style={{
+                                fontSize: '8px', fontWeight: 700,
+                                color: 'var(--imi-ai-green)',
+                                textTransform: 'uppercase', letterSpacing: '0.05em',
+                            }}>LIVE</span>
+                        </span>
                     </div>
-                    <h1 className="text-xl font-bold" style={{ color: 'var(--bo-text)' }}>
+                    <h1 className="gradient-text" style={{
+                        fontSize: '22px', fontWeight: 800,
+                        lineHeight: 1.2, letterSpacing: '-0.02em', margin: 0,
+                    }}>
                         Painel Executivo
                     </h1>
                     <p className="text-sm mt-0.5 capitalize" style={{ color: 'var(--bo-text-muted)' }}>
@@ -141,7 +154,6 @@ export default function DashboardClient({
                     </p>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                    {/* Team avatar group */}
                     {brokers.length > 0 && (
                         <AvatarGroup
                             brokers={brokers}
@@ -153,9 +165,13 @@ export default function DashboardClient({
                     )}
                     <motion.button
                         whileTap={{ scale: 0.96 }}
+                        whileHover={{ scale: 1.02 }}
                         onClick={() => router.push('/backoffice/avaliacoes/nova')}
                         className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                        style={{ background: 'var(--bo-accent)' }}
+                        style={{
+                            background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                            boxShadow: '0 4px 16px rgba(37,99,235,0.30)',
+                        }}
                     >
                         <Plus size={14} />
                         <span className="hidden sm:inline">Nova Avaliação</span>
@@ -256,7 +272,8 @@ export default function DashboardClient({
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.22, duration: 0.4 }}
-                    className="md:col-span-2 lg:col-span-2 intel-card"
+                    className="md:col-span-2 lg:col-span-2 intel-card card-accent-blue"
+                    style={{ padding: '16px' }}
                 >
                     <div className="flex items-start justify-between gap-3 mb-4">
                         <div>
@@ -348,6 +365,7 @@ export default function DashboardClient({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.28, duration: 0.4 }}
                     className="intel-card"
+                    style={{ padding: '16px' }}
                 >
                     <SectionHeader title="Ações Rápidas" className="mb-4" />
                     <div className="space-y-1.5">
@@ -358,14 +376,17 @@ export default function DashboardClient({
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.3 + i * 0.05 }}
                                     whileTap={{ scale: 0.97 }}
+                                    whileHover={{ x: 2 }}
                                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all group"
                                     style={{ background: 'transparent' }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
+                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                                        style={{ background: 'var(--imi-blue-dim)' }}>
-                                        <a.icon size={14} style={{ color: 'var(--imi-blue-bright)' }} />
+                                        style={{ background: a.color }}>
+                                        <a.icon size={14} style={{ color: a.fg }} />
                                     </div>
-                                    <span className="text-sm font-medium flex-1" style={{ color: 'var(--bo-text-muted)' }}>
+                                    <span className="text-sm font-medium flex-1" style={{ color: 'var(--bo-text)' }}>
                                         {a.label}
                                     </span>
                                     <ChevronRight size={14} style={{ color: 'var(--bo-text-muted)', opacity: 0.5 }}
@@ -386,6 +407,7 @@ export default function DashboardClient({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.35, duration: 0.4 }}
                     className="intel-card"
+                    style={{ padding: '16px' }}
                 >
                     <SectionHeader title="Performance por Canal" className="mb-1" />
                     <p className="text-[10px] mb-4" style={{ color: 'var(--bo-text-muted)' }}>origem dos últimos 6 meses</p>

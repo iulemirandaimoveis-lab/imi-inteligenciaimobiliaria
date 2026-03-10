@@ -129,25 +129,66 @@
   background: var(--bo-card);
   border: 1px solid var(--bo-border);
   border-radius: 16px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  /* Contain children — prevents overflow on Android */
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
   overflow: hidden;
-  /* Flex children should not escape */
   min-width: 0;
   max-width: 100%;
 }
 
 .intel-card:hover {
   border-color: var(--imi-blue-border);
-  box-shadow: 0 0 0 1px var(--imi-blue-dim);
+  box-shadow: 0 0 0 1px var(--imi-blue-dim), 0 8px 32px rgba(59,130,246,0.08), 0 2px 8px rgba(0,0,0,0.15);
+  transform: translateY(-1px);
+}
+
+/* ── PREMIUM CARD VARIANTS ─────────────────────────────────── */
+/* AI / featured card — gold accent */
+.intel-card-ai {
+  background: linear-gradient(135deg, rgba(234,179,8,0.06) 0%, var(--bo-card) 50%);
+  border: 1px solid rgba(234,179,8,0.22);
+  border-radius: 16px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.intel-card-ai:hover {
+  border-color: rgba(234,179,8,0.38);
+  box-shadow: 0 0 32px rgba(234,179,8,0.10), 0 8px 24px rgba(0,0,0,0.15);
+  transform: translateY(-1px);
+}
+
+/* Colored top-border accent utilities (use on intel-card) */
+.card-accent-blue  { border-top: 1.5px solid rgba(59,130,246,0.50) !important; }
+.card-accent-green { border-top: 1.5px solid rgba(74,222,128,0.50) !important; }
+.card-accent-warm  { border-top: 1.5px solid rgba(251,191,36,0.50)  !important; }
+.card-accent-cold  { border-top: 1.5px solid rgba(34,211,238,0.50)  !important; }
+.card-accent-hot   { border-top: 1.5px solid rgba(248,113,113,0.50) !important; }
+.card-accent-ai    { border-top: 1.5px solid rgba(234,179,8,0.50)   !important; }
+
+/* ── GRADIENT TEXT UTILITIES ───────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--bo-text) 0%, rgba(148,163,184,0.80) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-blue {
+  background: linear-gradient(135deg, #E0EEFF 0%, #93C5FD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ── NEON GLOW UTILITIES ───────────────────────────────────── */
-.glow-hot  { box-shadow: 0 0 8px rgba(248,113,113,0.35); }
-.glow-warm { box-shadow: 0 0 8px rgba(251,191,36,0.35); }
-.glow-cold { box-shadow: 0 0 8px rgba(34,211,238,0.35); }
-.glow-blue { box-shadow: 0 0 10px rgba(59,130,246,0.30); }
-.glow-ai   { box-shadow: 0 0 8px rgba(74,222,128,0.30); }
+.glow-hot  { box-shadow: 0 0 10px rgba(248,113,113,0.40), 0 0 24px rgba(248,113,113,0.15); }
+.glow-warm { box-shadow: 0 0 10px rgba(251,191,36,0.40),  0 0 24px rgba(251,191,36,0.15); }
+.glow-cold { box-shadow: 0 0 10px rgba(34,211,238,0.40),  0 0 24px rgba(34,211,238,0.15); }
+.glow-blue { box-shadow: 0 0 12px rgba(59,130,246,0.38),  0 0 32px rgba(59,130,246,0.12); }
+.glow-ai   { box-shadow: 0 0 10px rgba(74,222,128,0.38),  0 0 24px rgba(74,222,128,0.12); }
+.glow-gold { box-shadow: 0 0 10px rgba(234,179,8,0.40),   0 0 24px rgba(234,179,8,0.15); }
 
 /* ── LIVE INDICATOR ────────────────────────────────────────── */
 .live-dot {
