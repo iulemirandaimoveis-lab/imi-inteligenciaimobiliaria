@@ -45,8 +45,7 @@ export async function POST(req: NextRequest) {
 
     try {
         // Dynamic import to avoid bundling issues when Lambda not configured
-        // @ts-ignore — @remotion/lambda optional dependency, loaded at runtime
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // @ts-ignore — @remotion/lambda optional dependency, loaded at runtime only when configured
         const lambda: any = await import(/* webpackIgnore: true */ '@remotion/lambda' as any)
         const { renderMediaOnLambda, getRenderProgress } = lambda
 
