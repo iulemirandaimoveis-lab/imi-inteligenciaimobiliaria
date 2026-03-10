@@ -627,19 +627,19 @@ export function MobileBottomNav() {
                                                         <Link
                                                             href={item.href}
                                                             onClick={() => setOpen(false)}
-                                                            className="hover-card flex items-center gap-3 px-3 py-3 mb-1 rounded-2xl transition-all"
+                                                            className="hover-card flex items-center gap-3 px-3 py-2 mb-0.5 mx-1 rounded-xl transition-all"
                                                         >
                                                             <div
-                                                                className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0"
+                                                                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                                                                 style={{ background: item.bg }}
                                                             >
-                                                                <item.icon size={18} style={{ color: item.color }} />
+                                                                <item.icon size={16} style={{ color: item.color }} />
                                                             </div>
                                                             <div className="flex-1 min-w-0">
                                                                 <p className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>
                                                                     {item.label}
                                                                 </p>
-                                                                <p className="text-xs mt-0.5" style={{ color: 'var(--bo-text-muted)' }}>
+                                                                <p className="text-[11px] mt-0.5" style={{ color: 'var(--bo-text-muted)' }}>
                                                                     {item.desc}
                                                                 </p>
                                                             </div>

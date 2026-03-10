@@ -14,7 +14,7 @@ function generateShortCode(length = 6) {
 export async function POST(request: Request) {
     try {
         const body = await request.json()
-        const { development_id, campaign_name, utm_source, utm_medium, utm_campaign, utm_content, custom_slug } = body
+        const { development_id, campaign_name, utm_source, utm_medium, utm_campaign, utm_content, custom_slug, broker_id, team_label, label: linkLabel } = body
 
         if (!development_id || !utm_source || !utm_medium || !utm_campaign) {
             return NextResponse.json({ error: 'Campos obrigatórios: development_id, utm_source, utm_medium, utm_campaign' }, { status: 400 })
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         // Get development slug
         const { data: dev } = await supabase
             .from('developments')
-            .select('id, name, slug')
+            .select('id, name, slug, status_commercial')
             .eq('id', development_id)
             .single()
 
@@ -78,6 +78,9 @@ export async function POST(request: Request) {
                 utm_content: utm_content || null,
                 utm_params: { source: utm_source, medium: utm_medium, campaign: utm_campaign, content: utm_content || null },
                 clicks: 0,
+                broker_id: broker_id || null,
+                team_label: team_label || null,
+                label: linkLabel || null,
             })
             .select()
             .single()

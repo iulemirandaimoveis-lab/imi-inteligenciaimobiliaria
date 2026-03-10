@@ -513,12 +513,51 @@ export default function ImoveisPage() {
                 {filtered.length} imóveis/empreendimentos encontrados
             </p>
 
+            {/* Empty state */}
+            {filtered.length === 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col items-center justify-center py-20 rounded-3xl"
+                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                >
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4" style={{ background: T.elevated }}>
+                        <Building2 size={28} className="opacity-30" style={{ color: T.textMuted }} />
+                    </div>
+                    <p className="text-base font-bold mb-1" style={{ color: T.text }}>
+                        {search ? 'Nenhum imóvel encontrado' : filter !== 'all' ? `Nenhum imóvel ${STATUS_MAP[filter]?.label || filter}` : 'Portfólio vazio'}
+                    </p>
+                    <p className="text-sm mb-6 text-center max-w-xs" style={{ color: T.textMuted }}>
+                        {search ? `Sem resultados para "${search}". Tente outros termos.` : filter !== 'all' ? 'Nenhum imóvel com este status.' : 'Cadastre o primeiro empreendimento do portfólio IMI.'}
+                    </p>
+                    {!search && filter === 'all' && (
+                        <motion.button
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => router.push('/backoffice/imoveis/novo')}
+                            className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white"
+                            style={{ background: T.accent }}
+                        >
+                            <Plus size={16} /> Cadastrar Imóvel
+                        </motion.button>
+                    )}
+                    {(search || filter !== 'all') && (
+                        <button
+                            onClick={() => { setSearch(''); setFilter('all') }}
+                            className="text-sm font-semibold transition-opacity hover:opacity-70"
+                            style={{ color: T.accent }}
+                        >
+                            Limpar filtros
+                        </button>
+                    )}
+                </motion.div>
+            )}
+
             {/* Grid */}
-            {view === 'grid' ? (
+            {filtered.length > 0 && view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filtered.map((im, i) => <ImovelCard key={im.id} imovel={im} index={i} onAction={handleAction} />)}
                 </div>
-            ) : (
+            ) : filtered.length > 0 && (
                 <div className="space-y-2">
                     {filtered.map((im, i) => {
                         const s = STATUS_MAP[im.status] || STATUS_MAP.disponivel
