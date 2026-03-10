@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { FileText, TrendingUp, Home, ArrowRight } from 'lucide-react'
 import { useParams } from 'next/navigation'
+import { TiltCard } from '@/components/ui/motion-primitives'
 
 interface ServicesProps {
     dict: {
@@ -72,6 +73,7 @@ export default function Services({ dict }: ServicesProps) {
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.08, duration: 0.4 }}
                         >
+                            <TiltCard tiltDegree={6} className="h-full">
                             <Link
                                 href={item.href}
                                 className="group relative block rounded-2xl p-7 border border-white/[0.06] overflow-hidden transition-all duration-300 hover:border-[#334E68]/50"
@@ -106,6 +108,7 @@ export default function Services({ dict }: ServicesProps) {
                                     </div>
                                 </div>
                             </Link>
+                            </TiltCard>
                         </motion.div>
                     ))}
                 </div>
