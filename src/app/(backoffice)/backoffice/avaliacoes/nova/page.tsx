@@ -9,6 +9,7 @@ import {
   Landmark, ChevronDown, ChevronRight, Car, Layers, Star, Eye,
   Hash, Clock, CreditCard, Gavel
 } from 'lucide-react'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // ============================================================
 // TIPOS E CONSTANTES NBR 14653
@@ -200,16 +201,6 @@ function calcularHonorarios(valorEstimado: number, finalidade: string, metodolog
 // ============================================================
 // T-OBJECT — Dark theme tokens
 // ============================================================
-
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  hover: 'var(--bo-hover)',
-  accent: 'var(--bo-accent)',
-}
 
 // ============================================================
 // COMPONENTES AUXILIARES

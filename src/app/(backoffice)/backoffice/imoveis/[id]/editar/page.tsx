@@ -31,6 +31,7 @@ import {
   FileText,
 } from 'lucide-react'
 import { uploadFile, uploadMultipleFiles } from '@/lib/supabase-storage'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 /* ── YouTube helpers ── */
 function getYoutubeId(url: string): string | null {
@@ -103,13 +104,6 @@ const featuresOptions = [
   'Sauna', 'Espaço gourmet', 'Coworking', 'Pet place', 'Brinquedoteca', 'Salão de jogos',
   'Cinema', 'Spa', 'Jardim', 'Portaria 24h', 'Segurança', 'Elevador',
 ]
-
-const T = {
-  surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-  text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-  accent: 'var(--bo-accent)',
-}
 
 export default function EditarImovelPage() {
   const router = useRouter()

@@ -5,14 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, User, Mail, Shield, Key, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 export default function NovoUsuarioPage() {
     const router = useRouter()

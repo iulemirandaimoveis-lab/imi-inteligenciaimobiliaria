@@ -7,15 +7,7 @@ import {
   Mail, MapPin, Save, Upload, X, Loader2, AlertCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
-
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const inputStyle: React.CSSProperties = {
   background: T.elevated,

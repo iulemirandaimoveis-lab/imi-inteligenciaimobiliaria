@@ -10,15 +10,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    accent: '#486581',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // Section heatmap segments — in real production these would come from page_views/tracking
 const SECTIONS_DEFAULT = [

@@ -18,16 +18,7 @@ import {
     AlertCircle,
     Loader2,
 } from 'lucide-react'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const origens = [
     'Site IMI', 'Instagram', 'Facebook', 'Google Ads',

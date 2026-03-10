@@ -4,17 +4,9 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import QRCode from 'qrcode'
 import { QrCode, Link2, Copy, Download, Check, Trash2, Plus, ExternalLink, BarChart2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 /* ── Design tokens ─────────────────────────── */
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    accent: 'var(--bo-accent)',
-}
-
 interface TrackedLink {
     id: string
     label: string

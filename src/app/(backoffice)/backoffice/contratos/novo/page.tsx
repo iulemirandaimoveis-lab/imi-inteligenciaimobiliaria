@@ -10,13 +10,8 @@ import {
     FileSignature, Lock, Shield, Eye, X, Plus
 } from 'lucide-react'
 import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL, getModeloById } from '@/lib/modelos-contratos'
+import { T } from '@/app/(backoffice)/lib/theme'
 
-const T = {
-    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    accent: 'var(--bo-accent)',
-}
 const ICONES_CAT: Record<string, string> = {
     locacao: '🏠', venda: '📋', captacao: '🎯', avaliacao: '⚖️', credito: '💳',
     consultoria: '💼', prestacao_servicos: '⚙️', parceria: '🤝',

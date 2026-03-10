@@ -8,15 +8,7 @@ import {
   ChevronRight, Info, Sliders, RefreshCw,
 } from 'lucide-react'
 import { toast } from 'sonner'
-
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  accent: '#3B82F6',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 interface ScoreWeights {
   timeOnSite: number

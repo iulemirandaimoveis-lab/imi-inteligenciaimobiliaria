@@ -31,26 +31,11 @@ function getYoutubeEmbedUrl(url: string): string | null {
     return id ? `https://www.youtube.com/embed/${id}` : null
 }
 import { createClient } from '@/lib/supabase/client'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const supabase = createClient()
 
 /* ───────── Dark Theme Tokens ───────── */
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    border: 'var(--bo-border)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
-    accentBg: 'var(--bo-active-bg)',
-    accentHover: 'var(--bo-hover)',
-    error: '#f87171',
-    errorBg: 'rgba(248,113,113,0.08)',
-    success: '#34d399',
-    successBg: 'rgba(52,211,153,0.10)',
-}
-
 type Step = 1 | 2 | 3 | 4
 
 interface Developer {

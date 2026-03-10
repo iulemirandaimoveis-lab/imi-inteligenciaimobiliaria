@@ -13,13 +13,7 @@ import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTabs'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const STATUS_CFG: Record<string, { label: string; statusKey: string }> = {
   concluida:      { label: 'Concluída',     statusKey: 'done'   },

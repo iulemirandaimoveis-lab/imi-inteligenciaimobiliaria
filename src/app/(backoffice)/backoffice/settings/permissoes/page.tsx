@@ -13,14 +13,7 @@ import {
     Loader2,
 } from 'lucide-react'
 import { toast } from 'sonner'
-
-const T = {
-    bg: 'var(--bo-surface)',
-    card: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    sub: 'var(--bo-text-muted)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 type Perms = { view: boolean; create: boolean; edit: boolean; delete: boolean }
 type PermChange = { role: string; module: string; action: string; allowed: boolean }

@@ -9,14 +9,7 @@ import {
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
     active:   { label: 'ATIVO',    color: '#22C55E', bg: 'rgba(34,197,94,0.12)' },

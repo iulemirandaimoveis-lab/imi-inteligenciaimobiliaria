@@ -1,12 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import DashboardClient from './DashboardClient'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // ── helpers ──────────────────────────────────────────────────────
 function startOfMonth(d: Date) {

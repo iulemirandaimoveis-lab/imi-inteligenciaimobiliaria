@@ -11,13 +11,7 @@ import {
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import Link from 'next/link'
 import { KPICard, MetricBar, StatusBadge, SectionHeader } from '../../components/ui'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // ── Animated counter ──────────────────────────────────────────
 function AnimNum({ value, prefix = '', suffix = '', decimals = 0 }: {

@@ -7,17 +7,7 @@ import {
     Smartphone, Monitor, Tablet, MapPin, BarChart3, Loader2,
     RefreshCw, ArrowUpRight, FileText, Percent, Timer,
 } from 'lucide-react'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    border: 'var(--bo-border)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
-    accentBg: 'var(--bo-active-bg)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 interface Analytics {
     kpis: {

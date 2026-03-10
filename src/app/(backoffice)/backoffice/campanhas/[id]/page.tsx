@@ -10,13 +10,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const TYPE_MAP: Record<string, { label: string; icon: any }> = {
     google_ads: { label: 'Google Ads', icon: Globe },

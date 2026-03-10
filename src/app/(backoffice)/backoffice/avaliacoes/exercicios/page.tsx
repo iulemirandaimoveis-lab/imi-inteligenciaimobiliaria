@@ -7,6 +7,7 @@ import {
   BarChart2, Clock, Award, Zap, AlertCircle, ChevronDown
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // ============================================================
 // BANCO DE EXERCÍCIOS — NBR 14653 / Avaliação Imobiliária
@@ -253,16 +254,6 @@ const EXERCICIOS: Exercicio[] = [
 
 const CATEGORIAS = [...new Set(EXERCICIOS.map(e => e.categoria))]
 const NIVEIS = { basico: '🟢 Básico', intermediario: '🟡 Intermediário', avancado: '🔴 Avançado' }
-
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  hover: 'var(--bo-hover)',
-  accent: 'var(--bo-accent)',
-}
 
 export default function ExerciciosPage() {
   const router = useRouter()

@@ -14,13 +14,7 @@ import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { AIInsightCard } from '@/app/(backoffice)/components/ui/AIInsightCard'
 import { AIScore } from '@/app/(backoffice)/components/ui/AIScore'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // ── Helpers ────────────────────────────────────────────────────────
 function formatCapital(capital: number | null): string {

@@ -1,277 +1,448 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Target,
-  Award,
-  AlertTriangle,
-  Instagram,
-  Facebook,
-  Globe,
-  Mail,
-  MessageSquare,
+    TrendingUp, TrendingDown, DollarSign, Target, Users,
+    Award, AlertTriangle, Instagram, Facebook, Globe,
+    Mail, MessageSquare, Loader2, ArrowLeft, RefreshCw,
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
+import { T } from '@/app/(backoffice)/lib/theme'
 
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  hover: 'var(--bo-hover)',
-  accent: 'var(--bo-accent)',
+const CHANNEL_ICONS: Record<string, React.ElementType> = {
+    instagram: Instagram,
+    facebook: Facebook,
+    google: Globe,
+    email: Mail,
+    whatsapp: MessageSquare,
+    linkedin: Globe,
+    youtube: Globe,
+    outros: Target,
 }
 
-// ⚠️ NÃO MODIFICAR - Dados ROI mockados
-const roiData = {
-  // Campanhas por canal
-  porCanal: [
-    { platform: 'Instagram', budget: 5000, spent: 3200, revenue: 7800000, roi: 243750, conversions: 12, icon: Instagram },
-    { platform: 'Google', budget: 3000, spent: 2100, revenue: 3400000, roi: 161905, conversions: 8, icon: Globe },
-    { platform: 'Facebook', budget: 2000, spent: 800, revenue: 1440000, roi: 180000, conversions: 3, icon: Facebook },
-    { platform: 'Email', budget: 800, spent: 800, revenue: 2125000, roi: 265625, conversions: 5, icon: Mail },
-    { platform: 'WhatsApp', budget: 1200, spent: 1200, revenue: 2940000, roi: 245000, conversions: 7, icon: MessageSquare },
-  ],
+const CHANNEL_LABELS: Record<string, string> = {
+    instagram: 'Instagram',
+    facebook: 'Facebook',
+    google: 'Google Ads',
+    email: 'E-mail',
+    whatsapp: 'WhatsApp',
+    linkedin: 'LinkedIn',
+    youtube: 'YouTube',
+    outros: 'Outros',
+}
 
-  // Top performers
-  topPerformers: [
-    { name: 'Email Marketing Piedade', roi: 265625, revenue: 2125000, spent: 800 },
-    { name: 'WhatsApp Business Pina', roi: 245000, revenue: 2940000, spent: 1200 },
-    { name: 'Lançamento Reserva Imperial', roi: 243750, revenue: 7800000, spent: 3200 },
-  ],
+type Period = '7d' | '30d' | '90d' | '365d'
 
-  // Bottom performers
-  bottomPerformers: [
-    { name: 'Google Ads Boa Viagem', roi: 161905, revenue: 3400000, spent: 2100 },
-    { name: 'Facebook Villa Jardins', roi: 180000, revenue: 1440000, spent: 800 },
-  ],
+const PERIOD_LABELS: Record<Period, string> = {
+    '7d': 'Última Semana',
+    '30d': 'Último Mês',
+    '90d': 'Trimestre',
+    '365d': 'Ano',
+}
 
-  // Evolução mensal
-  evolucaoMensal: [
-    { month: 'Set/25', invested: 8500, revenue: 12500000, roi: 147058 },
-    { month: 'Out/25', invested: 9200, revenue: 14200000, roi: 154348 },
-    { month: 'Nov/25', invested: 10100, revenue: 15800000, roi: 156436 },
-    { month: 'Dez/25', invested: 11800, revenue: 19400000, roi: 164407 },
-    { month: 'Jan/26', invested: 10500, revenue: 16900000, roi: 160952 },
-    { month: 'Fev/26', invested: 8100, revenue: 17705000, roi: 218580 },
-  ],
+interface CanalROI {
+    channel: string
+    budget: number
+    spent: number
+    leads: number
+    conversions: number
+    avgRoi: number
+    count: number
+}
+
+interface MonthlyROI {
+    month: string
+    invested: number
+    leads: number
+    avgRoi: number
+}
+
+function fmtBRL(v: number) {
+    if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
+    if (v >= 1_000) return `R$ ${(v / 1_000).toFixed(0).replace('.', ',')}k`
+    return `R$ ${v.toFixed(0)}`
+}
+
+function fmtROI(v: number) {
+    const prefix = v > 0 ? '+' : ''
+    return `${prefix}${v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}%`
 }
 
 export default function CampanhasROIPage() {
-  const router = useRouter()
-  const [periodoFilter, setPeriodoFilter] = useState('mes')
+    const router = useRouter()
+    const [period, setPeriod] = useState<Period>('30d')
+    const [loading, setLoading] = useState(true)
+    const [refreshKey, setRefreshKey] = useState(0)
+    const [campaigns, setCampaigns] = useState<any[]>([])
 
-  const totalInvested = roiData.porCanal.reduce((acc, c) => acc + c.spent, 0)
-  const totalRevenue = roiData.porCanal.reduce((acc, c) => acc + c.revenue, 0)
-  const avgROI = ((totalRevenue - totalInvested) / totalInvested) * 100
+    useEffect(() => {
+        async function load() {
+            setLoading(true)
+            try {
+                const supabase = createClient()
+                const days = parseInt(period)
+                const since = new Date()
+                since.setDate(since.getDate() - days)
 
-  const formatPrice = (price: number) => {
-    if (price >= 1000000) return `R$ ${(price / 1000000).toFixed(1)}M`
-    if (price >= 1000) return `R$ ${(price / 1000).toFixed(1)}k`
-    return `R$ ${price.toFixed(0)}`
-  }
+                const { data, error } = await supabase
+                    .from('campaigns')
+                    .select('id, name, channel, status, budget, spent, leads, conversions, roi, created_at')
+                    .gte('created_at', since.toISOString())
+                    .not('budget', 'is', null)
+                    .order('created_at', { ascending: false })
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold" style={{ color: T.text }}>ROI das Campanhas</h1>
-          <p className="text-sm mt-1" style={{ color: T.textMuted }}>
-            Análise de retorno sobre investimento
-          </p>
-        </div>
-        <select
-          value={periodoFilter}
-          onChange={(e) => setPeriodoFilter(e.target.value)}
-          className="h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334E68]"
-          style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-        >
-          <option value="semana">Última Semana</option>
-          <option value="mes">Último Mês</option>
-          <option value="trimestre">Trimestre</option>
-          <option value="ano">Ano</option>
-        </select>
-      </div>
+                if (error) throw error
+                setCampaigns(data || [])
+            } catch {
+                toast.error('Erro ao carregar campanhas')
+            } finally {
+                setLoading(false)
+            }
+        }
+        load()
+    }, [period, refreshKey])
 
-      {/* KPIs Principais */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white">
-          <DollarSign size={32} className="mb-4" />
-          <p className="text-3xl font-bold mb-1">{avgROI.toFixed(0)}%</p>
-          <p className="text-sm text-green-100">ROI Médio</p>
-        </div>
+    // Aggregate ROI by channel
+    const canaisROI = useMemo<CanalROI[]>(() => {
+        const map: Record<string, { budget: number; spent: number; leads: number; conversions: number; roiSum: number; count: number }> = {}
+        for (const c of campaigns) {
+            const ch = (c.channel || 'outros').toLowerCase()
+            if (!map[ch]) map[ch] = { budget: 0, spent: 0, leads: 0, conversions: 0, roiSum: 0, count: 0 }
+            map[ch].budget += Number(c.budget) || 0
+            map[ch].spent += Number(c.spent) || 0
+            map[ch].leads += Number(c.leads) || 0
+            map[ch].conversions += Number(c.conversions) || 0
+            map[ch].roiSum += Number(c.roi) || 0
+            map[ch].count += 1
+        }
+        return Object.entries(map)
+            .map(([channel, d]) => ({
+                channel,
+                budget: d.budget,
+                spent: d.spent,
+                leads: d.leads,
+                conversions: d.conversions,
+                avgRoi: d.count > 0 ? d.roiSum / d.count : 0,
+                count: d.count,
+            }))
+            .sort((a, b) => b.avgRoi - a.avgRoi)
+    }, [campaigns])
 
-        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <p className="text-xs mb-1" style={{ color: T.textMuted }}>Investido</p>
-          <p className="text-2xl font-bold text-orange-700">{formatPrice(totalInvested)}</p>
-        </div>
+    // Monthly evolution (last 6 months)
+    const evolucaoMensal = useMemo<MonthlyROI[]>(() => {
+        const months: Record<string, { invested: number; leads: number; roiSum: number; count: number }> = {}
+        for (const c of campaigns) {
+            const d = new Date(c.created_at)
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+            if (!months[key]) months[key] = { invested: 0, leads: 0, roiSum: 0, count: 0 }
+            months[key].invested += Number(c.spent) || 0
+            months[key].leads += Number(c.leads) || 0
+            months[key].roiSum += Number(c.roi) || 0
+            months[key].count += 1
+        }
+        return Object.entries(months)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .slice(-6)
+            .map(([key, d]) => {
+                const [yr, mo] = key.split('-')
+                const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+                return {
+                    month: `${MONTHS[parseInt(mo) - 1]}/${yr.slice(2)}`,
+                    invested: d.invested,
+                    leads: d.leads,
+                    avgRoi: d.count > 0 ? d.roiSum / d.count : 0,
+                }
+            })
+    }, [campaigns])
 
-        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <p className="text-xs mb-1" style={{ color: T.textMuted }}>Receita</p>
-          <p className="text-2xl font-bold text-green-700">{formatPrice(totalRevenue)}</p>
-        </div>
+    // Top / Bottom performers (by roi column from DB)
+    const campSorted = useMemo(() => {
+        return [...campaigns]
+            .filter(c => c.spent > 0 && c.roi != null)
+            .map(c => ({ ...c, roi: Number(c.roi) }))
+            .sort((a, b) => b.roi - a.roi)
+    }, [campaigns])
 
-        <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <p className="text-xs mb-1" style={{ color: T.textMuted }}>Lucro</p>
-          <p className="text-2xl font-bold text-green-700">{formatPrice(totalRevenue - totalInvested)}</p>
-        </div>
-      </div>
+    const topPerformers = campSorted.slice(0, 3)
+    const bottomPerformers = campSorted.filter(c => c.roi < 0 || c.roi < 50).slice(-2).reverse()
 
-      {/* ROI por Canal */}
-      <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-        <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>ROI por Canal</h2>
-        <div className="space-y-4">
-          {roiData.porCanal.map((canal, idx) => {
-            const PlatformIcon = canal.icon
-            const maxROI = Math.max(...roiData.porCanal.map(c => c.roi))
-            const barWidth = (canal.roi / maxROI) * 100
+    // KPIs
+    const totalSpent = campaigns.reduce((s, c) => s + (Number(c.spent) || 0), 0)
+    const totalBudget = campaigns.reduce((s, c) => s + (Number(c.budget) || 0), 0)
+    const totalLeads = campaigns.reduce((s, c) => s + (Number(c.leads) || 0), 0)
+    const totalConversions = campaigns.reduce((s, c) => s + (Number(c.conversions) || 0), 0)
+    const avgROI = campaigns.length > 0
+        ? campaigns.reduce((s, c) => s + (Number(c.roi) || 0), 0) / campaigns.length
+        : 0
+    const cpl = totalLeads > 0 ? totalSpent / totalLeads : 0
 
-            return (
-              <div key={idx}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: T.elevated }}>
-                      <PlatformIcon size={20} style={{ color: T.textMuted }} />
-                    </div>
+    // Auto-insights
+    const insights: string[] = useMemo(() => {
+        const out: string[] = []
+        if (canaisROI.length > 0) {
+            const best = canaisROI[0]
+            out.push(`${CHANNEL_LABELS[best.channel] ?? best.channel} tem o melhor ROI médio (${fmtROI(best.avgRoi)}) com ${best.leads} leads gerados`)
+        }
+        if (topPerformers.length > 0) {
+            out.push(`Campanha "${topPerformers[0].name}" tem ROI de ${fmtROI(topPerformers[0].roi)} — ${topPerformers[0].leads || 0} leads`)
+        }
+        if (canaisROI.length > 1) {
+            const worst = canaisROI[canaisROI.length - 1]
+            if (worst.avgRoi < 0) {
+                out.push(`${CHANNEL_LABELS[worst.channel] ?? worst.channel} tem ROI negativo (${fmtROI(worst.avgRoi)}) — realocar budget`)
+            } else {
+                out.push(`${CHANNEL_LABELS[worst.channel] ?? worst.channel} tem ROI mais baixo — oportunidade de otimização`)
+            }
+        }
+        if (totalBudget > totalSpent && totalBudget > 0) {
+            const pct = ((totalBudget - totalSpent) / totalBudget * 100).toFixed(0)
+            out.push(`${pct}% do budget ainda disponível para aplicar neste período`)
+        }
+        if (cpl > 0) {
+            out.push(`Custo por lead atual: ${fmtBRL(cpl)} · ${totalConversions} conversões registradas`)
+        }
+        return out
+    }, [canaisROI, topPerformers, totalBudget, totalSpent, cpl, totalConversions])
+
+    return (
+        <div className="space-y-6 pb-8">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => router.back()}
+                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                    >
+                        <ArrowLeft size={16} style={{ color: T.textMuted }} />
+                    </button>
                     <div>
-                      <p className="text-sm font-semibold" style={{ color: T.text }}>{canal.platform}</p>
-                      <p className="text-xs" style={{ color: T.textMuted }}>
-                        {formatPrice(canal.spent)} investido • {canal.conversions} conversões
-                      </p>
+                        <h1 className="text-xl font-bold" style={{ color: T.text }}>ROI das Campanhas</h1>
+                        <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>
+                            Análise de retorno sobre investimento — dados reais
+                        </p>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-green-700">{canal.roi.toLocaleString('pt-BR')}%</p>
-                    <p className="text-xs" style={{ color: T.textMuted }}>{formatPrice(canal.revenue)} receita</p>
-                  </div>
                 </div>
-                <div className="h-3 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                  <div
-                    className="h-full bg-green-500 rounded-full transition-all"
-                    style={{ width: `${barWidth}%` }}
-                  />
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setRefreshKey(k => k + 1)}
+                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                        title="Atualizar dados"
+                    >
+                        <RefreshCw size={14} style={{ color: T.textMuted }} />
+                    </button>
+                    <select
+                        value={period}
+                        onChange={e => setPeriod(e.target.value as Period)}
+                        className="h-10 px-3 rounded-xl text-sm focus:outline-none"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                    >
+                        {(Object.entries(PERIOD_LABELS) as [Period, string][]).map(([k, v]) => (
+                            <option key={k} value={k}>{v}</option>
+                        ))}
+                    </select>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
+            </div>
 
-      {/* Top & Bottom Performers */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Performers */}
-        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <div className="flex items-center gap-2 mb-6">
-            <Award size={20} className="text-green-600" />
-            <h2 className="text-lg font-bold" style={{ color: T.text }}>Top 3 Performers</h2>
-          </div>
-          <div className="space-y-4">
-            {roiData.topPerformers.map((camp, idx) => (
-              <div key={idx} className="p-4 bg-green-50 border border-green-200 rounded-xl">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                      {idx + 1}
+            {loading ? (
+                <div className="flex items-center justify-center py-20">
+                    <Loader2 size={32} className="animate-spin" style={{ color: T.accent }} />
+                </div>
+            ) : campaigns.length === 0 ? (
+                <div className="rounded-2xl p-12 text-center" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <Target size={40} className="mx-auto mb-3 opacity-30" style={{ color: T.textMuted }} />
+                    <p className="font-semibold" style={{ color: T.text }}>Nenhuma campanha neste período</p>
+                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>Crie campanhas com budget definido para visualizar ROI</p>
+                </div>
+            ) : (
+                <>
+                    {/* KPIs */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="rounded-2xl p-5 text-white" style={{ background: avgROI >= 0 ? 'linear-gradient(135deg, #16a34a, #15803d)' : 'linear-gradient(135deg, #dc2626, #b91c1c)' }}>
+                            <DollarSign size={24} className="mb-3 opacity-80" />
+                            <p className="text-2xl font-bold">{fmtROI(avgROI)}</p>
+                            <p className="text-xs opacity-80 mt-0.5">ROI Médio</p>
+                        </div>
+                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <p className="text-xs mb-1" style={{ color: T.textMuted }}>Investido</p>
+                            <p className="text-xl font-bold" style={{ color: '#E8A87C' }}>{fmtBRL(totalSpent)}</p>
+                            <p className="text-xs mt-1" style={{ color: T.textMuted }}>Budget: {fmtBRL(totalBudget)}</p>
+                        </div>
+                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <Users size={18} className="mb-2 opacity-60" style={{ color: T.accent }} />
+                            <p className="text-xl font-bold" style={{ color: T.text }}>{totalLeads}</p>
+                            <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Leads Gerados</p>
+                        </div>
+                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <p className="text-xs mb-1" style={{ color: T.textMuted }}>CPL</p>
+                            <p className="text-xl font-bold" style={{ color: T.text }}>{fmtBRL(cpl)}</p>
+                            <p className="text-xs mt-1" style={{ color: T.textMuted }}>{totalConversions} conversões · {campaigns.length} camp.</p>
+                        </div>
                     </div>
-                    <p className="font-semibold text-sm" style={{ color: "var(--bo-text)" }}>{camp.name}</p>
-                  </div>
-                  <p className="text-lg font-bold text-green-700">{camp.roi.toLocaleString('pt-BR')}%</p>
-                </div>
-                <div className="flex items-center gap-4 text-xs" style={{ color: "var(--bo-text-muted)" }}>
-                  <span>Investido: {formatPrice(camp.spent)}</span>
-                  <span>•</span>
-                  <span>Receita: {formatPrice(camp.revenue)}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Bottom Performers */}
-        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <div className="flex items-center gap-2 mb-6">
-            <AlertTriangle size={20} className="text-orange-600" />
-            <h2 className="text-lg font-bold" style={{ color: T.text }}>Requerem Atenção</h2>
-          </div>
-          <div className="space-y-4">
-            {roiData.bottomPerformers.map((camp, idx) => (
-              <div key={idx} className="p-4 bg-orange-50 border border-orange-200 rounded-xl">
-                <div className="flex items-start justify-between mb-2">
-                  <p className="font-semibold text-sm" style={{ color: "var(--bo-text)" }}>{camp.name}</p>
-                  <p className="text-lg font-bold text-orange-700">{camp.roi.toLocaleString('pt-BR')}%</p>
-                </div>
-                <div className="flex items-center gap-4 text-xs" style={{ color: "var(--bo-text-muted)" }}>
-                  <span>Investido: {formatPrice(camp.spent)}</span>
-                  <span>•</span>
-                  <span>Receita: {formatPrice(camp.revenue)}</span>
-                </div>
-                <p className="text-xs text-orange-700 mt-2">
-                  💡 Considerar otimização ou realocação de orçamento
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+                    {/* ROI por Canal */}
+                    {canaisROI.length > 0 && (
+                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <h2 className="text-base font-bold mb-5" style={{ color: T.text }}>ROI por Canal</h2>
+                            <div className="space-y-4">
+                                {canaisROI.map((canal, idx) => {
+                                    const Icon = CHANNEL_ICONS[canal.channel] ?? Target
+                                    const maxROI = Math.max(...canaisROI.map(c => Math.abs(c.avgRoi)), 1)
+                                    const barW = Math.max(4, (Math.abs(canal.avgRoi) / maxROI) * 100)
+                                    const isPositive = canal.avgRoi >= 0
+                                    return (
+                                        <div key={idx}>
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: T.surface }}>
+                                                        <Icon size={18} style={{ color: T.textMuted }} />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-semibold" style={{ color: T.text }}>
+                                                            {CHANNEL_LABELS[canal.channel] ?? canal.channel}
+                                                        </p>
+                                                        <p className="text-xs" style={{ color: T.textMuted }}>
+                                                            {fmtBRL(canal.spent)} investido · {canal.leads} leads · {canal.count} camp.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className={`text-base font-bold ${isPositive ? 'text-green-500' : 'text-red-400'}`}>
+                                                        {fmtROI(canal.avgRoi)}
+                                                    </p>
+                                                    <p className="text-xs" style={{ color: T.textMuted }}>{canal.conversions} conv.</p>
+                                                </div>
+                                            </div>
+                                            <div className="h-2 rounded-full overflow-hidden" style={{ background: T.surface }}>
+                                                <div
+                                                    className={`h-full rounded-full transition-all duration-500 ${isPositive ? 'bg-green-500' : 'bg-red-400'}`}
+                                                    style={{ width: `${barW}%` }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    )}
 
-      {/* Evolução Mensal */}
-      <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-        <h2 className="text-lg font-bold mb-6" style={{ color: T.text }}>Evolução Mensal do ROI</h2>
-        <div className="space-y-4">
-          {roiData.evolucaoMensal.map((month, idx) => {
-            const maxROI = Math.max(...roiData.evolucaoMensal.map(m => m.roi))
-            const barWidth = (month.roi / maxROI) * 100
-            const prevMonth = idx > 0 ? roiData.evolucaoMensal[idx - 1] : null
-            const trend = prevMonth ? month.roi > prevMonth.roi : true
+                    {/* Top & Bottom */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        {/* Top performers */}
+                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <div className="flex items-center gap-2 mb-4">
+                                <Award size={18} className="text-green-500" />
+                                <h2 className="text-base font-bold" style={{ color: T.text }}>Top Performers</h2>
+                            </div>
+                            {topPerformers.length === 0 ? (
+                                <p className="text-sm text-center py-6" style={{ color: T.textMuted }}>Sem dados de ROI</p>
+                            ) : (
+                                <div className="space-y-3">
+                                    {topPerformers.map((camp, idx) => (
+                                        <div key={camp.id} className="p-3 rounded-xl" style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)' }}>
+                                            <div className="flex items-start justify-between mb-1">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: '#16a34a' }}>
+                                                        {idx + 1}
+                                                    </div>
+                                                    <p className="text-sm font-semibold line-clamp-1" style={{ color: T.text }}>{camp.name}</p>
+                                                </div>
+                                                <p className="text-sm font-bold text-green-500 ml-2 shrink-0">{fmtROI(camp.roi)}</p>
+                                            </div>
+                                            <p className="text-xs pl-7" style={{ color: T.textMuted }}>
+                                                {fmtBRL(Number(camp.spent))} investido · {camp.leads || 0} leads · {camp.conversions || 0} conv.
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
 
-            return (
-              <div key={idx}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold w-20" style={{ color: T.text }}>{month.month}</span>
-                    <div className="flex items-center gap-2">
-                      {trend ? (
-                        <TrendingUp size={14} className="text-green-600" />
-                      ) : (
-                        <TrendingDown size={14} className="text-red-600" />
-                      )}
-                      <span className={`text-xs font-medium ${trend ? 'text-green-600' : 'text-red-600'}`}>
-                        {month.roi.toLocaleString('pt-BR')}%
-                      </span>
+                        {/* Needs attention */}
+                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <div className="flex items-center gap-2 mb-4">
+                                <AlertTriangle size={18} className="text-orange-500" />
+                                <h2 className="text-base font-bold" style={{ color: T.text }}>Requerem Atenção</h2>
+                            </div>
+                            {bottomPerformers.length === 0 ? (
+                                <p className="text-sm text-center py-6" style={{ color: T.textMuted }}>Todas campanhas com bom ROI 🎉</p>
+                            ) : (
+                                <div className="space-y-3">
+                                    {bottomPerformers.map(camp => (
+                                        <div key={camp.id} className="p-3 rounded-xl" style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)' }}>
+                                            <div className="flex items-start justify-between mb-1">
+                                                <p className="text-sm font-semibold line-clamp-1" style={{ color: T.text }}>{camp.name}</p>
+                                                <p className={`text-sm font-bold ml-2 shrink-0 ${camp.roi < 0 ? 'text-red-400' : 'text-orange-500'}`}>
+                                                    {fmtROI(camp.roi)}
+                                                </p>
+                                            </div>
+                                            <p className="text-xs" style={{ color: T.textMuted }}>
+                                                {fmtBRL(Number(camp.spent))} investido · {camp.leads || 0} leads · Canal: {CHANNEL_LABELS[(camp.channel || '').toLowerCase()] ?? camp.channel}
+                                            </p>
+                                            <p className="text-xs text-orange-500 mt-1">💡 Considerar otimização ou realocação de budget</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
-                  </div>
-                  <div className="text-right text-xs" style={{ color: T.textMuted }}>
-                    <span>{formatPrice(month.invested)} → {formatPrice(month.revenue)}</span>
-                  </div>
-                </div>
-                <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                  <div
-                    className={`h-full rounded-full transition-all ${trend ? 'bg-green-500' : 'bg-orange-500'
-                      }`}
-                    style={{ width: `${barWidth}%` }}
-                  />
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
 
-      {/* Insights */}
-      <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-        <h3 className="text-sm font-bold text-blue-900 mb-3">💡 Insights Automáticos</h3>
-        <ul className="space-y-2 text-sm text-blue-800">
-          <li>• Email Marketing tem o melhor ROI (265,625%) com menor investimento</li>
-          <li>• Instagram gerou maior receita absoluta (R$ 7.8M) com ROI de 243,750%</li>
-          <li>• ROI cresceu 32% em fevereiro vs janeiro</li>
-          <li>• Google Ads tem ROI 40% abaixo da média - considerar otimização</li>
-        </ul>
-      </div>
-    </div>
-  )
+                    {/* Evolução Mensal */}
+                    {evolucaoMensal.length > 1 && (
+                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <h2 className="text-base font-bold mb-5" style={{ color: T.text }}>Evolução Mensal</h2>
+                            <div className="space-y-3">
+                                {evolucaoMensal.map((m, idx) => {
+                                    const maxROI = Math.max(...evolucaoMensal.map(x => Math.abs(x.avgRoi)), 1)
+                                    const barW = Math.max(4, (Math.abs(m.avgRoi) / maxROI) * 100)
+                                    const prev = idx > 0 ? evolucaoMensal[idx - 1] : null
+                                    const trend = prev ? m.avgRoi >= prev.avgRoi : true
+                                    const isPositive = m.avgRoi >= 0
+                                    return (
+                                        <div key={m.month}>
+                                            <div className="flex items-center justify-between mb-1.5">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-semibold w-16" style={{ color: T.text }}>{m.month}</span>
+                                                    {trend
+                                                        ? <TrendingUp size={12} className="text-green-500" />
+                                                        : <TrendingDown size={12} className="text-red-400" />}
+                                                    <span className={`text-xs font-medium ${isPositive ? 'text-green-500' : 'text-red-400'}`}>
+                                                        {fmtROI(m.avgRoi)}
+                                                    </span>
+                                                </div>
+                                                <span className="text-xs" style={{ color: T.textMuted }}>
+                                                    {fmtBRL(m.invested)} · {m.leads} leads
+                                                </span>
+                                            </div>
+                                            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.surface }}>
+                                                <div
+                                                    className={`h-full rounded-full transition-all duration-500 ${isPositive ? 'bg-green-500' : 'bg-red-400'}`}
+                                                    style={{ width: `${barW}%` }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Insights */}
+                    {insights.length > 0 && (
+                        <div className="rounded-xl p-5" style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)' }}>
+                            <h3 className="text-sm font-bold mb-3" style={{ color: '#60A5FA' }}>💡 Insights Automáticos</h3>
+                            <ul className="space-y-1.5">
+                                {insights.map((ins, i) => (
+                                    <li key={i} className="text-sm" style={{ color: T.textMuted }}>• {ins}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
+    )
 }

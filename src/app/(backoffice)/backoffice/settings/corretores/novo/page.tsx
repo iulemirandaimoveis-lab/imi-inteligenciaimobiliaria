@@ -12,16 +12,7 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { createBroker, BrokerFormData } from '@/hooks/use-brokers'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const schema = z.object({
     name: z.string().min(3, 'Nome muito curto'),

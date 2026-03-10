@@ -5,15 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Users, TrendingUp, Phone, ChevronRight, BarChart2, Zap, Clock, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    accent: '#486581',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const TEMP_COLORS = {
     hot:  { bg: 'rgba(255,49,49,0.15)',  text: '#FF3131', border: 'rgba(255,49,49,0.35)',  label: 'HOT'  },

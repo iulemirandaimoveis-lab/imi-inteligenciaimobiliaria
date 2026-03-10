@@ -7,15 +7,7 @@ import {
     Home, Percent, Save, Building2,
 } from 'lucide-react'
 import { toast } from 'sonner'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const bancos = [
     { id: 1, name: 'Caixa Econômica Federal', rate: 9.5 },

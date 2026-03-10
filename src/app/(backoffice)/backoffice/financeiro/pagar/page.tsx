@@ -8,13 +8,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     pago:     { label: 'Pago',      text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },

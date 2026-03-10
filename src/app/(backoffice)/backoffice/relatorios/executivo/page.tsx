@@ -7,15 +7,7 @@ import {
   Globe, Target, ChevronRight, RefreshCw, Download, Loader2,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  accent: '#3B82F6',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 type Period = 'monthly' | 'quarterly' | 'yearly'
 

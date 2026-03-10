@@ -6,13 +6,7 @@ import {
     Bell, Check, CheckCheck, Loader2,
     User, Home, DollarSign, FileText, AlertCircle, Info, CheckCircle,
 } from 'lucide-react'
-
-const T = {
-    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 interface Notification {
     id: string

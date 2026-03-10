@@ -3,16 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { Building2, Plus, MapPin, TrendingUp, Eye, Users, DollarSign, BarChart2, Loader2, X } from 'lucide-react'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 interface Projeto {
     id: string

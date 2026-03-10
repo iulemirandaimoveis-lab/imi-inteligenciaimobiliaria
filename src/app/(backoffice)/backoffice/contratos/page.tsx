@@ -8,13 +8,7 @@ import {
     Globe, FileSignature, ChevronRight, Sparkles, X, Loader2
 } from 'lucide-react'
 import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL } from '@/lib/modelos-contratos'
-
-const T = {
-    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     rascunho: { label: 'Rascunho', text: '#4E5669', bg: 'rgba(78,86,105,0.15)', icon: FileText },

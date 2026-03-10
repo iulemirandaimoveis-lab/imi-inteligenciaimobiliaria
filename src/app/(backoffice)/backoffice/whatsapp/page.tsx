@@ -8,21 +8,9 @@ import {
   AlertCircle, MessageSquare, Zap, Sparkles, Loader2, X, MessageCircle,
 } from 'lucide-react'
 import { useWhatsapp, WhatsappConversation, WhatsappMessage } from '@/hooks/backoffice/use-whatsapp'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 /* ── Design Tokens ──────────────────────────────────────────── */
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  hover: 'var(--bo-hover)',
-  border: 'var(--bo-border)',
-  borderGold: 'var(--bo-border-gold)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  textTertiary: 'var(--bo-text-tertiary, var(--bo-text-muted))',
-  accent: 'var(--bo-accent)',
-  shadow: 'var(--bo-shadow)',
-}
-
 const TEMPLATES_WHATSAPP = [
   { id: 'visita', label: 'Agendar Visita', text: 'Olá [Nome], podemos agendar uma visita técnica para amanhã às 10h ou 15h? Estarei com o material completo.' },
   { id: 'laudo', label: 'Enviar Laudo', text: 'Segue em anexo o laudo de avaliação técnica conforme NBR 14653. Fico à disposição para dúvidas.' },

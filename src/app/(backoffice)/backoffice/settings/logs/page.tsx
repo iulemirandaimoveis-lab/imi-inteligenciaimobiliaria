@@ -13,14 +13,7 @@ import {
   XCircle,
   RefreshCw,
 } from 'lucide-react'
-
-const T = {
-  bg: 'var(--bo-surface)',
-  card: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  sub: 'var(--bo-text-muted)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 interface AuditLog {
   id: string

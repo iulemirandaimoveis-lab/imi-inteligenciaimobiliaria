@@ -17,13 +17,7 @@ import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTa
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
 import { MetricBar } from '@/app/(backoffice)/components/ui/MetricBar'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const supabase = createClient()
 

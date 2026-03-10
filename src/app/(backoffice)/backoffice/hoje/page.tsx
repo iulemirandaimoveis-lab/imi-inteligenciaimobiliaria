@@ -15,13 +15,7 @@ import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
 import { MobileLeadCard } from '@/app/(backoffice)/components/ui/MobileLeadCard'
 import { AIInsightCard } from '@/app/(backoffice)/components/ui/AIInsightCard'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
-
-const T = {
-    surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // ── Helpers ────────────────────────────────────────────────────────────
 function getGreeting(): { text: string; Icon: React.ElementType; period: string } {

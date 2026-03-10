@@ -9,15 +9,7 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    accent: '#486581',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 function getScore(lead: any): number {
     if (lead.score && lead.score > 0) return lead.score

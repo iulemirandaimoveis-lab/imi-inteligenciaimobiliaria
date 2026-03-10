@@ -20,17 +20,9 @@ import {
   Image as ImageIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // Design tokens
-const T = {
-  surface: 'var(--bo-surface)',
-  surfaceAlt: 'var(--bo-surface-alt)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  accent: 'var(--bo-accent)',
-}
-
 export default function EditarConstrutoraPage() {
   const params = useParams()
   const router = useRouter()

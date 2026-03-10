@@ -6,14 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import {
   Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit, MoreVertical,
 } from 'lucide-react'
-
-const T = {
-  bg: 'var(--bo-surface)',
-  card: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  sub: 'var(--bo-text-muted)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const supabase = createClient()
 

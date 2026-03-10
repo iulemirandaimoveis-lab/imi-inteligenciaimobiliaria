@@ -7,16 +7,7 @@ import Link from 'next/link'
 import { useBrokers, updateBrokerStatus } from '@/hooks/use-brokers'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 export default function CorretoresPage() {
     const [searchTerm, setSearchTerm] = useState('')

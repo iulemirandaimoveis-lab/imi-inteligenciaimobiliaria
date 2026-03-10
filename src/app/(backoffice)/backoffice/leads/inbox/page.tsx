@@ -6,15 +6,7 @@ import { Search, SlidersHorizontal, Plus, Zap, Phone, MessageSquare, RefreshCw }
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    accent: '#486581',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 // Neon temperature colors (from Stitch design)
 const TEMP = {

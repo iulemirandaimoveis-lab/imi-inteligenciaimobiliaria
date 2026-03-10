@@ -9,7 +9,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Settings,
     Zap,
@@ -33,16 +33,7 @@ import {
     Save,
     X,
 } from 'lucide-react'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const REGRAS_INICIAIS = [
     {
@@ -187,15 +178,33 @@ const CATEGORIAS_LABEL: Record<string, string> = {
     decay: 'Decaimento',
 }
 
+const LS_KEY = 'imi-lead-rules-state'
+
 export default function LeadRulesPage() {
     const [regras, setRegras] = useState(REGRAS_INICIAIS)
     const [filtroCategoria, setFiltroCategoria] = useState<string | null>(null)
     const [mostrarInativas, setMostrarInativas] = useState(false)
 
+    // Load persisted toggle states from localStorage
+    useEffect(() => {
+        try {
+            const saved = JSON.parse(localStorage.getItem(LS_KEY) ?? '{}') as Record<number, boolean>
+            if (Object.keys(saved).length > 0) {
+                setRegras(prev => prev.map(r => r.id in saved ? { ...r, ativa: saved[r.id] } : r))
+            }
+        } catch {}
+    }, [])
+
     const toggleRegra = (id: number) => {
-        setRegras(prev =>
-            prev.map(r => (r.id === id ? { ...r, ativa: !r.ativa } : r))
-        )
+        setRegras(prev => {
+            const next = prev.map(r => (r.id === id ? { ...r, ativa: !r.ativa } : r))
+            // Persist state
+            try {
+                const state = Object.fromEntries(next.map(r => [r.id, r.ativa]))
+                localStorage.setItem(LS_KEY, JSON.stringify(state))
+            } catch {}
+            return next
+        })
     }
 
     const regrasFiltradas = regras.filter(r => {

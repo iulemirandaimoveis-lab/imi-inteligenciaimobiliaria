@@ -10,15 +10,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const TEMAS = [
     { value: 'lancamento-luxo', label: 'Destaque de Lançamento de Luxo' },

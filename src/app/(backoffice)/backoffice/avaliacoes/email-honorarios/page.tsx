@@ -6,6 +6,7 @@ import {
   DollarSign, FileText, User, MapPin, Building2, Gavel, Clock, Edit3
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 interface EmailAnalysis {
   solicitante: string
@@ -134,16 +135,6 @@ Avaliadora de Imóveis • CNAI [nº] • CRECI-PE [nº]
 IMI — Iule Miranda Imóveis
 Recife/PE • (81) 9 9723-0455
 www.iulemirandaimoveis.com.br`
-}
-
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  hover: 'var(--bo-hover)',
-  accent: 'var(--bo-accent)',
 }
 
 // ── Component ─────────────────────────────────────────────────

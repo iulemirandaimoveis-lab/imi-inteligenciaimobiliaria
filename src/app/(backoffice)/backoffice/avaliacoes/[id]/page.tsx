@@ -10,13 +10,7 @@ import {
     TrendingUp, BarChart2, Sparkles,
 } from 'lucide-react'
 import { toast } from 'sonner'
-
-const T = {
-    surface: 'var(--bo-surface)', surfaceAlt: 'var(--bo-surface-alt)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-dim)',
-    accent: 'var(--bo-accent)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
     concluida: { label: 'Concluída', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },

@@ -13,19 +13,9 @@ import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import QRCode from 'qrcode'
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const supabase = createClient()
-
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    card: 'var(--bo-card)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
-}
 
 const SOURCES = [
     {

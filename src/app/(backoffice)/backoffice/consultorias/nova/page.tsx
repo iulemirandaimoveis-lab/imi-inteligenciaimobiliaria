@@ -5,17 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Briefcase, Save, User, DollarSign, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
-
-const T = {
-  bg: 'var(--bo-surface)',
-  card: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  borderActive: 'var(--bo-border-gold)',
-  text: 'var(--bo-text)',
-  sub: 'var(--bo-text-muted)',
-  accent: 'var(--bo-accent)',
-  activeBg: 'var(--bo-active-bg)',
-}
+import { T } from '@/app/(backoffice)/lib/theme'
 
 const BTN_PRIMARY = {
   background: 'var(--bo-accent)',

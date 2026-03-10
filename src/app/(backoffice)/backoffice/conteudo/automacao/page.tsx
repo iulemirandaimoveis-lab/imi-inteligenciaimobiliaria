@@ -1,137 +1,107 @@
-// ============================================
-// BLOCO 4 — SCRIPT 5: AUTOMAÇÃO DE CONTEÚDO
-// ⚠️ COPIAR EXATAMENTE — NÃO MODIFICAR
-// ============================================
-
-/**
- * SALVAR EM: src/app/(backoffice)/backoffice/conteudo/automacao/page.tsx
- *
- * Dashboard de automação de fluxo de conteúdo com IA.
- * Permite configurar temas automáticos, canais e horários.
- */
-
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
-    Zap,
-    Bot,
-    RefreshCw,
-    Plus,
-    Play,
-    Settings,
-    Calendar,
-    Instagram,
-    Linkedin,
-    Mail,
-    FileText,
-    Clock,
-    CheckCircle,
-    AlertCircle,
-    BarChart3,
-    Search,
-    MoreVertical,
-    ToggleLeft,
-    ToggleRight,
-    ArrowRight,
-    Sparkles,
-    ChevronRight,
-    Pause,
+    Zap, Bot, RefreshCw, Plus, Play, Settings,
+    Calendar, Instagram, Linkedin, Mail, FileText,
+    BarChart3, Search, MoreVertical, ArrowRight,
+    Sparkles, ChevronRight, Pause, Loader2,
 } from 'lucide-react'
+import { T } from '@/app/(backoffice)/lib/theme'
+import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
+interface Workflow {
+    id: string
+    name: string
+    description: string | null
+    is_active: boolean | null
+    trigger_type: string
+    config: any
+    last_run_at: string | null
+    run_count: number | null
+    created_at: string
 }
-
-// ⚠️ NÃO MODIFICAR - Fluxos de automação mockados contextualizados Recife
-const FLUXOS_AUTOMACAO = [
-    {
-        id: 1,
-        nome: 'Newsletter Semanal: Mercado Recife',
-        desc: 'Gera e envia resumo do mercado imobiliário toda segunda 08:00',
-        model: 'Claude 3.5 Sonnet',
-        status: 'ativo',
-        canais: ['email'],
-        ultimaExec: '2026-02-16T08:00:00',
-        proximaExec: '2026-02-23T08:00:00',
-        sucesso_rate: 98,
-    },
-    {
-        id: 2,
-        nome: 'Dose Diária: Investidor Premium',
-        desc: 'Post curto sobre rentabilidade e novas unidades no Instagram',
-        model: 'Gemini 1.5 Flash',
-        status: 'ativo',
-        canais: ['instagram'],
-        ultimaExec: '2026-02-19T10:00:00',
-        proximaExec: '2026-02-20T10:00:00',
-        sucesso_rate: 94,
-    },
-    {
-        id: 3,
-        nome: 'LinkedIn Insight: Relatório Trimestral',
-        desc: 'Análise profunda de dados de valorização em Boa Viagem/Pina',
-        model: 'Claude 3.5 Sonnet',
-        status: 'pausado',
-        canais: ['linkedin'],
-        ultimaExec: '2026-01-15T09:00:00',
-        proximaExec: 'Pendente',
-        sucesso_rate: 100,
-    },
-    {
-        id: 4,
-        nome: 'Blog SEO: Guia de Bairros',
-        desc: 'Gera artigo otimizado sobre um bairro diferente a cada 15 dias',
-        model: 'GPT-4o',
-        status: 'configurar',
-        canais: ['blog'],
-        ultimaExec: null,
-        proximaExec: 'Manual',
-        sucesso_rate: null,
-    },
-]
 
 const CANAL_ICONS: Record<string, any> = {
     instagram: Instagram,
     linkedin: Linkedin,
     email: Mail,
     blog: FileText,
+    default: Zap,
+}
+
+function getStatusInfo(workflow: Workflow) {
+    if (workflow.is_active) return { label: 'ativo', color: '#4ade80', bg: 'rgba(34,197,94,0.12)' }
+    return { label: 'pausado', color: '#fbbf24', bg: 'rgba(245,158,11,0.12)' }
+}
+
+function fmtLastRun(ts: string | null): string {
+    if (!ts) return 'Nunca executado'
+    const d = new Date(ts)
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+}
+
+function getCanais(wf: Workflow): string[] {
+    if (wf.config?.canais) return wf.config.canais
+    if (wf.trigger_type) return [wf.trigger_type.split('_')[0]]
+    return ['blog']
 }
 
 export default function AutomacaoConteudoPage() {
-    const [fluxos, setFluxos] = useState(FLUXOS_AUTOMACAO)
+    const [workflows, setWorkflows] = useState<Workflow[]>([])
+    const [loading, setLoading] = useState(true)
     const [busca, setBusca] = useState('')
 
-    const toggleStatus = (id: number) => {
-        setFluxos(prev =>
-            prev.map(f => {
-                if (f.id === id) {
-                    const novoStatus = f.status === 'ativo' ? 'pausado' : 'ativo'
-                    return { ...f, status: novoStatus }
-                }
-                return f
-            })
-        )
+    async function loadWorkflows() {
+        setLoading(true)
+        try {
+            const supabase = createClient()
+            const { data, error } = await supabase
+                .from('automation_workflows')
+                .select('*')
+                .order('created_at', { ascending: false })
+            if (error) throw error
+            setWorkflows(data || [])
+        } catch {
+            toast.error('Erro ao carregar automações')
+        } finally {
+            setLoading(false)
+        }
     }
 
-    const fluxosFiltrados = fluxos.filter(f =>
-        f.nome.toLowerCase().includes(busca.toLowerCase()) ||
-        f.desc.toLowerCase().includes(busca.toLowerCase())
+    useEffect(() => { loadWorkflows() }, [])
+
+    const toggleWorkflow = async (wf: Workflow) => {
+        try {
+            const supabase = createClient()
+            const { error } = await supabase
+                .from('automation_workflows')
+                .update({ is_active: !wf.is_active, updated_at: new Date().toISOString() })
+                .eq('id', wf.id)
+            if (error) throw error
+            setWorkflows(prev => prev.map(w => w.id === wf.id ? { ...w, is_active: !w.is_active } : w))
+            toast.success(wf.is_active ? 'Automação pausada' : 'Automação ativada')
+        } catch {
+            toast.error('Erro ao atualizar automação')
+        }
+    }
+
+    const wfFiltrados = workflows.filter(f =>
+        f.name.toLowerCase().includes(busca.toLowerCase()) ||
+        (f.description ?? '').toLowerCase().includes(busca.toLowerCase())
     )
+
+    const ativos = workflows.filter(w => w.is_active).length
+    const totalRuns = workflows.reduce((s, w) => s + (w.run_count ?? 0), 0)
 
     return (
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-[#16162A] rounded-2xl flex items-center justify-center text-white shadow-lg shadow-accent-100">
-                        <Bot size={28} />
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style={{ background: T.elevated }}>
+                        <Bot size={24} style={{ color: T.accent }} />
                     </div>
                     <div>
                         <h1 className="text-2xl font-bold" style={{ color: T.text }}>Automação de Conteúdo</h1>
@@ -140,56 +110,57 @@ export default function AutomacaoConteudoPage() {
                         </p>
                     </div>
                 </div>
-                <button className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl font-medium hover:bg-[#0F0F1E] shadow-lg shadow-accent-100 transition-all">
+                <button
+                    className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium hover:brightness-110 transition-all"
+                    style={{ background: T.accent }}
+                >
                     <Plus size={18} />
-                    Criar Novo Pipeline
+                    Novo Pipeline
                 </button>
             </div>
 
-            {/* Stats e Insight */}
+            {/* Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Carga de IA</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Pipelines Ativos</p>
                         <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold" style={{ color: T.text }}>84%</p>
-                            <div className="w-16 h-8 rounded flex items-end p-1 gap-0.5" style={{ background: T.elevated }}>
-                                <div className="flex-1 h-1/2 rounded-full" style={{ background: T.border }} />
-                                <div className="flex-1 h-3/4 rounded-full" style={{ background: T.textMuted }} />
-                                <div className="flex-1 h-full rounded-full" style={{ background: 'var(--bo-accent)' }} />
-                            </div>
+                            <p className="text-3xl font-bold" style={{ color: T.text }}>{loading ? '—' : ativos}</p>
+                            <Zap size={20} style={{ color: T.accent }} className="mb-1" />
                         </div>
-                        <p className="text-[10px] font-medium mt-2" style={{ color: T.accent }}>Capacidade otimizada</p>
+                        <p className="text-[10px] font-medium mt-2" style={{ color: T.accent }}>
+                            de {loading ? '—' : workflows.length} configurados
+                        </p>
                     </div>
                     <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Posts Gerados</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Execuções Totais</p>
                         <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold" style={{ color: T.text }}>127</p>
+                            <p className="text-3xl font-bold" style={{ color: T.text }}>{loading ? '—' : totalRuns.toLocaleString('pt-BR')}</p>
                             <BarChart3 size={24} className="text-blue-500 mb-1" />
                         </div>
-                        <p className="text-[10px] font-medium mt-2" style={{ color: T.textMuted }}>Últimos 30 dias</p>
+                        <p className="text-[10px] font-medium mt-2" style={{ color: T.textMuted }}>Total acumulado</p>
                     </div>
                     <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Reach Orgânico</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Total de Pipelines</p>
                         <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold" style={{ color: T.text }}>+12%</p>
-                            <TrendingUpIcon size={24} className="text-green-500 mb-1" />
+                            <p className="text-3xl font-bold" style={{ color: T.text }}>{loading ? '—' : workflows.length}</p>
+                            <Settings size={20} style={{ color: T.textMuted }} className="mb-1" />
                         </div>
-                        <p className="text-[10px] text-green-600 font-medium mt-2">Powered by AI strategy</p>
+                        <p className="text-[10px] font-medium mt-2" style={{ color: T.textMuted }}>Configurados</p>
                     </div>
                 </div>
 
                 <div className="bg-gradient-to-br from-indigo-900 to-indigo-950 rounded-2xl p-6 text-white relative overflow-hidden">
                     <Sparkles className="absolute -top-4 -right-4 w-24 h-24 text-white/5" />
                     <h3 className="text-sm font-bold flex items-center gap-2 mb-3">
-                        <Zap size={16} className="text-accent-400" />
-                        Insight da IA
+                        <Zap size={16} className="text-yellow-400" />
+                        Dica de Automação
                     </h3>
                     <p className="text-xs text-indigo-100 leading-relaxed font-medium">
-                        "Posts sobre <strong>Airbnb em Boa Viagem</strong> performam 40% melhor às quintas-feiras. Recomendo ativar o pipeline de posts curtos para este tema."
+                        Configure pipelines com gatilhos baseados em eventos — novo lead, novo imóvel ou data programada — para máxima cobertura automática.
                     </p>
                     <button className="mt-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-white/10 hover:bg-white/20 py-2 px-4 rounded-xl transition-all">
-                        Ativar Sugestão <ChevronRight size={14} />
+                        Criar Pipeline <ChevronRight size={14} />
                     </button>
                 </div>
             </div>
@@ -203,124 +174,122 @@ export default function AutomacaoConteudoPage() {
                             value={busca}
                             onChange={e => setBusca(e.target.value)}
                             placeholder="Buscar pipeline de automação..."
-                            className="w-full h-11 pl-11 pr-4 rounded-2xl text-sm focus:ring-2 focus:ring-[#334E68] border-none"
+                            className="w-full h-11 pl-11 pr-4 rounded-2xl text-sm focus:ring-2 outline-none"
                             style={{ background: T.elevated, color: T.text }}
                         />
                     </div>
-                    <div className="flex items-center gap-3">
-                        <button
-                            className="flex items-center gap-2 h-11 px-4 rounded-2xl text-xs font-bold transition-all uppercase tracking-widest"
-                            style={{ background: T.elevated, color: T.textMuted }}
-                        >
-                            <RefreshCw size={14} />
-                            Forçar Sync Global
-                        </button>
+                    <button
+                        onClick={loadWorkflows}
+                        className="flex items-center gap-2 h-11 px-4 rounded-2xl text-xs font-bold transition-all uppercase tracking-widest"
+                        style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}
+                    >
+                        <RefreshCw size={14} />
+                        Atualizar
+                    </button>
+                </div>
+
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <Loader2 size={28} className="animate-spin" style={{ color: T.accent }} />
                     </div>
-                </div>
-
-                <div>
-                    {fluxosFiltrados.map(fluxo => (
-                        <div
-                            key={fluxo.id}
-                            className="p-6 flex flex-col md:flex-row md:items-center gap-6 group transition-colors"
-                            style={{ borderBottom: `1px solid ${T.border}` }}
-                        >
-                            <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-1">
-                                    <h3 className="text-base font-bold" style={{ color: T.text }}>{fluxo.nome}</h3>
-                                    <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider"
-                                        style={
-                                            fluxo.status === 'ativo' ? { background: 'rgba(34,197,94,0.12)', color: '#4ade80' } :
-                                            fluxo.status === 'pausado' ? { background: 'rgba(245,158,11,0.12)', color: '#fbbf24' } :
-                                            { background: T.elevated, color: T.textMuted }
-                                        }
-                                    >
-                                        {fluxo.status}
-                                    </span>
-                                </div>
-                                <p className="text-sm leading-relaxed max-w-xl" style={{ color: T.textMuted }}>{fluxo.desc}</p>
-                                <div className="flex items-center gap-4 mt-3">
-                                    <div className="flex items-center gap-1.5">
-                                        <Bot size={14} style={{ color: T.accent }} />
-                                        <span className="text-xs font-semibold" style={{ color: T.text }}>{fluxo.model}</span>
-                                    </div>
-                                    <div className="h-4 w-px" style={{ background: T.border }} />
-                                    <div className="flex items-center gap-1.5">
-                                        <Calendar size={14} style={{ color: T.textMuted }} />
-                                        <span className="text-xs font-medium" style={{ color: T.textMuted }}>Próximo: {fluxo.proximaExec}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-4 md:gap-12">
-                                <div className="flex -space-x-2">
-                                    {fluxo.canais.map(canal => {
-                                        const Icon = CANAL_ICONS[canal]
-                                        return (
-                                            <div
-                                                key={canal}
-                                                className="w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-colors"
-                                                style={{ background: T.elevated, border: `2px solid ${T.border}`, color: T.textMuted }}
-                                                title={canal}
-                                            >
-                                                <Icon size={14} />
+                ) : wfFiltrados.length === 0 ? (
+                    <div className="text-center py-16">
+                        <Bot size={40} className="mx-auto mb-3 opacity-20" style={{ color: T.textMuted }} />
+                        <p className="font-medium" style={{ color: T.text }}>
+                            {busca ? 'Nenhum pipeline encontrado' : 'Nenhuma automação configurada'}
+                        </p>
+                        <p className="text-sm mt-1" style={{ color: T.textMuted }}>
+                            {busca ? 'Tente outros termos' : 'Crie o primeiro pipeline de automação'}
+                        </p>
+                    </div>
+                ) : (
+                    <div>
+                        {wfFiltrados.map(wf => {
+                            const statusInfo = getStatusInfo(wf)
+                            const canais = getCanais(wf)
+                            return (
+                                <div key={wf.id} className="p-6 flex flex-col md:flex-row md:items-center gap-6 group transition-colors" style={{ borderBottom: `1px solid ${T.border}` }}>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <h3 className="text-base font-bold" style={{ color: T.text }}>{wf.name}</h3>
+                                            <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider" style={{ background: statusInfo.bg, color: statusInfo.color }}>
+                                                {statusInfo.label}
+                                            </span>
+                                        </div>
+                                        {wf.description && (
+                                            <p className="text-sm leading-relaxed max-w-xl" style={{ color: T.textMuted }}>{wf.description}</p>
+                                        )}
+                                        <div className="flex items-center gap-4 mt-3">
+                                            <div className="flex items-center gap-1.5">
+                                                <Zap size={14} style={{ color: T.accent }} />
+                                                <span className="text-xs font-semibold" style={{ color: T.text }}>{wf.trigger_type}</span>
                                             </div>
-                                        )
-                                    })}
-                                </div>
+                                            {wf.last_run_at && (
+                                                <>
+                                                    <div className="h-4 w-px" style={{ background: T.border }} />
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Calendar size={14} style={{ color: T.textMuted }} />
+                                                        <span className="text-xs font-medium" style={{ color: T.textMuted }}>
+                                                            Última exec: {fmtLastRun(wf.last_run_at)}
+                                                        </span>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
 
-                                <div className="text-right">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: T.textMuted }}>Sucesso</p>
-                                    <p className="text-sm font-bold" style={{ color: T.text }}>{fluxo.sucesso_rate ? `${fluxo.sucesso_rate}%` : '—'}</p>
-                                </div>
+                                    <div className="flex items-center gap-4 md:gap-8">
+                                        <div className="flex -space-x-2">
+                                            {canais.map(canal => {
+                                                const Icon = CANAL_ICONS[canal] ?? CANAL_ICONS.default
+                                                return (
+                                                    <div key={canal} className="w-8 h-8 rounded-full flex items-center justify-center shadow-sm"
+                                                        style={{ background: T.elevated, border: `2px solid ${T.border}`, color: T.textMuted }} title={canal}>
+                                                        <Icon size={14} />
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
 
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => toggleStatus(fluxo.id)}
-                                        className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
-                                        style={fluxo.status === 'ativo'
-                                            ? { background: 'rgba(245,158,11,0.12)', color: '#fbbf24' }
-                                            : { background: 'rgba(34,197,94,0.12)', color: '#4ade80' }
-                                        }
-                                    >
-                                        {fluxo.status === 'ativo' ? <Pause size={18} /> : <Play size={18} />}
-                                    </button>
-                                    <button
-                                        className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
-                                        style={{ background: T.elevated, color: T.textMuted }}
-                                    >
-                                        <Settings size={18} />
-                                    </button>
-                                    <button
-                                        className="w-10 h-10 flex items-center justify-center rounded-xl touch-always-visible opacity-0 group-hover:opacity-100 transition-all"
-                                        style={{ color: T.textMuted }}
-                                    >
-                                        <MoreVertical size={18} />
-                                    </button>
+                                        <div className="text-right">
+                                            <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: T.textMuted }}>Execuções</p>
+                                            <p className="text-sm font-bold" style={{ color: T.text }}>
+                                                {wf.run_count != null ? wf.run_count.toLocaleString('pt-BR') : '—'}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => toggleWorkflow(wf)}
+                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+                                                style={wf.is_active
+                                                    ? { background: 'rgba(245,158,11,0.12)', color: '#fbbf24' }
+                                                    : { background: 'rgba(34,197,94,0.12)', color: '#4ade80' }
+                                                }
+                                                title={wf.is_active ? 'Pausar' : 'Ativar'}
+                                            >
+                                                {wf.is_active ? <Pause size={18} /> : <Play size={18} />}
+                                            </button>
+                                            <button className="w-10 h-10 flex items-center justify-center rounded-xl transition-all" style={{ background: T.elevated, color: T.textMuted }}>
+                                                <Settings size={18} />
+                                            </button>
+                                            <button className="w-10 h-10 flex items-center justify-center rounded-xl opacity-0 group-hover:opacity-100 transition-all" style={{ color: T.textMuted }}>
+                                                <MoreVertical size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                            )
+                        })}
+                    </div>
+                )}
 
                 <div className="p-4 text-center" style={{ background: T.elevated, borderTop: `1px solid ${T.border}` }}>
-                    <button
-                        className="text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 mx-auto"
-                        style={{ color: T.textMuted }}
-                    >
+                    <button className="text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 mx-auto hover:opacity-80" style={{ color: T.textMuted }}>
                         Ver Logs de Automação Completos <ArrowRight size={14} />
                     </button>
                 </div>
             </div>
         </div>
-    )
-}
-
-function TrendingUpIcon({ className, size }: { className?: string; size: number }) {
-    return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-            <polyline points="16 7 22 7 22 13" />
-        </svg>
     )
 }
