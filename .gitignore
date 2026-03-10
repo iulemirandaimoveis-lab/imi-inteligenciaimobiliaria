@@ -21,6 +21,20 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+build_log.txt
+lint_output.txt
+type_errors.txt
+tailwind-error.log
+login_output.html
+
+# Sensitive scripts (never commit)
+reset_passwords.*
+test_login.*
+
+# Temp/backup directories
+tmp-blocos/
+imi-bloco-*/
+backups/
 
 # Local env files
 .env*.local
