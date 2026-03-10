@@ -136,7 +136,12 @@ export default function EbookPage() {
                 body: JSON.stringify({ ...config, stream: true }),
             })
 
-            if (!res.ok) throw new Error((await res.json()).error || 'Erro na API')
+            if (!res.ok) {
+                const text = await res.text()
+                let msg = 'Erro na API'
+                try { msg = JSON.parse(text).error || msg } catch { /* html page */ }
+                throw new Error(msg)
+            }
 
             const reader = res.body?.getReader()
             const decoder = new TextDecoder()

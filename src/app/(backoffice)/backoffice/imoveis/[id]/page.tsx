@@ -2,30 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import {
-  ArrowLeft,
-  MapPin,
-  Building2,
-  Bed,
-  Bath,
-  Ruler,
-  Car,
-  Edit,
-  Trash2,
-  CheckCircle,
-  Calendar,
-  Loader2,
-  Image as ImageIcon,
-  ExternalLink,
-  Tag,
-  Star,
-  Globe,
-  FileText,
-  QrCode,
-  ShoppingCart,
-  Archive,
-  RotateCcw,
+  ArrowLeft, MapPin, Building2, Bed, Bath, Ruler, Car, Edit,
+  CheckCircle, Calendar, Loader2, Image as ImageIcon, ExternalLink,
+  Tag, Star, Globe, FileText, QrCode, ShoppingCart, Archive, RotateCcw,
+  ChevronLeft, ChevronRight, X, ZoomIn,
 } from 'lucide-react'
 import { T } from '../../../lib/theme'
 import Image from 'next/image'
@@ -52,7 +35,8 @@ export default function ImovelDetalhesPage() {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
-  const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'info'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'mapa' | 'info'>('overview')
+  const [lightbox, setLightbox] = useState<{ open: boolean; idx: number }>({ open: false, idx: 0 })
 
   useEffect(() => {
     const fetchDevelopment = async () => {
@@ -288,10 +272,11 @@ export default function ImovelDetalhesPage() {
 
       {/* Tabs */}
       <div style={{ borderBottom: `1px solid ${T.border}` }}>
-        <div className="flex gap-6">
+        <div className="flex gap-6 overflow-x-auto">
           {[
             { key: 'overview', label: 'Visão Geral' },
-            { key: 'gallery', label: 'Galeria' },
+            { key: 'gallery', label: `Galeria${galleryImages.length > 0 ? ` (${galleryImages.length})` : ''}` },
+            { key: 'mapa', label: 'Mapa' },
             { key: 'info', label: 'Informações' },
           ].map(tab => (
             <button
@@ -432,9 +417,16 @@ export default function ImovelDetalhesPage() {
           {galleryImages.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {galleryImages.map((url: string, i: number) => (
-                <div key={i} className="relative group rounded-xl overflow-hidden cursor-pointer" style={{ border: `1px solid ${T.border}` }}>
-                  <Image src={url} alt={`${data.name} ${i + 1}`} width={400} height={192} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
-                </div>
+                <motion.div key={i} whileHover={{ scale: 1.02 }} onClick={() => setLightbox({ open: true, idx: i })}
+                  className="relative group rounded-xl overflow-hidden cursor-pointer" style={{ border: `1px solid ${T.border}` }}>
+                  <Image src={url} alt={`${data.name} ${i + 1}`} width={400} height={192} className="w-full h-48 object-cover group-hover:brightness-90 transition-all duration-300" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm" style={{ background: 'rgba(0,0,0,0.5)' }}>
+                      <ZoomIn size={18} color="white" />
+                    </div>
+                  </div>
+                  {i === 0 && <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: T.accent, color: 'white' }}>Capa</div>}
+                </motion.div>
               ))}
             </div>
           ) : (
@@ -443,6 +435,41 @@ export default function ImovelDetalhesPage() {
               <p className="text-sm" style={{ color: T.textDim }}>Nenhuma imagem cadastrada</p>
               <button onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)} className="text-sm mt-3 underline" style={{ color: T.accent }}>
                 Adicionar imagens
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'mapa' && (
+        <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+          {(data.address || data.neighborhood) ? (
+            <>
+              <div className="p-4 flex items-center gap-2" style={{ background: T.surface }}>
+                <MapPin size={16} style={{ color: T.accent }} />
+                <p className="text-sm font-medium" style={{ color: T.text }}>
+                  {[data.address, data.neighborhood, data.city || 'Recife', data.state || 'PE'].filter(Boolean).join(', ')}
+                </p>
+                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([data.address, data.neighborhood, data.city || 'Recife', 'PE'].filter(Boolean).join(', '))}`}
+                  target="_blank" rel="noopener" className="ml-auto flex items-center gap-1 text-xs" style={{ color: T.accent }}>
+                  Abrir no Maps <ExternalLink size={12} />
+                </a>
+              </div>
+              <iframe
+                src={`https://maps.google.com/maps?q=${encodeURIComponent([data.address, data.neighborhood, data.city || 'Recife', 'PE, Brasil'].filter(Boolean).join(', '))}&output=embed&z=16`}
+                className="w-full" height="420" style={{ border: 0 }} loading="lazy" allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade" />
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 gap-4" style={{ background: T.surface }}>
+              <MapPin size={48} style={{ color: T.textDim }} />
+              <div className="text-center">
+                <p className="text-sm font-medium mb-1" style={{ color: T.text }}>Endereço não cadastrado</p>
+                <p className="text-xs" style={{ color: T.textDim }}>Adicione um endereço para ver o mapa</p>
+              </div>
+              <button onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
+                className="h-9 px-4 rounded-xl text-sm font-medium" style={{ background: T.accent, color: 'white' }}>
+                Adicionar endereço
               </button>
             </div>
           )}
@@ -515,6 +542,42 @@ export default function ImovelDetalhesPage() {
           </div>
         </div>
       )}
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightbox.open && galleryImages.length > 0 && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,0.92)' }}
+            onClick={() => setLightbox({ open: false, idx: 0 })}>
+            <button onClick={(e) => { e.stopPropagation(); setLightbox({ open: false, idx: 0 }) }}
+              className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ background: 'rgba(255,255,255,0.12)', color: 'white' }}>
+              <X size={20} />
+            </button>
+            <button onClick={e => { e.stopPropagation(); setLightbox(p => ({ ...p, idx: (p.idx - 1 + galleryImages.length) % galleryImages.length })) }}
+              className="absolute left-4 w-12 h-12 rounded-full flex items-center justify-center"
+              style={{ background: 'rgba(255,255,255,0.12)', color: 'white' }}>
+              <ChevronLeft size={24} />
+            </button>
+            <motion.img key={lightbox.idx} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+              src={galleryImages[lightbox.idx]} alt={`${data.name} ${lightbox.idx + 1}`}
+              className="max-h-[85vh] max-w-[90vw] object-contain rounded-xl"
+              onClick={e => e.stopPropagation()} />
+            <button onClick={e => { e.stopPropagation(); setLightbox(p => ({ ...p, idx: (p.idx + 1) % galleryImages.length })) }}
+              className="absolute right-4 w-12 h-12 rounded-full flex items-center justify-center"
+              style={{ background: 'rgba(255,255,255,0.12)', color: 'white' }}>
+              <ChevronRight size={24} />
+            </button>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {galleryImages.map((_: string, i: number) => (
+                <button key={i} onClick={e => { e.stopPropagation(); setLightbox(p => ({ ...p, idx: i })) }}
+                  className="w-2 h-2 rounded-full transition-all"
+                  style={{ background: i === lightbox.idx ? 'white' : 'rgba(255,255,255,0.4)' }} />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

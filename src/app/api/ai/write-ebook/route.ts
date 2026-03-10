@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
             const readable = new ReadableStream({
                 async start(controller) {
                     const stream = anthropic.messages.stream({
-                        model: 'claude-3-haiku-20240307',
+                        model: 'claude-haiku-4-5-20251001',
                         max_tokens: 8192,
                         messages: [{ role: 'user', content: prompt }],
                         system: 'Você é um especialista em mercado imobiliário de luxo e escritor de eBooks de alta qualidade para a empresa IMI — Inteligência Imobiliária, baseada em Recife-PE, com portfólio premium.',
@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
         } else {
             // ── Non-streaming mode ──────────────────────────────────────────
             const msg = await anthropic.messages.create({
-                model: 'claude-3-haiku-20240307',
+                model: 'claude-haiku-4-5-20251001',
                 max_tokens: 8192,
                 system: 'Você é um especialista em mercado imobiliário de luxo e escritor de eBooks de alta qualidade para a empresa IMI — Inteligência Imobiliária, baseada em Recife-PE, com portfólio premium.',
                 messages: [{ role: 'user', content: prompt }],
