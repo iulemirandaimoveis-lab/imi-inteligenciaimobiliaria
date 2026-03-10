@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import {
   ArrowLeft,
@@ -14,94 +14,85 @@ import {
   Calendar,
   Download,
   Share2,
-  Play,
-  Pause,
   Edit,
   BarChart3,
-  PieChart,
   Activity,
   Zap,
+  Loader2,
 } from 'lucide-react'
+import { toast } from 'sonner'
+import { T } from '../../../../lib/theme'
 
-const T = {
-  surface: 'var(--bo-surface)',
-  elevated: 'var(--bo-elevated)',
-  border: 'var(--bo-border)',
-  text: 'var(--bo-text)',
-  textMuted: 'var(--bo-text-muted)',
-  hover: 'var(--bo-hover)',
-  accent: 'var(--bo-accent)',
-}
-
-// Mock data (seria carregado do Supabase)
-const mockCampaignData = {
-  id: 1,
-  name: 'Lançamento Reserva Imperial - Instagram',
-  status: 'active',
-  channel: 'Instagram Ads',
-  startDate: '2026-02-01',
-  endDate: '2026-02-28',
-  budget: 5000,
-  spent: 3250,
-
-  // Métricas
-  impressions: 125000,
-  clicks: 3750,
-  leads: 52,
-  conversions: 8,
-
-  // Calculados
-  ctr: 3.0, // (clicks / impressions) * 100
-  cpl: 62.5, // spent / leads
-  cpc: 0.87, // spent / clicks
-  conversionRate: 15.4, // (conversions / leads) * 100
-  roi: 160, // ((revenue - spent) / spent) * 100
-
-  // Performance diária (últimos 7 dias)
-  dailyStats: [
-    { date: '09/02', impressions: 5200, clicks: 156, leads: 3, spent: 180 },
-    { date: '10/02', impressions: 6100, clicks: 183, leads: 4, spent: 210 },
-    { date: '11/02', impressions: 5800, clicks: 174, leads: 2, spent: 195 },
-    { date: '12/02', impressions: 6500, clicks: 195, leads: 5, spent: 225 },
-    { date: '13/02', impressions: 7200, clicks: 216, leads: 6, spent: 250 },
-    { date: '14/02', impressions: 6800, clicks: 204, leads: 4, spent: 230 },
-    { date: '15/02', impressions: 7100, clicks: 213, leads: 5, spent: 240 },
-  ],
-
-  // Distribuição por dispositivo
-  deviceStats: [
-    { device: 'Mobile', percentage: 68, leads: 35 },
-    { device: 'Desktop', percentage: 28, leads: 15 },
-    { device: 'Tablet', percentage: 4, leads: 2 },
-  ],
-
-  // Top criativos
-  topCreatives: [
-    { id: 1, name: 'Fachada Noturna', impressions: 45000, clicks: 1350, ctr: 3.0 },
-    { id: 2, name: 'Área de Lazer', impressions: 38000, clicks: 1140, ctr: 3.0 },
-    { id: 3, name: 'Planta 3 Quartos', impressions: 42000, clicks: 1260, ctr: 3.0 },
-  ],
+interface Campaign {
+  id: string
+  name: string
+  status: string
+  channel: string | null
+  platform: string | null
+  budget: number | null
+  daily_budget: number | null
+  start_date: string | null
+  end_date: string | null
+  leads: number | null
+  cost_per_lead: number | null
+  objective: string | null
+  utm_source?: string | null
+  utm_medium?: string | null
+  utm_campaign?: string | null
 }
 
 export default function CampanhaAnalyticsPage() {
   const router = useRouter()
   const params = useParams()
+  const id = params?.id as string
   const [timeRange, setTimeRange] = useState('7d')
+  const [campaign, setCampaign] = useState<Campaign | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const campaign = mockCampaignData
-  const budgetUsed = (campaign.spent / campaign.budget) * 100
-  const daysRemaining = 13 // Calculado da endDate
+  useEffect(() => {
+    if (!id) return
+    fetch(`/api/campanhas?id=${id}`)
+      .then(r => r.json())
+      .then(d => { if (d && d.id) setCampaign(d) })
+      .catch(() => { toast.error('Erro ao carregar campanha') })
+      .finally(() => setLoading(false))
+  }, [id])
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 0,
-    }).format(value)
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(value)
+
+  const formatNumber = (value: number) =>
+    new Intl.NumberFormat('pt-BR').format(value)
+
+  const calcDaysRemaining = () => {
+    if (!campaign?.end_date) return null
+    const end = new Date(campaign.end_date)
+    const now = new Date()
+    const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    return Math.max(0, diff)
   }
 
-  const formatNumber = (value: number) => {
-    return new Intl.NumberFormat('pt-BR').format(value)
+  const budgetUsed = campaign?.budget && campaign.budget > 0 ? 100 : 0 // can't compute without spent
+  const leads = campaign?.leads ?? 0
+  const cpl = campaign?.cost_per_lead ?? 0
+  const channelLabel = campaign?.channel || campaign?.platform || '—'
+  const daysRemaining = calcDaysRemaining()
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="animate-spin" size={22} style={{ color: T.accent }} />
+      </div>
+    )
+  }
+
+  if (!campaign) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <p style={{ color: T.textMuted }}>Campanha não encontrada.</p>
+        <button onClick={() => router.back()} className="text-sm underline" style={{ color: T.accent }}>Voltar</button>
+      </div>
+    )
   }
 
   return (
@@ -119,15 +110,18 @@ export default function CampanhaAnalyticsPage() {
           <div>
             <h1 className="text-2xl font-bold" style={{ color: T.text }}>{campaign.name}</h1>
             <div className="flex items-center gap-3 mt-2">
-              <span className="px-3 py-1 rounded-lg text-sm font-medium" style={{ background: 'rgba(16,185,129,0.12)', color: '#10B981' }}>
-                ● Ativa
+              <span className="px-3 py-1 rounded-lg text-sm font-medium"
+                style={campaign.status === 'active'
+                  ? { background: 'rgba(16,185,129,0.12)', color: '#10B981' }
+                  : { background: T.elevated, color: T.textMuted }}>
+                ● {campaign.status === 'active' ? 'Ativa' : campaign.status === 'paused' ? 'Pausada' : campaign.status || 'Rascunho'}
               </span>
-              <span className="text-sm" style={{ color: T.textMuted }}>
-                {campaign.channel}
-              </span>
-              <span className="text-sm" style={{ color: T.textMuted }}>
-                {campaign.startDate} - {campaign.endDate}
-              </span>
+              <span className="text-sm" style={{ color: T.textMuted }}>{channelLabel}</span>
+              {campaign.start_date && campaign.end_date && (
+                <span className="text-sm" style={{ color: T.textMuted }}>
+                  {new Date(campaign.start_date).toLocaleDateString('pt-BR')} — {new Date(campaign.end_date).toLocaleDateString('pt-BR')}
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -141,16 +135,9 @@ export default function CampanhaAnalyticsPage() {
             Exportar
           </button>
           <button
-            className="h-10 px-4 rounded-xl font-medium flex items-center gap-2"
-            style={{ border: `1px solid ${T.border}`, color: T.text }}
-          >
-            <Share2 size={18} />
-            Compartilhar
-          </button>
-          <button
-            onClick={() => router.push(`/backoffice/campanhas/${params.id}/editar`)}
+            onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
             className="h-10 px-4 rounded-xl font-medium flex items-center gap-2 text-white"
-            style={{ background: '#3B82F6' }}
+            style={{ background: T.accent }}
           >
             <Edit size={18} />
             Editar
@@ -160,29 +147,24 @@ export default function CampanhaAnalyticsPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Investimento */}
+        {/* Orçamento */}
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.12)' }}>
               <DollarSign size={20} style={{ color: '#3B82F6' }} />
             </div>
             <div className="text-right">
-              <p className="text-xs" style={{ color: T.textMuted }}>Orçamento</p>
-              <p className="text-sm font-medium" style={{ color: T.textMuted }}>{formatCurrency(campaign.budget)}</p>
+              <p className="text-xs" style={{ color: T.textMuted }}>Orçamento Total</p>
             </div>
           </div>
           <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>
-            {formatCurrency(campaign.spent)}
+            {campaign.budget ? formatCurrency(campaign.budget) : '—'}
           </p>
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-              <div
-                className="h-full bg-blue-500 transition-all"
-                style={{ width: `${budgetUsed}%` }}
-              />
-            </div>
-            <span className="text-xs font-medium" style={{ color: T.textMuted }}>{budgetUsed.toFixed(0)}%</span>
-          </div>
+          {campaign.daily_budget && (
+            <p className="text-sm" style={{ color: T.textMuted }}>
+              Diário: {formatCurrency(campaign.daily_budget)}
+            </p>
+          )}
         </div>
 
         {/* Leads */}
@@ -191,312 +173,82 @@ export default function CampanhaAnalyticsPage() {
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.12)' }}>
               <Users size={20} style={{ color: '#10B981' }} />
             </div>
-            <div className="flex items-center gap-1" style={{ color: '#10B981' }}>
-              <TrendingUp size={16} />
-              <span className="text-sm font-medium">+12%</span>
-            </div>
+            <TrendingUp size={16} style={{ color: '#10B981' }} />
           </div>
-          <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>
-            {campaign.leads}
-          </p>
+          <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>{formatNumber(leads)}</p>
           <p className="text-sm" style={{ color: T.textMuted }}>
-            Leads Gerados • CPL {formatCurrency(campaign.cpl)}
+            Leads Gerados{cpl > 0 ? ` • CPL ${formatCurrency(cpl)}` : ''}
           </p>
         </div>
 
-        {/* CTR */}
+        {/* Prazo */}
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.12)' }}>
-              <MousePointerClick size={20} style={{ color: '#8B5CF6' }} />
-            </div>
-            <div className="flex items-center gap-1" style={{ color: '#10B981' }}>
-              <TrendingUp size={16} />
-              <span className="text-sm font-medium">+8%</span>
+              <Calendar size={20} style={{ color: '#8B5CF6' }} />
             </div>
           </div>
           <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>
-            {campaign.ctr.toFixed(1)}%
+            {daysRemaining !== null ? daysRemaining : '—'}
           </p>
           <p className="text-sm" style={{ color: T.textMuted }}>
-            CTR • {formatNumber(campaign.clicks)} cliques
+            {daysRemaining !== null ? 'Dias Restantes' : 'Sem prazo definido'}
           </p>
         </div>
 
-        {/* ROI */}
+        {/* Objetivo */}
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(249,115,22,0.12)' }}>
-              <TrendingUp size={20} style={{ color: '#F97316' }} />
-            </div>
-            <div className="flex items-center gap-1" style={{ color: '#10B981' }}>
-              <TrendingUp size={16} />
-              <span className="text-sm font-medium">+24%</span>
+              <Target size={20} style={{ color: '#F97316' }} />
             </div>
           </div>
-          <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>
-            {campaign.roi}%
+          <p className="text-sm font-bold mb-1 line-clamp-2" style={{ color: T.text }}>
+            {campaign.objective || 'Objetivo não definido'}
           </p>
+          <p className="text-xs" style={{ color: T.textMuted }}>Objetivo da Campanha</p>
+        </div>
+      </div>
+
+      {/* Meta Ads Notice */}
+      <div className="rounded-2xl p-5 flex items-start gap-4"
+        style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)' }}>
+        <Zap size={20} style={{ color: '#3B82F6', flexShrink: 0, marginTop: 2 }} />
+        <div>
+          <p className="text-sm font-bold mb-1" style={{ color: T.text }}>Métricas de performance em tempo real</p>
           <p className="text-sm" style={{ color: T.textMuted }}>
-            ROI • {campaign.conversions} conversões
+            Impressões, CTR, CPC e dados diários são sincronizados via <strong>Meta Ads API</strong>.
+            Configure o token de acesso em <a href="/backoffice/integracoes" className="underline" style={{ color: '#3B82F6' }}>Integrações → Meta Ads</a> para visualizar.
           </p>
         </div>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Performance Diária */}
-        <div className="lg:col-span-2 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-bold" style={{ color: T.text }}>Performance Diária</h3>
-              <p className="text-sm mt-1" style={{ color: T.textMuted }}>Últimos 7 dias</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setTimeRange('7d')}
-                className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-                style={timeRange === '7d'
-                  ? { background: 'rgba(59,130,246,0.14)', color: '#3B82F6' }
-                  : { color: T.textMuted }
-                }
-              >
-                7 dias
-              </button>
-              <button
-                onClick={() => setTimeRange('30d')}
-                className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
-                style={timeRange === '30d'
-                  ? { background: 'rgba(59,130,246,0.14)', color: '#3B82F6' }
-                  : { color: T.textMuted }
-                }
-              >
-                30 dias
-              </button>
-            </div>
-          </div>
-
-          {/* Simple Bar Chart */}
-          <div className="space-y-3">
-            {campaign.dailyStats.map((stat, index) => {
-              const maxLeads = Math.max(...campaign.dailyStats.map(s => s.leads))
-              const width = (stat.leads / maxLeads) * 100
-
-              return (
-                <div key={index} className="flex items-center gap-4">
-                  <span className="text-xs font-medium w-12" style={{ color: T.textMuted }}>{stat.date}</span>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-8 rounded-lg overflow-hidden" style={{ background: T.elevated }}>
-                        <div
-                          className="h-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-end pr-2"
-                          style={{ width: `${width}%` }}
-                        >
-                          {width > 20 && (
-                            <span className="text-xs font-bold text-white">{stat.leads}</span>
-                          )}
-                        </div>
-                      </div>
-                      {width <= 20 && (
-                        <span className="text-xs font-bold w-6" style={{ color: T.text }}>{stat.leads}</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-right w-24">
-                    <p className="text-xs font-medium" style={{ color: T.text }}>{formatCurrency(stat.spent)}</p>
-                    <p className="text-xs" style={{ color: T.textMuted }}>{formatNumber(stat.clicks)} cliques</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Legend */}
-          <div className="flex items-center gap-6 mt-6 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full" style={{ background: '#3B82F6' }} />
-              <span className="text-xs" style={{ color: T.textMuted }}>Leads por dia</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full" style={{ background: T.elevated }} />
-              <span className="text-xs" style={{ color: T.textMuted }}>Investimento diário</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Device Distribution */}
+      {/* UTM Tracking */}
+      {(campaign.utm_source || campaign.utm_campaign) && (
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <div className="mb-6">
-            <h3 className="text-lg font-bold" style={{ color: T.text }}>Por Dispositivo</h3>
-            <p className="text-sm mt-1" style={{ color: T.textMuted }}>Distribuição de leads</p>
-          </div>
-
-          {/* Donut Chart Simulation */}
-          <div className="flex items-center justify-center mb-6">
-            <div className="relative w-40 h-40">
-              <svg viewBox="0 0 100 100" className="transform -rotate-90">
-                {/* Mobile - 68% */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  fill="none"
-                  stroke="var(--bo-accent)"
-                  strokeWidth="20"
-                  strokeDasharray="251.2"
-                  strokeDashoffset="0"
-                />
-                {/* Desktop - 28% */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  fill="none"
-                  stroke="#8b5cf6"
-                  strokeWidth="20"
-                  strokeDasharray="70.3 180.9"
-                  strokeDashoffset="-170.8"
-                />
-                {/* Tablet - 4% */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  fill="none"
-                  stroke="#ec4899"
-                  strokeWidth="20"
-                  strokeDasharray="10 241.2"
-                  strokeDashoffset="-241.1"
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-2xl font-bold" style={{ color: T.text }}>{campaign.leads}</p>
-                  <p className="text-xs" style={{ color: T.textMuted }}>Total</p>
-                </div>
+          <h3 className="text-base font-bold mb-4" style={{ color: T.text }}>Rastreamento UTM</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {campaign.utm_source && (
+              <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
+                <p className="text-xs mb-1" style={{ color: T.textMuted }}>utm_source</p>
+                <p className="text-sm font-bold font-mono" style={{ color: T.text }}>{campaign.utm_source}</p>
               </div>
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="space-y-3">
-            {campaign.deviceStats.map((device, index) => {
-              const colors = ['#3B82F6', '#8B5CF6', '#EC4899']
-              return (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full" style={{ background: colors[index] }} />
-                    <span className="text-sm font-medium" style={{ color: T.text }}>{device.device}</span>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold" style={{ color: T.text }}>{device.percentage}%</p>
-                    <p className="text-xs" style={{ color: T.textMuted }}>{device.leads} leads</p>
-                  </div>
-                </div>
-              )
-            })}
+            )}
+            {campaign.utm_campaign && (
+              <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
+                <p className="text-xs mb-1" style={{ color: T.textMuted }}>utm_campaign</p>
+                <p className="text-sm font-bold font-mono" style={{ color: T.text }}>{campaign.utm_campaign}</p>
+              </div>
+            )}
+            {campaign.utm_medium && (
+              <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
+                <p className="text-xs mb-1" style={{ color: T.textMuted }}>utm_medium</p>
+                <p className="text-sm font-bold font-mono" style={{ color: T.text }}>{campaign.utm_medium}</p>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Criativos */}
-        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-bold" style={{ color: T.text }}>Top Criativos</h3>
-              <p className="text-sm mt-1" style={{ color: T.textMuted }}>Melhor performance</p>
-            </div>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.12)' }}>
-              <BarChart3 size={20} style={{ color: '#8B5CF6' }} />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {campaign.topCreatives.map((creative, index) => (
-              <div key={creative.id} className="flex items-center gap-4 p-4 rounded-xl" style={{ background: T.elevated }}>
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg text-sm font-bold"
-                  style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}>
-                  {index + 1}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium" style={{ color: T.text }}>{creative.name}</p>
-                  <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                    {formatNumber(creative.impressions)} impressões • {formatNumber(creative.clicks)} cliques
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold" style={{ color: T.text }}>{creative.ctr.toFixed(1)}%</p>
-                  <p className="text-xs" style={{ color: T.textMuted }}>CTR</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Métricas Adicionais */}
-        <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-bold" style={{ color: T.text }}>Métricas Adicionais</h3>
-              <p className="text-sm mt-1" style={{ color: T.textMuted }}>Performance geral</p>
-            </div>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.12)' }}>
-              <Activity size={20} style={{ color: '#10B981' }} />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {/* Impressões */}
-            <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
-              <div className="flex items-center gap-2 mb-2">
-                <Eye size={16} style={{ color: T.textMuted }} />
-                <p className="text-xs font-medium" style={{ color: T.textMuted }}>Impressões</p>
-              </div>
-              <p className="text-xl font-bold" style={{ color: T.text }}>{formatNumber(campaign.impressions)}</p>
-            </div>
-
-            {/* CPC */}
-            <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
-              <div className="flex items-center gap-2 mb-2">
-                <MousePointerClick size={16} style={{ color: T.textMuted }} />
-                <p className="text-xs font-medium" style={{ color: T.textMuted }}>CPC Médio</p>
-              </div>
-              <p className="text-xl font-bold" style={{ color: T.text }}>{formatCurrency(campaign.cpc)}</p>
-            </div>
-
-            {/* Taxa de Conversão */}
-            <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
-              <div className="flex items-center gap-2 mb-2">
-                <Target size={16} style={{ color: T.textMuted }} />
-                <p className="text-xs font-medium" style={{ color: T.textMuted }}>Conversão</p>
-              </div>
-              <p className="text-xl font-bold" style={{ color: T.text }}>{campaign.conversionRate.toFixed(1)}%</p>
-            </div>
-
-            {/* Dias Restantes */}
-            <div className="p-4 rounded-xl" style={{ background: T.elevated }}>
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar size={16} style={{ color: T.textMuted }} />
-                <p className="text-xs font-medium" style={{ color: T.textMuted }}>Dias Restantes</p>
-              </div>
-              <p className="text-xl font-bold" style={{ color: T.text }}>{daysRemaining}</p>
-            </div>
-          </div>
-
-          {/* Projeção */}
-          <div className="mt-4 p-4 rounded-xl" style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)' }}>
-            <div className="flex items-center gap-2 mb-2">
-              <Zap size={16} style={{ color: '#3B82F6' }} />
-              <p className="text-xs font-bold" style={{ color: T.text }}>Projeção Final</p>
-            </div>
-            <p className="text-sm" style={{ color: T.textMuted }}>
-              Com o ritmo atual, você deve atingir <span className="font-bold" style={{ color: '#3B82F6' }}>~85 leads</span> até o fim da campanha.
-            </p>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   )
 }

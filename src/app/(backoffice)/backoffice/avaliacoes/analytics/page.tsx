@@ -1,369 +1,413 @@
 'use client'
 
-import { useState } from 'react'
-import PageHeader from '../../../components/PageHeader'
-import { Card, CardHeader, CardBody } from '@/components/ui/Card'
-import { KPICard, Badge } from '@/components/ui/Badge'
-import { Select } from '@/components/ui/Select'
-import { Button } from '@/components/ui/Button'
+import { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import {
-    FileText,
-    Clock,
-    DollarSign,
-    TrendingUp,
-    CheckCircle,
-    Users,
-    Building2,
-    PieChart,
-    BarChart3,
-    MapPin,
-    Target,
-    Zap
+    FileText, Clock, DollarSign, CheckCircle, Users,
+    Building2, PieChart, BarChart3, MapPin, Target, Zap,
+    ArrowLeft, Loader2,
 } from 'lucide-react'
+import { toast } from 'sonner'
+import { T } from '../../../lib/theme'
 
-const T = {
-    surface: 'var(--bo-surface)',
-    elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)',
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    hover: 'var(--bo-hover)',
-    accent: 'var(--bo-accent)',
+interface Avaliacao {
+    id: string
+    status: string
+    tipo_imovel: string
+    metodologia: string
+    honorarios: number | null
+    cliente_nome: string
+    bairro: string
+    created_at: string
+    prazo_entrega: string | null
 }
 
-// Mock data (depois virá do Supabase)
-const mockAnalytics = {
-    overview: {
-        total: 124,
-        pending: 23,
-        completed: 87,
-        cancelled: 14,
-        avgTime: 3.2, // dias
-        totalRevenue: 186000,
-    },
+const STATUS_CONCLUIDO = ['concluida', 'concluído', 'entregue', 'aprovada', 'aprovado']
+const STATUS_PENDENTE  = ['aguardando_docs', 'em_analise', 'em_visita', 'em_elaboracao', 'rascunho', 'nova', 'aberta']
+const STATUS_CANCELADO = ['cancelada', 'cancelado', 'arquivada']
 
-    byType: [
-        { type: 'Residencial', count: 78, percentage: 62.9, avgValue: 450000 },
-        { type: 'Comercial', count: 31, percentage: 25.0, avgValue: 1200000 },
-        { type: 'Terreno', count: 15, percentage: 12.1, avgValue: 320000 },
-    ],
-
-    byMethod: [
-        { method: 'Comparativo', count: 68, percentage: 54.8 },
-        { method: 'Renda', count: 31, percentage: 25.0 },
-        { method: 'Custo', count: 25, percentage: 20.2 },
-    ],
-
-    monthlyTrend: [
-        { month: 'Ago', total: 18, completed: 15, revenue: 27000 },
-        { month: 'Set', total: 21, completed: 18, revenue: 31500 },
-        { month: 'Out', total: 19, completed: 16, revenue: 28500 },
-        { month: 'Nov', total: 24, completed: 20, revenue: 36000 },
-        { month: 'Dez', total: 22, completed: 18, revenue: 33000 },
-        { month: 'Jan', total: 20, completed: 17, revenue: 30000 },
-    ],
-
-    topClients: [
-        { name: 'Construtora ABC', count: 12, revenue: 18000 },
-        { name: 'Investimentos XYZ', count: 8, revenue: 12000 },
-        { name: 'Imobiliária Central', count: 6, revenue: 9000 },
-    ],
-
-    avgByNeighborhood: [
-        { neighborhood: 'Boa Viagem', avgValue: 520000, count: 28 },
-        { neighborhood: 'Pina', avgValue: 480000, count: 19 },
-        { neighborhood: 'Piedade', avgValue: 380000, count: 15 },
-        { neighborhood: 'Setúbal', avgValue: 420000, count: 12 },
-    ],
+function groupBy<T>(arr: T[], key: (item: T) => string): Record<string, T[]> {
+    return arr.reduce((acc, item) => {
+        const k = key(item)
+        if (!acc[k]) acc[k] = []
+        acc[k].push(item)
+        return acc
+    }, {} as Record<string, T[]>)
 }
 
 export default function AvaliacoesAnalyticsPage() {
+    const router = useRouter()
     const [timeRange, setTimeRange] = useState('6m')
-    const data = mockAnalytics
+    const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const completionRate = ((data.overview.completed / data.overview.total) * 100).toFixed(1)
+    useEffect(() => {
+        fetch('/api/avaliacoes?limit=250')
+            .then(r => r.json())
+            .then(json => {
+                const list: Avaliacao[] = json.data || (Array.isArray(json) ? json : [])
+                setAvaliacoes(list)
+            })
+            .catch(() => { toast.error('Erro ao carregar analytics de avaliações') })
+            .finally(() => setLoading(false))
+    }, [])
+
+    const data = useMemo(() => {
+        // Filter by time range
+        const now = new Date()
+        const monthsBack = timeRange === '30d' ? 1 : timeRange === '3m' ? 3 : timeRange === 'year' ? 12 : 6
+        const cutoff = new Date(now)
+        cutoff.setMonth(cutoff.getMonth() - monthsBack)
+        const filtered = avaliacoes.filter(a => new Date(a.created_at) >= cutoff)
+
+        const total = filtered.length
+        const completed = filtered.filter(a => STATUS_CONCLUIDO.includes(a.status?.toLowerCase() ?? '')).length
+        const pending = filtered.filter(a => STATUS_PENDENTE.includes(a.status?.toLowerCase() ?? '')).length
+        const cancelled = filtered.filter(a => STATUS_CANCELADO.includes(a.status?.toLowerCase() ?? '')).length
+        const totalRevenue = filtered.reduce((s, a) => s + (a.honorarios ?? 0), 0)
+
+        // Avg delivery time (days from created_at to prazo_entrega, or SLA target ~3 days)
+        const withPrazo = filtered.filter(a => a.prazo_entrega)
+        const avgTime = withPrazo.length > 0
+            ? withPrazo.reduce((s, a) => {
+                const diff = (new Date(a.prazo_entrega!).getTime() - new Date(a.created_at).getTime()) / (1000 * 60 * 60 * 24)
+                return s + Math.abs(diff)
+            }, 0) / withPrazo.length
+            : 3.2
+
+        // By tipo_imovel
+        const byTipoRaw = groupBy(filtered, a => a.tipo_imovel || 'Não informado')
+        const byType = Object.entries(byTipoRaw).map(([type, items]) => ({
+            type,
+            count: items.length,
+            percentage: total > 0 ? Math.round((items.length / total) * 100 * 10) / 10 : 0,
+            avgValue: items.reduce((s, i) => s + (i.honorarios ?? 0), 0) / (items.length || 1),
+        })).sort((a, b) => b.count - a.count).slice(0, 3)
+
+        // By metodologia
+        const byMetRaw = groupBy(filtered, a => {
+            const m = (a.metodologia || 'comparativo').toLowerCase()
+            if (m.includes('renda')) return 'Renda'
+            if (m.includes('custo')) return 'Custo'
+            return 'Comparativo'
+        })
+        const byMethod = Object.entries(byMetRaw).map(([method, items]) => ({
+            method,
+            count: items.length,
+            percentage: total > 0 ? Math.round((items.length / total) * 100 * 10) / 10 : 0,
+        })).sort((a, b) => b.count - a.count)
+
+        // Monthly trend (last 6 months)
+        const months: { month: string; total: number; completed: number; revenue: number }[] = []
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(now)
+            d.setMonth(d.getMonth() - i)
+            const label = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '').toUpperCase()
+            const monthItems = avaliacoes.filter(a => {
+                const ad = new Date(a.created_at)
+                return ad.getFullYear() === d.getFullYear() && ad.getMonth() === d.getMonth()
+            })
+            months.push({
+                month: label,
+                total: monthItems.length,
+                completed: monthItems.filter(a => STATUS_CONCLUIDO.includes(a.status?.toLowerCase() ?? '')).length,
+                revenue: monthItems.reduce((s, a) => s + (a.honorarios ?? 0), 0),
+            })
+        }
+
+        // Top clients
+        const byClient = groupBy(filtered, a => a.cliente_nome || 'Sem nome')
+        const topClients = Object.entries(byClient).map(([name, items]) => ({
+            name,
+            count: items.length,
+            revenue: items.reduce((s, i) => s + (i.honorarios ?? 0), 0),
+        })).sort((a, b) => b.count - a.count).slice(0, 3)
+
+        // By neighborhood
+        const byBairro = groupBy(filtered, a => a.bairro || 'Não informado')
+        const avgByNeighborhood = Object.entries(byBairro).map(([neighborhood, items]) => ({
+            neighborhood,
+            count: items.length,
+            avgValue: items.reduce((s, i) => s + (i.honorarios ?? 0), 0) / (items.length || 1),
+        })).filter(n => n.count > 0).sort((a, b) => b.avgValue - a.avgValue).slice(0, 4)
+
+        return { total, completed, pending, cancelled, totalRevenue, avgTime, byType, byMethod, monthlyTrend: months, topClients, avgByNeighborhood }
+    }, [avaliacoes, timeRange])
+
+    const completionRate = data.total > 0 ? ((data.completed / data.total) * 100).toFixed(1) : '0.0'
+
+    const formatCurrency = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-24">
+                <Loader2 className="animate-spin" size={22} style={{ color: T.accent }} />
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-6">
-            <PageHeader
-                title="Intelligence: Laudos & Avaliações"
-                subtitle="Performance analítica do motor de avaliação imobiliária"
-                breadcrumbs={[
-                    { label: 'Dashboard', href: '/backoffice/dashboard' },
-                    { label: 'Avaliações', href: '/backoffice/avaliacoes' },
-                    { label: 'Analytics Strategist' },
-                ]}
-                action={
-                    <div className="flex items-center gap-4">
-                        <Select
-                            className="w-48"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                            value={timeRange}
-                            onChange={(e) => setTimeRange(e.target.value)}
-                            options={[
-                                { value: '30d', label: 'Ciclo: 30 dias' },
-                                { value: '3m', label: 'Ciclo: 3 meses' },
-                                { value: '6m', label: 'Ciclo: 6 meses' },
-                                { value: 'year', label: 'Visão Anual' },
-                            ]}
-                        />
-                        <Button variant="outline" icon={<Zap size={18} />} style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>Insight Rápido</Button>
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
+                    <button onClick={() => router.back()} className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 mt-1"
+                        style={{ border: `1px solid ${T.border}` }}>
+                        <ArrowLeft size={18} style={{ color: T.text }} />
+                    </button>
+                    <div>
+                        <h1 className="text-2xl font-bold" style={{ color: T.text }}>Analytics: Laudos & Avaliações</h1>
+                        <p className="text-sm mt-1" style={{ color: T.textMuted }}>
+                            Performance analítica do motor de avaliação imobiliária · {data.total} avaliações no período
+                        </p>
                     </div>
-                }
-            />
-
-            {/* KPI Scorecard Architecture */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <KPICard
-                    label="Volume de Laudos"
-                    value={data.overview.total.toString()}
-                    icon={<FileText />}
-                    variant="primary"
-                    className="shadow-elevated"
-                />
-
-                <KPICard
-                    label="Taxa de Entrega"
-                    value={`${completionRate}%`}
-                    change={{ value: 4.2, label: 'vs. mês anterior', trend: 'up' }}
-                    icon={<CheckCircle />}
-                    variant="success"
-                    className="shadow-elevated"
-                />
-
-                <KPICard
-                    label="SLA Médio (Lead Time)"
-                    value={`${data.overview.avgTime} Dias`}
-                    change={{ value: -12, label: 'otimização de tempo', trend: 'up' }}
-                    icon={<Clock />}
-                    variant="primary"
-                    className="shadow-elevated"
-                />
-
-                <KPICard
-                    label="Billing Total"
-                    value={`R$ ${(data.overview.totalRevenue / 1000).toFixed(0)}k`}
-                    icon={<DollarSign />}
-                    variant="success"
-                    style={{ background: '#0D1117', border: '1px solid #334E68' }}
-                />
+                </div>
+                <select
+                    value={timeRange}
+                    onChange={e => setTimeRange(e.target.value)}
+                    className="h-10 px-4 rounded-xl text-sm outline-none shrink-0"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                >
+                    <option value="30d">Últimos 30 dias</option>
+                    <option value="3m">Últimos 3 meses</option>
+                    <option value="6m">Últimos 6 meses</option>
+                    <option value="year">Último ano</option>
+                </select>
             </div>
 
-            {/* Strategic Distribution Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Market Segmentation Strategy */}
-                <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
-                    <CardHeader title="Segmentação de Ativos Evaluated" subtitle="Distribuição por tipologia de imóvel" />
-                    <CardBody className="p-8">
-                        <div className="space-y-8">
-                            {data.byType.map((item) => (
-                                <div key={item.type} className="space-y-3">
+            {/* KPI Scorecard */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                    { label: 'Volume de Laudos', value: data.total.toString(), icon: FileText, color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
+                    { label: 'Taxa de Entrega', value: `${completionRate}%`, icon: CheckCircle, color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
+                    { label: 'SLA Médio', value: `${data.avgTime.toFixed(1)} dias`, icon: Clock, color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)' },
+                    { label: 'Billing Total', value: formatCurrency(data.totalRevenue), icon: DollarSign, color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
+                ].map(({ label, value, icon: Icon, color, bg }) => (
+                    <div key={label} className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: bg }}>
+                            <Icon size={20} style={{ color }} />
+                        </div>
+                        <p className="text-2xl font-bold mb-1 leading-tight" style={{ color: T.text }}>{value}</p>
+                        <p className="text-xs" style={{ color: T.textMuted }}>{label}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Status breakdown */}
+            <div className="grid grid-cols-3 gap-4">
+                {[
+                    { label: 'Concluídas', value: data.completed, color: '#10B981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.2)' },
+                    { label: 'Em Andamento', value: data.pending, color: '#3B82F6', bg: 'rgba(59,130,246,0.08)', border: 'rgba(59,130,246,0.2)' },
+                    { label: 'Canceladas', value: data.cancelled, color: '#EF4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)' },
+                ].map(({ label, value, color, bg, border }) => (
+                    <div key={label} className="rounded-xl p-4 text-center" style={{ background: bg, border: `1px solid ${border}` }}>
+                        <p className="text-2xl font-bold" style={{ color }}>{value}</p>
+                        <p className="text-xs mt-1" style={{ color }}>{label}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Distribution Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* By tipo_imovel */}
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="mb-5">
+                        <h3 className="text-base font-bold" style={{ color: T.text }}>Segmentação por Tipo de Imóvel</h3>
+                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>Distribuição por tipologia</p>
+                    </div>
+                    {data.byType.length === 0 ? (
+                        <p className="text-sm text-center py-8" style={{ color: T.textMuted }}>Sem dados no período</p>
+                    ) : (
+                        <div className="space-y-5">
+                            {data.byType.map(item => (
+                                <div key={item.type} className="space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: T.elevated, color: T.textMuted }}>
-                                                {item.type === 'Residencial' ? <Building2 size={18} /> : <Target size={18} />}
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: T.elevated }}>
+                                                <Building2 size={16} style={{ color: T.textMuted }} />
                                             </div>
-                                            <span className="text-sm font-black uppercase tracking-wider" style={{ color: T.text }}>
-                                                {item.type}
-                                            </span>
+                                            <span className="text-sm font-bold capitalize" style={{ color: T.text }}>{item.type}</span>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <span className="text-xs font-black text-[var(--bo-accent)]">{item.percentage}%</span>
-                                            <Badge variant="neutral" size="sm">{item.count} laudos</Badge>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-xs font-bold" style={{ color: T.accent }}>{item.percentage}%</span>
+                                            <span className="text-xs px-2 py-0.5 rounded-md" style={{ background: T.elevated, color: T.textMuted }}>{item.count}</span>
                                         </div>
                                     </div>
-                                    <div className="h-3 rounded-full overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                        <div
-                                            className="h-full bg-[#102A43] transition-all duration-1000 ease-smooth rounded-full"
-                                            style={{ width: `${item.percentage}%` }}
-                                        />
+                                    <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                        <div className="h-full rounded-full" style={{ width: `${item.percentage}%`, background: T.accent }} />
                                     </div>
-                                    <div className="flex items-center justify-between mt-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest pl-1" style={{ color: T.textMuted }}>
-                                            Ticket Médio Avaliado: <span style={{ color: T.text }}>R$ {(item.avgValue / 1000).toFixed(0)}k</span>
+                                    {item.avgValue > 0 && (
+                                        <p className="text-xs" style={{ color: T.textMuted }}>
+                                            Honorário médio: <span style={{ color: T.text }}>{formatCurrency(item.avgValue)}</span>
                                         </p>
-                                    </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
-                    </CardBody>
-                </Card>
+                    )}
+                </div>
 
-                {/* NBR Methodology Adherence */}
-                <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
-                    <CardHeader title="Metodologias (NBR 14653)" subtitle="Consistência técnica dos laudos emitidos" />
-                    <CardBody className="p-8">
-                        <div className="space-y-8">
-                            {data.byMethod.map((item) => (
-                                <div key={item.method} className="space-y-3">
+                {/* By metodologia */}
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="mb-5">
+                        <h3 className="text-base font-bold" style={{ color: T.text }}>Metodologias (NBR 14653)</h3>
+                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>Consistência técnica dos laudos</p>
+                    </div>
+                    {data.byMethod.length === 0 ? (
+                        <p className="text-sm text-center py-8" style={{ color: T.textMuted }}>Sem dados no período</p>
+                    ) : (
+                        <div className="space-y-5">
+                            {data.byMethod.map(item => (
+                                <div key={item.method} className="space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[11px] font-black uppercase tracking-[0.1em]" style={{ color: T.text }}>
+                                        <span className="text-sm font-bold uppercase tracking-wide" style={{ color: T.text }}>
                                             Método {item.method}
                                         </span>
                                         <div className="flex items-center gap-3">
-                                            <span className="text-xs font-black" style={{ color: T.textMuted }}>{item.percentage}%</span>
-                                            <Badge variant="primary" size="sm" dot>{item.count}</Badge>
+                                            <span className="text-xs" style={{ color: T.textMuted }}>{item.percentage}%</span>
+                                            <span className="text-xs px-2 py-0.5 rounded-md" style={{ background: T.elevated, color: T.textMuted }}>{item.count}</span>
                                         </div>
                                     </div>
-                                    <div className="h-3 rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                        <div
-                                            className="h-full transition-all duration-1000 ease-smooth rounded-2xl shadow-sm"
-                                            style={{ width: `${item.percentage}%`, background: T.text }}
-                                        />
+                                    <div className="h-2.5 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                        <div className="h-full rounded-full bg-blue-500" style={{ width: `${item.percentage}%` }} />
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </CardBody>
-                </Card>
+                    )}
+                </div>
             </div>
 
-            {/* Financial Velocity Timeline */}
-            <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
-                <CardHeader title="Trend de Billing & Produtividade" subtitle="Sazonalidade e volume semestral" />
-                <CardBody className="p-8">
-                    <div className="space-y-6">
-                        {data.monthlyTrend.map((month) => {
-                            const maxTotal = Math.max(...data.monthlyTrend.map((m) => m.total))
-                            const percentage = (month.total / maxTotal) * 100
-
-                            return (
-                                <div key={month.month} className="group">
-                                    <div className="flex flex-col md:flex-row items-center gap-8">
-                                        <div className="w-20 text-center md:text-left shrink-0">
-                                            <span className="text-xs font-black uppercase group-hover:text-[var(--bo-accent)] transition-colors" style={{ color: T.text }}>
-                                                {month.month}
-                                            </span>
-                                        </div>
-                                        <div className="flex-1 w-full relative">
-                                            <div className="h-12 rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                                <div
-                                                    className="h-full bg-[#102A43]/10 border-r-4 border-[#334E68] transition-all duration-1000 ease-smooth"
-                                                    style={{ width: `${percentage}%` }}
-                                                />
-                                                <div className="absolute inset-y-0 left-6 flex items-center gap-4">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: T.text }}>{month.total} Demandas</span>
-                                                    <span className="w-1 h-1 rounded-full" style={{ background: T.border }}></span>
-                                                    <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">{month.completed} Entregas</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="w-full md:w-32 text-right">
-                                            <p className="text-[9px] font-black uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Faturamento</p>
-                                            <p className="text-xl font-black" style={{ color: T.text }}>R$ {(month.revenue / 1000).toFixed(0)}k</p>
-                                        </div>
+            {/* Monthly Trend */}
+            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="flex items-center justify-between mb-5">
+                    <div>
+                        <h3 className="text-base font-bold" style={{ color: T.text }}>Trend de Billing & Produtividade</h3>
+                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>Volume mensal dos últimos 6 meses</p>
+                    </div>
+                </div>
+                <div className="space-y-4">
+                    {data.monthlyTrend.map(month => {
+                        const maxTotal = Math.max(...data.monthlyTrend.map(m => m.total), 1)
+                        const pct = (month.total / maxTotal) * 100
+                        return (
+                            <div key={month.month} className="flex items-center gap-4">
+                                <span className="text-xs font-bold w-12 shrink-0 uppercase" style={{ color: T.textMuted }}>{month.month}</span>
+                                <div className="flex-1 h-10 rounded-xl overflow-hidden relative" style={{ background: T.elevated }}>
+                                    <div
+                                        className="h-full transition-all duration-700"
+                                        style={{ width: `${pct}%`, background: `${T.accent}30`, borderRight: `3px solid ${T.accent}` }}
+                                    />
+                                    <div className="absolute inset-y-0 left-4 flex items-center gap-3">
+                                        <span className="text-xs font-bold" style={{ color: T.text }}>{month.total} demandas</span>
+                                        <span className="text-xs text-green-500 font-bold">{month.completed} entregas</span>
                                     </div>
                                 </div>
-                            )
-                        })}
-                    </div>
-                </CardBody>
-            </Card>
+                                <div className="w-24 text-right shrink-0">
+                                    <p className="text-xs font-bold" style={{ color: T.text }}>{formatCurrency(month.revenue)}</p>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
 
-            {/* Bottom Intelligence Matrix */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Client Retention High-Performance */}
-                <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
-                    <CardHeader title="Top Contratantes: B2B Strategy" subtitle="Fidelização por volume de ordens" />
-                    <CardBody className="p-8">
-                        <div className="space-y-4">
-                            {data.topClients.map((client, index) => (
-                                <div key={client.name} className="flex items-center gap-6 p-6 rounded-3xl transition-all group" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black shrink-0 shadow-lg group-hover:scale-110 transition-transform" style={{ background: T.surface, color: 'var(--bo-accent)' }}>
-                                        {index + 1}
+            {/* Bottom row: top clients + by neighborhood */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Top clients */}
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="mb-5">
+                        <h3 className="text-base font-bold" style={{ color: T.text }}>Top Contratantes</h3>
+                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>Por volume de ordens</p>
+                    </div>
+                    {data.topClients.length === 0 ? (
+                        <p className="text-sm text-center py-8" style={{ color: T.textMuted }}>Sem dados no período</p>
+                    ) : (
+                        <div className="space-y-3">
+                            {data.topClients.map((client, i) => (
+                                <div key={client.name} className="flex items-center gap-4 p-4 rounded-xl" style={{ background: T.elevated }}>
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0"
+                                        style={{ background: T.surface, color: T.accent, border: `1px solid ${T.border}` }}>
+                                        {i + 1}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-base font-black uppercase tracking-tight truncate" style={{ color: T.text }}>{client.name}</p>
-                                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] mt-1" style={{ color: T.textMuted }}>
-                                            {client.count} Ordens de Avaliação
-                                        </p>
+                                        <p className="text-sm font-bold truncate" style={{ color: T.text }}>{client.name}</p>
+                                        <p className="text-xs" style={{ color: T.textMuted }}>{client.count} avaliações</p>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-xl font-black" style={{ color: T.text }}>
-                                            R$ {(client.revenue / 1000).toFixed(0)}k
+                                    {client.revenue > 0 && (
+                                        <p className="text-sm font-bold shrink-0" style={{ color: T.text }}>
+                                            {formatCurrency(client.revenue)}
                                         </p>
-                                        <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: T.textMuted }}>Revenue Life-Time</p>
-                                    </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
-                    </CardBody>
-                </Card>
+                    )}
+                </div>
 
-                {/* Geospatial Valuation Matrix */}
-                <Card className="shadow-elevated" style={{ border: `1px solid ${T.border}` }}>
-                    <CardHeader title="Matriz de Valorização por Bairro" />
-                    <CardBody className="p-8">
-                        <div className="space-y-6">
-                            {data.avgByNeighborhood.map((item) => {
-                                const maxValue = Math.max(...data.avgByNeighborhood.map((i) => i.avgValue))
-                                const percentage = (item.avgValue / maxValue) * 100
-
+                {/* By bairro */}
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="mb-5">
+                        <h3 className="text-base font-bold" style={{ color: T.text }}>Valorização por Bairro</h3>
+                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>Honorário médio por localização</p>
+                    </div>
+                    {data.avgByNeighborhood.length === 0 ? (
+                        <p className="text-sm text-center py-8" style={{ color: T.textMuted }}>Sem dados no período</p>
+                    ) : (
+                        <div className="space-y-4">
+                            {data.avgByNeighborhood.map(item => {
+                                const maxVal = Math.max(...data.avgByNeighborhood.map(i => i.avgValue), 1)
+                                const pct = (item.avgValue / maxVal) * 100
                                 return (
-                                    <div key={item.neighborhood} className="space-y-2">
-                                        <div className="flex items-center justify-between mb-1">
-                                            <span className="text-[11px] font-black uppercase tracking-widest" style={{ color: T.text }}>
-                                                {item.neighborhood}
-                                            </span>
+                                    <div key={item.neighborhood} className="space-y-1.5">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.text }}>{item.neighborhood}</span>
                                             <div className="flex items-center gap-3">
-                                                <span className="text-xs font-black text-green-600">
-                                                    R$ {(item.avgValue / 1000).toFixed(0)}k
-                                                </span>
-                                                <Badge variant="neutral" size="sm" className="text-[10px]">
-                                                    {item.count} Lds
-                                                </Badge>
+                                                {item.avgValue > 0 && <span className="text-xs font-bold text-green-500">{formatCurrency(item.avgValue)}</span>}
+                                                <span className="text-xs px-2 py-0.5 rounded-md" style={{ background: T.elevated, color: T.textMuted }}>{item.count}</span>
                                             </div>
                                         </div>
-                                        <div className="h-4 rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                            <div
-                                                className="h-full bg-green-500 transition-all duration-1000 ease-smooth rounded-full shadow-sm"
-                                                style={{ width: `${percentage}%` }}
-                                            />
+                                        <div className="h-3 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                                            <div className="h-full rounded-full bg-green-500" style={{ width: `${pct}%` }} />
                                         </div>
                                     </div>
                                 )
                             })}
                         </div>
-                    </CardBody>
-                </Card>
+                    )}
+                </div>
             </div>
 
-            {/* Executive Summary Unit Economics */}
-            <Card className="overflow-hidden relative" style={{ background: '#0D1117', border: '1px solid #334E68' }}>
+            {/* Executive Summary */}
+            <div className="rounded-2xl p-8 relative overflow-hidden" style={{ background: '#0D1117', border: '1px solid #334E68' }}>
                 <div className="absolute top-0 right-0 p-8 opacity-5">
                     <PieChart size={180} />
                 </div>
-                <CardHeader title="Executive Summary & Unit Economics" className="text-white border-white/10" />
-                <CardBody className="p-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        <div className="text-center p-8 rounded-3xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>Efficiency Score</p>
-                            <p className="text-5xl font-black text-green-400 mb-2">
-                                {completionRate}<span className="text-xl">%</span>
-                            </p>
-                            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                                {data.overview.completed} Entregas / {data.overview.total} Demandas
-                            </p>
+                <h3 className="text-base font-bold text-white mb-6">Executive Summary</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {[
+                        { label: 'Efficiency Score', value: `${completionRate}%`, sub: `${data.completed} Entregas / ${data.total} Demandas`, color: '#34D399' },
+                        {
+                            label: 'Unit Billing Médio',
+                            value: data.completed > 0 ? `R$${(data.totalRevenue / data.completed).toFixed(0)}` : '—',
+                            sub: 'Por laudo entregue',
+                            color: T.accent
+                        },
+                        {
+                            label: 'Velocidade Mensal',
+                            value: (data.total / 6).toFixed(1),
+                            sub: 'Avaliações/mês (histórico)',
+                            color: '#60A5FA'
+                        },
+                    ].map(({ label, value, sub, color }) => (
+                        <div key={label} className="text-center p-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</p>
+                            <p className="text-4xl font-black mb-1" style={{ color }}>{value}</p>
+                            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>{sub}</p>
                         </div>
-
-                        <div className="text-center p-8 rounded-3xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>Unit Billing Médio</p>
-                            <p className="text-5xl font-black text-[var(--bo-accent)] mb-2">
-                                <span className="text-xl">R$</span>{(data.overview.totalRevenue / data.overview.total).toFixed(0)}
-                            </p>
-                            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>Por Laudo Emitido</p>
-                        </div>
-
-                        <div className="text-center p-8 rounded-3xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>Escalabilidade Mensal</p>
-                            <p className="text-5xl font-black text-blue-400 mb-2">
-                                {(data.overview.total / 6).toFixed(1)}
-                            </p>
-                            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.35)' }}>Avaliações / Mês (Histo)</p>
-                        </div>
-                    </div>
-                </CardBody>
-            </Card>
+                    ))}
+                </div>
+            </div>
         </div>
     )
 }
