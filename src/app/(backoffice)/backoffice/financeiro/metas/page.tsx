@@ -13,8 +13,8 @@ import { toast } from 'sonner'
 const T = {
     surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
+    accent: 'var(--bo-accent)',
 }
 
 const fmt = (v: number) =>
@@ -143,19 +143,19 @@ export default function MetasPage() {
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
-                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textSub }}>
+                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textMuted }}>
                             Financeiro
                         </Link>
-                        <ChevronRight size={12} style={{ color: T.textSub }} />
+                        <ChevronRight size={12} style={{ color: T.textMuted }} />
                         <span className="text-xs font-medium" style={{ color: T.text }}>Metas</span>
                     </div>
                     <h1 className="text-xl font-bold" style={{ color: T.text }}>Metas & Performance</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textSub }}>{monthLabel(currentMonth)}</p>
+                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>{monthLabel(currentMonth)}</p>
                 </div>
                 <button
                     onClick={() => setEditing(!editing)}
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all"
-                    style={{ background: editing ? 'rgba(229,115,115,0.2)' : T.gold, color: editing ? '#E57373' : 'white' }}
+                    style={{ background: editing ? 'rgba(229,115,115,0.2)' : T.accent, color: editing ? '#E57373' : 'white' }}
                 >
                     {editing ? <><X size={15} /> Cancelar</> : <><Pencil size={15} /> Editar Metas</>}
                 </button>
@@ -163,7 +163,7 @@ export default function MetasPage() {
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <Loader2 className="animate-spin" size={22} style={{ color: T.gold }} />
+                    <Loader2 className="animate-spin" size={22} style={{ color: T.accent }} />
                 </div>
             ) : (
                 <>
@@ -176,7 +176,7 @@ export default function MetasPage() {
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <DollarSign size={15} style={{ color: '#6BB87B' }} />
-                                        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textSub }}>Receita do Mês</span>
+                                        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Receita do Mês</span>
                                     </div>
                                     <p className="text-2xl font-bold" style={{ color: T.text }}>{fmt(actuals.revenue)}</p>
                                 </div>
@@ -189,7 +189,7 @@ export default function MetasPage() {
                             </div>
                             {editing ? (
                                 <div className="space-y-2">
-                                    <label className="text-[11px] font-semibold" style={{ color: T.textSub }}>Meta de Receita (R$)</label>
+                                    <label className="text-[11px] font-semibold" style={{ color: T.textMuted }}>Meta de Receita (R$)</label>
                                     <input
                                         type="number"
                                         value={form.target_revenue}
@@ -203,10 +203,10 @@ export default function MetasPage() {
                                 <>
                                     <ProgressBar pct={revPct} color={revPct >= 100 ? '#6BB87B' : revPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
-                                        <span className="text-xs" style={{ color: T.textSub }}>
+                                        <span className="text-xs" style={{ color: T.textMuted }}>
                                             Meta: {revTarget > 0 ? fmt(revTarget) : 'não definida'}
                                         </span>
-                                        <span className="text-xs font-bold" style={{ color: revPct >= 100 ? '#6BB87B' : T.textSub }}>
+                                        <span className="text-xs font-bold" style={{ color: revPct >= 100 ? '#6BB87B' : T.textMuted }}>
                                             {revTarget > 0 ? `${revPct}%` : '—'}
                                         </span>
                                     </div>
@@ -221,7 +221,7 @@ export default function MetasPage() {
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
                                         <Scale size={15} style={{ color: 'var(--bo-accent)' }} />
-                                        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textSub }}>Avaliações/Honorários</span>
+                                        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Avaliações/Honorários</span>
                                     </div>
                                     <p className="text-2xl font-bold" style={{ color: T.text }}>{actuals.avaliacoes}</p>
                                 </div>
@@ -234,7 +234,7 @@ export default function MetasPage() {
                             </div>
                             {editing ? (
                                 <div className="space-y-2">
-                                    <label className="text-[11px] font-semibold" style={{ color: T.textSub }}>Meta de Avaliações/Honorários</label>
+                                    <label className="text-[11px] font-semibold" style={{ color: T.textMuted }}>Meta de Avaliações/Honorários</label>
                                     <input
                                         type="number"
                                         value={form.target_avaliacoes}
@@ -248,10 +248,10 @@ export default function MetasPage() {
                                 <>
                                     <ProgressBar pct={avalPct} color={avalPct >= 100 ? '#6BB87B' : avalPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
-                                        <span className="text-xs" style={{ color: T.textSub }}>
+                                        <span className="text-xs" style={{ color: T.textMuted }}>
                                             Meta: {avalTarget > 0 ? `${avalTarget} lançamentos` : 'não definida'}
                                         </span>
-                                        <span className="text-xs font-bold" style={{ color: avalPct >= 100 ? '#6BB87B' : T.textSub }}>
+                                        <span className="text-xs font-bold" style={{ color: avalPct >= 100 ? '#6BB87B' : T.textMuted }}>
                                             {avalTarget > 0 ? `${avalPct}%` : '—'}
                                         </span>
                                     </div>
@@ -275,7 +275,7 @@ export default function MetasPage() {
                     {/* Historical goals */}
                     {goals.filter(g => g.month !== currentMonth).length > 0 && (
                         <div>
-                            <h2 className="text-sm font-bold mb-3" style={{ color: T.textSub }}>Histórico de Metas</h2>
+                            <h2 className="text-sm font-bold mb-3" style={{ color: T.textMuted }}>Histórico de Metas</h2>
                             <div className="space-y-2">
                                 {goals.filter(g => g.month !== currentMonth).map((g, i) => {
                                     const rPct = g.target_revenue > 0 ? Math.min(100, Math.round((0 / g.target_revenue) * 100)) : 0
@@ -285,16 +285,16 @@ export default function MetasPage() {
                                             style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                             <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                                                 style={{ background: T.elevated }}>
-                                                <Target size={16} style={{ color: T.gold }} />
+                                                <Target size={16} style={{ color: T.accent }} />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-semibold" style={{ color: T.text }}>{monthLabel(g.month)}</p>
-                                                <p className="text-[11px]" style={{ color: T.textSub }}>
+                                                <p className="text-[11px]" style={{ color: T.textMuted }}>
                                                     Meta receita: {g.target_revenue > 0 ? fmt(g.target_revenue) : '—'} ·
                                                     Meta avaliações: {g.target_avaliacoes || '—'}
                                                 </p>
                                             </div>
-                                            <TrendingUp size={14} style={{ color: T.textSub }} />
+                                            <TrendingUp size={14} style={{ color: T.textMuted }} />
                                         </motion.div>
                                     )
                                 })}
@@ -305,12 +305,12 @@ export default function MetasPage() {
                     {/* Empty state */}
                     {!currentGoal && !editing && (
                         <div className="rounded-2xl p-10 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                            <Target size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textSub }} />
-                            <p className="text-sm font-semibold mb-1" style={{ color: T.textSub }}>Metas não definidas para {monthLabel(currentMonth)}</p>
-                            <p className="text-xs mb-4" style={{ color: T.textSub }}>Defina sua meta de receita e avaliações para acompanhar o progresso</p>
+                            <Target size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textMuted }} />
+                            <p className="text-sm font-semibold mb-1" style={{ color: T.textMuted }}>Metas não definidas para {monthLabel(currentMonth)}</p>
+                            <p className="text-xs mb-4" style={{ color: T.textMuted }}>Defina sua meta de receita e avaliações para acompanhar o progresso</p>
                             <button onClick={() => setEditing(true)}
                                 className="inline-flex items-center gap-2 h-9 px-5 rounded-xl text-xs font-semibold text-white"
-                                style={{ background: T.gold }}>
+                                style={{ background: T.accent }}>
                                 <Plus size={13} /> Definir Metas
                             </button>
                         </div>

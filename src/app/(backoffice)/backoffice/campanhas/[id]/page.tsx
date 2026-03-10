@@ -14,8 +14,8 @@ import Link from 'next/link'
 const T = {
     surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
+    accent: 'var(--bo-accent)',
 }
 
 const TYPE_MAP: Record<string, { label: string; icon: any }> = {
@@ -86,7 +86,7 @@ export default function CampanhaDetalhesPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-24">
-                <Loader2 className="animate-spin" size={22} style={{ color: T.gold }} />
+                <Loader2 className="animate-spin" size={22} style={{ color: T.accent }} />
             </div>
         )
     }
@@ -94,9 +94,9 @@ export default function CampanhaDetalhesPage() {
     if (!campanha) {
         return (
             <div className="rounded-2xl p-16 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <Target size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textSub }} />
-                <p className="text-sm font-semibold" style={{ color: T.textSub }}>Campanha não encontrada</p>
-                <Link href="/backoffice/campanhas" className="text-xs mt-2 inline-block hover:underline" style={{ color: T.gold }}>
+                <Target size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textMuted }} />
+                <p className="text-sm font-semibold" style={{ color: T.textMuted }}>Campanha não encontrada</p>
+                <Link href="/backoffice/campanhas" className="text-xs mt-2 inline-block hover:underline" style={{ color: T.accent }}>
                     Voltar às campanhas
                 </Link>
             </div>
@@ -118,10 +118,10 @@ export default function CampanhaDetalhesPage() {
     const maxFunnel = funnel[0].count || 1
 
     const KPIS = [
-        { label: 'Impressões', value: fmtN(campanha.impressions), color: T.textSub },
+        { label: 'Impressões', value: fmtN(campanha.impressions), color: T.textMuted },
         { label: 'Cliques', value: fmtN(campanha.clicks), color: '#7BA3C2' },
         { label: 'CTR', value: campanha.ctr != null ? `${Number(campanha.ctr).toFixed(1)}%` : '—', color: '#A89EC4' },
-        { label: 'Leads', value: fmtN(campanha.leads), color: T.gold },
+        { label: 'Leads', value: fmtN(campanha.leads), color: T.accent },
         { label: 'Conversões', value: fmtN(campanha.conversions), color: '#4CAF7D' },
         { label: 'CPL', value: fmtBRL(campanha.cost_per_lead), color: '#E8A87C' },
         { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: '#6BB87B' },
@@ -134,20 +134,20 @@ export default function CampanhaDetalhesPage() {
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
-                        <Link href="/backoffice/campanhas" className="text-xs font-medium hover:underline" style={{ color: T.textSub }}>
+                        <Link href="/backoffice/campanhas" className="text-xs font-medium hover:underline" style={{ color: T.textMuted }}>
                             Campanhas
                         </Link>
-                        <ChevronRight size={12} style={{ color: T.textSub }} />
+                        <ChevronRight size={12} style={{ color: T.textMuted }} />
                         <span className="text-xs font-medium" style={{ color: T.text }}>{campanha.name}</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                             style={{ background: 'rgba(72,101,129,0.12)' }}>
-                            <TypeIcon size={16} style={{ color: T.gold }} />
+                            <TypeIcon size={16} style={{ color: T.accent }} />
                         </div>
                         <div>
                             <h1 className="text-xl font-bold leading-tight" style={{ color: T.text }}>{campanha.name}</h1>
-                            <p className="text-xs mt-0.5" style={{ color: T.textSub }}>
+                            <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>
                                 {type.label}
                                 {campanha.objective && <> · {campanha.objective}</>}
                                 {campanha.start_date && <> · {new Date(campanha.start_date).toLocaleDateString('pt-BR')}</>}
@@ -164,7 +164,7 @@ export default function CampanhaDetalhesPage() {
                     <button
                         onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
                         className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-sm font-semibold text-white"
-                        style={{ background: T.gold }}>
+                        style={{ background: T.accent }}>
                         <Edit size={14} /> Editar
                     </button>
                 </div>
@@ -175,7 +175,7 @@ export default function CampanhaDetalhesPage() {
                 {KPIS.map((kpi, i) => (
                     <div key={i} className="rounded-2xl p-4"
                         style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: T.textSub }}>{kpi.label}</p>
+                        <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: T.textMuted }}>{kpi.label}</p>
                         <p className="text-lg font-bold" style={{ color: kpi.color }}>{kpi.value}</p>
                     </div>
                 ))}
@@ -187,7 +187,7 @@ export default function CampanhaDetalhesPage() {
                     <div className="flex items-center justify-between mb-3">
                         <div>
                             <p className="text-sm font-semibold" style={{ color: T.text }}>Orçamento utilizado</p>
-                            <p className="text-xs" style={{ color: T.textSub }}>
+                            <p className="text-xs" style={{ color: T.textMuted }}>
                                 {fmtBRL(campanha.spent)} de {fmtBRL(campanha.budget)} ({progressPct.toFixed(0)}%)
                             </p>
                         </div>
@@ -199,7 +199,7 @@ export default function CampanhaDetalhesPage() {
                         <div className="h-full rounded-full transition-all"
                             style={{
                                 width: `${progressPct}%`,
-                                background: progressPct > 90 ? '#E87C7C' : progressPct > 70 ? '#E8A87C' : T.gold,
+                                background: progressPct > 90 ? '#E87C7C' : progressPct > 70 ? '#E8A87C' : T.accent,
                             }} />
                     </div>
                 </div>
@@ -216,14 +216,14 @@ export default function CampanhaDetalhesPage() {
                     </span>
                 </div>
                 {aiLoading ? (
-                    <p className="text-xs" style={{ color: T.textSub }}>Processando dados da campanha...</p>
+                    <p className="text-xs" style={{ color: T.textMuted }}>Processando dados da campanha...</p>
                 ) : aiAnalysis ? (
                     <>
                         <p className="text-sm mb-3" style={{ color: T.text, lineHeight: 1.65 }}>{aiAnalysis.insight}</p>
                         <div className="grid grid-cols-2 gap-2 mb-3">
                             {aiAnalysis.status && (
                                 <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                                    <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textSub }}>Performance</p>
+                                    <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Performance</p>
                                     <p className="text-sm font-bold" style={{
                                         color: aiAnalysis.status === 'excelente' ? '#10B981' : aiAnalysis.status === 'bom' ? '#3B82F6' : aiAnalysis.status === 'regular' ? '#F59E0B' : '#EF4444'
                                     }}>{aiAnalysis.status}</p>
@@ -231,26 +231,26 @@ export default function CampanhaDetalhesPage() {
                             )}
                             {aiAnalysis.score != null && (
                                 <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                                    <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textSub }}>Eficiência IA</p>
-                                    <p className="text-sm font-bold" style={{ color: T.gold }}>{aiAnalysis.score}/100</p>
+                                    <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Eficiência IA</p>
+                                    <p className="text-sm font-bold" style={{ color: T.accent }}>{aiAnalysis.score}/100</p>
                                 </div>
                             )}
                         </div>
                         {aiAnalysis.nextAction && (
                             <div className="rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--bo-border)' }}>
-                                <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: T.textSub }}>Próxima Ação</p>
+                                <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>Próxima Ação</p>
                                 <p className="text-xs font-medium" style={{ color: T.text }}>{aiAnalysis.nextAction}</p>
                             </div>
                         )}
                         {(aiAnalysis.cplAnalysis || aiAnalysis.budgetSuggestion) && (
                             <div className="mt-2 space-y-1.5">
-                                {aiAnalysis.cplAnalysis && <p className="text-xs" style={{ color: T.textSub }}>💡 {aiAnalysis.cplAnalysis}</p>}
-                                {aiAnalysis.budgetSuggestion && <p className="text-xs" style={{ color: T.textSub }}>💰 {aiAnalysis.budgetSuggestion}</p>}
+                                {aiAnalysis.cplAnalysis && <p className="text-xs" style={{ color: T.textMuted }}>💡 {aiAnalysis.cplAnalysis}</p>}
+                                {aiAnalysis.budgetSuggestion && <p className="text-xs" style={{ color: T.textMuted }}>💰 {aiAnalysis.budgetSuggestion}</p>}
                             </div>
                         )}
                     </>
                 ) : (
-                    <p className="text-xs" style={{ color: T.textSub }}>Análise IA não disponível para esta campanha.</p>
+                    <p className="text-xs" style={{ color: T.textMuted }}>Análise IA não disponível para esta campanha.</p>
                 )}
             </div>
 
@@ -258,8 +258,8 @@ export default function CampanhaDetalhesPage() {
             {(campanha.utm_source || campanha.utm_campaign) && (
                 <div className="rounded-2xl p-4 flex items-center gap-3"
                     style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <LinkIcon size={14} style={{ color: T.textSub }} />
-                    <p className="text-xs" style={{ color: T.textSub }}>
+                    <LinkIcon size={14} style={{ color: T.textMuted }} />
+                    <p className="text-xs" style={{ color: T.textMuted }}>
                         {campanha.utm_source && <><span className="font-semibold">UTM Source:</span> {campanha.utm_source} </>}
                         {campanha.utm_campaign && <><span className="font-semibold">· Campaign:</span> {campanha.utm_campaign}</>}
                     </p>
@@ -273,8 +273,8 @@ export default function CampanhaDetalhesPage() {
                         onClick={() => setActiveTab(tab)}
                         className="pb-3 px-1 text-sm font-medium border-b-2 transition-colors"
                         style={{
-                            borderColor: activeTab === tab ? T.gold : 'transparent',
-                            color: activeTab === tab ? T.gold : T.textSub,
+                            borderColor: activeTab === tab ? T.accent : 'transparent',
+                            color: activeTab === tab ? T.accent : T.textMuted,
                         }}>
                         {tab === 'overview' ? 'Visão Geral' : 'Métricas'}
                     </button>
@@ -290,12 +290,12 @@ export default function CampanhaDetalhesPage() {
                         <div className="space-y-4">
                             {funnel.map((stage, idx) => {
                                 const pct = maxFunnel > 0 ? (stage.count / maxFunnel) * 100 : 0
-                                const COLORS = [T.gold, '#7BA3C2', '#A89EC4', '#4CAF7D']
+                                const COLORS = [T.accent, '#7BA3C2', '#A89EC4', '#4CAF7D']
                                 return (
                                     <div key={idx}>
                                         <div className="flex items-center justify-between mb-1.5">
                                             <span className="text-xs font-medium" style={{ color: T.text }}>{stage.stage}</span>
-                                            <span className="text-xs font-bold" style={{ color: T.textSub }}>
+                                            <span className="text-xs font-bold" style={{ color: T.textMuted }}>
                                                 {fmtN(stage.count)}
                                             </span>
                                         </div>
@@ -321,7 +321,7 @@ export default function CampanhaDetalhesPage() {
                             { label: 'Fim', value: campanha.end_date ? new Date(campanha.end_date).toLocaleDateString('pt-BR') : '—' },
                         ].map((item, i) => (
                             <div key={i} className="flex items-center justify-between">
-                                <span className="text-xs" style={{ color: T.textSub }}>{item.label}</span>
+                                <span className="text-xs" style={{ color: T.textMuted }}>{item.label}</span>
                                 <span className="text-xs font-semibold" style={{ color: T.text }}>{item.value}</span>
                             </div>
                         ))}
@@ -348,7 +348,7 @@ export default function CampanhaDetalhesPage() {
                         ].map((item, i) => (
                             <div key={i} className="flex items-center justify-between p-3 rounded-xl"
                                 style={{ background: T.elevated }}>
-                                <span className="text-xs" style={{ color: T.textSub }}>{item.label}</span>
+                                <span className="text-xs" style={{ color: T.textMuted }}>{item.label}</span>
                                 <span className="text-sm font-bold" style={{ color: T.text }}>{item.value}</span>
                             </div>
                         ))}

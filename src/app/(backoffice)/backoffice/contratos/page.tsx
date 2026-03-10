@@ -12,8 +12,8 @@ import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL } from '@/lib/modelo
 const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    accent: 'var(--bo-accent)',
 }
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
@@ -172,7 +172,7 @@ export default function ContratosPage() {
 
                         {loading && (
                             <div className="flex items-center justify-center py-16">
-                                <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.gold }} />
+                                <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.accent }} />
                             </div>
                         )}
 
@@ -191,7 +191,7 @@ export default function ContratosPage() {
                                             <div className="flex items-center gap-3 p-4">
                                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                                                     style={{ background: 'var(--bo-active-bg)' }}>
-                                                    <FileSignature size={18} style={{ color: T.gold }} />
+                                                    <FileSignature size={18} style={{ color: T.accent }} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
@@ -259,7 +259,7 @@ export default function ContratosPage() {
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-1.5 mb-1">
                                                             <p className="text-xs font-semibold" style={{ color: T.text }}>{m.nome}</p>
-                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bo-hover)', color: T.gold }}>✦</span>}
+                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bo-hover)', color: T.accent }}>✦</span>}
                                                             {m.internacional && <Globe size={9} style={{ color: '#E8A87C' }} />}
                                                         </div>
                                                         <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>

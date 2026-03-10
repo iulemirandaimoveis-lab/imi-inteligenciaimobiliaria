@@ -10,8 +10,8 @@ import {
 const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    accent: 'var(--bo-accent)',
 }
 
 interface AnalyticsData {
@@ -55,7 +55,7 @@ export default function ImovelAnalyticsPage() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-32">
-                <Loader2 className="w-8 h-8 animate-spin" style={{ color: T.gold }} />
+                <Loader2 className="w-8 h-8 animate-spin" style={{ color: T.accent }} />
             </div>
         )
     }
@@ -66,7 +66,7 @@ export default function ImovelAnalyticsPage() {
                 <BarChart3 size={40} className="mx-auto mb-4 opacity-30" />
                 <p className="text-sm">Nenhum dado de analytics encontrado</p>
                 <button onClick={() => router.back()}
-                    className="mt-4 text-sm font-semibold px-4 py-2 rounded-xl" style={{ color: T.gold }}>
+                    className="mt-4 text-sm font-semibold px-4 py-2 rounded-xl" style={{ color: T.accent }}>
                     Voltar
                 </button>
             </div>
@@ -162,12 +162,12 @@ export default function ImovelAnalyticsPage() {
                                         </span>
                                         <div className="flex items-center gap-3 text-[11px]" style={{ color: T.textDim }}>
                                             <span>{day.clicks} cliques</span>
-                                            <span style={{ color: T.gold, fontWeight: 600 }}>{day.leads} leads</span>
+                                            <span style={{ color: T.accent, fontWeight: 600 }}>{day.leads} leads</span>
                                         </div>
                                     </div>
-                                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: `${T.gold}15` }}>
+                                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: `${T.accent}15` }}>
                                         <div className="h-full rounded-full transition-all"
-                                            style={{ width: `${barWidth}%`, background: T.gold }} />
+                                            style={{ width: `${barWidth}%`, background: T.accent }} />
                                     </div>
                                 </div>
                             )
@@ -194,8 +194,8 @@ export default function ImovelAnalyticsPage() {
                                             <span className="text-xs ml-2" style={{ color: T.textDim }}>{f.percentage}%</span>
                                         </div>
                                     </div>
-                                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: `${T.gold}15` }}>
-                                        <div className="h-full rounded-full" style={{ width: `${f.percentage}%`, background: T.gold }} />
+                                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: `${T.accent}15` }}>
+                                        <div className="h-full rounded-full" style={{ width: `${f.percentage}%`, background: T.accent }} />
                                     </div>
                                 </div>
                             ))}
@@ -217,7 +217,7 @@ export default function ImovelAnalyticsPage() {
                                         <MapPin size={14} style={{ color: T.textDim }} />
                                         <span className="text-sm font-medium" style={{ color: T.text }}>{loc.city}</span>
                                     </div>
-                                    <span className="text-sm font-bold" style={{ color: T.gold }}>{loc.percentage}%</span>
+                                    <span className="text-sm font-bold" style={{ color: T.accent }}>{loc.percentage}%</span>
                                 </div>
                             ))}
                         </div>
@@ -240,7 +240,7 @@ export default function ImovelAnalyticsPage() {
                                         <span className="text-sm font-medium" style={{ color: T.text }}>{d.device}</span>
                                         <span className="text-sm font-bold" style={{ color: T.text }}>{d.percentage}%</span>
                                     </div>
-                                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: `${T.gold}15` }}>
+                                    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: `${T.accent}15` }}>
                                         <div className="h-full rounded-full" style={{ width: `${d.percentage}%`, background: '#A89EC4' }} />
                                     </div>
                                 </div>
@@ -262,7 +262,7 @@ export default function ImovelAnalyticsPage() {
                                     <span className="text-sm font-medium truncate mr-3" style={{ color: T.text }}>{c.name}</span>
                                     <div className="flex items-center gap-3 flex-shrink-0">
                                         <span className="text-xs" style={{ color: T.textDim }}>{c.clicks} cliques</span>
-                                        <span className="text-xs font-semibold" style={{ color: T.gold }}>{c.leads} leads</span>
+                                        <span className="text-xs font-semibold" style={{ color: T.accent }}>{c.leads} leads</span>
                                     </div>
                                 </div>
                             ))}

@@ -8,6 +8,7 @@ import {
   Phone, MessageCircle, ArrowRight, Building2,
   TrendingUp, Scale, Clock, Zap,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
@@ -18,8 +19,8 @@ import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 const T = {
     surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
+    accent: 'var(--bo-accent)',
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────
@@ -81,8 +82,8 @@ export default function HojePage() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/leads').then(r => r.json()).catch(() => []),
-      fetch(`/api/agenda?month=${currentMonth}`).then(r => r.json()).catch(() => []),
+      fetch('/api/leads').then(r => r.json()).catch(() => { toast.error('Erro ao carregar leads'); return [] }),
+      fetch(`/api/agenda?month=${currentMonth}`).then(r => r.json()).catch(() => { toast.error('Erro ao carregar agenda'); return [] }),
     ]).then(([leadsData, eventsData]) => {
       // /api/leads returns { data: [...], pagination: {} } — extract .data
       setLeads(leadsData?.data || (Array.isArray(leadsData) ? leadsData : []))

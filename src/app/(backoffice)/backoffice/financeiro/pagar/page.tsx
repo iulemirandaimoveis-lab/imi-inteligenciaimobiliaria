@@ -12,8 +12,8 @@ import { toast } from 'sonner'
 const T = {
     surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)',
+    accent: 'var(--bo-accent)',
 }
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
@@ -74,19 +74,19 @@ export default function PagarPage() {
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
-                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textSub }}>
+                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textMuted }}>
                             Financeiro
                         </Link>
-                        <ChevronRight size={12} style={{ color: T.textSub }} />
+                        <ChevronRight size={12} style={{ color: T.textMuted }} />
                         <span className="text-xs font-medium" style={{ color: T.text }}>A Pagar</span>
                     </div>
                     <h1 className="text-xl font-bold" style={{ color: T.text }}>Contas a Pagar</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textSub }}>Despesas operacionais, marketing e custos fixos</p>
+                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>Despesas operacionais, marketing e custos fixos</p>
                 </div>
                 <Link
                     href="/backoffice/financeiro"
                     className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: T.gold }}
+                    style={{ background: T.accent }}
                 >
                     <Plus size={15} /> Novo Lançamento
                 </Link>
@@ -114,7 +114,7 @@ export default function PagarPage() {
             <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1">
-                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textSub }} />
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                         <input type="text" placeholder="Buscar por descrição ou categoria..."
                             value={search} onChange={e => setSearch(e.target.value)}
                             className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
@@ -128,8 +128,8 @@ export default function PagarPage() {
                             <button key={s} onClick={() => setStatusFilter(s)}
                                 className="px-3.5 h-10 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                                 style={{
-                                    background: statusFilter === s ? T.gold : T.elevated,
-                                    color: statusFilter === s ? 'white' : T.textSub,
+                                    background: statusFilter === s ? T.accent : T.elevated,
+                                    color: statusFilter === s ? 'white' : T.textMuted,
                                     border: `1px solid ${statusFilter === s ? T.borderGold : T.border}`,
                                 }}>
                                 {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.label || s}
@@ -142,20 +142,20 @@ export default function PagarPage() {
             {/* List */}
             {loading ? (
                 <div className="flex items-center justify-center py-20">
-                    <Loader2 className="animate-spin" size={22} style={{ color: T.gold }} />
+                    <Loader2 className="animate-spin" size={22} style={{ color: T.accent }} />
                 </div>
             ) : filtered.length === 0 ? (
                 <div className="rounded-2xl p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <TrendingDown size={36} className="mx-auto mb-4 opacity-20" style={{ color: T.textSub }} />
-                    <p className="text-sm font-semibold mb-1" style={{ color: T.textSub }}>
+                    <TrendingDown size={36} className="mx-auto mb-4 opacity-20" style={{ color: T.textMuted }} />
+                    <p className="text-sm font-semibold mb-1" style={{ color: T.textMuted }}>
                         {transactions.length === 0 ? 'Nenhuma despesa cadastrada' : 'Nenhum resultado para o filtro'}
                     </p>
-                    <p className="text-xs mb-4" style={{ color: T.textSub }}>
+                    <p className="text-xs mb-4" style={{ color: T.textMuted }}>
                         Registre despesas e contas a pagar no módulo Financeiro
                     </p>
                     <Link href="/backoffice/financeiro"
                         className="inline-flex items-center gap-2 h-9 px-5 rounded-xl text-xs font-semibold text-white"
-                        style={{ background: T.gold }}>
+                        style={{ background: T.accent }}>
                         <Plus size={14} /> Novo Lançamento
                     </Link>
                 </div>
@@ -178,9 +178,9 @@ export default function PagarPage() {
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{t.description}</p>
                                     <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                                        <span className="text-[10px] font-medium" style={{ color: T.textSub }}>{t.category}</span>
-                                        <span className="text-[10px]" style={{ color: T.textSub }}>·</span>
-                                        <span className="text-[10px]" style={{ color: isOverdue ? '#E57373' : T.textSub }}>
+                                        <span className="text-[10px] font-medium" style={{ color: T.textMuted }}>{t.category}</span>
+                                        <span className="text-[10px]" style={{ color: T.textMuted }}>·</span>
+                                        <span className="text-[10px]" style={{ color: isOverdue ? '#E57373' : T.textMuted }}>
                                             Vence {fmtDate(t.due_date)}
                                         </span>
                                         <span

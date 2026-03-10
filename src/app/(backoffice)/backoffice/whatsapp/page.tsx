@@ -19,7 +19,7 @@ const T = {
   text: 'var(--bo-text)',
   textMuted: 'var(--bo-text-muted)',
   textTertiary: 'var(--bo-text-tertiary, var(--bo-text-muted))',
-  gold: 'var(--bo-accent)',
+  accent: 'var(--bo-accent)',
   shadow: 'var(--bo-shadow)',
 }
 
@@ -171,7 +171,7 @@ export default function WhatsappPage() {
               onChange={e => setSearch(e.target.value)}
               className="w-full h-10 pl-10 pr-4 rounded-xl text-sm font-medium outline-none transition-all"
               style={{ background: T.hover, color: T.text, border: `1px solid transparent` }}
-              onFocus={e => (e.currentTarget.style.borderColor = T.gold)}
+              onFocus={e => (e.currentTarget.style.borderColor = T.accent)}
               onBlur={e => (e.currentTarget.style.borderColor = 'transparent')}
             />
           </div>
@@ -210,13 +210,13 @@ export default function WhatsappPage() {
                   className="w-full flex items-center gap-3 p-4 transition-all hover-card"
                   style={{
                     background: active ? T.elevated : 'transparent',
-                    borderLeft: active ? `3px solid ${T.gold}` : '3px solid transparent',
+                    borderLeft: active ? `3px solid ${T.accent}` : '3px solid transparent',
                   }}
                   
                 >
                   <div className="relative flex-shrink-0">
                     <div className="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm"
-                      style={{ background: 'var(--bo-active-bg)', color: T.gold }}>
+                      style={{ background: 'var(--bo-active-bg)', color: T.accent }}>
                       {getInitials(conversa.contact_name)}
                     </div>
                     {conversa.status === 'active' && (
@@ -235,7 +235,7 @@ export default function WhatsappPage() {
                       <p className="text-xs truncate" style={{ color: T.textMuted }}>{conversa.last_message_preview ?? ''}</p>
                       {conversa.unread_count > 0 && (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center text-white flex-shrink-0 ml-2"
-                          style={{ background: T.gold }}>{conversa.unread_count}</span>
+                          style={{ background: T.accent }}>{conversa.unread_count}</span>
                       )}
                     </div>
                   </div>
@@ -267,7 +267,7 @@ export default function WhatsappPage() {
                   <ArrowLeft size={20} />
                 </button>
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs flex-shrink-0"
-                  style={{ background: 'var(--bo-active-bg)', color: T.gold }}>
+                  style={{ background: 'var(--bo-active-bg)', color: T.accent }}>
                   {getInitials(activeConversation.contact_name)}
                 </div>
                 <div className="min-w-0">
@@ -276,7 +276,7 @@ export default function WhatsappPage() {
                     <span>{activeConversation.phone_number}</span>
                     <span>•</span>
                     <span className="px-1.5 py-0.5 rounded-md capitalize"
-                      style={{ background: 'var(--bo-active-bg)', color: T.gold }}>{activeConversation.status}</span>
+                      style={{ background: 'var(--bo-active-bg)', color: T.accent }}>{activeConversation.status}</span>
                   </div>
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function WhatsappPage() {
                 ))}
                 <button className="p-2 rounded-xl transition-colors hover-card"
                   onClick={() => setShowInfo(!showInfo)}
-                  style={{ color: showInfo ? T.gold : T.textMuted }}>
+                  style={{ color: showInfo ? T.accent : T.textMuted }}>
                   <MoreVertical size={18} />
                 </button>
               </div>
@@ -351,7 +351,7 @@ export default function WhatsappPage() {
                 <div className="mb-3 flex flex-wrap gap-2">
                   {aiLoading ? (
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold"
-                      style={{ background: 'var(--bo-active-bg)', color: T.gold, border: `1px solid var(--bo-border)` }}>
+                      style={{ background: 'var(--bo-active-bg)', color: T.accent, border: `1px solid var(--bo-border)` }}>
                       <Loader2 size={14} className="animate-spin" /> IA formulando resposta...
                     </div>
                   ) : (
@@ -359,7 +359,7 @@ export default function WhatsappPage() {
                       {TEMPLATES_WHATSAPP.map(tpl => (
                         <button key={tpl.id} onClick={() => applyTemplate(tpl.text)}
                           className="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
-                          style={{ background: 'var(--bo-active-bg)', color: T.gold, border: `1px solid var(--bo-border)` }}>
+                          style={{ background: 'var(--bo-active-bg)', color: T.accent, border: `1px solid var(--bo-border)` }}>
                           {tpl.label}
                         </button>
                       ))}
@@ -382,7 +382,7 @@ export default function WhatsappPage() {
                 <div className="flex gap-0.5 mb-0.5 flex-shrink-0">
                   <button onClick={() => setShowTemplates(!showTemplates)}
                     className="p-2 sm:p-2.5 rounded-xl transition-all"
-                    style={{ background: showTemplates ? T.gold : 'transparent', color: showTemplates ? '#fff' : T.textMuted }}
+                    style={{ background: showTemplates ? T.accent : 'transparent', color: showTemplates ? '#fff' : T.textMuted }}
                     title="Templates & IA"><Zap size={18} /></button>
                   <button className="hidden sm:flex p-2.5 rounded-xl transition-colors hover-card" style={{ color: T.textMuted }}><Paperclip size={18} /></button>
                   <button className="hidden sm:flex p-2.5 rounded-xl transition-colors hover-card" style={{ color: T.textMuted }}><Smile size={18} /></button>
@@ -395,7 +395,7 @@ export default function WhatsappPage() {
                     placeholder="Digite uma mensagem..."
                     className="w-full h-11 py-3 px-4 rounded-2xl text-sm font-medium resize-none outline-none transition-all"
                     style={{ background: T.surface, color: T.text, border: `1px solid ${T.border}` }}
-                    onFocus={e => (e.currentTarget.style.borderColor = T.gold)}
+                    onFocus={e => (e.currentTarget.style.borderColor = T.accent)}
                     onBlur={e => (e.currentTarget.style.borderColor = T.border)}
                   />
                 </div>
@@ -418,7 +418,7 @@ export default function WhatsappPage() {
             <button className="absolute right-3 top-3 p-1 rounded-lg" onClick={() => setShowInfo(false)}
               style={{ color: T.textMuted }}><X size={16} /></button>
             <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold mb-3"
-              style={{ background: 'var(--bo-active-bg)', color: T.gold }}>
+              style={{ background: 'var(--bo-active-bg)', color: T.accent }}>
               {getInitials(activeConversation.contact_name)}
             </div>
             <h3 className="font-bold text-sm" style={{ color: T.text }}>{activeConversation.contact_name}</h3>

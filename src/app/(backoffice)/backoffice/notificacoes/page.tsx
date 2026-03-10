@@ -10,8 +10,8 @@ import {
 const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    accent: 'var(--bo-accent)',
 }
 
 interface Notification {
@@ -78,7 +78,7 @@ export default function NotificacoesPage() {
     const unreadCount = notifications.filter(n => !n.read).length
 
     if (loading) {
-        return <div className="flex items-center justify-center h-64"><Loader2 size={24} className="animate-spin" style={{ color: T.gold }} /></div>
+        return <div className="flex items-center justify-center h-64"><Loader2 size={24} className="animate-spin" style={{ color: T.accent }} /></div>
     }
 
     return (
@@ -93,7 +93,7 @@ export default function NotificacoesPage() {
                 </div>
                 {unreadCount > 0 && (
                     <button onClick={markAllRead} className="flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold"
-                        style={{ background: T.elevated, color: T.textSub, border: `1px solid ${T.border}` }}>
+                        style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
                         <CheckCheck size={14} /> Marcar todas como lidas
                     </button>
                 )}
@@ -105,7 +105,7 @@ export default function NotificacoesPage() {
                     <button key={f} onClick={() => setFilter(f)}
                         className="px-3.5 h-9 rounded-xl text-xs font-semibold transition-all"
                         style={{
-                            background: filter === f ? T.gold : T.elevated,
+                            background: filter === f ? T.accent : T.elevated,
                             color: filter === f ? 'white' : T.textDim,
                             border: `1px solid ${filter === f ? T.borderGold : T.border}`,
                         }}>
@@ -118,7 +118,7 @@ export default function NotificacoesPage() {
             {filtered.length === 0 ? (
                 <div className="rounded-2xl p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <Bell size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textDim }} />
-                    <p className="text-sm font-semibold" style={{ color: T.textSub }}>
+                    <p className="text-sm font-semibold" style={{ color: T.textMuted }}>
                         {filter === 'unread' ? 'Nenhuma notificação não lida' : 'Nenhuma notificação'}
                     </p>
                     <p className="text-xs mt-1" style={{ color: T.textDim }}>As notificações aparecerão aqui quando houver atividade</p>
@@ -127,7 +127,7 @@ export default function NotificacoesPage() {
                 <div className="space-y-2">
                     {filtered.map((n, i) => {
                         const Icon = TYPE_ICONS[n.type] || Bell
-                        const color = TYPE_COLORS[n.type] || T.gold
+                        const color = TYPE_COLORS[n.type] || T.accent
                         return (
                             <motion.div key={n.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
                                 className="flex items-start gap-3 p-4 rounded-2xl transition-all cursor-pointer"
@@ -143,7 +143,7 @@ export default function NotificacoesPage() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
                                         <p className="text-xs font-semibold truncate" style={{ color: T.text }}>{n.title}</p>
-                                        {!n.read && <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: T.gold }} />}
+                                        {!n.read && <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: T.accent }} />}
                                     </div>
                                     {n.message && <p className="text-[11px] mt-0.5 line-clamp-2" style={{ color: T.textDim }}>{n.message}</p>}
                                     <p className="text-[10px] mt-1" style={{ color: T.textDim }}>{timeAgo(n.created_at)}</p>
@@ -151,7 +151,7 @@ export default function NotificacoesPage() {
                                 {!n.read && (
                                     <button className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
                                         style={{ background: 'var(--bo-active-bg)' }} onClick={e => { e.stopPropagation(); markRead(n.id) }}>
-                                        <Check size={12} style={{ color: T.gold }} />
+                                        <Check size={12} style={{ color: T.accent }} />
                                     </button>
                                 )}
                             </motion.div>

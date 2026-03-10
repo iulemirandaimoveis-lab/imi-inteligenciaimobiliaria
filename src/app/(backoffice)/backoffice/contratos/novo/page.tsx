@@ -14,8 +14,8 @@ import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL, getModeloById } fro
 const T = {
     bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
     border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
+    text: 'var(--bo-text)', textMuted: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
+    accent: 'var(--bo-accent)',
 }
 const ICONES_CAT: Record<string, string> = {
     locacao: '🏠', venda: '📋', captacao: '🎯', avaliacao: '⚖️', credito: '💳',
@@ -59,7 +59,7 @@ function Campo({ campo, value, onChange }: any) {
         </select>
     if (campo.tipo === 'currency')
         return <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold" style={{ color: T.gold }}>R$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold" style={{ color: T.accent }}>R$</span>
             <input type="number" value={value || ''} onChange={e => onChange(parseFloat(e.target.value) || '')}
                 placeholder="0,00" onFocus={onF} onBlur={onB} style={st({ paddingLeft: 36 })} />
         </div>
@@ -74,7 +74,7 @@ function FormParte({ titulo, parte, onChange }: { titulo: string; parte: any; on
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'var(--bo-active-bg)' }}><User size={15} style={{ color: T.gold }} /></div>
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'var(--bo-active-bg)' }}><User size={15} style={{ color: T.accent }} /></div>
                 <h3 className="text-sm font-bold" style={{ color: T.text }}>{titulo}</h3>
             </div>
             <div className="flex gap-2">
@@ -195,7 +195,7 @@ function NovoContratoInner() {
         <div className="max-w-4xl mx-auto space-y-5">
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
                 <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <ChevronLeft size={16} style={{ color: T.textSub }} />
+                    <ChevronLeft size={16} style={{ color: T.textMuted }} />
                 </button>
                 <div>
                     <h1 className="text-xl font-bold" style={{ color: T.text }}>{gerado ? `✓ ${resultado?.numero}` : 'Novo Contrato'}</h1>
@@ -212,7 +212,7 @@ function NovoContratoInner() {
                                     style={{ background: i < step ? '#6BB87B' : i === step ? 'var(--bo-accent)' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
                                     {i < step ? '✓' : i + 1}
                                 </div>
-                                <span className="text-[10px] mt-1 hidden sm:block" style={{ color: i === step ? T.gold : T.textDim }}>{s.label}</span>
+                                <span className="text-[10px] mt-1 hidden sm:block" style={{ color: i === step ? T.accent : T.textDim }}>{s.label}</span>
                             </div>
                             {i < STEPS.length - 1 && <div className="w-6 sm:w-8 h-px mx-1" style={{ background: i < step ? '#6BB87B' : T.border }} />}
                         </div>
@@ -245,8 +245,8 @@ function NovoContratoInner() {
                                             <div className="text-2xl w-10 h-10 flex items-center justify-center flex-shrink-0">{ICONES_CAT[m.categoria]}</div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-                                                    <p className="text-xs font-semibold" style={{ color: sel ? T.gold : T.text }}>{m.nome}</p>
-                                                    {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bo-hover)', color: T.gold }}>★</span>}
+                                                    <p className="text-xs font-semibold" style={{ color: sel ? T.accent : T.text }}>{m.nome}</p>
+                                                    {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bo-hover)', color: T.accent }}>★</span>}
                                                     {m.internacional && <span className="text-[9px]" style={{ color: '#E8A87C' }}>🌐</span>}
                                                 </div>
                                                 <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>
@@ -277,7 +277,7 @@ function NovoContratoInner() {
                                             style={{ background: sel ? 'var(--bo-active-bg)' : T.elevated, border: `1px solid ${sel ? T.borderGold : T.border}`, opacity: disp ? 1 : 0.3, cursor: disp && !obrig ? 'pointer' : 'default' }}>
                                             <span className="text-xl">{cfg.flag}</span>
                                             <div>
-                                                <p className="text-xs font-semibold" style={{ color: sel ? T.gold : T.text }}>{cfg.label}</p>
+                                                <p className="text-xs font-semibold" style={{ color: sel ? T.accent : T.text }}>{cfg.label}</p>
                                                 <p className="text-[9px]" style={{ color: T.textDim }}>{obrig ? 'Obrigatório' : disp ? (sel ? '✓ Selecionado' : 'Disponível') : 'Indisponível'}</p>
                                             </div>
                                         </button>
@@ -286,7 +286,7 @@ function NovoContratoInner() {
                             </div>
                             {idiomasSel.length > 1 && (
                                 <div className="mt-4 pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
-                                    <p className="text-xs font-semibold mb-2" style={{ color: T.textSub }}>Idioma principal:</p>
+                                    <p className="text-xs font-semibold mb-2" style={{ color: T.textMuted }}>Idioma principal:</p>
                                     <div className="flex gap-2 flex-wrap">
                                         {idiomasSel.map(l => (
                                             <button key={l} onClick={() => setIdiomaPrim(l)} className="flex items-center gap-1.5 px-3 h-8 rounded-xl text-xs font-semibold transition-all"
@@ -379,7 +379,7 @@ function NovoContratoInner() {
                                 <div><p style={{ color: T.textDim }}>Idiomas</p><p className="font-semibold mt-0.5" style={{ color: T.text }}>{idiomasSel.map(l => (IDIOMAS_LABEL as any)[l]?.flag).join(' ')}</p></div>
                                 <div><p style={{ color: T.textDim }}>Contratante</p><p className="font-semibold mt-0.5 truncate" style={{ color: T.text }}>{contratante.nome || '—'}</p></div>
                                 <div><p style={{ color: T.textDim }}>Contratado</p><p className="font-semibold mt-0.5 truncate" style={{ color: T.text }}>{contratado.nome || '—'}</p></div>
-                                <div className="col-span-2"><p style={{ color: T.textDim }}>Assinatura</p><p className="font-semibold mt-0.5" style={{ color: T.gold }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</p></div>
+                                <div className="col-span-2"><p style={{ color: T.textDim }}>Assinatura</p><p className="font-semibold mt-0.5" style={{ color: T.accent }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</p></div>
                             </div>
                         </div>
                         {erro && <div className="flex items-start gap-3 p-4 rounded-2xl" style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.20)' }}>
@@ -422,8 +422,8 @@ function NovoContratoInner() {
                                 <button key={a.label} onClick={a.action} className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-all"
                                     style={{ background: T.surface, border: `1px solid ${T.border}` }}
                                     >
-                                    <a.icon size={18} style={{ color: T.gold }} />
-                                    <span className="text-[10px] font-semibold" style={{ color: T.textSub }}>{a.label}</span>
+                                    <a.icon size={18} style={{ color: T.accent }} />
+                                    <span className="text-[10px] font-semibold" style={{ color: T.textMuted }}>{a.label}</span>
                                 </button>
                             ))}
                         </div>
@@ -447,9 +447,9 @@ function NovoContratoInner() {
                         </div>
                         {plat !== 'sem_assinatura' && (
                             <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}>
-                                <div className="flex items-center gap-2 mb-2"><FileSignature size={16} style={{ color: T.gold }} /><h3 className="text-sm font-bold" style={{ color: T.text }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</h3></div>
+                                <div className="flex items-center gap-2 mb-2"><FileSignature size={16} style={{ color: T.accent }} /><h3 className="text-sm font-bold" style={{ color: T.text }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</h3></div>
                                 <p className="text-xs mb-3" style={{ color: T.textDim }}>Envie para assinatura digital juridicamente válida. Configure a variável de ambiente antes de ativar.</p>
-                                <button className="w-full h-11 rounded-xl text-sm font-semibold flex items-center justify-center gap-2" style={{ background: 'var(--bo-active-bg)', border: `1px solid ${T.borderGold}`, color: T.gold }}>
+                                <button className="w-full h-11 rounded-xl text-sm font-semibold flex items-center justify-center gap-2" style={{ background: 'var(--bo-active-bg)', border: `1px solid ${T.borderGold}`, color: T.accent }}>
                                     <Shield size={15} /> Enviar para Assinatura Digital
                                 </button>
                                 <p className="text-[9px] text-center mt-2 font-mono" style={{ color: T.textDim }}>{PLATAFORMAS.find(p => p.id === plat)?.env}</p>
@@ -464,7 +464,7 @@ function NovoContratoInner() {
                                             <button onClick={() => setPreview(false)}><X size={18} style={{ color: T.textDim }} /></button>
                                         </div>
                                         <div className="overflow-y-auto p-6 max-h-[75vh]">
-                                            <pre className="text-xs leading-relaxed whitespace-pre-wrap" style={{ color: T.textSub, fontFamily: 'monospace' }}>{resultado.conteudo_markdown}</pre>
+                                            <pre className="text-xs leading-relaxed whitespace-pre-wrap" style={{ color: T.textMuted, fontFamily: 'monospace' }}>{resultado.conteudo_markdown}</pre>
                                         </div>
                                     </motion.div>
                                 </motion.div>
@@ -477,7 +477,7 @@ function NovoContratoInner() {
             {!gerado && (
                 <div className="flex justify-between pt-2">
                     <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0} className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold transition-all"
-                        style={{ background: step === 0 ? 'transparent' : T.surface, color: step === 0 ? T.textDim : T.textSub, border: `1px solid ${step === 0 ? 'transparent' : T.border}` }}>
+                        style={{ background: step === 0 ? 'transparent' : T.surface, color: step === 0 ? T.textDim : T.textMuted, border: `1px solid ${step === 0 ? 'transparent' : T.border}` }}>
                         <ChevronLeft size={16} /> Voltar
                     </button>
                     {step < STEPS.length - 1 && (
