@@ -13,7 +13,7 @@ import {
     Megaphone, BarChart2, Plug, TrendingUp, TrendingDown, CalendarDays,
     QrCode, Sparkles, Building, Sun, Brain, LineChart, Wand2, BarChart3, Shield,
     Plus, UserPlus, CalendarPlus, ClipboardList,
-    ChevronRight, Inbox, Check, Pencil,
+    Check, Pencil, BookMarked, Inbox,
 } from 'lucide-react'
 
 // ── Shortcut pool — user picks 4 ────────────────────────────────────
@@ -43,15 +43,14 @@ const LS_KEY = 'imi-nav-shortcuts'
 
 // Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
-    { label: 'Novo Lead',      desc: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-    { label: 'Novo Evento',    desc: 'Agendar compromisso',      href: '/backoffice/agenda',          icon: CalendarPlus, color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)'  },
-    { label: 'Novo Imóvel',    desc: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: '#486581', bg: 'rgba(72,101,129,0.15)'  },
-    { label: 'Nova Avaliação', desc: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+    { label: 'Novo Lead',      desc: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: '#E8A87C', bg: 'rgba(232,168,124,0.13)' },
+    { label: 'Novo Evento',    desc: 'Agendar compromisso',      href: '/backoffice/agenda',          icon: CalendarPlus, color: '#8B5CF6', bg: 'rgba(139,92,246,0.13)'  },
+    { label: 'Novo Imóvel',    desc: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: '#486581', bg: 'rgba(72,101,129,0.16)'  },
+    { label: 'Nova Avaliação', desc: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: '#6BB87B', bg: 'rgba(107,184,123,0.13)' },
 ]
 
 // Context-sensitive FAB map — route prefix → primary action
-// When tapped, FAB navigates directly to the action for the current section
-const CONTEXT_FAB: { prefix: string; href: string; label: string; Icon: any }[] = [
+const CONTEXT_FAB: { prefix: string; href: string; label: string; Icon: React.ElementType }[] = [
     { prefix: '/backoffice/leads',        href: '/backoffice/leads/novo',      label: 'Novo Lead',      Icon: UserPlus     },
     { prefix: '/backoffice/avaliacoes',   href: '/backoffice/avaliacoes/nova', label: 'Nova Avaliação', Icon: ClipboardList },
     { prefix: '/backoffice/imoveis',      href: '/backoffice/imoveis/novo',    label: 'Novo Imóvel',    Icon: Building2    },
@@ -59,15 +58,15 @@ const CONTEXT_FAB: { prefix: string; href: string; label: string; Icon: any }[] 
     { prefix: '/backoffice/contratos',    href: '/backoffice/contratos/novo',  label: 'Novo Contrato',  Icon: FileSignature },
 ]
 
-// Full nav groups
+// Full nav groups — horizontal Netflix-style rows
 const GROUPS = [
     {
         label: 'Visão Executiva', color: '#6B9EC4', bg: 'rgba(107,158,196,0.12)',
         items: [
             { name: 'Dashboard',           href: '/backoffice/dashboard',              icon: LayoutDashboard },
-            { name: 'Metas & Performance', href: '/backoffice/financeiro/metas',       icon: Target },
+            { name: 'Metas',               href: '/backoffice/financeiro/metas',       icon: Target },
             { name: 'Relatórios',          href: '/backoffice/relatorios',             icon: FileStack },
-            { name: 'Global Intelligence', href: '/backoffice/relatorios/executivo',   icon: Brain },
+            { name: 'Global Intel',        href: '/backoffice/relatorios/executivo',   icon: Brain },
         ],
     },
     {
@@ -77,7 +76,7 @@ const GROUPS = [
             { name: 'Inbox IA',        href: '/backoffice/leads/inbox',      icon: Inbox },
             { name: 'Comportamento',   href: '/backoffice/leads/behavior',   icon: BarChart3 },
             { name: 'Campanhas',       href: '/backoffice/campanhas',        icon: Megaphone },
-            { name: 'Ads Performance', href: '/backoffice/campanhas/ads',    icon: BarChart2 },
+            { name: 'Ads',             href: '/backoffice/campanhas/ads',    icon: BarChart2 },
             { name: 'QR Tracking',     href: '/backoffice/tracking/qr',      icon: QrCode },
             { name: 'Omni Channel',    href: '/backoffice/omnichannel',      icon: Layers },
             { name: 'WhatsApp',        href: '/backoffice/whatsapp',         icon: MessageSquare },
@@ -86,77 +85,138 @@ const GROUPS = [
     {
         label: 'Conversão', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)',
         items: [
-            { name: 'Pipeline',   href: '/backoffice/leads/pipeline',    icon: TrendingUp },
-            { name: 'Simulações', href: '/backoffice/credito/simulador', icon: CreditCard },
-            { name: 'Agenda',     href: '/backoffice/agenda',            icon: CalendarDays },
+            { name: 'Pipeline',    href: '/backoffice/leads/pipeline',    icon: TrendingUp },
+            { name: 'Simulações',  href: '/backoffice/credito/simulador', icon: CreditCard },
+            { name: 'Agenda',      href: '/backoffice/agenda',            icon: CalendarDays },
         ],
     },
     {
         label: 'Portfólio', color: '#D4A929', bg: 'rgba(212,169,41,0.12)',
         items: [
-            { name: 'Imóveis',      href: '/backoffice/imoveis',            icon: Building2 },
-            { name: 'Construtoras', href: '/backoffice/construtoras',       icon: Building },
+            { name: 'Imóveis',      href: '/backoffice/imoveis',            icon: Building2  },
+            { name: 'Construtoras', href: '/backoffice/construtoras',       icon: Building   },
             { name: 'Projetos',     href: '/backoffice/projetos',           icon: FolderOpen },
-            { name: 'Publicações',  href: '/backoffice/conteudos',          icon: FileText },
-            { name: 'Criador IA',   href: '/backoffice/conteudo/criador',   icon: Wand2 },
-            { name: 'Automação',    href: '/backoffice/conteudo/automacao', icon: Zap },
+            { name: 'Publicações',  href: '/backoffice/conteudos',          icon: FileText   },
+            { name: 'Criador IA',   href: '/backoffice/conteudo/criador',   icon: Wand2      },
+            { name: 'eBook IA',     href: '/backoffice/conteudo/ebook',     icon: BookMarked },
+            { name: 'Automação',    href: '/backoffice/conteudo/automacao', icon: Zap        },
         ],
     },
     {
         label: 'Inteligência', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)',
         items: [
-            { name: 'Ebooks',      href: '/backoffice/inteligencia/ebooks',       icon: BookOpen },
+            { name: 'eBooks',      href: '/backoffice/inteligencia/ebooks',       icon: BookOpen  },
             { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack },
             { name: 'Indicadores', href: '/backoffice/inteligencia/indicadores',  icon: LineChart },
-            { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain },
+            { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain     },
         ],
     },
     {
         label: 'Operação', color: '#4ECDC4', bg: 'rgba(78,205,196,0.12)',
         items: [
-            { name: 'Avaliações',         href: '/backoffice/avaliacoes',                   icon: Scale },
-            { name: 'Nova Avaliação',      href: '/backoffice/avaliacoes/nova',              icon: Scale },
-            { name: 'Email + Honorários',  href: '/backoffice/avaliacoes/email-honorarios',  icon: Scale },
-            { name: 'Exercícios NBR',      href: '/backoffice/avaliacoes/exercicios',        icon: BookOpen },
-            { name: 'Contratos',           href: '/backoffice/contratos',                    icon: FileSignature },
-            { name: 'Novo Contrato',       href: '/backoffice/contratos/novo',               icon: FileSignature },
-            { name: 'Consultoria',         href: '/backoffice/consultorias',                 icon: Briefcase },
-            { name: 'Nova Consultoria',    href: '/backoffice/consultorias/nova',             icon: Briefcase },
-            { name: 'Crédito',             href: '/backoffice/credito',                      icon: CreditCard },
+            { name: 'Avaliações',     href: '/backoffice/avaliacoes',                  icon: Scale         },
+            { name: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova',             icon: Scale         },
+            { name: 'Email + Hon.',   href: '/backoffice/avaliacoes/email-honorarios', icon: Scale         },
+            { name: 'NBR',            href: '/backoffice/avaliacoes/exercicios',       icon: BookOpen      },
+            { name: 'Contratos',      href: '/backoffice/contratos',                   icon: FileSignature },
+            { name: 'Novo Contrato',  href: '/backoffice/contratos/novo',              icon: FileSignature },
+            { name: 'Consultoria',    href: '/backoffice/consultorias',                icon: Briefcase     },
+            { name: 'Nova Consult.',  href: '/backoffice/consultorias/nova',           icon: Briefcase     },
+            { name: 'Crédito',        href: '/backoffice/credito',                     icon: CreditCard    },
         ],
     },
     {
         label: 'Financeiro', color: '#84CC16', bg: 'rgba(132,204,22,0.10)',
         items: [
-            { name: 'Visão Geral', href: '/backoffice/financeiro',         icon: Banknote },
-            { name: 'A Receber',   href: '/backoffice/financeiro/receber', icon: TrendingUp },
+            { name: 'Visão Geral', href: '/backoffice/financeiro',         icon: Banknote    },
+            { name: 'A Receber',   href: '/backoffice/financeiro/receber', icon: TrendingUp  },
             { name: 'A Pagar',     href: '/backoffice/financeiro/pagar',   icon: TrendingDown },
-            { name: 'Metas',       href: '/backoffice/financeiro/metas',   icon: Target },
+            { name: 'Metas',       href: '/backoffice/financeiro/metas',   icon: Target      },
         ],
     },
     {
         label: 'Crescimento', color: '#A78BFA', bg: 'rgba(167,139,250,0.12)',
         items: [
-            { name: 'Automações',    href: '/backoffice/automacoes',        icon: Zap },
-            { name: 'Playbooks',     href: '/backoffice/playbooks',         icon: BookOpen },
-            { name: 'Analytics',     href: '/backoffice/tracking',          icon: BarChart2 },
-            { name: 'Central de IA',  href: '/backoffice/ia',                icon: Sparkles },
-            { name: 'IA Avaliações', href: '/backoffice/avaliacoes/ia',     icon: Sparkles },
+            { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap        },
+            { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen   },
+            { name: 'Analytics',     href: '/backoffice/tracking',      icon: BarChart2  },
+            { name: 'Central IA',    href: '/backoffice/ia',            icon: Sparkles   },
+            { name: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles   },
         ],
     },
     {
         label: 'Configurações', color: '#94A3B8', bg: 'rgba(148,163,184,0.10)',
         items: [
-            { name: 'Organização',    href: '/backoffice/organizacao',        icon: Building },
-            { name: 'Equipe',         href: '/backoffice/equipe',             icon: Users },
-            { name: 'Integrações',    href: '/backoffice/integracoes',        icon: Plug },
-            { name: 'Configurações',  href: '/backoffice/settings',           icon: Settings },
-            { name: 'Corretores',     href: '/backoffice/settings/corretores', icon: Users },
-            { name: 'Permissões',     href: '/backoffice/settings/permissoes', icon: Shield },
-            { name: 'Config. IA',     href: '/backoffice/settings/ia',         icon: Brain },
+            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building  },
+            { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users     },
+            { name: 'Integrações',  href: '/backoffice/integracoes',         icon: Plug      },
+            { name: 'Settings',     href: '/backoffice/settings',            icon: Settings  },
+            { name: 'Corretores',   href: '/backoffice/settings/corretores', icon: Users     },
+            { name: 'Permissões',   href: '/backoffice/settings/permissoes', icon: Shield    },
+            { name: 'Config. IA',   href: '/backoffice/settings/ia',         icon: Brain     },
         ],
     },
 ]
+
+// ── Netflix tile card ──────────────────────────────────────────────
+function NetflixItemCard({
+    name, icon: Icon, color, bg, active,
+}: { name: string; icon: React.ElementType; color: string; bg: string; active: boolean }) {
+    return (
+        <div className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[62px]">
+            <div
+                className="w-[48px] h-[48px] rounded-2xl flex items-center justify-center"
+                style={{
+                    background: active ? bg : 'var(--bo-icon-bg)',
+                    boxShadow: active ? `0 0 0 1.5px ${color}80` : 'none',
+                    transition: 'background 0.15s, box-shadow 0.15s',
+                }}
+            >
+                <Icon size={19} style={{ color: active ? color : 'var(--bo-text-muted)' }} />
+            </div>
+            <span
+                className="text-[9px] font-semibold text-center leading-tight w-full"
+                style={{ color: active ? color : 'var(--bo-text-muted)' }}
+            >
+                {name}
+            </span>
+        </div>
+    )
+}
+
+// ── Netflix row label ──────────────────────────────────────────────
+function NetflixRowLabel({ color, label }: { color: string; label: string }) {
+    return (
+        <div className="flex items-center gap-2 px-4 mb-2">
+            <div className="w-[3px] h-[13px] rounded-full flex-shrink-0" style={{ background: color }} />
+            <span
+                className="text-[10px] font-bold tracking-[0.1em] uppercase"
+                style={{ color: 'var(--bo-text-muted)' }}
+            >
+                {label}
+            </span>
+        </div>
+    )
+}
+
+// ── Scrollable horizontal row ──────────────────────────────────────
+function NetflixRow({ children }: { children: React.ReactNode }) {
+    return (
+        <div className="relative">
+            <div
+                className="flex gap-3 overflow-x-auto px-4 pb-2"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+            >
+                {children}
+            </div>
+            {/* Right fade hint */}
+            <div
+                className="absolute right-0 top-0 bottom-0 w-6 pointer-events-none"
+                style={{ background: 'linear-gradient(to left, var(--bo-drawer-bg, #0f1318) 20%, transparent)' }}
+            />
+        </div>
+    )
+}
 
 // ── User strip (loads from Supabase auth) ──────────────────────────
 function UserStrip({ onClose, router }: { onClose: () => void; router: ReturnType<typeof useRouter> }) {
@@ -175,18 +235,18 @@ function UserStrip({ onClose, router }: { onClose: () => void; router: ReturnTyp
 
     return (
         <div
-            className="flex items-center gap-3 px-5 py-3 flex-shrink-0"
+            className="flex items-center gap-3 px-4 py-2.5 flex-shrink-0"
             style={{ borderBottom: '1px solid var(--bo-border)' }}
         >
             <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
                 style={{ background: 'var(--bo-accent)' }}
             >
                 {userInfo.initials}
             </div>
             <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate" style={{ color: 'var(--bo-text)' }}>{userInfo.name}</p>
-                <p className="text-[11px] truncate" style={{ color: 'var(--bo-text-muted)' }}>{userInfo.email}</p>
+                <p className="text-xs font-semibold truncate" style={{ color: 'var(--bo-text)' }}>{userInfo.name}</p>
+                <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>{userInfo.email}</p>
             </div>
             <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -196,10 +256,10 @@ function UserStrip({ onClose, router }: { onClose: () => void; router: ReturnTyp
                     await supabase.auth.signOut()
                     router.push('/login')
                 }}
-                className="flex items-center gap-1.5 px-3 h-8 rounded-xl text-xs font-semibold flex-shrink-0"
+                className="flex items-center gap-1.5 px-3 h-7 rounded-xl text-[11px] font-semibold flex-shrink-0"
                 style={{ background: 'var(--s-cancel-bg)', color: 'var(--s-cancel)' }}
             >
-                <LogOut size={12} />
+                <LogOut size={11} />
                 Sair
             </motion.button>
         </div>
@@ -249,7 +309,7 @@ export function MobileBottomNav() {
     const leftShortcuts  = shortcuts.slice(0, 2)
     const rightShortcuts = shortcuts.slice(2, 4)
 
-    // Resolve context-sensitive FAB for current route
+    // Resolve context-sensitive FAB
     const contextFab = pathname
         ? CONTEXT_FAB.find(c => pathname === c.prefix || pathname.startsWith(c.prefix + '/'))
         : null
@@ -459,7 +519,7 @@ export function MobileBottomNav() {
                             transition={{ duration: 0.2 }}
                             className="lg:hidden fixed inset-0 z-40"
                             style={{
-                                background: 'rgba(7,9,13,0.8)',
+                                background: 'rgba(7,9,13,0.82)',
                                 backdropFilter: 'blur(8px)',
                                 WebkitBackdropFilter: 'blur(8px)',
                             }}
@@ -586,160 +646,170 @@ export function MobileBottomNav() {
                                     </div>
                                 </>
                             ) : (
-                                /* ── Main Menu View ── */
+                                /* ── Netflix-style Main Menu ── */
                                 <>
                                     {/* Header */}
                                     <div
-                                        className="flex items-center justify-between px-5 py-2.5 flex-shrink-0"
+                                        className="flex items-center justify-between px-4 py-2.5 flex-shrink-0"
                                         style={{ borderBottom: '1px solid var(--bo-border)' }}
                                     >
-                                        <span className="text-base font-bold tracking-tight" style={{ color: 'var(--bo-text)' }}>
-                                            Menu
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <div
+                                                className="w-5 h-5 rounded-md flex items-center justify-center"
+                                                style={{ background: 'var(--bo-accent)' }}
+                                            >
+                                                <span className="text-[10px] font-black text-white">I</span>
+                                            </div>
+                                            <span className="text-sm font-bold tracking-tight" style={{ color: 'var(--bo-text)' }}>
+                                                IMI Backoffice
+                                            </span>
+                                        </div>
                                         <motion.button
                                             whileTap={{ scale: 0.9 }}
                                             onClick={() => setOpen(false)}
-                                            className="w-9 h-9 rounded-xl flex items-center justify-center"
+                                            className="w-8 h-8 rounded-xl flex items-center justify-center"
                                             style={{ background: 'var(--bo-icon-bg)' }}
                                         >
-                                            <X size={16} style={{ color: 'var(--bo-text-muted)' }} />
+                                            <X size={15} style={{ color: 'var(--bo-text-muted)' }} />
                                         </motion.button>
                                     </div>
 
-                                    {/* User profile */}
+                                    {/* User strip */}
                                     <UserStrip onClose={() => setOpen(false)} router={router} />
 
-                                    {/* Scrollable content */}
+                                    {/* ── Netflix scrollable rows ── */}
                                     <div
                                         className="overflow-y-auto flex-1"
-                                        style={{ paddingBottom: 'calc(84px + env(safe-area-inset-bottom))' }}
+                                        style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom))' }}
                                     >
-                                        {/* ── Criar Novo ── */}
-                                        <div className="pt-4 pb-2">
-                                            <SectionLabel color="#E8A87C" label="Criar Novo" />
-                                            <div className="px-3 mt-1">
+                                        {/* Quick Create — prominent landscape cards */}
+                                        <motion.div
+                                            className="pt-4"
+                                            initial={{ opacity: 0, y: 12 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.05, duration: 0.28 }}
+                                        >
+                                            <NetflixRowLabel color="#E8A87C" label="Criar Novo" />
+                                            <NetflixRow>
                                                 {QUICK_CREATE.map((item, i) => (
                                                     <motion.div
                                                         key={item.href}
-                                                        initial={{ opacity: 0, x: -6 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: i * 0.035 }}
+                                                        initial={{ opacity: 0, scale: 0.88 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        transition={{ delay: 0.08 + i * 0.06, type: 'spring', stiffness: 380, damping: 26 }}
                                                     >
-                                                        <Link
-                                                            href={item.href}
-                                                            onClick={() => setOpen(false)}
-                                                            className="hover-card flex items-center gap-3 px-3 py-2 mb-0.5 mx-1 rounded-xl transition-all"
-                                                        >
-                                                            <div
-                                                                className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                                                                style={{ background: item.bg }}
+                                                        <Link href={item.href} onClick={() => setOpen(false)}>
+                                                            <motion.div
+                                                                whileTap={{ scale: 0.94 }}
+                                                                className="flex-shrink-0 w-[120px] rounded-2xl p-3 flex flex-col gap-2"
+                                                                style={{
+                                                                    background: item.bg,
+                                                                    border: `1px solid ${item.color}28`,
+                                                                }}
                                                             >
-                                                                <item.icon size={16} style={{ color: item.color }} />
-                                                            </div>
-                                                            <div className="flex-1 min-w-0">
-                                                                <p className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>
-                                                                    {item.label}
-                                                                </p>
-                                                                <p className="text-[11px] mt-0.5" style={{ color: 'var(--bo-text-muted)' }}>
-                                                                    {item.desc}
-                                                                </p>
-                                                            </div>
-                                                            <ChevronRight size={14} style={{ color: 'var(--bo-border)', flexShrink: 0 }} />
+                                                                <div
+                                                                    className="w-8 h-8 rounded-xl flex items-center justify-center"
+                                                                    style={{ background: `${item.color}25` }}
+                                                                >
+                                                                    <item.icon size={15} style={{ color: item.color }} />
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-[11px] font-bold leading-tight" style={{ color: 'var(--bo-text)' }}>
+                                                                        {item.label}
+                                                                    </p>
+                                                                    <p className="text-[9px] mt-0.5 leading-tight" style={{ color: 'var(--bo-text-muted)' }}>
+                                                                        {item.desc}
+                                                                    </p>
+                                                                </div>
+                                                            </motion.div>
                                                         </Link>
                                                     </motion.div>
                                                 ))}
-                                            </div>
-                                        </div>
+                                            </NetflixRow>
+                                        </motion.div>
 
-                                        {/* ── Atalhos rápidos ── */}
-                                        <div className="pb-2">
-                                            <div className="flex items-center justify-between px-5 pb-2.5 pt-1">
+                                        {/* My shortcuts row */}
+                                        <motion.div
+                                            className="pt-4"
+                                            initial={{ opacity: 0, y: 12 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: 0.1, duration: 0.28 }}
+                                        >
+                                            <div className="flex items-center justify-between px-4 mb-2">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#6B9EC4' }} />
-                                                    <p className="text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: 'var(--bo-text-muted)' }}>
+                                                    <div className="w-[3px] h-[13px] rounded-full flex-shrink-0" style={{ background: '#6B9EC4' }} />
+                                                    <span className="text-[10px] font-bold tracking-[0.1em] uppercase" style={{ color: 'var(--bo-text-muted)' }}>
                                                         Meus Atalhos
-                                                    </p>
+                                                    </span>
                                                 </div>
-                                                <button
+                                                <motion.button
+                                                    whileTap={{ scale: 0.95 }}
                                                     onClick={enterCustomize}
-                                                    className="flex items-center gap-1.5 px-3 h-7 rounded-lg text-[11px] font-semibold"
+                                                    className="flex items-center gap-1 px-2.5 h-6 rounded-lg text-[10px] font-semibold"
                                                     style={{ background: 'var(--bo-icon-bg)', color: 'var(--bo-accent)' }}
                                                 >
-                                                    <Pencil size={11} />
-                                                    Personalizar
-                                                </button>
+                                                    <Pencil size={9} />
+                                                    Editar
+                                                </motion.button>
                                             </div>
-                                            <div className="grid grid-cols-4 gap-2 px-4">
-                                                {shortcuts.map(item => {
-                                                    const active = pathname === item.href || pathname?.startsWith(item.href + '/')
-                                                    return (
-                                                        <Link
-                                                            key={item.href}
-                                                            href={item.href}
-                                                            onClick={() => setOpen(false)}
-                                                            className="hover-card flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-all"
-                                                            style={{
-                                                                background: active ? item.bg : 'var(--bo-icon-bg)',
-                                                                border: `1px solid ${active ? item.color + '60' : 'transparent'}`,
-                                                            }}
-                                                        >
-                                                            <item.icon
-                                                                size={20}
-                                                                style={{ color: item.color, opacity: active ? 1 : 0.75 }}
-                                                            />
-                                                            <span
-                                                                className="text-[9px] font-bold text-center leading-tight px-0.5"
-                                                                style={{ color: active ? item.color : 'var(--bo-text-muted)' }}
-                                                            >
-                                                                {item.name}
-                                                            </span>
-                                                        </Link>
-                                                    )
-                                                })}
-                                            </div>
-                                        </div>
-
-                                        {/* ── Full navigation ── */}
-                                        {GROUPS.map((group, gi) => (
-                                            <div key={group.label} className="pt-3">
-                                                <SectionLabel color={group.color} label={group.label} />
-                                                {group.items.map((item, i) => {
+                                            <NetflixRow>
+                                                {shortcuts.map((item, i) => {
                                                     const active = pathname === item.href || pathname?.startsWith(item.href + '/')
                                                     return (
                                                         <motion.div
                                                             key={item.href}
-                                                            initial={{ opacity: 0, x: -8 }}
-                                                            animate={{ opacity: 1, x: 0 }}
-                                                            transition={{ delay: (gi * 5 + i) * 0.012 }}
+                                                            initial={{ opacity: 0, y: 8 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ delay: 0.12 + i * 0.05 }}
                                                         >
-                                                            <Link
-                                                                href={item.href}
-                                                                onClick={() => setOpen(false)}
-                                                                className="hover-card flex items-center gap-3 px-4 py-2.5 mx-2 mb-0.5 rounded-xl transition-all"
-                                                                style={{ background: active ? group.bg : 'transparent' }}
-                                                            >
-                                                                <div
-                                                                    className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-                                                                    style={{ background: group.bg }}
-                                                                >
-                                                                    <item.icon size={15} style={{ color: group.color }} />
-                                                                </div>
-                                                                <span
-                                                                    className="text-sm font-medium flex-1"
-                                                                    style={{ color: active ? 'var(--bo-text)' : 'var(--bo-text-muted)' }}
-                                                                >
-                                                                    {item.name}
-                                                                </span>
-                                                                <ChevronRight
-                                                                    size={13}
-                                                                    style={{ color: active ? group.color : 'var(--bo-border)', flexShrink: 0 }}
-                                                                />
+                                                            <Link href={item.href} onClick={() => setOpen(false)}>
+                                                                <motion.div whileTap={{ scale: 0.9 }}>
+                                                                    <NetflixItemCard
+                                                                        name={item.name}
+                                                                        icon={item.icon}
+                                                                        color={item.color}
+                                                                        bg={item.bg}
+                                                                        active={active}
+                                                                    />
+                                                                </motion.div>
                                                             </Link>
                                                         </motion.div>
                                                     )
                                                 })}
-                                            </div>
+                                            </NetflixRow>
+                                        </motion.div>
+
+                                        {/* ── GROUPS as Netflix horizontal rows ── */}
+                                        {GROUPS.map((group, gi) => (
+                                            <motion.div
+                                                key={group.label}
+                                                className="pt-4"
+                                                initial={{ opacity: 0, y: 14 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.14 + gi * 0.035, duration: 0.26 }}
+                                            >
+                                                <NetflixRowLabel color={group.color} label={group.label} />
+                                                <NetflixRow>
+                                                    {group.items.map(item => {
+                                                        const active = pathname === item.href || pathname?.startsWith(item.href + '/')
+                                                        return (
+                                                            <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
+                                                                <motion.div whileTap={{ scale: 0.88 }}>
+                                                                    <NetflixItemCard
+                                                                        name={item.name}
+                                                                        icon={item.icon}
+                                                                        color={group.color}
+                                                                        bg={group.bg}
+                                                                        active={active}
+                                                                    />
+                                                                </motion.div>
+                                                            </Link>
+                                                        )
+                                                    })}
+                                                </NetflixRow>
+                                            </motion.div>
                                         ))}
+
                                         <div className="h-6" />
                                     </div>
                                 </>
@@ -749,18 +819,5 @@ export function MobileBottomNav() {
                 )}
             </AnimatePresence>
         </>
-    )
-}
-
-// ── Section label helper ───────────────────────────────────────────
-function SectionLabel({ color, label }: { color: string; label: string }) {
-    return (
-        <div className="flex items-center gap-2.5 px-5 pb-1.5">
-            <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] flex-shrink-0" style={{ color: 'var(--bo-text-muted)' }}>
-                {label}
-            </p>
-            <div className="flex-1 h-px" style={{ background: 'var(--bo-border)' }} />
-        </div>
     )
 }

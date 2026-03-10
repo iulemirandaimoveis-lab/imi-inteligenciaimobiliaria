@@ -11,6 +11,7 @@ import {
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import Link from 'next/link'
 import { KPICard, MetricBar, StatusBadge, SectionHeader } from '../../components/ui'
+import { AvatarGroup, type BrokerAvatar } from '@/components/ui/AvatarGroup'
 import { T } from '@/app/(backoffice)/lib/theme'
 
 // ── Animated counter ──────────────────────────────────────────
@@ -56,6 +57,7 @@ interface Props {
     chartData: ChartPoint[]
     canalPerformance: CanalItem[]
     alertas: Alerta[]
+    brokers?: BrokerAvatar[]
 }
 
 type Period = '1M' | '3M' | '6M' | '1A'
@@ -72,7 +74,7 @@ const fmt = (v: number) =>
 
 export default function DashboardClient({
     stats, avStats, recentLeads, recentAvaliacoes,
-    imoveisCount, chartData, canalPerformance, alertas,
+    imoveisCount, chartData, canalPerformance, alertas, brokers = [],
 }: Props) {
     const router = useRouter()
     const [period, setPeriod] = useState<Period>('6M')
@@ -138,16 +140,28 @@ export default function DashboardClient({
                         {dateStr}
                     </p>
                 </div>
-                <motion.button
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'var(--bo-accent)' }}
-                >
-                    <Plus size={15} />
-                    <span className="hidden sm:inline">Nova Avaliação</span>
-                    <span className="sm:hidden">+</span>
-                </motion.button>
+                <div className="flex flex-col items-end gap-2">
+                    {/* Team avatar group */}
+                    {brokers.length > 0 && (
+                        <AvatarGroup
+                            brokers={brokers}
+                            max={5}
+                            size={30}
+                            href="/backoffice/settings/corretores"
+                            label="Equipe"
+                        />
+                    )}
+                    <motion.button
+                        whileTap={{ scale: 0.96 }}
+                        onClick={() => router.push('/backoffice/avaliacoes/nova')}
+                        className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                        style={{ background: 'var(--bo-accent)' }}
+                    >
+                        <Plus size={14} />
+                        <span className="hidden sm:inline">Nova Avaliação</span>
+                        <span className="sm:hidden">+</span>
+                    </motion.button>
+                </div>
             </motion.div>
 
             {/* ── Alertas Críticos ─────────────────────────────── */}

@@ -94,6 +94,13 @@ export default async function DashboardPage() {
         .order('created_at', { ascending: false })
         .limit(5)
 
+    // Corretores da equipe (para AvatarGroup)
+    const { data: brokersData } = await supabase
+        .from('brokers')
+        .select('id, name, avatar_url, role, last_login_at')
+        .order('last_login_at', { ascending: false })
+        .limit(12)
+
     // ── Processar dados do gráfico (últimos 12 meses) ─────────────
     const chartData = []
     for (let i = 11; i >= 0; i--) {
@@ -201,6 +208,7 @@ export default async function DashboardPage() {
             chartData={chartData}
             canalPerformance={canalPerformance}
             alertas={alertas}
+            brokers={brokersData || []}
         />
     )
 }
