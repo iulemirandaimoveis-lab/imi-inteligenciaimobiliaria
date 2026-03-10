@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import OpenAI from 'openai'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! })
 
 // ── Style presets ─────────────────────────────────────────────────────────────
 const STYLE_PROMPTS: Record<string, string> = {
@@ -38,16 +35,28 @@ Do NOT include visible text in the image — only visual elements.
 High quality, print-ready design.`
 
     try {
-        const response = await openai.images.generate({
-            model: 'dall-e-3',
-            prompt,
-            n: 1,
-            size: '1024x1792', // Portrait 9:16-ish ratio — closest for book cover
-            quality: 'hd',
-            style: 'vivid',
+        const res = await fetch('https://api.openai.com/v1/images/generations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+            },
+            body: JSON.stringify({
+                model: 'dall-e-3',
+                prompt,
+                n: 1,
+                size: '1024x1792',
+                quality: 'hd',
+                style: 'vivid',
+            }),
         })
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}))
+            throw new Error((err as any)?.error?.message || `OpenAI error ${res.status}`)
+        }
+        const response = await res.json()
 
-        const imageUrl = response.data[0]?.url
+        const imageUrl = response.data?.[0]?.url
         if (!imageUrl) throw new Error('Nenhuma imagem gerada')
 
         // Log usage
@@ -58,7 +67,7 @@ High quality, print-ready design.`
             cost_cents: 12, // ~$0.12 per HD image
         }).throwOnError().catch(() => null)
 
-        return NextResponse.json({ success: true, url: imageUrl, revised_prompt: response.data[0]?.revised_prompt })
+        return NextResponse.json({ success: true, url: imageUrl, revised_prompt: response.data?.[0]?.revised_prompt })
     } catch (err: any) {
         console.error('[generate-cover]', err)
         return NextResponse.json({ error: err.message || 'Erro na geração da capa' }, { status: 500 })

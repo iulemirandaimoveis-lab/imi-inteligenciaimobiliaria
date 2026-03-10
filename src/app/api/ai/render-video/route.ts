@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     try {
         // Dynamic import to avoid bundling issues when Lambda not configured
-        const { renderMediaOnLambda, getRenderProgress } = await import('@remotion/lambda')
+        const { renderMediaOnLambda, getRenderProgress } = await import(/* webpackIgnore: true */ '@remotion/lambda')
 
         const FORMAT_DIMS: Record<string, { width: number; height: number; fps: number; durationInFrames: number }> = {
             tiktok:   { width: 1080, height: 1920, fps: 30, durationInFrames: 450 },
