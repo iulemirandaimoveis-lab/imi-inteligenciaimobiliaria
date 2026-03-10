@@ -65,7 +65,7 @@ High quality, print-ready design.`
             type: 'ebook_cover',
             model: 'dall-e-3',
             cost_cents: 12, // ~$0.12 per HD image
-        }).throwOnError().catch(() => null)
+        }).then(() => null).catch(() => null)
 
         return NextResponse.json({ success: true, url: imageUrl, revised_prompt: response.data?.[0]?.revised_prompt })
     } catch (err: any) {
