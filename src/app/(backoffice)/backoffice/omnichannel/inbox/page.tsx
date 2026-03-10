@@ -8,7 +8,7 @@ import {
     Clock, User, Bot, ChevronRight, X, Loader2, AtSign,
     Phone, Globe, Star, Archive, Reply, MoreHorizontal,
 } from 'lucide-react'
-import { T } from '../../lib/theme'
+import { T } from '../../../lib/theme'
 import { toast } from 'sonner'
 
 // ── Types ────────────────────────────────────────────────────────────────────
