@@ -199,7 +199,7 @@ export default function HojePage() {
       >
         <SectionHeader title="Ações Rápidas" />
         <div
-          className="flex gap-3 overflow-x-auto"
+          className="flex gap-3 overflow-x-auto -mx-4 px-4"
           style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', paddingBottom: '4px' }}
         >
           {QUICK_ACTIONS.map((a, i) => (

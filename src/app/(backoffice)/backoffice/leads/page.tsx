@@ -188,7 +188,7 @@ export default function LeadsPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.06 }}
-        className="grid grid-cols-4 gap-2"
+        className="grid grid-cols-2 sm:grid-cols-4 gap-2"
       >
         <KPICard
           label="Total"

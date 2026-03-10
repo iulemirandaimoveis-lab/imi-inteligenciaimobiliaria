@@ -212,26 +212,18 @@ export default function FinanceiroPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.08, duration: 0.35 }}
-        style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}
+        className="grid grid-cols-2 sm:grid-cols-4 gap-3"
       >
-        <div style={{ flexShrink: 0, minWidth: '130px', flex: '1 1 0' }}>
-          <KPICard label="Receitas" value={formatCurrency(totalReceitas)} sublabel="entradas" icon={<ArrowUpCircle size={16} />} accent="green" />
-        </div>
-        <div style={{ flexShrink: 0, minWidth: '130px', flex: '1 1 0' }}>
-          <KPICard label="Despesas" value={formatCurrency(totalDespesas)} sublabel="saídas" icon={<ArrowDownCircle size={16} />} accent="hot" />
-        </div>
-        <div style={{ flexShrink: 0, minWidth: '130px', flex: '1 1 0' }}>
-          <KPICard
-            label="Saldo"
-            value={formatCurrency(saldo)}
-            sublabel="balanço atual"
-            icon={saldo >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-            accent={saldo >= 0 ? 'green' : 'hot'}
-          />
-        </div>
-        <div style={{ flexShrink: 0, minWidth: '110px', flex: '1 1 0' }}>
-          <KPICard label="Pendentes" value={String(pendentes)} sublabel="a liquidar" icon={<DollarSign size={16} />} accent="warm" />
-        </div>
+        <KPICard label="Receitas" value={formatCurrency(totalReceitas)} sublabel="entradas" icon={<ArrowUpCircle size={16} />} accent="green" />
+        <KPICard label="Despesas" value={formatCurrency(totalDespesas)} sublabel="saídas" icon={<ArrowDownCircle size={16} />} accent="hot" />
+        <KPICard
+          label="Saldo"
+          value={formatCurrency(saldo)}
+          sublabel="balanço atual"
+          icon={saldo >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+          accent={saldo >= 0 ? 'green' : 'hot'}
+        />
+        <KPICard label="Pendentes" value={String(pendentes)} sublabel="a liquidar" icon={<DollarSign size={16} />} accent="warm" />
       </motion.div>
 
       {/* Transactions panel */}

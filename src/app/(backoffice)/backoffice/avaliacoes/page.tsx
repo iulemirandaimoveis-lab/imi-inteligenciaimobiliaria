@@ -123,20 +123,12 @@ export default function AvaliacoesPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.08, duration: 0.35 }}
-        style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}
+        className="grid grid-cols-2 sm:grid-cols-4 gap-3"
       >
-        <div style={{ flexShrink: 0, minWidth: '140px', flex: '1 1 0' }}>
-          <KPICard label="Honorários Recebidos" value={loading ? '—' : fmt(honorariosPago)} sublabel="receita confirmada" icon={<DollarSign size={16} />} accent="green" />
-        </div>
-        <div style={{ flexShrink: 0, minWidth: '140px', flex: '1 1 0' }}>
-          <KPICard label="A Receber" value={loading ? '—' : fmt(honorariosPendente)} sublabel="honorários pendentes" icon={<TrendingUp size={16} />} accent="warm" />
-        </div>
-        <div style={{ flexShrink: 0, minWidth: '120px', flex: '1 1 0' }}>
-          <KPICard label="Em Andamento" value={loading ? '—' : String(emAndamento)} sublabel="laudos ativos" icon={<Clock size={16} />} accent="blue" />
-        </div>
-        <div style={{ flexShrink: 0, minWidth: '120px', flex: '1 1 0' }}>
-          <KPICard label="Concluídas" value={loading ? '—' : String(concluidas)} sublabel="laudos entregues" icon={<CheckCircle size={16} />} accent="ai" />
-        </div>
+        <KPICard label="Honorários Recebidos" value={loading ? '—' : fmt(honorariosPago)} sublabel="receita confirmada" icon={<DollarSign size={16} />} accent="green" />
+        <KPICard label="A Receber" value={loading ? '—' : fmt(honorariosPendente)} sublabel="honorários pendentes" icon={<TrendingUp size={16} />} accent="warm" />
+        <KPICard label="Em Andamento" value={loading ? '—' : String(emAndamento)} sublabel="laudos ativos" icon={<Clock size={16} />} accent="blue" />
+        <KPICard label="Concluídas" value={loading ? '—' : String(concluidas)} sublabel="laudos entregues" icon={<CheckCircle size={16} />} accent="ai" />
       </motion.div>
 
       {/* Quick Actions */}
@@ -144,7 +136,7 @@ export default function AvaliacoesPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, duration: 0.3 }}
-        style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none' }}
+        style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none', marginInline: '-4px', paddingInline: '4px', paddingBottom: '4px' }}
       >
         {QUICK_ACTIONS.map((a) => (
           <Link key={a.href} href={a.href} style={{ textDecoration: 'none', flexShrink: 0 }}>

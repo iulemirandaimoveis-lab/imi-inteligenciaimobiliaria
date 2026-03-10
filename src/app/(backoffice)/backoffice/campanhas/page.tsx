@@ -352,17 +352,11 @@ export default function CampanhasPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.08, duration: 0.35 }}
-        style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}
+        className="grid grid-cols-1 sm:grid-cols-3 gap-3"
       >
-        <div style={{ flexShrink: 0, minWidth: '140px', flex: '1 1 0' }}>
-          <KPICard label="Pipeline Total" value={isLoading ? '—' : formatBRL(totalBudget)} sublabel="orçamento aprovado" icon={<DollarSign size={16} />} accent="blue" />
-        </div>
-        <div style={{ flexShrink: 0, minWidth: '140px', flex: '1 1 0' }}>
-          <KPICard label="Conversão" value={isLoading ? '—' : `${convPct}%`} sublabel={`${totalConversions} de ${totalLeads} leads`} icon={<Target size={16} />} accent="green" />
-        </div>
-        <div style={{ flexShrink: 0, minWidth: '140px', flex: '1 1 0' }}>
-          <KPICard label="CAC Médio" value={isLoading ? '—' : formatBRL(avgCAC)} sublabel="custo por aquisição" icon={<Zap size={16} />} accent="warm" />
-        </div>
+        <KPICard label="Pipeline Total" value={isLoading ? '—' : formatBRL(totalBudget)} sublabel="orçamento aprovado" icon={<DollarSign size={16} />} accent="blue" />
+        <KPICard label="Conversão" value={isLoading ? '—' : `${convPct}%`} sublabel={`${totalConversions} de ${totalLeads} leads`} icon={<Target size={16} />} accent="green" />
+        <KPICard label="CAC Médio" value={isLoading ? '—' : formatBRL(avgCAC)} sublabel="custo por aquisição" icon={<Zap size={16} />} accent="warm" />
       </motion.div>
 
       <motion.div
@@ -389,7 +383,7 @@ export default function CampanhasPage() {
       </motion.div>
 
       {isLoading ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,280px),1fr))', gap: '12px' }}>
           {[1, 2, 3, 4].map(i => (
             <div key={i} style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', padding: '14px', height: '180px', animation: 'pulse 1.5s ease-in-out infinite' }} />
           ))}
@@ -397,7 +391,7 @@ export default function CampanhasPage() {
       ) : campanhas && campanhas.length > 0 ? (
         <>
           <SectionHeader title="Campanhas" badge={campanhas.length} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,280px),1fr))', gap: '12px' }}>
             {campanhas.map((c, i) => (
               <CampaignCard key={c.id} c={c} index={i} onClick={() => router.push(`/backoffice/campanhas/${c.id}`)} />
             ))}

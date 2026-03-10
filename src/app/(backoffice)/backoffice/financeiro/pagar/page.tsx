@@ -93,7 +93,7 @@ export default function PagarPage() {
             </motion.div>
 
             {/* KPIs */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2">
                 {[
                     { label: 'A Pagar',   value: fmt(totalPendente), color: '#E8A87C', icon: Clock },
                     { label: 'Já Pago',   value: fmt(totalPago),     color: '#6BB87B', icon: CheckCircle },

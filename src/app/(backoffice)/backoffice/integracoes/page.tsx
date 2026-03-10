@@ -327,14 +327,14 @@ export default function IntegracoesPage() {
                 />
 
                 {/* Status geral */}
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                     <KPICard label="Conectadas" value={String(conectadas)} icon={<CheckCircle size={16} />} accent="green" size="sm" />
                     <KPICard label="Disponíveis" value={String(INTEGRACOES.length)} icon={<Plug size={16} />} accent="blue" size="sm" />
                     <KPICard label="A configurar" value={String(configurar)} icon={<Settings size={16} />} accent="warm" size="sm" />
                 </div>
 
                 {/* Categorias */}
-                <div className="flex gap-1.5 overflow-x-auto pb-0.5">
+                <div className="flex gap-1.5 overflow-x-auto pb-0.5 -mx-1 px-1">
                     {[{ key: 'todas', label: 'Todas' }, ...Object.entries(CATEGORIAS_INTEGRACAO).map(([k, v]) => ({ key: k, label: v.label }))].map(cat => (
                         <button key={cat.key} onClick={() => setCategoriaAtiva(cat.key)}
                             className="px-3.5 h-9 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"

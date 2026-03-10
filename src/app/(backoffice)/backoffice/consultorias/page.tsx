@@ -99,7 +99,7 @@ export default function ConsultoriasPage() {
                     </div>
                     <div className="skeleton h-10 w-40 rounded-xl" />
                 </div>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                     {[...Array(4)].map((_, i) => (
                         <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 80}ms` }}>
                             <div className="skeleton h-3 w-20 mb-3" />
@@ -141,7 +141,7 @@ export default function ConsultoriasPage() {
             />
 
             {/* KPIs */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                 <KPICard label="Total Portfólio" value={fmtCurrency(totalHonorarios)} icon={<DollarSign size={16} />} accent="blue" size="sm" />
                 <KPICard label="Hon. Recebidos" value={fmtCurrency(recebido)} icon={<CheckCircle2 size={16} />} accent="green" size="sm" />
                 <KPICard label="Em Andamento" value={String(emAndamento)} icon={<Clock size={16} />} accent="warm" size="sm" />

@@ -93,7 +93,7 @@ export default function ReceberPage() {
             </motion.div>
 
             {/* KPIs */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2">
                 {[
                     { label: 'A Receber', value: fmt(totalPendente), color: '#E8A87C', icon: Clock },
                     { label: 'Já Recebido', value: fmt(totalRecebido), color: '#6BB87B', icon: CheckCircle },
