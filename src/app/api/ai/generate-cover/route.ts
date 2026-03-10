@@ -59,13 +59,8 @@ High quality, print-ready design.`
         const imageUrl = response.data?.[0]?.url
         if (!imageUrl) throw new Error('Nenhuma imagem gerada')
 
-        // Log usage
-        await supabase.from('ai_requests').insert({
-            user_id: user.id,
-            type: 'ebook_cover',
-            model: 'dall-e-3',
-            cost_cents: 12, // ~$0.12 per HD image
-        }).then(() => null).catch(() => null)
+        // Log usage (best-effort, ignore errors)
+        try { await supabase.from('ai_requests').insert({ user_id: user.id, type: 'ebook_cover', model: 'dall-e-3', cost_cents: 12 }) } catch { /* ignore */ }
 
         return NextResponse.json({ success: true, url: imageUrl, revised_prompt: response.data?.[0]?.revised_prompt })
     } catch (err: any) {
