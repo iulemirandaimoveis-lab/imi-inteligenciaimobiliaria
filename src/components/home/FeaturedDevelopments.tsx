@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowRight, MapPin, Bed, Maximize2 } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowRight, MapPin } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
 import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
@@ -53,10 +54,12 @@ function FeaturedCard({
         >
             {/* Background */}
             {hasImage ? (
-                <img
-                    src={dev.images.main}
+                <Image
+                    src={dev.images.main!}
                     alt={dev.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    fill
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 67vw, 853px"
                 />
             ) : (
                 <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`}>
