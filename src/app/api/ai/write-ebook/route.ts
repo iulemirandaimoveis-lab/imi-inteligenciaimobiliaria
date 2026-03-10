@@ -117,13 +117,7 @@ export async function POST(req: NextRequest) {
             const conteudo = msg.content[0].type === 'text' ? msg.content[0].text : ''
 
             // Log to ai_requests
-            await supabase.from('ai_requests').insert({
-                user_id: user.id,
-                type: 'ebook_write',
-                model: 'claude-3-haiku-20240307',
-                tokens_used: msg.usage.input_tokens + msg.usage.output_tokens,
-                cost_cents: Math.round(((msg.usage.input_tokens * 0.00025 + msg.usage.output_tokens * 0.00125) / 1000) * 100),
-            }).throwOnError().catch(() => null)
+            try { await supabase.from('ai_requests').insert({ user_id: user.id, type: 'ebook_write', model: 'claude-3-haiku-20240307', tokens_used: msg.usage.input_tokens + msg.usage.output_tokens, cost_cents: Math.round(((msg.usage.input_tokens * 0.00025 + msg.usage.output_tokens * 0.00125) / 1000) * 100) }) } catch { /* ignore */ }
 
             return NextResponse.json({ success: true, conteudo, tokens: msg.usage })
         }
