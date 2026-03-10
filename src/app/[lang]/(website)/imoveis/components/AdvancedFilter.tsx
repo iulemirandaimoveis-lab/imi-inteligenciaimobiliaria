@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, SlidersHorizontal, ChevronDown, Check, Search, MapPin, Building, BedDouble, DollarSign } from 'lucide-react';
+import { X, SlidersHorizontal, ChevronDown, Check, MapPin, Building, BedDouble, DollarSign, Zap } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
+// ── Types ─────────────────────────────────────────────────────────────────────
 export interface FilterState {
     status: string[];
     type: string[];
@@ -24,14 +25,15 @@ interface AdvancedFilterProps {
     maxPrice?: number;
 }
 
-const PRICE_OPTIONS = [
-    { label: 'Até R$ 500 mil', value: 500000 },
-    { label: 'Até R$ 800 mil', value: 800000 },
-    { label: 'Até R$ 1 mi', value: 1000000 },
-    { label: 'Até R$ 1.5 mi', value: 1500000 },
-    { label: 'Até R$ 2 mi', value: 2000000 },
-    { label: 'Até R$ 3 mi', value: 3000000 },
-    { label: 'Mais de R$ 3 mi', value: 3000001 },
+// ── Constants ─────────────────────────────────────────────────────────────────
+const PRICE_MIN = 0;
+const PRICE_MAX = 10_000_000;
+const PRICE_STEP = 50_000;
+
+const STATUS_OPTIONS = [
+    { label: 'Lançamento', value: 'launch', color: '#3B82F6', dot: '🔵' },
+    { label: 'Em Construção', value: 'under_construction', color: '#F59E0B', dot: '🟡' },
+    { label: 'Pronta Entrega', value: 'ready', color: '#10B981', dot: '🟢' },
 ];
 
 const TYPE_OPTIONS = [
@@ -42,112 +44,264 @@ const TYPE_OPTIONS = [
     { label: 'Garden', value: 'garden' },
 ];
 
-export default function AdvancedFilter({ filters, onFilterChange, locations, neighborhoods = [], maxPrice = 10000000 }: AdvancedFilterProps) {
+// ── Price formatting ──────────────────────────────────────────────────────────
+function fmtPrice(v: number): string {
+    if (v <= 0) return 'Sem mínimo';
+    if (v >= PRICE_MAX) return 'Sem limite';
+    if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+    return `R$ ${Math.round(v / 1000)}K`;
+}
+
+// ── PriceRangeSlider ──────────────────────────────────────────────────────────
+interface PriceRangeSliderProps {
+    value: [number, number];
+    onChange: (v: [number, number]) => void;
+}
+
+function PriceRangeSlider({ value, onChange }: PriceRangeSliderProps) {
+    const toPercent = (v: number) => ((v - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
+
+    const PRESETS: { label: string; range: [number, number] }[] = [
+        { label: 'Até 500K', range: [0, 500_000] },
+        { label: 'Até 1M',   range: [0, 1_000_000] },
+        { label: 'Até 2M',   range: [0, 2_000_000] },
+        { label: 'Acima 2M', range: [2_000_000, PRICE_MAX] },
+    ];
+
+    return (
+        <div className="px-1">
+            {/* Labels */}
+            <div className="flex justify-between mb-5">
+                <span style={{ color: '#486581', fontSize: 12, fontWeight: 700 }}>{fmtPrice(value[0])}</span>
+                <span style={{ color: '#486581', fontSize: 12, fontWeight: 700 }}>{fmtPrice(value[1])}</span>
+            </div>
+
+            {/* Track */}
+            <div style={{ position: 'relative', height: 28, marginBottom: 20 }}>
+                {/* Track bg */}
+                <div style={{
+                    position: 'absolute', top: '50%', left: 0, right: 0,
+                    height: 4, borderRadius: 9999,
+                    background: 'rgba(255,255,255,0.1)',
+                    transform: 'translateY(-50%)',
+                    pointerEvents: 'none',
+                }} />
+                {/* Filled range */}
+                <div style={{
+                    position: 'absolute', top: '50%',
+                    left: `${toPercent(value[0])}%`,
+                    right: `${100 - toPercent(value[1])}%`,
+                    height: 4, borderRadius: 9999,
+                    background: 'linear-gradient(90deg, #334E68, #486581)',
+                    transform: 'translateY(-50%)',
+                    pointerEvents: 'none',
+                }} />
+
+                {/* Min thumb */}
+                <input
+                    type="range"
+                    min={PRICE_MIN} max={PRICE_MAX} step={PRICE_STEP}
+                    value={value[0]}
+                    onChange={e => {
+                        const v = Math.min(Number(e.target.value), value[1] - PRICE_STEP);
+                        onChange([v, value[1]]);
+                    }}
+                    className="price-thumb-input"
+                    style={{
+                        position: 'absolute', inset: 0, width: '100%', height: '100%',
+                        background: 'transparent', outline: 'none', margin: 0, padding: 0,
+                        cursor: 'pointer',
+                        zIndex: value[0] > PRICE_MAX * 0.85 ? 5 : 3,
+                        WebkitAppearance: 'none', appearance: 'none',
+                    }}
+                />
+                {/* Max thumb */}
+                <input
+                    type="range"
+                    min={PRICE_MIN} max={PRICE_MAX} step={PRICE_STEP}
+                    value={value[1]}
+                    onChange={e => {
+                        const v = Math.max(Number(e.target.value), value[0] + PRICE_STEP);
+                        onChange([value[0], v]);
+                    }}
+                    className="price-thumb-input"
+                    style={{
+                        position: 'absolute', inset: 0, width: '100%', height: '100%',
+                        background: 'transparent', outline: 'none', margin: 0, padding: 0,
+                        cursor: 'pointer', zIndex: 4,
+                        WebkitAppearance: 'none', appearance: 'none',
+                    }}
+                />
+
+                {/* Visual thumbs (pointer-events none — purely decorative) */}
+                <div style={{
+                    position: 'absolute', top: '50%',
+                    left: `${toPercent(value[0])}%`,
+                    transform: 'translate(-50%, -50%)',
+                    width: 18, height: 18, borderRadius: '50%',
+                    background: 'white', border: '2.5px solid #486581',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                    pointerEvents: 'none', zIndex: 6,
+                }} />
+                <div style={{
+                    position: 'absolute', top: '50%',
+                    left: `${toPercent(value[1])}%`,
+                    transform: 'translate(-50%, -50%)',
+                    width: 18, height: 18, borderRadius: '50%',
+                    background: 'white', border: '2.5px solid #486581',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                    pointerEvents: 'none', zIndex: 6,
+                }} />
+            </div>
+
+            {/* Quick presets */}
+            <div className="flex gap-2 flex-wrap">
+                {PRESETS.map(p => {
+                    const active = value[0] === p.range[0] && value[1] === p.range[1];
+                    return (
+                        <button
+                            key={p.label}
+                            onClick={() => onChange(p.range)}
+                            className={cn(
+                                "px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-all",
+                                active
+                                    ? "bg-[#102A43]/20 border-[#334E68]/60 text-[#486581]"
+                                    : "border-white/10 text-[#6B7280] hover:bg-white/5 hover:text-[#9CA3AF]"
+                            )}
+                        >
+                            {p.label}
+                        </button>
+                    );
+                })}
+                {(value[0] > 0 || value[1] < PRICE_MAX) && (
+                    <button
+                        onClick={() => onChange([PRICE_MIN, PRICE_MAX])}
+                        className="px-3 py-1.5 rounded-lg text-[11px] font-semibold border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all"
+                    >
+                        Limpar
+                    </button>
+                )}
+            </div>
+
+            {/* CSS for thumb styling */}
+            <style>{`
+                .price-thumb-input::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    width: 28px; height: 28px;
+                    border-radius: 50%;
+                    background: transparent;
+                    cursor: pointer;
+                    pointer-events: all;
+                }
+                .price-thumb-input::-moz-range-thumb {
+                    width: 28px; height: 28px;
+                    border-radius: 50%;
+                    background: transparent;
+                    cursor: pointer;
+                    border: none;
+                }
+                .price-thumb-input::-webkit-slider-runnable-track { background: transparent; }
+                .price-thumb-input::-moz-range-track { background: transparent; }
+            `}</style>
+        </div>
+    );
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
+export default function AdvancedFilter({
+    filters,
+    onFilterChange,
+    locations,
+    neighborhoods = [],
+    maxPrice = PRICE_MAX,
+}: AdvancedFilterProps) {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-
-    // Initial state for mobile drawer (cloned from props)
     const [mobileFilters, setMobileFilters] = useState<FilterState>(filters);
 
-    // Lock body scroll when mobile filter is open
+    // Lock body scroll
     useEffect(() => {
-        if (isMobileOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
+        document.body.style.overflow = isMobileOpen ? 'hidden' : 'unset';
+        return () => { document.body.style.overflow = 'unset'; };
     }, [isMobileOpen]);
 
-    // Helper function to update desktop filters
-    const updateFilter = (key: keyof FilterState, value: any) => {
+    // Sync mobile filters when drawer opens
+    useEffect(() => {
+        if (isMobileOpen) setMobileFilters(filters);
+    }, [isMobileOpen, filters]);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        if (!activeDropdown) return;
+        const handle = (e: MouseEvent) => {
+            const t = e.target as HTMLElement;
+            if (!t.closest('.filter-dropdown') && !t.closest('[data-filter-trigger]')) {
+                setActiveDropdown(null);
+            }
+        };
+        document.addEventListener('click', handle);
+        return () => document.removeEventListener('click', handle);
+    }, [activeDropdown]);
+
+    const updateFilter = (key: keyof FilterState, value: unknown) =>
         onFilterChange({ ...filters, [key]: value });
-    };
 
-    // Helper function to update mobile filters (local state)
-    const updateMobileFilter = (key: keyof FilterState, value: any) => {
+    const updateMobileFilter = (key: keyof FilterState, value: unknown) =>
         setMobileFilters(prev => ({ ...prev, [key]: value }));
-    };
 
-    // Clear all filters
     const clearFilters = () => {
         const cleared: FilterState = {
-            status: [],
-            type: [],
-            bedrooms: null,
-            priceRange: [0, maxPrice],
-            location: null,
-            neighborhood: null,
-            sort: 'relevant'
+            status: [], type: [], bedrooms: null,
+            priceRange: [PRICE_MIN, maxPrice],
+            location: null, neighborhood: null, sort: 'relevant',
         };
         onFilterChange(cleared);
         setMobileFilters(cleared);
         setActiveDropdown(null);
     };
 
-    // Apply mobile filters to parent
     const applyMobileFilters = () => {
         onFilterChange(mobileFilters);
         setIsMobileOpen(false);
     };
 
-    // Sync mobile filters when drawer opens
-    useEffect(() => {
-        if (isMobileOpen) {
-            setMobileFilters(filters);
-        }
-    }, [isMobileOpen, filters]);
-
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        if (!activeDropdown) return;
-        const handleClick = (e: MouseEvent) => {
-            const target = e.target as HTMLElement;
-            if (!target.closest('.filter-dropdown') && !target.closest('[data-filter-trigger]')) {
-                setActiveDropdown(null);
-            }
-        };
-        document.addEventListener('click', handleClick);
-        return () => document.removeEventListener('click', handleClick);
-    }, [activeDropdown]);
-
-    // Count active filters for badge
+    // Badge count — all active filter categories
     const activeFilterCount = [
         filters.location ? 1 : 0,
         filters.neighborhood ? 1 : 0,
+        filters.status.length > 0 ? 1 : 0,
         filters.type.length > 0 ? 1 : 0,
         filters.bedrooms ? 1 : 0,
         (filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice) ? 1 : 0,
-    ].reduce((sum, v) => sum + v, 0);
+    ].reduce((a, b) => a + b, 0);
+
+    const hasAnyFilter = activeFilterCount > 0;
 
     return (
         <div className="sticky top-20 z-40 w-full">
-            {/* Desktop / Tablet Bar */}
             <div className="bg-[#0D0F14]/80 backdrop-blur-xl border-b border-white/[0.05] shadow-sm py-4">
                 <div className="container-custom">
                     <div className="flex items-center justify-between gap-4">
 
-                        {/* Mobile Toggle - Improved UI */}
+                        {/* ── Mobile toggle ─────────────────────────────── */}
                         <motion.button
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setIsMobileOpen(true)}
-                            className="lg:hidden flex items-center gap-2 bg-[#1A1E2A] text-white px-5 py-3.5 rounded-lg font-bold text-sm shadow-md w-full justify-center active:bg-[#21263A] border border-[#21263A] transition-colors"
+                            className="lg:hidden flex items-center gap-2.5 bg-[#1A1E2A] text-white px-5 py-3.5 rounded-xl font-bold text-sm shadow-md w-full justify-center active:bg-[#21263A] border border-[#21263A] transition-colors"
                         >
-                            <SlidersHorizontal className="w-5 h-5 text-[#486581]" />
+                            <SlidersHorizontal className="w-4.5 h-4.5 text-[#486581]" />
                             Filtrar Imóveis
                             {activeFilterCount > 0 && (
-                                <span className="ml-1 min-w-[20px] h-5 px-1.5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
                                     {activeFilterCount}
                                 </span>
                             )}
                         </motion.button>
 
-                        {/* Desktop Filters */}
-                        <div className="hidden lg:flex items-center gap-3 overflow-visible">
+                        {/* ── Desktop filter bar ────────────────────────── */}
+                        <div className="hidden lg:flex items-center gap-2 flex-wrap overflow-visible">
 
-                            {/* Location Filter */}
+                            {/* Location */}
                             <div className="relative">
                                 <FilterButton
                                     label={filters.location || "Localização"}
@@ -157,36 +311,24 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                     onClick={() => setActiveDropdown(activeDropdown === 'location' ? null : 'location')}
                                 />
                                 {activeDropdown === 'location' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: 10 }}
-                                        className="filter-dropdown absolute top-full left-0 mt-2 w-64 bg-[#1A1E2A] rounded-2xl shadow-2xl border border-white/[0.05] p-2 overflow-hidden z-50"
-                                    >
-                                        <button
+                                    <DropdownPanel width={240}>
+                                        <DropdownItem
+                                            label="Todas as localizações"
+                                            active={!filters.location}
                                             onClick={() => { updateFilter('location', null); setActiveDropdown(null); }}
-                                            className={cn("w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors", !filters.location ? "font-bold text-white" : "text-[#9CA3AF]")}
-                                        >
-                                            Todas as localizações
-                                        </button>
+                                        />
                                         {locations.map(loc => (
-                                            <button
-                                                key={loc}
+                                            <DropdownItem
+                                                key={loc} label={loc}
+                                                active={filters.location === loc}
                                                 onClick={() => { updateFilter('location', loc); setActiveDropdown(null); }}
-                                                className={cn(
-                                                    "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors flex justify-between items-center",
-                                                    filters.location === loc ? "bg-[#21263A] font-bold text-white" : "text-[#9CA3AF]"
-                                                )}
-                                            >
-                                                {loc}
-                                                {filters.location === loc && <Check className="w-4 h-4 text-[#486581]" />}
-                                            </button>
+                                            />
                                         ))}
-                                    </motion.div>
+                                    </DropdownPanel>
                                 )}
                             </div>
 
-                            {/* Neighborhood Filter */}
+                            {/* Neighborhood */}
                             {neighborhoods.length > 0 && (
                                 <div className="relative">
                                     <FilterButton
@@ -197,76 +339,103 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                         onClick={() => setActiveDropdown(activeDropdown === 'neighborhood' ? null : 'neighborhood')}
                                     />
                                     {activeDropdown === 'neighborhood' && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            className="filter-dropdown absolute top-full left-0 mt-2 w-64 bg-[#1A1E2A] rounded-2xl shadow-2xl border border-white/[0.05] p-2 overflow-hidden z-50 max-h-72 overflow-y-auto"
-                                        >
-                                            <button
+                                        <DropdownPanel width={240} maxH={280}>
+                                            <DropdownItem
+                                                label="Todos os bairros"
+                                                active={!filters.neighborhood}
                                                 onClick={() => { updateFilter('neighborhood', null); setActiveDropdown(null); }}
-                                                className={cn("w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors", !filters.neighborhood ? "font-bold text-white" : "text-[#9CA3AF]")}
-                                            >
-                                                Todos os bairros
-                                            </button>
-                                            {neighborhoods.map(hood => (
-                                                <button
-                                                    key={hood}
-                                                    onClick={() => { updateFilter('neighborhood', hood); setActiveDropdown(null); }}
-                                                    className={cn(
-                                                        "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors flex justify-between items-center",
-                                                        filters.neighborhood === hood ? "bg-[#21263A] font-bold text-white" : "text-[#9CA3AF]"
-                                                    )}
-                                                >
-                                                    {hood}
-                                                    {filters.neighborhood === hood && <Check className="w-4 h-4 text-[#486581]" />}
-                                                </button>
+                                            />
+                                            {neighborhoods.map(h => (
+                                                <DropdownItem
+                                                    key={h} label={h}
+                                                    active={filters.neighborhood === h}
+                                                    onClick={() => { updateFilter('neighborhood', h); setActiveDropdown(null); }}
+                                                />
                                             ))}
-                                        </motion.div>
+                                        </DropdownPanel>
                                     )}
                                 </div>
                             )}
 
-                            {/* Type Filter */}
+                            {/* Status */}
                             <div className="relative">
                                 <FilterButton
-                                    label="Tipo de Imóvel"
+                                    label={filters.status.length > 0
+                                        ? STATUS_OPTIONS.filter(o => filters.status.includes(o.value)).map(o => o.label).join(', ')
+                                        : "Status"
+                                    }
+                                    icon={Zap}
+                                    active={activeDropdown === 'status'}
+                                    hasValue={filters.status.length > 0}
+                                    onClick={() => setActiveDropdown(activeDropdown === 'status' ? null : 'status')}
+                                />
+                                {activeDropdown === 'status' && (
+                                    <DropdownPanel width={220}>
+                                        {STATUS_OPTIONS.map(opt => {
+                                            const sel = filters.status.includes(opt.value);
+                                            return (
+                                                <button
+                                                    key={opt.value}
+                                                    onClick={() => {
+                                                        const next = sel
+                                                            ? filters.status.filter(s => s !== opt.value)
+                                                            : [...filters.status, opt.value];
+                                                        updateFilter('status', next);
+                                                    }}
+                                                    className={cn(
+                                                        "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors flex items-center justify-between mb-1",
+                                                        sel ? "bg-[#21263A] font-bold text-white" : "text-[#9CA3AF]"
+                                                    )}
+                                                >
+                                                    <span className="flex items-center gap-2">
+                                                        <span style={{ width: 8, height: 8, borderRadius: '50%', background: opt.color, display: 'inline-block', flexShrink: 0 }} />
+                                                        {opt.label}
+                                                    </span>
+                                                    {sel && <Check className="w-4 h-4 text-[#486581]" />}
+                                                </button>
+                                            );
+                                        })}
+                                    </DropdownPanel>
+                                )}
+                            </div>
+
+                            {/* Type */}
+                            <div className="relative">
+                                <FilterButton
+                                    label="Tipo"
                                     icon={Building}
                                     active={activeDropdown === 'type'}
                                     hasValue={filters.type.length > 0}
                                     onClick={() => setActiveDropdown(activeDropdown === 'type' ? null : 'type')}
                                 />
                                 {activeDropdown === 'type' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="filter-dropdown absolute top-full left-0 mt-2 w-56 bg-[#1A1E2A] rounded-2xl shadow-2xl border border-white/[0.05] p-2 z-50"
-                                    >
+                                    <DropdownPanel width={210}>
                                         {TYPE_OPTIONS.map(opt => {
-                                            const isSelected = filters.type.includes(opt.value);
+                                            const sel = filters.type.includes(opt.value);
                                             return (
                                                 <button
                                                     key={opt.value}
                                                     onClick={() => {
-                                                        const newTypes = isSelected
+                                                        const next = sel
                                                             ? filters.type.filter(t => t !== opt.value)
                                                             : [...filters.type, opt.value];
-                                                        updateFilter('type', newTypes);
+                                                        updateFilter('type', next);
                                                     }}
                                                     className={cn(
                                                         "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors flex justify-between items-center mb-1",
-                                                        isSelected ? "bg-[#21263A] font-bold text-white" : "text-[#9CA3AF]"
+                                                        sel ? "bg-[#21263A] font-bold text-white" : "text-[#9CA3AF]"
                                                     )}
                                                 >
                                                     {opt.label}
-                                                    {isSelected && <Check className="w-4 h-4 text-[#486581]" />}
+                                                    {sel && <Check className="w-4 h-4 text-[#486581]" />}
                                                 </button>
                                             );
                                         })}
-                                    </motion.div>
+                                    </DropdownPanel>
                                 )}
                             </div>
 
-                            {/* Bedrooms Filter */}
+                            {/* Bedrooms */}
                             <div className="relative">
                                 <FilterButton
                                     label={filters.bedrooms ? `${filters.bedrooms}+ Quartos` : "Quartos"}
@@ -276,33 +445,31 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                     onClick={() => setActiveDropdown(activeDropdown === 'bedrooms' ? null : 'bedrooms')}
                                 />
                                 {activeDropdown === 'bedrooms' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="filter-dropdown absolute top-full left-0 mt-2 w-48 bg-[#1A1E2A] rounded-2xl shadow-2xl border border-white/[0.05] p-2 z-50"
-                                    >
-                                        <button onClick={() => updateFilter('bedrooms', null)} className={cn("w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] mb-1 transition-colors", !filters.bedrooms ? "font-bold text-white" : "text-[#9CA3AF]")}>Qualquer</button>
-                                        {[1, 2, 3, 4].map(num => (
-                                            <button
-                                                key={num}
-                                                onClick={() => updateFilter('bedrooms', num)}
-                                                className={cn(
-                                                    "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors flex justify-between items-center mb-1",
-                                                    filters.bedrooms === num ? "bg-[#21263A] font-bold text-white" : "text-[#9CA3AF]"
-                                                )}
-                                            >
-                                                {num}+ Quartos
-                                                {filters.bedrooms === num && <Check className="w-4 h-4 text-[#486581]" />}
-                                            </button>
+                                    <DropdownPanel width={190}>
+                                        <DropdownItem
+                                            label="Qualquer"
+                                            active={!filters.bedrooms}
+                                            onClick={() => updateFilter('bedrooms', null)}
+                                        />
+                                        {[1, 2, 3, 4].map(n => (
+                                            <DropdownItem
+                                                key={n} label={`${n}+ Quartos`}
+                                                active={filters.bedrooms === n}
+                                                onClick={() => updateFilter('bedrooms', n)}
+                                            />
                                         ))}
-                                    </motion.div>
+                                    </DropdownPanel>
                                 )}
                             </div>
 
-                            {/* Price Filter - Simplified Range */}
+                            {/* Price — range slider dropdown */}
                             <div className="relative">
                                 <FilterButton
-                                    label="Faixa de Preço"
+                                    label={
+                                        filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice
+                                            ? `${fmtPrice(filters.priceRange[0])} – ${fmtPrice(filters.priceRange[1])}`
+                                            : "Preço"
+                                    }
                                     icon={DollarSign}
                                     active={activeDropdown === 'price'}
                                     hasValue={filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice}
@@ -312,43 +479,44 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                                     <motion.div
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className="filter-dropdown absolute top-full left-0 mt-2 w-64 bg-[#1A1E2A] rounded-2xl shadow-2xl border border-white/[0.05] p-2 z-50"
+                                        className="filter-dropdown absolute top-full left-0 mt-2 bg-[#1A1E2A] rounded-2xl shadow-2xl border border-white/[0.05] p-5 z-50"
+                                        style={{ width: 300 }}
                                     >
-                                        {PRICE_OPTIONS.map((opt, idx) => (
-                                            <button
-                                                key={idx}
-                                                onClick={() => {
-                                                    if (opt.value > 3000000) updateFilter('priceRange', [3000000, maxPrice]);
-                                                    else updateFilter('priceRange', [0, opt.value]);
-                                                    setActiveDropdown(null);
-                                                }}
-                                                className="w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] text-[#9CA3AF] hover:text-white mb-1 transition-colors"
-                                            >
-                                                {opt.label}
-                                            </button>
-                                        ))}
+                                        <PriceRangeSlider
+                                            value={filters.priceRange}
+                                            onChange={v => updateFilter('priceRange', v)}
+                                        />
                                     </motion.div>
                                 )}
                             </div>
 
-                            {(filters.location || filters.neighborhood || filters.type.length > 0 || filters.bedrooms || filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice) && (
-                                <button onClick={clearFilters} className="text-xs font-bold text-red-500 hover:text-red-600 uppercase tracking-wider ml-auto px-4">
-                                    Limpar Filtros
+                            {/* Clear filters */}
+                            {hasAnyFilter && (
+                                <button
+                                    onClick={clearFilters}
+                                    className="text-xs font-bold text-red-400 hover:text-red-300 uppercase tracking-wider px-3 transition-colors"
+                                >
+                                    Limpar
                                 </button>
                             )}
                         </div>
+
+                        {/* Desktop active filter badge */}
+                        {activeFilterCount > 0 && (
+                            <span className="hidden lg:flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-bold flex-shrink-0">
+                                {activeFilterCount}
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Mobile Filter Sheet (Full Screen) */}
+            {/* ── Mobile full-screen filter sheet ───────────────────────── */}
             <AnimatePresence>
                 {isMobileOpen && (
                     <>
                         <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             onClick={() => setIsMobileOpen(false)}
                             className="fixed inset-0 bg-black/60 z-50 lg:hidden backdrop-blur-sm"
                         />
@@ -356,193 +524,187 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                             initial={{ opacity: 0, y: '100%' }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: '100%' }}
-                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed inset-x-0 bottom-0 top-[10vh] z-50 bg-[#0D0F14] rounded-t-3xl flex flex-col overflow-hidden shadow-2xl lg:hidden border-t border-white/10"
+                            transition={{ type: "spring", damping: 28, stiffness: 220 }}
+                            className="fixed inset-x-0 bottom-0 top-[8vh] z-50 bg-[#0D0F14] rounded-t-3xl flex flex-col overflow-hidden shadow-2xl lg:hidden border-t border-white/10"
                         >
                             {/* Header */}
-                            <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.05] bg-[#0D0F14] flex-shrink-0">
-                                <h2 className="font-display text-xl font-bold text-white">Filtrar Imóveis</h2>
+                            <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.05] flex-shrink-0">
+                                <div className="flex items-center gap-3">
+                                    <h2 className="font-display text-xl font-bold text-white">Filtros</h2>
+                                    {activeFilterCount > 0 && (
+                                        <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                            {activeFilterCount}
+                                        </span>
+                                    )}
+                                </div>
                                 <button
                                     onClick={() => setIsMobileOpen(false)}
-                                    className="p-2.5 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
+                                    className="p-2.5 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"
                                 >
                                     <X className="w-5 h-5 text-[#9CA3AF]" />
                                 </button>
                             </div>
 
-                            {/* Content Scroll */}
-                            <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-[#0D0F14]">
+                            {/* Scrollable content */}
+                            <div className="flex-1 overflow-y-auto p-6 space-y-8">
 
-                                {/* Location Section */}
+                                {/* Localização */}
                                 <div>
                                     <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Localização</h3>
-                                    <div className="flex flex-wrap gap-2.5">
-                                        <button
+                                    <div className="flex flex-wrap gap-2">
+                                        <MobileChip
+                                            label="Todas"
+                                            active={!mobileFilters.location}
                                             onClick={() => updateMobileFilter('location', null)}
-                                            className={cn(
-                                                "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
-                                                !mobileFilters.location
-                                                    ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
-                                                    : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
-                                            )}
-                                        >
-                                            Todas
-                                        </button>
+                                        />
                                         {locations.map(loc => (
-                                            <button
-                                                key={loc}
+                                            <MobileChip
+                                                key={loc} label={loc}
+                                                active={mobileFilters.location === loc}
                                                 onClick={() => updateMobileFilter('location', loc)}
-                                                className={cn(
-                                                    "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
-                                                    mobileFilters.location === loc
-                                                        ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
-                                                        : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
-                                                )}
-                                            >
-                                                {loc}
-                                            </button>
+                                            />
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* Neighborhood Section */}
+                                {/* Bairro */}
                                 {neighborhoods.length > 0 && (
                                     <div>
                                         <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Bairro</h3>
-                                        <div className="flex flex-wrap gap-2.5">
-                                            <button
+                                        <div className="flex flex-wrap gap-2">
+                                            <MobileChip
+                                                label="Todos"
+                                                active={!mobileFilters.neighborhood}
                                                 onClick={() => updateMobileFilter('neighborhood', null)}
-                                                className={cn(
-                                                    "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
-                                                    !mobileFilters.neighborhood
-                                                        ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
-                                                        : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
-                                                )}
-                                            >
-                                                Todos
-                                            </button>
-                                            {neighborhoods.map(hood => (
-                                                <button
-                                                    key={hood}
-                                                    onClick={() => updateMobileFilter('neighborhood', hood)}
-                                                    className={cn(
-                                                        "px-4 py-2.5 rounded-lg text-[13px] font-semibold border transition-all whitespace-nowrap",
-                                                        mobileFilters.neighborhood === hood
-                                                            ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
-                                                            : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
-                                                    )}
-                                                >
-                                                    {hood}
-                                                </button>
+                                            />
+                                            {neighborhoods.map(h => (
+                                                <MobileChip
+                                                    key={h} label={h}
+                                                    active={mobileFilters.neighborhood === h}
+                                                    onClick={() => updateMobileFilter('neighborhood', h)}
+                                                />
                                             ))}
                                         </div>
                                     </div>
                                 )}
 
-                                {/* Type Section */}
+                                {/* Status */}
                                 <div>
-                                    <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Tipo do Imóvel</h3>
-                                    <div className="grid grid-cols-2 gap-2.5">
-                                        {TYPE_OPTIONS.map(opt => {
-                                            const isSelected = mobileFilters.type.includes(opt.value);
+                                    <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Status do Empreendimento</h3>
+                                    <div className="grid grid-cols-1 gap-2">
+                                        {STATUS_OPTIONS.map(opt => {
+                                            const sel = mobileFilters.status.includes(opt.value);
                                             return (
                                                 <button
                                                     key={opt.value}
                                                     onClick={() => {
-                                                        const newTypes = isSelected
-                                                            ? mobileFilters.type.filter(t => t !== opt.value)
-                                                            : [...mobileFilters.type, opt.value];
-                                                        updateMobileFilter('type', newTypes);
+                                                        const next = sel
+                                                            ? mobileFilters.status.filter(s => s !== opt.value)
+                                                            : [...mobileFilters.status, opt.value];
+                                                        updateMobileFilter('status', next);
                                                     }}
                                                     className={cn(
-                                                        "px-4 py-3 rounded-lg text-[13px] font-semibold border text-left flex justify-between items-center transition-all",
-                                                        isSelected
-                                                            ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                        "px-4 py-3 rounded-xl text-[13px] font-semibold border flex items-center justify-between transition-all",
+                                                        sel
+                                                            ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581]"
                                                             : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                                     )}
                                                 >
-                                                    {opt.label}
-                                                    {isSelected && <Check className="w-4 h-4 text-[#486581]" />}
+                                                    <span className="flex items-center gap-3">
+                                                        <span style={{ width: 10, height: 10, borderRadius: '50%', background: opt.color, display: 'inline-block', flexShrink: 0 }} />
+                                                        {opt.label}
+                                                    </span>
+                                                    {sel && <Check className="w-4 h-4 text-[#486581]" />}
                                                 </button>
                                             );
                                         })}
                                     </div>
                                 </div>
 
-                                {/* Bedrooms Section */}
+                                {/* Tipo */}
+                                <div>
+                                    <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Tipo do Imóvel</h3>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {TYPE_OPTIONS.map(opt => {
+                                            const sel = mobileFilters.type.includes(opt.value);
+                                            return (
+                                                <button
+                                                    key={opt.value}
+                                                    onClick={() => {
+                                                        const next = sel
+                                                            ? mobileFilters.type.filter(t => t !== opt.value)
+                                                            : [...mobileFilters.type, opt.value];
+                                                        updateMobileFilter('type', next);
+                                                    }}
+                                                    className={cn(
+                                                        "px-4 py-3 rounded-xl text-[13px] font-semibold border flex justify-between items-center transition-all",
+                                                        sel
+                                                            ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581]"
+                                                            : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
+                                                    )}
+                                                >
+                                                    {opt.label}
+                                                    {sel && <Check className="w-4 h-4 text-[#486581]" />}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* Quartos */}
                                 <div>
                                     <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Quartos</h3>
-                                    <div className="grid grid-cols-5 gap-2.5">
+                                    <div className="grid grid-cols-5 gap-2">
                                         <button
                                             onClick={() => updateMobileFilter('bedrooms', null)}
                                             className={cn(
-                                                "py-3 rounded-lg text-[13px] font-semibold border justify-center flex transition-all",
+                                                "py-3 rounded-xl text-[13px] font-semibold border flex justify-center items-center transition-all",
                                                 !mobileFilters.bedrooms
-                                                    ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                    ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581]"
                                                     : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                             )}
                                         >
                                             Todos
                                         </button>
-                                        {[1, 2, 3, 4].map(num => (
+                                        {[1, 2, 3, 4].map(n => (
                                             <button
-                                                key={num}
-                                                onClick={() => updateMobileFilter('bedrooms', num)}
+                                                key={n}
+                                                onClick={() => updateMobileFilter('bedrooms', n)}
                                                 className={cn(
-                                                    "py-3 rounded-lg text-[13px] font-semibold border justify-center flex transition-all text-center",
-                                                    mobileFilters.bedrooms === num
-                                                        ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
+                                                    "py-3 rounded-xl text-[13px] font-semibold border flex justify-center items-center transition-all",
+                                                    mobileFilters.bedrooms === n
+                                                        ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581]"
                                                         : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
                                                 )}
                                             >
-                                                {num}+
+                                                {n}+
                                             </button>
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* Price Section */}
+                                {/* Faixa de Preço — range slider */}
                                 <div>
-                                    <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Faixa de Preço</h3>
-                                    <div className="grid grid-cols-2 gap-2.5">
-                                        {PRICE_OPTIONS.map((opt, idx) => {
-                                            const isActive = opt.value > 3000000
-                                                ? mobileFilters.priceRange[0] === 3000000
-                                                : mobileFilters.priceRange[1] === opt.value && mobileFilters.priceRange[0] === 0;
-                                            return (
-                                                <button
-                                                    key={idx}
-                                                    onClick={() => {
-                                                        if (opt.value > 3000000) updateMobileFilter('priceRange', [3000000, maxPrice]);
-                                                        else updateMobileFilter('priceRange', [0, opt.value]);
-                                                    }}
-                                                    className={cn(
-                                                        "px-4 py-3 rounded-lg text-[13px] font-semibold border text-left transition-all",
-                                                        isActive
-                                                            ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581] shadow-sm"
-                                                            : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
-                                                    )}
-                                                >
-                                                    {opt.label}
-                                                </button>
-                                            );
-                                        })}
-                                    </div>
+                                    <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-6">Faixa de Preço</h3>
+                                    <PriceRangeSlider
+                                        value={mobileFilters.priceRange}
+                                        onChange={v => updateMobileFilter('priceRange', v)}
+                                    />
                                 </div>
                             </div>
 
-                            {/* Footer Actions */}
-                            <div className="p-5 border-t border-white/[0.05] bg-[#0D0F14] pb-[calc(1.25rem+env(safe-area-inset-bottom))] flex-shrink-0">
+                            {/* Footer */}
+                            <div className="p-5 border-t border-white/[0.05] flex-shrink-0" style={{ paddingBottom: 'calc(1.25rem + env(safe-area-inset-bottom))' }}>
                                 <div className="flex gap-3">
                                     <Button
                                         variant="outline"
-                                        className="flex-1 justify-center border-white/20 text-white hover:bg-white/5 h-[50px] rounded-lg font-bold"
+                                        className="flex-1 justify-center border-white/20 text-white hover:bg-white/5 h-[50px] rounded-xl font-bold"
                                         onClick={clearFilters}
                                     >
                                         Limpar
                                     </Button>
                                     <Button
-                                        className="flex-[2] justify-center bg-[#102A43] text-[#141420] hover:bg-[#16162A] h-[50px] rounded-lg font-bold shadow-[0_4px_14px_rgba(26,26,46,0.4)]"
+                                        className="flex-[2] justify-center bg-[#102A43] text-white hover:bg-[#16375e] h-[50px] rounded-xl font-bold shadow-[0_4px_14px_rgba(16,42,67,0.5)]"
                                         onClick={applyMobileFilters}
                                     >
                                         Ver Resultados
@@ -557,7 +719,8 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
     );
 }
 
-// FilterButton Component
+// ── Reusable sub-components ───────────────────────────────────────────────────
+
 interface FilterButtonProps {
     label: string;
     icon: React.ElementType;
@@ -572,17 +735,80 @@ function FilterButton({ label, icon: Icon, active, hasValue, onClick }: FilterBu
             data-filter-trigger
             onClick={onClick}
             className={cn(
-                "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300",
+                "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-200 whitespace-nowrap",
                 active
                     ? "bg-[#21263A] border-[#21263A] border-l-2 border-l-[#334E68] text-white"
                     : hasValue
-                        ? "bg-[#102A43]/10 border-[#334E68]/30 text-[#486581]"
+                        ? "bg-[#102A43]/15 border-[#334E68]/40 text-[#486581]"
                         : "bg-white/5 border-white/10 text-[#9CA3AF] hover:bg-white/10 hover:border-white/20 hover:text-white"
             )}
         >
-            <Icon className="w-4 h-4" />
-            <span className="truncate max-w-[120px]">{label}</span>
-            <ChevronDown className={cn("w-4 h-4 transition-transform", active && "rotate-180")} />
+            <Icon className="w-4 h-4 flex-shrink-0" />
+            <span className="truncate max-w-[130px]">{label}</span>
+            <ChevronDown className={cn("w-3.5 h-3.5 flex-shrink-0 transition-transform", active && "rotate-180")} />
+        </button>
+    );
+}
+
+interface DropdownPanelProps {
+    children: React.ReactNode;
+    width?: number;
+    maxH?: number;
+}
+
+function DropdownPanel({ children, width = 240, maxH }: DropdownPanelProps) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            className="filter-dropdown absolute top-full left-0 mt-2 bg-[#1A1E2A] rounded-2xl shadow-2xl border border-white/[0.06] p-2 z-50"
+            style={{ width, ...(maxH ? { maxHeight: maxH, overflowY: 'auto' } : {}) }}
+        >
+            {children}
+        </motion.div>
+    );
+}
+
+interface DropdownItemProps {
+    label: string;
+    active?: boolean;
+    onClick: () => void;
+}
+
+function DropdownItem({ label, active, onClick }: DropdownItemProps) {
+    return (
+        <button
+            onClick={onClick}
+            className={cn(
+                "w-full text-left px-4 py-2.5 rounded-xl text-sm hover:bg-[#21263A] transition-colors flex justify-between items-center mb-0.5",
+                active ? "bg-[#21263A] font-bold text-white" : "text-[#9CA3AF]"
+            )}
+        >
+            {label}
+            {active && <Check className="w-4 h-4 text-[#486581] flex-shrink-0" />}
+        </button>
+    );
+}
+
+interface MobileChipProps {
+    label: string;
+    active: boolean;
+    onClick: () => void;
+}
+
+function MobileChip({ label, active, onClick }: MobileChipProps) {
+    return (
+        <button
+            onClick={onClick}
+            className={cn(
+                "px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition-all whitespace-nowrap",
+                active
+                    ? "bg-[#102A43]/15 border-[#334E68]/50 text-[#486581]"
+                    : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
+            )}
+        >
+            {label}
         </button>
     );
 }

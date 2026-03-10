@@ -1,22 +1,34 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { staggerContainer, slideUp } from '@/lib/animations';
 import { Development } from './types/development';
 import DevelopmentCard from './components/DevelopmentCard';
 import AdvancedFilter, { FilterState } from './components/AdvancedFilter';
-import Button from '@/components/ui/Button';
-import Badge from '@/components/ui/Badge';
-import { MessageCircle, Search, Grid3X3, Map } from 'lucide-react';
+import { MessageCircle, Search, Grid3X3, Map, ChevronDown } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import LeadCaptureModal from './components/LeadCaptureModal';
 import dynamic from 'next/dynamic';
 
+const ITEMS_PER_PAGE = 12;
+
+const DEFAULT_FILTERS: FilterState = {
+    status: [],
+    type: [],
+    bedrooms: null,
+    priceRange: [0, 10000000],
+    location: null,
+    neighborhood: null,
+    sort: 'relevant',
+};
+
+const MAP_HEIGHT = 'clamp(400px, calc(100vh - 200px), 700px)';
+
 const PropertyMap = dynamic(() => import('@/components/maps/PropertyMap'), {
     ssr: false,
     loading: () => (
-        <div style={{ height: '560px', background: '#141420', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ height: MAP_HEIGHT, background: '#141420', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ color: '#9CA3AF', fontSize: 14 }}>Carregando mapa...</div>
         </div>
     ),
@@ -29,20 +41,51 @@ interface ImoveisClientProps {
 
 export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClientProps) {
 
-
-    const [filters, setFilters] = useState<FilterState>({
-        status: [],
-        type: [],
-        bedrooms: null,
-        priceRange: [0, 10000000],
-        location: null,
-        neighborhood: null,
-        sort: 'relevant'
-    });
-
+    const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [ctaTarget, setCtaTarget] = useState<'off-market' | 'general'>('general');
     const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+    const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    // ── Read URL query params on mount ────────────────────────────────────────
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const params = new URLSearchParams(window.location.search);
+        if (!params.toString()) return;
+        setFilters(prev => ({
+            ...prev,
+            type: params.get('type') ? params.get('type')!.split(',') : prev.type,
+            bedrooms: params.get('beds') ? Number(params.get('beds')) : prev.bedrooms,
+            priceRange: [
+                params.get('price_min') ? Number(params.get('price_min')) : prev.priceRange[0],
+                params.get('price_max') ? Number(params.get('price_max')) : prev.priceRange[1],
+            ],
+            location: params.get('location') || prev.location,
+            status: params.get('status') ? params.get('status')!.split(',') : prev.status,
+        }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ── Persist active filters to URL ─────────────────────────────────────────
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const params = new URLSearchParams();
+        if (filters.type.length > 0) params.set('type', filters.type.join(','));
+        if (filters.bedrooms) params.set('beds', String(filters.bedrooms));
+        if (filters.priceRange[0] > 0) params.set('price_min', String(filters.priceRange[0]));
+        if (filters.priceRange[1] < 10000000) params.set('price_max', String(filters.priceRange[1]));
+        if (filters.location) params.set('location', filters.location);
+        if (filters.status.length > 0) params.set('status', filters.status.join(','));
+        const search = params.toString();
+        const newUrl = search ? `${window.location.pathname}?${search}` : window.location.pathname;
+        window.history.replaceState(null, '', newUrl);
+    }, [filters]);
+
+    // ── Reset pagination when filters or view mode change ────────────────────
+    useEffect(() => {
+        setVisibleCount(ITEMS_PER_PAGE);
+    }, [filters, viewMode]);
 
     const handleCTAClick = (target: 'off-market' | 'general') => {
         setCtaTarget(target);
@@ -54,23 +97,20 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         setIsModalOpen(false);
     };
 
-    // Extract unique locations for the filter dropdown based on REAL data
+    // ── Derived data ──────────────────────────────────────────────────────────
     const availableLocations = useMemo(() => {
         const locs = new Set<string>();
         initialDevelopments.forEach(dev => {
             const isInternational = ['dubai', 'usa'].includes(dev.region?.toLowerCase());
             if (isInternational) {
-                // Para internacionais, mostrar o país
                 locs.add(dev.location.country || dev.location.city);
             } else {
-                // Para nacionais, mostrar a cidade
                 locs.add(dev.location.city);
             }
         });
         return Array.from(locs).filter(Boolean).sort();
     }, [initialDevelopments]);
 
-    // Extract unique neighborhoods
     const availableNeighborhoods = useMemo(() => {
         const hoods = new Set<string>();
         const devs = filters.location
@@ -88,26 +128,26 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
             if (filters.location) {
                 const matchCity = dev.location.city === filters.location;
                 const matchCountry = dev.location.country === filters.location;
-                const matchRegion = dev.region === filters.location.toLowerCase().replace(' ', '-'); // Fallback for region matching
+                const matchRegion = dev.region === filters.location.toLowerCase().replace(' ', '-');
                 if (!matchCity && !matchCountry && !matchRegion) return false;
             }
-
             // Neighborhood
             if (filters.neighborhood) {
                 if (dev.location.neighborhood !== filters.neighborhood) return false;
             }
-
-            // Price - Check if development starts within budget
-            if (dev.priceRange.min > filters.priceRange[1]) return false;
-
-            // Bedrooms - Check if development has units with at least requested bedrooms
+            // Status
+            if (filters.status.length > 0) {
+                if (!filters.status.includes(dev.status)) return false;
+            }
+            // Price — only filter if development has a price
+            if (dev.priceRange.min > 0 && dev.priceRange.min > filters.priceRange[1]) return false;
+            if (filters.priceRange[0] > 0 && dev.priceRange.max > 0 && dev.priceRange.max < filters.priceRange[0]) return false;
+            // Bedrooms
             if (filters.bedrooms) {
-                // Parse "2-4" or "3"
                 const parts = dev.specs.bedroomsRange.split('-').map(p => parseInt(p));
                 const maxBeds = parts.length > 1 ? parts[1] : parts[0];
-                if (maxBeds < filters.bedrooms) return false;
+                if (isNaN(maxBeds) || maxBeds < filters.bedrooms) return false;
             }
-
             // Type
             if (filters.type.length > 0) {
                 const typeMatches = filters.type.some(t => {
@@ -121,28 +161,45 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 });
                 if (!typeMatches) return false;
             }
-
             return true;
         }).sort((a, b) => {
-            // Sort Logic
             if (filters.sort === 'price-asc') return a.priceRange.min - b.priceRange.min;
             if (filters.sort === 'price-desc') return b.priceRange.min - a.priceRange.min;
             if (filters.sort === 'newest') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            return a.order - b.order; // Default 'relevant'
+            return a.order - b.order;
         });
     }, [filters, initialDevelopments]);
 
-    // Separar Pronta Entrega para seção especial (apenas se filtros estiverem limpos ou compatíveis)
-    const showReadySection = !filters.location && !filters.neighborhood && !filters.bedrooms && filters.type.length === 0;
+    // Special "Pronta Entrega" section — only when no active filters
+    const showReadySection = !filters.location && !filters.neighborhood
+        && !filters.bedrooms && filters.type.length === 0 && filters.status.length === 0;
     const readyDevelopments = showReadySection
         ? initialDevelopments.filter(dev => dev.status === 'ready' && dev.region === 'paraiba')
         : [];
-
-    // Dedup: Don't show in main grid if shown in special section
     const mainGridDevelopments = showReadySection
         ? filteredDevelopments.filter(dev => !readyDevelopments.find(r => r.id === dev.id))
         : filteredDevelopments;
 
+    // Paginated slice
+    const visibleDevelopments = mainGridDevelopments.slice(0, visibleCount);
+    const hasMore = visibleCount < mainGridDevelopments.length;
+
+    // Intersection observer for auto-load-more
+    useEffect(() => {
+        if (!sentinelRef.current || !hasMore || viewMode !== 'grid') return;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, mainGridDevelopments.length));
+                }
+            },
+            { rootMargin: '200px', threshold: 0 }
+        );
+        observer.observe(sentinelRef.current);
+        return () => observer.disconnect();
+    }, [hasMore, viewMode, mainGridDevelopments.length]);
+
+    // ── Empty portfolio state ─────────────────────────────────────────────────
     if (!initialDevelopments || initialDevelopments.length === 0) {
         return (
             <main className="bg-[#0D0F14] min-h-screen pt-32 pb-20">
@@ -178,25 +235,17 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
     return (
         <main className="bg-[#0D0F14] min-h-screen">
-            {/* Premium Hero */}
+
+            {/* ── Premium Hero ──────────────────────────────────────────── */}
             <section className="relative bg-[#141420] pt-20 pb-14 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
-                {/* Gold glow orb */}
                 <div
                     className="absolute top-1/4 right-1/4 w-[200px] h-[200px] sm:w-[500px] sm:h-[500px] rounded-full pointer-events-none"
-                    style={{
-                        background: 'radial-gradient(circle, rgba(26,26,46,0.08) 0%, transparent 70%)',
-                        filter: 'blur(60px)',
-                    }}
+                    style={{ background: 'radial-gradient(circle, rgba(26,26,46,0.08) 0%, transparent 70%)', filter: 'blur(60px)' }}
                 />
                 <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
 
                 <div className="container-custom relative z-10">
-                    <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={staggerContainer}
-                        className="max-w-4xl"
-                    >
+                    <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl">
                         <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
                             <div className="w-8 h-px" style={{ background: '#C8A65A' }} />
                             <span className="font-bold uppercase tracking-[0.25em] text-[11px]" style={{ color: '#C8A65A' }}>Portfólio 2026</span>
@@ -211,7 +260,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 </div>
             </section>
 
-            {/* Advanced Filters */}
+            {/* ── Advanced Filters ───────────────────────────────────────── */}
             <AdvancedFilter
                 filters={filters}
                 onFilterChange={setFilters}
@@ -219,7 +268,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 neighborhoods={availableNeighborhoods}
             />
 
-            {/* Seção Especial Pronta Entrega */}
+            {/* ── Pronta Entrega special section ─────────────────────────── */}
             {readyDevelopments.length > 0 && (
                 <section className="py-16 bg-[#1A1E2A] overflow-hidden border-b border-white/[0.05]">
                     <div className="container-custom">
@@ -232,9 +281,10 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                             <span className="bg-[#102A43]/20 text-[#486581] px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px] border border-[#334E68]/30">
                                 Pronta Entrega
                             </span>
-                            <h2 className="font-display text-2xl md:text-3xl text-white font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Oportunidades Imediatas</h2>
+                            <h2 className="font-display text-2xl md:text-3xl text-white font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                                Oportunidades Imediatas
+                            </h2>
                         </motion.div>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {readyDevelopments.map((dev, idx) => (
                                 <DevelopmentCard key={dev.id} development={dev} index={idx} lang={lang} />
@@ -244,90 +294,124 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 </section>
             )}
 
-            {/* Grid Principal */}
+            {/* ── Main Grid / Map ────────────────────────────────────────── */}
             <section className="py-16 md:py-24 bg-[#0D0F14]">
                 <div className="container-custom">
+
+                    {/* Toolbar */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="mb-10 flex items-center justify-between"
+                        className="mb-10 flex items-center justify-between gap-4"
                     >
-                        <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full" style={{ background: '#C8A65A' }} />
-                            <span className="font-bold uppercase tracking-widest text-xs" style={{ color: '#9CA3AF' }}>
-                                {mainGridDevelopments.length} {mainGridDevelopments.length === 1 ? 'resultado' : 'resultados'} encontrados
+                        {/* Result count */}
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-2 h-2 flex-shrink-0 rounded-full" style={{ background: '#C8A65A' }} />
+                            <span className="font-bold uppercase tracking-widest text-xs truncate" style={{ color: '#9CA3AF' }}>
+                                {mainGridDevelopments.length} {mainGridDevelopments.length === 1 ? 'resultado' : 'resultados'}
                             </span>
                         </div>
-                        {/* View mode toggle */}
-                        <div className="flex items-center gap-1 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+
+                        {/* View toggle — always show text labels */}
+                        <div className="flex items-center gap-1 p-1 rounded-xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                             <button
                                 onClick={() => setViewMode('grid')}
-                                className="flex items-center gap-2 h-8 px-3 rounded-lg text-xs font-semibold transition-all"
+                                className="flex items-center gap-2 h-9 px-3 sm:px-4 rounded-lg text-xs font-semibold transition-all"
                                 style={viewMode === 'grid'
                                     ? { background: 'rgba(200,166,90,0.2)', color: '#C8A65A', border: '1px solid rgba(200,166,90,0.3)' }
                                     : { color: '#6B7280' }
                                 }
                             >
-                                <Grid3X3 size={13} />
-                                <span className="hidden sm:inline">Grade</span>
+                                <Grid3X3 size={14} />
+                                <span>Grade</span>
                             </button>
                             <button
                                 onClick={() => setViewMode('map')}
-                                className="flex items-center gap-2 h-8 px-3 rounded-lg text-xs font-semibold transition-all"
+                                className="flex items-center gap-2 h-9 px-3 sm:px-4 rounded-lg text-xs font-semibold transition-all"
                                 style={viewMode === 'map'
                                     ? { background: 'rgba(200,166,90,0.2)', color: '#C8A65A', border: '1px solid rgba(200,166,90,0.3)' }
                                     : { color: '#6B7280' }
                                 }
                             >
-                                <Map size={13} />
-                                <span className="hidden sm:inline">Mapa</span>
+                                <Map size={14} />
+                                <span>Mapa</span>
                             </button>
                         </div>
                     </motion.div>
 
-                    {/* MAP VIEW */}
+                    {/* ── MAP VIEW ─────────────────────────────────────────── */}
                     {viewMode === 'map' && (
                         <div className="mb-10">
-                            <PropertyMap
-                                developments={filteredDevelopments}
-                                height="560px"
-                                lang={lang}
-                                darkMode={true}
-                                className="w-full"
-                            />
+                            {filteredDevelopments.length === 0 ? (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 text-center gap-4"
+                                    style={{ height: MAP_HEIGHT, background: '#141420' }}
+                                >
+                                    <span style={{ fontSize: 44, opacity: 0.25 }}>🗺️</span>
+                                    <p style={{ color: '#9CA3AF', fontSize: 14, fontWeight: 500, margin: 0 }}>
+                                        Nenhum empreendimento com esses filtros
+                                    </p>
+                                    <button
+                                        onClick={() => setFilters(DEFAULT_FILTERS)}
+                                        className="px-5 py-2.5 rounded-xl border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors"
+                                    >
+                                        Limpar filtros
+                                    </button>
+                                </motion.div>
+                            ) : (
+                                <PropertyMap
+                                    developments={filteredDevelopments}
+                                    height={MAP_HEIGHT}
+                                    lang={lang}
+                                    darkMode={true}
+                                    className="w-full"
+                                />
+                            )}
                         </div>
                     )}
 
-                    {/* GRID VIEW */}
+                    {/* ── GRID VIEW ────────────────────────────────────────── */}
                     {viewMode === 'grid' && mainGridDevelopments.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-                            {mainGridDevelopments.map((dev, index) => (
-                                <DevelopmentCard key={dev.id} development={dev} index={index} lang={lang} />
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                                {visibleDevelopments.map((dev, index) => (
+                                    <DevelopmentCard key={dev.id} development={dev} index={index} lang={lang} />
+                                ))}
+                            </div>
+
+                            {/* Sentinel + "Carregar mais" button */}
+                            {hasMore && (
+                                <div ref={sentinelRef} className="flex flex-col items-center gap-3 mt-12">
+                                    <button
+                                        onClick={() => setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, mainGridDevelopments.length))}
+                                        className="flex items-center gap-2 px-8 py-3.5 rounded-xl border border-white/20 text-[#9CA3AF] text-sm font-semibold hover:bg-white/5 hover:text-white transition-all"
+                                    >
+                                        <ChevronDown size={15} />
+                                        Carregar mais
+                                        <span className="text-xs text-[#6B7280]">
+                                            ({visibleCount} de {mainGridDevelopments.length})
+                                        </span>
+                                    </button>
+                                </div>
+                            )}
+                        </>
                     ) : viewMode === 'grid' && (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="text-center py-24 bg-[#141420] rounded-3xl border border-dashed border-white/[0.1]"
                         >
-                            <div className="w-20 h-20 bg-white/[0.05] rounded-full flex items-center justify-center mx-auto mb-6 shadow-soft">
+                            <div className="w-20 h-20 bg-white/[0.05] rounded-full flex items-center justify-center mx-auto mb-6">
                                 <Search className="w-8 h-8 text-[#486581]" strokeWidth={1.5} />
                             </div>
                             <h3 className="font-display text-2xl font-bold text-white mb-2">Nenhum ativo encontrado</h3>
                             <p className="text-[#9CA3AF] max-w-xs mx-auto mb-8">
-                                Não encontramos imóveis com esses filtros exatos. Tente remover alguns filtros para ver mais opções.
+                                Não encontramos imóveis com esses filtros exatos. Tente remover alguns filtros.
                             </p>
                             <button
-                                onClick={() => setFilters({
-                                    status: [],
-                                    type: [],
-                                    bedrooms: null,
-                                    priceRange: [0, 10000000],
-                                    location: null,
-                                    neighborhood: null,
-                                    sort: 'relevant'
-                                })}
+                                onClick={() => setFilters(DEFAULT_FILTERS)}
                                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 text-white font-medium hover:bg-white/5 transition-colors"
                             >
                                 Limpar filtros
@@ -337,7 +421,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 </div>
             </section>
 
-            {/* CTA Final */}
+            {/* ── CTA Final ─────────────────────────────────────────────── */}
             <section className="bg-[#141420] text-white py-20 md:py-32 text-center relative overflow-hidden border-t border-white/[0.05]">
                 <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
@@ -347,7 +431,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                         viewport={{ once: true }}
                         variants={staggerContainer}
                     >
-                        <motion.h3 variants={slideUp} className="text-3xl md:text-5xl font-black mb-6 tracking-tight text-white mb-6" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        <motion.h3 variants={slideUp} className="text-3xl md:text-5xl font-black mb-6 tracking-tight text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                             Não encontrou o <span className="text-[#486581] italic">imóvel ideal?</span>
                         </motion.h3>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
@@ -358,7 +442,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                                 className="inline-flex items-center gap-3 h-14 px-9 text-sm font-bold tracking-wide bg-[#102A43] text-white hover:bg-[#1A2F44] border border-[#1A2F44] hover:border-[#334E68]/50 rounded-xl transition-all duration-300 hover:-translate-y-0.5 shadow-[0_4px_20px_rgba(10,25,41,0.3)]"
                                 onClick={() => handleCTAClick('general')}
                             >
-                                <MessageCircle className="w-4.5 h-4.5 flex-shrink-0 text-white/80" />
+                                <MessageCircle className="w-4 h-4 flex-shrink-0 text-white/80" />
                                 Iniciar Consultoria
                             </button>
                         </motion.div>
