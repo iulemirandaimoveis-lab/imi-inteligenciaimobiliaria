@@ -16,6 +16,8 @@ interface PropertyMapProps {
     className?: string
     lang?: string
     darkMode?: boolean
+    selectedId?: string
+    onMarkerClick?: (id: string) => void
 }
 
 const formatCurrency = (v: number) =>
@@ -53,14 +55,21 @@ export default function PropertyMap({
     className = '',
     lang = 'pt',
     darkMode = true,
+    selectedId,
+    onMarkerClick,
 }: PropertyMapProps) {
     // Responsive default: taller on desktop, shorter on mobile
     const resolvedHeight = height || 'clamp(400px, calc(100vh - 280px), 700px)'
     const mapContainer = useRef<HTMLDivElement>(null)
     const map = useRef<any>(null)
-    const markers = useRef<any[]>([])
+    const markers = useRef<Map<string, any>>(new Map())
+    const popups = useRef<Map<string, any>>(new Map())
+    const onMarkerClickRef = useRef(onMarkerClick)
     const [mapLoaded, setMapLoaded] = useState(false)
     const [error, setError] = useState<string | null>(null)
+
+    // Keep callback ref fresh without re-init
+    useEffect(() => { onMarkerClickRef.current = onMarkerClick }, [onMarkerClick])
 
     const validDevelopments = developments.filter(
         (d) =>
@@ -181,6 +190,11 @@ export default function PropertyMap({
                     pin.style.boxShadow = `0 4px 20px ${statusColor}55,0 2px 6px rgba(0,0,0,0.4)`
                 })
 
+                // Click fires onMarkerClick callback for sidebar sync
+                el.addEventListener('click', () => {
+                    onMarkerClickRef.current?.(dev.id)
+                })
+
                 const popupHTML = `
                     <div style="
                         background:#1A1E2A;border-radius:14px;overflow:hidden;
@@ -244,7 +258,8 @@ export default function PropertyMap({
                     .setPopup(popup)
                     .addTo(map.current)
 
-                markers.current.push(marker)
+                markers.current.set(dev.id, marker)
+                popups.current.set(dev.id, popup)
             })
         }
 
@@ -265,7 +280,8 @@ export default function PropertyMap({
 
         return () => {
             markers.current.forEach((m) => m.remove())
-            markers.current = []
+            markers.current.clear()
+            popups.current.clear()
             if (map.current) {
                 map.current.remove()
                 map.current = null
@@ -274,6 +290,28 @@ export default function PropertyMap({
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    // Open popup when selectedId changes externally (e.g. sidebar click)
+    useEffect(() => {
+        if (!selectedId || !mapLoaded) return
+        const marker = markers.current.get(selectedId)
+        const popup = popups.current.get(selectedId)
+        if (!marker || !popup) return
+        // Close all other popups first
+        popups.current.forEach((p, id) => { if (id !== selectedId) p.remove() })
+        if (!popup.isOpen()) marker.togglePopup()
+        // Fly camera to selected marker
+        const dev = validDevelopments.find(d => d.id === selectedId)
+        if (dev && map.current) {
+            map.current.flyTo({
+                center: [dev.location.coordinates.lng, dev.location.coordinates.lat],
+                zoom: Math.max(map.current.getZoom(), 13),
+                duration: 700,
+                essential: true,
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedId, mapLoaded])
 
     if (error) {
         return (
