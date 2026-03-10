@@ -7,7 +7,7 @@
  * SALVAR EM: src/app/api/ai/router/route.ts
  *
  * Central de roteamento multi-modelo.
- * Suporta: Claude (Anthropic), GPT (OpenAI), Gemini (Google), Kling (video)
+ * Suporta: Claude (Anthropic), GPT (OpenAI), Gemini (Google), Grok (xAI), Kling (video)
  * Cada task_type é mapeado para o modelo ideal com fallback automático.
  */
 
@@ -23,6 +23,7 @@ export type AIModel =
     | 'gpt-4o-mini'
     | 'gemini-pro'
     | 'gemini-flash'
+    | 'grok-2'
     | 'kling'
 
 export type TaskType =
@@ -212,6 +213,55 @@ async function callGPT(
     }
 }
 
+// ─── Chamada Grok ─────────────────────────────────────────────────────────────
+
+async function callGrok(
+    prompt: string,
+    systemPrompt: string,
+    model: 'grok-2',
+    temperature: number,
+    max_tokens: number
+): Promise<{ result: string; tokens_input: number; tokens_output: number; cost_usd: number }> {
+    const apiKey = process.env.XAI_API_KEY
+    if (!apiKey) throw new Error('XAI_API_KEY não configurada')
+
+    const response = await fetch('https://api.x.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            model: 'grok-2-1212',
+            max_tokens,
+            temperature,
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: prompt },
+            ],
+        }),
+    })
+
+    if (!response.ok) {
+        const err = await response.text()
+        throw new Error(`Grok API error: ${response.status} ${err}`)
+    }
+
+    const data = await response.json()
+    const inputTokens = data.usage?.prompt_tokens || 0
+    const outputTokens = data.usage?.completion_tokens || 0
+
+    // Grok-2: ~$2/$10 por 1M tokens (similar ao GPT-4o)
+    const cost_usd = (inputTokens * 2 + outputTokens * 10) / 1_000_000
+
+    return {
+        result: data.choices?.[0]?.message?.content || '',
+        tokens_input: inputTokens,
+        tokens_output: outputTokens,
+        cost_usd,
+    }
+}
+
 // ─── Chamada Gemini ──────────────────────────────────────────────────────────
 
 async function callGemini(
@@ -322,6 +372,9 @@ export async function POST(request: NextRequest) {
                 if (m === 'gpt-4o' || m === 'gpt-4o-mini') {
                     return { ...(await callGPT(fullPrompt, systemPrompt, m, temperature, max_tokens)), model_used: m }
                 }
+                if (m === 'grok-2') {
+                    return { ...(await callGrok(fullPrompt, systemPrompt, m, temperature, max_tokens)), model_used: m }
+                }
                 if (m === 'gemini-pro' || m === 'gemini-flash') {
                     return { ...(await callGemini(fullPrompt, systemPrompt, m, temperature, max_tokens)), model_used: m }
                 }
@@ -380,7 +433,7 @@ export async function GET() {
     return NextResponse.json({
         status: 'ok',
         description: 'IMI AI Router — Multi-model orchestration',
-        models_available: ['claude-sonnet', 'claude-haiku', 'gpt-4o', 'gpt-4o-mini', 'gemini-pro', 'gemini-flash', 'kling'],
+        models_available: ['claude-sonnet', 'claude-haiku', 'gpt-4o', 'gpt-4o-mini', 'gemini-pro', 'gemini-flash', 'grok-2', 'kling'],
         task_types: Object.keys(MODEL_ROUTING),
         routing: MODEL_ROUTING,
     })

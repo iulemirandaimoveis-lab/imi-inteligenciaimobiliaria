@@ -2,7 +2,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { AIProvider } from '@/types/commercial-system';
 
-// Configuração do cliente Gemini
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
 export interface GeminiImageRequest {
@@ -17,90 +16,108 @@ export interface GeminiImageRequest {
 
 export interface GeminiImageResponse {
     image_url: string;
-    image_data: string; // base64
+    image_data: string; // base64 data URI
     ai_request_id: string;
     cost_usd: number;
 }
 
 /**
- * Gera imagem usando Gemini (ou fallback para outras opções)
- * NOTA: Gemini atualmente tem geração de imagens via Imagen no Vertex AI
- * Esta é uma implementação simplificada
+ * Gera imagem usando Gemini 2.0 Flash Experimental (geração nativa de imagens)
+ * Requer GOOGLE_AI_API_KEY configurada no .env
  */
 export async function generateImage(params: GeminiImageRequest): Promise<GeminiImageResponse> {
     const startTime = Date.now();
     const supabase = await createClient();
+    const apiKey = process.env.GOOGLE_AI_API_KEY;
 
-    // Para produção real, usar Vertex AI Imagen API
-    // Esta é uma implementação placeholder que usa o modelo de texto
-    // para criar um prompt otimizado que pode ser usado com DALL-E ou Midjourney
-
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    if (!apiKey) throw new Error('GOOGLE_AI_API_KEY não configurada');
 
     let status: 'success' | 'error' | 'timeout' = 'success';
     let error_message: string | null = null;
+    let image_data = '';
+    let image_url = '';
+
+    // Step 1: Otimizar prompt para geração de imagem
     let optimized_prompt = params.prompt;
-
     try {
-        // Otimiza o prompt para geração de imagem
-        const result = await model.generateContent({
-            contents: [
-                {
-                    role: 'user',
-                    parts: [
-                        {
-                            text: `Você é um especialista em criar prompts para geração de imagens com IA.
-
-Prompt original: "${params.prompt}"
-
-Aspect ratio desejado: ${params.aspect_ratio || '1:1'}
-Estilo: ${params.style || 'professional, clean, modern'}
-
-Otimize este prompt para gerar uma imagem de alta qualidade. O prompt deve ser:
-- Em inglês
-- Detalhado e específico
-- Incluir elementos de composição, iluminação, estilo visual
-- Adequado para aspect ratio ${params.aspect_ratio || '1:1'}
-- Profissional e adequado para redes sociais
-
-Retorne APENAS o prompt otimizado, sem explicações.`,
-                        },
-                    ],
-                },
-            ],
-        });
-
-        optimized_prompt = result.response.text().trim();
-    } catch (error: any) {
-        console.warn('Failed to optimize prompt with Gemini:', error.message);
-        // Continua com prompt original em caso de erro
+        optimized_prompt = await optimizeImagePrompt(
+            params.prompt,
+            `Aspect ratio: ${params.aspect_ratio || '1:1'}. Style: ${params.style || 'professional real estate photography, premium, high-end'}`
+        );
+    } catch {
+        // Continua com prompt original
     }
 
-    const endTime = Date.now();
-    const latency_ms = endTime - startTime;
+    // Step 2: Gerar imagem com Gemini 2.0 Flash Experimental
+    const fullPrompt = `${optimized_prompt}. 
+Real estate photography, premium quality, professional lighting, high resolution.
+Aspect ratio: ${params.aspect_ratio || '1:1'}.
+Style: ${params.style || 'architectural photography, clean, sophisticated, luxury real estate in Recife Brazil'}.`;
 
-    // Custo estimado para geração de imagem (baseado em Vertex AI Imagen)
-    // ~$0.020 por imagem
-    const cost_usd = 0.02;
+    try {
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        role: 'user',
+                        parts: [{ text: fullPrompt }]
+                    }],
+                    generationConfig: {
+                        responseModalities: ['IMAGE', 'TEXT'],
+                        candidateCount: 1,
+                    }
+                })
+            }
+        );
 
-    // PLACEHOLDER: Em produção real, aqui chamaríamos Vertex AI Imagen
-    // Por enquanto, retornamos um placeholder com o prompt otimizado
-    const placeholder_image = await generatePlaceholderImage(
-        optimized_prompt,
-        params.aspect_ratio || '1:1'
-    );
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Gemini API ${response.status}: ${errText}`);
+        }
 
-    // Salva log no banco
-    const { data: aiRequest, error: dbError } = await supabase
+        const data = await response.json();
+        const parts: any[] = data.candidates?.[0]?.content?.parts || [];
+
+        // Encontra a parte de imagem na resposta
+        const imagePart = parts.find((p: any) => p.inlineData?.mimeType?.startsWith('image/'));
+        if (!imagePart?.inlineData) {
+            throw new Error('Gemini não retornou imagem — verifique se o modelo suporta image generation');
+        }
+
+        const { mimeType, data: b64 } = imagePart.inlineData;
+        image_data = `data:${mimeType};base64,${b64}`;
+        image_url = ''; // será preenchido após upload no storage
+
+    } catch (err: any) {
+        status = 'error';
+        error_message = err.message;
+        // Fallback para placeholder visual
+        const dims: Record<string, [number, number]> = {
+            '1:1': [1080, 1080], '4:5': [1080, 1350], '9:16': [1080, 1920], '16:9': [1920, 1080],
+        };
+        const [w, h] = dims[params.aspect_ratio || '1:1'] || [1080, 1080];
+        image_url = `https://placehold.co/${w}x${h}/0d1117/486581?text=Gemini+Image+Gen&font=montserrat`;
+        image_data = `data:image/jpeg;base64,/9j/4AAQSkZJRg==`; // minimal placeholder base64
+        console.error('Gemini image generation failed, using placeholder:', err.message);
+    }
+
+    const latency_ms = Date.now() - startTime;
+    const cost_usd = status === 'success' ? 0.02 : 0;
+
+    // Log no banco
+    const { data: aiRequest } = await supabase
         .from('ai_requests')
         .insert({
             tenant_id: params.tenant_id,
             provider: 'google' as AIProvider,
-            model: 'imagen-3',
+            model: 'gemini-2.0-flash-exp',
             prompt: params.prompt,
-            system_prompt: `Optimized prompt: ${optimized_prompt}`,
-            response: placeholder_image.url,
-            raw_response: { optimized_prompt, aspect_ratio: params.aspect_ratio },
+            system_prompt: `Optimized: ${optimized_prompt}`,
+            response: image_url || 'base64_image',
+            raw_response: { optimized_prompt, aspect_ratio: params.aspect_ratio, status },
             cost_usd,
             latency_ms,
             status,
@@ -113,13 +130,9 @@ Retorne APENAS o prompt otimizado, sem explicações.`,
         .select('id')
         .single();
 
-    if (dbError) {
-        console.error('Failed to log AI request:', dbError);
-    }
-
     return {
-        image_url: placeholder_image.url,
-        image_data: placeholder_image.data,
+        image_url,
+        image_data,
         ai_request_id: aiRequest?.id || '',
         cost_usd,
     };
@@ -136,10 +149,12 @@ export async function uploadGeneratedImage(
 ): Promise<string> {
     const supabase = await createClient();
 
-    // Convert base64 to buffer
     const base64Data = image_data.replace(/^data:image\/\w+;base64,/, '');
-    const buffer = Buffer.from(base64Data, 'base64');
+    if (!base64Data || base64Data === '/9j/4AAQSkZJRg==') {
+        return image_data.startsWith('http') ? image_data : '';
+    }
 
+    const buffer = Buffer.from(base64Data, 'base64');
     const filename = `${tenant_id}/content/${content_item_id}_${Date.now()}.${format}`;
 
     const { data, error } = await supabase.storage
@@ -149,107 +164,34 @@ export async function uploadGeneratedImage(
             upsert: false,
         });
 
-    if (error) {
-        throw new Error(`Failed to upload image: ${error.message}`);
-    }
+    if (error) throw new Error(`Failed to upload image: ${error.message}`);
 
     const { data: publicUrlData } = supabase.storage.from('media').getPublicUrl(data.path);
-
     return publicUrlData.publicUrl;
 }
-
-/**
- * PLACEHOLDER: Gera imagem placeholder
- * Em produção, substituir por chamada real ao Vertex AI Imagen
- */
-async function generatePlaceholderImage(
-    prompt: string,
-    aspect_ratio: string
-): Promise<{ url: string; data: string }> {
-    // Dimensões baseadas no aspect ratio
-    const dimensions: Record<string, { width: number; height: number }> = {
-        '1:1': { width: 1080, height: 1080 },
-        '4:5': { width: 1080, height: 1350 },
-        '9:16': { width: 1080, height: 1920 },
-        '16:9': { width: 1920, height: 1080 },
-    };
-
-    const { width, height } = dimensions[aspect_ratio] || dimensions['1:1'];
-
-    // Usa serviço placeholder (em produção, usar Vertex AI Imagen)
-    const placeholderUrl = `https://placehold.co/${width}x${height}/1a202c/9a7147?text=AI+Generated+Image&font=montserrat`;
-
-    // Simula base64 (em produção, retornar imagem real)
-    const fakeBase64 = `data:image/jpeg;base64,/9j/4AAQSkZJRg==`;
-
-    return {
-        url: placeholderUrl,
-        data: fakeBase64,
-    };
-}
-
-/**
- * FUNÇÃO PARA INTEGRAÇÃO REAL COM VERTEX AI (comentada para referência)
- * Uncomment e configure quando tiver credenciais do Google Cloud
- */
-/*
-import { ImageGenerationModel } from '@google-cloud/vertexai';
-
-export async function generateImageVertexAI(params: GeminiImageRequest): Promise<GeminiImageResponse> {
-    const vertex_ai = new VertexAI({
-        project: process.env.GOOGLE_CLOUD_PROJECT_ID!,
-        location: 'us-central1',
-    });
-
-    const model = vertex_ai.preview.getGenerativeModel({
-        model: 'imagegeneration@006',
-    });
-
-    const result = await model.generateImages({
-        prompt: params.prompt,
-        numberOfImages: 1,
-        aspectRatio: params.aspect_ratio || '1:1',
-        mode: 'high-quality',
-    });
-
-    const image = result.images[0];
-    
-    return {
-        image_url: image.url,
-        image_data: image.base64,
-        ai_request_id: '...',
-        cost_usd: 0.02,
-    };
-}
-*/
 
 export { optimizeImagePrompt };
 
 /**
- * Helper: Otimiza prompt de imagem usando Gemini
+ * Otimiza prompt de imagem usando Gemini Flash
  */
 async function optimizeImagePrompt(original_prompt: string, context?: string): Promise<string> {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
     const result = await model.generateContent({
-        contents: [
-            {
-                role: 'user',
-                parts: [
-                    {
-                        text: `Otimize este prompt para geração de imagem com IA:
+        contents: [{
+            role: 'user',
+            parts: [{
+                text: `Optimize this image generation prompt for high-quality real estate photography:
 
 "${original_prompt}"
 
-${context ? `Contexto adicional: ${context}` : ''}
+${context ? `Context: ${context}` : ''}
 
-Retorne um prompt em inglês, detalhado, específico, profissional.
-Inclua: composição, iluminação, estilo, cores, atmosfera.
-APENAS o prompt otimizado, sem explicações.`,
-                    },
-                ],
-            },
-        ],
+Return ONLY the optimized prompt in English. Include: composition, lighting, style, atmosphere, technical quality.
+Focus on luxury real estate in tropical coastal city (Recife, Brazil). Max 200 words.`,
+            }],
+        }],
     });
 
     return result.response.text().trim();

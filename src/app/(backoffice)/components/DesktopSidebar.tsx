@@ -154,6 +154,7 @@ const SECTIONS: NavSection[] = [
             { label: 'Automações', href: '/backoffice/automacoes', icon: Zap },
             { label: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
             { label: 'Analytics', href: '/backoffice/tracking', icon: BarChart2 },
+            { label: 'Central de IA', href: '/backoffice/ia', icon: Sparkles },
             { label: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles },
         ]
     },

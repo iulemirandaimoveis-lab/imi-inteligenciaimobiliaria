@@ -140,6 +140,7 @@ const GROUPS = [
             { name: 'Automações',    href: '/backoffice/automacoes',        icon: Zap },
             { name: 'Playbooks',     href: '/backoffice/playbooks',         icon: BookOpen },
             { name: 'Analytics',     href: '/backoffice/tracking',          icon: BarChart2 },
+            { name: 'Central de IA',  href: '/backoffice/ia',                icon: Sparkles },
             { name: 'IA Avaliações', href: '/backoffice/avaliacoes/ia',     icon: Sparkles },
         ],
     },
