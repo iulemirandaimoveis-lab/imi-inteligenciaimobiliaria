@@ -11,6 +11,7 @@ async function getAuthenticatedSupabase() {
     return { supabase, user }
 }
 
+
 export async function GET(request: NextRequest) {
     try {
         const { supabase, user } = await getAuthenticatedSupabase()
@@ -53,6 +54,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }
+
 
 /**
  * Normalize field names from camelCase (form) to snake_case (DB).
@@ -179,6 +181,7 @@ function normalizeFields(body: Record<string, any>): Record<string, any> {
     return result
 }
 
+
 export async function POST(req: Request) {
     try {
         const { supabase, user } = await getAuthenticatedSupabase()
@@ -247,6 +250,7 @@ export async function POST(req: Request) {
     }
 }
 
+
 export async function PUT(request: Request) {
     try {
         const { supabase, user } = await getAuthenticatedSupabase()
@@ -304,6 +308,73 @@ export async function PUT(request: Request) {
     }
 }
 
+
+
+export async function PATCH(request: Request) {
+    try {
+        const { supabase, user } = await getAuthenticatedSupabase()
+        if (!supabase || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        const body = await request.json()
+        const { id, status } = body
+
+        if (!id || !status) {
+            return NextResponse.json({ error: 'ID e status obrigatórios' }, { status: 400 })
+        }
+
+        // Map frontend status → dual DB columns
+        const statusMap: Record<string, { comercial: string; commercial: string; appStatus: string }> = {
+            disponivel:    { comercial: 'publicado',  commercial: 'published', appStatus: 'disponivel' },
+            vendido:       { comercial: 'privado',    commercial: 'sold',      appStatus: 'vendido' },
+            reservado:     { comercial: 'publicado',  commercial: 'published', appStatus: 'reservado' },
+            em_negociacao: { comercial: 'publicado',  commercial: 'published', appStatus: 'em_negociacao' },
+            lancamento:    { comercial: 'publicado',  commercial: 'published', appStatus: 'lancamento' },
+            arquivado:     { comercial: 'privado',    commercial: 'private',   appStatus: 'arquivado' },
+        }
+
+        const mapped = statusMap[status]
+        if (!mapped) {
+            return NextResponse.json({ error: `Status inválido: ${status}` }, { status: 400 })
+        }
+
+        const updateData = {
+            status: mapped.appStatus,
+            status_comercial: mapped.comercial,
+            status_commercial: mapped.commercial,
+            updated_at: new Date().toISOString(),
+            updated_by: user.id,
+        }
+
+        const { data, error } = await supabase
+            .from('developments')
+            .update(updateData)
+            .eq('id', id)
+            .select('id, name, status, status_comercial, status_commercial')
+            .single()
+
+        if (error) {
+            console.error('PATCH developments Error:', error)
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        const meta = getRequestMeta(request)
+        logAudit({
+            action: 'status_change',
+            entity_type: 'development',
+            entity_id: id,
+            new_data: { requested_status: status, ...updateData },
+            ...meta,
+        })
+
+        return NextResponse.json({ success: true, data })
+    } catch (error: any) {
+        console.error('Error patching development:', error)
+        return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+}
+
 export async function DELETE(request: Request) {
     try {
         const { supabase, user } = await getAuthenticatedSupabase()
@@ -349,3 +420,4 @@ export async function DELETE(request: Request) {
         return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }
+

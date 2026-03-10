@@ -8,6 +8,7 @@ import {
     Instagram, Facebook, Globe, Mail, MessageSquare,
     Loader2, ChevronRight, Link as LinkIcon, Sparkles, Brain,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import Link from 'next/link'
 
 const T = {
@@ -74,11 +75,11 @@ export default function CampanhaDetalhesPage() {
                     })
                         .then(r => r.json())
                         .then(res => { if (res.analysis) setAiAnalysis(res.analysis) })
-                        .catch(() => {})
+                        .catch(() => { /* AI analysis non-critical */ })
                         .finally(() => setAiLoading(false))
                 }
             })
-            .catch(() => {})
+            .catch(() => { toast.error('Erro ao carregar campanha') })
             .finally(() => setLoading(false))
     }, [id])
 

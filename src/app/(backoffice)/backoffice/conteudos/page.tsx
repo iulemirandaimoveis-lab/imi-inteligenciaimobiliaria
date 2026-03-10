@@ -8,8 +8,9 @@ import {
     Linkedin, Mail, Sparkles, Eye, Clock, TrendingUp,
     BarChart3, Search, CheckCircle2, Edit3,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { PageIntelHeader, KPICard, FilterTabs } from '../../components/ui'
-import { T, ctaGradient, ctaShadow } from '../../lib/theme'
+import { T } from '../../lib/theme'
 
 interface Conteudo {
     id: string
@@ -55,7 +56,7 @@ export default function ConteudosPage() {
                 const list = json.data || (Array.isArray(json) ? json : [])
                 setConteudos(list)
             })
-            .catch(() => {})
+            .catch(() => { toast.error('Erro ao carregar conteúdos') })
             .finally(() => setLoading(false))
     }, [])
 
@@ -119,7 +120,7 @@ export default function ConteudosPage() {
                         <motion.button whileTap={{ scale: 0.96 }}
                             onClick={() => router.push('/backoffice/conteudo/novo')}
                             className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                            style={{ background: ctaGradient, boxShadow: ctaShadow }}>
+                            style={{ background: T.accent }}>
                             <Plus size={15} /> <span className="hidden sm:inline">Novo</span>
                         </motion.button>
                     </div>
@@ -252,7 +253,7 @@ export default function ConteudosPage() {
                                             <motion.button key={item.label} whileTap={{ scale: 0.96 }}
                                                 onClick={() => router.push(item.href)}
                                                 className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
-                                                style={{ background: ctaGradient, boxShadow: ctaShadow }}>
+                                                style={{ background: T.accent }}>
                                                 <Icon size={15} /> {item.label}
                                             </motion.button>
                                         )

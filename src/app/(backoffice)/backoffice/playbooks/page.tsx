@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { ChevronDown, ChevronRight, CheckCircle2, Circle, Clock, BookOpen } from 'lucide-react'
+import { toast } from 'sonner'
 import { PageIntelHeader, FilterTabs } from '../../components/ui'
 import { T } from '../../lib/theme'
 
@@ -34,7 +35,7 @@ export default function PlaybooksPage() {
         fetch('/api/operational-playbooks')
             .then(r => r.json())
             .then(d => setPlaybooks(d.data || []))
-            .catch(() => setPlaybooks([]))
+            .catch(() => { setPlaybooks([]); toast.error('Erro ao carregar playbooks') })
             .finally(() => setLoading(false))
     }, [])
 

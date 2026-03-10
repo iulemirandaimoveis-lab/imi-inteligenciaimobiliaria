@@ -11,7 +11,7 @@ import {
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { PageIntelHeader, KPICard } from '../../components/ui'
-import { T, ctaGradient, ctaShadow } from '../../lib/theme'
+import { T } from '../../lib/theme'
 
 const supabase = createClient()
 
@@ -195,7 +195,7 @@ function SimuladorCredito() {
 
       <Link href="/backoffice/credito/novo"
         className="flex items-center justify-center gap-2 h-10 w-full rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-        style={{ background: ctaGradient, boxShadow: ctaShadow }}>
+        style={{ background: T.accent }}>
         Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
 
@@ -307,7 +307,7 @@ export default function CreditoPage() {
             whileTap={{ scale: 0.96 }}
             onClick={() => window.location.href = '/backoffice/credito/novo'}
             className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-            style={{ background: ctaGradient, boxShadow: ctaShadow }}
+            style={{ background: T.accent }}
           >
             <Plus size={16} /> <span className="hidden sm:inline">Nova Operação</span>
           </motion.button>
@@ -359,7 +359,7 @@ export default function CreditoPage() {
               <p className="empty-state-desc">Registre operações de crédito para acompanhar o processo.</p>
               <Link href="/backoffice/credito/novo"
                 className="mt-4 flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
-                style={{ background: ctaGradient, boxShadow: ctaShadow }}>
+                style={{ background: T.accent }}>
                 <Plus size={14} /> Nova Operação
               </Link>
             </div>

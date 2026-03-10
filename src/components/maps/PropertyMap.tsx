@@ -49,11 +49,13 @@ function getMapProvider() {
 
 export default function PropertyMap({
     developments,
-    height = '500px',
+    height,
     className = '',
     lang = 'pt',
     darkMode = true,
 }: PropertyMapProps) {
+    // Responsive default: taller on desktop, shorter on mobile
+    const resolvedHeight = height || 'clamp(400px, calc(100vh - 280px), 700px)'
     const mapContainer = useRef<HTMLDivElement>(null)
     const map = useRef<any>(null)
     const markers = useRef<any[]>([])
@@ -278,7 +280,7 @@ export default function PropertyMap({
             <div
                 className={className}
                 style={{
-                    height,
+                    height: resolvedHeight,
                     background: '#1A1E2A',
                     borderRadius: 16,
                     display: 'flex',
@@ -291,10 +293,36 @@ export default function PropertyMap({
         )
     }
 
+    if (validDevelopments.length === 0) {
+        return (
+            <div
+                className={className}
+                style={{
+                    height: resolvedHeight,
+                    background: '#1A1E2A',
+                    borderRadius: 16,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                }}
+            >
+                <span style={{ fontSize: 40, opacity: 0.3 }}>🗺️</span>
+                <p style={{ color: '#9CA3AF', fontSize: 13, margin: 0, fontWeight: 500 }}>
+                    Nenhum empreendimento com coordenadas disponíveis
+                </p>
+                <p style={{ color: '#6B7280', fontSize: 11, margin: 0 }}>
+                    Ajuste os filtros ou adicione coordenadas aos empreendimentos
+                </p>
+            </div>
+        )
+    }
+
     return (
         <div
             className={className}
-            style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', height }}
+            style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', height: resolvedHeight }}
         >
             {/* Loading overlay */}
             {!mapLoaded && (

@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Plus, Zap, TrendingUp, Users, Flame, Download } from 'lucide-react'
+import { toast } from 'sonner'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { FilterTabs, FilterTab } from '@/app/(backoffice)/components/ui/FilterTabs'
@@ -92,7 +93,7 @@ export default function LeadsPage() {
           ai_score: l.ai_score ?? undefined,
         })))
       })
-      .catch(() => {})
+      .catch(() => { toast.error('Erro ao carregar leads') })
       .finally(() => setLoading(false))
   }, [])
 

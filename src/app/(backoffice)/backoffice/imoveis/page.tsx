@@ -3,18 +3,21 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Plus, Search, Grid3X3, List, Building2, MapPin, Bed, Bath, Car, Ruler, DollarSign, Star, MoreHorizontal, Eye, Edit, CheckCircle, Clock, AlertCircle, Tag, TrendingUp } from 'lucide-react'
+import { Plus, Search, Grid3X3, List, Building2, MapPin, Bed, Bath, Ruler, DollarSign, Star, MoreHorizontal, Eye, Edit, CheckCircle, Clock, AlertCircle, Tag, Archive, Trash2, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { toast } from 'sonner'
 import { PageIntelHeader, KPICard } from '../../components/ui'
-import { T, ctaGradient, ctaShadow } from '../../lib/theme'
+import { T } from '../../lib/theme'
 import { calcPricePerSqm } from '@/lib/utils'
 
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     disponivel: { label: 'Disponível', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
     em_negociacao: { label: 'Negociação', text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Clock },
     reservado: { label: 'Reservado', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: AlertCircle },
-    vendido: { label: 'Vendido', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
+    vendido: { label: 'Vendido', text: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: ShoppingCart },
     lancamento: { label: 'Lançamento', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Tag },
+    arquivado: { label: 'Arquivado', text: '#64748B', bg: 'rgba(100,116,139,0.12)', icon: Archive },
 }
 
 // No fallback mock — real Supabase data only
@@ -34,6 +37,7 @@ interface Imovel {
     preco: number;
     construtora: string | null;
     visitas: number;
+    image: string | null;
     liquidez: number;
 }
 
@@ -58,7 +62,58 @@ const fmtPreco = (v: number, tipo: string) => {
     return `R$ ${v.toLocaleString('pt-BR')}`
 }
 
-function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
+function CardActions({ imovel, onAction }: { imovel: Imovel; onAction: (id: string, action: string) => void }) {
+    const [open, setOpen] = useState(false)
+
+    const actions = [
+        { key: 'view', label: 'Ver Detalhes', icon: Eye, color: T.textMuted },
+        { key: 'edit', label: 'Editar', icon: Edit, color: T.textMuted },
+        ...(imovel.status !== 'vendido' ? [{ key: 'vendido', label: 'Marcar Vendido', icon: ShoppingCart, color: '#60A5FA' }] : []),
+        ...(imovel.status !== 'arquivado' ? [{ key: 'arquivado', label: 'Arquivar', icon: Archive, color: '#F59E0B' }] : []),
+        ...(imovel.status === 'arquivado' ? [{ key: 'disponivel', label: 'Restaurar', icon: CheckCircle, color: '#6BB87B' }] : []),
+        { key: 'delete', label: 'Excluir', icon: Trash2, color: '#EF4444' },
+    ]
+
+    return (
+        <div className="relative" onClick={e => e.preventDefault()}>
+            <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => { e.stopPropagation(); setOpen(!open) }}
+                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
+                style={{ background: open ? 'var(--bo-elevated)' : 'rgba(0,0,0,0.4)', border: open ? `1px solid ${T.border}` : 'none' }}
+            >
+                <MoreHorizontal size={14} style={{ color: 'white' }} />
+            </motion.button>
+            {open && (
+                <>
+                    <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="absolute right-0 top-10 z-50 w-48 rounded-xl overflow-hidden shadow-xl"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                    >
+                        {actions.map(a => {
+                            const Icon = a.icon
+                            return (
+                                <button
+                                    key={a.key}
+                                    onClick={(e) => { e.stopPropagation(); setOpen(false); onAction(imovel.id, a.key) }}
+                                    className="flex items-center gap-2.5 w-full px-3.5 py-2.5 text-xs font-medium text-left transition-all hover:bg-[var(--bo-hover)]"
+                                    style={{ color: a.color }}
+                                >
+                                    <Icon size={13} /> {a.label}
+                                </button>
+                            )
+                        })}
+                    </motion.div>
+                </>
+            )}
+        </div>
+    )
+}
+
+function ImovelCard({ imovel, index, onAction }: { imovel: Imovel; index: number; onAction: (id: string, action: string) => void }) {
     const s = STATUS_MAP[imovel.status] || STATUS_MAP.disponivel
     const SIcon = s.icon
     return (
@@ -70,7 +125,7 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
             className="hover-card rounded-2xl overflow-hidden cursor-pointer group transition-all"
             style={{ background: T.surface, border: `1px solid ${T.border}` }}
         >
-            {/* Image — 16:9 aspect ratio (PropTech standard) */}
+            {/* Image — 16:9 aspect ratio */}
             <div
                 className="relative aspect-[16/9] flex items-end p-3"
                 style={{
@@ -79,7 +134,7 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                 }}
             >
                 {imovel.image ? (
-                    <img src={imovel.image} alt={imovel.titulo} className="absolute inset-0 w-full h-full object-cover" />
+                    <Image src={imovel.image} alt={imovel.titulo} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                 ) : (
                     <div className="absolute inset-0 overflow-hidden opacity-10">
                         <div className="absolute top-4 left-4 w-16 h-16 border border-[#334E68] rounded-lg rotate-12" />
@@ -87,6 +142,11 @@ function ImovelCard({ imovel, index }: { imovel: any; index: number }) {
                         <div className="absolute top-8 right-12 w-8 h-8 bg-[#102A43] rounded opacity-30" />
                     </div>
                 )}
+
+                {/* Actions overlay (always visible) */}
+                <div className="absolute top-3 right-3 z-10">
+                    <CardActions imovel={imovel} onAction={onAction} />
+                </div>
 
                 <div className="relative flex items-end justify-between w-full">
                     <span
@@ -199,7 +259,6 @@ export default function ImoveisPage() {
                     const data = await propsRes.json()
                     if (Array.isArray(data) && data.length > 0) {
                         const formatted = data
-                            .filter((d: any) => d.status !== 'arquivado' && d.status_comercial !== 'archived')
                             .map((d: any) => {
                                 const s = leadsMap[d.id] || { hot: 0, warm: 0, total: 0, won: 0 }
                                 const liquidez = Math.min(97, 22 + s.hot * 13 + s.warm * 8 + s.total * 3 + s.won * 16)
@@ -235,6 +294,50 @@ export default function ImoveisPage() {
         }
         fetchData()
     }, [])
+
+    const handleAction = async (id: string, action: string) => {
+        if (action === 'view') { router.push(`/backoffice/imoveis/${id}`); return }
+        if (action === 'edit') { router.push(`/backoffice/imoveis/${id}/editar`); return }
+
+        // Status changes via PATCH
+        if (['vendido', 'arquivado', 'disponivel'].includes(action)) {
+            const labelMap: Record<string, string> = { vendido: 'Vendido', arquivado: 'Arquivado', disponivel: 'Disponível' }
+            try {
+                const res = await fetch('/api/developments', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, status: action }),
+                })
+                if (!res.ok) {
+                    const err = await res.json()
+                    toast.error(err.error || 'Erro ao atualizar status')
+                    return
+                }
+                setImoveis(prev => prev.map(im => im.id === id ? { ...im, status: action } : im))
+                toast.success(`Imóvel marcado como ${labelMap[action]}`)
+            } catch {
+                toast.error('Erro de conexão ao atualizar status')
+            }
+            return
+        }
+
+        // Soft delete
+        if (action === 'delete') {
+            if (!confirm('Tem certeza que deseja excluir este imóvel? Ele será arquivado.')) return
+            try {
+                const res = await fetch(`/api/developments?id=${id}`, { method: 'DELETE' })
+                if (!res.ok) {
+                    const err = await res.json()
+                    toast.error(err.error || 'Erro ao excluir')
+                    return
+                }
+                setImoveis(prev => prev.map(im => im.id === id ? { ...im, status: 'arquivado' } : im))
+                toast.success('Imóvel excluído (arquivado)')
+            } catch {
+                toast.error('Erro de conexão ao excluir')
+            }
+        }
+    }
 
     const total = imoveis.length
     const destaquesCount = imoveis.filter(i => i.destaque).length
@@ -310,7 +413,7 @@ export default function ImoveisPage() {
                         whileTap={{ scale: 0.96 }}
                         onClick={() => router.push('/backoffice/imoveis/novo')}
                         className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                        style={{ background: ctaGradient, boxShadow: ctaShadow }}
+                        style={{ background: T.accent }}
                     >
                         <Plus size={16} /> <span className="hidden sm:inline">Novo Empreendimento</span>
                     </motion.button>
@@ -363,9 +466,11 @@ export default function ImoveisPage() {
                             <option value="disponivel">Disponível</option>
                             <option value="em_negociacao">Negociação</option>
                             <option value="lancamento">Lançamento</option>
+                            <option value="vendido">Vendido</option>
+                            <option value="arquivado">Arquivado</option>
                         </select>
                         {/* Status filter — desktop buttons */}
-                        {['all', 'disponivel', 'em_negociacao', 'lancamento'].map(s => (
+                        {['all', 'disponivel', 'em_negociacao', 'lancamento', 'vendido', 'arquivado'].map(s => (
                             <button
                                 key={s}
                                 onClick={() => setFilter(s)}
@@ -411,41 +516,45 @@ export default function ImoveisPage() {
             {/* Grid */}
             {view === 'grid' ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filtered.map((im, i) => <ImovelCard key={im.id} imovel={im} index={i} />)}
+                    {filtered.map((im, i) => <ImovelCard key={im.id} imovel={im} index={i} onAction={handleAction} />)}
                 </div>
             ) : (
                 <div className="space-y-2">
                     {filtered.map((im, i) => {
                         const s = STATUS_MAP[im.status] || STATUS_MAP.disponivel
                         return (
-                            <Link key={im.id} href={`/backoffice/imoveis/${im.id}`}>
                             <motion.div
+                                key={im.id}
                                 initial={{ opacity: 0, x: -8 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.03 }}
-                                className="hover-card flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all"
+                                className="hover-card flex items-center gap-4 p-4 rounded-2xl transition-all"
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
                             >
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bo-active-bg)' }}>
-                                    <Building2 size={20} style={{ color: T.accent }} />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                        <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
-                                        {im.destaque && <Star size={12} style={{ fill: T.accent, color: T.accent, flexShrink: 0 }} />}
+                                <Link href={`/backoffice/imoveis/${im.id}`} className="flex items-center gap-4 flex-1 min-w-0 cursor-pointer">
+                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--bo-active-bg)' }}>
+                                        <Building2 size={20} style={{ color: T.accent }} />
                                     </div>
-                                    <p className="text-xs" style={{ color: T.textDim }}>{im.codigo} · {im.bairro} · {im.area.toLocaleString('pt-BR')}m²</p>
-                                </div>
-                                <div className="flex items-center gap-4 flex-shrink-0">
-                                    <span className="text-[10px] font-bold px-2 py-1 rounded-full" style={{ color: s.text, background: s.bg }}>
-                                        {s.label}
-                                    </span>
-                                    <p className="text-sm font-bold hidden sm:block" style={{ color: T.accent }}>
-                                        {fmtPreco(im.preco, im.tipo)}
-                                    </p>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-0.5">
+                                            <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
+                                            {im.destaque && <Star size={12} style={{ fill: T.accent, color: T.accent, flexShrink: 0 }} />}
+                                        </div>
+                                        <p className="text-xs" style={{ color: T.textDim }}>{im.codigo} · {im.bairro} · {im.area.toLocaleString('pt-BR')}m²</p>
+                                    </div>
+                                    <div className="flex items-center gap-4 flex-shrink-0">
+                                        <span className="text-[10px] font-bold px-2 py-1 rounded-full" style={{ color: s.text, background: s.bg }}>
+                                            {s.label}
+                                        </span>
+                                        <p className="text-sm font-bold hidden sm:block" style={{ color: T.accent }}>
+                                            {fmtPreco(im.preco, im.tipo)}
+                                        </p>
+                                    </div>
+                                </Link>
+                                <div className="flex-shrink-0">
+                                    <CardActions imovel={im} onAction={handleAction} />
                                 </div>
                             </motion.div>
-                            </Link>
                         )
                     })}
                 </div>

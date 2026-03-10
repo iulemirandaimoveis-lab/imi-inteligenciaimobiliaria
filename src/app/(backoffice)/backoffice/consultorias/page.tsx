@@ -7,8 +7,9 @@ import {
     Briefcase, Plus, Search, Eye, Edit, Clock,
     CheckCircle2, DollarSign, Calendar, MapPin,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { PageIntelHeader, KPICard, FilterTabs } from '../../components/ui'
-import { T, ctaGradient, ctaShadow } from '../../lib/theme'
+import { T } from '../../lib/theme'
 
 // ── Types ─────────────────────────────────────────────────────
 interface Consultoria {
@@ -62,7 +63,7 @@ export default function ConsultoriasPage() {
                 const list = json.data || (Array.isArray(json) ? json : [])
                 setConsultorias(list)
             })
-            .catch(() => {})
+            .catch(() => { toast.error('Erro ao carregar consultorias') })
             .finally(() => setLoading(false))
     }, [])
 
@@ -132,7 +133,7 @@ export default function ConsultoriasPage() {
                         whileTap={{ scale: 0.96 }}
                         onClick={() => router.push('/backoffice/consultorias/nova')}
                         className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                        style={{ background: ctaGradient, boxShadow: ctaShadow }}
+                        style={{ background: T.accent }}
                     >
                         <Plus size={16} /> <span className="hidden sm:inline">Nova Consultoria</span>
                     </motion.button>
@@ -302,7 +303,7 @@ export default function ConsultoriasPage() {
                                 whileTap={{ scale: 0.96 }}
                                 onClick={() => router.push('/backoffice/consultorias/nova')}
                                 className="mt-4 flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold text-white"
-                                style={{ background: ctaGradient, boxShadow: ctaShadow }}
+                                style={{ background: T.accent }}
                             >
                                 <Plus size={14} /> Nova Consultoria
                             </motion.button>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Layers, MessageSquare, Mail, Phone, Instagram, ExternalLink, RefreshCw, Users, Clock, Star, AlertCircle } from 'lucide-react'
+import { toast } from 'sonner'
 import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
 
@@ -19,6 +20,7 @@ export default function OmniChannelPage() {
     const [activeView, setActiveView] = useState<'overview' | 'chatwoot'>('overview')
     const [iframeKey, setIframeKey] = useState(0)
     const [realStats, setRealStats] = useState({ hoje: 0, pendentes: 0 })
+    const [loading, setLoading] = useState(true)
 
     const hasChatwoot = !!CHATWOOT_URL
 
@@ -27,15 +29,40 @@ export default function OmniChannelPage() {
         fetch('/api/leads')
             .then(r => r.json())
             .then((json: any) => {
-                // /api/leads returns { data: [...], pagination: {} }
                 const data = json?.data || (Array.isArray(json) ? json : [])
                 const today = new Date().toDateString()
                 const hoje = data.filter((l: any) => new Date(l.created_at || '').toDateString() === today).length
                 const pendentes = data.filter((l: any) => l.status === 'new' || l.status === 'warm' || !l.status).length
                 setRealStats({ hoje, pendentes: Math.min(pendentes, 99) })
             })
-            .catch(() => {})
+            .catch(() => { toast.error('Erro ao carregar dados') })
+            .finally(() => setLoading(false))
     }, [])
+
+    if (loading) return (
+        <div className="space-y-5">
+            <div><div className="skeleton h-6 w-48 mb-2" /><div className="skeleton h-4 w-64" /></div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 100}ms` }}>
+                        <div className="skeleton w-9 h-9 rounded-xl mb-3" />
+                        <div className="skeleton lg h-5 w-16 mb-2" />
+                        <div className="skeleton h-3 w-24" />
+                    </div>
+                ))}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="skeleton-card p-5" style={{ animationDelay: `${i * 80}ms` }}>
+                        <div className="flex items-center gap-3">
+                            <div className="skeleton w-12 h-12 rounded-xl" />
+                            <div><div className="skeleton h-4 w-24 mb-1" /><div className="skeleton h-3 w-16" /></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
 
     return (
         <div className="space-y-5">

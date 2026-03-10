@@ -15,7 +15,7 @@ import {
   Building2,
 } from 'lucide-react'
 import { PageIntelHeader } from '../../components/ui'
-import { T, ctaGradient, ctaShadow } from '../../lib/theme'
+import { T } from '../../lib/theme'
 
 interface SettingsData {
   companyName: string
@@ -182,7 +182,7 @@ export default function SettingsPage() {
             onClick={handleSave}
             disabled={isSaving}
             className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
-            style={{ background: ctaGradient, boxShadow: ctaShadow }}
+            style={{ background: T.accent }}
           >
             {isSaving ? (
               <><Loader2 size={16} className="animate-spin" /> <span className="hidden sm:inline">Salvando...</span></>

@@ -100,6 +100,28 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
         }
     }, [isMobileOpen, filters]);
 
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        if (!activeDropdown) return;
+        const handleClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('.filter-dropdown') && !target.closest('[data-filter-trigger]')) {
+                setActiveDropdown(null);
+            }
+        };
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
+    }, [activeDropdown]);
+
+    // Count active filters for badge
+    const activeFilterCount = [
+        filters.location ? 1 : 0,
+        filters.neighborhood ? 1 : 0,
+        filters.type.length > 0 ? 1 : 0,
+        filters.bedrooms ? 1 : 0,
+        (filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice) ? 1 : 0,
+    ].reduce((sum, v) => sum + v, 0);
+
     return (
         <div className="sticky top-20 z-40 w-full">
             {/* Desktop / Tablet Bar */}
@@ -115,6 +137,11 @@ export default function AdvancedFilter({ filters, onFilterChange, locations, nei
                         >
                             <SlidersHorizontal className="w-5 h-5 text-[#486581]" />
                             Filtrar Imóveis
+                            {activeFilterCount > 0 && (
+                                <span className="ml-1 min-w-[20px] h-5 px-1.5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                    {activeFilterCount}
+                                </span>
+                            )}
                         </motion.button>
 
                         {/* Desktop Filters */}
@@ -542,6 +569,7 @@ interface FilterButtonProps {
 function FilterButton({ label, icon: Icon, active, hasValue, onClick }: FilterButtonProps) {
     return (
         <button
+            data-filter-trigger
             onClick={onClick}
             className={cn(
                 "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all duration-300",

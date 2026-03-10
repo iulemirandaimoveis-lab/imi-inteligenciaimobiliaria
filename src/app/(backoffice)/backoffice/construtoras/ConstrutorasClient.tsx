@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import {
     Plus,
     Search,
@@ -160,7 +161,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                                 <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden relative"
                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                     {construtora.logo_url ? (
-                                        <img src={construtora.logo_url} alt={construtora.name} className="w-full h-full object-contain p-1" />
+                                        <Image src={construtora.logo_url} alt={construtora.name} width={48} height={48} className="w-full h-full object-contain p-1" />
                                     ) : (
                                         <Building2 size={24} style={{ color: T.textMuted }} />
                                     )}

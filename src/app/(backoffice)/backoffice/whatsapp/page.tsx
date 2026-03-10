@@ -412,7 +412,7 @@ export default function WhatsappPage() {
 
       {/* ═══════════════ INFO PANEL (RIGHT) ═══════════════ */}
       {showInfo && activeConversation && (
-        <div className="hidden lg:flex w-72 flex-col flex-shrink-0"
+        <div className="hidden md:flex w-72 flex-col flex-shrink-0"
           style={{ borderLeft: `1px solid ${T.border}`, background: T.surface }}>
           <div className="p-5 text-center flex-shrink-0 relative" style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
             <button className="absolute right-3 top-3 p-1 rounded-lg" onClick={() => setShowInfo(false)}

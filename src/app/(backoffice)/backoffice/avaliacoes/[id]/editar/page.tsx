@@ -24,6 +24,7 @@ import {
   X,
   Image as ImageIcon,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 type Step = 1 | 2 | 3
 
@@ -157,7 +158,7 @@ export default function EditarAvaliacaoPage() {
           }))
         }
       })
-      .catch(() => {})
+      .catch(() => { toast.error('Erro ao carregar dados da avaliação') })
       .finally(() => setIsLoading(false))
   }, [params.id])
 

@@ -26,6 +26,7 @@ import {
   X,
   Upload,
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 const T = {
     surface: 'var(--bo-surface)',
@@ -166,7 +167,7 @@ export default function EditarCampanhaPage() {
           }))
         }
       })
-      .catch(() => {})
+      .catch(() => { toast.error('Erro ao carregar dados da campanha') })
       .finally(() => setIsLoading(false))
   }, [params.id])
 

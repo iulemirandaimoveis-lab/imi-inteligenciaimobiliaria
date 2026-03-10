@@ -190,7 +190,7 @@ export default function CreditoNovoPage() {
                                     >
                                         {currentStep > step.id ? <Check size={24} strokeWidth={4} /> : step.id}
                                     </div>
-                                    <div className="hidden lg:block">
+                                    <div className="hidden md:block">
                                         <p className={`text-[10px] font-black uppercase tracking-widest ${currentStep >= step.id ? 'text-imi-950' : 'text-imi-300'}`}>Etapa {step.id}</p>
                                         <p className={`text-sm font-bold truncate ${currentStep >= step.id ? 'text-imi-900' : 'text-imi-400'}`}>{step.name}</p>
                                     </div>

@@ -1,24 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     Shield, PenTool, Mail, Server, MessageCircle,
     HardDrive, Database, Calendar, BarChart2,
     Facebook, Instagram, CreditCard, Zap, Globe,
     CheckCircle, AlertCircle, XCircle, Clock,
-    ChevronRight, X, Eye, EyeOff, ExternalLink,
+    X, Eye, EyeOff, ExternalLink,
     RefreshCw, Settings, Plug
 } from 'lucide-react'
 import { INTEGRACOES, CATEGORIAS_INTEGRACAO } from '@/lib/integracoes-registry'
 import type { Integracao, IntegracaoStatus } from '@/types/contratos'
-
-const T = {
-    bg: 'transparent', surface: 'var(--bo-surface)', elevated: 'var(--bo-elevated)',
-    border: 'var(--bo-border)', borderGold: 'var(--bo-border-gold)',
-    text: 'var(--bo-text)', textSub: 'var(--bo-text-muted)', textDim: 'var(--bo-text-muted)',
-    gold: 'var(--bo-accent)',
-}
+import { PageIntelHeader, KPICard } from '../../components/ui'
+import { T } from '../../lib/theme'
 
 const ICONES: Record<string, any> = {
     Shield, PenTool, Mail, Server, MessageCircle, HardDrive,
@@ -150,7 +145,7 @@ function ConfigModal({
                             return (
                                 <div key={campo.key} className="space-y-1.5">
                                     <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: T.textDim }}>
-                                        {campo.label}{campo.required && <span style={{ color: T.gold }}> *</span>}
+                                        {campo.label}{campo.required && <span style={{ color: T.accent }}> *</span>}
                                     </label>
                                     {campo.tipo === 'select' ? (
                                         <select
@@ -218,7 +213,7 @@ function ConfigModal({
                     {integracao.docs_url && (
                         <a href={integracao.docs_url} target="_blank" rel="noopener noreferrer"
                             className="flex items-center gap-1.5 px-4 h-10 rounded-xl text-xs font-medium"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
                             <ExternalLink size={12} /> Docs
                         </a>
                     )}
@@ -226,7 +221,7 @@ function ConfigModal({
                     {integracao.campos_config.length > 0 && integracao.id !== 'supabase_storage' && (
                         <button onClick={handleTest} disabled={testing}
                             className="flex items-center gap-1.5 px-4 h-10 rounded-xl text-xs font-medium"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textSub }}>
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
                             {testing ? <RefreshCw size={12} className="animate-spin" /> : <Plug size={12} />}
                             Testar Conexão
                         </button>
@@ -248,6 +243,33 @@ export default function IntegracoesPage() {
     const [categoriaAtiva, setCategoriaAtiva] = useState('todas')
     const [integracaoAberta, setIntegracaoAberta] = useState<Integracao | null>(null)
     const [statusOverride, setStatusOverride] = useState<Record<string, IntegracaoStatus>>({})
+    const [loadingStatus, setLoadingStatus] = useState(true)
+
+    // Fetch saved integration statuses from DB on mount
+    useEffect(() => {
+        async function loadSavedStatuses() {
+            try {
+                const res = await fetch('/api/integracoes/status')
+                if (res.ok) {
+                    const { statusMap } = await res.json()
+                    if (statusMap && typeof statusMap === 'object') {
+                        const overrides: Record<string, IntegracaoStatus> = {}
+                        for (const [id, status] of Object.entries(statusMap)) {
+                            if (status && status !== 'nao_configurado') {
+                                overrides[id] = status as IntegracaoStatus
+                            }
+                        }
+                        setStatusOverride(overrides)
+                    }
+                }
+            } catch (err) {
+                console.error('[integracoes] Failed to load saved statuses:', err)
+            } finally {
+                setLoadingStatus(false)
+            }
+        }
+        loadSavedStatuses()
+    }, [])
 
     const handleSave = (id: string, _values: Record<string, string>) => {
         setStatusOverride(prev => ({ ...prev, [id]: 'conectado' }))
@@ -263,34 +285,52 @@ export default function IntegracoesPage() {
     const conectadas = INTEGRACOES.filter(i => getStatus(i) === 'conectado').length
     const configurar = INTEGRACOES.filter(i => getStatus(i) === 'nao_configurado').length
 
+    if (loadingStatus) return (
+        <div className="space-y-5 max-w-7xl mx-auto">
+            <div><div className="skeleton h-6 w-48 mb-2" /><div className="skeleton h-4 w-72" /></div>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 100}ms` }}>
+                        <div className="skeleton w-9 h-9 rounded-xl mb-3" />
+                        <div className="skeleton lg h-5 w-16 mb-2" />
+                        <div className="skeleton h-3 w-24" />
+                    </div>
+                ))}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 60}ms` }}>
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="skeleton w-10 h-10 rounded-xl" />
+                            <div className="flex-1">
+                                <div className="skeleton h-4 w-28 mb-1" />
+                                <div className="skeleton h-3 w-20" />
+                            </div>
+                        </div>
+                        <div className="skeleton h-3 w-full mb-1" />
+                        <div className="skeleton h-3 w-3/4" />
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+
     return (
         <>
             <div className="space-y-5 max-w-7xl mx-auto">
 
                 {/* Header */}
-                <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Integrações</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
-                        Conecte todas as plataformas — assinatura, email, WhatsApp, storage, redes sociais e pagamento
-                    </p>
-                </motion.div>
+                <PageIntelHeader
+                    moduleLabel="INTEGRAÇÕES"
+                    title="Integrações"
+                    subtitle="Conecte todas as plataformas — assinatura, email, WhatsApp, storage, redes sociais e pagamento"
+                />
 
                 {/* Status geral */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {[
-                        { label: 'Conectadas', value: conectadas, color: '#6BB87B' },
-                        { label: 'Disponíveis', value: INTEGRACOES.length, color: '#7B9EC4' },
-                        { label: 'A configurar', value: configurar, color: 'var(--bo-accent)' },
-                    ].map((s, i) => (
-                        <motion.div key={s.label}
-                            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.05 }}
-                            className="rounded-2xl p-4 text-center"
-                            style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
-                            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                            <p className="text-xs mt-1" style={{ color: T.textDim }}>{s.label}</p>
-                        </motion.div>
-                    ))}
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+                    <KPICard label="Conectadas" value={String(conectadas)} icon={<CheckCircle size={16} />} accent="green" size="sm" />
+                    <KPICard label="Disponíveis" value={String(INTEGRACOES.length)} icon={<Plug size={16} />} accent="blue" size="sm" />
+                    <KPICard label="A configurar" value={String(configurar)} icon={<Settings size={16} />} accent="warm" size="sm" />
                 </div>
 
                 {/* Categorias */}
@@ -365,7 +405,7 @@ export default function IntegracoesPage() {
                                     style={{
                                         background: connected ? 'rgba(107,184,123,0.12)' : 'var(--bo-active-bg)',
                                         border: `1px solid ${connected ? 'rgba(107,184,123,0.25)' : T.borderGold}`,
-                                        color: connected ? '#6BB87B' : T.gold,
+                                        color: connected ? '#6BB87B' : T.accent,
                                     }}
                                 >
                                     {connected ? '⚙ Gerenciar' : '+ Configurar'}
