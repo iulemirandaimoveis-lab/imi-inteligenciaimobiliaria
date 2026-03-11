@@ -168,9 +168,9 @@ export default function CampanhaDetalhesPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
                 {KPIS.map((kpi, i) => (
                     <div key={i} className="rounded-2xl p-4"
-                        style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: T.textMuted }}>{kpi.label}</p>
-                        <p className="text-lg font-bold" style={{ color: kpi.color }}>{kpi.value}</p>
+                        style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid ${kpi.color}` }}>
+                        <p className="text-[9px] mb-1.5 uppercase tracking-widest font-bold" style={{ color: T.textMuted }}>{kpi.label}</p>
+                        <p className="text-lg font-bold font-mono" style={{ color: kpi.color }}>{kpi.value}</p>
                     </div>
                 ))}
             </div>
@@ -279,7 +279,7 @@ export default function CampanhaDetalhesPage() {
             {activeTab === 'overview' && (
                 <div className="grid md:grid-cols-2 gap-4">
                     {/* Conversion funnel */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}` }}>
                         <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Funil de Conversão</h2>
                         <div className="space-y-4">
                             {funnel.map((stage, idx) => {
@@ -304,7 +304,7 @@ export default function CampanhaDetalhesPage() {
                     </div>
 
                     {/* Campaign info */}
-                    <div className="rounded-2xl p-6 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-2xl p-6 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.border}` }}>
                         <h2 className="text-sm font-bold" style={{ color: T.text }}>Detalhes da Campanha</h2>
                         {[
                             { label: 'Canal', value: type.label },
@@ -341,9 +341,9 @@ export default function CampanhaDetalhesPage() {
                             { label: 'Taxa de conversão', value: campanha.leads > 0 ? `${((campanha.conversions / campanha.leads) * 100).toFixed(1)}%` : '—' },
                         ].map((item, i) => (
                             <div key={i} className="flex items-center justify-between p-3 rounded-xl"
-                                style={{ background: T.elevated }}>
+                                style={{ background: T.elevated, borderLeft: `2px solid ${T.border}` }}>
                                 <span className="text-xs" style={{ color: T.textMuted }}>{item.label}</span>
-                                <span className="text-sm font-bold" style={{ color: T.text }}>{item.value}</span>
+                                <span className="text-sm font-bold font-mono" style={{ color: T.text }}>{item.value}</span>
                             </div>
                         ))}
                     </div>

@@ -5,10 +5,11 @@ import { motion } from 'framer-motion'
 import {
   Bot, Zap, Calendar, AlertTriangle, Check,
   MessageSquare, Smile, Briefcase, Loader2,
-  ChevronRight, Info, Sliders, RefreshCw,
+  Info, Sliders,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 interface ScoreWeights {
   timeOnSite: number
@@ -45,7 +46,6 @@ export default function IASettingsPage() {
     linkedinReport: false,
   })
 
-  // Load saved AI config on mount
   useEffect(() => {
     async function loadAIConfig() {
       try {
@@ -147,24 +147,28 @@ export default function IASettingsPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
-      {/* ── Header ──────────────────────────────────────────────────────── */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '14px', background: 'var(--bo-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Bot size={22} color="#fff" />
-            </div>
-            <div>
-              <h1 style={{ fontSize: '20px', fontWeight: 800, color: T.text, lineHeight: 1.2 }}>AI Settings</h1>
-              <p style={{ fontSize: '12px', color: T.textMuted, marginTop: '2px' }}>
-                Configuração do sistema de inteligência
-              </p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      {/* Header */}
+      <PageIntelHeader
+        moduleLabel="SISTEMA DE INTELIGÊNCIA"
+        title="AI Settings"
+        subtitle="Configure o motor de IA — lead scoring, tom de conversa e automações"
+        live
+        actions={
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold text-white transition-all disabled:opacity-60"
+            style={{ background: 'var(--bo-accent)', boxShadow: '0 0 18px rgba(59,130,246,0.25)' }}
+          >
+            {saving
+              ? <><Loader2 size={15} className="animate-spin" /> Salvando...</>
+              : <><Check size={15} /> Salvar Config</>
+            }
+          </button>
+        }
+      />
 
-      {/* ── System Status Banner ─────────────────────────────────────────── */}
+      {/* System Status Banner */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <div style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.25)', borderRadius: '16px', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ADE80', boxShadow: '0 0 8px rgba(74,222,128,0.6)', flexShrink: 0, animation: 'pulse 2s infinite' }} />
@@ -183,9 +187,9 @@ export default function IASettingsPage() {
         </div>
       </motion.div>
 
-      {/* ── Lead Scoring Logic ───────────────────────────────────────────── */}
+      {/* Lead Scoring Logic */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.09 }}>
-        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: '18px', padding: '20px' }}>
+        <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: '18px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Sliders size={16} color="#3B82F6" />
@@ -193,7 +197,7 @@ export default function IASettingsPage() {
                 Lead Scoring Logic
               </span>
             </div>
-            <button style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px', background: T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer' }}>
+            <button style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer' }}>
               <Info size={13} color={T.textMuted} />
             </button>
           </div>
@@ -204,7 +208,7 @@ export default function IASettingsPage() {
           <ScoreSlider label="Engajamento WhatsApp" value={weights.whatsappEngagement} onChange={v => setWeights(w => ({ ...w, whatsappEngagement: v }))} icon={MessageSquare} color="#FBBF24" />
           <ScoreSlider label="Match de Budget" value={weights.budgetMatch} onChange={v => setWeights(w => ({ ...w, budgetMatch: v }))} icon={AlertTriangle} color="#F472B6" />
 
-          <div style={{ padding: '12px 14px', borderRadius: '12px', background: T.elevated, display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+          <div style={{ padding: '12px 14px', borderRadius: '12px', background: T.surface ?? T.elevated, display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', border: `1px solid ${T.border}` }}>
             <Info size={13} color={T.textMuted} />
             <p style={{ fontSize: '11px', color: T.textMuted, lineHeight: 1.4 }}>
               A soma dos pesos define a prioridade de cada sinal. Ajuste conforme o perfil do seu pipeline.
@@ -213,9 +217,9 @@ export default function IASettingsPage() {
         </div>
       </motion.div>
 
-      {/* ── AI Conversation Tone ─────────────────────────────────────────── */}
+      {/* AI Conversation Tone */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.13 }}>
-        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: '18px', padding: '20px' }}>
+        <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: '18px', padding: '20px' }}>
           <p style={{ fontSize: '13px', fontWeight: 700, color: T.text, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '16px' }}>
             AI Conversation Tone
           </p>
@@ -233,11 +237,11 @@ export default function IASettingsPage() {
                   style={{
                     padding: '16px', borderRadius: '14px', border: 'none', cursor: 'pointer',
                     textAlign: 'center', transition: 'all 0.2s',
-                    background: isActive ? 'rgba(59,130,246,0.12)' : T.elevated,
+                    background: isActive ? 'rgba(59,130,246,0.12)' : T.surface ?? T.elevated,
                     outline: isActive ? '2px solid #3B82F6' : `1px solid ${T.border}`,
                   }}
                 >
-                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', margin: '0 auto 10px', background: isActive ? 'rgba(59,130,246,0.2)' : T.surface, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', margin: '0 auto 10px', background: isActive ? 'rgba(59,130,246,0.2)' : T.elevated, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={20} color={isActive ? '#3B82F6' : T.textMuted} />
                   </div>
                   <p style={{ fontSize: '14px', fontWeight: 700, color: isActive ? '#3B82F6' : T.text, marginBottom: '4px' }}>{opt.label}</p>
@@ -254,16 +258,16 @@ export default function IASettingsPage() {
         </div>
       </motion.div>
 
-      {/* ── Auto-Scheduling Rules ────────────────────────────────────────── */}
+      {/* Auto-Scheduling Rules */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }}>
-        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: '18px', padding: '20px' }}>
+        <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: '18px', padding: '20px' }}>
           <p style={{ fontSize: '13px', fontWeight: 700, color: T.text, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '16px' }}>
             Auto-Scheduling Rules
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {/* Enable Auto-Meetings */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: T.elevated }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '9px', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Calendar size={15} color="#3B82F6" />
@@ -277,7 +281,7 @@ export default function IASettingsPage() {
             </div>
 
             {/* Min Score Threshold */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: T.elevated }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '9px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <AlertTriangle size={15} color="#FBBF24" />
@@ -290,14 +294,14 @@ export default function IASettingsPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <button
                   onClick={() => setRules(r => ({ ...r, minScoreThreshold: Math.max(0, r.minScoreThreshold - 5) }))}
-                  style={{ width: '28px', height: '28px', borderRadius: '8px', background: T.surface, border: `1px solid ${T.border}`, cursor: 'pointer', fontSize: '16px', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
+                  style={{ width: '28px', height: '28px', borderRadius: '8px', background: T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer', fontSize: '16px', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
                 >
                   −
                 </button>
                 <span style={{ fontSize: '16px', fontWeight: 800, color: '#3B82F6', minWidth: '36px', textAlign: 'center' }}>{rules.minScoreThreshold}</span>
                 <button
                   onClick={() => setRules(r => ({ ...r, minScoreThreshold: Math.min(100, r.minScoreThreshold + 5) }))}
-                  style={{ width: '28px', height: '28px', borderRadius: '8px', background: T.surface, border: `1px solid ${T.border}`, cursor: 'pointer', fontSize: '16px', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
+                  style={{ width: '28px', height: '28px', borderRadius: '8px', background: T.elevated, border: `1px solid ${T.border}`, cursor: 'pointer', fontSize: '16px', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
                 >
                   +
                 </button>
@@ -305,7 +309,7 @@ export default function IASettingsPage() {
             </div>
 
             {/* Auto-Reply WhatsApp */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: T.elevated }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '9px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <MessageSquare size={15} color="#4ADE80" />
@@ -321,9 +325,9 @@ export default function IASettingsPage() {
         </div>
       </motion.div>
 
-      {/* ── Content Automation ───────────────────────────────────────────── */}
+      {/* Content Automation */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.21 }}>
-        <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: '18px', padding: '20px' }}>
+        <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: '18px', padding: '20px' }}>
           <p style={{ fontSize: '13px', fontWeight: 700, color: T.text, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '16px' }}>
             Content Automation
           </p>
@@ -333,7 +337,7 @@ export default function IASettingsPage() {
               { key: 'dailyInstaPost', label: 'Post Diário Instagram', desc: 'Publicação automática 10:00 dias úteis', color: '#F472B6' },
               { key: 'linkedinReport', label: 'Report LinkedIn Mensal', desc: 'Análise trimestral de dados do mercado', color: '#60A5FA' },
             ].map(item => (
-              <div key={item.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: '12px', background: T.elevated }}>
+              <div key={item.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderRadius: '12px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}` }}>
                 <div>
                   <p style={{ fontSize: '13px', fontWeight: 600, color: T.text }}>{item.label}</p>
                   <p style={{ fontSize: '11px', color: T.textMuted, marginTop: '2px' }}>{item.desc}</p>
@@ -348,7 +352,7 @@ export default function IASettingsPage() {
         </div>
       </motion.div>
 
-      {/* ── Save Button ──────────────────────────────────────────────────── */}
+      {/* Save Button */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
         <button
           onClick={handleSave}
@@ -358,7 +362,7 @@ export default function IASettingsPage() {
             background: 'var(--bo-accent)',
             color: '#fff', fontSize: '15px', fontWeight: 800, letterSpacing: '0.02em',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-            boxShadow: '0 0 24px rgba(59,130,246,0.4)',
+            boxShadow: '0 0 24px rgba(59,130,246,0.3)',
             opacity: saving ? 0.8 : 1,
           }}
         >

@@ -280,10 +280,11 @@ export default function AgendaPage() {
                     onClick={() => setViewMode(mode)}
                     style={{
                       height: '30px', padding: '0 12px', borderRadius: '9px',
-                      fontSize: '12px', fontWeight: 700, cursor: 'pointer', border: 'none',
-                      transition: 'all 0.2s',
-                      background: viewMode === mode ? 'var(--imi-blue)' : 'transparent',
+                      fontSize: '12px', fontWeight: 600, cursor: 'pointer', border: 'none',
+                      transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
+                      background: viewMode === mode ? 'var(--bo-accent)' : 'transparent',
                       color: viewMode === mode ? '#fff' : 'var(--bo-text-muted)',
+                      boxShadow: viewMode === mode ? '0 0 12px rgba(59,130,246,0.2)' : 'none',
                     }}
                   >
                     {mode === 'day' ? 'Dia' : 'Semana'}
@@ -296,12 +297,14 @@ export default function AgendaPage() {
                 onClick={() => setShowModal(true)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '36px', padding: '0 14px', borderRadius: '10px',
-                  fontSize: '12px', fontWeight: 700, color: '#fff',
-                  background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
-                  border: 'none', cursor: 'pointer',
-                  boxShadow: '0 0 14px rgba(59,130,246,0.3)',
+                  height: '40px', padding: '0 16px', borderRadius: '12px',
+                  fontSize: '13px', fontWeight: 600, color: '#fff',
+                  background: 'var(--bo-accent)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 20px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
                   whiteSpace: 'nowrap',
+                  transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                 }}
               >
                 <Plus size={14} />
@@ -323,6 +326,8 @@ export default function AgendaPage() {
           background: 'var(--bo-surface)',
           border: '1px solid var(--bo-border)',
           borderRadius: '18px', padding: '16px 20px',
+          boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)',
+          backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 50%)',
         }}>
           {/* Week nav */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
@@ -356,12 +361,13 @@ export default function AgendaPage() {
                   style={{
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px',
                     padding: '10px 4px', borderRadius: '14px', border: 'none', cursor: 'pointer',
-                    transition: 'all 0.2s',
+                    transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                     background: isSelected
-                      ? '#3B82F6'
+                      ? 'var(--bo-accent)'
                       : todayBool
-                        ? 'rgba(59,130,246,0.08)'
+                        ? 'rgba(59,130,246,0.1)'
                         : 'transparent',
+                    boxShadow: isSelected ? '0 0 16px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.15)' : 'none',
                   }}
                 >
                   <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.06em', color: isSelected ? 'rgba(255,255,255,0.75)' : 'var(--bo-text-muted)' }}>
@@ -382,7 +388,7 @@ export default function AgendaPage() {
 
           {/* ── Day Events ────────────────────────────────────────────────── */}
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', overflow: 'hidden' }}>
+            <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', overflow: 'hidden', boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
               {/* Header */}
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -427,6 +433,7 @@ export default function AgendaPage() {
                           padding: '16px 20px',
                           borderBottom: idx < selectedDayEvents.length - 1 ? '1px solid var(--bo-border)' : 'none',
                           display: 'flex', alignItems: 'center', gap: '14px',
+                          transition: 'background 0.15s cubic-bezier(0.4,0,0.2,1)',
                         }}
                       >
                         {/* Time */}
@@ -498,7 +505,7 @@ export default function AgendaPage() {
           {/* ── Smart Suggestions ─────────────────────────────────────────── */}
           {activeSuggestions.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
-              <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', overflow: 'hidden' }}>
+              <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', overflow: 'hidden', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)', backgroundImage: 'linear-gradient(135deg, rgba(129,140,248,0.04) 0%, transparent 50%)' }}>
                 {/* Header */}
                 <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(129,140,248,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -539,7 +546,7 @@ export default function AgendaPage() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                           <button
                             onClick={() => setShowModal(true)}
-                            style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 700, color: '#fff', background: '#3B82F6', border: 'none', cursor: 'pointer' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 600, color: '#fff', background: 'var(--bo-accent)', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', boxShadow: '0 0 12px rgba(59,130,246,0.22)' }}
                           >
                             <Check size={12} />
                             Aceitar
@@ -562,9 +569,9 @@ export default function AgendaPage() {
           {/* ── Week Overview (when week mode) ────────────────────────────── */}
           {viewMode === 'week' && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
-              <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', overflow: 'hidden' }}>
+              <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', overflow: 'hidden', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}>
                 <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--bo-border)' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Visão Geral da Semana</span>
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Visão Geral da Semana</span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)' }}>
                   {weekDays.map((dayStr, i) => {
@@ -683,7 +690,7 @@ export default function AgendaPage() {
                 <button
                   onClick={handleCreate}
                   disabled={saving || !form.title || !form.start_time}
-                  style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1 }}
+                  style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1, boxShadow: '0 0 16px rgba(59,130,246,0.22)' }}
                 >
                   <Plus size={16} />
                   {saving ? 'Salvando...' : 'Criar Evento'}

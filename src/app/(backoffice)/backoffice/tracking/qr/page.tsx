@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import {
-    Building2, Copy, Check, QrCode, Sparkles,
+    ArrowLeft, Building2, Copy, Check, QrCode, Sparkles,
     ChevronDown, Loader2, Globe, Trash2, MapPin,
     Download, RefreshCw, Eye, BarChart2, ExternalLink,
     TrendingUp, Clock, User, Users, ChevronRight,
@@ -14,6 +14,7 @@ import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import QRCode from 'qrcode'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -209,15 +210,25 @@ export default function QRGeneratorPage() {
         <div className="space-y-6 max-w-[640px] mx-auto pb-12">
 
             {/* Header */}
-            <div>
-                <p className="text-[10px] font-bold tracking-[0.18em] uppercase mb-1" style={{ color: T.textMuted }}>Engine de Rastreamento</p>
-                <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold tracking-tight" style={{ color: T.text }}>QR Tracking</h1>
-                    <a href="/backoffice/tracking/links" className="flex items-center gap-1.5 text-xs font-semibold hover:opacity-80 transition-opacity" style={{ color: T.accent }}>
-                        Todos os links <ChevronRight size={13} />
-                    </a>
-                </div>
-            </div>
+            <PageIntelHeader
+                moduleLabel="TRACKING · QR CODES"
+                title="QR Tracking"
+                subtitle="Engine de rastreamento — gere links UTM + QR Codes por canal e imóvel"
+                actions={
+                    <div className="flex items-center gap-2">
+                        <a href="/backoffice/tracking"
+                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            style={{ background: T.card, border: `1px solid ${T.border}`, textDecoration: 'none' }}>
+                            <ArrowLeft size={18} style={{ color: T.text }} />
+                        </a>
+                        <a href="/backoffice/tracking/links"
+                            className="h-10 px-4 rounded-xl flex items-center gap-1.5 text-xs font-semibold hover:opacity-80 transition-opacity"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.accent, textDecoration: 'none' }}>
+                            Todos os links <ChevronRight size={13} />
+                        </a>
+                    </div>
+                }
+            />
 
             {/* Stats — only when there are links */}
             {links.length > 0 && (

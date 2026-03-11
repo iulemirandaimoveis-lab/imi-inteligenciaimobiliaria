@@ -14,8 +14,11 @@ import {
     Edit,
     Star,
     TrendingUp,
+    Users,
+    DollarSign,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // Interface para os dados reias do Supabase
 export interface Developer {
@@ -68,46 +71,41 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold" style={{ color: T.text }}>Construtoras Parceiras</h1>
-                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>
-                        Gestão real integrada: {initialData.length} parceiros do portfólio IMI encontrados
-                    </p>
-                </div>
-                <button
-                    onClick={() => router.push('/backoffice/construtoras/nova')}
-                    className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium transition-colors hover:brightness-110"
-                    style={{ background: T.accent }}
-                >
-                    <Plus size={20} />
-                    Nova Construtora
-                </button>
-            </div>
+            <PageIntelHeader
+                title="Construtoras Parceiras"
+                subtitle={`Gestão integrada — ${initialData.length} parceiros no portfólio IMI`}
+                actions={
+                    <button
+                        onClick={() => router.push('/backoffice/construtoras/nova')}
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold transition-all hover:brightness-110"
+                        style={{ background: T.accent }}
+                    >
+                        <Plus size={18} />
+                        Nova Construtora
+                    </button>
+                }
+            />
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Total</p>
-                    <p className="text-2xl font-bold" style={{ color: T.text }}>{stats.total}</p>
-                </div>
-                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1 text-green-500">Ativas</p>
-                    <p className="text-2xl font-bold text-green-500">{stats.ativas}</p>
-                </div>
-                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Projetos Ativos</p>
-                    <p className="text-2xl font-bold text-blue-400">{stats.projetos}</p>
-                </div>
-                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Unidades Vendidas</p>
-                    <p className="text-2xl font-bold text-purple-400">{stats.vendas}</p>
-                </div>
-                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Receita Total</p>
-                    <p className="text-xl font-bold text-green-500">{formatPrice(stats.receita)}</p>
-                </div>
+                {[
+                    { label: 'Total', value: stats.total, color: T.text, icon: Building2, iconColor: T.accent },
+                    { label: 'Ativas', value: stats.ativas, color: '#4ADE80', icon: TrendingUp, iconColor: '#4ADE80' },
+                    { label: 'Projetos', value: stats.projetos, color: '#60A5FA', icon: Building2, iconColor: '#60A5FA' },
+                    { label: 'Unid. Vendidas', value: stats.vendas, color: '#A78BFA', icon: Users, iconColor: '#A78BFA' },
+                    { label: 'VGV / Receita', value: formatPrice(stats.receita), color: '#34D399', icon: DollarSign, iconColor: '#34D399' },
+                ].map(s => {
+                    const Icon = s.icon
+                    return (
+                        <div key={s.label} className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Icon size={14} style={{ color: s.iconColor }} />
+                                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>{s.label}</p>
+                            </div>
+                            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+                        </div>
+                    )
+                })}
             </div>
 
             {/* Filtros */}

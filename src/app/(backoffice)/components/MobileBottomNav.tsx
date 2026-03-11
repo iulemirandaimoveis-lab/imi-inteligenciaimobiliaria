@@ -314,6 +314,18 @@ export function MobileBottomNav() {
         ? CONTEXT_FAB.find(c => pathname === c.prefix || pathname.startsWith(c.prefix + '/'))
         : null
 
+    // When in a submodule page (depth > 3 segments like /backoffice/imoveis/abc/editar),
+    // or already on a creation route (ends with /novo or /nova),
+    // the FAB should open the mega-menu instead of navigating directly —
+    // so the user can choose from all quick-create options.
+    const isDeepSubmodule = pathname
+        ? pathname.split('/').filter(Boolean).length > 3
+        : false
+    const isCreationRoute = pathname
+        ? (pathname.endsWith('/novo') || pathname.endsWith('/nova'))
+        : false
+    const fabShouldOpenMenu = isDeepSubmodule || isCreationRoute
+
     const togglePin = (href: string) => {
         setTempPinned(prev => {
             if (prev.includes(href)) return prev.filter(h => h !== href)
@@ -395,9 +407,11 @@ export function MobileBottomNav() {
                             <motion.button
                                 whileTap={{ scale: 0.88 }}
                                 onClick={() => {
-                                    if (contextFab && !open) {
+                                    if (contextFab && !open && !fabShouldOpenMenu) {
+                                        // Direct navigation only on root section pages
                                         router.push(contextFab.href)
                                     } else {
+                                        // In submodules, creation routes, or no context: open mega-menu
                                         setOpen(v => !v)
                                     }
                                 }}

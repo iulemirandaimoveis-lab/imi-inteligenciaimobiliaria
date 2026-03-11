@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
     TrendingDown, Plus, Search, CheckCircle, Clock, AlertCircle,
-    ArrowDownCircle, Loader2, ChevronRight,
+    ArrowDownCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     pago:     { label: 'Pago',      text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
@@ -65,26 +66,20 @@ export default function PagarPage() {
     return (
         <div className="space-y-5 max-w-7xl mx-auto">
             {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textMuted }}>
-                            Financeiro
-                        </Link>
-                        <ChevronRight size={12} style={{ color: T.textMuted }} />
-                        <span className="text-xs font-medium" style={{ color: T.text }}>A Pagar</span>
-                    </div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Contas a Pagar</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>Despesas operacionais, marketing e custos fixos</p>
-                </div>
-                <Link
-                    href="/backoffice/financeiro"
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: T.accent }}
-                >
-                    <Plus size={15} /> Novo Lançamento
-                </Link>
-            </motion.div>
+            <PageIntelHeader
+                moduleLabel="FINANCEIRO"
+                title="Contas a Pagar"
+                subtitle="Despesas operacionais, marketing e custos fixos"
+                actions={
+                    <Link
+                        href="/backoffice/financeiro"
+                        className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-80"
+                        style={{ background: T.accent }}
+                    >
+                        <Plus size={15} /> Novo Lançamento
+                    </Link>
+                }
+            />
 
             {/* KPIs */}
             <div className="grid grid-cols-3 gap-2">
@@ -135,8 +130,10 @@ export default function PagarPage() {
 
             {/* List */}
             {loading ? (
-                <div className="flex items-center justify-center py-20">
-                    <Loader2 className="animate-spin" size={22} style={{ color: T.accent }} />
+                <div className="space-y-2">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="animate-pulse rounded-2xl h-16" style={{ background: T.elevated }} />
+                    ))}
                 </div>
             ) : filtered.length === 0 ? (
                 <div className="rounded-2xl p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>

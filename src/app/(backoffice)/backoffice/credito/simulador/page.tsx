@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 const bancos = [
     { id: 1, name: 'Caixa Econômica Federal', rate: 9.5 },
@@ -99,24 +100,20 @@ export default function SimuladorCreditoPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-4">
-                    <button onClick={() => router.back()}
-                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                        <ArrowLeft size={18} style={{ color: T.textMuted }} />
+            <PageIntelHeader
+                moduleLabel="CRÉDITO · SIMULADOR"
+                title="Simulador de Crédito"
+                subtitle="Calcule financiamento imobiliário com amortização PRICE ou SAC em tempo real"
+                actions={
+                    <button
+                        onClick={() => { toast.success('Simulação salva com sucesso!'); router.push('/backoffice/credito') }}
+                        className="flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90"
+                        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}
+                    >
+                        <Save size={16} /> Salvar Simulação
                     </button>
-                    <div>
-                        <h1 className="text-xl font-bold" style={{ color: T.text }}>Simulador de Crédito</h1>
-                        <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>Calcule financiamento imobiliário em tempo real</p>
-                    </div>
-                </div>
-                <button onClick={() => { toast.success('Simulação salva com sucesso!'); router.push('/backoffice/credito') }}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                    style={{ background: '#1E3A5F' }}>
-                    <Save size={16} /> Salvar Simulação
-                </button>
-            </div>
+                }
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* LEFT: Form */}
@@ -218,7 +215,7 @@ export default function SimuladorCreditoPage() {
                 {/* RIGHT: Results */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Resumo */}
-                    <div className="rounded-2xl p-8 text-white" style={{ background: 'linear-gradient(135deg, #1E3A5F, #0B1929)' }}>
+                    <div className="rounded-2xl p-8 text-white" style={{ background: 'linear-gradient(135deg, #1E3A5F, #0B1929)', border: '1px solid rgba(59,130,246,0.2)' }}>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                             {[
                                 { l: 'Parcela Mensal', v: fmt(monthlyPayment), large: true },
@@ -227,8 +224,8 @@ export default function SimuladorCreditoPage() {
                                 { l: 'Total Juros', v: fmt(totalInterest) },
                             ].map(item => (
                                 <div key={item.l}>
-                                    <p className="text-xs text-white/60 mb-1">{item.l}</p>
-                                    <p className={`font-bold ${item.large ? 'text-3xl' : 'text-xl'}`}>{item.v}</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mb-1">{item.l}</p>
+                                    <p className={`font-black ${item.large ? 'text-4xl' : 'text-2xl'}`} style={{ fontVariantNumeric: 'tabular-nums' }}>{item.v}</p>
                                     {item.large && system === 'sac' && <p className="text-xs text-white/40 mt-1">Primeira parcela</p>}
                                 </div>
                             ))}
@@ -297,11 +294,11 @@ export default function SimuladorCreditoPage() {
                                         )
                                         return (
                                             <tr key={row.month} style={{ borderTop: `1px solid ${T.border}` }} className="transition-colors hover:opacity-80">
-                                                <td className="px-5 py-3 text-sm font-medium" style={{ color: T.text }}>{row.month}</td>
-                                                <td className="px-5 py-3 text-sm text-right font-semibold" style={{ color: T.text }}>{fmt(row.payment)}</td>
-                                                <td className="px-5 py-3 text-sm text-right" style={{ color: '#4ADE80' }}>{fmt(row.principal)}</td>
-                                                <td className="px-5 py-3 text-sm text-right" style={{ color: '#F87171' }}>{fmt(row.interest)}</td>
-                                                <td className="px-5 py-3 text-sm text-right" style={{ color: T.textMuted }}>{fmt(row.balance)}</td>
+                                                <td className="px-5 py-3 text-sm font-medium" style={{ color: T.text, fontVariantNumeric: 'tabular-nums' }}>{row.month}</td>
+                                                <td className="px-5 py-3 text-sm text-right font-semibold" style={{ color: T.text, fontVariantNumeric: 'tabular-nums' }}>{fmt(row.payment)}</td>
+                                                <td className="px-5 py-3 text-sm text-right" style={{ color: '#4ADE80', fontVariantNumeric: 'tabular-nums' }}>{fmt(row.principal)}</td>
+                                                <td className="px-5 py-3 text-sm text-right" style={{ color: '#F87171', fontVariantNumeric: 'tabular-nums' }}>{fmt(row.interest)}</td>
+                                                <td className="px-5 py-3 text-sm text-right" style={{ color: T.textMuted, fontVariantNumeric: 'tabular-nums' }}>{fmt(row.balance)}</td>
                                             </tr>
                                         )
                                     })}

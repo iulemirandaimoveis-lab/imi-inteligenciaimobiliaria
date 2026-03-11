@@ -1,11 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import PageHeader from '@/components/backoffice/PageHeader'
-import { UserPlus, Shield, CheckCircle, Smartphone, Mail, Lock, User, Square, Key, CheckSquare, ArrowLeft } from 'lucide-react'
-import Button from '@/components/ui/Button'
-import Input from '@/components/ui/Input'
-import { Card, CardHeader } from '@/components/ui/Card'
+import { UserPlus, Shield, CheckCircle, Smartphone, Mail, Key, User, CheckSquare } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -13,6 +9,7 @@ import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { createBroker, BrokerFormData } from '@/hooks/use-brokers'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const schema = z.object({
     name: z.string().min(3, 'Nome muito curto'),
@@ -112,107 +109,115 @@ export default function NovoCorretorPage() {
         }
     }
 
+    const fieldStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
+
     return (
-        <div className="space-y-8 animate-fade-in pb-20 max-w-5xl mx-auto">
-            <PageHeader
+        <div className="space-y-6 pb-20 max-w-5xl mx-auto">
+            <PageIntelHeader
                 title="Cadastrar Novo Corretor"
-                description="Preencha os dados e defina as permissões de acesso."
-                breadcrumbs={[
-                    { label: 'Configurações', href: '/backoffice/settings' },
-                    { label: 'Corretores', href: '/backoffice/settings/corretores' },
-                    { label: 'Novo' }
-                ]}
+                subtitle="Preencha os dados e defina as permissões de acesso"
+                actions={
+                    <button type="button" onClick={() => router.back()}
+                        className="h-11 px-5 rounded-xl text-sm font-medium transition-all"
+                        style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: T.elevated }}>
+                        Cancelar
+                    </button>
+                }
             />
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left Column: Personal Data */}
                     <div className="lg:col-span-2 space-y-6">
-                        <Card style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                            <CardHeader title="Dados Pessoais" className="px-6 pt-6 pb-0" />
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                                <div className="space-y-2 col-span-2">
-                                    <label className="text-sm font-bold" style={{ color: T.text }}>Nome Completo</label>
-                                    <Input
-                                        placeholder="Ex: João da Silva"
-                                        {...register('name')}
-                                        error={errors.name?.message}
-                                        leftIcon={<User size={18} />}
-                                    />
+                        {/* Dados Pessoais */}
+                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Dados Pessoais</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="md:col-span-2 space-y-1.5">
+                                    <label className="text-xs font-semibold block" style={{ color: T.textMuted }}>Nome Completo *</label>
+                                    <div className="relative">
+                                        <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                                        <input type="text" placeholder="Ex: João da Silva" {...register('name')}
+                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            style={fieldStyle} />
+                                    </div>
+                                    {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold" style={{ color: T.text }}>Email Corporativo</label>
-                                    <Input
-                                        placeholder="joao@imi.com.br"
-                                        {...register('email')}
-                                        error={errors.email?.message}
-                                        leftIcon={<Mail size={18} />}
-                                    />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold block" style={{ color: T.textMuted }}>Email Corporativo *</label>
+                                    <div className="relative">
+                                        <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                                        <input type="email" placeholder="joao@imi.com.br" {...register('email')}
+                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            style={fieldStyle} />
+                                    </div>
+                                    {errors.email && <p className="text-xs text-red-400">{errors.email.message}</p>}
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold" style={{ color: T.text }}>Telefone / WhatsApp</label>
-                                    <Input
-                                        placeholder="(11) 99999-9999"
-                                        {...register('phone')}
-                                        error={errors.phone?.message}
-                                        leftIcon={<Smartphone size={18} />}
-                                    />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold block" style={{ color: T.textMuted }}>Telefone / WhatsApp *</label>
+                                    <div className="relative">
+                                        <Smartphone size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                                        <input type="text" placeholder="(11) 99999-9999" {...register('phone')}
+                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            style={fieldStyle} />
+                                    </div>
+                                    {errors.phone && <p className="text-xs text-red-400">{errors.phone.message}</p>}
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold" style={{ color: T.text }}>CRECI</label>
-                                    <Input
-                                        placeholder="12345-F"
-                                        {...register('creci')}
-                                        error={errors.creci?.message}
-                                        leftIcon={<Shield size={18} />}
-                                    />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold block" style={{ color: T.textMuted }}>CRECI *</label>
+                                    <div className="relative">
+                                        <Shield size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                                        <input type="text" placeholder="12345-F" {...register('creci')}
+                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            style={fieldStyle} />
+                                    </div>
+                                    {errors.creci && <p className="text-xs text-red-400">{errors.creci.message}</p>}
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold" style={{ color: T.text }}>Status</label>
-                                    <select
-                                        {...register('status')}
-                                        className="w-full h-10 px-4 rounded-xl outline-none transition-all appearance-none"
-                                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                                    >
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold block" style={{ color: T.textMuted }}>Status</label>
+                                    <select {...register('status')}
+                                        className="w-full h-11 px-4 rounded-xl outline-none text-sm"
+                                        style={fieldStyle}>
                                         <option value="active">Ativo</option>
                                         <option value="inactive">Inativo</option>
                                     </select>
                                 </div>
                             </div>
-                        </Card>
+                        </div>
 
-                        <Card style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                            <CardHeader title="Segurança" className="px-6 pt-6 pb-0" />
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold" style={{ color: T.text }}>Senha de Acesso</label>
-                                    <Input
-                                        type="password"
-                                        placeholder="Mínimo 8 caracteres"
-                                        {...register('password')}
-                                        error={errors.password?.message}
-                                        leftIcon={<Key size={18} />}
-                                    />
+                        {/* Segurança */}
+                        <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <h2 className="text-sm font-bold mb-5" style={{ color: T.text }}>Segurança</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold block" style={{ color: T.textMuted }}>Senha de Acesso *</label>
+                                    <div className="relative">
+                                        <Key size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                                        <input type="password" placeholder="Mínimo 8 caracteres" {...register('password')}
+                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            style={fieldStyle} />
+                                    </div>
+                                    {errors.password && <p className="text-xs text-red-400">{errors.password.message}</p>}
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold" style={{ color: T.text }}>Confirmar Senha</label>
-                                    <Input
-                                        type="password"
-                                        placeholder="Repita a senha"
-                                        {...register('confirmPassword')}
-                                        error={errors.confirmPassword?.message}
-                                        leftIcon={<Key size={18} />}
-                                    />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold block" style={{ color: T.textMuted }}>Confirmar Senha *</label>
+                                    <div className="relative">
+                                        <Key size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                                        <input type="password" placeholder="Repita a senha" {...register('confirmPassword')}
+                                            className="w-full h-11 pl-9 pr-4 rounded-xl outline-none text-sm"
+                                            style={fieldStyle} />
+                                    </div>
+                                    {errors.confirmPassword && <p className="text-xs text-red-400">{errors.confirmPassword.message}</p>}
                                 </div>
                             </div>
-                        </Card>
+                        </div>
                     </div>
 
                     {/* Right Column: Permissions */}
                     <div className="lg:col-span-1">
-                        <div className="rounded-3xl overflow-hidden sticky top-6"
-                            style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                            <div className="p-6" style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
+                        <div className="rounded-2xl overflow-hidden sticky top-6"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <div className="p-5" style={{ borderBottom: `1px solid ${T.border}` }}>
                                 <h3 className="font-display font-bold text-lg flex items-center gap-2" style={{ color: T.text }}>
                                     <Shield size={20} style={{ color: T.accent }} /> Permissões
                                 </h3>
@@ -284,11 +289,18 @@ export default function NovoCorretorPage() {
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-4 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
-                    <Button variant="outline" type="button" onClick={() => router.back()}>Cancelar</Button>
-                    <Button variant="primary" type="submit" loading={isSubmitting} icon={<UserPlus size={18} />}>
-                        Cadastrar Corretor
-                    </Button>
+                <div className="flex justify-end gap-3 pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
+                    <button type="button" onClick={() => router.back()}
+                        className="h-11 px-6 rounded-xl text-sm font-medium transition-all"
+                        style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: 'transparent' }}>
+                        Cancelar
+                    </button>
+                    <button type="submit" disabled={isSubmitting}
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold hover:brightness-110 transition-all disabled:opacity-60"
+                        style={{ background: T.accent }}>
+                        <UserPlus size={16} />
+                        {isSubmitting ? 'Cadastrando...' : 'Cadastrar Corretor'}
+                    </button>
                 </div>
             </form>
         </div>

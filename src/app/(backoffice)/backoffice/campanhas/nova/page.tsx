@@ -284,34 +284,59 @@ export default function NovaCampanhaPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ border: `1px solid ${T.border}` }}
-          >
-            <ArrowLeft size={20} style={{ color: T.text }} />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold" style={{ color: T.text }}>Nova Campanha de Marketing</h1>
-            <p className="text-sm mt-1" style={{ color: T.textMuted }}>Passo {currentStep} de 3</p>
+      {/* Sticky Step Header */}
+      <div className="sticky top-0 z-20 rounded-2xl px-6 py-4"
+        style={{ background: T.surface, border: `1px solid ${T.border}`, backdropFilter: 'blur(12px)' }}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.back()}
+              className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors hover:opacity-80"
+              style={{ border: `1px solid ${T.border}`, background: T.elevated }}
+            >
+              <ArrowLeft size={18} style={{ color: T.text }} />
+            </button>
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-widest mb-0.5" style={{ color: T.textMuted }}>Nova Campanha</p>
+              <h1 className="text-base font-bold leading-tight" style={{ color: T.text }}>
+                {steps[currentStep - 1].label}
+                <span className="ml-2 text-xs font-normal" style={{ color: T.textMuted }}>Passo {currentStep}/3</span>
+              </h1>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {selectedChannel && (
+              <div
+                className="px-3 py-1.5 text-white rounded-xl flex items-center gap-2"
+                style={{ background: selectedChannel.hex, opacity: 0.9 }}
+              >
+                <selectedChannel.icon size={13} />
+                <span className="text-xs font-semibold">{selectedChannel.label}</span>
+              </div>
+            )}
+            {/* Step dots */}
+            <div className="flex items-center gap-1.5">
+              {steps.map(s => (
+                <div key={s.number}
+                  className="rounded-full transition-all"
+                  style={{
+                    width: currentStep === s.number ? 20 : 7,
+                    height: 7,
+                    background: currentStep > s.number ? T.success : currentStep === s.number ? T.accent : T.border,
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
-
-        {selectedChannel && (
-          <div
-            className="px-4 py-2 text-white rounded-xl flex items-center gap-2"
-            style={{ background: selectedChannel.hex }}
-          >
-            <selectedChannel.icon size={16} />
-            <span className="text-sm font-medium">{selectedChannel.label}</span>
-          </div>
-        )}
+        {/* Progress bar */}
+        <div className="mt-3 h-1 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+          <div className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${progress}%`, background: T.accent }} />
+        </div>
       </div>
 
-      {/* Progress Bar */}
+      {/* Step progress detail (collapsed — sticky replaces it) */}
       <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between mb-4">
           {steps.map((step, index) => {

@@ -8,6 +8,7 @@ import {
     RefreshCw, ArrowUpRight, FileText, Percent, Timer,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 interface Analytics {
     kpis: {
@@ -62,32 +63,30 @@ export default function TrackingDashboardPage() {
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>
-                        Tracking & Analytics
-                    </h1>
-                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                        Inteligência comportamental completa — visitantes, sessões, cliques e leads
-                    </p>
-                </div>
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => router.push('/backoffice/tracking/qr')}
-                        className="h-9 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 text-white transition-all"
-                        style={{ background: T.accent }}
-                    >
-                        <QrCode size={14} /> Novo QR Code
-                    </button>
-                    <button
-                        onClick={() => router.push('/backoffice/tracking/links')}
-                        className="h-9 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                    >
-                        <Link2 size={14} /> Links
-                    </button>
-                </div>
-            </div>
+            <PageIntelHeader
+                moduleLabel="TRACKING · ANALYTICS"
+                title="Tracking & Analytics"
+                subtitle="Inteligência comportamental completa — visitantes, sessões, cliques e leads"
+                live
+                actions={
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => router.push('/backoffice/tracking/qr')}
+                            className="h-10 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 text-white transition-all"
+                            style={{ background: T.accent }}
+                        >
+                            <QrCode size={14} /> Novo QR Code
+                        </button>
+                        <button
+                            onClick={() => router.push('/backoffice/tracking/links')}
+                            className="h-10 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                        >
+                            <Link2 size={14} /> Links
+                        </button>
+                    </div>
+                }
+            />
 
             {/* Time Range + Refresh */}
             <div className="flex items-center justify-between">

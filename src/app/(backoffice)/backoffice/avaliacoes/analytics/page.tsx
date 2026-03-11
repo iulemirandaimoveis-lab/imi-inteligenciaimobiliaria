@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
 import {
     FileText, Clock, DollarSign, CheckCircle, Users,
     Building2, PieChart, BarChart3, MapPin, Target, Zap,
-    ArrowLeft, Loader2,
+    Loader2,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { T } from '../../../lib/theme'
+import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 interface Avaliacao {
     id: string
@@ -36,7 +36,6 @@ function groupBy<T>(arr: T[], key: (item: T) => string): Record<string, T[]> {
 }
 
 export default function AvaliacoesAnalyticsPage() {
-    const router = useRouter()
     const [timeRange, setTimeRange] = useState('6m')
     const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([])
     const [loading, setLoading] = useState(true)
@@ -140,8 +139,23 @@ export default function AvaliacoesAnalyticsPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center py-24">
-                <Loader2 className="animate-spin" size={22} style={{ color: T.accent }} />
+            <div className="space-y-5">
+                <div className="animate-pulse" style={{ height: '72px', borderRadius: '16px', background: T.surface, border: `1px solid ${T.border}` }} />
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[...Array(4)].map((_, i) => (
+                        <div key={i} className="animate-pulse rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: T.elevated, marginBottom: '12px' }} />
+                            <div style={{ height: '28px', width: '60%', borderRadius: '6px', background: T.elevated, marginBottom: '8px' }} />
+                            <div style={{ height: '12px', width: '80%', borderRadius: '6px', background: T.elevated }} />
+                        </div>
+                    ))}
+                </div>
+                <div className="animate-pulse rounded-2xl" style={{ height: '200px', background: T.surface, border: `1px solid ${T.border}` }} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {[...Array(2)].map((_, i) => (
+                        <div key={i} className="animate-pulse rounded-2xl" style={{ height: '240px', background: T.surface, border: `1px solid ${T.border}` }} />
+                    ))}
+                </div>
             </div>
         )
     }
@@ -149,31 +163,24 @@ export default function AvaliacoesAnalyticsPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4">
-                    <button onClick={() => router.back()} className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 mt-1"
-                        style={{ border: `1px solid ${T.border}` }}>
-                        <ArrowLeft size={18} style={{ color: T.text }} />
-                    </button>
-                    <div>
-                        <h1 className="text-2xl font-bold" style={{ color: T.text }}>Analytics: Laudos & Avaliações</h1>
-                        <p className="text-sm mt-1" style={{ color: T.textMuted }}>
-                            Performance analítica do motor de avaliação imobiliária · {data.total} avaliações no período
-                        </p>
-                    </div>
-                </div>
-                <select
-                    value={timeRange}
-                    onChange={e => setTimeRange(e.target.value)}
-                    className="h-10 px-4 rounded-xl text-sm outline-none shrink-0"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                >
-                    <option value="30d">Últimos 30 dias</option>
-                    <option value="3m">Últimos 3 meses</option>
-                    <option value="6m">Últimos 6 meses</option>
-                    <option value="year">Último ano</option>
-                </select>
-            </div>
+            <PageIntelHeader
+                moduleLabel="ANALYTICS · AVALIAÇÕES"
+                title="Analytics: Laudos & Avaliações"
+                subtitle={`Performance analítica do motor de avaliação imobiliária · ${data.total} avaliações no período`}
+                actions={
+                    <select
+                        value={timeRange}
+                        onChange={e => setTimeRange(e.target.value)}
+                        className="h-11 px-4 rounded-xl text-sm outline-none shrink-0"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                    >
+                        <option value="30d">Últimos 30 dias</option>
+                        <option value="3m">Últimos 3 meses</option>
+                        <option value="6m">Últimos 6 meses</option>
+                        <option value="year">Último ano</option>
+                    </select>
+                }
+            />
 
             {/* KPI Scorecard */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -183,12 +190,15 @@ export default function AvaliacoesAnalyticsPage() {
                     { label: 'SLA Médio', value: `${data.avgTime.toFixed(1)} dias`, icon: Clock, color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)' },
                     { label: 'Billing Total', value: formatCurrency(data.totalRevenue), icon: DollarSign, color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
                 ].map(({ label, value, icon: Icon, color, bg }) => (
-                    <div key={label} className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div key={label} className="rounded-2xl p-5 relative overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: bg }}>
                             <Icon size={20} style={{ color }} />
                         </div>
-                        <p className="text-2xl font-bold mb-1 leading-tight" style={{ color: T.text }}>{value}</p>
-                        <p className="text-xs" style={{ color: T.textMuted }}>{label}</p>
+                        <p className="text-3xl font-black mb-1 leading-tight" style={{ color: T.text, fontVariantNumeric: 'tabular-nums' }}>{value}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>{label}</p>
+                        <div className="absolute bottom-3 right-3 opacity-[0.06]">
+                            <Icon size={48} style={{ color }} />
+                        </div>
                     </div>
                 ))}
             </div>
@@ -269,7 +279,7 @@ export default function AvaliacoesAnalyticsPage() {
                                         </div>
                                     </div>
                                     <div className="h-2.5 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                                        <div className="h-full rounded-full bg-blue-500" style={{ width: `${item.percentage}%` }} />
+                                        <div className="h-full rounded-full" style={{ width: `${item.percentage}%`, background: '#3B82F6' }} />
                                     </div>
                                 </div>
                             ))}
@@ -300,7 +310,7 @@ export default function AvaliacoesAnalyticsPage() {
                                     />
                                     <div className="absolute inset-y-0 left-4 flex items-center gap-3">
                                         <span className="text-xs font-bold" style={{ color: T.text }}>{month.total} demandas</span>
-                                        <span className="text-xs text-green-500 font-bold">{month.completed} entregas</span>
+                                        <span className="text-xs font-bold" style={{ color: '#10B981' }}>{month.completed} entregas</span>
                                     </div>
                                 </div>
                                 <div className="w-24 text-right shrink-0">
@@ -363,12 +373,12 @@ export default function AvaliacoesAnalyticsPage() {
                                         <div className="flex items-center justify-between">
                                             <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.text }}>{item.neighborhood}</span>
                                             <div className="flex items-center gap-3">
-                                                {item.avgValue > 0 && <span className="text-xs font-bold text-green-500">{formatCurrency(item.avgValue)}</span>}
+                                                {item.avgValue > 0 && <span className="text-xs font-bold" style={{ color: '#10B981' }}>{formatCurrency(item.avgValue)}</span>}
                                                 <span className="text-xs px-2 py-0.5 rounded-md" style={{ background: T.elevated, color: T.textMuted }}>{item.count}</span>
                                             </div>
                                         </div>
                                         <div className="h-3 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                                            <div className="h-full rounded-full bg-green-500" style={{ width: `${pct}%` }} />
+                                            <div className="h-full rounded-full" style={{ width: `${pct}%`, background: '#10B981' }} />
                                         </div>
                                     </div>
                                 )

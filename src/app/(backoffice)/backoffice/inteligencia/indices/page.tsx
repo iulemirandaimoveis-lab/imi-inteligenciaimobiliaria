@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, TrendingUp, Save, Trash2, Eye, EyeOff, Loader2, RefreshCw } from 'lucide-react'
+import { Plus, TrendingUp, TrendingDown, Minus, Save, Trash2, Eye, EyeOff, Loader2, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 type MarketIndex = {
     id: string
@@ -35,6 +36,13 @@ function varColor(v: number | null) {
     return '#fbbf24'
 }
 
+function VarIcon({ v }: { v: number | null }) {
+    if (v === null) return <Minus size={11} style={{ color: 'var(--bo-text-muted)' }} />
+    if (v > 0) return <TrendingUp size={11} style={{ color: '#34d399' }} />
+    if (v < 0) return <TrendingDown size={11} style={{ color: '#ef4444' }} />
+    return <Minus size={11} style={{ color: '#fbbf24' }} />
+}
+
 export default function IndicesBackofficePage() {
     const [indices, setIndices] = useState<MarketIndex[]>([])
     const [loading, setLoading] = useState(true)
@@ -58,6 +66,7 @@ export default function IndicesBackofficePage() {
         await supabase.from('market_indices').update({ ...editForm, updated_at: new Date().toISOString() }).eq('id', id)
         setSaving(false)
         setEditingId(null)
+        toast.success('Índice atualizado')
         load()
     }
 
@@ -82,120 +91,186 @@ export default function IndicesBackofficePage() {
         })
     }
 
-    const inputClass = "h-8 px-2.5 rounded-lg text-sm outline-none transition-all w-full"
-    const inputStyle = { background: 'var(--bo-input-bg)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }
+    const inputClass = "h-9 px-3 rounded-xl text-sm outline-none transition-all w-full"
+    const inputStyle = { background: T.surface ?? T.elevated, border: `1px solid ${T.border}`, color: T.text }
+
+    const published = indices.filter(i => i.is_published).length
+    const drafts = indices.filter(i => !i.is_published).length
 
     return (
-        <div className="p-6 lg:p-8">
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-2xl font-bold" style={{ color: 'var(--bo-text)', fontFamily: "'Playfair Display', serif" }}>Índices IMI</h1>
-                    <p className="text-sm mt-1" style={{ color: 'var(--bo-text-muted)' }}>Gestão dos índices de mercado proprietários</p>
-                </div>
-                <div className="flex gap-3">
-                    <button onClick={load} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)] transition-colors" style={{ background: 'var(--bo-icon-bg)' }}>
-                        <RefreshCw size={14} style={{ color: 'var(--bo-text-muted)' }} />
+        <div className="space-y-5">
+            {/* Header */}
+            <PageIntelHeader
+                moduleLabel="INTELIGÊNCIA DE MERCADO"
+                title="Índices IMI"
+                subtitle="Gestão dos índices de mercado proprietários — performance e variações"
+                actions={
+                    <button
+                        onClick={load}
+                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                    >
+                        <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
                     </button>
-                </div>
+                }
+            />
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-3">
+                {[
+                    { label: 'Total Índices', value: indices.length, color: T.text },
+                    { label: 'Publicados', value: published, color: '#34d399' },
+                    { label: 'Rascunhos', value: drafts, color: T.textMuted },
+                ].map(s => (
+                    <div key={s.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{s.label}</p>
+                        <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+                    </div>
+                ))}
             </div>
 
             <div className="space-y-4">
                 {loading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <Loader2 className="animate-spin" size={22} style={{ color: 'var(--bo-text-muted)' }} />
+                    <div className="space-y-3">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                            <div key={i} className="rounded-2xl p-5 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-9 h-9 rounded-xl" style={{ background: 'var(--bo-hover)' }} />
+                                    <div>
+                                        <div className="h-3.5 rounded mb-1.5" style={{ background: 'var(--bo-hover)', width: 120 }} />
+                                        <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: 80 }} />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-4 gap-4">
+                                    {[...Array(4)].map((_, j) => (
+                                        <div key={j} className="h-12 rounded-xl" style={{ background: 'var(--bo-hover)' }} />
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 ) : indices.length === 0 ? (
-                    <div className="text-center py-20 rounded-2xl" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
-                        <TrendingUp size={36} style={{ color: 'var(--bo-text-muted)', opacity: 0.4 }} className="mx-auto mb-4" />
-                        <p className="text-sm" style={{ color: 'var(--bo-text-muted)' }}>Nenhum índice cadastrado</p>
-                        <p className="text-xs mt-1" style={{ color: 'var(--bo-text-muted)' }}>Adicione índices via migração SQL ou painel admin</p>
+                    <div className="text-center py-20 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <TrendingUp size={40} style={{ color: T.textMuted, opacity: 0.25 }} className="mx-auto mb-4" />
+                        <p className="text-sm font-semibold mb-1" style={{ color: T.text }}>Nenhum índice cadastrado</p>
+                        <p className="text-xs" style={{ color: T.textMuted }}>Adicione índices via migração SQL ou painel admin</p>
                     </div>
                 ) : (
                     indices.map((idx) => (
-                        <div key={idx.id} className="rounded-2xl overflow-hidden" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>
+                        <div key={idx.id} className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             {/* Header row */}
-                            <div className="p-5 border-b flex items-center justify-between" style={{ borderColor: 'var(--bo-border)' }}>
+                            <div className="p-5 flex items-center justify-between" style={{ borderBottom: `1px solid ${T.border}` }}>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--bo-icon-bg)' }}>
-                                        <TrendingUp size={14} style={{ color: 'var(--accent-500)' }} />
+                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.12)' }}>
+                                        <TrendingUp size={15} style={{ color: '#3B82F6' }} />
                                     </div>
                                     <div>
-                                        <p className="font-semibold text-sm" style={{ color: 'var(--bo-text)' }}>{idx.name}</p>
-                                        <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>{idx.region ?? '—'}</p>
+                                        <p className="font-semibold text-sm" style={{ color: T.text }}>{idx.name}</p>
+                                        <p className="text-xs" style={{ color: T.textMuted }}>{idx.region ?? '—'}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
                                         style={idx.is_published
                                             ? { color: '#34d399', background: 'rgba(52,211,153,0.1)' }
-                                            : { color: 'var(--bo-text-muted)', background: 'var(--bo-icon-bg)' }
+                                            : { color: T.textMuted, background: 'rgba(255,255,255,0.05)' }
                                         }
                                     >
                                         {idx.is_published ? 'Publicado' : 'Rascunho'}
                                     </span>
-                                    <button onClick={() => togglePublish(idx.id, idx.is_published)} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]">
-                                        {idx.is_published ? <EyeOff size={14} style={{ color: 'var(--bo-text-muted)' }} /> : <Eye size={14} style={{ color: 'var(--accent-500)' }} />}
+                                    <button
+                                        onClick={() => togglePublish(idx.id, idx.is_published)}
+                                        className="w-9 h-9 rounded-xl flex items-center justify-center hover:opacity-70 transition-opacity"
+                                        style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
+                                    >
+                                        {idx.is_published
+                                            ? <EyeOff size={14} style={{ color: T.textMuted }} />
+                                            : <Eye size={14} style={{ color: 'var(--bo-accent)' }} />
+                                        }
                                     </button>
-                                    <button onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]">
-                                        <Save size={14} style={{ color: 'var(--bo-text-muted)' }} />
+                                    <button
+                                        onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }}
+                                        className="w-9 h-9 rounded-xl flex items-center justify-center hover:opacity-70 transition-opacity"
+                                        style={{ background: editingId === idx.id ? 'rgba(59,130,246,0.12)' : 'rgba(255,255,255,0.04)', border: `1px solid ${editingId === idx.id ? '#3B82F6' : T.border}` }}
+                                    >
+                                        <Save size={14} style={{ color: editingId === idx.id ? '#3B82F6' : T.textMuted }} />
                                     </button>
-                                    <button onClick={() => deleteIndex(idx.id)} className="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-red-500/10">
+                                    <button
+                                        onClick={() => deleteIndex(idx.id)}
+                                        className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-red-500/10 transition-colors"
+                                        style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
+                                    >
                                         <Trash2 size={14} style={{ color: '#ef4444' }} />
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Metrics */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 divide-x" style={{ borderColor: 'var(--bo-border)' }}>
+                            {/* Metrics — Bloomberg-style data row */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 divide-x" style={{ borderColor: T.border }}>
                                 {[
-                                    { label: 'Valor Atual', val: idx.value.toFixed(1) },
-                                    { label: '1 Mês', val: formatVar(idx.variation_1m), color: varColor(idx.variation_1m) },
-                                    { label: '3 Meses', val: formatVar(idx.variation_3m), color: varColor(idx.variation_3m) },
-                                    { label: '12 Meses', val: formatVar(idx.variation_12m), color: varColor(idx.variation_12m) },
+                                    { label: 'Valor Atual', val: idx.value.toFixed(1), v: null as number | null, isBase: true },
+                                    { label: '1 Mês', val: formatVar(idx.variation_1m), v: idx.variation_1m, isBase: false },
+                                    { label: '3 Meses', val: formatVar(idx.variation_3m), v: idx.variation_3m, isBase: false },
+                                    { label: '12 Meses', val: formatVar(idx.variation_12m), v: idx.variation_12m, isBase: false },
                                 ].map(m => (
-                                    <div key={m.label} className="p-4 text-center" style={{ borderColor: 'var(--bo-border)' }}>
-                                        <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: 'var(--bo-text-muted)' }}>{m.label}</p>
-                                        <p className="font-bold text-base" style={{ color: (m as { label: string; val: string; color?: string }).color ?? 'var(--bo-text)' }}>{m.val}</p>
+                                    <div key={m.label} className="p-4 text-center" style={{ borderColor: T.border }}>
+                                        <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{m.label}</p>
+                                        <div className="flex items-center justify-center gap-1">
+                                            {!m.isBase && <VarIcon v={m.v} />}
+                                            <p className="font-bold text-base" style={{ color: m.isBase ? T.text : varColor(m.v) }}>{m.val}</p>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
 
                             {/* Edit form */}
                             {editingId === idx.id && (
-                                <div className="p-5 border-t space-y-4" style={{ borderColor: 'var(--bo-border)', background: 'var(--bo-active-bg)' }}>
+                                <div className="p-5 space-y-4" style={{ borderTop: `1px solid ${T.border}`, background: 'var(--bo-active-bg)' }}>
+                                    <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Editar Índice</p>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Nome</label>
+                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: T.textMuted }}>Nome</label>
                                             <input className={inputClass} style={inputStyle} value={editForm.name ?? ''} onChange={e => setEditForm(p => ({ ...p, name: e.target.value }))} />
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Região</label>
+                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: T.textMuted }}>Região</label>
                                             <input className={inputClass} style={inputStyle} value={editForm.region ?? ''} onChange={e => setEditForm(p => ({ ...p, region: e.target.value }))} />
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Valor Atual</label>
+                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: T.textMuted }}>Valor Atual</label>
                                             <input type="number" step="0.1" className={inputClass} style={inputStyle} value={editForm.value ?? 0} onChange={e => setEditForm(p => ({ ...p, value: parseFloat(e.target.value) }))} />
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Var. 1 Mês (%)</label>
+                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: T.textMuted }}>Var. 1 Mês (%)</label>
                                             <input type="number" step="0.1" className={inputClass} style={inputStyle} value={editForm.variation_1m ?? ''} onChange={e => setEditForm(p => ({ ...p, variation_1m: parseFloat(e.target.value) || null }))} />
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Var. 3 Meses (%)</label>
+                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: T.textMuted }}>Var. 3 Meses (%)</label>
                                             <input type="number" step="0.1" className={inputClass} style={inputStyle} value={editForm.variation_3m ?? ''} onChange={e => setEditForm(p => ({ ...p, variation_3m: parseFloat(e.target.value) || null }))} />
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Var. 12 Meses (%)</label>
+                                            <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: T.textMuted }}>Var. 12 Meses (%)</label>
                                             <input type="number" step="0.1" className={inputClass} style={inputStyle} value={editForm.variation_12m ?? ''} onChange={e => setEditForm(p => ({ ...p, variation_12m: parseFloat(e.target.value) || null }))} />
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--bo-text-muted)' }}>Descrição</label>
-                                        <textarea className="w-full px-2.5 py-2 rounded-lg text-sm outline-none resize-none" style={inputStyle} rows={2} value={editForm.description ?? ''} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} />
+                                        <label className="block text-[10px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: T.textMuted }}>Descrição</label>
+                                        <textarea className="w-full px-3 py-2 rounded-xl text-sm outline-none resize-none" style={inputStyle} rows={2} value={editForm.description ?? ''} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} />
                                     </div>
                                     <div className="flex gap-3 justify-end">
-                                        <button onClick={() => setEditingId(null)} className="h-8 px-4 rounded-lg text-sm" style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-icon-bg)' }}>Cancelar</button>
-                                        <button onClick={() => saveEdit(idx.id)} disabled={saving} className="flex items-center gap-2 h-8 px-4 rounded-lg text-sm font-semibold text-white disabled:opacity-60" style={{ background: 'var(--accent-500)' }}>
+                                        <button
+                                            onClick={() => setEditingId(null)}
+                                            className="h-10 px-4 rounded-xl text-sm font-medium transition-all hover:opacity-80"
+                                            style={{ color: T.textMuted, background: T.elevated, border: `1px solid ${T.border}` }}
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button
+                                            onClick={() => saveEdit(idx.id)}
+                                            disabled={saving}
+                                            className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white disabled:opacity-60 transition-all"
+                                            style={{ background: 'var(--bo-accent)' }}
+                                        >
                                             {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
                                             Salvar
                                         </button>

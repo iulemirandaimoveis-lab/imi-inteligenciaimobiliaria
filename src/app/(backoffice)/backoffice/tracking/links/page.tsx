@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/client'
 import QRCode from 'qrcode'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -92,31 +93,30 @@ export default function TrackingLinksPage() {
     return (
         <div className="space-y-6 max-w-6xl mx-auto">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => router.push('/backoffice/tracking')}
-                        className="w-10 h-10 rounded-xl flex items-center justify-center"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                    >
-                        <ArrowLeft size={18} style={{ color: T.accent }} />
-                    </button>
-                    <div>
-                        <h1 className="text-lg font-bold" style={{ color: T.text }}>Links Rastreáveis</h1>
-                        <p className="text-xs" style={{ color: T.textMuted }}>{links.length} links gerados</p>
+            <PageIntelHeader
+                moduleLabel="TRACKING · LINKS"
+                title="Links Rastreáveis"
+                subtitle={`${links.length} links gerados`}
+                actions={
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => router.push('/backoffice/tracking')}
+                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            style={{ background: T.card, border: `1px solid ${T.border}` }}
+                        >
+                            <ArrowLeft size={18} style={{ color: T.text }} />
+                        </button>
+                        <button
+                            onClick={() => router.push('/backoffice/tracking/qr')}
+                            className="h-10 px-4 rounded-xl text-sm font-semibold flex items-center gap-2 text-white"
+                            style={{ background: T.accent }}
+                        >
+                            <QrCode size={16} />
+                            Novo QR Code
+                        </button>
                     </div>
-                </div>
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => router.push('/backoffice/tracking/qr')}
-                        className="h-10 px-4 rounded-xl text-sm font-semibold flex items-center gap-2 text-white"
-                        style={{ background: T.accent }}
-                    >
-                        <QrCode size={16} />
-                        Novo QR Code
-                    </button>
-                </div>
-            </div>
+                }
+            />
 
             {/* Search + Refresh */}
             <div className="flex gap-2">

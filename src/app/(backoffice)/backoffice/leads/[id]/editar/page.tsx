@@ -285,34 +285,35 @@ export default function EditarLeadPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4 min-w-0">
                     <button
                         onClick={() => router.back()}
-                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
-                        style={{ border: `1px solid ${T.border}` }}
+                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-all flex-shrink-0"
+                        style={{ border: `1px solid ${T.border}`, background: T.elevated }}
                         onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        onMouseLeave={e => (e.currentTarget.style.background = T.elevated)}
                     >
-                        <ArrowLeft size={20} style={{ color: T.text }} />
+                        <ArrowLeft size={18} style={{ color: T.text }} />
                     </button>
-                    <div>
-                        <h1 className="text-2xl font-bold" style={{ color: T.text }}>Editar Lead</h1>
-                        <p className="text-sm mt-1" style={{ color: T.textMuted }}>{formData.name}</p>
+                    <div className="min-w-0">
+                        <h1 className="text-xl font-bold truncate" style={{ color: T.text }}>Editar Lead</h1>
+                        <p className="text-sm truncate" style={{ color: T.textMuted }}>{formData.name || 'Carregando...'}</p>
                     </div>
                 </div>
 
                 {/* Score Badge */}
-                <div className="px-6 py-3 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                <div className="flex-shrink-0 px-5 py-3 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-3">
-                        <Sparkles size={20} style={{ color: T.accent }} />
+                        <Sparkles size={18} style={{ color: T.accent }} />
                         <div>
-                            <p className="text-xs font-medium" style={{ color: T.textMuted }}>Score de Qualificação</p>
-                            <p className={`text-2xl font-bold ${getScoreColor()}`}>{score}/20</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Score</p>
+                            <p className={`text-xl font-bold ${getScoreColor()}`}>{score}<span className="text-xs font-normal opacity-60">/20</span></p>
                         </div>
-                        <div className="text-right">
-                            <p className={`text-sm font-bold ${getScoreColor()}`}>{getScoreLabel()}</p>
-                        </div>
+                        <span className={`text-xs font-bold px-2 py-1 rounded-lg ${getScoreColor()}`}
+                            style={{ background: score >= 15 ? 'rgba(52,211,153,0.12)' : score >= 10 ? 'rgba(251,146,60,0.12)' : 'rgba(96,165,250,0.12)' }}>
+                            {getScoreLabel()}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -683,8 +684,8 @@ export default function EditarLeadPage() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full h-11 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                style={{ background: 'var(--accent-500)' }}
+                                className="w-full h-11 text-white rounded-xl font-semibold transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{ background: T.accent }}
                             >
                                 {isSubmitting ? (
                                     <>

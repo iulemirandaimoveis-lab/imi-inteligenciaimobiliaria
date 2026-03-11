@@ -10,6 +10,7 @@ import {
   Hash, Clock, CreditCard, Gavel
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // ============================================================
 // TIPOS E CONSTANTES NBR 14653
@@ -365,19 +366,28 @@ export default function NovaAvaliacaoPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors" style={{ border: `1px solid ${T.border}` }}>
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: T.text }}>Nova Avaliação Técnica</h1>
-          <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Laudo NBR 14653 • Etapa {currentStep}/5</p>
-        </div>
-        <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-lg">
-          <Sparkles size={14} className="text-amber-600" />
-          <span className="text-xs font-medium text-amber-700">Motor IA Ativo</span>
-        </div>
-      </div>
+      <PageIntelHeader
+        moduleLabel="AVALIAÇÕES · NBR 14653"
+        title="Nova Avaliação Técnica"
+        subtitle={`Etapa ${currentStep}/5 — Laudo técnico completo com inteligência de mercado`}
+        live
+        actions={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.back()}
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+              style={{ background: T.card, border: `1px solid ${T.border}` }}
+            >
+              <ArrowLeft size={18} style={{ color: T.text }} />
+            </button>
+            <div className="flex items-center gap-2 h-9 px-3 rounded-xl"
+              style={{ background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)' }}>
+              <Sparkles size={14} style={{ color: '#F59E0B' }} />
+              <span className="text-xs font-semibold" style={{ color: '#F59E0B' }}>Motor IA</span>
+            </div>
+          </div>
+        }
+      />
 
       {/* Steps */}
       <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
@@ -389,12 +399,17 @@ export default function NovaAvaliacaoPage() {
             return (
               <div key={step.n} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all ${done ? 'bg-emerald-500 text-white' : active ? 'bg-[#102A43] text-white' : ''}`}
-                    style={!done && !active ? { background: T.elevated, color: T.textMuted } : undefined}>
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all"
+                    style={{
+                      background: done ? '#6BB87B' : active ? 'var(--bo-accent)' : T.elevated,
+                      color: done || active ? 'white' : T.textMuted,
+                    }}
+                  >
                     {done ? <Check size={16} /> : <Icon size={16} />}
                   </div>
-                  <span className={`text-xs mt-1 hidden sm:block ${active ? 'text-[var(--bo-accent)] font-medium' : done ? 'text-emerald-600' : ''}`}
-                    style={!active && !done ? { color: T.textMuted } : undefined}>
+                  <span className="text-xs mt-1 hidden sm:block font-medium"
+                    style={{ color: active ? 'var(--bo-accent)' : done ? '#6BB87B' : T.textMuted }}>
                     {step.label}
                   </span>
                 </div>
@@ -561,11 +576,11 @@ export default function NovaAvaliacaoPage() {
             </div>
 
             {/* Info Box */}
-            <div className="flex gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-              <Info size={18} className="text-blue-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-blue-700">
-                <p className="font-medium mb-1">Responsabilidade do Avaliador</p>
-                <p className="text-xs text-blue-600">O laudo de avaliação é de responsabilidade exclusiva do profissional habilitado (CNAI/CRECI). Os dados do solicitante são arquivados para rastreabilidade conforme NBR 14653-1.</p>
+            <div className="flex gap-3 p-4 rounded-xl" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
+              <Info size={18} style={{ color: 'var(--bo-accent)', flexShrink: 0, marginTop: 1 }} />
+              <div className="text-sm">
+                <p className="font-medium mb-1" style={{ color: T.text }}>Responsabilidade do Avaliador</p>
+                <p className="text-xs" style={{ color: T.textMuted }}>O laudo de avaliação é de responsabilidade exclusiva do profissional habilitado (CNAI/CRECI). Os dados do solicitante são arquivados para rastreabilidade conforme NBR 14653-1.</p>
               </div>
             </div>
           </div>
@@ -582,9 +597,17 @@ export default function NovaAvaliacaoPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
                 {FINALIDADES.map(f => (
                   <button key={f.value} type="button" onClick={() => handleChange('finalidade', f.value)}
-                    className={`flex items-start gap-3 p-3 rounded-xl text-left transition-all ${formData.finalidade === f.value ? 'border-[#334E68] bg-amber-50' : ''}`}
-                    style={formData.finalidade !== f.value ? { border: `1px solid ${T.border}`, background: T.elevated } : { border: '1px solid #334E68' }}>
-                    <div className={`w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0 ${formData.finalidade === f.value ? 'border-[#334E68] bg-[#102A43]' : 'border-[var(--bo-border)]'}`} />
+                    className="flex items-start gap-3 p-3 rounded-xl text-left transition-all"
+                    style={formData.finalidade === f.value
+                      ? { border: '1px solid var(--bo-accent)', background: 'var(--bo-active-bg)' }
+                      : { border: `1px solid ${T.border}`, background: T.elevated }}>
+                    <div
+                      className="w-4 h-4 rounded-full border-2 mt-0.5 flex-shrink-0"
+                      style={{
+                        borderColor: formData.finalidade === f.value ? 'var(--bo-accent)' : T.border,
+                        background: formData.finalidade === f.value ? 'var(--bo-accent)' : 'transparent',
+                      }}
+                    />
                     <div>
                       <p className="text-sm font-medium" style={{ color: T.text }}>{f.label}</p>
                       {f.subtitulo && <p className="text-xs" style={{ color: T.textMuted }}>{f.subtitulo}</p>}
@@ -603,10 +626,14 @@ export default function NovaAvaliacaoPage() {
                   const Icon = m.icone
                   return (
                     <button key={m.value} type="button" onClick={() => handleChange('metodologia', m.value)}
-                      className={`w-full flex items-center gap-4 p-4 rounded-xl text-left transition-all ${formData.metodologia === m.value ? 'border-[#334E68] bg-amber-50' : ''}`}
-                      style={formData.metodologia !== m.value ? { border: `1px solid ${T.border}`, background: T.elevated } : { border: '1px solid #334E68' }}>
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${formData.metodologia === m.value ? 'bg-[#102A43] text-white' : ''}`}
-                        style={formData.metodologia !== m.value ? { background: T.surface, color: T.textMuted } : undefined}>
+                      className="w-full flex items-center gap-4 p-4 rounded-xl text-left transition-all"
+                      style={formData.metodologia === m.value
+                        ? { border: '1px solid var(--bo-accent)', background: 'var(--bo-active-bg)' }
+                        : { border: `1px solid ${T.border}`, background: T.elevated }}>
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={formData.metodologia === m.value
+                          ? { background: 'var(--bo-accent)', color: 'white' }
+                          : { background: T.surface, color: T.textMuted }}>
                         <Icon size={20} />
                       </div>
                       <div className="flex-1">
@@ -647,14 +674,15 @@ export default function NovaAvaliacaoPage() {
             </div>
 
             {/* Calculadora de Honorários */}
-            <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #d97706' }}>
+            <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.30)', background: T.card }}>
               <button type="button" onClick={() => setShowHonorarios(!showHonorarios)}
-                className="w-full flex items-center justify-between p-4 bg-amber-50 hover:bg-amber-100 transition-colors">
+                className="w-full flex items-center justify-between p-4 transition-colors"
+                style={{ background: 'rgba(245,158,11,0.08)' }}>
                 <div className="flex items-center gap-3">
-                  <Calculator size={18} className="text-amber-600" />
-                  <span className="text-sm font-semibold text-amber-800">Calculadora de Honorários (IBAPE)</span>
+                  <Calculator size={18} style={{ color: '#F59E0B' }} />
+                  <span className="text-sm font-semibold" style={{ color: '#F59E0B' }}>Calculadora de Honorários (IBAPE)</span>
                 </div>
-                {showHonorarios ? <ChevronDown size={18} className="text-amber-600" /> : <ChevronRight size={18} className="text-amber-600" />}
+                {showHonorarios ? <ChevronDown size={18} style={{ color: '#F59E0B' }} /> : <ChevronRight size={18} style={{ color: '#F59E0B' }} />}
               </button>
 
               {showHonorarios && (
@@ -681,7 +709,8 @@ export default function NovaAvaliacaoPage() {
                   <p className="text-xs italic" style={{ color: T.textMuted }}>{honorarios.justificativa}</p>
 
                   <button type="button" onClick={() => handleChange('valorHonorarios', honorarios.recomendado.toString())}
-                    className="w-full py-2 bg-[#102A43] text-white rounded-lg text-sm font-medium hover:bg-[#16162A] transition-colors">
+                    className="w-full py-2 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+                    style={{ background: 'var(--bo-accent)' }}>
                     Usar Valor Recomendado ({formatCurrency(honorarios.recomendado)})
                   </button>
                 </div>
@@ -727,21 +756,34 @@ export default function NovaAvaliacaoPage() {
                 <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>NBR 14653-2 exige mín. 3 amostras (Grau II) ou 5 amostras (Grau III)</p>
               </div>
               <button type="button" onClick={addComparavel}
-                className="flex items-center gap-2 px-4 py-2 bg-[#102A43] text-white rounded-lg text-sm font-medium hover:bg-[#16162A] transition-colors">
+                className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+                style={{ background: 'var(--bo-accent)', color: 'white' }}>
                 + Adicionar
               </button>
             </div>
 
             {/* Status de amostras */}
-            <div className={`flex items-center gap-3 p-3 rounded-xl border ${formData.comparaveis.length >= 5 ? 'bg-emerald-50 border-emerald-200' : formData.comparaveis.length >= 3 ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${formData.comparaveis.length >= 5 ? 'bg-emerald-500 text-white' : formData.comparaveis.length >= 3 ? 'bg-amber-500 text-white' : 'bg-red-500 text-white'}`}>
+            <div
+              className="flex items-center gap-3 p-3 rounded-xl"
+              style={{
+                background: formData.comparaveis.length >= 5 ? 'rgba(107,184,123,0.10)' : formData.comparaveis.length >= 3 ? 'rgba(245,158,11,0.10)' : 'rgba(229,115,115,0.10)',
+                border: `1px solid ${formData.comparaveis.length >= 5 ? 'rgba(107,184,123,0.25)' : formData.comparaveis.length >= 3 ? 'rgba(245,158,11,0.25)' : 'rgba(229,115,115,0.25)'}`,
+              }}
+            >
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+                style={{
+                  background: formData.comparaveis.length >= 5 ? '#6BB87B' : formData.comparaveis.length >= 3 ? '#F59E0B' : '#E57373',
+                  color: 'white',
+                }}
+              >
                 {formData.comparaveis.length}
               </div>
               <div>
                 <p className="text-sm font-medium" style={{ color: T.text }}>
-                  {formData.comparaveis.length >= 5 ? '✓ Grau III — Suficiente para alta precisão' :
-                    formData.comparaveis.length >= 3 ? '⚠ Grau II — Mínimo atingido' :
-                      `✗ Insuficiente — adicione ${3 - formData.comparaveis.length} amostra(s)`}
+                  {formData.comparaveis.length >= 5 ? 'Grau III — Suficiente para alta precisão' :
+                    formData.comparaveis.length >= 3 ? 'Grau II — Mínimo atingido' :
+                      `Insuficiente — adicione ${3 - formData.comparaveis.length} amostra(s)`}
                 </p>
                 <p className="text-xs" style={{ color: T.textMuted }}>Amostras coletadas</p>
               </div>
@@ -850,14 +892,14 @@ export default function NovaAvaliacaoPage() {
           <div className="space-y-6">
             <h2 className="text-lg font-bold pb-3" style={{ color: T.text, borderBottom: `1px solid ${T.border}` }}>Documentação</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-              <p className="text-sm font-semibold text-blue-800 col-span-2">Documentos Necessários (NBR 14653)</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-xl" style={{ background: 'rgba(72,101,129,0.10)', border: '1px solid rgba(72,101,129,0.20)' }}>
+              <p className="text-sm font-semibold col-span-2" style={{ color: T.text }}>Documentos Necessários (NBR 14653)</p>
               {['Matrícula do imóvel (RI Digital / ONR)', 'IPTU vigente', 'Plantas / Croquis', 'Memorial descritivo', 'Fotos do imóvel (mín. 8 fotos)', 'Habite-se (edificações)'].map(d => (
                 <div key={d} className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded border border-blue-300 flex items-center justify-center" style={{ background: "var(--bo-elevated)" }}>
-                    <Check size={10} className="text-blue-500" />
+                  <div className="w-4 h-4 rounded flex items-center justify-center" style={{ background: 'rgba(107,184,123,0.15)', border: '1px solid rgba(107,184,123,0.30)' }}>
+                    <Check size={10} style={{ color: '#6BB87B' }} />
                   </div>
-                  <span className="text-xs text-blue-700">{d}</span>
+                  <span className="text-xs" style={{ color: T.textMuted }}>{d}</span>
                 </div>
               ))}
             </div>
@@ -867,7 +909,7 @@ export default function NovaAvaliacaoPage() {
                 const files = Array.from(e.target.files || [])
                 setFormData(prev => ({ ...prev, documentos: [...prev.documentos, ...files] }))
               }} className="hidden" />
-              <div className="border-2 border-dashed rounded-xl p-8 text-center hover:border-[#334E68] hover:bg-amber-50 transition-all" style={{ borderColor: T.border }}>
+              <div className="border-2 border-dashed rounded-xl p-8 text-center transition-all hover:opacity-80" style={{ borderColor: T.border }}>
                 <Upload size={32} className="mx-auto mb-3" style={{ color: T.textMuted }} />
                 <p className="text-sm font-medium" style={{ color: T.text }}>Arraste ou clique para fazer upload</p>
                 <p className="text-xs mt-1" style={{ color: T.textMuted }}>PDF, JPG, PNG, DOC — máx. 10MB cada</p>
@@ -895,25 +937,25 @@ export default function NovaAvaliacaoPage() {
               <p className="text-sm font-semibold mb-3" style={{ color: T.text }}>Links de Consulta</p>
               <a href="https://ridigital.org.br/" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <Landmark size={16} className="text-blue-600" />
+                <Landmark size={16} style={{ color: 'var(--bo-accent)' }} />
                 <div>
-                  <p className="text-sm text-blue-600 group-hover:underline">RI Digital — Matrícula do Imóvel</p>
+                  <p className="text-sm group-hover:underline" style={{ color: 'var(--bo-accent)' }}>RI Digital — Matrícula do Imóvel</p>
                   <p className="text-xs" style={{ color: T.textMuted }}>ridigital.org.br</p>
                 </div>
               </a>
               <a href="https://mapa.onr.org.br/" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <MapPin size={16} className="text-green-600" />
+                <MapPin size={16} style={{ color: '#6BB87B' }} />
                 <div>
-                  <p className="text-sm text-green-600 group-hover:underline">ONR — Mapa Registral</p>
+                  <p className="text-sm group-hover:underline" style={{ color: '#6BB87B' }}>ONR — Mapa Registral</p>
                   <p className="text-xs" style={{ color: T.textMuted }}>mapa.onr.org.br</p>
                 </div>
               </a>
               <a href="https://www.fipe.org.br/pt-br/indices/fipezap/" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <BarChart2 size={16} className="text-purple-600" />
+                <BarChart2 size={16} style={{ color: '#A78BFA' }} />
                 <div>
-                  <p className="text-sm text-purple-600 group-hover:underline">FIPE ZAP — Índice de Preços</p>
+                  <p className="text-sm group-hover:underline" style={{ color: '#A78BFA' }}>FIPE ZAP — Índice de Preços</p>
                   <p className="text-xs" style={{ color: T.textMuted }}>fipe.org.br</p>
                 </div>
               </a>
@@ -945,12 +987,14 @@ export default function NovaAvaliacaoPage() {
 
         {currentStep < 5 ? (
           <button type="button" onClick={handleNext}
-            className="flex items-center gap-2 h-10 px-6 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors">
+            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80"
+            style={{ background: 'var(--bo-accent)' }}>
             Próximo <ArrowRight size={18} />
           </button>
         ) : (
           <button type="button" onClick={handleSubmit} disabled={isSubmitting}
-            className="flex items-center gap-2 h-10 px-6 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50">
+            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 hover:opacity-80"
+            style={{ background: '#6BB87B' }}>
             {isSubmitting ? <><Loader2 size={18} className="animate-spin" /> Criando...</> : <><Save size={18} /> Criar Avaliação</>}
           </button>
         )}

@@ -2,25 +2,44 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import PageHeader from '../../../components/PageHeader'
-import { Button } from '@/components/ui/Button'
-import { Card, CardHeader, CardBody, CardFooter } from '@/components/ui/Card'
-import { Input, Textarea } from '@/components/ui/Input'
-import { Select } from '@/components/ui/Select'
-import { Badge } from '@/components/ui/Badge'
-import { Save, ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import {
+    ArrowLeft, ArrowRight, Save, Loader2, Check,
+    User, Home, Calculator, FileText,
+    AlertCircle,
+} from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 
 const supabase = createClient()
 
-const steps = [
-    { id: 1, name: 'Cliente', description: 'Dados pessoais' },
-    { id: 2, name: 'Imóvel', description: 'Informações do registro' },
-    { id: 3, name: 'Engenharia de Crédito', description: 'Análise de capacidade' },
-    { id: 4, name: 'Dossiê', description: 'Instruções finais' },
+const STEPS = [
+    { id: 1, name: 'Cliente', description: 'Dados pessoais', icon: User },
+    { id: 2, name: 'Imóvel', description: 'Informações do registro', icon: Home },
+    { id: 3, name: 'Engenharia de Crédito', description: 'Análise de capacidade', icon: Calculator },
+    { id: 4, name: 'Dossiê', description: 'Instruções finais', icon: FileText },
 ]
+
+const inputClass = 'w-full h-11 px-4 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all'
+const inputStyle = { background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }
+const inputErrorStyle = { background: 'var(--bo-elevated)', border: `1px solid ${T.error}`, color: 'var(--bo-text)' }
+
+function Label({ children }: { children: React.ReactNode }) {
+    return (
+        <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: T.textMuted }}>
+            {children}
+        </label>
+    )
+}
+
+function FieldError({ msg }: { msg?: string }) {
+    if (!msg) return null
+    return (
+        <p className="mt-1 text-xs flex items-center gap-1" style={{ color: T.error }}>
+            <AlertCircle size={12} /> {msg}
+        </p>
+    )
+}
 
 export default function CreditoNovoPage() {
     const router = useRouter()
@@ -28,90 +47,73 @@ export default function CreditoNovoPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const [formData, setFormData] = useState({
-        // Step 1: Cliente
         client_name: '',
         client_email: '',
         client_phone: '',
         client_cpf: '',
         client_birthdate: '',
         client_marital_status: '',
-
-        // Step 2: Imóvel
         property_type: '',
         property_value: '',
         property_address: '',
         property_city: '',
         property_state: '',
-
-        // Step 3: Financiamento
         requested_amount: '',
         income: '',
         employment_type: '',
         employment_time: '',
         has_fgts: 'no',
         fgts_value: '',
-
-        // Step 4: Observações
         notes: '',
     })
 
     const [errors, setErrors] = useState<Record<string, string>>({})
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target
-        setFormData((prev) => ({ ...prev, [name]: value }))
-        if (errors[name]) {
-            setErrors((prev) => ({ ...prev, [name]: '' }))
-        }
+        setFormData(prev => ({ ...prev, [name]: value }))
+        if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
     }
 
     const validateStep = (step: number) => {
         const newErrors: Record<string, string> = {}
-
         if (step === 1) {
             if (!formData.client_name.trim()) newErrors.client_name = 'Nome completo é obrigatório'
             if (!formData.client_email.trim()) newErrors.client_email = 'E-mail é obrigatório para notificações'
             if (!formData.client_phone.trim()) newErrors.client_phone = 'Telefone de contato é obrigatório'
             if (!formData.client_cpf.trim()) newErrors.client_cpf = 'CPF é fundamental para análise bancária'
         }
-
         if (step === 2) {
             if (!formData.property_type) newErrors.property_type = 'Selecione a tipologia do ativo'
             if (!formData.property_value) newErrors.property_value = 'Valor de avaliação é obrigatório'
             if (!formData.property_city.trim()) newErrors.property_city = 'Cidade da garantia é obrigatória'
         }
-
         if (step === 3) {
             if (!formData.requested_amount) newErrors.requested_amount = 'Informe o valor total do crédito'
             if (!formData.income) newErrors.income = 'Renda mensal comprovada é obrigatória'
             if (!formData.employment_type) newErrors.employment_type = 'Selecione o regime de ocupação'
         }
-
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
 
     const handleNext = () => {
         if (validateStep(currentStep)) {
-            setCurrentStep((prev) => Math.min(prev + 1, steps.length))
+            setCurrentStep(prev => Math.min(prev + 1, STEPS.length))
             window.scrollTo({ top: 0, behavior: 'smooth' })
         } else {
-            toast.error('Por favor, preencha todos os campos obrigatórios da etapa atual.')
+            toast.error('Por favor, preencha todos os campos obrigatórios.')
         }
     }
 
     const handlePrevious = () => {
-        setCurrentStep((prev) => Math.max(prev - 1, 1))
+        setCurrentStep(prev => Math.max(prev - 1, 1))
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
     const handleSubmit = async () => {
         if (!validateStep(currentStep)) return
-
         setIsSubmitting(true)
-
         try {
             const { error } = await supabase.from('credit_requests').insert({
                 client_name: formData.client_name,
@@ -134,9 +136,7 @@ export default function CreditoNovoPage() {
                 notes: formData.notes || null,
                 status: 'pending',
             })
-
             if (error) throw error
-
             toast.success('Solicitação de crédito enviada para análise com sucesso!')
             router.push('/backoffice/credito')
         } catch (error: any) {
@@ -147,288 +147,260 @@ export default function CreditoNovoPage() {
         }
     }
 
+    const progress = (currentStep / STEPS.length) * 100
+    const currentStepData = STEPS[currentStep - 1]
+    const StepIcon = currentStepData.icon
+
     return (
         <div className="space-y-6">
-            <PageHeader
-                title="Protocolar Solicitação de Crédito"
-                subtitle="Inicie um novo fluxo de análise bancária para seu cliente"
-                breadcrumbs={[
-                    { label: 'Dashboard', href: '/backoffice/dashboard' },
-                    { label: 'Crédito', href: '/backoffice/credito' },
-                    { label: 'Nova Operação' },
-                ]}
-            />
-
-            {/* Steps Progress Visualizer */}
-            <Card className="border-none bg-transparent shadow-none">
-                <CardBody className="px-0">
-                    <div className="flex items-center justify-between gap-4">
-                        {steps.map((step, index) => (
-                            <div key={step.id} className="flex items-center flex-1 last:flex-none">
-                                <div className="flex flex-col md:flex-row items-center gap-3">
-                                    <div
-                                        className={`
-                      w-12 h-12 rounded-2xl flex items-center justify-center
-                      text-lg font-black transition-all duration-500 shadow-sm
-                      ${currentStep > step.id
-                                                ? 'bg-green-500 text-white rotate-[360deg]'
-                                                : currentStep === step.id
-                                                    ? 'bg-[#102A43] text-white scale-110 shadow-glow'
-                                                    : 'text-imi-300 border border-imi-100'
-                                            }
-                    `}
-                                        style={currentStep <= step.id && currentStep !== step.id ? { background: T.elevated } : undefined}
-                                    >
-                                        {currentStep > step.id ? <Check size={24} strokeWidth={4} /> : step.id}
-                                    </div>
-                                    <div className="hidden md:block">
-                                        <p className={`text-[10px] font-black uppercase tracking-widest ${currentStep >= step.id ? 'text-imi-950' : 'text-imi-300'}`}>Etapa {step.id}</p>
-                                        <p className={`text-sm font-bold truncate ${currentStep >= step.id ? 'text-imi-900' : 'text-imi-400'}`}>{step.name}</p>
-                                    </div>
-                                </div>
-                                {index < steps.length - 1 && (
-                                    <div className="flex-1 mx-6 h-1 bg-imi-100 rounded-full overflow-hidden hidden sm:block">
-                                        <div
-                                            className={`h-full transition-all duration-700 ease-smooth ${currentStep > step.id ? 'bg-green-500 w-full' : 'bg-accent-200 w-0'
-                                                }`}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+            {/* Sticky step header */}
+            <div className="sticky top-0 z-20 rounded-2xl px-5 py-4"
+                style={{ background: T.surface, border: `1px solid ${T.border}`, backdropFilter: 'blur(12px)' }}>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => router.back()}
+                            className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors hover:opacity-80"
+                            style={{ border: `1px solid ${T.border}`, background: T.elevated }}
+                        >
+                            <ArrowLeft size={16} style={{ color: T.text }} />
+                        </button>
+                        <div>
+                            <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
+                                PROTOCOLAR CRÉDITO
+                            </p>
+                            <h1 className="text-sm font-bold leading-tight flex items-center gap-2" style={{ color: T.text }}>
+                                <StepIcon size={13} style={{ color: T.accent }} />
+                                {currentStepData.name}
+                                <span className="text-xs font-normal" style={{ color: T.textMuted }}>
+                                    Etapa {currentStep}/{STEPS.length}
+                                </span>
+                            </h1>
+                        </div>
                     </div>
-                </CardBody>
-            </Card>
+                    {/* Step indicators */}
+                    <div className="flex items-center gap-2">
+                        {STEPS.map(s => {
+                            const Icon = s.icon
+                            const done = currentStep > s.id
+                            const active = currentStep === s.id
+                            return (
+                                <div key={s.id} className="flex items-center gap-1.5">
+                                    <div
+                                        className="w-7 h-7 rounded-full flex items-center justify-center transition-all"
+                                        style={
+                                            done
+                                                ? { background: T.success, color: '#fff' }
+                                                : active
+                                                    ? { background: T.accent, color: '#fff' }
+                                                    : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }
+                                        }
+                                    >
+                                        {done ? <Check size={12} strokeWidth={3} /> : <Icon size={12} />}
+                                    </div>
+                                    {s.id < STEPS.length && (
+                                        <div className="w-6 h-0.5 rounded-full"
+                                            style={{ background: currentStep > s.id ? T.success : T.border }} />
+                                    )}
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+                {/* Progress bar */}
+                <div className="mt-3 h-1 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                    <div className="h-full rounded-full transition-all duration-500"
+                        style={{ width: `${progress}%`, background: T.accent }} />
+                </div>
+            </div>
 
-            {/* Dynamic Form Content */}
-            <Card className="shadow-elevated border-imi-50">
-                <CardHeader
-                    title={`Sessão ${currentStep}: ${steps[currentStep - 1].name}`}
-                    subtitle={steps[currentStep - 1].description}
-                    className="bg-imi-50/50"
-                />
-                <CardBody className="p-8">
+            {/* Form card */}
+            <div className="rounded-2xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                {/* Card header */}
+                <div className="px-8 py-5" style={{ borderBottom: `1px solid ${T.border}` }}>
+                    <p className="text-[9px] font-bold uppercase tracking-widest mb-0.5" style={{ color: T.textMuted }}>
+                        Sessão {currentStep}
+                    </p>
+                    <h2 className="text-base font-bold" style={{ color: T.text }}>{currentStepData.name}</h2>
+                    <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{currentStepData.description}</p>
+                </div>
+
+                <div className="p-8">
                     {/* Step 1: Cliente */}
                     {currentStep === 1 && (
-                        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                            <Input
-                                label="Nome Completo do Proponente *"
-                                name="client_name"
-                                value={formData.client_name}
-                                onChange={handleChange}
-                                error={errors.client_name}
-                                placeholder="Ex: João Roberto de Albuquerque"
-                                className="h-14"
-                            />
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <Input
-                                    label="E-mail de Notificação *"
-                                    name="client_email"
-                                    type="email"
-                                    value={formData.client_email}
-                                    onChange={handleChange}
-                                    error={errors.client_email}
-                                    placeholder="cliente@email.com"
-                                    className="h-14"
-                                />
-
-                                <Input
-                                    label="Telefone WhatsApp *"
-                                    name="client_phone"
-                                    value={formData.client_phone}
-                                    onChange={handleChange}
-                                    error={errors.client_phone}
-                                    placeholder="(00) 00000-0000"
-                                    className="h-14"
-                                />
+                        <div className="space-y-6">
+                            <div>
+                                <Label>Nome Completo do Proponente *</Label>
+                                <input name="client_name" type="text" value={formData.client_name} onChange={handleChange}
+                                    placeholder="Ex: João Roberto de Albuquerque"
+                                    className={inputClass}
+                                    style={errors.client_name ? inputErrorStyle : inputStyle} />
+                                <FieldError msg={errors.client_name} />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <Input
-                                    label="CPF Individual *"
-                                    name="client_cpf"
-                                    value={formData.client_cpf}
-                                    onChange={handleChange}
-                                    error={errors.client_cpf}
-                                    placeholder="000.000.000-00"
-                                    className="h-14"
-                                />
-
-                                <Input
-                                    label="Data de Nascimento"
-                                    name="client_birthdate"
-                                    type="date"
-                                    value={formData.client_birthdate}
-                                    onChange={handleChange}
-                                    className="h-14"
-                                />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <Label>E-mail de Notificação *</Label>
+                                    <input name="client_email" type="email" value={formData.client_email} onChange={handleChange}
+                                        placeholder="cliente@email.com" className={inputClass}
+                                        style={errors.client_email ? inputErrorStyle : inputStyle} />
+                                    <FieldError msg={errors.client_email} />
+                                </div>
+                                <div>
+                                    <Label>Telefone WhatsApp *</Label>
+                                    <input name="client_phone" type="tel" value={formData.client_phone} onChange={handleChange}
+                                        placeholder="(00) 00000-0000" className={inputClass}
+                                        style={errors.client_phone ? inputErrorStyle : inputStyle} />
+                                    <FieldError msg={errors.client_phone} />
+                                </div>
                             </div>
 
-                            <Select
-                                label="Estado Civil Biológico"
-                                name="client_marital_status"
-                                value={formData.client_marital_status}
-                                onChange={handleChange}
-                                className="h-14"
-                                options={[
-                                    { value: '', label: 'Selecione o status' },
-                                    { value: 'solteiro', label: 'Solteiro(a)' },
-                                    { value: 'casado', label: 'Casado(a) / União Estável' },
-                                    { value: 'divorciado', label: 'Divorciado(a)' },
-                                    { value: 'viuvo', label: 'Viúvo(a)' },
-                                ]}
-                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <Label>CPF Individual *</Label>
+                                    <input name="client_cpf" type="text" value={formData.client_cpf} onChange={handleChange}
+                                        placeholder="000.000.000-00" className={`${inputClass} font-mono`}
+                                        style={errors.client_cpf ? inputErrorStyle : inputStyle} />
+                                    <FieldError msg={errors.client_cpf} />
+                                </div>
+                                <div>
+                                    <Label>Data de Nascimento</Label>
+                                    <input name="client_birthdate" type="date" value={formData.client_birthdate} onChange={handleChange}
+                                        className={inputClass} style={inputStyle} />
+                                </div>
+                            </div>
+
+                            <div>
+                                <Label>Estado Civil</Label>
+                                <select name="client_marital_status" value={formData.client_marital_status} onChange={handleChange}
+                                    className={inputClass} style={inputStyle}>
+                                    <option value="">Selecione o status</option>
+                                    <option value="solteiro">Solteiro(a)</option>
+                                    <option value="casado">Casado(a) / União Estável</option>
+                                    <option value="divorciado">Divorciado(a)</option>
+                                    <option value="viuvo">Viúvo(a)</option>
+                                </select>
+                            </div>
                         </div>
                     )}
 
                     {/* Step 2: Imóvel */}
                     {currentStep === 2 && (
-                        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <Select
-                                    label="Tipologia do Imóvel *"
-                                    name="property_type"
-                                    value={formData.property_type}
-                                    onChange={handleChange}
-                                    error={errors.property_type}
-                                    className="h-14"
-                                    options={[
-                                        { value: '', label: 'Selecione o tipo de ativo' },
-                                        { value: 'Apartamento', label: 'Apartamento' },
-                                        { value: 'Casa', label: 'Casa de Condomínio / Rua' },
-                                        { value: 'Terreno', label: 'Lote / Terreno' },
-                                        { value: 'Comercial', label: 'Ativo Comercial' },
-                                    ]}
-                                />
-
-                                <Input
-                                    label="Valor de Mercado Estimado (R$) *"
-                                    name="property_value"
-                                    type="number"
-                                    value={formData.property_value}
-                                    onChange={handleChange}
-                                    error={errors.property_value}
-                                    placeholder="EX: 450000"
-                                    className="h-14"
-                                    hint="Valor total de avaliação do bem"
-                                />
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <Label>Tipologia do Imóvel *</Label>
+                                    <select name="property_type" value={formData.property_type} onChange={handleChange}
+                                        className={inputClass}
+                                        style={errors.property_type ? inputErrorStyle : inputStyle}>
+                                        <option value="">Selecione o tipo de ativo</option>
+                                        <option value="Apartamento">Apartamento</option>
+                                        <option value="Casa">Casa de Condomínio / Rua</option>
+                                        <option value="Terreno">Lote / Terreno</option>
+                                        <option value="Comercial">Ativo Comercial</option>
+                                    </select>
+                                    <FieldError msg={errors.property_type} />
+                                </div>
+                                <div>
+                                    <Label>Valor de Mercado Estimado (R$) *</Label>
+                                    <input name="property_value" type="number" value={formData.property_value} onChange={handleChange}
+                                        placeholder="450000" className={inputClass}
+                                        style={errors.property_value ? inputErrorStyle : inputStyle} />
+                                    <FieldError msg={errors.property_value} />
+                                </div>
                             </div>
 
-                            <Input
-                                label="Endereço da Garantia"
-                                name="property_address"
-                                value={formData.property_address}
-                                onChange={handleChange}
-                                placeholder="Rua, número, bairro e complemento"
-                                className="h-14"
-                            />
+                            <div>
+                                <Label>Endereço da Garantia</Label>
+                                <input name="property_address" type="text" value={formData.property_address} onChange={handleChange}
+                                    placeholder="Rua, número, bairro e complemento"
+                                    className={inputClass} style={inputStyle} />
+                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <Input
-                                    label="Cidade *"
-                                    name="property_city"
-                                    value={formData.property_city}
-                                    onChange={handleChange}
-                                    error={errors.property_city}
-                                    className="h-14"
-                                />
-
-                                <Select
-                                    label="Unidade Federativa"
-                                    name="property_state"
-                                    value={formData.property_state}
-                                    onChange={handleChange}
-                                    className="h-14"
-                                    options={[
-                                        { value: '', label: 'Selecione o estado' },
-                                        { value: 'PE', label: 'Pernambuco' },
-                                        { value: 'SP', label: 'São Paulo' },
-                                        { value: 'RJ', label: 'Rio de Janeiro' },
-                                        { value: 'CE', label: 'Ceará' },
-                                        { value: 'BA', label: 'Bahia' },
-                                    ]}
-                                />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <Label>Cidade *</Label>
+                                    <input name="property_city" type="text" value={formData.property_city} onChange={handleChange}
+                                        className={inputClass}
+                                        style={errors.property_city ? inputErrorStyle : inputStyle} />
+                                    <FieldError msg={errors.property_city} />
+                                </div>
+                                <div>
+                                    <Label>Unidade Federativa</Label>
+                                    <select name="property_state" value={formData.property_state} onChange={handleChange}
+                                        className={inputClass} style={inputStyle}>
+                                        <option value="">Selecione o estado</option>
+                                        <option value="PE">Pernambuco</option>
+                                        <option value="SP">São Paulo</option>
+                                        <option value="RJ">Rio de Janeiro</option>
+                                        <option value="CE">Ceará</option>
+                                        <option value="BA">Bahia</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     )}
 
-                    {/* Step 3: Financiamento */}
+                    {/* Step 3: Engenharia de Crédito */}
                     {currentStep === 3 && (
-                        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                            <Input
-                                label="Valor Total Solicitado (LTV) *"
-                                name="requested_amount"
-                                type="number"
-                                value={formData.requested_amount}
-                                onChange={handleChange}
-                                error={errors.requested_amount}
-                                className="h-14"
-                                hint="Projeção: Geralmente até 80% do valor do ativo imobiliário"
-                            />
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <Input
-                                    label="Renda Mensal Comprovada (R$) *"
-                                    name="income"
-                                    type="number"
-                                    value={formData.income}
-                                    onChange={handleChange}
-                                    error={errors.income}
-                                    className="h-14"
-                                />
-
-                                <Select
-                                    label="Regime de Ocupação *"
-                                    name="employment_type"
-                                    value={formData.employment_type}
-                                    onChange={handleChange}
-                                    error={errors.employment_type}
-                                    className="h-14"
-                                    options={[
-                                        { value: '', label: 'Selecione o regime' },
-                                        { value: 'CLT', label: 'Assalariado (CLT)' },
-                                        { value: 'Empresário', label: 'Empresário / Sócio Quotista' },
-                                        { value: 'Autônomo', label: 'Profissional Liberal / Autônomo' },
-                                        { value: 'Servidor Público', label: 'Servidor Público Federal/Est/Mun' },
-                                    ]}
-                                />
+                        <div className="space-y-6">
+                            <div>
+                                <Label>Valor Total Solicitado (LTV) *</Label>
+                                <input name="requested_amount" type="number" value={formData.requested_amount} onChange={handleChange}
+                                    className={inputClass}
+                                    style={errors.requested_amount ? inputErrorStyle : inputStyle} />
+                                <p className="text-xs mt-1" style={{ color: T.textMuted }}>
+                                    Projeção: geralmente até 80% do valor do ativo imobiliário
+                                </p>
+                                <FieldError msg={errors.requested_amount} />
                             </div>
 
-                            <Input
-                                label="Tempo de Atividade no Cargo / Empresa"
-                                name="employment_time"
-                                value={formData.employment_time}
-                                onChange={handleChange}
-                                placeholder="Ex: 5 anos e 2 meses"
-                                className="h-14"
-                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <Label>Renda Mensal Comprovada (R$) *</Label>
+                                    <input name="income" type="number" value={formData.income} onChange={handleChange}
+                                        className={inputClass}
+                                        style={errors.income ? inputErrorStyle : inputStyle} />
+                                    <FieldError msg={errors.income} />
+                                </div>
+                                <div>
+                                    <Label>Regime de Ocupação *</Label>
+                                    <select name="employment_type" value={formData.employment_type} onChange={handleChange}
+                                        className={inputClass}
+                                        style={errors.employment_type ? inputErrorStyle : inputStyle}>
+                                        <option value="">Selecione o regime</option>
+                                        <option value="CLT">Assalariado (CLT)</option>
+                                        <option value="Empresário">Empresário / Sócio Quotista</option>
+                                        <option value="Autônomo">Profissional Liberal / Autônomo</option>
+                                        <option value="Servidor Público">Servidor Público Federal/Est/Mun</option>
+                                    </select>
+                                    <FieldError msg={errors.employment_type} />
+                                </div>
+                            </div>
 
-                            <div className="p-6 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                <div className="flex flex-col md:flex-row items-center gap-8">
+                            <div>
+                                <Label>Tempo de Atividade no Cargo / Empresa</Label>
+                                <input name="employment_time" type="text" value={formData.employment_time} onChange={handleChange}
+                                    placeholder="Ex: 5 anos e 2 meses"
+                                    className={inputClass} style={inputStyle} />
+                            </div>
+
+                            <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                                <div className="flex flex-col md:flex-row items-start gap-6">
                                     <div className="flex-1">
-                                        <Select
-                                            label="Utilizar Saldo de FGTS na Operação?"
-                                            name="has_fgts"
-                                            value={formData.has_fgts}
-                                            onChange={handleChange}
-                                            options={[
-                                                { value: 'no', label: 'Não utilizar FGTS' },
-                                                { value: 'yes', label: 'Sim, utilizar como entrada/amortização' },
-                                            ]}
-                                        />
+                                        <Label>Utilizar Saldo de FGTS na Operação?</Label>
+                                        <select name="has_fgts" value={formData.has_fgts} onChange={handleChange}
+                                            className={inputClass} style={inputStyle}>
+                                            <option value="no">Não utilizar FGTS</option>
+                                            <option value="yes">Sim, utilizar como entrada/amortização</option>
+                                        </select>
                                     </div>
-
                                     {formData.has_fgts === 'yes' && (
-                                        <div className="flex-1 animate-in zoom-in duration-300">
-                                            <Input
-                                                label="Saldo FGTS Disponível (R$)"
-                                                name="fgts_value"
-                                                type="number"
-                                                value={formData.fgts_value}
-                                                onChange={handleChange}
+                                        <div className="flex-1">
+                                            <Label>Saldo FGTS Disponível (R$)</Label>
+                                            <input name="fgts_value" type="number" value={formData.fgts_value} onChange={handleChange}
                                                 placeholder="0.00"
-                                            />
+                                                className={inputClass} style={inputStyle} />
                                         </div>
                                     )}
                                 </div>
@@ -436,83 +408,97 @@ export default function CreditoNovoPage() {
                         </div>
                     )}
 
-                    {/* Step 4: Documentos */}
+                    {/* Step 4: Dossiê */}
                     {currentStep === 4 && (
-                        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-                            <Textarea
-                                label="Observações Técnicas e Contexto"
-                                name="notes"
-                                value={formData.notes}
-                                onChange={handleChange}
-                                rows={8}
-                                placeholder="Insira aqui detalhes sobre a composição de renda, outros proponentes ou particularidades do imóvel..."
-                                className="bg-imi-50/30"
-                            />
+                        <div className="space-y-6">
+                            <div>
+                                <Label>Observações Técnicas e Contexto</Label>
+                                <textarea
+                                    name="notes"
+                                    value={formData.notes}
+                                    onChange={handleChange}
+                                    rows={6}
+                                    placeholder="Insira aqui detalhes sobre a composição de renda, outros proponentes ou particularidades do imóvel..."
+                                    className="w-full px-4 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[var(--bo-accent)] transition-all resize-none"
+                                    style={inputStyle}
+                                />
+                            </div>
 
-                            <div className="p-8 bg-imi-950 rounded-2xl border border-imi-800 shadow-elevated">
+                            <div className="rounded-2xl p-6"
+                                style={{ background: T.elevated, border: `1px solid ${T.border}`, borderLeft: `3px solid ${T.accent}` }}>
                                 <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-[#102A43]/20 flex items-center justify-center shrink-0">
-                                        <Check size={20} className="text-accent-400" />
+                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                                        style={{ background: 'rgba(var(--imi-ai-gold-rgb, 72,101,129),0.15)' }}>
+                                        <Check size={16} style={{ color: T.accent }} />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-black text-white uppercase tracking-widest mb-3">Protocolo de Instrução de Dossiê</p>
-                                        <p className="text-sm text-imi-300 leading-relaxed mb-4">
+                                        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: T.text }}>
+                                            Protocolo de Instrução de Dossiê
+                                        </p>
+                                        <p className="text-xs leading-relaxed mb-4" style={{ color: T.textMuted }}>
                                             Ao salvar esta solicitação, o sistema gerará um número de protocolo. Prepare os seguintes documentos originais digitalizados:
                                         </p>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2">
-                                            <div className="flex items-center gap-2 text-xs text-imi-400">
-                                                <span className="w-1 h-1 bg-[#102A43] rounded-full"></span>
-                                                Documentos de Identidade (RG/CNH)
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs text-imi-400">
-                                                <span className="w-1 h-1 bg-[#102A43] rounded-full"></span>
-                                                Comprovante de Residência Atualizado
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs text-imi-400">
-                                                <span className="w-1 h-1 bg-[#102A43] rounded-full"></span>
-                                                Holerites / DECORE (Últimos 3 meses)
-                                            </div>
-                                            <div className="flex items-center gap-2 text-xs text-imi-400">
-                                                <span className="w-1 h-1 bg-[#102A43] rounded-full"></span>
-                                                IRPF Completo com Recibo de Entrega
-                                            </div>
+                                            {[
+                                                'Documentos de Identidade (RG/CNH)',
+                                                'Comprovante de Residência Atualizado',
+                                                'Holerites / DECORE (Últimos 3 meses)',
+                                                'IRPF Completo com Recibo de Entrega',
+                                            ].map(doc => (
+                                                <div key={doc} className="flex items-center gap-2">
+                                                    <div className="w-1.5 h-1.5 rounded-full" style={{ background: T.accent }} />
+                                                    <span className="text-xs" style={{ color: T.textMuted }}>{doc}</span>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     )}
-                </CardBody>
+                </div>
 
-                <CardFooter className="bg-imi-50/30 p-8 border-t border-imi-100">
-                    <div className="flex items-center justify-between w-full">
-                        <Button
-                            variant="outline"
-                            onClick={handlePrevious}
-                            disabled={currentStep === 1}
-                            icon={<ArrowLeft size={18} />}
-                            className="h-14 px-8 border-imi-200 text-imi-500"
+                {/* Footer navigation */}
+                <div className="px-8 py-5 flex items-center justify-between"
+                    style={{ borderTop: `1px solid ${T.border}` }}>
+                    <button
+                        type="button"
+                        onClick={handlePrevious}
+                        disabled={currentStep === 1}
+                        className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-80"
+                        style={{ border: `1px solid ${T.border}`, background: T.elevated, color: T.text }}
+                    >
+                        <ArrowLeft size={18} />
+                        Etapa Anterior
+                    </button>
+
+                    {currentStep < STEPS.length ? (
+                        <button
+                            type="button"
+                            onClick={handleNext}
+                            className="flex items-center gap-2 h-11 px-8 rounded-xl font-semibold text-white transition-all hover:opacity-90"
+                            style={{ background: T.accent }}
                         >
-                            Etapa Anterior
-                        </Button>
-
-                        {currentStep < steps.length ? (
-                            <Button onClick={handleNext} icon={<ArrowRight size={18} />} className="h-14 px-12 shadow-glow">
-                                Continuar
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={handleSubmit}
-                                loading={isSubmitting}
-                                icon={<Save size={18} />}
-                                className="h-14 px-16 shadow-glow"
-                            >
-                                Efetivar Análise Bancária
-                            </Button>
-                        )}
-                    </div>
-                </CardFooter>
-            </Card>
+                            Continuar
+                            <ArrowRight size={18} />
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
+                            className="flex items-center gap-2 h-11 px-8 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+                            style={{ background: T.accent }}
+                        >
+                            {isSubmitting ? (
+                                <><Loader2 size={18} className="animate-spin" /> Enviando...</>
+                            ) : (
+                                <><Save size={18} /> Efetivar Análise Bancária</>
+                            )}
+                        </button>
+                    )}
+                </div>
+            </div>
         </div>
     )
 }

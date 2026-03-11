@@ -19,6 +19,7 @@ import {
     Loader2,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const origens = [
     'Site IMI', 'Instagram', 'Facebook', 'Google Ads',
@@ -165,31 +166,31 @@ export default function NovoLeadPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                    >
-                        <ArrowLeft size={18} style={{ color: T.textMuted }} />
-                    </button>
-                    <div>
-                        <h1 className="text-xl font-bold" style={{ color: T.text }}>Novo Lead</h1>
-                        <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>Cadastre um novo lead no sistema</p>
+            <PageIntelHeader
+                moduleLabel="LEADS"
+                title="Novo Lead"
+                subtitle="Cadastre um novo lead no sistema"
+                actions={
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => router.back()}
+                            className="w-11 h-11 rounded-xl flex items-center justify-center transition-opacity hover:opacity-80"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                        >
+                            <ArrowLeft size={18} style={{ color: T.textMuted }} />
+                        </button>
+                        {/* Score Badge */}
+                        <div className="px-5 py-3 rounded-xl flex items-center gap-3" style={getScoreColor()}>
+                            <Sparkles size={16} />
+                            <div>
+                                <p className="text-xs font-medium opacity-80">Score</p>
+                                <p className="text-lg font-bold leading-tight">{score}/20</p>
+                            </div>
+                            <p className="text-sm font-bold ml-1">{getScoreLabel()}</p>
+                        </div>
                     </div>
-                </div>
-
-                {/* Score Badge */}
-                <div className="px-5 py-3 rounded-xl flex items-center gap-3" style={getScoreColor()}>
-                    <Sparkles size={18} />
-                    <div>
-                        <p className="text-xs font-medium opacity-80">Score de Qualificação</p>
-                        <p className="text-xl font-bold leading-tight">{score}/20</p>
-                    </div>
-                    <p className="text-sm font-bold ml-1">{getScoreLabel()}</p>
-                </div>
-            </div>
+                }
+            />
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Form */}
@@ -211,7 +212,7 @@ export default function NovoLeadPage() {
                                         style={{ ...inputStyle, border: errors.name ? '1px solid #ef4444' : `1px solid ${T.border}` }}
                                     />
                                 </div>
-                                {errors.name && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12} />{errors.name}</p>}
+                                {errors.name && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: '#E57373' }}><AlertCircle size={12} />{errors.name}</p>}
                             </div>
 
                             {/* Email */}
@@ -227,7 +228,7 @@ export default function NovoLeadPage() {
                                         style={{ ...inputStyle, border: errors.email ? '1px solid #ef4444' : `1px solid ${T.border}` }}
                                     />
                                 </div>
-                                {errors.email && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12} />{errors.email}</p>}
+                                {errors.email && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: '#E57373' }}><AlertCircle size={12} />{errors.email}</p>}
                             </div>
 
                             {/* Telefone */}
@@ -244,7 +245,7 @@ export default function NovoLeadPage() {
                                         style={{ ...inputStyle, border: errors.phone ? '1px solid #ef4444' : `1px solid ${T.border}` }}
                                     />
                                 </div>
-                                {errors.phone && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12} />{errors.phone}</p>}
+                                {errors.phone && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: '#E57373' }}><AlertCircle size={12} />{errors.phone}</p>}
                             </div>
 
                             {/* CPF */}
@@ -283,7 +284,7 @@ export default function NovoLeadPage() {
                                         {origens.map(o => <option key={o} value={o}>{o}</option>)}
                                     </select>
                                 </div>
-                                {errors.origem && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={12} />{errors.origem}</p>}
+                                {errors.origem && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: '#E57373' }}><AlertCircle size={12} />{errors.origem}</p>}
                             </div>
 
                             {/* Tipo de Imóvel */}
@@ -415,8 +416,8 @@ export default function NovoLeadPage() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                                style={{ background: isSubmitting ? '#334E68' : '#1E3A5F', boxShadow: isSubmitting ? 'none' : '0 2px 8px rgba(30,58,95,0.4)' }}
+                                className="w-full h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-opacity hover:opacity-80 disabled:opacity-50"
+                                style={{ background: T.accent }}
                             >
                                 {isSubmitting ? <><Loader2 size={15} className="animate-spin" /> Salvando...</> : <><Save size={15} /> Criar Lead</>}
                             </button>

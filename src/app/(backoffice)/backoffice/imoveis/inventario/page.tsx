@@ -3,35 +3,36 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import {
-    Building2, Bed, Bath, Maximize2, TrendingUp,
-    TrendingDown, Plus, Search, Filter, BarChart2,
+    Building2, Bed, Bath, Maximize2,
+    Plus, Search, Filter, BarChart2,
     Eye, ExternalLink,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-    publicado: { label: 'Publicado', color: '#4ade80', bg: 'rgba(74,222,128,0.12)' },
-    published: { label: 'Publicado', color: '#4ade80', bg: 'rgba(74,222,128,0.12)' },
-    rascunho: { label: 'Rascunho', color: '#facc15', bg: 'rgba(250,204,21,0.12)' },
-    draft: { label: 'Rascunho', color: '#facc15', bg: 'rgba(250,204,21,0.12)' },
-    vendido: { label: 'Sold Out', color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
-    sold: { label: 'Sold Out', color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
-    campanha: { label: 'Em Campanha', color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
-    campaign: { label: 'Em Campanha', color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
+    publicado:  { label: 'Publicado',   color: '#4ade80', bg: 'rgba(74,222,128,0.12)' },
+    published:  { label: 'Publicado',   color: '#4ade80', bg: 'rgba(74,222,128,0.12)' },
+    rascunho:   { label: 'Rascunho',    color: '#facc15', bg: 'rgba(250,204,21,0.12)' },
+    draft:      { label: 'Rascunho',    color: '#facc15', bg: 'rgba(250,204,21,0.12)' },
+    vendido:    { label: 'Sold Out',    color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
+    sold:       { label: 'Sold Out',    color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
+    campanha:   { label: 'Em Campanha', color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
+    campaign:   { label: 'Em Campanha', color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
 }
 
 const TYPE_FILTERS = [
-    { value: 'all', label: 'Todos' },
-    { value: 'apartment', label: 'Residencial' },
+    { value: 'all',        label: 'Todos' },
+    { value: 'apartment',  label: 'Residencial' },
     { value: 'commercial', label: 'Comercial' },
 ]
 
 const VIEW_TABS = [
-    { key: 'listings', label: 'Listagem' },
-    { key: 'performance', label: 'Performance' },
+    { key: 'listings',     label: 'Listagem' },
+    { key: 'performance',  label: 'Performance' },
 ]
 
 export default function InventarioPage() {
@@ -55,7 +56,6 @@ export default function InventarioPage() {
                 .not('development_slug', 'is', null),
         ]).then(([{ data: devs }, { data: pv }]) => {
             setDevelopments(devs || [])
-            // Aggregate view counts by slug
             const counts: Record<string, number> = {}
             for (const row of pv || []) {
                 if (row.development_slug) counts[row.development_slug] = (counts[row.development_slug] || 0) + 1
@@ -89,51 +89,52 @@ export default function InventarioPage() {
         return null
     }
 
-    const getViews = (d: any) => {
-        return viewCounts[d.slug] || d.views || 0
-    }
+    const getViews = (d: any) => viewCounts[d.slug] || d.views || 0
+
+    // Summary counts
+    const totalPublished = developments.filter(d => ['published', 'publicado'].includes(d.status_commercial || d.status_comercial || '')).length
+    const totalSold = developments.filter(d => ['sold', 'vendido'].includes(d.status_commercial || d.status_comercial || '')).length
 
     return (
-        <div style={{ paddingBottom: 40 }}>
+        <div className="space-y-6 pb-10">
             {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 24 }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-                    <div>
-                        <h1 style={{ fontSize: 28, fontWeight: 800, color: T.text, letterSpacing: '-0.5px' }}>Inventário</h1>
-                        <p style={{ fontSize: 12, color: T.textMuted, marginTop: 2 }}>
-                            {loading ? '—' : `${developments.length} empreendimentos cadastrados`}
-                        </p>
-                    </div>
+            <PageIntelHeader
+                moduleLabel="REAL ESTATE INVENTORY"
+                title="Inventário"
+                subtitle={loading ? 'Carregando...' : `${developments.length} empreendimentos · ${totalPublished} publicados · ${totalSold} vendidos`}
+                actions={
                     <Link
                         href="/backoffice/imoveis/novo"
+                        className="flex items-center gap-2 h-10 px-5 rounded-xl font-semibold text-sm text-white transition-all hover:scale-[1.02]"
                         style={{
-                            display: 'flex', alignItems: 'center', gap: 8,
-                            height: 44, padding: '0 20px', borderRadius: 14,
-                            background: 'var(--bo-accent)',
-                            color: '#fff', fontSize: 13, fontWeight: 700,
-                            textDecoration: 'none', boxShadow: '0 4px 16px rgba(59,130,246,0.3)',
+                            background: T.accent,
+                            textDecoration: 'none',
+                            boxShadow: '0 4px 16px rgba(59,130,246,0.3)',
                         }}
                     >
-                        <Plus size={17} /> Novo Imóvel
+                        <Plus size={15} /> Novo Imóvel
                     </Link>
-                </div>
-            </motion.div>
+                }
+            />
 
-            {/* View Tabs + Search */}
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-                style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18, flexWrap: 'wrap' }}>
+            {/* Controls row: view tabs + search */}
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="flex items-center gap-3 flex-wrap"
+            >
                 {/* View tabs */}
-                <div style={{ display: 'flex', gap: 4, background: T.elevated, borderRadius: 12, padding: 4 }}>
+                <div className="flex gap-1 p-1 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     {VIEW_TABS.map(tab => (
                         <button
                             key={tab.key}
                             onClick={() => setActiveView(tab.key as any)}
+                            className="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
                             style={{
-                                padding: '8px 16px', borderRadius: 9, fontSize: 12, fontWeight: 700,
                                 background: activeView === tab.key ? T.surface : 'transparent',
                                 border: activeView === tab.key ? `1px solid ${T.border}` : '1px solid transparent',
                                 color: activeView === tab.key ? T.text : T.textMuted,
-                                cursor: 'pointer', transition: 'all 0.15s',
                             }}
                         >
                             {tab.label}
@@ -142,61 +143,75 @@ export default function InventarioPage() {
                 </div>
 
                 {/* Search */}
-                <div style={{ flex: 1, minWidth: 180, position: 'relative' }}>
-                    <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: T.textMuted }} />
+                <div className="flex-1 min-w-[180px] relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                     <input
                         value={busca}
                         onChange={e => setBusca(e.target.value)}
                         placeholder="Buscar empreendimento..."
+                        className="w-full h-10 pl-9 pr-4 rounded-xl text-sm focus:outline-none"
                         style={{
-                            width: '100%', height: 42, paddingLeft: 36, paddingRight: 14,
-                            borderRadius: 12, background: T.elevated, border: `1px solid ${T.border}`,
-                            color: T.text, fontSize: 13, outline: 'none', boxSizing: 'border-box',
+                            background: T.elevated,
+                            border: `1px solid ${T.border}`,
+                            color: T.text,
                         }}
                     />
                 </div>
             </motion.div>
 
             {/* Type filter chips */}
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-                style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.08 }}
+                className="flex items-center gap-2 flex-wrap"
+            >
                 {TYPE_FILTERS.map(f => (
                     <button
                         key={f.value}
                         onClick={() => setActiveType(f.value)}
+                        className="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
                         style={{
-                            padding: '8px 16px', borderRadius: 20, fontSize: 12, fontWeight: 700,
-                            background: activeType === f.value ? '#3B82F6' : T.elevated,
-                            border: `1px solid ${activeType === f.value ? '#3B82F6' : T.border}`,
+                            background: activeType === f.value ? T.accent : T.elevated,
+                            border: `1px solid ${activeType === f.value ? T.accent : T.border}`,
                             color: activeType === f.value ? '#fff' : T.textMuted,
-                            cursor: 'pointer', transition: 'all 0.15s',
                         }}
                     >
                         {f.label}
                     </button>
                 ))}
-                <div style={{ marginLeft: 'auto' }}>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 6, height: 36, padding: '0 14px', borderRadius: 10, background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
-                        <Filter size={13} /> Filtrar
-                    </button>
-                </div>
+                <button
+                    className="ml-auto flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-semibold"
+                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
+                >
+                    <Filter size={12} /> Filtrar
+                </button>
             </motion.div>
 
-            {/* Loading */}
+            {/* Loading skeleton */}
             {loading && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {[1, 2, 3, 4].map(i => (
-                        <div key={i} style={{ borderRadius: 20, background: T.elevated, border: `1px solid ${T.border}`, height: 340, opacity: 0.5 }} />
+                        <div key={i} className="animate-pulse rounded-2xl h-80"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, opacity: 0.5 }} />
                     ))}
                 </div>
             )}
 
             {/* Empty state */}
             {!loading && filtered.length === 0 && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 300, gap: 12 }}>
-                    <Building2 size={40} style={{ color: T.textMuted, opacity: 0.4 }} />
-                    <p style={{ color: T.textMuted, fontSize: 14 }}>Nenhum empreendimento encontrado</p>
-                    <Link href="/backoffice/imoveis/novo" style={{ color: '#3B82F6', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+                <div className="flex flex-col items-center justify-center py-24 rounded-2xl"
+                    style={{ background: T.surface, border: `1px dashed ${T.border}` }}>
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <Building2 size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
+                    </div>
+                    <p className="font-semibold mb-1" style={{ color: T.text }}>Nenhum empreendimento encontrado</p>
+                    <Link
+                        href="/backoffice/imoveis/novo"
+                        className="mt-3 text-sm font-bold"
+                        style={{ color: T.accent, textDecoration: 'none' }}
+                    >
                         + Cadastrar primeiro imóvel
                     </Link>
                 </div>
@@ -204,7 +219,7 @@ export default function InventarioPage() {
 
             {/* LISTINGS VIEW */}
             {!loading && filtered.length > 0 && activeView === 'listings' && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {filtered.map((d, i) => {
                         const status = getStatus(d)
                         const price = getPrice(d)
@@ -217,52 +232,53 @@ export default function InventarioPage() {
                                 initial={{ opacity: 0, y: 12 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.04 }}
+                                whileHover={{ y: -3, transition: { duration: 0.15 } }}
                             >
                                 <Link href={`/backoffice/imoveis/${d.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-                                    <div style={{
-                                        borderRadius: 20, overflow: 'hidden',
-                                        background: T.elevated, border: `1px solid ${T.border}`,
-                                        transition: 'transform 0.15s, box-shadow 0.15s',
-                                        cursor: 'pointer',
-                                    }}
-                                        onMouseEnter={e => { (e.currentTarget as any).style.transform = 'translateY(-2px)'; (e.currentTarget as any).style.boxShadow = '0 8px 32px rgba(0,0,0,0.2)' }}
-                                        onMouseLeave={e => { (e.currentTarget as any).style.transform = 'translateY(0)'; (e.currentTarget as any).style.boxShadow = 'none' }}
+                                    <div
+                                        className="rounded-2xl overflow-hidden transition-shadow hover:shadow-xl"
+                                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                     >
                                         {/* Image */}
-                                        <div style={{ height: 180, position: 'relative', overflow: 'hidden', background: T.surface }}>
+                                        <div className="relative h-44 overflow-hidden" style={{ background: T.surface }}>
                                             {image ? (
                                                 <Image src={image} alt={d.name} fill className="object-cover" />
                                             ) : (
-                                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <Building2 size={40} style={{ color: T.textMuted, opacity: 0.3 }} />
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                    <Building2 size={36} style={{ color: T.textMuted, opacity: 0.25 }} />
                                                 </div>
                                             )}
                                             {/* Gradient overlay */}
-                                            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.5) 100%)' }} />
+                                            <div className="absolute inset-0"
+                                                style={{ background: 'linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.55) 100%)' }} />
                                             {/* Status badge */}
-                                            <div style={{ position: 'absolute', top: 12, left: 12 }}>
-                                                <span style={{
-                                                    fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em',
-                                                    padding: '4px 8px', borderRadius: 6,
-                                                    background: status.bg, color: status.color,
-                                                    backdropFilter: 'blur(8px)',
-                                                    border: `1px solid ${status.color}40`,
-                                                }}>
+                                            <div className="absolute top-3 left-3">
+                                                <span
+                                                    className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full backdrop-blur-md"
+                                                    style={{
+                                                        background: status.bg,
+                                                        color: status.color,
+                                                        border: `1px solid ${status.color}40`,
+                                                    }}
+                                                >
                                                     {status.label}
                                                 </span>
                                             </div>
-                                            {/* Price badge bottom right */}
+                                            {/* Price */}
                                             {price && (
-                                                <div style={{ position: 'absolute', bottom: 10, right: 12 }}>
-                                                    <span style={{ fontSize: 14, fontWeight: 800, color: '#fff', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+                                                <div className="absolute bottom-3 right-3">
+                                                    <span className="text-sm font-bold text-white"
+                                                        style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}>
                                                         {price}
                                                     </span>
                                                 </div>
                                             )}
                                             {/* Sold out overlay */}
                                             {isSold && (
-                                                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)' }}>
-                                                    <span style={{ fontSize: 20, fontWeight: 900, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.15em', textShadow: '0 2px 8px rgba(0,0,0,0.5)', border: '2px solid #f97316', padding: '4px 12px', borderRadius: 6 }}>
+                                                <div className="absolute inset-0 flex items-center justify-center"
+                                                    style={{ background: 'rgba(0,0,0,0.45)' }}>
+                                                    <span className="text-xl font-black text-orange-400 uppercase tracking-[0.15em]"
+                                                        style={{ border: '2px solid #f97316', padding: '4px 14px', borderRadius: 6 }}>
                                                         Sold Out
                                                     </span>
                                                 </div>
@@ -270,28 +286,27 @@ export default function InventarioPage() {
                                         </div>
 
                                         {/* Info */}
-                                        <div style={{ padding: '14px 16px' }}>
-                                            <p style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 10, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        <div className="p-4">
+                                            <p className="font-bold text-sm mb-2 truncate" style={{ color: T.text }}>
                                                 {d.name}
                                             </p>
-                                            {/* Stats row */}
-                                            <div style={{ display: 'flex', gap: 16 }}>
+                                            <div className="flex items-center gap-4">
                                                 {d.bedrooms && (
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                                        <Bed size={13} style={{ color: T.textMuted }} />
-                                                        <span style={{ fontSize: 12, color: T.textMuted, fontWeight: 500 }}>{d.bedrooms}</span>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Bed size={12} style={{ color: T.textMuted }} />
+                                                        <span className="text-xs font-medium" style={{ color: T.textMuted }}>{d.bedrooms}</span>
                                                     </div>
                                                 )}
                                                 {d.bathrooms && (
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                                        <Bath size={13} style={{ color: T.textMuted }} />
-                                                        <span style={{ fontSize: 12, color: T.textMuted, fontWeight: 500 }}>{d.bathrooms}</span>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Bath size={12} style={{ color: T.textMuted }} />
+                                                        <span className="text-xs font-medium" style={{ color: T.textMuted }}>{d.bathrooms}</span>
                                                     </div>
                                                 )}
                                                 {d.area && (
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                                        <Maximize2 size={13} style={{ color: T.textMuted }} />
-                                                        <span style={{ fontSize: 12, color: T.textMuted, fontWeight: 500 }}>{d.area}m²</span>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Maximize2 size={12} style={{ color: T.textMuted }} />
+                                                        <span className="text-xs font-medium" style={{ color: T.textMuted }}>{d.area}m²</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -306,11 +321,14 @@ export default function InventarioPage() {
 
             {/* PERFORMANCE VIEW */}
             {!loading && filtered.length > 0 && activeView === 'performance' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div className="space-y-2">
                     {/* Header row */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 120px', gap: 8, padding: '0 16px', marginBottom: 4 }}>
+                    <div className="grid grid-cols-[1fr_100px_130px] gap-3 px-4 pb-1">
                         {['Imóvel', 'Visitas (30d)', 'Analytics'].map(h => (
-                            <p key={h} style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{h}</p>
+                            <p key={h} className="text-[9px] font-bold uppercase tracking-[0.12em]"
+                                style={{ color: T.textMuted }}>
+                                {h}
+                            </p>
                         ))}
                     </div>
 
@@ -325,53 +343,57 @@ export default function InventarioPage() {
                                 initial={{ opacity: 0, x: -8 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.04 }}
+                                whileHover={{ x: 2, transition: { duration: 0.12 } }}
                             >
-                                <div style={{
-                                    display: 'grid', gridTemplateColumns: '1fr 100px 120px',
-                                    gap: 8, alignItems: 'center',
-                                    padding: '14px 16px', borderRadius: 16,
-                                    background: T.elevated, border: `1px solid ${T.border}`,
-                                }}>
-                                        {/* Property info */}
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                                            <div style={{ position: 'relative', width: 44, height: 44, borderRadius: 10, overflow: 'hidden', flexShrink: 0, background: T.surface }}>
-                                                {image ? (
-                                                    <Image src={image} alt={d.name} fill className="object-cover" />
-                                                ) : (
-                                                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                        <Building2 size={18} style={{ color: T.textMuted, opacity: 0.4 }} />
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div style={{ minWidth: 0 }}>
-                                                <p style={{ fontSize: 13, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                                    {d.name}
-                                                </p>
-                                                <span style={{ fontSize: 9, fontWeight: 800, color: status.color, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                                                    {status.label}
-                                                </span>
-                                            </div>
+                                <div
+                                    className="grid grid-cols-[1fr_100px_130px] gap-3 items-center px-4 py-3.5 rounded-2xl"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                                >
+                                    {/* Property info */}
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <div className="relative w-11 h-11 rounded-xl overflow-hidden flex-shrink-0"
+                                            style={{ background: T.surface }}>
+                                            {image ? (
+                                                <Image src={image} alt={d.name} fill className="object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center">
+                                                    <Building2 size={16} style={{ color: T.textMuted, opacity: 0.4 }} />
+                                                </div>
+                                            )}
                                         </div>
-
-                                        {/* Views — real from page_views */}
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                            <Eye size={14} style={{ color: T.textMuted }} />
-                                            <p style={{ fontSize: 15, fontWeight: 700, color: T.text }}>
-                                                {views.toLocaleString('pt-BR')}
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-bold truncate" style={{ color: T.text }}>
+                                                {d.name}
                                             </p>
-                                        </div>
-
-                                        {/* Link to full analytics */}
-                                        <div>
-                                            <Link
-                                                href={`/backoffice/imoveis/${d.id}/analytics`}
-                                                style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 700, color: 'var(--bo-accent)', textDecoration: 'none' }}
-                                                onClick={e => e.stopPropagation()}
+                                            <span
+                                                className="text-[9px] font-bold uppercase tracking-wider"
+                                                style={{ color: status.color }}
                                             >
-                                                <BarChart2 size={13} /> Ver analytics <ExternalLink size={10} />
-                                            </Link>
+                                                {status.label}
+                                            </span>
                                         </div>
                                     </div>
+
+                                    {/* Views */}
+                                    <div className="flex items-center gap-2">
+                                        <Eye size={13} style={{ color: T.textMuted }} />
+                                        <span className="text-sm font-bold" style={{ color: T.text }}>
+                                            {views.toLocaleString('pt-BR')}
+                                        </span>
+                                    </div>
+
+                                    {/* Analytics link */}
+                                    <div>
+                                        <Link
+                                            href={`/backoffice/imoveis/${d.id}/analytics`}
+                                            className="flex items-center gap-1.5 text-xs font-bold"
+                                            style={{ color: T.accent, textDecoration: 'none' }}
+                                            onClick={e => e.stopPropagation()}
+                                        >
+                                            <BarChart2 size={12} /> Ver analytics <ExternalLink size={10} />
+                                        </Link>
+                                    </div>
+                                </div>
                             </motion.div>
                         )
                     })}

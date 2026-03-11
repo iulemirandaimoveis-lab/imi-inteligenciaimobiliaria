@@ -7,6 +7,7 @@ import {
     Loader2, TrendingUp, Layers, DollarSign, Target,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -86,72 +87,61 @@ export default function ProjetoDetalhePage() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-start justify-between">
-                <div className="flex items-start gap-4">
-                    <button onClick={() => router.back()}
-                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
-                        style={{ border: `1px solid ${T.border}`, color: T.text, background: T.surface }}>
-                        <ArrowLeft size={20} />
-                    </button>
-                    <div>
-                        <div className="flex items-center gap-3 mb-1">
-                            <h1 className="text-2xl font-bold" style={{ color: T.text }}>{projeto.nome}</h1>
-                            <span className="px-3 py-1 rounded-lg text-xs font-medium" style={{ color: statusInfo.color, background: statusInfo.bg }}>
-                                {statusInfo.label}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm" style={{ color: T.textMuted }}>
-                            <MapPin size={14} />
-                            {localizacao}
-                            {projeto.tipo && <span className="ml-1 opacity-60">· {projeto.tipo}</span>}
-                        </div>
+            <PageIntelHeader
+                title={projeto.nome}
+                subtitle={[localizacao, projeto.tipo].filter(Boolean).join(' · ')}
+                actions={
+                    <div className="flex items-center gap-3">
+                        <span className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide"
+                            style={{ color: statusInfo.color, background: statusInfo.bg }}>
+                            {statusInfo.label}
+                        </span>
+                        <button
+                            onClick={() => router.push(`/backoffice/projetos/${params.id}/editar`)}
+                            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold transition-all hover:brightness-110"
+                            style={{ background: T.accent }}
+                        >
+                            <Edit size={16} />
+                            Editar
+                        </button>
                     </div>
-                </div>
-                <button
-                    onClick={() => router.push(`/backoffice/projetos/${params.id}/editar`)}
-                    className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium transition-colors hover:brightness-110"
-                    style={{ background: T.accent }}
-                >
-                    <Edit size={16} />
-                    Editar
-                </button>
-            </div>
+                }
+            />
 
             {/* KPIs */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <div className="flex items-center gap-2 mb-2">
-                        <DollarSign size={16} style={{ color: T.accent }} />
-                        <p className="text-xs uppercase tracking-wider" style={{ color: T.textMuted }}>VGV</p>
+                <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div className="flex items-center gap-2 mb-3">
+                        <DollarSign size={14} style={{ color: T.accent }} />
+                        <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>VGV</p>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>{fmtCurrency(projeto.vgv)}</p>
                 </div>
-                <div className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <div className="flex items-center gap-2 mb-2">
-                        <Layers size={16} className="text-blue-400" />
-                        <p className="text-xs uppercase tracking-wider" style={{ color: T.textMuted }}>Unidades</p>
+                <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div className="flex items-center gap-2 mb-3">
+                        <Layers size={14} style={{ color: '#60A5FA' }} />
+                        <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Unidades</p>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>{projeto.unidades ?? '—'}</p>
                     {projeto.unidades > 0 && (
-                        <p className="text-xs mt-1 text-green-500">{projeto.unidades_vendidas ?? 0} vendidas</p>
+                        <p className="text-xs mt-1" style={{ color: '#34D399' }}>{projeto.unidades_vendidas ?? 0} vendidas</p>
                     )}
                 </div>
-                <div className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <div className="flex items-center gap-2 mb-2">
-                        <Target size={16} className="text-purple-400" />
-                        <p className="text-xs uppercase tracking-wider" style={{ color: T.textMuted }}>Área Total</p>
+                <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div className="flex items-center gap-2 mb-3">
+                        <Target size={14} style={{ color: '#A78BFA' }} />
+                        <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Área Total</p>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>
                         {projeto.area_total_m2 ? `${Number(projeto.area_total_m2).toLocaleString('pt-BR')} m²` : '—'}
                     </p>
                 </div>
-                <div className="rounded-xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <div className="flex items-center gap-2 mb-2">
-                        <TrendingUp size={16} className="text-green-400" />
-                        <p className="text-xs uppercase tracking-wider" style={{ color: T.textMuted }}>Vendas</p>
+                <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <div className="flex items-center gap-2 mb-3">
+                        <TrendingUp size={14} style={{ color: '#34D399' }} />
+                        <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Vendas</p>
                     </div>
-                    <p className="text-2xl font-bold text-green-500">{progressVendas}%</p>
+                    <p className="text-2xl font-bold" style={{ color: '#34D399' }}>{progressVendas}%</p>
                     <p className="text-xs mt-1" style={{ color: T.textMuted }}>do total vendido</p>
                 </div>
             </div>

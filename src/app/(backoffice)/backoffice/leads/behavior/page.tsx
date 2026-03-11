@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Users, TrendingUp, Phone, ChevronRight, BarChart2, Zap, Clock, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { Users, TrendingUp, Phone, ChevronRight, BarChart2, Zap, ArrowUpRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const TEMP_COLORS = {
     hot:  { bg: 'rgba(255,49,49,0.15)',  text: '#FF3131', border: 'rgba(255,49,49,0.35)',  label: 'HOT'  },
@@ -107,32 +108,28 @@ export default function LeadBehaviorPage() {
         <div className="max-w-2xl mx-auto pb-28">
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <p className="text-[9px] font-black uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>
-                        LEAD TRACKING
-                    </p>
-                    <h1 className="text-[22px] font-bold" style={{ color: T.text, fontFamily: "'Playfair Display', serif" }}>
-                        Behavior Analytics
-                    </h1>
-                </div>
-                {/* Range selector */}
-                <div className="flex rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
-                    {(['today', '7d', '30d'] as RangeKey[]).map(r => (
-                        <button
-                            key={r}
-                            onClick={() => { setLoading(true); setRange(r) }}
-                            className="px-3 h-8 text-[10px] font-bold transition-colors"
-                            style={{
-                                background: range === r ? T.accent : 'transparent',
-                                color: range === r ? '#fff' : T.textMuted,
-                            }}
-                        >
-                            {r === 'today' ? 'Hoje' : r === '7d' ? '7d' : '30d'}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            <PageIntelHeader
+                moduleLabel="LEAD TRACKING"
+                title="Behavior Analytics"
+                subtitle="Análise comportamental e engajamento de leads"
+                actions={
+                    <div className="flex rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                        {(['today', '7d', '30d'] as RangeKey[]).map(r => (
+                            <button
+                                key={r}
+                                onClick={() => { setLoading(true); setRange(r) }}
+                                className="px-3 h-10 text-[10px] font-bold transition-colors"
+                                style={{
+                                    background: range === r ? T.accent : 'transparent',
+                                    color: range === r ? '#fff' : T.textMuted,
+                                }}
+                            >
+                                {r === 'today' ? 'Hoje' : r === '7d' ? '7d' : '30d'}
+                            </button>
+                        ))}
+                    </div>
+                }
+            />
 
             {/* KPI Cards */}
             <div className="grid grid-cols-2 gap-3 mb-6">

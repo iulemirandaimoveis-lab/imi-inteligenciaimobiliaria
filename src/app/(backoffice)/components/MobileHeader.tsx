@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, X, ChevronRight, ChevronLeft } from 'lucide-react'
+import { Bell, X, ChevronRight, ChevronLeft, Settings, LogOut, Moon, Sun, User } from 'lucide-react'
 import Link from 'next/link'
 import ThemeToggle from './ThemeToggle'
+import { createClient } from '@/lib/supabase/client'
 
 interface Notification {
     id: string
@@ -78,15 +79,53 @@ export default function MobileHeader() {
     const router = useRouter()
     const pathname = usePathname()
     const [notifOpen, setNotifOpen] = useState(false)
+    const [accountOpen, setAccountOpen] = useState(false)
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [unreadCount, setUnreadCount] = useState(0)
+    const [userInfo, setUserInfo] = useState<{ name: string; email: string; initials: string } | null>(null)
     const panelRef = useRef<HTMLDivElement>(null)
+    const accountPanelRef = useRef<HTMLDivElement>(null)
 
     const title = getPageTitle(pathname)
 
     // Sub-page detection: ['backoffice', 'leads', '123'] → length 3 → sub-page
     const segments = pathname?.split('/').filter(Boolean) || []
     const isSubPage = segments.length > 2
+
+    // Load company logo — localStorage first, then /api/settings fallback
+    const [companyLogo, setCompanyLogo] = useState<string | null>(null)
+    useEffect(() => {
+        try {
+            const cached = localStorage.getItem('imi-company-logo')
+            if (cached) {
+                setCompanyLogo(cached)
+                return
+            }
+        } catch {}
+
+        // Fallback: fetch from settings API
+        fetch('/api/settings')
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data?.logo_url) {
+                    setCompanyLogo(data.logo_url)
+                    try { localStorage.setItem('imi-company-logo', data.logo_url) } catch {}
+                }
+            })
+            .catch(() => {})
+    }, [])
+
+    // Load Supabase user info for account drawer
+    useEffect(() => {
+        const supabase = createClient()
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            if (user) {
+                const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Admin'
+                const initials = name.split(' ').slice(0, 2).map((n: string) => n[0]).join('').toUpperCase()
+                setUserInfo({ name, email: user.email || '', initials })
+            }
+        })
+    }, [])
 
     // Fetch notifications
     useEffect(() => {
@@ -101,7 +140,7 @@ export default function MobileHeader() {
             .catch(() => { })
     }, [pathname])
 
-    // Close panel on outside click
+    // Close notification panel on outside click
     useEffect(() => {
         if (!notifOpen) return
         const handler = (e: MouseEvent) => {
@@ -113,17 +152,20 @@ export default function MobileHeader() {
         return () => document.removeEventListener('mousedown', handler)
     }, [notifOpen])
 
-    // Close on route change
-    useEffect(() => { setNotifOpen(false) }, [pathname])
-
-    // Load company logo from localStorage (set when settings are saved)
-    const [companyLogo, setCompanyLogo] = useState<string | null>(null)
+    // Close account drawer on outside click
     useEffect(() => {
-        try {
-            const logo = localStorage.getItem('imi-company-logo')
-            if (logo) setCompanyLogo(logo)
-        } catch {}
-    }, [])
+        if (!accountOpen) return
+        const handler = (e: MouseEvent) => {
+            if (accountPanelRef.current && !accountPanelRef.current.contains(e.target as Node)) {
+                setAccountOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handler)
+        return () => document.removeEventListener('mousedown', handler)
+    }, [accountOpen])
+
+    // Close panels on route change
+    useEffect(() => { setNotifOpen(false); setAccountOpen(false) }, [pathname])
 
     const markAllRead = async () => {
         try {
@@ -135,6 +177,13 @@ export default function MobileHeader() {
             setNotifications(prev => prev.map(n => ({ ...n, read: true })))
             setUnreadCount(0)
         } catch { }
+    }
+
+    const handleSignOut = async () => {
+        setAccountOpen(false)
+        const supabase = createClient()
+        await supabase.auth.signOut()
+        router.push('/login')
     }
 
     return (
@@ -163,10 +212,14 @@ export default function MobileHeader() {
                                 <ChevronLeft size={20} style={{ color: 'var(--bo-text)' }} />
                             </motion.button>
                         ) : (
-                            <Link
-                                href="/backoffice/hoje"
+                            <motion.button
+                                whileTap={{ scale: 0.90 }}
+                                onClick={() => setAccountOpen(v => !v)}
                                 className="flex items-center justify-center w-9 h-9 rounded-xl overflow-hidden transition-all"
-                                style={{ background: companyLogo ? 'transparent' : 'var(--bo-elevated)' }}
+                                style={{
+                                    background: companyLogo ? 'transparent' : 'var(--bo-elevated)',
+                                    border: accountOpen ? '1px solid var(--bo-border-gold)' : '1px solid transparent',
+                                }}
                             >
                                 {companyLogo ? (
                                     /* eslint-disable-next-line @next/next/no-img-element */
@@ -183,7 +236,7 @@ export default function MobileHeader() {
                                         IMI
                                     </span>
                                 )}
-                            </Link>
+                            </motion.button>
                         )}
                     </div>
 
@@ -228,6 +281,91 @@ export default function MobileHeader() {
                     </div>
                 </div>
             </div>
+
+            {/* ── Account Drawer (logo tap) ── */}
+            <AnimatePresence>
+                {accountOpen && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="lg:hidden fixed inset-0 z-50"
+                            style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+                            onClick={() => setAccountOpen(false)}
+                        />
+                        <motion.div
+                            ref={accountPanelRef}
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+                            className="lg:hidden fixed top-14 left-3 z-50 rounded-2xl overflow-hidden"
+                            style={{
+                                background: 'var(--bo-elevated)',
+                                border: '1px solid var(--bo-border)',
+                                boxShadow: '0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)',
+                                minWidth: 220,
+                            }}
+                        >
+                            {/* User info */}
+                            <div
+                                className="flex items-center gap-3 px-4 py-4"
+                                style={{ borderBottom: '1px solid var(--bo-border)' }}
+                            >
+                                <div
+                                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+                                    style={{ background: 'var(--bo-accent)' }}
+                                >
+                                    {userInfo?.initials ?? <User size={16} />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold truncate" style={{ color: 'var(--bo-text)' }}>
+                                        {userInfo?.name ?? 'Carregando...'}
+                                    </p>
+                                    <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--bo-text-muted)' }}>
+                                        {userInfo?.email ?? ''}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="p-1.5">
+                                {/* Dark mode toggle row */}
+                                <div
+                                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
+                                    style={{ color: 'var(--bo-text-muted)' }}
+                                >
+                                    <Sun size={14} className="flex-shrink-0" />
+                                    <span className="text-sm flex-1">Aparência</span>
+                                    <ThemeToggle size="sm" />
+                                </div>
+
+                                <Link
+                                    href="/backoffice/settings"
+                                    onClick={() => setAccountOpen(false)}
+                                    className="hover-card flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
+                                    style={{ color: 'var(--bo-text-muted)' }}
+                                >
+                                    <Settings size={14} className="flex-shrink-0" />
+                                    Configurações
+                                </Link>
+
+                                <div className="h-px my-1" style={{ background: 'var(--bo-border)' }} />
+
+                                <button
+                                    onClick={handleSignOut}
+                                    className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
+                                    style={{ color: 'var(--s-cancel)' }}
+                                >
+                                    <LogOut size={14} className="flex-shrink-0" />
+                                    Sair
+                                </button>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
 
             {/* ── Notification Panel ── */}
             <AnimatePresence>

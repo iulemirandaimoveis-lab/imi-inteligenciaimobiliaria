@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { Building2, Plus, MapPin, TrendingUp, Eye, Users, DollarSign, BarChart2, Loader2, X } from 'lucide-react'
+import { Building2, Plus, MapPin, TrendingUp, Users, DollarSign, Loader2, X } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 interface Projeto {
     id: string
@@ -94,21 +95,20 @@ export default function ProjetosPage() {
     }
 
     return (
-        <div className="min-h-screen" style={{ background: T.surface }}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-xl font-bold" style={{ color: T.text }}>Projetos & Empreendimentos</h1>
-                        <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>Portfólio de desenvolvimentos ativos</p>
-                    </div>
+        <div className="space-y-6">
+            <PageIntelHeader
+                title="Projetos & Empreendimentos"
+                subtitle="Portfólio de desenvolvimentos ativos"
+                actions={
                     <button onClick={() => setShowModal(true)}
-                        className="flex items-center gap-2 h-9 px-4 text-white rounded-xl text-sm font-semibold hover:brightness-110 transition"
+                        className="flex items-center gap-2 h-11 px-5 text-white rounded-xl text-sm font-semibold hover:brightness-110 transition"
                         style={{ background: T.accent }}>
                         <Plus size={16} /> Novo Projeto
                     </button>
-                </div>
+                }
+            />
+
+            <div className="space-y-6">
 
                 {/* KPIs */}
                 <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
@@ -120,13 +120,13 @@ export default function ProjetosPage() {
                     ].map(kpi => {
                         const Icon = kpi.icon
                         return (
-                            <div key={kpi.l} className="p-4 rounded-2xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div key={kpi.l} className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                 <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
-                                    style={{ backgroundColor: `${kpi.color}15` }}>
+                                    style={{ backgroundColor: `${kpi.color}18` }}>
                                     <Icon size={18} style={{ color: kpi.color }} />
                                 </div>
-                                <p className="text-xl font-bold" style={{ color: T.text }}>{kpi.v}</p>
-                                <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{kpi.l}</p>
+                                <p className="text-2xl font-bold" style={{ color: T.text }}>{kpi.v}</p>
+                                <p className="text-[10px] font-medium mt-0.5 uppercase tracking-widest" style={{ color: T.textMuted }}>{kpi.l}</p>
                             </div>
                         )
                     })}
@@ -152,10 +152,18 @@ export default function ProjetosPage() {
                         <Loader2 className="animate-spin" size={32} style={{ color: T.accent }} />
                     </div>
                 ) : projetos.length === 0 ? (
-                    <div className="p-12 text-center rounded-2xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <Building2 size={48} className="mx-auto mb-4" style={{ color: T.textMuted }} />
+                    <div className="p-16 text-center rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                            style={{ background: T.surface }}>
+                            <Building2 size={28} style={{ color: T.textMuted, opacity: 0.5 }} />
+                        </div>
                         <h3 className="text-lg font-semibold mb-2" style={{ color: T.text }}>Nenhum projeto encontrado</h3>
-                        <p style={{ color: T.textMuted }}>Crie um novo projeto para começar</p>
+                        <p className="text-sm mb-6" style={{ color: T.textMuted }}>Crie um novo projeto para começar</p>
+                        <button onClick={() => setShowModal(true)}
+                            className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold hover:brightness-110 transition"
+                            style={{ background: T.accent }}>
+                            <Plus size={16} /> Novo Projeto
+                        </button>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">

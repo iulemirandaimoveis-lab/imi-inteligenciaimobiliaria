@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 const inputStyle: React.CSSProperties = {
   background: T.elevated,
@@ -77,10 +78,15 @@ export default function NovaConstrutora() {
     try {
       let logoUrl: string | null = null
       if (logoFile) {
-        const { uploadFile } = await import('@/lib/supabase-storage')
-        const result = await uploadFile(logoFile, 'media', `developers/new-${Date.now()}`)
-        if (result.error) toast.error(`Erro no upload do logo: ${result.error}`)
-        else logoUrl = result.url
+        const fd = new FormData()
+        fd.append('file', logoFile)
+        const uploadRes = await fetch('/api/upload?folder=developers', { method: 'POST', body: fd })
+        const uploadJson = await uploadRes.json()
+        if (!uploadRes.ok || !uploadJson.success) {
+          toast.error(`Erro no upload do logo: ${uploadJson.error || 'falha desconhecida'}`)
+        } else {
+          logoUrl = uploadJson.data?.url || null
+        }
       }
       const response = await fetch('/api/developers', {
         method: 'POST',
@@ -127,17 +133,20 @@ export default function NovaConstrutora() {
   return (
     <div className="space-y-6 max-w-3xl">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <button onClick={() => router.back()}
-          className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
-          style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-          <ArrowLeft size={18} style={{ color: T.textMuted }} />
-        </button>
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: T.text }}>Nova Construtora</h1>
-          <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>Cadastre uma nova parceira</p>
-        </div>
-      </div>
+      <PageIntelHeader
+        moduleLabel="CONSTRUTORAS"
+        title="Nova Construtora"
+        subtitle="Cadastre uma nova parceira no portfólio"
+        actions={
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+          >
+            <ArrowLeft size={18} style={{ color: T.textMuted }} />
+          </button>
+        }
+      />
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo */}

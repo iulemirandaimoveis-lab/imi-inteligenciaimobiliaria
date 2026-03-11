@@ -8,8 +8,8 @@ import {
     Image as ImageIcon, FileText, TrendingUp, Zap,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { T } from '../../../lib/theme'
-import { PageIntelHeader } from '../../../components/ui'
+import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // Lazy-load Remotion Player (client-only, large bundle)
 const RemotionPlayerDynamic = lazy(() =>

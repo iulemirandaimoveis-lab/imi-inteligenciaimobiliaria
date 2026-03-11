@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react'
 import {
     TrendingUp, TrendingDown, BarChart3, Target,
     DollarSign, Users, MousePointerClick, ArrowUpRight,
-    Zap, Loader2,
+    Zap, Loader2, Plus,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
     active:   { label: 'ATIVO',    color: '#22C55E', bg: 'rgba(34,197,94,0.12)' },
@@ -122,38 +123,44 @@ export default function AdsPerformancePage() {
     })
 
     return (
-        <div style={{ maxWidth: 640, paddingBottom: 48 }}>
+        <div style={{ paddingBottom: 48 }}>
 
             {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 24 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <BarChart3 size={20} style={{ color: '#3B82F6' }} />
-                    </div>
-                    <div>
-                        <h1 style={{ fontSize: 24, fontWeight: 800, color: T.text, letterSpacing: '-0.3px' }}>Ads Performance</h1>
-                        <p style={{ fontSize: 10, color: T.textMuted, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>IMI Intelligence OS</p>
-                    </div>
-                </div>
-            </motion.div>
+            <PageIntelHeader
+                moduleLabel="ADS PERFORMANCE"
+                title="Ads Performance"
+                subtitle="Monitoramento em tempo real de campanhas pagas e orgânicas"
+                actions={
+                    <Link href="/backoffice/campanhas/nova"
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: 6,
+                            height: 38, padding: '0 16px', borderRadius: 12,
+                            background: T.accent,
+                            color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                        }}>
+                        <Plus size={14} /> Nova Campanha
+                    </Link>
+                }
+            />
 
             {/* KPI Cards */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
                 style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 24 }}>
                 {[
-                    { label: 'Total Gasto', value: loading ? '...' : fmtBRL(totalSpent) },
-                    { label: 'Total Leads', value: loading ? '...' : totalLeads.toLocaleString('pt-BR') },
-                    { label: 'CPL Médio', value: loading ? '...' : fmtBRL(avgCPL) },
+                    { label: 'Total Gasto', value: loading ? '—' : fmtBRL(totalSpent), accent: T.accent },
+                    { label: 'Total Leads', value: loading ? '—' : totalLeads.toLocaleString('pt-BR'), accent: '#4CAF7D' },
+                    { label: 'CPL Médio', value: loading ? '—' : fmtBRL(avgCPL), accent: '#E8A87C' },
                 ].map((kpi, i) => (
                     <div key={kpi.label} style={{
-                        padding: '14px 14px', borderRadius: 16,
-                        background: i < 2 ? 'rgba(59,130,246,0.1)' : T.elevated,
-                        border: `1px solid ${i < 2 ? 'rgba(59,130,246,0.25)' : T.border}`,
+                        padding: '16px', borderRadius: 16,
+                        background: T.elevated,
+                        border: `1px solid ${T.border}`,
+                        borderLeft: `3px solid ${kpi.accent}`,
                     }}>
-                        <p style={{ fontSize: 9, fontWeight: 700, color: i < 2 ? 'rgba(147,197,253,0.7)' : T.textMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
+                        <p style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>
                             {kpi.label}
                         </p>
-                        <p style={{ fontSize: 18, fontWeight: 800, color: i < 2 ? '#fff' : T.text, letterSpacing: '-0.5px' }}>
+                        <p style={{ fontSize: 20, fontWeight: 800, color: kpi.accent, letterSpacing: '-0.5px', fontFamily: 'monospace' }}>
                             {kpi.value}
                         </p>
                     </div>
@@ -232,7 +239,7 @@ export default function AdsPerformancePage() {
                                     initial={{ opacity: 0, x: -8 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.2 + i * 0.06 }}
-                                    style={{ borderRadius: 18, padding: '16px', background: T.elevated, border: `1px solid ${T.border}` }}
+                                    style={{ borderRadius: 18, padding: '16px', background: T.elevated, border: `1px solid ${T.border}`, borderLeft: `3px solid ${st.color}` }}
                                 >
                                     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 4 }}>
                                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -262,7 +269,7 @@ export default function AdsPerformancePage() {
                                                 <p style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 3 }}>
                                                     {stat.label}
                                                 </p>
-                                                <p style={{ fontSize: 14, fontWeight: 700, color: T.text }}>
+                                                <p style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: 'monospace' }}>
                                                     {stat.value}
                                                 </p>
                                             </div>

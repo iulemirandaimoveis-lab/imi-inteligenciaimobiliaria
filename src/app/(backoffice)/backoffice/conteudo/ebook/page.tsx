@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import {
     BookOpen, Wand2, ImageIcon, Upload, Check, Loader2, ChevronRight,
     ChevronLeft, Sparkles, RefreshCw, Eye, Save, Plus, X, ArrowLeft,
@@ -265,33 +266,29 @@ export default function EbookPage() {
     return (
         <div className="p-4 md:p-8 max-w-5xl mx-auto">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-8">
-                <motion.div
-                    animate={{ rotate: [0, 10, -5, 0] }}
-                    transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-                    className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${T.accent}20`, border: `1px solid ${T.accent}40` }}
-                >
-                    <BookOpen size={22} style={{ color: T.accent }} />
-                </motion.div>
-                <div>
-                    <h1 className="text-2xl font-black" style={{ color: T.text }}>eBook Writer IA</h1>
-                    <p className="text-sm" style={{ color: T.textMuted }}>
-                        Claude Haiku escreve · DALL-E 3 cria a capa
-                    </p>
-                </div>
-                {conteudo && (
-                    <div className="ml-auto hidden sm:flex items-center gap-2">
-                        <button
-                            onClick={() => setPreviewMode(!previewMode)}
-                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all"
-                            style={{ background: T.hover, color: T.textMuted, border: `1px solid ${T.border}` }}
-                        >
-                            <Eye size={13} />
-                            {previewMode ? 'Editor' : 'Preview'}
-                        </button>
-                    </div>
-                )}
+            <div className="mb-8">
+                <PageIntelHeader
+                    moduleLabel="CONTEÚDO"
+                    title="eBook Writer IA"
+                    subtitle="Claude escreve · DALL-E 3 cria a capa · Publicação em um clique"
+                    actions={
+                        conteudo ? (
+                            <button
+                                onClick={() => setPreviewMode(!previewMode)}
+                                className="flex items-center gap-1.5 h-11 px-4 rounded-xl text-xs font-semibold transition-all"
+                                style={{
+                                    background: previewMode ? `${T.accent}18` : T.elevated,
+                                    color: previewMode ? T.accent : T.textMuted,
+                                    border: `1px solid ${previewMode ? T.accent : T.border}`,
+                                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                                }}
+                            >
+                                <Eye size={13} />
+                                {previewMode ? 'Editor' : 'Preview'}
+                            </button>
+                        ) : undefined
+                    }
+                />
             </div>
 
             <StepBar current={step} />

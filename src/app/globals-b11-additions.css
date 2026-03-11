@@ -398,3 +398,177 @@
 .backoffice-root ::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.14);
 }
+
+/* ── PREMIUM CARD — Bloomberg Terminal floating surface ──────── */
+/* Use: className="premium-card" — replaces intel-card for top-tier surfaces */
+.premium-card {
+  background: var(--bo-card);
+  border: 1px solid var(--bo-border);
+  border-radius: 16px;
+  box-shadow: var(--bo-card-shadow);
+  /* Top-edge light illusion — makes card appear to float above surface */
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--bo-transition), box-shadow var(--bo-transition), transform var(--bo-transition);
+}
+
+.premium-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  pointer-events: none;
+  border-radius: 16px 16px 0 0;
+}
+
+.premium-card:hover {
+  border-color: rgba(59,130,246,0.20);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+  transform: translateY(-1px);
+}
+
+/* ── PRECISION STAT SURFACE — KPI number display ─────────────── */
+.stat-surface {
+  background: var(--bo-elevated);
+  border: 1px solid var(--bo-border);
+  border-radius: 12px;
+  box-shadow: var(--bo-shadow);
+  transition: all var(--bo-transition);
+}
+
+.stat-surface:hover {
+  border-color: rgba(59,130,246,0.18);
+  box-shadow: var(--bo-card-shadow);
+}
+
+/* ── TERMINAL ROW — table/list row Bloomberg style ───────────── */
+.terminal-row {
+  border-bottom: 1px solid var(--bo-border);
+  transition: background var(--bo-transition);
+}
+
+.terminal-row:hover {
+  background: var(--bo-hover);
+}
+
+.terminal-row:last-child {
+  border-bottom: none;
+}
+
+/* ── ACCENT BUTTON PREMIUM ───────────────────────────────────── */
+.btn-premium {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--bo-transition);
+  background: var(--bo-accent);
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.08) inset;
+}
+
+.btn-premium:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 4px 16px rgba(59,130,246,0.35), 0 0 0 1px rgba(255,255,255,0.10) inset;
+  transform: translateY(-1px);
+}
+
+.btn-premium:active {
+  transform: translateY(0);
+  filter: brightness(1.0);
+}
+
+/* ── GHOST BUTTON PRECISION ──────────────────────────────────── */
+.btn-ghost-precision {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid var(--bo-border);
+  cursor: pointer;
+  transition: all var(--bo-transition);
+  background: transparent;
+  color: var(--bo-text-muted);
+}
+
+.btn-ghost-precision:hover {
+  background: var(--bo-hover);
+  border-color: var(--bo-border-strong);
+  color: var(--bo-text);
+}
+
+/* ── INPUT PRECISION — terminal-grade input ──────────────────── */
+.input-precision {
+  height: 40px;
+  padding: 0 14px;
+  font-size: 13px;
+  background: var(--bo-surface);
+  border: 1px solid var(--bo-border);
+  border-radius: 8px;
+  color: var(--bo-text);
+  transition: border-color var(--bo-transition), box-shadow var(--bo-transition);
+  outline: none;
+  width: 100%;
+}
+
+.input-precision::placeholder {
+  color: var(--bo-text-muted);
+}
+
+.input-precision:hover {
+  border-color: var(--bo-border-strong);
+}
+
+.input-precision:focus {
+  border-color: var(--bo-accent);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+
+/* ── SECTION DIVIDER PRECISION ───────────────────────────────── */
+.divider-precision {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--bo-border) 15%, var(--bo-border) 85%, transparent 100%);
+  margin: 0;
+}
+
+/* ── DATA LABEL — Bloomberg terminal monospace label ─────────── */
+.data-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--bo-text-muted);
+}
+
+.data-value {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--bo-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── STAT LABEL — small uppercase section label ──────────────── */
+.stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--bo-text-muted);
+  line-height: 1.2;
+}

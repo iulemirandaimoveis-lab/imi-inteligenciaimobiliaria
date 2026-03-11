@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Save, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 
 const CATEGORIES = ['Panorama Anual', 'Dossiê de Bairro', 'Análise Comparativa', 'Estudo de Viabilidade', 'Laudo Técnico']
@@ -47,8 +48,12 @@ export default function NovoRelatorioPage() {
             slug: form.slug || autoSlug(form.title),
         })
         setSaving(false)
-        if (!error) router.push('/backoffice/inteligencia/relatorios')
-        else alert('Erro ao salvar: ' + error.message)
+        if (!error) {
+            toast.success('Relatório salvo com sucesso!')
+            router.push('/backoffice/inteligencia/relatorios')
+        } else {
+            toast.error('Erro ao salvar: ' + error.message)
+        }
     }
 
     const inputClass = "w-full h-10 px-3 rounded-xl text-sm outline-none transition-all"

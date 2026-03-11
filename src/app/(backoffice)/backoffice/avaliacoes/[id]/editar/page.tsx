@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 type Step = 1 | 2 | 3
 
@@ -258,9 +259,10 @@ export default function EditarAvaliacaoPage() {
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Erro ao atualizar')
 
+      toast.success('Avaliação atualizada com sucesso!')
       router.push(`/backoffice/avaliacoes`)
-    } catch (error) {
-      console.error('Erro ao atualizar avaliação:', error)
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao atualizar avaliação')
       setIsSubmitting(false)
     }
   }
@@ -282,28 +284,30 @@ export default function EditarAvaliacaoPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ border: `1px solid ${T.border}` }}
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold" style={{ color: T.text }}>Editar Avaliação Técnica</h1>
-            <p className="text-sm mt-1" style={{ color: T.textMuted }}>Laudo NBR 14653 • Passo {currentStep} de 3</p>
-          </div>
-        </div>
-
-        <div className="px-4 py-2 bg-purple-50 border border-purple-200 rounded-xl">
+      <PageIntelHeader
+        moduleLabel="AVALIAÇÕES"
+        title="Editar Avaliação Técnica"
+        subtitle={`Laudo NBR 14653 · Passo ${currentStep} de 3`}
+        live
+        actions={
           <div className="flex items-center gap-2">
-            <Sparkles size={16} className="text-purple-600" />
-            <span className="text-sm font-medium text-purple-700">Geração com IA</span>
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-xl"
+              style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+            >
+              <Sparkles size={14} style={{ color: 'var(--imi-ai-gold)' }} />
+              <span className="text-sm font-semibold" style={{ color: 'var(--imi-ai-gold)' }}>Geração com IA</span>
+            </div>
+            <button
+              onClick={() => router.back()}
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors hover:opacity-80"
+              style={{ border: `1px solid ${T.border}`, background: T.elevated, color: T.textMuted }}
+            >
+              <ArrowLeft size={18} />
+            </button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Progress Bar */}
       <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
@@ -316,29 +320,41 @@ export default function EditarAvaliacaoPage() {
             return (
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isCompleted ? 'bg-green-500 text-white' :
-                    isActive ? 'bg-purple-500 text-white' : ''
-                    }`}
-                    style={!isCompleted && !isActive ? { background: T.elevated, color: T.textMuted } : undefined}>
-                    {isCompleted ? <Check size={24} /> : <StepIcon size={24} />}
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
+                    style={
+                      isCompleted
+                        ? { background: 'rgba(52,211,153,0.15)', color: '#34d399', border: '1.5px solid rgba(52,211,153,0.35)' }
+                        : isActive
+                        ? { background: T.accentBg, color: T.accent, border: `1.5px solid ${T.accent}` }
+                        : { background: T.elevated, color: T.textMuted, border: `1.5px solid ${T.border}` }
+                    }
+                  >
+                    {isCompleted ? <Check size={22} /> : <StepIcon size={22} />}
                   </div>
-                  <p className={`text-sm font-medium mt-2 ${isActive ? 'text-purple-700' : isCompleted ? 'text-green-700' : ''}`}
-                    style={!isActive && !isCompleted ? { color: T.textMuted } : undefined}>
+                  <p
+                    className="text-sm font-semibold mt-2"
+                    style={{
+                      color: isCompleted ? '#34d399' : isActive ? T.accent : T.textMuted,
+                    }}
+                  >
                     {step.label}
                   </p>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`h-1 flex-1 mx-4 rounded-full transition-all ${currentStep > step.number ? 'bg-green-500' : ''}`}
-                    style={currentStep <= step.number ? { background: T.border } : undefined} />
+                  <div
+                    className="h-0.5 flex-1 mx-4 rounded-full transition-all"
+                    style={{ background: currentStep > step.number ? '#34d399' : T.border }}
+                  />
                 )}
               </div>
             )
           })}
         </div>
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.elevated }}>
           <div
-            className="h-full bg-purple-500 transition-all duration-300"
-            style={{ width: `${progress}%` }}
+            className="h-full transition-all duration-300"
+            style={{ width: `${progress}%`, background: T.accent }}
           />
         </div>
       </div>
@@ -363,12 +379,12 @@ export default function EditarAvaliacaoPage() {
                     onChange={(e) => handleChange('propertyAddress', e.target.value)}
                     placeholder="Ex: Av. Boa Viagem, 3500 - Apto 802, Boa Viagem"
                     rows={3}
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none`}
-                    style={{ background: T.elevated, border: `1px solid ${errors.propertyAddress ? '#fca5a5' : T.border}`, color: T.text }}
+                    className={`w-full pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-0 resize-none`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.propertyAddress ? T.error : T.border}`, color: T.text }}
                   />
                 </div>
                 {errors.propertyAddress && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: T.error }}>
                     <AlertCircle size={14} />
                     {errors.propertyAddress}
                   </p>
@@ -385,8 +401,8 @@ export default function EditarAvaliacaoPage() {
                   <select
                     value={formData.propertyType}
                     onChange={(e) => handleChange('propertyType', e.target.value)}
-                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                    style={{ background: T.elevated, border: `1px solid ${errors.propertyType ? '#fca5a5' : T.border}`, color: T.text }}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.propertyType ? T.error : T.border}`, color: T.text }}
                   >
                     <option value="">Selecione...</option>
                     {tiposImovel.map(tipo => (
@@ -395,7 +411,7 @@ export default function EditarAvaliacaoPage() {
                   </select>
                 </div>
                 {errors.propertyType && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: T.error }}>
                     <AlertCircle size={14} />
                     {errors.propertyType}
                   </p>
@@ -414,12 +430,12 @@ export default function EditarAvaliacaoPage() {
                     value={formData.propertyArea}
                     onChange={(e) => handleChange('propertyArea', e.target.value)}
                     placeholder="95"
-                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                    style={{ background: T.elevated, border: `1px solid ${errors.propertyArea ? '#fca5a5' : T.border}`, color: T.text }}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.propertyArea ? T.error : T.border}`, color: T.text }}
                   />
                 </div>
                 {errors.propertyArea && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: T.error }}>
                     <AlertCircle size={14} />
                     {errors.propertyArea}
                   </p>
@@ -436,7 +452,7 @@ export default function EditarAvaliacaoPage() {
                   value={formData.bedrooms}
                   onChange={(e) => handleChange('bedrooms', e.target.value)}
                   placeholder="3"
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
@@ -451,7 +467,7 @@ export default function EditarAvaliacaoPage() {
                   value={formData.bathrooms}
                   onChange={(e) => handleChange('bathrooms', e.target.value)}
                   placeholder="2"
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
@@ -466,7 +482,7 @@ export default function EditarAvaliacaoPage() {
                   value={formData.parking}
                   onChange={(e) => handleChange('parking', e.target.value)}
                   placeholder="2"
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
@@ -480,7 +496,7 @@ export default function EditarAvaliacaoPage() {
                   type="text"
                   value={formData.city}
                   onChange={(e) => handleChange('city', e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 />
               </div>
@@ -493,7 +509,7 @@ export default function EditarAvaliacaoPage() {
                 <select
                   value={formData.state}
                   onChange={(e) => handleChange('state', e.target.value)}
-                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
                   style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                 >
                   <option value="PE">Pernambuco</option>
@@ -524,12 +540,12 @@ export default function EditarAvaliacaoPage() {
                     value={formData.clientName}
                     onChange={(e) => handleChange('clientName', e.target.value)}
                     placeholder="Ex: Maria Santos Silva"
-                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                    style={{ background: T.elevated, border: `1px solid ${errors.clientName ? '#fca5a5' : T.border}`, color: T.text }}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.clientName ? T.error : T.border}`, color: T.text }}
                   />
                 </div>
                 {errors.clientName && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: T.error }}>
                     <AlertCircle size={14} />
                     {errors.clientName}
                   </p>
@@ -548,12 +564,12 @@ export default function EditarAvaliacaoPage() {
                     value={formData.clientEmail}
                     onChange={(e) => handleChange('clientEmail', e.target.value)}
                     placeholder="email@exemplo.com"
-                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                    style={{ background: T.elevated, border: `1px solid ${errors.clientEmail ? '#fca5a5' : T.border}`, color: T.text }}
+                    className={`w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                    style={{ background: T.elevated, border: `1px solid ${errors.clientEmail ? T.error : T.border}`, color: T.text }}
                   />
                 </div>
                 {errors.clientEmail && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: T.error }}>
                     <AlertCircle size={14} />
                     {errors.clientEmail}
                   </p>
@@ -573,7 +589,7 @@ export default function EditarAvaliacaoPage() {
                     onChange={(e) => handleChange('clientPhone', formatPhone(e.target.value))}
                     placeholder="(81) 99999-9999"
                     maxLength={15}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
@@ -592,7 +608,7 @@ export default function EditarAvaliacaoPage() {
                     onChange={(e) => handleChange('clientCPF', formatCPF(e.target.value))}
                     placeholder="000.000.000-00"
                     maxLength={14}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
@@ -615,8 +631,8 @@ export default function EditarAvaliacaoPage() {
                 <select
                   value={formData.purpose}
                   onChange={(e) => handleChange('purpose', e.target.value)}
-                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                  style={{ background: T.elevated, border: `1px solid ${errors.purpose ? '#fca5a5' : T.border}`, color: T.text }}
+                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                  style={{ background: T.elevated, border: `1px solid ${errors.purpose ? T.error : T.border}`, color: T.text }}
                 >
                   <option value="">Selecione...</option>
                   {finalidades.map(fin => (
@@ -624,7 +640,7 @@ export default function EditarAvaliacaoPage() {
                   ))}
                 </select>
                 {errors.purpose && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: T.error }}>
                     <AlertCircle size={14} />
                     {errors.purpose}
                   </p>
@@ -639,15 +655,15 @@ export default function EditarAvaliacaoPage() {
                 <select
                   value={formData.method}
                   onChange={(e) => handleChange('method', e.target.value)}
-                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500`}
-                  style={{ background: T.elevated, border: `1px solid ${errors.method ? '#fca5a5' : T.border}`, color: T.text }}
+                  className={`w-full h-11 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0`}
+                  style={{ background: T.elevated, border: `1px solid ${errors.method ? T.error : T.border}`, color: T.text }}
                 >
                   {metodosAvaliacao.map(met => (
                     <option key={met} value={met}>{met}</option>
                   ))}
                 </select>
                 {errors.method && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <p className="mt-1 text-sm flex items-center gap-1" style={{ color: T.error }}>
                     <AlertCircle size={14} />
                     {errors.method}
                   </p>
@@ -665,7 +681,7 @@ export default function EditarAvaliacaoPage() {
                     type="date"
                     value={formData.requestDate}
                     onChange={(e) => handleChange('requestDate', e.target.value)}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
@@ -682,7 +698,7 @@ export default function EditarAvaliacaoPage() {
                     type="date"
                     value={formData.deadline}
                     onChange={(e) => handleChange('deadline', e.target.value)}
-                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full h-11 pl-10 pr-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-0"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                   />
                 </div>
@@ -702,7 +718,12 @@ export default function EditarAvaliacaoPage() {
                   onChange={handleDocumentUpload}
                   className="hidden"
                 />
-                <div className="border-2 border-dashed rounded-2xl p-8 text-center hover:border-purple-400 hover:bg-purple-50 transition-all cursor-pointer" style={{ borderColor: T.border }}>
+                <div
+                  className="border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer"
+                  style={{ borderColor: T.border }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = T.accent; (e.currentTarget as HTMLDivElement).style.background = T.accentBg }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = T.border; (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
+                >
                   <Upload size={40} className="mx-auto mb-3" style={{ color: T.textMuted }} />
                   <p className="text-sm font-medium mb-1" style={{ color: T.text }}>
                     Clique para fazer upload
@@ -718,7 +739,7 @@ export default function EditarAvaliacaoPage() {
                 <div className="mt-4 space-y-2">
                   {formData.documents.map((file, index) => (
                     <div key={index} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: T.elevated }}>
-                      <FileText size={20} className="text-purple-600" />
+                      <FileText size={20} style={{ color: T.accent }} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate" style={{ color: T.text }}>{file.name}</p>
                         <p className="text-xs" style={{ color: T.textMuted }}>{formatFileSize(file.size)}</p>
@@ -726,7 +747,8 @@ export default function EditarAvaliacaoPage() {
                       <button
                         type="button"
                         onClick={() => removeDocument(index)}
-                        className="text-red-600 hover:text-red-700"
+                        className="transition-opacity hover:opacity-80"
+                        style={{ color: T.error }}
                       >
                         <X size={18} />
                       </button>
@@ -756,26 +778,28 @@ export default function EditarAvaliacaoPage() {
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-2 h-11 px-6 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition-colors"
+            className="flex items-center gap-2 h-11 px-6 rounded-xl font-semibold text-white transition-all hover:opacity-90"
+            style={{ background: T.accent }}
           >
             Próximo
-            <ArrowRight size={20} />
+            <ArrowRight size={18} />
           </button>
         ) : (
           <button
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex items-center gap-2 h-11 px-6 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 h-11 px-6 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: T.accent }}
           >
             {isSubmitting ? (
               <>
-                <Loader2 size={20} className="animate-spin" />
-                Criando Laudo...
+                <Loader2 size={18} className="animate-spin" />
+                Salvando...
               </>
             ) : (
               <>
-                <Save size={20} />
+                <Save size={18} />
                 Salvar Alterações
               </>
             )}

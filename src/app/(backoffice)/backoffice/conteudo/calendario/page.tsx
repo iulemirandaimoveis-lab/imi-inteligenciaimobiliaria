@@ -8,6 +8,7 @@ import {
     CheckCircle, AlertCircle, Edit, Eye, Loader2, RefreshCw,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import { createClient } from '@/lib/supabase/client'
 
 interface ConteudoItem {
@@ -138,54 +139,63 @@ export default function CalendarioPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold" style={{ color: T.text }}>Calendário Editorial</h1>
-                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>Planejamento e agendamento de conteúdo</p>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setAnoMes({ ano: hoje.getFullYear(), mes: hoje.getMonth() })}
-                        className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
-                        title="Ir para hoje"
-                    >
-                        <RefreshCw size={15} />
-                    </button>
-                    <div className="flex rounded-xl p-1" style={{ background: T.elevated }}>
-                        {(['mes', 'lista'] as const).map(v => (
-                            <button
-                                key={v}
-                                onClick={() => setView(v)}
-                                className="px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors"
-                                style={view === v ? { background: T.surface, color: T.text } : { color: T.textMuted }}
-                            >
-                                {v === 'mes' ? 'Mês' : 'Lista'}
-                            </button>
-                        ))}
+            <PageIntelHeader
+                moduleLabel="CONTEÚDO"
+                title="Calendário Editorial"
+                subtitle="Planejamento e agendamento de conteúdo"
+                actions={
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setAnoMes({ ano: hoje.getFullYear(), mes: hoje.getMonth() })}
+                            className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
+                            title="Ir para hoje"
+                        >
+                            <RefreshCw size={15} />
+                        </button>
+                        <div className="flex rounded-xl p-1" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            {(['mes', 'lista'] as const).map(v => (
+                                <button
+                                    key={v}
+                                    onClick={() => setView(v)}
+                                    className="px-3 py-1.5 rounded-lg text-sm font-semibold capitalize transition-all"
+                                    style={view === v
+                                        ? { background: T.surface, color: T.text, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }
+                                        : { color: T.textMuted }
+                                    }
+                                >
+                                    {v === 'mes' ? 'Mês' : 'Lista'}
+                                </button>
+                            ))}
+                        </div>
+                        <button
+                            onClick={() => router.push('/backoffice/conteudo/novo')}
+                            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold text-white"
+                            style={{ background: T.accent, boxShadow: '0 0 16px rgba(59,130,246,0.28)' }}
+                        >
+                            <Plus size={16} />
+                            Novo
+                        </button>
                     </div>
-                    <button
-                        onClick={() => router.push('/backoffice/conteudo/novo')}
-                        className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium text-white"
-                        style={{ background: T.accent }}
-                    >
-                        <Plus size={16} />
-                        Novo
-                    </button>
-                </div>
-            </div>
+                }
+            />
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total no Mês', value: stats.total, color: T.text, bg: T.elevated },
-                    { label: 'Publicados', value: stats.publicados, color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
-                    { label: 'Agendados', value: stats.agendados, color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
-                    { label: 'Rascunhos', value: stats.rascunhos, color: T.textMuted, bg: T.elevated },
+                    { label: 'Total no Mês', value: stats.total, color: T.text, bg: T.elevated, accent: 'rgba(59,130,246,0.08)' },
+                    { label: 'Publicados', value: stats.publicados, color: '#10B981', bg: 'rgba(16,185,129,0.10)', accent: 'rgba(16,185,129,0.08)' },
+                    { label: 'Agendados', value: stats.agendados, color: '#60A5FA', bg: 'rgba(96,165,250,0.10)', accent: 'rgba(96,165,250,0.08)' },
+                    { label: 'Rascunhos', value: stats.rascunhos, color: T.textMuted, bg: T.elevated, accent: 'rgba(59,130,246,0.04)' },
                 ].map(s => (
-                    <div key={s.label} className="rounded-2xl p-4" style={{ background: s.bg, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>{s.label}</p>
-                        <p className="text-3xl font-bold mt-1" style={{ color: s.color }}>
+                    <div key={s.label} className="rounded-2xl p-4 transition-all" style={{
+                        background: s.bg,
+                        border: `1px solid ${T.border}`,
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                        backgroundImage: `linear-gradient(135deg, ${s.accent} 0%, transparent 60%)`,
+                    }}>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: T.textMuted }}>{s.label}</p>
+                        <p className="text-4xl font-bold mt-1" style={{ color: s.color, fontVariantNumeric: 'tabular-nums' }}>
                             {loading ? '—' : s.value}
                         </p>
                     </div>
@@ -241,7 +251,7 @@ export default function CalendarioPage() {
                     {view === 'mes' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             {/* Calendário */}
-                            <div className="lg:col-span-2 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="lg:col-span-2 rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 50%)' }}>
                                 <div className="flex items-center justify-between mb-6">
                                     <button onClick={mesAnterior} className="w-9 h-9 flex items-center justify-center rounded-xl" style={{ color: T.textMuted }}>
                                         <ChevronLeft size={18} />
@@ -291,7 +301,7 @@ export default function CalendarioPage() {
                             </div>
 
                             {/* Painel lateral */}
-                            <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
                                 {diaSelecionado ? (
                                     <>
                                         <div className="flex items-center justify-between mb-4">
@@ -394,7 +404,7 @@ export default function CalendarioPage() {
                     )}
 
                     {view === 'lista' && (
-                        <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18))', backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.04) 0%, transparent 40%)' }}>
                             {conteudosFiltrados.length === 0 ? (
                                 <div className="text-center py-12">
                                     <Calendar size={40} className="mx-auto mb-3" style={{ color: T.border }} />
@@ -415,7 +425,7 @@ export default function CalendarioPage() {
                                         const dateStr = getDateStr(c)
                                         const hora = getHora(c)
                                         return (
-                                            <div key={c.id} className="p-4 flex items-center justify-between transition-colors" style={{ borderBottom: `1px solid ${T.border}` }}>
+                                            <div key={c.id} className="p-4 flex items-center justify-between group" style={{ borderBottom: `1px solid ${T.border}`, transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)' }}>
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: tCfg.bg }}>
                                                         <TIcon size={18} style={{ color: tCfg.color }} />

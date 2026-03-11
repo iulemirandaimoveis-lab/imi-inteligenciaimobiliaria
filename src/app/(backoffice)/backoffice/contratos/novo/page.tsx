@@ -434,7 +434,7 @@ function NovoContratoInner() {
                             </div>
                             {envioOk
                                 ? <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: '#6BB87B' }} /><p className="text-xs font-semibold" style={{ color: '#6BB87B' }}>Enviado com sucesso!</p></div>
-                                : <button onClick={enviar} disabled={enviando} className="w-full h-12 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2" style={{ background: 'var(--bo-accent)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
+                                : <button onClick={enviar} disabled={enviando} className="w-full rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2" style={{ height: '44px', background: 'var(--bo-accent)', boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}>
                                     {enviando ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                                     {enviando ? 'Enviando...' : `Enviar via ${canal}`}
                                 </button>
@@ -471,13 +471,13 @@ function NovoContratoInner() {
 
             {!gerado && (
                 <div className="flex justify-between pt-2">
-                    <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0} className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold transition-all"
-                        style={{ background: step === 0 ? 'transparent' : T.surface, color: step === 0 ? T.textDim : T.textMuted, border: `1px solid ${step === 0 ? 'transparent' : T.border}` }}>
+                    <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0} className="flex items-center gap-2 px-5 rounded-2xl text-sm font-semibold transition-all"
+                        style={{ height: '44px', background: step === 0 ? 'transparent' : T.surface, color: step === 0 ? T.textDim : T.textMuted, border: `1px solid ${step === 0 ? 'transparent' : T.border}` }}>
                         <ChevronLeft size={16} /> Voltar
                     </button>
                     {step < STEPS.length - 1 && (
-                        <button onClick={() => setStep(s => s + 1)} disabled={!ok()} className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white transition-all"
-                            style={{ background: ok() ? 'var(--bo-accent)' : 'var(--bo-hover)', opacity: ok() ? 1 : 0.5, boxShadow: ok() ? '0 1px 2px rgba(0,0,0,0.1)' : 'none' }}>
+                        <button onClick={() => setStep(s => s + 1)} disabled={!ok()} className="flex items-center gap-2 px-6 rounded-2xl text-sm font-bold text-white transition-all"
+                            style={{ height: '44px', background: ok() ? 'var(--bo-accent)' : 'var(--bo-hover)', opacity: ok() ? 1 : 0.5, boxShadow: ok() ? '0 4px 14px rgba(37,99,235,0.22)' : 'none', border: 'none' }}>
                             Avançar <ChevronRight size={16} />
                         </button>
                     )}

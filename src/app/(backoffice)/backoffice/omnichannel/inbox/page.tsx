@@ -4,14 +4,14 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     MessageCircle, Mail, Instagram, Facebook, Linkedin,
-    Send, Sparkles, RefreshCw, Search, Filter, CheckCheck,
+    Send, Sparkles, RefreshCw, Search, CheckCheck,
     Clock, User, Bot, ChevronRight, X, Loader2, AtSign,
     Phone, Globe, Star, Archive, Reply, MoreHorizontal,
 } from 'lucide-react'
-import { T } from '../../../lib/theme'
+import { T } from '@/app/(backoffice)/lib/theme'
 import { toast } from 'sonner'
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// ── Types ──────────────────────────────────────────────────────────────
 
 type Channel = 'all' | 'whatsapp' | 'instagram' | 'gmail' | 'facebook' | 'linkedin'
 
@@ -39,7 +39,7 @@ const CHANNEL_CFG: Record<Exclude<Channel, 'all'>, { label: string; color: strin
     linkedin:  { label: 'LinkedIn',  color: '#0A66C2', bg: 'rgba(10,102,194,0.12)', icon: Linkedin },
 }
 
-// ── AI Suggest ───────────────────────────────────────────────────────────────
+// ── AI Suggest ─────────────────────────────────────────────────────────
 
 async function suggestReply(msg: Message, channel: string): Promise<string> {
     const res = await fetch('/api/ai/suggest-reply', {
@@ -57,7 +57,7 @@ async function suggestReply(msg: Message, channel: string): Promise<string> {
     return data.reply || data.content || ''
 }
 
-// ── Message Card ─────────────────────────────────────────────────────────────
+// ── Message Card ───────────────────────────────────────────────────────
 
 function MessageCard({
     msg,
@@ -82,10 +82,10 @@ function MessageCard({
             style={{
                 background: selected ? 'var(--bo-active-bg)' : 'transparent',
                 borderLeft: selected ? `3px solid ${cfg.color}` : '3px solid transparent',
-                borderBottom: '1px solid var(--bo-border)',
+                borderBottom: `1px solid ${T.border}`,
             }}
             onClick={onClick}
-            whileHover={{ backgroundColor: 'var(--bo-icon-bg)' }}
+            whileHover={{ backgroundColor: 'var(--bo-hover)' }}
             transition={{ duration: 0.1 }}
         >
             {/* Avatar */}
@@ -103,15 +103,16 @@ function MessageCard({
             {/* Content */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-0.5">
-                    <span className="text-[13px] font-semibold truncate" style={{ color: msg.unread ? 'var(--bo-text)' : 'var(--bo-text-muted)' }}>
+                    <span className="text-[13px] font-semibold truncate"
+                        style={{ color: msg.unread ? T.text : T.textMuted }}>
                         {msg.from}
                     </span>
-                    <span className="text-[10px] flex-shrink-0" style={{ color: 'var(--bo-text-muted)' }}>{timeStr}</span>
+                    <span className="text-[10px] flex-shrink-0" style={{ color: T.textMuted }}>{timeStr}</span>
                 </div>
                 {msg.subject && (
-                    <p className="text-[11px] font-medium truncate mb-0.5" style={{ color: 'var(--bo-text)' }}>{msg.subject}</p>
+                    <p className="text-[11px] font-medium truncate mb-0.5" style={{ color: T.text }}>{msg.subject}</p>
                 )}
-                <p className="text-[11px] truncate" style={{ color: 'var(--bo-text-muted)' }}>{msg.preview}</p>
+                <p className="text-[11px] truncate" style={{ color: T.textMuted }}>{msg.preview}</p>
             </div>
 
             {/* Unread dot */}
@@ -123,7 +124,7 @@ function MessageCard({
     )
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
+// ── Main ───────────────────────────────────────────────────────────────
 
 export default function SocialInboxPage() {
     const [channel, setChannel] = useState<Channel>('all')
@@ -230,6 +231,7 @@ export default function SocialInboxPage() {
                 })
                 toast.success('Mensagem enviada via WhatsApp!')
             } else {
+                // Future feature — intentional toast.info
                 toast.info(`Resposta via ${CHANNEL_CFG[selected.channel].label} em breve!`)
             }
             setReply('')
@@ -244,30 +246,33 @@ export default function SocialInboxPage() {
     const channelCount = (ch: Exclude<Channel, 'all'>) => messages.filter(m => m.channel === ch).length
 
     return (
-        <div className="flex flex-col h-[calc(100vh-80px)] overflow-hidden" style={{ background: 'var(--bo-bg)' }}>
-            {/* Header */}
-            <div className="px-6 py-4 flex items-center justify-between flex-shrink-0"
-                style={{ borderBottom: '1px solid var(--bo-border)' }}>
+        <div className="flex flex-col overflow-hidden rounded-2xl"
+            style={{ height: 'calc(100vh - 80px)', background: T.elevated, border: `1px solid ${T.border}` }}>
+
+            {/* Header bar */}
+            <div className="px-5 py-3.5 flex items-center justify-between flex-shrink-0"
+                style={{ borderBottom: `1px solid ${T.border}` }}>
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl flex items-center justify-center"
                         style={{ background: 'var(--bo-active-bg)' }}>
-                        <MessageCircle size={18} style={{ color: 'var(--bo-accent)' }} />
+                        <MessageCircle size={17} style={{ color: 'var(--bo-accent)' }} />
                     </div>
                     <div>
-                        <h1 className="text-[15px] font-bold" style={{ color: T.text }}>Social Inbox</h1>
+                        <h1 className="text-[14px] font-bold" style={{ color: T.text }}>Social Inbox</h1>
                         <p className="text-[11px]" style={{ color: T.textMuted }}>
                             {unreadCount > 0 ? `${unreadCount} não lidas` : 'Tudo em dia'}
                         </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button onClick={fetchMessages} className="p-2 rounded-lg transition-colors"
-                        style={{ background: 'var(--bo-icon-bg)' }}>
-                        <RefreshCw size={14} style={{ color: T.textMuted }} />
+                    <button onClick={fetchMessages}
+                        className="p-2 rounded-xl transition-colors hover:opacity-70"
+                        style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
+                        <RefreshCw size={13} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
                     </button>
                     {!gmailConnected && (
                         <a href="/api/auth/google"
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold"
                             style={{ background: 'rgba(234,67,53,0.12)', color: '#EA4335' }}>
                             <Mail size={12} />
                             Conectar Gmail
@@ -277,13 +282,13 @@ export default function SocialInboxPage() {
             </div>
 
             {/* Channel tabs */}
-            <div className="flex gap-1 px-4 py-2.5 overflow-x-auto flex-shrink-0"
-                style={{ borderBottom: '1px solid var(--bo-border)', scrollbarWidth: 'none' }}>
+            <div className="flex gap-1 px-4 py-2 overflow-x-auto flex-shrink-0"
+                style={{ borderBottom: `1px solid ${T.border}`, scrollbarWidth: 'none' }}>
                 <button
                     onClick={() => setChannel('all')}
                     className="flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all"
                     style={{
-                        background: channel === 'all' ? 'var(--bo-active-bg)' : 'var(--bo-icon-bg)',
+                        background: channel === 'all' ? 'var(--bo-active-bg)' : 'rgba(255,255,255,0.04)',
                         color: channel === 'all' ? 'var(--bo-accent)' : T.textMuted,
                     }}>
                     Todos {messages.length > 0 && `(${messages.length})`}
@@ -297,7 +302,7 @@ export default function SocialInboxPage() {
                             onClick={() => setChannel(ch)}
                             className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all"
                             style={{
-                                background: channel === ch ? cfg.bg : 'var(--bo-icon-bg)',
+                                background: channel === ch ? cfg.bg : 'rgba(255,255,255,0.04)',
                                 color: channel === ch ? cfg.color : T.textMuted,
                             }}>
                             <Icon size={11} />
@@ -312,15 +317,15 @@ export default function SocialInboxPage() {
             <div className="flex flex-1 overflow-hidden">
                 {/* Message list */}
                 <div className="w-[300px] flex-shrink-0 flex flex-col overflow-hidden"
-                    style={{ borderRight: '1px solid var(--bo-border)' }}>
+                    style={{ borderRight: `1px solid ${T.border}` }}>
                     {/* Search */}
-                    <div className="px-3 py-2 flex-shrink-0" style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                    <div className="px-3 py-2 flex-shrink-0" style={{ borderBottom: `1px solid ${T.border}` }}>
                         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
-                            style={{ background: 'var(--bo-icon-bg)' }}>
-                            <Search size={13} style={{ color: T.textMuted }} />
+                            style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
+                            <Search size={12} style={{ color: T.textMuted }} />
                             <input value={search} onChange={e => setSearch(e.target.value)}
                                 placeholder="Buscar mensagens..."
-                                className="flex-1 bg-transparent text-[12px] outline-none placeholder:opacity-50"
+                                className="flex-1 bg-transparent text-[12px] outline-none placeholder:opacity-40"
                                 style={{ color: T.text }} />
                         </div>
                     </div>
@@ -328,13 +333,13 @@ export default function SocialInboxPage() {
                     <div className="flex-1 overflow-y-auto">
                         {loading ? (
                             <div className="flex items-center justify-center py-16 gap-2">
-                                <Loader2 size={18} className="animate-spin" style={{ color: T.textMuted }} />
+                                <Loader2 size={17} className="animate-spin" style={{ color: T.textMuted }} />
                                 <span className="text-[12px]" style={{ color: T.textMuted }}>Carregando...</span>
                             </div>
                         ) : filtered.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-16 gap-3 px-4 text-center">
                                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                                    style={{ background: 'var(--bo-icon-bg)' }}>
+                                    style={{ background: 'rgba(255,255,255,0.05)' }}>
                                     <MessageCircle size={20} style={{ color: T.textMuted }} />
                                 </div>
                                 <p className="text-[12px]" style={{ color: T.textMuted }}>
@@ -342,9 +347,9 @@ export default function SocialInboxPage() {
                                 </p>
                                 {!gmailConnected && channel === 'all' && (
                                     <a href="/api/auth/google"
-                                        className="text-[11px] font-semibold px-3 py-1.5 rounded-lg"
+                                        className="text-[11px] font-semibold px-3 py-1.5 rounded-xl"
                                         style={{ background: 'rgba(234,67,53,0.12)', color: '#EA4335' }}>
-                                        Conectar Gmail para ver emails
+                                        Conectar Gmail
                                     </a>
                                 )}
                             </div>
@@ -363,19 +368,19 @@ export default function SocialInboxPage() {
                     {!selected ? (
                         <div className="flex flex-col items-center justify-center flex-1 gap-4">
                             <div className="w-16 h-16 rounded-3xl flex items-center justify-center"
-                                style={{ background: 'var(--bo-icon-bg)' }}>
-                                <MessageCircle size={28} style={{ color: T.textMuted }} />
+                                style={{ background: 'rgba(255,255,255,0.04)' }}>
+                                <MessageCircle size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
                             </div>
                             <div className="text-center">
                                 <p className="text-[14px] font-semibold" style={{ color: T.text }}>Selecione uma mensagem</p>
-                                <p className="text-[12px] mt-1" style={{ color: T.textMuted }}>Leia e responda aqui com sugestão de IA</p>
+                                <p className="text-[12px] mt-1" style={{ color: T.textMuted }}>Leia e responda com sugestão de IA</p>
                             </div>
                         </div>
                     ) : (
                         <>
                             {/* Detail header */}
-                            <div className="px-6 py-4 flex items-start gap-3 flex-shrink-0"
-                                style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                            <div className="px-5 py-4 flex items-start gap-3 flex-shrink-0"
+                                style={{ borderBottom: `1px solid ${T.border}` }}>
                                 {(() => {
                                     const cfg = CHANNEL_CFG[selected.channel]
                                     const Icon = cfg.icon
@@ -386,7 +391,7 @@ export default function SocialInboxPage() {
                                                     style={{ background: cfg.bg, color: cfg.color }}>
                                                     {selected.from.charAt(0).toUpperCase()}
                                                 </div>
-                                                <div className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 rounded-full flex items-center justify-center"
+                                                <div className="absolute -bottom-0.5 -right-0.5 rounded-full flex items-center justify-center"
                                                     style={{ background: cfg.color, width: 18, height: 18 }}>
                                                     <Icon size={10} color="white" />
                                                 </div>
@@ -394,7 +399,7 @@ export default function SocialInboxPage() {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 mb-0.5">
                                                     <span className="text-[14px] font-bold" style={{ color: T.text }}>{selected.from}</span>
-                                                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                                                         style={{ background: cfg.bg, color: cfg.color }}>{cfg.label}</span>
                                                 </div>
                                                 {selected.subject && (
@@ -410,8 +415,9 @@ export default function SocialInboxPage() {
                             </div>
 
                             {/* Message body */}
-                            <div className="flex-1 overflow-y-auto px-6 py-4">
-                                <div className="rounded-2xl p-4" style={{ background: 'var(--bo-surface)' }}>
+                            <div className="flex-1 overflow-y-auto px-5 py-4">
+                                <div className="rounded-2xl p-4"
+                                    style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
                                     <p className="text-[13px] leading-relaxed whitespace-pre-wrap" style={{ color: T.text }}>
                                         {selected.body || selected.preview}
                                     </p>
@@ -419,8 +425,9 @@ export default function SocialInboxPage() {
                             </div>
 
                             {/* Reply area */}
-                            <div className="px-4 py-3 flex-shrink-0" style={{ borderTop: '1px solid var(--bo-border)' }}>
-                                <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
+                            <div className="px-4 py-3 flex-shrink-0" style={{ borderTop: `1px solid ${T.border}` }}>
+                                <div className="rounded-2xl overflow-hidden"
+                                    style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
                                     <textarea
                                         ref={replyRef}
                                         value={reply}
@@ -434,9 +441,9 @@ export default function SocialInboxPage() {
                                         }}
                                     />
                                     <div className="flex items-center justify-between px-3 py-2"
-                                        style={{ borderTop: '1px solid var(--bo-border)' }}>
+                                        style={{ borderTop: `1px solid ${T.border}` }}>
                                         <button onClick={handleAiSuggest} disabled={aiLoading}
-                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all disabled:opacity-50"
                                             style={{ background: 'rgba(167,139,250,0.12)', color: '#A78BFA' }}>
                                             {aiLoading ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
                                             Sugerir com IA
@@ -448,7 +455,7 @@ export default function SocialInboxPage() {
                                                 disabled={!reply.trim() || sending}
                                                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[12px] font-semibold transition-all disabled:opacity-40"
                                                 style={{
-                                                    background: reply.trim() ? CHANNEL_CFG[selected.channel].color : 'var(--bo-icon-bg)',
+                                                    background: reply.trim() ? CHANNEL_CFG[selected.channel].color : 'rgba(255,255,255,0.05)',
                                                     color: reply.trim() ? 'white' : T.textMuted,
                                                 }}>
                                                 {sending ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}

@@ -182,11 +182,13 @@ export default function AutomacoesPage() {
                             onClick={() => setShowModal(true)}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '6px',
-                                height: '36px', padding: '0 14px', borderRadius: '10px',
-                                fontSize: '12px', fontWeight: 700, color: '#fff',
-                                background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
-                                border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
-                                boxShadow: '0 0 14px rgba(59,130,246,0.3)',
+                                height: '40px', padding: '0 16px', borderRadius: '12px',
+                                fontSize: '13px', fontWeight: 600, color: '#fff',
+                                background: 'var(--bo-accent)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                cursor: 'pointer', whiteSpace: 'nowrap',
+                                boxShadow: '0 0 20px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
+                                transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                             }}
                         >
                             <Plus size={14} />
@@ -247,42 +249,55 @@ export default function AutomacoesPage() {
                             const color = getColor(wf.trigger_type)
 
                             return (
-                                <div key={wf.id} className="rounded-2xl p-6 transition-all group" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
+                                <div
+                                    key={wf.id}
+                                    className="rounded-2xl p-6 group"
+                                    style={{
+                                        background: 'var(--bo-surface)',
+                                        border: '1px solid var(--bo-border)',
+                                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                                        backgroundImage: `linear-gradient(135deg, ${color}08 0%, transparent 55%)`,
+                                        transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
+                                    }}
+                                >
                                     {/* Header */}
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-start gap-3">
                                             <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                                                style={{ backgroundColor: `${color}15` }}>
-                                                <Icon size={24} style={{ color }} />
+                                                style={{ background: `${color}15`, boxShadow: `inset 0 1px 0 rgba(255,255,255,0.08)` }}>
+                                                <Icon size={22} style={{ color }} />
                                             </div>
                                             <div>
                                                 <h3 className="font-bold mb-1" style={{ color: 'var(--bo-text)' }}>{wf.name}</h3>
                                                 {wf.description && <p className="text-sm" style={{ color: 'var(--bo-text-muted)' }}>{wf.description}</p>}
                                             </div>
                                         </div>
-                                        <span className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 ${wf.is_active
-                                            ? 'bg-green-500/10 text-green-400'
-                                            : 'bg-amber-500/10 text-amber-400'
-                                            }`}>
+                                        <span
+                                            className="px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5"
+                                            style={wf.is_active
+                                                ? { background: 'rgba(52,211,153,0.12)', color: '#34d399', border: '1px solid rgba(52,211,153,0.25)' }
+                                                : { background: 'rgba(251,191,36,0.12)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.25)' }
+                                            }
+                                        >
                                             {wf.is_active ? <Play size={12} /> : <Pause size={12} />}
                                             {wf.is_active ? 'Ativa' : 'Pausada'}
                                         </span>
                                     </div>
 
                                     {/* Trigger */}
-                                    <div className="mb-4 p-3 bg-[var(--bo-hover)] rounded-lg">
+                                    <div className="mb-4 p-3 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
                                         <div className="flex items-center gap-2 mb-1">
-                                            <Zap size={14} style={{ color: 'var(--bo-text-muted)' }} className="" />
-                                            <span className="text-xs font-semibold uppercase" style={{ color: 'var(--bo-text-muted)' }}>Trigger</span>
+                                            <Zap size={12} style={{ color }} />
+                                            <span className="text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: 'var(--bo-text-muted)' }}>Trigger</span>
                                         </div>
-                                        <p className="text-sm font-medium" style={{ color: 'var(--bo-text)' }}>{wf.trigger_type}</p>
+                                        <p className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>{wf.trigger_type}</p>
                                     </div>
 
                                     {/* Config preview */}
                                     {wf.config && typeof wf.config === 'object' && Object.keys(wf.config).length > 0 && (
                                         <div className="mb-4 flex flex-wrap gap-2">
                                             {(wf.config.actions || []).map((a: string, i: number) => (
-                                                <span key={i} className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs font-medium rounded">
+                                                <span key={i} className="px-2 py-1 text-xs font-semibold rounded-lg" style={{ background: 'rgba(59,130,246,0.12)', color: '#60a5fa', border: '1px solid rgba(59,130,246,0.2)' }}>
                                                     {a}
                                                 </span>
                                             ))}
@@ -290,28 +305,39 @@ export default function AutomacoesPage() {
                                     )}
 
                                     {/* Stats */}
-                                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[var(--bo-border)]">
+                                    <div className="grid grid-cols-2 gap-4 pt-4" style={{ borderTop: '1px solid var(--bo-border)' }}>
                                         <div>
-                                            <p className="text-xs mb-1" style={{ color: 'var(--bo-text-muted)' }}>Execuções</p>
-                                            <p className="text-lg font-bold" style={{ color: 'var(--bo-text)' }}>{wf.run_count || 0}</p>
+                                            <p className="text-[10px] font-bold uppercase tracking-[0.1em] mb-1" style={{ color: 'var(--bo-text-muted)' }}>Execuções</p>
+                                            <p className="text-2xl font-bold" style={{ color: 'var(--bo-text)', fontVariantNumeric: 'tabular-nums' }}>{wf.run_count || 0}</p>
                                         </div>
                                         <div>
-                                            <p className="text-xs mb-1" style={{ color: 'var(--bo-text-muted)' }}>Última Execução</p>
-                                            <p className="text-xs font-medium" style={{ color: 'var(--bo-text)' }}>{getTimeAgo(wf.last_run_at)}</p>
+                                            <p className="text-[10px] font-bold uppercase tracking-[0.1em] mb-1" style={{ color: 'var(--bo-text-muted)' }}>Última Exec.</p>
+                                            <p className="text-xs font-semibold" style={{ color: 'var(--bo-text)' }}>{getTimeAgo(wf.last_run_at)}</p>
                                         </div>
                                     </div>
 
                                     {/* Actions */}
-                                    <div className="flex items-center justify-end gap-2 pt-4 border-t border-[var(--bo-border)] mt-4">
-                                        <button onClick={() => toggleActive(wf)}
-                                            className="p-2 hover:bg-[var(--bo-hover)] rounded-lg transition" title={wf.is_active ? 'Pausar' : 'Ativar'}>
+                                    <div className="flex items-center justify-end gap-2 pt-3 mt-3" style={{ borderTop: '1px solid var(--bo-border)' }}>
+                                        <button
+                                            onClick={() => toggleActive(wf)}
+                                            className="p-2 rounded-xl transition-all"
+                                            style={{ background: 'transparent', border: '1px solid transparent' }}
+                                            onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-elevated)')}
+                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                            title={wf.is_active ? 'Pausar' : 'Ativar'}
+                                        >
                                             {wf.is_active
-                                                ? <Pause size={16} className="text-amber-400" />
-                                                : <Play size={16} className="text-green-400" />}
+                                                ? <Pause size={16} style={{ color: '#fbbf24' }} />
+                                                : <Play size={16} style={{ color: '#34d399' }} />}
                                         </button>
-                                        <button onClick={() => handleDelete(wf.id, wf.name)}
-                                            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-2 hover:bg-red-500/10 rounded-lg transition">
-                                            <X size={16} className="text-red-400" />
+                                        <button
+                                            onClick={() => handleDelete(wf.id, wf.name)}
+                                            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-2 rounded-xl transition-all"
+                                            style={{ background: 'transparent' }}
+                                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(248,113,113,0.1)')}
+                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                        >
+                                            <X size={16} style={{ color: '#f87171' }} />
                                         </button>
                                     </div>
                                 </div>
@@ -368,7 +394,7 @@ export default function AutomacoesPage() {
                             </button>
                             <button onClick={handleCreate} disabled={saving || !form.name}
                                 className="flex-1 h-11 text-white rounded-xl font-semibold transition disabled:opacity-40"
-                                style={{ background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)' }}>
+                                style={{ background: 'var(--bo-accent)', boxShadow: '0 0 16px rgba(59,130,246,0.25)' }}>
                                 {saving ? 'Salvando...' : 'Criar Automação'}
                             </button>
                         </div>

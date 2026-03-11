@@ -98,7 +98,7 @@ export default function AvaliacoesPage() {
               onClick={() => router.push('/backoffice/avaliacoes/nova')}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
-                height: '38px', padding: '0 18px', borderRadius: '12px',
+                height: '44px', padding: '0 20px', borderRadius: '14px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
                 background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
@@ -183,10 +183,22 @@ export default function AvaliacoesPage() {
       {loading && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {[1, 2, 3, 4].map(i => (
-            <div key={i} style={{
+            <div key={i} className="animate-pulse" style={{
               background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
-              borderRadius: '14px', height: '80px', animation: 'pulse 1.5s ease-in-out infinite',
-            }} />
+              borderRadius: '14px', padding: '14px',
+              display: 'flex', alignItems: 'center', gap: '12px',
+            }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--bo-elevated)', flexShrink: 0 }} />
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ height: '11px', width: '40%', borderRadius: '6px', background: 'var(--bo-elevated)' }} />
+                <div style={{ height: '13px', width: '65%', borderRadius: '6px', background: 'var(--bo-elevated)' }} />
+                <div style={{ height: '11px', width: '50%', borderRadius: '6px', background: 'var(--bo-elevated)' }} />
+              </div>
+              <div style={{ width: '70px', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' }}>
+                <div style={{ height: '13px', width: '60px', borderRadius: '6px', background: 'var(--bo-elevated)' }} />
+                <div style={{ height: '10px', width: '44px', borderRadius: '6px', background: 'var(--bo-elevated)' }} />
+              </div>
+            </div>
           ))}
         </div>
       )}
@@ -247,13 +259,16 @@ export default function AvaliacoesPage() {
                   {/* Value */}
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     {av.honorarios && (
-                      <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--imi-blue-bright)', marginBottom: '3px' }}>
+                      <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--imi-blue-bright)', marginBottom: '3px', fontVariantNumeric: 'tabular-nums' }}>
                         {fmt(Number(av.honorarios))}
                       </p>
                     )}
-                    <span style={{ fontSize: '10px', fontWeight: 600, color: hc.color }}>{hc.label}</span>
+                    <span style={{
+                      fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '6px',
+                      background: `${hc.color}18`, color: hc.color,
+                    }}>{hc.label}</span>
                     {av.valor_estimado && (
-                      <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)', marginTop: '2px' }}>
+                      <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)', marginTop: '4px', fontVariantNumeric: 'tabular-nums' }}>
                         Vlr: {fmt(Number(av.valor_estimado))}
                       </p>
                     )}
@@ -286,9 +301,10 @@ export default function AvaliacoesPage() {
               onClick={() => router.push('/backoffice/avaliacoes/nova')}
               style={{
                 marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
-                height: '38px', padding: '0 18px', borderRadius: '12px',
+                height: '44px', padding: '0 20px', borderRadius: '14px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
-                background: 'var(--bo-accent)',
+                background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                boxShadow: '0 4px 14px rgba(37,99,235,0.22)',
                 border: 'none', cursor: 'pointer',
               }}
             >

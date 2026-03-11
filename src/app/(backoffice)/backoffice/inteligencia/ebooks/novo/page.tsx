@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Save, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 
 export default function NovoEbookPage() {
@@ -49,8 +50,12 @@ export default function NovoEbookPage() {
             sort_order: Number(form.sort_order),
         })
         setSaving(false)
-        if (!error) router.push('/backoffice/inteligencia/ebooks')
-        else alert('Erro ao salvar: ' + error.message)
+        if (!error) {
+            toast.success('Ebook salvo com sucesso!')
+            router.push('/backoffice/inteligencia/ebooks')
+        } else {
+            toast.error('Erro ao salvar: ' + error.message)
+        }
     }
 
     const inputClass = "w-full h-10 px-3 rounded-xl text-sm outline-none transition-all"

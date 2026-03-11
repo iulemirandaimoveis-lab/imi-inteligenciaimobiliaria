@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 type Step = 1 | 2 | 3 | 4
 
@@ -167,30 +168,30 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
-                        style={{ background: T.card, border: `1px solid ${T.border}` }}
-                    >
-                        <ArrowLeft size={20} style={{ color: T.text }} />
-                    </button>
-                    <div>
-                        <h1 className="text-2xl font-bold flex items-center gap-3" style={{ color: T.text }}>
-                            Gerar Laudo com IA
-                            <span
-                                className="px-3 py-1 rounded-full text-xs font-medium border"
-                                style={{ background: 'rgba(139,92,246,0.12)', color: '#A78BFA', borderColor: 'rgba(139,92,246,0.25)' }}
-                            >
-                                <Sparkles size={11} className="inline mr-1" />
-                                Claude AI
-                            </span>
-                        </h1>
-                        <p className="text-sm mt-1" style={{ color: T.sub }}>Geração automática de laudos NBR 14653</p>
+            <PageIntelHeader
+                moduleLabel="AVALIAÇÕES · INTELIGÊNCIA ARTIFICIAL"
+                title="Gerar Laudo com IA"
+                subtitle="Geração automática de laudos NBR 14653-2 via Claude AI"
+                live
+                actions={
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => router.back()}
+                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            style={{ background: T.card, border: `1px solid ${T.border}` }}
+                        >
+                            <ArrowLeft size={18} style={{ color: T.text }} />
+                        </button>
+                        <span
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium"
+                            style={{ background: 'rgba(139,92,246,0.12)', color: '#A78BFA', border: '1px solid rgba(139,92,246,0.25)' }}
+                        >
+                            <Sparkles size={12} />
+                            Claude AI
+                        </span>
                     </div>
-                </div>
-            </div>
+                }
+            />
 
             {/* Progress Steps */}
             <div className="rounded-2xl p-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>

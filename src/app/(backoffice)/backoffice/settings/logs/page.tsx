@@ -14,6 +14,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 interface AuditLog {
   id: string
@@ -139,11 +140,11 @@ export default function LogsPage() {
   }
 
   const inputBase: React.CSSProperties = {
-    background: T.card,
+    background: T.elevated,
     border: `1px solid ${T.border}`,
     color: T.text,
-    height: '40px',
-    borderRadius: '10px',
+    height: '44px',
+    borderRadius: '12px',
     padding: '0 12px',
     fontSize: '13px',
     outline: 'none',
@@ -174,50 +175,51 @@ export default function LogsPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold" style={{ color: T.text }}>Logs do Sistema</h1>
-          <p className="text-sm mt-1" style={{ color: T.sub }}>Auditoria e histórico de atividades</p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={fetchLogs}
-            className="flex items-center gap-2 h-10 px-4 rounded-xl font-medium text-sm transition-all"
-            style={{ background: T.card, border: `1px solid ${T.border}`, color: T.sub }}
-          >
-            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
-            Atualizar
-          </button>
-          <button
-            className="flex items-center gap-2 h-10 px-4 rounded-xl font-medium text-sm transition-all"
-            style={{ background: T.card, border: `1px solid ${T.border}`, color: T.sub }}
-          >
-            <Download size={15} />
-            Exportar
-          </button>
-        </div>
-      </div>
+      <PageIntelHeader
+        moduleLabel="AUDITORIA DO SISTEMA"
+        title="Logs do Sistema"
+        subtitle="Histórico completo de eventos e auditoria de atividades"
+        actions={
+          <div className="flex gap-2">
+            <button
+              onClick={fetchLogs}
+              className="flex items-center gap-2 h-11 px-4 rounded-xl font-medium text-sm transition-all"
+              style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
+            >
+              <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+              Atualizar
+            </button>
+            <button
+              className="flex items-center gap-2 h-11 px-4 rounded-xl font-medium text-sm transition-all"
+              style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
+            >
+              <Download size={14} />
+              Exportar
+            </button>
+          </div>
+        }
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: 'Total', value: stats.total, color: T.text },
+          { label: 'Total Eventos', value: stats.total, color: T.text },
           { label: 'Sucesso', value: stats.success, color: '#6BB87B' },
           { label: 'Erros', value: stats.errors, color: '#E57373' },
           { label: 'Avisos', value: stats.warnings, color: '#E8A87C' },
         ].map(s => (
-          <div key={s.label} className="rounded-xl p-4" style={{ background: T.card, border: `1px solid ${T.border}` }}>
-            <p className="text-xs mb-1" style={{ color: T.sub }}>{s.label}</p>
+          <div key={s.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+            <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{s.label}</p>
             <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
           </div>
         ))}
       </div>
 
       {/* Filtros */}
-      <div className="rounded-xl p-4" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+      <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: T.sub }} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={14} style={{ color: T.textMuted }} />
             <input
               type="text"
               placeholder="Buscar por usuário, ação ou IP..."
@@ -238,15 +240,83 @@ export default function LogsPage() {
         </div>
       </div>
 
-      {/* Timeline */}
-      <div className="rounded-xl overflow-hidden" style={{ background: T.card, border: `1px solid ${T.border}` }}>
-        {loading ? (
-          <div className="py-16 text-center" style={{ color: T.sub }}>
+      {/* Log Timeline */}
+      <div className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+        {/* Table header */}
+        {!loading && filtered.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead style={{ background: T.surface ?? T.elevated, borderBottom: `1px solid ${T.border}` }}>
+                <tr>
+                  {['Evento', 'Módulo', 'Usuário', 'IP', 'Timestamp'].map(h => (
+                    <th key={h} className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap"
+                      style={{ color: T.textMuted }}>
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((log, idx) => {
+                  const cfg = STATUS_CONFIG[log.status] || STATUS_CONFIG.info
+                  const StatusIcon = cfg.icon
+                  return (
+                    <tr key={log.id}
+                      style={{ borderTop: idx > 0 ? `1px solid ${T.border}` : undefined }}
+                      className="transition-all hover:opacity-90">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+                            style={{ background: cfg.bg }}>
+                            <StatusIcon size={14} style={{ color: cfg.color }} />
+                          </div>
+                          <div>
+                            <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold"
+                              style={{ background: cfg.bg, color: cfg.color }}>
+                              {getActionLabel(log.action)}
+                            </span>
+                            <p className="text-xs mt-1 max-w-[240px] truncate" style={{ color: T.textMuted }}>{log.details}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span className="px-2 py-0.5 rounded-md text-[11px] font-medium whitespace-nowrap"
+                          style={{ background: 'rgba(255,255,255,0.05)', color: T.textMuted }}>
+                          {log.module}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span className="flex items-center gap-1.5 text-xs whitespace-nowrap" style={{ color: T.textMuted }}>
+                          <User size={11} />{log.user}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span className="flex items-center gap-1.5 text-xs whitespace-nowrap font-mono" style={{ color: T.textMuted }}>
+                          <Activity size={11} />{log.ip}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span className="flex items-center gap-1.5 text-xs whitespace-nowrap" style={{ color: T.textMuted }}>
+                          <Clock size={11} />{formatTimestamp(log.created_at)}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {loading && (
+          <div className="py-16 text-center" style={{ color: T.textMuted }}>
             <RefreshCw size={28} className="animate-spin mx-auto mb-3" style={{ opacity: 0.4 }} />
             <p className="text-sm">Carregando logs...</p>
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="py-16 text-center" style={{ color: T.sub }}>
+        )}
+
+        {!loading && filtered.length === 0 && (
+          <div className="py-16 text-center" style={{ color: T.textMuted }}>
             <Activity size={36} className="mx-auto mb-3" style={{ opacity: 0.3 }} />
             <p className="text-sm font-medium mb-1" style={{ color: T.text }}>Nenhum log encontrado</p>
             <p className="text-xs">
@@ -255,70 +325,13 @@ export default function LogsPage() {
                 : 'Tente ajustar os filtros de busca.'}
             </p>
           </div>
-        ) : (
-          <div>
-            {filtered.map((log, idx) => {
-              const cfg = STATUS_CONFIG[log.status] || STATUS_CONFIG.info
-              const StatusIcon = cfg.icon
-              return (
-                <div
-                  key={log.id}
-                  className="p-5 transition-all hover:opacity-90"
-                  style={{ borderBottom: idx < filtered.length - 1 ? `1px solid ${T.border}` : 'none' }}
-                >
-                  <div className="flex items-start gap-4">
-                    <div
-                      className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-                      style={{ background: cfg.bg }}
-                    >
-                      <StatusIcon size={17} style={{ color: cfg.color }} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                        <span
-                          className="px-2 py-0.5 rounded-md text-xs font-semibold"
-                          style={{ background: cfg.bg, color: cfg.color }}
-                        >
-                          {getActionLabel(log.action)}
-                        </span>
-                        <span
-                          className="px-2 py-0.5 rounded-md text-xs font-medium"
-                          style={{ background: 'rgba(255,255,255,0.05)', color: T.sub }}
-                        >
-                          {log.module}
-                        </span>
-                      </div>
-                      <p className="text-sm font-medium mb-1.5" style={{ color: T.text }}>{log.details}</p>
-                      <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: T.sub }}>
-                        <span className="flex items-center gap-1">
-                          <User size={11} />
-                          {log.user}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Activity size={11} />
-                          {log.ip}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock size={11} />
-                          {formatTimestamp(log.created_at)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
         )}
       </div>
 
       {/* Info */}
-      <div
-        className="rounded-xl p-4"
-        style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}
-      >
+      <div className="rounded-2xl p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
         <p className="text-sm" style={{ color: '#8CA4B8' }}>
-          💡 <strong>Retenção:</strong> Logs são mantidos por 90 dias. Exportações são recomendadas para auditoria de longo prazo.
+          <strong style={{ color: T.text }}>Retenção:</strong> Logs são mantidos por 90 dias. Exportações são recomendadas para auditoria de longo prazo.
         </p>
       </div>
     </div>

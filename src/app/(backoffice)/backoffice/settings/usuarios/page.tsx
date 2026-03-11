@@ -7,6 +7,7 @@ import {
   Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit, MoreVertical,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -33,7 +34,6 @@ export default function UsuariosPage() {
           phone: u.phone || '',
           role: u.role || 'ADMIN',
           avatar: (u.name || u.email || 'U').substring(0, 2).toUpperCase(),
-          // status: derive from `active` field if present, otherwise default to 'ativo'
           status: u.active === false ? 'inativo' : 'ativo',
           ultimoAcesso: u.updatedAt || u.createdAt,
           criadoEm: u.createdAt,
@@ -87,8 +87,8 @@ export default function UsuariosPage() {
   }
 
   const inputStyle: React.CSSProperties = {
-    background: T.card, border: `1px solid ${T.border}`, color: T.text,
-    height: '42px', borderRadius: '10px', padding: '0 12px', fontSize: '13px', outline: 'none',
+    background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
+    height: '44px', borderRadius: '12px', padding: '0 12px', fontSize: '13px', outline: 'none',
   }
 
   const STAT_CARDS = [
@@ -104,42 +104,48 @@ export default function UsuariosPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold" style={{ color: T.text }}>Usuários</h1>
-          <p className="text-sm mt-1" style={{ color: T.sub }}>Gerencie usuários e acessos</p>
-        </div>
-        <button
-          onClick={() => router.push('/backoffice/settings/usuarios/novo')}
-          className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium text-sm transition-all"
-          style={{ background: '#1E3A5F', color: 'white' }}
-        >
-          <Plus size={18} />
-          Novo Usuário
-        </button>
-      </div>
+      <PageIntelHeader
+        moduleLabel="GESTÃO DE ACESSO"
+        title="Usuários"
+        subtitle="Gerencie usuários, roles e permissões de acesso ao sistema"
+        actions={
+          <button
+            onClick={() => router.push('/backoffice/settings/usuarios/novo')}
+            className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold text-sm transition-all"
+            style={{ background: 'var(--bo-accent)', color: 'white' }}
+          >
+            <Plus size={16} />
+            Novo Usuário
+          </button>
+        }
+      />
 
       {loading ? (
-        <div className="py-20 flex justify-center text-sm" style={{ color: T.sub }}>
-          Carregando usuários...
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-2xl p-4 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, height: 80 }}>
+              <div className="h-2.5 rounded mb-3" style={{ background: 'var(--bo-hover)', width: '50%' }} />
+              <div className="h-7 rounded" style={{ background: 'var(--bo-hover)', width: '40%' }} />
+            </div>
+          ))}
         </div>
       ) : (
         <>
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
             {STAT_CARDS.map(s => (
-              <div key={s.label} className="rounded-xl p-4" style={{ background: T.card, border: `1px solid ${T.border}` }}>
-                <p className="text-xs mb-1" style={{ color: T.sub }}>{s.label}</p>
+              <div key={s.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{s.label}</p>
                 <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
               </div>
             ))}
           </div>
 
           {/* Filtros */}
-          <div className="rounded-xl p-4" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+          <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: T.sub }} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={14} style={{ color: T.textMuted }} />
                 <input
                   type="text"
                   placeholder="Buscar por nome ou email..."
@@ -173,11 +179,12 @@ export default function UsuariosPage() {
           </div>
 
           {/* Lista */}
-          <div className="rounded-xl overflow-hidden" style={{ background: T.card, border: `1px solid ${T.border}` }}>
+          <div className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
             {filteredUsuarios.length === 0 ? (
-              <div className="py-16 text-center" style={{ color: T.sub }}>
-                <Shield size={32} className="mx-auto mb-3" style={{ opacity: 0.3 }} />
-                <p className="text-sm">Nenhum usuário encontrado</p>
+              <div className="py-20 text-center" style={{ color: T.textMuted }}>
+                <Shield size={36} className="mx-auto mb-4" style={{ opacity: 0.25 }} />
+                <p className="text-sm font-medium mb-1" style={{ color: T.text }}>Nenhum usuário encontrado</p>
+                <p className="text-xs">Tente ajustar os filtros de busca</p>
               </div>
             ) : (
               <div>
@@ -193,37 +200,37 @@ export default function UsuariosPage() {
                         {/* Avatar */}
                         <div
                           className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
-                          style={{ background: '#1E3A5F', color: '#8CA4B8' }}
+                          style={{ background: 'rgba(51,78,104,0.4)', color: '#8CA4B8' }}
                         >
                           {user.avatar}
                         </div>
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-1">
+                          <div className="flex items-center gap-2.5 mb-1">
                             <h3 className="font-semibold text-sm" style={{ color: T.text }}>{user.name}</h3>
                             <span
-                              className="px-2 py-0.5 rounded-md text-xs font-medium border"
+                              className="px-2 py-0.5 rounded-md text-[11px] font-bold border"
                               style={{ background: badge.bg, color: badge.color, borderColor: badge.border }}
                             >
                               {user.role}
                             </span>
                             {user.status === 'ativo'
-                              ? <CheckCircle size={15} style={{ color: '#6BB87B' }} />
-                              : <XCircle size={15} style={{ color: T.sub }} />
+                              ? <CheckCircle size={14} style={{ color: '#6BB87B' }} />
+                              : <XCircle size={14} style={{ color: T.textMuted }} />
                             }
                           </div>
-                          <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: T.sub }}>
+                          <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: T.textMuted }}>
                             <span className="flex items-center gap-1">
-                              <Mail size={12} />{user.email}
+                              <Mail size={11} />{user.email}
                             </span>
                             {user.phone && (
                               <span className="flex items-center gap-1">
-                                <Phone size={12} />{user.phone}
+                                <Phone size={11} />{user.phone}
                               </span>
                             )}
                             <span className="flex items-center gap-1">
-                              <Clock size={12} />
+                              <Clock size={11} />
                               Último acesso: {getTimeAgo(user.ultimoAcesso)}
                             </span>
                           </div>
@@ -233,16 +240,16 @@ export default function UsuariosPage() {
                         <div className="flex items-center gap-1 flex-shrink-0">
                           <button
                             onClick={() => router.push(`/backoffice/settings/usuarios/${user.id}`)}
-                            className="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
                             style={{ background: 'transparent', border: `1px solid ${T.border}` }}
                           >
-                            <Edit size={15} style={{ color: T.sub }} />
+                            <Edit size={14} style={{ color: T.textMuted }} />
                           </button>
                           <button
-                            className="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
                             style={{ background: 'transparent', border: `1px solid ${T.border}` }}
                           >
-                            <MoreVertical size={15} style={{ color: T.sub }} />
+                            <MoreVertical size={14} style={{ color: T.textMuted }} />
                           </button>
                         </div>
                       </div>

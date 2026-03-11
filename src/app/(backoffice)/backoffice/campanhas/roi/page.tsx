@@ -10,6 +10,7 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const CHANNEL_ICONS: Record<string, React.ElementType> = {
     instagram: Instagram,
@@ -209,43 +210,40 @@ export default function CampanhasROIPage() {
     return (
         <div className="space-y-6 pb-8">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                    >
-                        <ArrowLeft size={16} style={{ color: T.textMuted }} />
-                    </button>
-                    <div>
-                        <h1 className="text-xl font-bold" style={{ color: T.text }}>ROI das Campanhas</h1>
-                        <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>
-                            Análise de retorno sobre investimento — dados reais
-                        </p>
+            <PageIntelHeader
+                moduleLabel="CAMPANHAS"
+                title="ROI das Campanhas"
+                subtitle="Análise de retorno sobre investimento — dados reais"
+                actions={
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => router.back()}
+                            className="w-11 h-11 flex items-center justify-center rounded-xl transition-opacity hover:opacity-80"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                        >
+                            <ArrowLeft size={16} style={{ color: T.textMuted }} />
+                        </button>
+                        <button
+                            onClick={() => setRefreshKey(k => k + 1)}
+                            className="w-11 h-11 flex items-center justify-center rounded-xl transition-opacity hover:opacity-80"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                            title="Atualizar dados"
+                        >
+                            <RefreshCw size={14} style={{ color: T.textMuted }} />
+                        </button>
+                        <select
+                            value={period}
+                            onChange={e => setPeriod(e.target.value as Period)}
+                            className="h-11 px-3 rounded-xl text-sm focus:outline-none"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                        >
+                            {(Object.entries(PERIOD_LABELS) as [Period, string][]).map(([k, v]) => (
+                                <option key={k} value={k}>{v}</option>
+                            ))}
+                        </select>
                     </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setRefreshKey(k => k + 1)}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                        title="Atualizar dados"
-                    >
-                        <RefreshCw size={14} style={{ color: T.textMuted }} />
-                    </button>
-                    <select
-                        value={period}
-                        onChange={e => setPeriod(e.target.value as Period)}
-                        className="h-10 px-3 rounded-xl text-sm focus:outline-none"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                    >
-                        {(Object.entries(PERIOD_LABELS) as [Period, string][]).map(([k, v]) => (
-                            <option key={k} value={k}>{v}</option>
-                        ))}
-                    </select>
-                </div>
-            </div>
+                }
+            />
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
@@ -310,7 +308,8 @@ export default function CampanhasROIPage() {
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className={`text-base font-bold ${isPositive ? 'text-green-500' : 'text-red-400'}`}>
+                                                    <p className="text-base font-bold"
+                                                        style={{ color: isPositive ? '#6BB87B' : '#E57373' }}>
                                                         {fmtROI(canal.avgRoi)}
                                                     </p>
                                                     <p className="text-xs" style={{ color: T.textMuted }}>{canal.conversions} conv.</p>
@@ -318,8 +317,8 @@ export default function CampanhasROIPage() {
                                             </div>
                                             <div className="h-2 rounded-full overflow-hidden" style={{ background: T.surface }}>
                                                 <div
-                                                    className={`h-full rounded-full transition-all duration-500 ${isPositive ? 'bg-green-500' : 'bg-red-400'}`}
-                                                    style={{ width: `${barW}%` }}
+                                                    className="h-full rounded-full transition-all duration-500"
+                                                    style={{ width: `${barW}%`, background: isPositive ? '#6BB87B' : '#E57373' }}
                                                 />
                                             </div>
                                         </div>
@@ -334,7 +333,7 @@ export default function CampanhasROIPage() {
                         {/* Top performers */}
                         <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center gap-2 mb-4">
-                                <Award size={18} className="text-green-500" />
+                                <Award size={18} style={{ color: '#6BB87B' }} />
                                 <h2 className="text-base font-bold" style={{ color: T.text }}>Top Performers</h2>
                             </div>
                             {topPerformers.length === 0 ? (
@@ -342,15 +341,15 @@ export default function CampanhasROIPage() {
                             ) : (
                                 <div className="space-y-3">
                                     {topPerformers.map((camp, idx) => (
-                                        <div key={camp.id} className="p-3 rounded-xl" style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)' }}>
+                                        <div key={camp.id} className="p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.06)', border: '1px solid rgba(107,184,123,0.15)' }}>
                                             <div className="flex items-start justify-between mb-1">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: '#16a34a' }}>
+                                                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: '#6BB87B', color: '#0F0F1E' }}>
                                                         {idx + 1}
                                                     </div>
                                                     <p className="text-sm font-semibold line-clamp-1" style={{ color: T.text }}>{camp.name}</p>
                                                 </div>
-                                                <p className="text-sm font-bold text-green-500 ml-2 shrink-0">{fmtROI(camp.roi)}</p>
+                                                <p className="text-sm font-bold ml-2 shrink-0" style={{ color: '#6BB87B' }}>{fmtROI(camp.roi)}</p>
                                             </div>
                                             <p className="text-xs pl-7" style={{ color: T.textMuted }}>
                                                 {fmtBRL(Number(camp.spent))} investido · {camp.leads || 0} leads · {camp.conversions || 0} conv.
@@ -364,25 +363,26 @@ export default function CampanhasROIPage() {
                         {/* Needs attention */}
                         <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div className="flex items-center gap-2 mb-4">
-                                <AlertTriangle size={18} className="text-orange-500" />
+                                <AlertTriangle size={18} style={{ color: '#E8A87C' }} />
                                 <h2 className="text-base font-bold" style={{ color: T.text }}>Requerem Atenção</h2>
                             </div>
                             {bottomPerformers.length === 0 ? (
-                                <p className="text-sm text-center py-6" style={{ color: T.textMuted }}>Todas campanhas com bom ROI 🎉</p>
+                                <p className="text-sm text-center py-6" style={{ color: T.textMuted }}>Todas campanhas com bom ROI</p>
                             ) : (
                                 <div className="space-y-3">
                                     {bottomPerformers.map(camp => (
-                                        <div key={camp.id} className="p-3 rounded-xl" style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)' }}>
+                                        <div key={camp.id} className="p-3 rounded-xl" style={{ background: 'rgba(232,168,124,0.06)', border: '1px solid rgba(232,168,124,0.15)' }}>
                                             <div className="flex items-start justify-between mb-1">
                                                 <p className="text-sm font-semibold line-clamp-1" style={{ color: T.text }}>{camp.name}</p>
-                                                <p className={`text-sm font-bold ml-2 shrink-0 ${camp.roi < 0 ? 'text-red-400' : 'text-orange-500'}`}>
+                                                <p className="text-sm font-bold ml-2 shrink-0"
+                                                    style={{ color: camp.roi < 0 ? '#E57373' : '#E8A87C' }}>
                                                     {fmtROI(camp.roi)}
                                                 </p>
                                             </div>
                                             <p className="text-xs" style={{ color: T.textMuted }}>
                                                 {fmtBRL(Number(camp.spent))} investido · {camp.leads || 0} leads · Canal: {CHANNEL_LABELS[(camp.channel || '').toLowerCase()] ?? camp.channel}
                                             </p>
-                                            <p className="text-xs text-orange-500 mt-1">💡 Considerar otimização ou realocação de budget</p>
+                                            <p className="text-xs mt-1" style={{ color: '#E8A87C' }}>Considerar otimização ou realocação de budget</p>
                                         </div>
                                     ))}
                                 </div>
@@ -407,9 +407,10 @@ export default function CampanhasROIPage() {
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-sm font-semibold w-16" style={{ color: T.text }}>{m.month}</span>
                                                     {trend
-                                                        ? <TrendingUp size={12} className="text-green-500" />
-                                                        : <TrendingDown size={12} className="text-red-400" />}
-                                                    <span className={`text-xs font-medium ${isPositive ? 'text-green-500' : 'text-red-400'}`}>
+                                                        ? <TrendingUp size={12} style={{ color: '#6BB87B' }} />
+                                                        : <TrendingDown size={12} style={{ color: '#E57373' }} />}
+                                                    <span className="text-xs font-medium"
+                                                        style={{ color: isPositive ? '#6BB87B' : '#E57373' }}>
                                                         {fmtROI(m.avgRoi)}
                                                     </span>
                                                 </div>
@@ -419,8 +420,8 @@ export default function CampanhasROIPage() {
                                             </div>
                                             <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.surface }}>
                                                 <div
-                                                    className={`h-full rounded-full transition-all duration-500 ${isPositive ? 'bg-green-500' : 'bg-red-400'}`}
-                                                    style={{ width: `${barW}%` }}
+                                                    className="h-full rounded-full transition-all duration-500"
+                                                    style={{ width: `${barW}%`, background: isPositive ? '#6BB87B' : '#E57373' }}
                                                 />
                                             </div>
                                         </div>
@@ -432,11 +433,13 @@ export default function CampanhasROIPage() {
 
                     {/* Insights */}
                     {insights.length > 0 && (
-                        <div className="rounded-xl p-5" style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.15)' }}>
-                            <h3 className="text-sm font-bold mb-3" style={{ color: '#60A5FA' }}>💡 Insights Automáticos</h3>
+                        <div className="rounded-2xl p-5" style={{ background: `${T.elevated}`, border: `1px solid ${T.border}` }}>
+                            <h3 className="text-sm font-bold mb-3 uppercase tracking-wider" style={{ color: T.accent }}>Insights Automáticos</h3>
                             <ul className="space-y-1.5">
                                 {insights.map((ins, i) => (
-                                    <li key={i} className="text-sm" style={{ color: T.textMuted }}>• {ins}</li>
+                                    <li key={i} className="text-sm flex items-start gap-2" style={{ color: T.textMuted }}>
+                                        <span style={{ color: T.accent, flexShrink: 0 }}>·</span> {ins}
+                                    </li>
                                 ))}
                             </ul>
                         </div>

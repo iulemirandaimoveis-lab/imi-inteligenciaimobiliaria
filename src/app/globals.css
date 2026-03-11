@@ -85,8 +85,10 @@
   --bo-hover: rgba(0, 0, 0, 0.04);
   --bo-active-bg: rgba(51, 78, 104, 0.08);
   --bo-icon-bg: rgba(0, 0, 0, 0.05);
-  --bo-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --bo-shadow: 0 1px 3px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+  --bo-card-shadow: 0 4px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
   --bo-shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.1);
+  --bo-surface-highlight: inset 0 1px 0 rgba(255,255,255,0.8);
   --bo-drawer-bg: #ffffff;
   --header-bg: rgba(244,247,252,0.92);
   --backdrop-bg: rgba(0,0,0,0.3);
@@ -104,10 +106,13 @@
   --nav-border: rgba(0,0,0,0.06);
   --nav-active: #334E68;
   --nav-inactive: #6b7280;
+  /* Transition — precision micro-interaction */
+  --bo-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --bo-transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .dark {
-  /* ── IMI INTELLIGENCE DARK THEME v4.0 ─────────────────────── */
+  /* ── IMI INTELLIGENCE DARK THEME v5.0 — Bloomberg Terminal Precision ── */
   --bo-surface: #0C1017;
   --bo-elevated: #111822;
   --bo-border: rgba(255, 255, 255, 0.07);
@@ -122,12 +127,16 @@
   --bo-hover: rgba(255, 255, 255, 0.045);
   --bo-active-bg: rgba(37, 99, 235, 0.12);
   --bo-icon-bg: rgba(255, 255, 255, 0.06);
-  --bo-shadow: 0 4px 24px rgba(0, 0, 0, 0.50);
-  --bo-shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.60);
+  /* Premium layered shadows — depth without blur wash */
+  --bo-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+  --bo-card-shadow: 0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+  --bo-shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.60), 0 0 0 1px rgba(255,255,255,0.04);
+  /* Subtle top-edge light for "floating" cards */
+  --bo-surface-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
   --bo-drawer-bg: #0C1017;
   --header-bg: rgba(10,13,19,0.92);
   --backdrop-bg: rgba(5,7,11,0.80);
-  /* Responsive accent — bright blue in dark mode */
+  /* Responsive accent — electric blue #3B82F6 (Revolut / N26 precision) */
   --bo-accent: #3B82F6;
   --bo-accent-dim: #1D4ED8;
   /* Card surface */
@@ -141,6 +150,9 @@
   --nav-border: rgba(37,99,235,0.12);
   --nav-active: #60A5FA;
   --nav-inactive: #475569;
+  /* Transition — precision micro-interaction */
+  --bo-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --bo-transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ── BASE RESETS ────────────────────────────────────────────── */

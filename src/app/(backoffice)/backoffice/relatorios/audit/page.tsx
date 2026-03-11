@@ -6,6 +6,7 @@ import {
   LogIn, LogOut, Download, AlertTriangle, CheckCircle, Clock, Lock,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // DB action → UI action
 function mapAction(action: string): string {
@@ -116,23 +117,23 @@ function transformLog(raw: RawAuditLog): UILog {
   }
 }
 
-const ACAO_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  login:  { label: 'Login',         icon: LogIn,    color: 'text-blue-400 bg-blue-500/10' },
-  logout: { label: 'Logout',        icon: LogOut,   color: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)]' },
-  create: { label: 'Criação',       icon: Plus,     color: 'text-green-400 bg-green-500/10' },
-  update: { label: 'Edição',        icon: Edit,     color: 'text-orange-400 bg-orange-500/10' },
-  delete: { label: 'Exclusão',      icon: Trash2,   color: 'text-red-400 bg-red-500/10' },
-  view:   { label: 'Visualização',  icon: Eye,      color: 'text-[#94A3B8] bg-[rgba(148,163,184,0.1)]' },
-  export: { label: 'Exportação',    icon: Download, color: 'text-purple-400 bg-purple-500/10' },
-  sync:   { label: 'Sync',          icon: Settings, color: 'text-blue-400 bg-blue-500/10' },
-  backup: { label: 'Backup',        icon: Shield,   color: 'text-green-400 bg-green-500/10' },
+const ACAO_CONFIG: Record<string, { label: string; icon: any; textColor: string; bgColor: string }> = {
+  login:  { label: 'Login',         icon: LogIn,    textColor: '#60A5FA', bgColor: 'rgba(96,165,250,0.10)'  },
+  logout: { label: 'Logout',        icon: LogOut,   textColor: '#94A3B8', bgColor: 'rgba(148,163,184,0.10)' },
+  create: { label: 'Criação',       icon: Plus,     textColor: '#6BB87B', bgColor: 'rgba(107,184,123,0.10)' },
+  update: { label: 'Edição',        icon: Edit,     textColor: '#E8A87C', bgColor: 'rgba(232,168,124,0.10)' },
+  delete: { label: 'Exclusão',      icon: Trash2,   textColor: '#E57373', bgColor: 'rgba(229,115,115,0.10)' },
+  view:   { label: 'Visualização',  icon: Eye,      textColor: '#94A3B8', bgColor: 'rgba(148,163,184,0.10)' },
+  export: { label: 'Exportação',    icon: Download, textColor: '#C084FC', bgColor: 'rgba(192,132,252,0.10)' },
+  sync:   { label: 'Sync',          icon: Settings, textColor: '#60A5FA', bgColor: 'rgba(96,165,250,0.10)'  },
+  backup: { label: 'Backup',        icon: Shield,   textColor: '#6BB87B', bgColor: 'rgba(107,184,123,0.10)' },
 }
 
-const SEVERIDADE_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  info:    { label: 'Info',    color: 'bg-blue-500/10 text-blue-400',   icon: CheckCircle },
-  success: { label: 'Sucesso', color: 'bg-green-500/10 text-green-400', icon: CheckCircle },
-  warning: { label: 'Atenção', color: 'bg-amber-500/10 text-amber-400', icon: AlertTriangle },
-  danger:  { label: 'Crítico', color: 'bg-red-500/10 text-red-400',     icon: AlertTriangle },
+const SEVERIDADE_CONFIG: Record<string, { label: string; textColor: string; bgColor: string; icon: any }> = {
+  info:    { label: 'Info',    textColor: '#60A5FA', bgColor: 'rgba(96,165,250,0.10)',   icon: CheckCircle  },
+  success: { label: 'Sucesso', textColor: '#6BB87B', bgColor: 'rgba(107,184,123,0.10)', icon: CheckCircle  },
+  warning: { label: 'Atenção', textColor: '#FCD34D', bgColor: 'rgba(252,211,77,0.10)',  icon: AlertTriangle },
+  danger:  { label: 'Crítico', textColor: '#E57373', bgColor: 'rgba(229,115,115,0.10)', icon: AlertTriangle },
 }
 
 const MODULOS = ['todos', 'auth', 'imoveis', 'leads', 'campanhas', 'avaliacoes', 'financeiro', 'contratos', 'automacoes', 'settings', 'sistema']
@@ -210,23 +211,20 @@ export default function AuditPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold" style={{ color: T.text }}>Trilha de Auditoria</h1>
-          <p className="text-sm mt-1" style={{ color: T.textMuted }}>
-            Registro imutável de todas as ações no sistema
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
+      <PageIntelHeader
+        moduleLabel="RELATÓRIOS"
+        title="Trilha de Auditoria"
+        subtitle="Registro imutável de todas as ações no sistema"
+        actions={
           <button
             onClick={exportCSV}
-            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors"
+            className="flex items-center gap-2 h-11 px-4 rounded-xl text-sm font-semibold transition-opacity hover:opacity-80"
             style={{ background: T.elevated, color: T.text, border: `1px solid ${T.border}` }}>
             <Download size={16} />
             Exportar CSV
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -280,8 +278,11 @@ export default function AuditPage() {
             <button
               key={k}
               onClick={() => setSeveridadeFiltro(severidadeFiltro === k ? null : k)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${severidadeFiltro === k ? `${v.color} border-current` : ''}`}
-              style={severidadeFiltro !== k ? { background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted } : {}}
+              className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
+              style={severidadeFiltro === k
+                ? { background: v.bgColor, color: v.textColor, border: `1px solid ${v.textColor}` }
+                : { background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }
+              }
             >
               {v.label}
             </button>
@@ -359,7 +360,8 @@ export default function AuditPage() {
 
                   {/* Ação */}
                   <div className="col-span-2">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold border border-transparent ${acaoCfg.color}`}>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+                      style={{ background: acaoCfg.bgColor, color: acaoCfg.textColor }}>
                       <AcaoIcon size={12} />
                       {acaoCfg.label}
                     </span>
@@ -378,7 +380,8 @@ export default function AuditPage() {
 
                   {/* Severidade */}
                   <div className="col-span-1">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold ${sevCfg.color}`}>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+                      style={{ background: sevCfg.bgColor, color: sevCfg.textColor }}>
                       <SevIcon size={12} />
                       {sevCfg.label}
                     </span>

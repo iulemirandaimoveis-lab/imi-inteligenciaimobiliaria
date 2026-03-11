@@ -127,12 +127,14 @@ export default function EditarConstrutoraPage() {
 
       // Upload new logo if selected
       if (logoFile) {
-        const { uploadFile } = await import('@/lib/supabase-storage')
-        const result = await uploadFile(logoFile, 'media', `developers/${params.id}`)
-        if (result.error) {
-          toast.error(`Erro no upload do logo: ${result.error}`)
+        const fd = new FormData()
+        fd.append('file', logoFile)
+        const uploadRes = await fetch('/api/upload?folder=developers', { method: 'POST', body: fd })
+        const uploadJson = await uploadRes.json()
+        if (!uploadRes.ok || !uploadJson.success) {
+          toast.error(`Erro no upload do logo: ${uploadJson.error || 'falha desconhecida'}`)
         } else {
-          logoUrl = result.url
+          logoUrl = uploadJson.data?.url || logoUrl
         }
       }
 

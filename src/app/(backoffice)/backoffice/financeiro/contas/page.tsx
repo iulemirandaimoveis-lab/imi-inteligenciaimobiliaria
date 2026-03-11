@@ -11,10 +11,10 @@ import {
     Edit,
     TrendingUp,
     TrendingDown,
-    Loader2,
     Landmark,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -84,58 +84,56 @@ export default function ContasBancariasPage() {
         return ((conta.saldo - conta.saldo_anterior) / conta.saldo_anterior) * 100
     }
 
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="text-center">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-3" style={{ color: T.accent }} />
-                    <p style={{ color: T.textMuted }}>Carregando contas...</p>
-                </div>
-            </div>
-        )
-    }
-
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold" style={{ color: T.text }}>Contas Bancárias</h1>
-                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>Gerencie suas contas e saldos</p>
-                </div>
-                <button
-                    onClick={() => router.push('/backoffice/financeiro/contas/nova')}
-                    className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium transition-colors hover:brightness-110"
-                    style={{ background: T.accent }}
-                >
-                    <Plus size={20} />
-                    Nova Conta
-                </button>
-            </div>
+            <PageIntelHeader
+                moduleLabel="FINANCEIRO"
+                title="Contas Bancárias"
+                subtitle="Gerencie suas contas e saldos"
+                actions={
+                    <button
+                        onClick={() => router.push('/backoffice/financeiro/contas/nova')}
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold transition-opacity hover:opacity-80"
+                        style={{ background: T.accent }}
+                    >
+                        <Plus size={18} />
+                        Nova Conta
+                    </button>
+                }
+            />
 
             {/* Stats Cards */}
+            {loading ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="animate-pulse rounded-2xl h-20" style={{ background: T.elevated }} />
+                    ))}
+                </div>
+            ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Contas Ativas</p>
-                    <p className="text-2xl font-bold" style={{ color: T.text }}>{contasAtivas.length}</p>
+                <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Contas Ativas</p>
+                    <p className="text-3xl font-bold" style={{ color: T.text }}>{contasAtivas.length}</p>
                 </div>
-                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1 text-green-400">Saldo Total</p>
-                    <p className="text-2xl font-bold text-green-400">{formatPrice(saldoTotal)}</p>
+                <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: '#6BB87B' }}>Saldo Total</p>
+                    <p className="text-3xl font-bold" style={{ color: '#6BB87B' }}>{formatPrice(saldoTotal)}</p>
                 </div>
-                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Média por Conta</p>
-                    <p className="text-2xl font-bold" style={{ color: T.text }}>
+                <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Média por Conta</p>
+                    <p className="text-3xl font-bold" style={{ color: T.text }}>
                         {contasAtivas.length > 0 ? formatPrice(saldoTotal / contasAtivas.length) : '—'}
                     </p>
                 </div>
-                <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <p className="text-xs mb-1" style={{ color: T.textMuted }}>Inativas</p>
-                    <p className="text-2xl font-bold text-red-400">
+                <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Inativas</p>
+                    <p className="text-3xl font-bold" style={{ color: '#E57373' }}>
                         {contas.filter(c => !c.is_active).length}
                     </p>
                 </div>
             </div>
+            )}
 
             {/* Filtros */}
             <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
@@ -166,7 +164,7 @@ export default function ContasBancariasPage() {
             </div>
 
             {/* Lista de Contas */}
-            {filteredContas.length > 0 ? (
+            {loading ? null : filteredContas.length > 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {filteredContas.map((conta) => {
                         const variacao = getVariacao(conta)
@@ -198,13 +196,15 @@ export default function ContasBancariasPage() {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {conta.is_active ? (
-                                            <span className="px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded">Ativa</span>
+                                            <span className="px-2 py-1 text-xs font-semibold rounded-lg"
+                                                style={{ background: 'rgba(107,184,123,0.12)', color: '#6BB87B' }}>Ativa</span>
                                         ) : (
-                                            <span className="px-2 py-1 text-xs font-medium rounded"
+                                            <span className="px-2 py-1 text-xs font-medium rounded-lg"
                                                 style={{ background: T.elevated, color: T.textMuted }}>Inativa</span>
                                         )}
                                         {conta.tipo && (
-                                            <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs font-medium rounded">
+                                            <span className="px-2 py-1 text-xs font-semibold rounded-lg"
+                                                style={{ background: 'rgba(96,165,250,0.12)', color: '#60A5FA' }}>
                                                 {conta.tipo}
                                             </span>
                                         )}
@@ -220,7 +220,8 @@ export default function ContasBancariasPage() {
                                             {formatPrice(conta.saldo)}
                                         </p>
                                         {conta.saldo_anterior != null && conta.saldo_anterior > 0 && (
-                                            <div className={`flex items-center gap-1 text-sm font-medium ${variacaoPositiva ? 'text-green-400' : 'text-red-400'}`}>
+                                            <div className="flex items-center gap-1 text-sm font-medium"
+                                                style={{ color: variacaoPositiva ? '#6BB87B' : '#E57373' }}>
                                                 {variacaoPositiva ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                                                 {Math.abs(variacao).toFixed(1)}%
                                             </div>
@@ -297,9 +298,9 @@ export default function ContasBancariasPage() {
                 </div>
             ) : (
                 /* Empty State */
-                <div className="rounded-xl p-12 text-center"
-                    style={{ background: T.surface, border: `1px dashed ${T.border}` }}>
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                <div className="rounded-2xl p-12 text-center"
+                    style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 opacity-20"
                         style={{ background: T.elevated }}>
                         <Landmark size={32} style={{ color: T.textMuted }} />
                     </div>

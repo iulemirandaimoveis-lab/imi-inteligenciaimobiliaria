@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 type Period = 'monthly' | 'quarterly' | 'yearly'
 
@@ -174,25 +175,31 @@ export default function RelatoriosExecutivoPage() {
 
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-          <div>
-            <p style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.12em', color: '#3B82F6', textTransform: 'uppercase', marginBottom: '4px' }}>
-              INTELLIGENCE OS
-            </p>
-            <h1 style={{ fontSize: '26px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.15 }}>
-              Global Reports
-            </h1>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <button style={{ display: 'flex', alignItems: 'center', gap: '6px', height: '36px', padding: '0 14px', borderRadius: '10px', fontSize: '12px', fontWeight: 700, color: 'var(--bo-text-muted)', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}>
-              <Download size={14} />
-              Exportar
-            </button>
-            <button style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}>
-              <RefreshCw size={14} color="var(--bo-text-muted)" />
-            </button>
-          </div>
-        </div>
+        <PageIntelHeader
+          moduleLabel="INTELLIGENCE OS · RELATÓRIOS"
+          title="Global Reports"
+          subtitle="Visão executiva consolidada de performance, leads e receita"
+          live
+          actions={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                height: '44px', padding: '0 16px', borderRadius: '14px',
+                fontSize: '13px', fontWeight: 700, color: 'var(--bo-text-muted)',
+                background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer',
+              }}>
+                <Download size={14} />
+                Exportar
+              </button>
+              <button style={{
+                width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                borderRadius: '14px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer',
+              }}>
+                <RefreshCw size={14} color="var(--bo-text-muted)" />
+              </button>
+            </div>
+          }
+        />
       </motion.div>
 
       {/* ── Period Tabs ──────────────────────────────────────────────────── */}
@@ -220,69 +227,81 @@ export default function RelatoriosExecutivoPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
           {/* Pipeline */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Target size={14} color="#3B82F6" />
+              <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Target size={15} color="#3B82F6" />
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Est. Pipeline
               </span>
             </div>
-            <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '6px' }}>
+            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
               {loading ? '—' : pipeline === '—' ? '—' : `R$ ${pipeline}${pipeline.includes('k') ? '' : 'M'}`}
             </p>
             <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>Leads quentes em negociação</p>
+            <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
+              <Target size={52} color="#3B82F6" />
+            </div>
           </div>
 
           {/* Conversion */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(167,139,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <BarChart3 size={14} color="#A78BFA" />
+              <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'rgba(167,139,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <BarChart3 size={15} color="#A78BFA" />
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Conversão
               </span>
             </div>
-            <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '6px' }}>
+            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
               {loading ? '—' : conversion === '—' ? '—' : `${conversion}%`}
             </p>
             <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{wonLeads} fechamentos de {totalLeads} leads</p>
+            <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
+              <BarChart3 size={52} color="#A78BFA" />
+            </div>
           </div>
 
           {/* Total Leads */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Users size={14} color="#4ADE80" />
+              <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Users size={15} color="#4ADE80" />
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Total Leads
               </span>
             </div>
-            <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '6px' }}>
+            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
               {loading ? '—' : totalLeads.toLocaleString('pt-BR')}
             </p>
             <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>Base total da plataforma</p>
+            <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
+              <Users size={52} color="#4ADE80" />
+            </div>
           </div>
 
           {/* Receita do Mês */}
-          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px' }}>
+          <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TrendingUp size={14} color="#FBBF24" />
+              <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <TrendingUp size={15} color="#FBBF24" />
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Receita / Mês
               </span>
             </div>
-            <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '6px' }}>
+            <p style={{ fontSize: '32px', fontWeight: 900, color: 'var(--bo-text)', lineHeight: 1.1, marginBottom: '4px', fontVariantNumeric: 'tabular-nums' }}>
               {loading ? '—' : monthRevenue > 0
                 ? `R$ ${monthRevenue >= 1000 ? (monthRevenue / 1000).toFixed(0) + 'k' : monthRevenue.toLocaleString('pt-BR')}`
                 : '—'}
             </p>
             <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{totalProperties} imóveis no portfólio</p>
+            <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
+              <TrendingUp size={52} color="#FBBF24" />
+            </div>
           </div>
         </div>
       </motion.div>
@@ -455,9 +474,9 @@ export default function RelatoriosExecutivoPage() {
                 </div>
                 <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text)' }}>{agent.name}</span>
               </div>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)', textAlign: 'center' }}>{agent.leads}</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#4ADE80', textAlign: 'center' }}>{agent.conv}%</span>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: '#3B82F6', textAlign: 'right' }}>R${agent.volume}M</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.leads}</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#4ADE80', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.conv}%</span>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: '#3B82F6', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>R${agent.volume}M</span>
             </motion.div>
           ))}
         </div>
@@ -467,9 +486,9 @@ export default function RelatoriosExecutivoPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
         <div style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #0F172A 100%)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '18px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <p style={{ fontSize: '11px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Total Leads Capturados</p>
-            <p style={{ fontSize: '32px', fontWeight: 800, color: '#fff' }}>
-              {loading ? <Loader2 size={24} style={{ animation: 'spin 1s linear infinite' }} /> : totalLeads.toLocaleString('pt-BR')}
+            <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '6px' }}>Total Leads Capturados</p>
+            <p style={{ fontSize: '40px', fontWeight: 900, color: '#fff', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>
+              {loading ? <Loader2 size={24} className="animate-spin" /> : totalLeads.toLocaleString('pt-BR')}
             </p>
           </div>
           <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

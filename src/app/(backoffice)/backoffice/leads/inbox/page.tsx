@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // Neon temperature colors (from Stitch design)
 const TEMP = {
@@ -132,42 +133,41 @@ export default function LeadsInboxPage() {
         <div className="max-w-2xl mx-auto pb-28">
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-2 pb-4" style={{ borderBottom: `1px solid ${T.border}` }}>
-                <div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                        <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#4ADE80' }} />
-                        <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: '#4ADE80' }}>
-                            IA EM TEMPO REAL
-                        </span>
+            <PageIntelHeader
+                moduleLabel="LEADS"
+                title="Inbox de Qualificação"
+                subtitle="IA em tempo real · Scoring automático"
+                live
+                actions={
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => loadLeads(true)}
+                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
+                            title="Atualizar"
+                        >
+                            <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} style={{ color: T.textMuted }} />
+                        </button>
+                        <button
+                            onClick={() => setShowSearch(v => !v)}
+                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                            style={{
+                                background: showSearch ? T.accent : T.elevated,
+                                border: `1px solid ${T.border}`,
+                                boxShadow: showSearch ? '0 0 14px rgba(59,130,246,0.28)' : 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                            }}
+                        >
+                            <Search size={14} style={{ color: showSearch ? '#fff' : T.textMuted }} />
+                        </button>
+                        <button
+                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
+                        >
+                            <SlidersHorizontal size={14} style={{ color: T.textMuted }} />
+                        </button>
                     </div>
-                    <h1 className="text-[22px] font-bold" style={{ color: T.text, fontFamily: "'Playfair Display', serif" }}>
-                        Inbox de Qualificação
-                    </h1>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => loadLeads(true)}
-                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                        title="Atualizar"
-                    >
-                        <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} style={{ color: T.textMuted }} />
-                    </button>
-                    <button
-                        onClick={() => setShowSearch(v => !v)}
-                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
-                        style={{ background: showSearch ? T.accent : T.elevated, border: `1px solid ${T.border}` }}
-                    >
-                        <Search size={14} style={{ color: showSearch ? '#fff' : T.textMuted }} />
-                    </button>
-                    <button
-                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                    >
-                        <SlidersHorizontal size={14} style={{ color: T.textMuted }} />
-                    </button>
-                </div>
-            </div>
+                }
+            />
 
             {/* Search */}
             <AnimatePresence>
@@ -254,11 +254,13 @@ export default function LeadsInboxPage() {
                             >
                                 <button
                                     onClick={() => router.push(`/backoffice/leads/inbox/${lead.id}`)}
-                                    className="w-full text-left rounded-2xl p-4 transition-all hover:scale-[1.005] active:scale-[0.998]"
+                                    className="w-full text-left rounded-2xl p-4 hover:scale-[1.01] active:scale-[0.998]"
                                     style={{
                                         background: T.elevated,
                                         border: `1px solid ${T.border}`,
                                         display: 'block',
+                                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)',
+                                        transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                                     }}
                                 >
                                     {/* Row 1: Name + Temp + Time */}

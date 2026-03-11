@@ -180,8 +180,8 @@ function SimuladorCredito() {
           { l: sistema === 'SAC' ? 'Última Parcela' : 'Total Juros', v: sistema === 'SAC' ? fmt(ultimaParcela) : fmt(totalJuros), color: T.text },
         ].map(item => (
           <div key={item.l} className="p-3 rounded-xl text-center" style={{ background: T.elevated }}>
-            <p className="text-xs mb-0.5" style={{ color: T.textMuted }}>{item.l}</p>
-            <p className="text-sm font-bold" style={{ color: item.color }}>{item.v}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: T.textMuted }}>{item.l}</p>
+            <p className="text-sm font-bold" style={{ color: item.color, fontVariantNumeric: 'tabular-nums' }}>{item.v}</p>
           </div>
         ))}
       </div>
@@ -194,8 +194,8 @@ function SimuladorCredito() {
       </div>
 
       <Link href="/backoffice/credito/novo"
-        className="flex items-center justify-center gap-2 h-10 w-full rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-        style={{ background: T.accent }}>
+        className="flex items-center justify-center gap-2 w-full rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90"
+        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px rgba(37,99,235,0.22)' }}>
         Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
 
@@ -306,8 +306,8 @@ export default function CreditoPage() {
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={() => window.location.href = '/backoffice/credito/novo'}
-            className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-            style={{ background: T.accent }}
+            className="flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white flex-shrink-0"
+            style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}
           >
             <Plus size={16} /> <span className="hidden sm:inline">Nova Operação</span>
           </motion.button>
@@ -326,8 +326,9 @@ export default function CreditoPage() {
       <div className="flex border-b" style={{ borderColor: T.border }}>
         {[{ v: 'simulador', l: 'Simulador' }, { v: 'operacoes', l: 'Operações' }].map(tab => (
           <button key={tab.v} onClick={() => setActiveTab(tab.v as any)}
-            className="px-5 py-3 text-sm font-medium border-b-2 transition-colors"
+            className="px-5 text-sm font-semibold border-b-2 transition-colors"
             style={{
+              height: '44px',
               borderBottomColor: activeTab === tab.v ? T.accent : 'transparent',
               color: activeTab === tab.v ? T.accent : T.textMuted,
             }}>
@@ -391,9 +392,9 @@ export default function CreditoPage() {
                       </div>
                     </div>
                     <div className="hidden sm:block text-right">
-                      <p className="text-sm font-bold" style={{ color: T.text }}>{fmt(op.financed_amount)}</p>
+                      <p className="text-sm font-bold" style={{ color: T.text, fontVariantNumeric: 'tabular-nums' }}>{fmt(op.financed_amount)}</p>
                       {op.monthly_payment && (
-                        <p className="text-xs" style={{ color: T.textMuted }}>Parcela: {fmt(op.monthly_payment)}/mês</p>
+                        <p className="text-xs" style={{ color: T.textMuted, fontVariantNumeric: 'tabular-nums' }}>Parcela: {fmt(op.monthly_payment)}/mês</p>
                       )}
                     </div>
                     <Link href={`/backoffice/credito/${op.id}`}

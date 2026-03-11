@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 type Perms = { view: boolean; create: boolean; edit: boolean; delete: boolean }
 type PermChange = { role: string; module: string; action: string; allowed: boolean }
@@ -160,7 +161,6 @@ export default function PermissoesPage() {
         const currentValue = modulePerms[actionKey as keyof Perms]
         const newValue = !currentValue
 
-        // Update local UI state optimistically
         setRoles(prev => prev.map(role => {
             if (role.id !== selectedRoleId) return role
             return {
@@ -175,7 +175,6 @@ export default function PermissoesPage() {
             }
         }))
 
-        // Track change (upsert: replace previous if same role+module+action)
         setPendingChanges(prev => {
             const filtered = prev.filter(
                 c => !(c.role === selectedRole.name && c.module === moduleKey && c.action === actionKey)
@@ -218,65 +217,63 @@ export default function PermissoesPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between flex-wrap gap-3">
-                <div>
-                    <h1 className="text-2xl font-bold" style={{ color: T.text }}>Permissões e Roles</h1>
-                    <p className="text-sm mt-1" style={{ color: T.sub }}>
-                        Gerencie permissões de acesso por função
-                        {hasChanges && (
-                            <span className="ml-2 text-xs font-semibold" style={{ color: '#fb923c' }}>
-                                • {pendingChanges.length} alteração(ões) pendente(s)
-                            </span>
-                        )}
-                    </p>
-                </div>
-                {hasChanges && (
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={handleDiscard}
-                            disabled={saving}
-                            className="flex items-center gap-2 h-10 px-5 rounded-xl font-medium transition-all hover:opacity-80 disabled:opacity-40"
-                            style={{ border: `1px solid ${T.border}`, color: T.text, background: 'transparent' }}
-                        >
-                            <RotateCcw size={16} />
-                            Descartar
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            disabled={saving}
-                            className="flex items-center gap-2 h-10 px-5 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-40"
-                            style={{ background: 'var(--bo-accent)' }}
-                        >
-                            {saving
-                                ? <><Loader2 size={16} className="animate-spin" /> Salvando...</>
-                                : <><Save size={16} /> Salvar Alterações</>
-                            }
-                        </button>
-                    </div>
-                )}
-            </div>
+            <PageIntelHeader
+                moduleLabel="CONTROLE DE ACESSO"
+                title="Permissões e Roles"
+                subtitle={
+                    hasChanges
+                        ? `Gerencie permissões de acesso por função — ${pendingChanges.length} alteração(ões) pendente(s)`
+                        : 'Gerencie permissões de acesso por função'
+                }
+                actions={
+                    hasChanges ? (
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={handleDiscard}
+                                disabled={saving}
+                                className="flex items-center gap-2 h-11 px-5 rounded-xl font-medium transition-all hover:opacity-80 disabled:opacity-40"
+                                style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: 'transparent' }}
+                            >
+                                <RotateCcw size={15} />
+                                Descartar
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={saving}
+                                className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-40"
+                                style={{ background: 'var(--bo-accent)' }}
+                            >
+                                {saving
+                                    ? <><Loader2 size={15} className="animate-spin" /> Salvando...</>
+                                    : <><Save size={15} /> Salvar Alterações</>
+                                }
+                            </button>
+                        </div>
+                    ) : undefined
+                }
+            />
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
                     { label: 'Total Roles', value: roles.length },
                     { label: 'Total Usuários', value: roles.reduce((acc, r) => acc + r.usuarios, 0) },
                     { label: 'Módulos', value: modules.length },
                     { label: 'Ações', value: actions.length },
                 ].map(stat => (
-                    <div key={stat.label} className="rounded-xl p-4" style={{ background: T.card, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: T.sub }}>{stat.label}</p>
+                    <div key={stat.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{stat.label}</p>
                         <p className="text-2xl font-bold" style={{ color: T.text }}>{stat.value}</p>
                     </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
                 {/* Roles Sidebar */}
                 <div className="lg:col-span-1">
-                    <div className="rounded-2xl p-4 sticky top-6" style={{ background: T.card, border: `1px solid ${T.border}` }}>
-                        <h2 className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: T.sub }}>
-                            Roles
+                    <div className="rounded-2xl p-4 sticky top-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <h2 className="text-[10px] font-bold uppercase tracking-wider mb-4" style={{ color: T.textMuted }}>
+                            Roles do Sistema
                         </h2>
                         <div className="space-y-2">
                             {roles.map((role) => (
@@ -286,14 +283,14 @@ export default function PermissoesPage() {
                                     className="w-full text-left p-3 rounded-xl transition-all"
                                     style={{
                                         border: selectedRoleId === role.id
-                                            ? '2px solid #334E68'
+                                            ? `2px solid ${getRoleTextColor(role.color)}40`
                                             : `1px solid ${T.border}`,
-                                        background: selectedRoleId === role.id ? 'rgba(51,78,104,0.15)' : 'transparent',
+                                        background: selectedRoleId === role.id ? getRoleAccentColor(role.color) : 'transparent',
                                     }}
                                 >
                                     <div className="flex items-center justify-between mb-1">
                                         <span className="font-semibold text-sm" style={{ color: T.text }}>{role.name}</span>
-                                        <span className="px-2 py-0.5 rounded text-xs font-medium"
+                                        <span className="px-2 py-0.5 rounded-md text-xs font-bold"
                                             style={{
                                                 background: getRoleAccentColor(role.color),
                                                 color: getRoleTextColor(role.color),
@@ -301,7 +298,7 @@ export default function PermissoesPage() {
                                             {role.usuarios}
                                         </span>
                                     </div>
-                                    <p className="text-xs line-clamp-2" style={{ color: T.sub }}>{role.description}</p>
+                                    <p className="text-xs line-clamp-2" style={{ color: T.textMuted }}>{role.description}</p>
                                 </button>
                             ))}
                         </div>
@@ -312,38 +309,45 @@ export default function PermissoesPage() {
                 <div className="lg:col-span-3">
                     <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
                         {/* Matrix Header */}
-                        <div className="p-6" style={{ borderBottom: `1px solid ${T.border}`, background: T.bg }}>
+                        <div className="p-5" style={{ borderBottom: `1px solid ${T.border}`, background: T.elevated }}>
                             <div className="flex items-center gap-3 mb-2">
-                                <Shield size={24} className="text-[var(--bo-accent)]" />
-                                <h2 className="text-lg font-bold" style={{ color: T.text }}>{selectedRole.name}</h2>
-                                <span className="px-3 py-1 rounded-lg text-xs font-medium"
-                                    style={{
-                                        background: getRoleAccentColor(selectedRole.color),
-                                        color: getRoleTextColor(selectedRole.color),
-                                    }}>
-                                    {selectedRole.usuarios} usuários
-                                </span>
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                    style={{ background: getRoleAccentColor(selectedRole.color) }}>
+                                    <Shield size={20} style={{ color: getRoleTextColor(selectedRole.color) }} />
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <h2 className="text-base font-bold" style={{ color: T.text }}>{selectedRole.name}</h2>
+                                        <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-bold"
+                                            style={{
+                                                background: getRoleAccentColor(selectedRole.color),
+                                                color: getRoleTextColor(selectedRole.color),
+                                            }}>
+                                            {selectedRole.usuarios} usuários
+                                        </span>
+                                    </div>
+                                    <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{selectedRole.description}</p>
+                                </div>
                             </div>
-                            <p className="text-sm" style={{ color: T.sub }}>{selectedRole.description}</p>
-                            <p className="text-xs mt-2" style={{ color: T.sub }}>
-                                Clique nos ícones para alternar permissões
+                            <p className="text-[11px] mt-2" style={{ color: T.textMuted }}>
+                                Clique nos ícones para alternar permissões individualmente
                             </p>
                         </div>
 
                         {/* Matrix Table */}
-                        <div className="overflow-x-auto" style={{ background: T.card }}>
+                        <div className="overflow-x-auto" style={{ background: T.card ?? T.surface }}>
                             <table className="w-full">
-                                <thead style={{ background: T.bg, borderBottom: `1px solid ${T.border}` }}>
+                                <thead style={{ background: T.elevated, borderBottom: `1px solid ${T.border}` }}>
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider w-48"
-                                            style={{ color: T.sub }}>
+                                        <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider w-44"
+                                            style={{ color: T.textMuted }}>
                                             Módulo
                                         </th>
                                         {actions.map((action) => (
-                                            <th key={action.key} className="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider"
-                                                style={{ color: T.sub }}>
+                                            <th key={action.key} className="px-5 py-3 text-center text-[10px] font-semibold uppercase tracking-wider"
+                                                style={{ color: T.textMuted }}>
                                                 <div className="flex flex-col items-center gap-1">
-                                                    <action.icon size={14} />
+                                                    <action.icon size={13} />
                                                     <span>{action.label}</span>
                                                 </div>
                                             </th>
@@ -357,7 +361,7 @@ export default function PermissoesPage() {
                                         return (
                                             <tr key={module.key}
                                                 style={{ borderTop: idx > 0 ? `1px solid ${T.border}` : undefined }}>
-                                                <td className="px-6 py-4 text-sm font-medium" style={{ color: T.text }}>
+                                                <td className="px-5 py-4 text-sm font-medium" style={{ color: T.text }}>
                                                     {module.label}
                                                 </td>
                                                 {actions.map((action) => {
@@ -367,20 +371,21 @@ export default function PermissoesPage() {
                                                     )
 
                                                     return (
-                                                        <td key={action.key} className="px-6 py-4 text-center">
+                                                        <td key={action.key} className="px-5 py-4 text-center">
                                                             <button
                                                                 onClick={() => handleToggle(module.key, action.key)}
-                                                                className="inline-flex items-center justify-center rounded-lg p-1 transition-all hover:opacity-70"
+                                                                className="inline-flex items-center justify-center rounded-xl p-1.5 transition-all hover:opacity-70"
                                                                 title={hasPermission ? 'Clique para revogar' : 'Clique para conceder'}
                                                                 style={{
                                                                     outline: isPending ? '2px solid #fb923c' : 'none',
                                                                     outlineOffset: '2px',
+                                                                    background: hasPermission ? 'rgba(52,211,153,0.08)' : 'transparent',
                                                                 }}
                                                             >
                                                                 {hasPermission ? (
-                                                                    <CheckCircle size={20} className="text-green-400" />
+                                                                    <CheckCircle size={19} style={{ color: '#34d399' }} />
                                                                 ) : (
-                                                                    <XCircle size={20} style={{ color: T.border }} />
+                                                                    <XCircle size={19} style={{ color: T.border }} />
                                                                 )}
                                                             </button>
                                                         </td>
@@ -397,14 +402,14 @@ export default function PermissoesPage() {
             </div>
 
             {/* Info Card */}
-            <div className="rounded-xl p-6" style={{ background: 'rgba(51,78,104,0.1)', border: '1px solid rgba(51,78,104,0.3)' }}>
-                <h3 className="text-sm font-bold text-[#829AB1] mb-2">💡 Sobre Permissões</h3>
-                <ul className="space-y-1 text-sm" style={{ color: T.sub }}>
-                    <li>• <strong style={{ color: T.text }}>Admin:</strong> Acesso completo a todos os módulos</li>
-                    <li>• <strong style={{ color: T.text }}>Gestor:</strong> Pode gerenciar operações mas não pode excluir dados críticos</li>
-                    <li>• <strong style={{ color: T.text }}>Corretor:</strong> Foco em leads e vendas, acesso limitado a relatórios</li>
-                    <li>• <strong style={{ color: T.text }}>Avaliador:</strong> Especializado em avaliações técnicas</li>
-                    <li>• <strong style={{ color: T.text }}>Marketing:</strong> Gestão de campanhas e conteúdo</li>
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(51,78,104,0.08)', border: '1px solid rgba(51,78,104,0.25)' }}>
+                <p className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: '#829AB1' }}>Sobre as Roles</p>
+                <ul className="space-y-1.5 text-sm" style={{ color: T.textMuted }}>
+                    <li><strong style={{ color: T.text }}>Admin:</strong> Acesso completo a todos os módulos</li>
+                    <li><strong style={{ color: T.text }}>Gestor:</strong> Pode gerenciar operações mas não excluir dados críticos</li>
+                    <li><strong style={{ color: T.text }}>Corretor:</strong> Foco em leads e vendas, acesso limitado a relatórios</li>
+                    <li><strong style={{ color: T.text }}>Avaliador:</strong> Especializado em avaliações técnicas</li>
+                    <li><strong style={{ color: T.text }}>Marketing:</strong> Gestão de campanhas e conteúdo</li>
                 </ul>
             </div>
         </div>

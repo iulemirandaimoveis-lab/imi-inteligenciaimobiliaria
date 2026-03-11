@@ -8,16 +8,18 @@ import {
     Star, Loader2, Building2,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-    available: { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
+    available:  { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
     disponivel: { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
-    reserved: { label: 'Reservada', color: '#F59E0B', bg: 'rgba(245,158,11,0.14)', icon: Clock },
-    reservada: { label: 'Reservada', color: '#F59E0B', bg: 'rgba(245,158,11,0.14)', icon: Clock },
-    sold: { label: 'Vendida', color: '#6B7280', bg: 'rgba(107,114,128,0.12)', icon: XCircle },
-    vendida: { label: 'Vendida', color: '#6B7280', bg: 'rgba(107,114,128,0.12)', icon: XCircle },
+    reserved:   { label: 'Reservada',  color: '#F59E0B', bg: 'rgba(245,158,11,0.14)',  icon: Clock },
+    reservada:  { label: 'Reservada',  color: '#F59E0B', bg: 'rgba(245,158,11,0.14)',  icon: Clock },
+    sold:       { label: 'Vendida',    color: '#6B7280', bg: 'rgba(107,114,128,0.12)', icon: XCircle },
+    vendida:    { label: 'Vendida',    color: '#6B7280', bg: 'rgba(107,114,128,0.12)', icon: XCircle },
 }
 
 function formatPrice(price: number) {
@@ -80,87 +82,114 @@ export default function ImoveisUnidadesPage() {
         vendidas: unidades.filter(u => u.status === 'sold' || u.status === 'vendida').length,
     }
 
-    if (loading) return (
-        <div className="flex items-center justify-center min-h-[60vh]">
-            <Loader2 className="w-8 h-8 animate-spin" style={{ color: T.accent }} />
-        </div>
-    )
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <Loader2 className="w-8 h-8 animate-spin" style={{ color: T.accent }} />
+            </div>
+        )
+    }
+
+    const availPct = stats.total > 0 ? Math.round((stats.disponiveis / stats.total) * 100) : 0
+    const soldPct  = stats.total > 0 ? Math.round((stats.vendidas  / stats.total) * 100) : 0
 
     return (
         <div className="space-y-6 pb-24">
-            {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="flex items-start justify-between gap-4 flex-wrap">
-                <div className="flex items-start gap-3">
-                    <button
-                        onClick={() => router.push(`/backoffice/imoveis/${id}`)}
-                        className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors"
-                        style={{ border: `1px solid ${T.border}`, color: T.text }}
-                    >
-                        <ArrowLeft size={18} />
-                    </button>
-                    <div>
-                        <h1 className="text-2xl font-bold" style={{ color: T.text }}>
-                            {development?.name || 'Unidades'}
-                        </h1>
-                        <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>
-                            Gestão de unidades e disponibilidade
-                        </p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl font-medium text-sm transition-colors"
-                        style={{ border: `1px solid ${T.border}`, color: T.text }}
-                        onClick={() => alert('Export em breve')}
-                    >
-                        <Download size={16} />
-                        <span className="hidden sm:inline">Exportar</span>
-                    </button>
-                    <button
-                        onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
-                        className="flex items-center gap-2 h-10 px-5 text-white rounded-xl font-medium text-sm"
-                        style={{ background: 'var(--bo-accent)', boxShadow: '0 4px 12px rgba(59,130,246,0.3)' }}
-                    >
-                        <Plus size={16} />
-                        <span className="hidden sm:inline">Nova Unidade</span>
-                    </button>
-                </div>
-            </motion.div>
+            {/* Back nav */}
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={() => router.push(`/backoffice/imoveis/${id}`)}
+                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                    style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textDim }}
+                >
+                    <ArrowLeft size={17} />
+                </button>
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: T.textMuted }}>
+                    {development?.name || 'Imóvel'} / Unidades
+                </span>
+            </div>
 
-            {/* Stats */}
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Header */}
+            <PageIntelHeader
+                moduleLabel="INVENTÁRIO DE UNIDADES"
+                title={development?.name || 'Unidades'}
+                subtitle="Gestão de unidades e disponibilidade do empreendimento"
+                actions={
+                    <div className="flex items-center gap-2">
+                        <button
+                            className="flex items-center gap-2 h-10 px-4 rounded-xl font-medium text-sm transition-colors"
+                            style={{ border: `1px solid ${T.border}`, color: T.text, background: T.surface }}
+                            onClick={() => toast.info('Export em desenvolvimento')}
+                        >
+                            <Download size={15} />
+                            <span className="hidden sm:inline">Exportar</span>
+                        </button>
+                        <button
+                            onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
+                            className="flex items-center gap-2 h-10 px-5 text-white rounded-xl font-semibold text-sm transition-all hover:scale-[1.02]"
+                            style={{ background: T.accent, boxShadow: '0 4px 16px rgba(59,130,246,0.3)' }}
+                        >
+                            <Plus size={15} />
+                            <span className="hidden sm:inline">Nova Unidade</span>
+                        </button>
+                    </div>
+                }
+            />
+
+            {/* Stats Strip */}
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 }}
+                className="grid grid-cols-2 md:grid-cols-4 gap-3"
+            >
                 {[
-                    { label: 'Total', value: stats.total, color: T.text },
+                    { label: 'Total', value: stats.total, color: T.text, sub: 'unidades' },
                     {
                         label: 'Disponíveis', value: stats.disponiveis, color: '#10B981',
-                        bar: stats.total > 0 ? (stats.disponiveis / stats.total) * 100 : 0, barColor: '#10B981',
+                        sub: `${availPct}% do total`,
+                        bar: availPct, barColor: '#10B981',
                     },
-                    { label: 'Reservadas', value: stats.reservadas, color: '#F59E0B' },
+                    { label: 'Reservadas', value: stats.reservadas, color: '#F59E0B', sub: 'pendente contrato' },
                     {
                         label: 'Vendidas', value: stats.vendidas, color: T.textMuted,
-                        bar: stats.total > 0 ? (stats.vendidas / stats.total) * 100 : 0, barColor: T.textMuted,
+                        sub: `${soldPct}% do total`,
+                        bar: soldPct, barColor: T.textMuted,
                     },
                 ].map(s => (
-                    <div key={s.label} className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs mb-1" style={{ color: s.color }}>{s.label}</p>
-                        <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
+                    <div
+                        key={s.label}
+                        className="rounded-2xl p-4"
+                        style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                    >
+                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>
+                            {s.label}
+                        </p>
+                        <p className="text-3xl font-bold" style={{ color: s.color }}>{s.value}</p>
+                        <p className="text-[10px] mt-0.5" style={{ color: T.textMuted }}>{s.sub}</p>
                         {s.bar !== undefined && (
                             <div className="h-1 rounded-full overflow-hidden mt-2" style={{ background: T.elevated }}>
-                                <div className="h-full transition-all" style={{ width: `${s.bar}%`, background: s.barColor }} />
+                                <div
+                                    className="h-full transition-all"
+                                    style={{ width: `${s.bar}%`, background: s.barColor }}
+                                />
                             </div>
                         )}
                     </div>
                 ))}
             </motion.div>
 
-            {/* Filtros */}
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            {/* Filters */}
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="rounded-2xl p-4"
+                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+            >
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: T.textMuted }} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: T.textMuted }} />
                         <input
                             type="text"
                             placeholder="Buscar unidade..."
@@ -193,12 +222,22 @@ export default function ImoveisUnidadesPage() {
                 </div>
             </motion.div>
 
-            {/* Grid de Unidades */}
+            {/* Unit Cards Grid */}
             {filtered.length === 0 ? (
-                <div className="text-center py-20 rounded-2xl" style={{ background: T.surface, border: `1px dashed ${T.border}` }}>
-                    <Building2 size={40} className="mx-auto mb-4 opacity-20" style={{ color: T.textMuted }} />
-                    <p className="font-semibold" style={{ color: T.text }}>Nenhuma unidade encontrada</p>
-                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>
+                <div
+                    className="text-center py-20 rounded-2xl"
+                    style={{ background: T.surface, border: `1px dashed ${T.border}` }}
+                >
+                    <div
+                        className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                    >
+                        <Building2 size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
+                    </div>
+                    <p className="font-semibold mb-1" style={{ color: T.text }}>
+                        Nenhuma unidade encontrada
+                    </p>
+                    <p className="text-sm" style={{ color: T.textMuted }}>
                         {unidades.length === 0
                             ? 'Cadastre a primeira unidade deste empreendimento'
                             : 'Ajuste os filtros para ver mais resultados'}
@@ -206,7 +245,7 @@ export default function ImoveisUnidadesPage() {
                     {unidades.length === 0 && (
                         <button
                             onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
-                            className="mt-4 h-10 px-6 rounded-xl font-semibold text-sm text-white"
+                            className="mt-5 h-10 px-6 rounded-xl font-semibold text-sm text-white transition-all hover:scale-[1.02]"
                             style={{ background: T.accent }}
                         >
                             + Nova Unidade
@@ -224,38 +263,45 @@ export default function ImoveisUnidadesPage() {
                                 initial={{ opacity: 0, y: 12 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.04, duration: 0.3 }}
-                                className="rounded-xl p-4 cursor-pointer transition-all hover:shadow-lg"
+                                whileHover={{ y: -2, transition: { duration: 0.15 } }}
+                                className="rounded-2xl p-4 cursor-pointer transition-shadow hover:shadow-lg"
                                 style={{
                                     background: T.surface,
-                                    border: unidade.is_highlighted ? `2px solid var(--bo-accent)` : `1px solid ${T.border}`,
+                                    border: unidade.is_highlighted
+                                        ? `2px solid ${T.accent}`
+                                        : `1px solid ${T.border}`,
                                 }}
                                 onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/${unidade.id}`)}
                             >
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
-                                        <div className="flex items-center gap-2 mb-0.5">
+                                        <div className="flex items-center gap-1.5 mb-0.5">
                                             <h3 className="font-bold text-sm" style={{ color: T.text }}>
-                                                {unidade.unit_name || `Unidade`}
+                                                {unidade.unit_name || 'Unidade'}
                                             </h3>
                                             {unidade.is_highlighted && (
-                                                <Star size={12} style={{ fill: 'var(--bo-accent)', color: 'var(--bo-accent)' }} />
+                                                <Star size={11} style={{ fill: T.accent, color: T.accent }} />
                                             )}
                                         </div>
                                         <p className="text-xs" style={{ color: T.textMuted }}>
                                             {unidade.unit_type || 'Apartamento'}
-                                            {unidade.position ? ` • ${unidade.position}` : ''}
-                                            {unidade.tower ? ` • Torre ${unidade.tower}` : ''}
+                                            {unidade.position ? ` · ${unidade.position}` : ''}
+                                            {unidade.tower ? ` · Torre ${unidade.tower}` : ''}
                                         </p>
                                     </div>
-                                    <span className="px-2 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1 flex-shrink-0"
-                                        style={{ background: st.bg, color: st.color }}>
-                                        <StatusIcon size={10} />
+                                    <span
+                                        className="px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 flex-shrink-0"
+                                        style={{ background: st.bg, color: st.color }}
+                                    >
+                                        <StatusIcon size={9} />
                                         {st.label}
                                     </span>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-2 mb-3 pb-3"
-                                    style={{ borderBottom: `1px solid ${T.border}` }}>
+                                <div
+                                    className="grid grid-cols-2 gap-2 mb-3 pb-3"
+                                    style={{ borderBottom: `1px solid ${T.border}` }}
+                                >
                                     {unidade.area > 0 && (
                                         <div className="flex items-center gap-1.5 text-xs" style={{ color: T.textMuted }}>
                                             <Ruler size={11} />
@@ -265,13 +311,16 @@ export default function ImoveisUnidadesPage() {
                                     {(unidade.bedrooms > 0 || unidade.bathrooms > 0) && (
                                         <div className="flex items-center gap-1.5 text-xs" style={{ color: T.textMuted }}>
                                             <Home size={11} />
-                                            <span>{unidade.bedrooms > 0 ? `${unidade.bedrooms}Q` : ''}{unidade.bathrooms > 0 ? ` ${unidade.bathrooms}B` : ''}</span>
+                                            <span>
+                                                {unidade.bedrooms > 0 ? `${unidade.bedrooms}Q` : ''}
+                                                {unidade.bathrooms > 0 ? ` ${unidade.bathrooms}B` : ''}
+                                            </span>
                                         </div>
                                     )}
                                 </div>
 
                                 <div>
-                                    <p className="text-xs mb-0.5" style={{ color: T.textMuted }}>Valor</p>
+                                    <p className="text-[10px] uppercase tracking-wider mb-0.5" style={{ color: T.textMuted }}>Valor</p>
                                     <p className="text-lg font-bold" style={{ color: T.text }}>
                                         {formatPrice(unidade.total_price)}
                                     </p>

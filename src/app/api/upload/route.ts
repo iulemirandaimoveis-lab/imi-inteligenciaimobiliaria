@@ -5,6 +5,10 @@ import { nanoid } from 'nanoid'
 
 export const runtime = 'nodejs';
 
+// Use admin client when service role key is available, otherwise fall back to
+// the authenticated server client (user must be logged in either way).
+const hasServiceKey = !!(process.env.SUPABASE_SERVICE_ROLE_KEY)
+
 /**
  * POST /api/upload
  * Upload de imagens para Supabase Storage
@@ -59,8 +63,11 @@ export async function POST(request: NextRequest) {
         const arrayBuffer = await file.arrayBuffer()
         const buffer = Buffer.from(arrayBuffer)
 
+        // Seleciona cliente de storage: admin (bypassa RLS) ou autenticado (usa RLS)
+        const storageClient = hasServiceKey ? supabaseAdmin : supabase
+
         // Upload para Supabase
-        const { data, error } = await supabaseAdmin.storage
+        const { data, error } = await storageClient.storage
             .from('media')
             .upload(fileName, buffer, {
                 contentType: file.type,
@@ -71,13 +78,13 @@ export async function POST(request: NextRequest) {
         if (error) {
             console.error('Supabase upload error:', error)
             return NextResponse.json(
-                { success: false, error: 'Erro ao fazer upload' },
+                { success: false, error: 'Erro ao fazer upload: ' + error.message },
                 { status: 500 }
             )
         }
 
         // Gera URL pública
-        const { data: publicData } = supabaseAdmin.storage
+        const { data: publicData } = storageClient.storage
             .from('media')
             .getPublicUrl(fileName)
 
@@ -123,7 +130,8 @@ export async function DELETE(request: NextRequest) {
             )
         }
 
-        const { error } = await supabaseAdmin.storage
+        const storageClient = hasServiceKey ? supabaseAdmin : supabase
+        const { error } = await storageClient.storage
             .from('media')
             .remove([fileName])
 

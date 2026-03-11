@@ -90,23 +90,26 @@ export default function CreditoDetalhesPage() {
         new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(value)
 
     const getStatusBadge = (status: string) => {
-        const badges: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-            approved:     { label: 'Aprovado',     color: 'bg-green-100 text-green-700',  icon: CheckCircle },
-            aprovado:     { label: 'Aprovado',     color: 'bg-green-100 text-green-700',  icon: CheckCircle },
-            pending:      { label: 'Pendente',     color: 'bg-yellow-100 text-yellow-700', icon: Clock },
-            pendente:     { label: 'Pendente',     color: 'bg-yellow-100 text-yellow-700', icon: Clock },
-            rejected:     { label: 'Rejeitado',    color: 'bg-red-100 text-red-700',       icon: XCircle },
-            recusado:     { label: 'Rejeitado',    color: 'bg-red-100 text-red-700',       icon: XCircle },
-            under_review: { label: 'Em Análise',   color: 'bg-blue-100 text-blue-700',     icon: AlertCircle },
-            analise:      { label: 'Em Análise',   color: 'bg-blue-100 text-blue-700',     icon: AlertCircle },
-            documents:    { label: 'Documentação', color: 'bg-purple-100 text-purple-700', icon: FileText },
-            documentacao: { label: 'Documentação', color: 'bg-purple-100 text-purple-700', icon: FileText },
+        const badges: Record<string, { label: string; textColor: string; bg: string; icon: React.ElementType }> = {
+            approved:     { label: 'Aprovado',     textColor: '#4CAF7D', bg: 'rgba(76,175,125,0.12)', icon: CheckCircle },
+            aprovado:     { label: 'Aprovado',     textColor: '#4CAF7D', bg: 'rgba(76,175,125,0.12)', icon: CheckCircle },
+            pending:      { label: 'Pendente',     textColor: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Clock },
+            pendente:     { label: 'Pendente',     textColor: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Clock },
+            rejected:     { label: 'Rejeitado',    textColor: '#f87171', bg: 'rgba(248,113,113,0.12)', icon: XCircle },
+            recusado:     { label: 'Rejeitado',    textColor: '#f87171', bg: 'rgba(248,113,113,0.12)', icon: XCircle },
+            under_review: { label: 'Em Análise',   textColor: '#7BA3C2', bg: 'rgba(123,163,194,0.12)', icon: AlertCircle },
+            analise:      { label: 'Em Análise',   textColor: '#7BA3C2', bg: 'rgba(123,163,194,0.12)', icon: AlertCircle },
+            documents:    { label: 'Documentação', textColor: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: FileText },
+            documentacao: { label: 'Documentação', textColor: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: FileText },
         }
         const badge = badges[status] || badges.pending
         const Icon = badge.icon
         return (
-            <span className={`px-3 py-1.5 ${badge.color} rounded-lg text-sm font-medium flex items-center gap-2 w-fit`}>
-                <Icon size={16} />
+            <span
+                className="px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-2 w-fit"
+                style={{ color: badge.textColor, background: badge.bg }}
+            >
+                <Icon size={15} />
                 {badge.label}
             </span>
         )
@@ -216,47 +219,47 @@ export default function CreditoDetalhesPage() {
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Valor do Imóvel</p>
                     </div>
-                    <p className="text-2xl font-bold" style={{ color: T.text }}>
+                    <p className="text-2xl font-bold font-mono" style={{ color: T.text }}>
                         {formatCurrency(credit.property_value)}
                     </p>
                 </div>
 
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #4CAF7D' }}>
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 rounded-xl bg-green-500/15 flex items-center justify-center">
                             <DollarSign size={20} className="text-green-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Valor Financiado</p>
                     </div>
-                    <p className="text-2xl font-bold" style={{ color: T.text }}>
+                    <p className="text-2xl font-bold font-mono" style={{ color: T.text }}>
                         {formatCurrency(credit.financed_amount)}
                     </p>
                     {credit.ltv != null && (
-                        <p className="text-xs mt-1" style={{ color: T.textMuted }}>LTV: {credit.ltv}%</p>
+                        <p className="text-xs mt-1 font-mono" style={{ color: T.textMuted }}>LTV: {credit.ltv}%</p>
                     )}
                 </div>
 
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #A89EC4' }}>
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 rounded-xl bg-purple-500/15 flex items-center justify-center">
                             <CreditCard size={20} className="text-purple-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Parcela Mensal</p>
                     </div>
-                    <p className="text-2xl font-bold" style={{ color: T.text }}>
+                    <p className="text-2xl font-bold font-mono" style={{ color: T.text }}>
                         {credit.monthly_payment ? formatCurrency(credit.monthly_payment) : '—'}
                     </p>
-                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>{credit.term_months} meses</p>
+                    <p className="text-xs mt-1 font-mono" style={{ color: T.textMuted }}>{credit.term_months} meses</p>
                 </div>
 
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: '3px solid #E8A87C' }}>
                     <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 rounded-xl bg-orange-500/15 flex items-center justify-center">
                             <Percent size={20} className="text-orange-400" />
                         </div>
                         <p className="text-sm font-medium" style={{ color: T.textMuted }}>Taxa de Juros</p>
                     </div>
-                    <p className="text-2xl font-bold" style={{ color: T.text }}>
+                    <p className="text-2xl font-bold font-mono" style={{ color: T.text }}>
                         {credit.interest_rate ? `${credit.interest_rate}% a.a.` : '—'}
                     </p>
                     {credit.system && (
@@ -270,7 +273,7 @@ export default function CreditoDetalhesPage() {
                 {/* Left Column */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Dados do Cliente */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid #7BA3C2` }}>
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
                             <User size={20} className="text-blue-400" />
                             Dados do Cliente
@@ -314,7 +317,7 @@ export default function CreditoDetalhesPage() {
                     </div>
 
                     {/* Dados do Imóvel */}
-                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                    <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}`, borderLeft: `3px solid #4CAF7D` }}>
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: T.text }}>
                             <Building2 size={20} className="text-green-400" />
                             Dados do Imóvel

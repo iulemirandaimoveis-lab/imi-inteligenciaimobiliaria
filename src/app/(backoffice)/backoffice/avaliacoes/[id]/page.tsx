@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
     concluida: { label: 'Concluída', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
@@ -164,41 +165,38 @@ export default function AvaliacaoDetalhesPage() {
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             {/* Header */}
-            <div className="flex items-start justify-between flex-wrap gap-4">
-                <div className="flex items-start gap-4">
-                    <button onClick={() => router.back()}
-                        className="w-10 h-10 rounded-lg flex items-center justify-center hover:opacity-80"
-                        style={{ border: `1px solid ${T.border}`, color: T.text }}>
-                        <ArrowLeft size={20} />
-                    </button>
-                    <div>
-                        <div className="flex items-center gap-3 mb-1 flex-wrap">
-                            <h1 className="text-2xl font-bold" style={{ color: T.text }}>{data.protocolo || `AVL-${data.id?.slice(0, 8)}`}</h1>
-                            <span className="px-3 py-1 rounded-full text-xs font-bold"
-                                style={{ color: sc.text, background: sc.bg }}>
-                                {sc.label}
-                            </span>
-                        </div>
-                        <p className="text-sm" style={{ color: T.textMuted }}>
-                            {data.cliente_nome} · {data.tipo_imovel} - {data.bairro}
-                        </p>
+            <PageIntelHeader
+                moduleLabel="AVALIAÇÕES · DETALHES"
+                title={data.protocolo || `AVL-${data.id?.slice(0, 8)}`}
+                subtitle={`${data.cliente_nome || '—'} · ${data.tipo_imovel || ''} — ${data.bairro || ''}`}
+                actions={
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => router.back()}
+                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            style={{ background: T.card, border: `1px solid ${T.border}` }}
+                        >
+                            <ArrowLeft size={18} style={{ color: T.text }} />
+                        </button>
+                        <span className="px-3 py-1.5 rounded-full text-xs font-bold"
+                            style={{ color: sc.text, background: sc.bg }}>
+                            {sc.label}
+                        </span>
+                        {data.laudo_url && (
+                            <a href={data.laudo_url} target="_blank" rel="noopener noreferrer"
+                                className="h-10 px-4 rounded-xl flex items-center gap-2 text-sm font-medium hover:opacity-80"
+                                style={{ border: `1px solid ${T.border}`, color: T.text }}>
+                                <Download size={16} /> PDF
+                            </a>
+                        )}
+                        <button onClick={() => setShowDeleteConfirm(true)}
+                            className="h-10 px-3 rounded-xl text-sm font-medium hover:bg-red-500/20"
+                            style={{ border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}>
+                            <Trash2 size={16} />
+                        </button>
                     </div>
-                </div>
-                <div className="flex gap-2">
-                    {data.laudo_url && (
-                        <a href={data.laudo_url} target="_blank" rel="noopener noreferrer"
-                            className="h-10 px-4 rounded-xl flex items-center gap-2 text-sm font-medium hover:opacity-80"
-                            style={{ border: `1px solid ${T.border}`, color: T.text }}>
-                            <Download size={16} /> PDF
-                        </a>
-                    )}
-                    <button onClick={() => setShowDeleteConfirm(true)}
-                        className="h-10 px-4 rounded-xl text-sm font-medium hover:bg-red-500/20"
-                        style={{ border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}>
-                        <Trash2 size={16} />
-                    </button>
-                </div>
-            </div>
+                }
+            />
 
             {showDeleteConfirm && (
                 <div className="rounded-xl p-4 flex items-center justify-between"

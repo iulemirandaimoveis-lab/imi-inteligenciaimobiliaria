@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { ArrowLeft, Save, Building2, MapPin, DollarSign, Calendar, Globe } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const tiposProjeto = [
     'Loteamento Premium',
@@ -99,18 +100,17 @@ export default function NovoProjetoPage() {
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
-            {/* Header */}
-            <div className="flex items-center gap-4">
-                <button onClick={() => router.back()}
-                    className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
-                    style={{ border: `1px solid ${T.border}`, color: T.text, background: T.surface }}>
-                    <ArrowLeft size={20} />
-                </button>
-                <div>
-                    <h1 className="text-2xl font-bold" style={{ color: T.text }}>Novo Projeto</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>Cadastrar empreendimento IMI</p>
-                </div>
-            </div>
+            <PageIntelHeader
+                title="Novo Projeto"
+                subtitle="Cadastrar empreendimento IMI"
+                actions={
+                    <button onClick={() => router.back()}
+                        className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-medium transition-all"
+                        style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: T.elevated }}>
+                        <ArrowLeft size={16} /> Voltar
+                    </button>
+                }
+            />
 
             {/* Steps */}
             <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
@@ -324,10 +324,10 @@ export default function NovoProjetoPage() {
                     <button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-medium transition-colors disabled:opacity-60"
+                        className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold transition-all hover:brightness-110 disabled:opacity-60"
                         style={{ background: T.accent }}
                     >
-                        <ArrowLeft className="rotate-180" size={16} />
+                        <Save size={16} />
                         {isSubmitting ? 'Salvando...' : 'Salvar Projeto'}
                     </button>
                 )}

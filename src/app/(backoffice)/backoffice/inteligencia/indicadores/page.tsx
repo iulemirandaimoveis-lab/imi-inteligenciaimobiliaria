@@ -8,7 +8,8 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { T } from '../../../lib/theme'
+import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 type Indicator = {
     id: string
@@ -96,8 +97,8 @@ function IndicatorCard({
                         </p>
                     </div>
                 </div>
-                {/* Actions — visible on touch, hover on desktop */}
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 touch-always-visible transition-opacity">
+                {/* Actions — visible on hover */}
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                         onClick={() => onEdit(ind)}
                         className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
@@ -292,7 +293,6 @@ export default function IndicadoresPage() {
         load()
     }
 
-    // Filtered indicators
     const filtered = categoryFilter === 'all'
         ? indicators
         : indicators.filter(i => i.category === categoryFilter)
@@ -302,46 +302,39 @@ export default function IndicadoresPage() {
     return (
         <div className="space-y-5">
 
-            {/* ── Header ───────────────────────────────────────── */}
-            <div className="flex items-start justify-between gap-3">
-                <div>
-                    <p className="text-[9px] font-bold uppercase tracking-wider mb-1"
-                        style={{ color: 'var(--imi-blue-bright)' }}>
-                        INTELIGÊNCIA DE MERCADO
-                    </p>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>
-                        Indicadores
-                    </h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>
-                        KPIs do dashboard público — editáveis inline
-                    </p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                    <button
-                        onClick={load}
-                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
-                        style={{ background: 'var(--bo-elevated)', border: `1px solid ${T.border}` }}
-                    >
-                        <RefreshCw size={14} style={{ color: T.textMuted }} />
-                    </button>
-                    <button
-                        onClick={() => { setAddingNew(true); setEditingId(null) }}
-                        className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-sm font-semibold text-white"
-                        style={{ background: 'var(--bo-accent)' }}
-                    >
-                        <Plus size={14} />
-                        <span className="hidden sm:inline">Novo</span>
-                    </button>
-                </div>
-            </div>
+            {/* Header */}
+            <PageIntelHeader
+                moduleLabel="INTELIGÊNCIA DE MERCADO"
+                title="Indicadores"
+                subtitle="KPIs do dashboard público — dados de mercado editáveis inline"
+                actions={
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={load}
+                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                        >
+                            <RefreshCw size={14} style={{ color: T.textMuted }} />
+                        </button>
+                        <button
+                            onClick={() => { setAddingNew(true); setEditingId(null) }}
+                            className="flex items-center gap-1.5 h-10 px-4 rounded-xl text-sm font-semibold text-white"
+                            style={{ background: 'var(--bo-accent)' }}
+                        >
+                            <Plus size={14} />
+                            <span className="hidden sm:inline">Novo</span>
+                        </button>
+                    </div>
+                }
+            />
 
-            {/* ── Category filter tabs ─────────────────────────── */}
+            {/* Category filter tabs */}
             <div className="flex gap-2 overflow-x-auto pb-1 scroll-row">
                 <button
                     onClick={() => setCategoryFilter('all')}
                     className="flex-shrink-0 h-8 px-3 rounded-xl text-xs font-semibold transition-all"
                     style={{
-                        background: categoryFilter === 'all' ? 'var(--bo-accent)' : 'var(--bo-elevated)',
+                        background: categoryFilter === 'all' ? 'var(--bo-accent)' : T.elevated,
                         color: categoryFilter === 'all' ? 'white' : T.textMuted,
                         border: `1px solid ${categoryFilter === 'all' ? 'transparent' : T.border}`,
                     }}
@@ -358,7 +351,7 @@ export default function IndicadoresPage() {
                             onClick={() => setCategoryFilter(cat)}
                             className="flex-shrink-0 h-8 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all"
                             style={{
-                                background: categoryFilter === cat ? cm.bg : 'var(--bo-elevated)',
+                                background: categoryFilter === cat ? cm.bg : T.elevated,
                                 color: categoryFilter === cat ? cm.color : T.textMuted,
                                 border: `1px solid ${categoryFilter === cat ? `${cm.color}40` : T.border}`,
                             }}
@@ -369,7 +362,7 @@ export default function IndicadoresPage() {
                 })}
             </div>
 
-            {/* ── New indicator form ────────────────────────────── */}
+            {/* New indicator form */}
             {addingNew && (
                 <IndicatorEditCard
                     initial={emptyNew}
@@ -380,7 +373,7 @@ export default function IndicadoresPage() {
                 />
             )}
 
-            {/* ── Cards grid ───────────────────────────────────── */}
+            {/* Cards grid */}
             {loading ? (
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                     {Array.from({ length: 6 }).map((_, i) => (
@@ -401,7 +394,7 @@ export default function IndicadoresPage() {
             ) : filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 rounded-2xl"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                    <BarChart3 size={32} style={{ color: T.textDim }} className="mb-3" />
+                    <BarChart3 size={36} style={{ color: T.textDim }} className="mb-3" />
                     <p className="text-sm font-semibold" style={{ color: T.text }}>
                         {categoryFilter === 'all' ? 'Nenhum indicador' : `Nenhum indicador em "${CATEGORY_META[categoryFilter]?.label}"`}
                     </p>

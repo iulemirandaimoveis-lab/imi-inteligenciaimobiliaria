@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import {
-    Sparkles, Bot, Zap, CheckCircle2, XCircle, AlertCircle,
+    Sparkles, Bot, CheckCircle2, XCircle, AlertCircle,
     RefreshCw, Play, Image as ImageIcon, FileText, Loader2,
-    ChevronRight, BarChart3, Settings, Cpu, Braces,
+    ChevronRight, BarChart3, Settings, Cpu, Braces, Clock, History,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import { createClient } from '@/lib/supabase/client'
 
 // ── Providers catalog ─────────────────────────────────────────────
 const PROVIDERS = [
@@ -106,6 +107,19 @@ type TestResult = {
     error?: string
 }
 
+type AIRequest = {
+    id: string
+    task_type: string
+    model_used: string
+    prompt: string
+    result: string | null
+    cost_usd: number | null
+    latency_ms: number | null
+    success: boolean
+    created_at: string
+    user_id?: string
+}
+
 export default function IAHubPage() {
     const [providerStatus, setProviderStatus] = useState<Record<string, 'loading' | 'ok' | 'error' | 'unconfigured'>>({})
     const [testPrompt, setTestPrompt] = useState('Escreva uma legenda para Instagram de um apartamento premium com 3 quartos em Boa Viagem, Recife.')
@@ -117,9 +131,37 @@ export default function IAHubPage() {
     const [generatingImage, setGeneratingImage] = useState(false)
     const [generatedImage, setGeneratedImage] = useState<string | null>(null)
 
+    // History from ai_requests table
+    const [aiHistory, setAiHistory] = useState<AIRequest[]>([])
+    const [historyLoading, setHistoryLoading] = useState(true)
+
+    // Fetch AI request history from Supabase
+    async function fetchAIHistory() {
+        setHistoryLoading(true)
+        try {
+            const supabase = createClient()
+            const { data, error } = await supabase
+                .from('ai_requests')
+                .select('id, task_type, model_used, prompt, result, cost_usd, latency_ms, success, created_at')
+                .order('created_at', { ascending: false })
+                .limit(20)
+            if (error) {
+                // Table might not exist yet — show empty state gracefully
+                setAiHistory([])
+            } else {
+                setAiHistory(data || [])
+            }
+        } catch {
+            setAiHistory([])
+        } finally {
+            setHistoryLoading(false)
+        }
+    }
+
     // Check provider health on mount
     useEffect(() => {
         checkAllProviders()
+        fetchAIHistory()
     }, [])
 
     async function checkAllProviders() {
@@ -533,6 +575,101 @@ export default function IAHubPage() {
                         )}
                     </div>
                 </div>
+            </div>
+
+            {/* AI Request History */}
+            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center gap-2">
+                        <History size={16} style={{ color: T.accent }} />
+                        <h2 className="text-sm font-bold" style={{ color: T.text }}>Histórico de Requisições</h2>
+                    </div>
+                    <button
+                        onClick={fetchAIHistory}
+                        className="flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-bold transition-all"
+                        style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
+                        <RefreshCw size={12} />
+                        Atualizar
+                    </button>
+                </div>
+
+                {historyLoading ? (
+                    <div className="space-y-2">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="h-14 animate-pulse rounded-xl" style={{ background: T.elevated }} />
+                        ))}
+                    </div>
+                ) : aiHistory.length === 0 ? (
+                    <div className="py-16 flex flex-col items-center gap-3 text-center">
+                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
+                            style={{ background: T.elevated }}>
+                            <Bot size={28} style={{ color: T.textMuted, opacity: 0.4 }} />
+                        </div>
+                        <h3 className="text-sm font-semibold" style={{ color: T.text }}>Nenhuma requisição ainda</h3>
+                        <p className="text-xs max-w-xs" style={{ color: T.textMuted }}>
+                            Use a IA em avaliações ou leads para ver o histórico aqui
+                        </p>
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                                    {['Tarefa', 'Modelo', 'Status', 'Latência', 'Custo', 'Data'].map(h => (
+                                        <th key={h} className="px-3 py-2.5 text-[10px] font-bold uppercase tracking-widest"
+                                            style={{ color: T.textMuted }}>{h}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {aiHistory.map((req, i) => (
+                                    <tr key={req.id}
+                                        style={{ borderTop: i > 0 ? `1px solid ${T.border}` : 'none' }}>
+                                        <td className="px-3 py-3">
+                                            <span className="text-xs font-medium px-2 py-0.5 rounded-lg"
+                                                style={{ background: T.elevated, color: T.text }}>
+                                                {req.task_type || '—'}
+                                            </span>
+                                        </td>
+                                        <td className="px-3 py-3">
+                                            <span className="text-[10px] font-mono" style={{ color: T.textMuted }}>
+                                                {req.model_used || '—'}
+                                            </span>
+                                        </td>
+                                        <td className="px-3 py-3">
+                                            {req.success ? (
+                                                <CheckCircle2 size={14} style={{ color: T.success }} />
+                                            ) : (
+                                                <XCircle size={14} style={{ color: T.error }} />
+                                            )}
+                                        </td>
+                                        <td className="px-3 py-3">
+                                            <div className="flex items-center gap-1">
+                                                <Clock size={11} style={{ color: T.textMuted }} />
+                                                <span className="text-xs" style={{ color: T.textMuted }}>
+                                                    {req.latency_ms ? `${req.latency_ms}ms` : '—'}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-3 py-3">
+                                            <span className="text-xs" style={{ color: T.textMuted }}>
+                                                {req.cost_usd != null ? `$${req.cost_usd.toFixed(5)}` : '—'}
+                                            </span>
+                                        </td>
+                                        <td className="px-3 py-3">
+                                            <span className="text-xs" style={{ color: T.textMuted }}>
+                                                {new Date(req.created_at).toLocaleDateString('pt-BR', {
+                                                    day: '2-digit', month: '2-digit',
+                                                    hour: '2-digit', minute: '2-digit'
+                                                })}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </div>
     )

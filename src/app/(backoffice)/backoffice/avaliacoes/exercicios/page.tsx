@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // ============================================================
 // BANCO DE EXERCÍCIOS — NBR 14653 / Avaliação Imobiliária
@@ -352,21 +353,21 @@ export default function ExerciciosPage() {
   if (mode === 'resultado') {
     return (
       <div className="max-w-2xl mx-auto space-y-6 pb-20">
-        <div className="text-center py-8 rounded-xl px-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-          <div className="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
-            <Trophy size={36} className="text-amber-600" />
+        <div className="text-center py-8 rounded-2xl px-6" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
+          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(245,158,11,0.12)' }}>
+            <Trophy size={36} style={{ color: '#F59E0B' }} />
           </div>
           <h2 className="text-2xl font-bold mb-1" style={{ color: T.text }}>Treino Concluído!</h2>
           <p style={{ color: T.textMuted }}>{score.total} questões respondidas</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
             {[
-              { label: 'Aproveitamento', value: `${pct}%`, color: pct >= 70 ? 'text-emerald-600' : 'text-red-500' },
-              { label: 'Corretas', value: score.corretas, color: 'text-emerald-600' },
-              { label: 'Sequência max.', value: score.maxStreak, color: 'text-amber-600' },
+              { label: 'Aproveitamento', value: `${pct}%`, color: pct >= 70 ? '#6BB87B' : '#E57373' },
+              { label: 'Corretas', value: score.corretas, color: '#6BB87B' },
+              { label: 'Sequência max.', value: score.maxStreak, color: '#F59E0B' },
             ].map(item => (
               <div key={item.label} className="rounded-xl p-3" style={{ background: T.elevated }}>
-                <p className={`text-2xl font-bold ${item.color}`}>{item.value}</p>
+                <p className="text-2xl font-bold" style={{ color: item.color, fontVariantNumeric: 'tabular-nums' }}>{item.value}</p>
                 <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>{item.label}</p>
               </div>
             ))}
@@ -387,7 +388,8 @@ export default function ExerciciosPage() {
             </div>
           )}
 
-          <button onClick={startTreino} className="mt-6 w-full h-11 bg-[#102A43] text-white rounded-xl font-semibold hover:bg-[#16162A] transition-colors flex items-center justify-center gap-2">
+          <button onClick={startTreino} className="mt-6 w-full h-11 text-white rounded-xl font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
+            style={{ background: 'var(--bo-accent)' }}>
             <RefreshCw size={18} /> Treinar Novamente
           </button>
         </div>
@@ -418,60 +420,66 @@ export default function ExerciciosPage() {
 
         {/* Progress */}
         <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.border }}>
-          <div className="h-full bg-[#102A43] rounded-full transition-all" style={{ width: `${((currentIdx) / filtered.length) * 100}%` }} />
+          <div className="h-full rounded-full transition-all" style={{ width: `${((currentIdx) / filtered.length) * 100}%`, background: 'var(--bo-accent)' }} />
         </div>
 
-        <div className="rounded-xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <div className="rounded-2xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
           {/* Meta */}
           <div className="flex items-center gap-2">
             <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: T.elevated, color: T.textMuted }}>{current.categoria}</span>
             <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: T.elevated, color: T.textMuted }}>{NIVEIS[current.nivel]}</span>
-            {current.normaRef && <span className="text-xs px-2 py-0.5 bg-blue-50 rounded-full text-blue-600">{current.normaRef}</span>}
+            {current.normaRef && <span className="text-xs px-2 py-0.5 rounded-full font-mono" style={{ background: 'rgba(72,101,129,0.15)', color: 'var(--bo-accent)' }}>{current.normaRef}</span>}
           </div>
 
           <p className="text-base font-semibold leading-relaxed" style={{ color: T.text }}>{current.pergunta}</p>
 
           {current.contexto && (
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800 font-mono">
+            <div className="p-3 rounded-xl text-sm font-mono" style={{ background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)', color: '#F59E0B' }}>
               {current.contexto}
             </div>
           )}
 
           <div className="space-y-2">
             {current.opcoes.map((opt, idx) => {
-              let cls = ''
               let inlineStyle: React.CSSProperties = { border: `1px solid ${T.border}`, color: T.text }
               if (revealed) {
-                if (idx === current.correta) { cls = 'border-emerald-400 bg-emerald-50 text-emerald-800'; inlineStyle = {} }
-                else if (idx === selected && idx !== current.correta) { cls = 'border-red-400 bg-red-50 text-red-800'; inlineStyle = {} }
+                if (idx === current.correta) { inlineStyle = { border: '1px solid rgba(107,184,123,0.5)', background: 'rgba(107,184,123,0.12)', color: '#6BB87B' } }
+                else if (idx === selected && idx !== current.correta) { inlineStyle = { border: '1px solid rgba(227,87,87,0.5)', background: 'rgba(227,87,87,0.12)', color: '#E35757' } }
                 else { inlineStyle = { border: `1px solid ${T.border}`, color: T.textMuted } }
               }
               return (
                 <button key={idx} onClick={() => handleAnswer(idx)}
-                  className={`w-full flex items-center gap-3 p-3.5 rounded-xl text-left text-sm transition-all ${cls}`}
-                  style={Object.keys(inlineStyle).length > 0 ? inlineStyle : undefined}>
-                  <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold flex-shrink-0 ${revealed && idx === current.correta ? 'bg-emerald-500 border-emerald-500 text-white' : revealed && idx === selected ? 'bg-red-500 border-red-500 text-white' : ''}`}
-                    style={!revealed || (idx !== current.correta && idx !== selected) ? { borderColor: T.border } : undefined}>
+                  className="w-full flex items-center gap-3 p-3.5 rounded-xl text-left text-sm transition-all"
+                  style={inlineStyle}>
+                  <div
+                    className="w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold flex-shrink-0"
+                    style={
+                      revealed && idx === current.correta ? { background: '#6BB87B', borderColor: '#6BB87B', color: 'white' }
+                      : revealed && idx === selected ? { background: '#E57373', borderColor: '#E57373', color: 'white' }
+                      : { borderColor: T.border, color: T.textMuted }
+                    }
+                  >
                     {String.fromCharCode(65 + idx)}
                   </div>
                   {opt}
-                  {revealed && idx === current.correta && <CheckCircle size={16} className="ml-auto text-emerald-500" />}
-                  {revealed && idx === selected && idx !== current.correta && <XCircle size={16} className="ml-auto text-red-500" />}
+                  {revealed && idx === current.correta && <CheckCircle size={16} className="ml-auto" style={{ color: '#6BB87B' }} />}
+                  {revealed && idx === selected && idx !== current.correta && <XCircle size={16} className="ml-auto" style={{ color: '#E57373' }} />}
                 </button>
               )
             })}
           </div>
 
           {revealed && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-800">
-              <p className="font-semibold mb-1">💡 Explicação</p>
-              <p>{current.explicacao}</p>
+            <div className="p-4 rounded-xl text-sm" style={{ background: 'rgba(72,101,129,0.12)', border: '1px solid rgba(72,101,129,0.25)' }}>
+              <p className="font-semibold mb-1" style={{ color: 'var(--bo-accent)' }}>Explicação</p>
+              <p style={{ color: T.textMuted }}>{current.explicacao}</p>
             </div>
           )}
         </div>
 
         {revealed && (
-          <button onClick={handleNext} className="w-full h-11 bg-[#102A43] text-white rounded-xl font-semibold hover:bg-[#16162A] transition-colors flex items-center justify-center gap-2">
+          <button onClick={handleNext} className="w-full h-11 text-white rounded-xl font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
+            style={{ background: 'var(--bo-accent)' }}>
             {currentIdx < filtered.length - 1 ? <>Próxima <ChevronRight size={18} /></> : <>Ver Resultado <Trophy size={18} /></>}
           </button>
         )}
@@ -481,28 +489,33 @@ export default function ExerciciosPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-20">
-      <div className="flex items-center gap-4">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ border: `1px solid ${T.border}` }}>
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: T.text }}>Exercícios — NBR 14653</h1>
-          <p className="text-xs" style={{ color: T.textMuted }}>Treine avaliação imobiliária diariamente</p>
-        </div>
-      </div>
+      <PageIntelHeader
+        moduleLabel="AVALIAÇÕES · TREINAMENTO"
+        title="Exercícios — NBR 14653"
+        subtitle="Treine avaliação imobiliária diariamente com questões inteligentes"
+        actions={
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+            style={{ background: T.card, border: `1px solid ${T.border}` }}
+          >
+            <ArrowLeft size={18} style={{ color: T.text }} />
+          </button>
+        }
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          { label: 'Questões', value: EXERCICIOS.length, icon: BookOpen, color: 'text-blue-600 bg-blue-50' },
-          { label: 'Categorias', value: CATEGORIAS.length, icon: Target, color: 'text-purple-600 bg-purple-50' },
-          { label: 'Geradas por IA', value: '∞', icon: Sparkles, color: 'text-amber-600 bg-amber-50' },
+          { label: 'Questões', value: EXERCICIOS.length, icon: BookOpen, bg: 'rgba(72,101,129,0.12)', color: 'var(--bo-accent)' },
+          { label: 'Categorias', value: CATEGORIAS.length, icon: Target, bg: 'rgba(139,92,246,0.12)', color: '#A78BFA' },
+          { label: 'Geradas por IA', value: '∞', icon: Sparkles, bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' },
         ].map(item => {
           const Icon = item.icon
           return (
             <div key={item.label} className="rounded-xl p-4 flex items-center gap-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${item.color}`}>
-                <Icon size={18} />
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: item.bg }}>
+                <Icon size={18} style={{ color: item.color }} />
               </div>
               <div>
                 <p className="text-xl font-bold" style={{ color: T.text }}>{item.value}</p>
@@ -519,8 +532,10 @@ export default function ExerciciosPage() {
         <div className="flex flex-wrap gap-2">
           {['Todos', ...CATEGORIAS].map(cat => (
             <button key={cat} onClick={() => setSelectedCat(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${selectedCat === cat ? 'bg-[#102A43] text-white border-[#334E68]' : 'hover:border-[#334E68]'}`}
-              style={selectedCat !== cat ? { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` } : undefined}>
+              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:opacity-80"
+              style={selectedCat === cat
+                ? { background: 'var(--bo-accent)', color: 'white', border: '1px solid transparent' }
+                : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
               {cat}
             </button>
           ))}
@@ -538,7 +553,8 @@ export default function ExerciciosPage() {
         <div className="flex items-center justify-between pt-1">
           <p className="text-sm" style={{ color: T.textMuted }}><strong style={{ color: T.text }}>{filtered.length}</strong> questões selecionadas</p>
           <button onClick={startTreino} disabled={filtered.length === 0}
-            className="flex items-center gap-2 h-9 px-5 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors disabled:opacity-40">
+            className="flex items-center gap-2 h-9 px-5 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-40"
+            style={{ background: 'var(--bo-accent)' }}>
             <Play size={15} /> Iniciar Treino
           </button>
         </div>
@@ -550,8 +566,8 @@ export default function ExerciciosPage() {
           className="w-full flex items-center justify-between p-4 transition-colors"
           style={{ background: T.surface }}>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
-              <Sparkles size={18} className="text-amber-600" />
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'rgba(245,158,11,0.12)' }}>
+              <Sparkles size={18} style={{ color: '#F59E0B' }} />
             </div>
             <div className="text-left">
               <p className="text-sm font-semibold" style={{ color: T.text }}>Gerar Exercício com IA</p>
@@ -564,7 +580,8 @@ export default function ExerciciosPage() {
         {showIA && (
           <div className="p-4 space-y-3" style={{ borderTop: `1px solid ${T.border}` }}>
             <button onClick={generateIAExercise} disabled={isGenerating}
-              className="w-full flex items-center justify-center gap-2 h-10 bg-amber-50 border border-amber-200 text-amber-700 rounded-xl text-sm font-medium hover:bg-amber-100 transition-colors disabled:opacity-50">
+              className="w-full flex items-center justify-center gap-2 h-10 rounded-xl text-sm font-medium transition-all hover:opacity-80 disabled:opacity-50"
+              style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.25)', color: '#F59E0B' }}>
               {isGenerating ? <><Loader2 size={16} className="animate-spin" /> Gerando...</> : <><Sparkles size={16} /> Nova Questão</>}
             </button>
             {iaExercicio && (() => {
@@ -578,7 +595,7 @@ export default function ExerciciosPage() {
                         <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ background: T.border, color: T.text }}>
                           {String.fromCharCode(65 + i)}
                         </span>
-                        <span className={i === parsed.correta ? 'font-bold text-emerald-700' : ''}>{opt}</span>
+                        <span style={{ fontWeight: i === parsed.correta ? 700 : undefined, color: i === parsed.correta ? '#6BB87B' : T.textMuted }}>{opt}</span>
                         {i === parsed.correta && <CheckCircle size={12} className="text-emerald-500" />}
                       </div>
                     ))}

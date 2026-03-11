@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 interface EmailAnalysis {
   solicitante: string
@@ -213,32 +214,37 @@ export default function EmailHonorariosPage() {
   const fmtCurrency = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
-  const ENTITY_BADGE: Record<string, string> = {
-    tribunal: 'bg-purple-50 text-purple-700',
-    banco: 'bg-blue-50 text-blue-700',
-    particular: 'bg-emerald-50 text-emerald-700',
-    escritorio: 'bg-amber-50 text-amber-700',
-    outro: 'bg-[var(--bo-elevated)] text-[var(--bo-text-muted)]',
+  const ENTITY_BADGE: Record<string, { bg: string; color: string }> = {
+    tribunal: { bg: 'rgba(139,92,246,0.12)', color: '#A78BFA' },
+    banco: { bg: 'rgba(72,101,129,0.12)', color: 'var(--bo-accent)' },
+    particular: { bg: 'rgba(107,184,123,0.12)', color: '#6BB87B' },
+    escritorio: { bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' },
+    outro: { bg: 'rgba(255,255,255,0.05)', color: T.textMuted },
   }
-  const URGENCIA_BADGE: Record<string, string> = {
-    baixa: 'bg-green-50 text-green-700',
-    media: 'bg-amber-50 text-amber-700',
-    alta: 'bg-red-50 text-red-700',
+  const URGENCIA_BADGE: Record<string, { bg: string; color: string }> = {
+    baixa: { bg: 'rgba(107,184,123,0.12)', color: '#6BB87B' },
+    media: { bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' },
+    alta: { bg: 'rgba(229,115,115,0.12)', color: '#E57373' },
   }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-20">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <button onClick={() => router.back()}
-          className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ border: `1px solid ${T.border}` }}>
-          <ArrowLeft size={16} />
-        </button>
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: T.text }}>Interpretador de Email + Honorários</h1>
-          <p className="text-xs" style={{ color: T.textMuted }}>IA analisa emails de tribunais, bancos e particulares e gera proposta automática</p>
-        </div>
-      </div>
+      <PageIntelHeader
+        moduleLabel="AVALIAÇÕES · HONORÁRIOS"
+        title="Interpretador de Email + Honorários"
+        subtitle="IA analisa emails de tribunais, bancos e particulares e gera proposta automática"
+        live
+        actions={
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+            style={{ background: T.card, border: `1px solid ${T.border}` }}
+          >
+            <ArrowLeft size={18} style={{ color: T.text }} />
+          </button>
+        }
+      />
 
       {/* Input */}
       <div className="rounded-xl p-5 space-y-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
@@ -263,11 +269,12 @@ export default function EmailHonorariosPage() {
           style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
 
         {error && (
-          <p className="text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">{error}</p>
+          <p className="text-sm rounded-xl px-3 py-2" style={{ background: 'rgba(229,115,115,0.12)', color: '#E57373' }}>{error}</p>
         )}
 
         <button onClick={analisar} disabled={!emailText.trim() || loading}
-          className="w-full flex items-center justify-center gap-2 h-11 bg-[#102A43] text-white rounded-xl font-semibold hover:bg-[#16162A] transition-colors disabled:opacity-50">
+          className="w-full flex items-center justify-center gap-2 h-11 text-white rounded-xl font-semibold transition-all hover:opacity-80 disabled:opacity-50"
+          style={{ background: 'var(--bo-accent)' }}>
           {loading
             ? <><Loader2 size={17} className="animate-spin" /> Analisando com IA…</>
             : <><Sparkles size={17} /> Analisar e Gerar Proposta</>}
@@ -280,8 +287,11 @@ export default function EmailHonorariosPage() {
           <div className="flex" style={{ borderBottom: `1px solid ${T.border}` }}>
             {(['analise', 'resposta'] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab ? 'border-[#334E68] text-[var(--bo-accent)]' : 'border-transparent'}`}
-                style={activeTab !== tab ? { color: T.textMuted } : undefined}>
+                className="px-5 py-3 text-sm font-medium transition-colors"
+                style={{
+                  borderBottom: `2px solid ${activeTab === tab ? 'var(--bo-accent)' : 'transparent'}`,
+                  color: activeTab === tab ? 'var(--bo-accent)' : T.textMuted,
+                }}>
                 {tab === 'analise' ? '📊 Análise do Email' : '✉ Rascunho de Resposta'}
               </button>
             ))}
@@ -297,10 +307,22 @@ export default function EmailHonorariosPage() {
                   )}
                 </div>
                 <div className="flex gap-2 flex-wrap">
-                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${ENTITY_BADGE[analysis.tipo_entidade]}`}>
+                  <span
+                    className="text-xs px-2.5 py-1 rounded-full font-medium capitalize"
+                    style={{
+                      background: ENTITY_BADGE[analysis.tipo_entidade]?.bg,
+                      color: ENTITY_BADGE[analysis.tipo_entidade]?.color,
+                    }}
+                  >
                     {analysis.tipo_entidade}
                   </span>
-                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${URGENCIA_BADGE[analysis.urgencia]}`}>
+                  <span
+                    className="text-xs px-2.5 py-1 rounded-full font-medium capitalize"
+                    style={{
+                      background: URGENCIA_BADGE[analysis.urgencia]?.bg,
+                      color: URGENCIA_BADGE[analysis.urgencia]?.color,
+                    }}
+                  >
                     Urgência {analysis.urgencia}
                   </span>
                 </div>
@@ -329,9 +351,9 @@ export default function EmailHonorariosPage() {
               </div>
 
               {/* Honorários */}
-              <div className="border border-amber-200 rounded-xl overflow-hidden">
-                <div className="bg-amber-50 px-4 py-2.5 border-b border-amber-100">
-                  <p className="text-sm font-semibold text-amber-800 flex items-center gap-2">
+              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(245,158,11,0.30)' }}>
+                <div className="px-4 py-2.5" style={{ background: 'rgba(245,158,11,0.08)', borderBottom: '1px solid rgba(245,158,11,0.20)' }}>
+                  <p className="text-sm font-semibold flex items-center gap-2" style={{ color: '#F59E0B' }}>
                     <DollarSign size={14} /> Proposta de Honorários (IBAPE)
                   </p>
                 </div>
@@ -351,12 +373,13 @@ export default function EmailHonorariosPage() {
 
               <div className="flex gap-3">
                 <button onClick={() => setActiveTab('resposta')}
-                  className="flex-1 h-10 bg-[#102A43] text-white rounded-xl text-sm font-semibold hover:bg-[#16162A] transition-colors flex items-center justify-center gap-2">
+                  className="flex-1 h-11 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
+                  style={{ background: 'var(--bo-accent)' }}>
                   <Mail size={15} /> Ver Rascunho
                 </button>
                 <button onClick={() => router.push('/backoffice/avaliacoes/nova')}
-                  className="flex-1 h-10 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-2"
-                  style={{ border: `1px solid ${T.border}`, color: T.text }}>
+                  className="flex-1 h-11 rounded-xl text-sm font-medium transition-all hover:opacity-80 flex items-center justify-center gap-2"
+                  style={{ border: `1px solid ${T.border}`, color: T.text, background: T.card }}>
                   <FileText size={15} /> Criar Avaliação
                 </button>
               </div>

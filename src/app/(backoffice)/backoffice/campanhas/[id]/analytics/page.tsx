@@ -21,7 +21,8 @@ import {
   Loader2,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { T } from '../../../../lib/theme'
+import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 interface Campaign {
   id: string
@@ -80,17 +81,29 @@ export default function CampanhaAnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-24">
-        <Loader2 className="animate-spin" size={22} style={{ color: T.accent }} />
+      <div className="space-y-4 pt-2">
+        <div className="animate-pulse rounded-2xl h-16" style={{ background: T.elevated }} />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="animate-pulse rounded-2xl h-32" style={{ background: T.elevated }} />
+          ))}
+        </div>
       </div>
     )
   }
 
   if (!campaign) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <p style={{ color: T.textMuted }}>Campanha não encontrada.</p>
-        <button onClick={() => router.back()} className="text-sm underline" style={{ color: T.accent }}>Voltar</button>
+      <div className="rounded-2xl p-16 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+        <Target size={40} className="mx-auto mb-4 opacity-20" style={{ color: T.textMuted }} />
+        <p className="font-semibold mb-2" style={{ color: T.text }}>Campanha não encontrada</p>
+        <button
+          onClick={() => router.back()}
+          className="h-11 px-5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-80"
+          style={{ background: T.accent, color: '#fff' }}
+        >
+          Voltar
+        </button>
       </div>
     )
   }
@@ -98,52 +111,39 @@ export default function CampanhaAnalyticsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{ border: `1px solid ${T.border}` }}
-          >
-            <ArrowLeft size={20} style={{ color: T.text }} />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold" style={{ color: T.text }}>{campaign.name}</h1>
-            <div className="flex items-center gap-3 mt-2">
-              <span className="px-3 py-1 rounded-lg text-sm font-medium"
-                style={campaign.status === 'active'
-                  ? { background: 'rgba(16,185,129,0.12)', color: '#10B981' }
-                  : { background: T.elevated, color: T.textMuted }}>
-                ● {campaign.status === 'active' ? 'Ativa' : campaign.status === 'paused' ? 'Pausada' : campaign.status || 'Rascunho'}
-              </span>
-              <span className="text-sm" style={{ color: T.textMuted }}>{channelLabel}</span>
-              {campaign.start_date && campaign.end_date && (
-                <span className="text-sm" style={{ color: T.textMuted }}>
-                  {new Date(campaign.start_date).toLocaleDateString('pt-BR')} — {new Date(campaign.end_date).toLocaleDateString('pt-BR')}
-                </span>
-              )}
-            </div>
+      <PageIntelHeader
+        moduleLabel="CAMPANHAS · ANALYTICS"
+        title={campaign.name}
+        subtitle={[channelLabel, campaign.start_date && campaign.end_date
+          ? `${new Date(campaign.start_date).toLocaleDateString('pt-BR')} — ${new Date(campaign.end_date).toLocaleDateString('pt-BR')}`
+          : null].filter(Boolean).join(' · ')}
+        actions={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.back()}
+              className="w-11 h-11 rounded-xl flex items-center justify-center transition-opacity hover:opacity-80"
+              style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+            >
+              <ArrowLeft size={18} style={{ color: T.textMuted }} />
+            </button>
+            <button
+              className="h-11 px-4 rounded-xl font-semibold flex items-center gap-2 transition-opacity hover:opacity-80"
+              style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+            >
+              <Download size={16} />
+              Exportar
+            </button>
+            <button
+              onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
+              className="h-11 px-4 rounded-xl font-semibold flex items-center gap-2 text-white transition-opacity hover:opacity-80"
+              style={{ background: T.accent }}
+            >
+              <Edit size={16} />
+              Editar
+            </button>
           </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            className="h-10 px-4 rounded-xl font-medium flex items-center gap-2"
-            style={{ border: `1px solid ${T.border}`, color: T.text }}
-          >
-            <Download size={18} />
-            Exportar
-          </button>
-          <button
-            onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
-            className="h-10 px-4 rounded-xl font-medium flex items-center gap-2 text-white"
-            style={{ background: T.accent }}
-          >
-            <Edit size={18} />
-            Editar
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

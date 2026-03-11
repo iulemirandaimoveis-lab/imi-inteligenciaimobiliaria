@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp } from 'lucide-react'
+import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp, BarChart3 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -186,40 +187,48 @@ export default function PipelineKanbanPage() {
             {/* ── Header ── */}
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
                 style={{ paddingBottom: 16, flexShrink: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                    <div>
-                        <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--bo-text)', letterSpacing: '-0.3px' }}>
-                            Pipeline Comercial
-                        </h1>
-                        <p style={{ fontSize: 11, color: 'var(--bo-text-muted)', marginTop: 1 }}>CRM · Funil de Vendas</p>
-                    </div>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                        <Link href="/backoffice/leads/novo" style={{
-                            display: 'flex', alignItems: 'center', gap: 6,
-                            height: 38, padding: '0 16px', borderRadius: 12,
-                            background: 'var(--bo-accent)',
-                            color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none',
-                        }}>
-                            <Plus size={15} /> Novo Lead
-                        </Link>
-                    </div>
-                </div>
+                <PageIntelHeader
+                    moduleLabel="CRM · FUNIL DE VENDAS"
+                    title="Pipeline Comercial"
+                    subtitle={`${totalLeads} leads ativos — potencial total ${formatTotal(totalBudget)}`}
+                    actions={
+                        <div style={{ display: 'flex', gap: 8 }}>
+                            <Link href="/backoffice/campanhas/ads" style={{
+                                display: 'flex', alignItems: 'center', gap: 6,
+                                height: 36, padding: '0 14px', borderRadius: 10,
+                                background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                                color: 'var(--bo-text-muted)', fontSize: 12, fontWeight: 600, textDecoration: 'none',
+                            }}>
+                                <BarChart3 size={13} /> Ads
+                            </Link>
+                            <Link href="/backoffice/leads/novo" style={{
+                                display: 'flex', alignItems: 'center', gap: 6,
+                                height: 36, padding: '0 16px', borderRadius: 10,
+                                background: 'var(--bo-accent)',
+                                color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                            }}>
+                                <Plus size={14} /> Novo Lead
+                            </Link>
+                        </div>
+                    }
+                />
 
                 {/* KPI strip */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
                     {[
-                        { label: 'TOTAL EM NEGOCIAÇÃO', value: loading ? '...' : formatTotal(totalBudget), color: 'var(--bo-text)' },
-                        { label: 'TICKETS ATIVOS', value: loading ? '...' : `${totalLeads} Leads`, color: 'var(--bo-text)' },
-                        { label: 'FECHAMENTOS', value: loading ? '...' : String(ganhoCount).padStart(2, '0'), color: '#22C55E' },
+                        { label: 'TOTAL EM NEGOCIAÇÃO', value: loading ? '—' : formatTotal(totalBudget), accent: T.accent },
+                        { label: 'TICKETS ATIVOS', value: loading ? '—' : `${totalLeads}`, accent: '#7BA3C2' },
+                        { label: 'FECHAMENTOS', value: loading ? '—' : String(ganhoCount).padStart(2, '0'), accent: '#22C55E' },
                     ].map(kpi => (
                         <div key={kpi.label} style={{
-                            padding: '10px 12px', borderRadius: 12,
+                            padding: '12px 14px', borderRadius: 12,
                             background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                            borderLeft: `3px solid ${kpi.accent}`,
                         }}>
-                            <p style={{ fontSize: 8, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
+                            <p style={{ fontSize: 8, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
                                 {kpi.label}
                             </p>
-                            <p style={{ fontSize: 16, fontWeight: 800, color: kpi.color, letterSpacing: '-0.3px' }}>
+                            <p style={{ fontSize: 18, fontWeight: 800, color: kpi.accent, letterSpacing: '-0.3px', fontFamily: 'monospace' }}>
                                 {kpi.value}
                             </p>
                         </div>
@@ -295,8 +304,9 @@ export default function PipelineKanbanPage() {
 
                             {/* Cards container */}
                             <div style={{
-                                background: 'var(--bo-surface)',
-                                border: '1px solid var(--bo-border)',
+                                background: `color-mix(in srgb, ${stage.dot}06, var(--bo-surface))`,
+                                border: `1px solid color-mix(in srgb, ${stage.dot}20, var(--bo-border))`,
+                                borderTop: `2px solid ${stage.dot}40`,
                                 borderRadius: 16, padding: 10,
                                 minHeight: 120,
                                 maxHeight: 'calc(100vh - 320px)',

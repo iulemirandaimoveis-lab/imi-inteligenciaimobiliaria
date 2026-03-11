@@ -8,6 +8,7 @@ import { useBrokers, updateBrokerStatus } from '@/hooks/use-brokers'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 export default function CorretoresPage() {
     const [searchTerm, setSearchTerm] = useState('')
@@ -30,18 +31,17 @@ export default function CorretoresPage() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between flex-wrap gap-3">
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Gestão de Corretores</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>Controle de acesso, permissões e desempenho da equipe comercial</p>
-                </div>
-                <Link href="/backoffice/settings/corretores/novo"
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                    style={{ background: '#1E3A5F' }}>
-                    <Plus size={16} /> Novo Corretor
-                </Link>
-            </div>
+            <PageIntelHeader
+                title="Gestão de Corretores"
+                subtitle="Controle de acesso, permissões e desempenho da equipe comercial"
+                actions={
+                    <Link href="/backoffice/settings/corretores/novo"
+                        className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-110"
+                        style={{ background: T.accent }}>
+                        <Plus size={16} /> Novo Corretor
+                    </Link>
+                }
+            />
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -52,10 +52,10 @@ export default function CorretoresPage() {
                 ].map(s => {
                     const Icon = s.icon
                     return (
-                        <div key={s.label} className="flex items-center justify-between rounded-xl p-5"
-                            style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                        <div key={s.label} className="flex items-center justify-between rounded-2xl p-5"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <div>
-                                <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: T.textMuted }}>{s.label}</p>
+                                <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>{s.label}</p>
                                 <p className="text-3xl font-bold" style={{ color: s.color }}>{s.value}</p>
                             </div>
                             <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: s.bg }}>

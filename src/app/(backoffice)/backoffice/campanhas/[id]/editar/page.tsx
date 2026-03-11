@@ -323,22 +323,29 @@ export default function EditarCampanhaPage() {
             return (
               <div key={step.number} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isCompleted ? 'bg-green-500 text-white' :
-                    isActive ? 'bg-blue-500 text-white' : ''
-                    }`}
-                    style={(!isCompleted && !isActive) ? { background: T.elevated, color: T.textMuted } : undefined}
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
+                    style={
+                      isCompleted
+                        ? { background: T.success, color: '#fff' }
+                        : isActive
+                          ? { background: T.accent, color: '#fff' }
+                          : { background: T.elevated, color: T.textMuted }
+                    }
                   >
                     {isCompleted ? <Check size={24} /> : <StepIcon size={24} />}
                   </div>
-                  <p className={`text-sm font-medium mt-2 ${isActive ? 'text-blue-500' : isCompleted ? 'text-green-500' : ''}`}
-                    style={(!isActive && !isCompleted) ? { color: T.textMuted } : undefined}
+                  <p
+                    className="text-sm font-medium mt-2"
+                    style={{ color: isActive ? T.accent : isCompleted ? T.success : T.textMuted }}
                   >
                     {step.label}
                   </p>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`h-1 flex-1 mx-4 rounded-full transition-all ${currentStep > step.number ? 'bg-green-500' : ''}`}
-                    style={currentStep <= step.number ? { background: T.border } : undefined}
+                  <div
+                    className="h-1 flex-1 mx-4 rounded-full transition-all"
+                    style={{ background: currentStep > step.number ? T.success : T.border }}
                   />
                 )}
               </div>
@@ -347,8 +354,8 @@ export default function EditarCampanhaPage() {
         </div>
         <div className="h-2 rounded-full overflow-hidden" style={{ background: T.elevated }}>
           <div
-            className="h-full bg-blue-500 transition-all duration-300"
-            style={{ width: `${progress}%` }}
+            className="h-full transition-all duration-300"
+            style={{ width: `${progress}%`, background: T.accent }}
           />
         </div>
       </div>
@@ -623,7 +630,7 @@ export default function EditarCampanhaPage() {
                       onClick={() => toggleLocation(loc)}
                       className="h-10 px-4 rounded-lg text-sm font-medium transition-all"
                       style={formData.location.includes(loc)
-                        ? { background: '#3B82F6', color: '#fff', border: '1px solid #3B82F6' }
+                        ? { background: T.activeBg, border: `1px solid ${T.borderActive}`, color: T.text }
                         : { background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }
                       }
                     >
@@ -649,7 +656,7 @@ export default function EditarCampanhaPage() {
                       onClick={() => toggleInterest(interest)}
                       className="h-10 px-4 rounded-lg text-sm font-medium transition-all"
                       style={formData.interests.includes(interest)
-                        ? { background: '#3B82F6', color: '#fff', border: '1px solid #3B82F6' }
+                        ? { background: T.activeBg, border: `1px solid ${T.borderActive}`, color: T.text }
                         : { background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }
                       }
                     >
@@ -879,7 +886,8 @@ export default function EditarCampanhaPage() {
           <button
             type="button"
             onClick={handleNext}
-            className="flex items-center gap-2 h-11 px-6 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium text-white transition-all hover:opacity-90"
+            style={{ background: T.accent }}
           >
             Próximo
             <ArrowRight size={20} />
@@ -889,7 +897,8 @@ export default function EditarCampanhaPage() {
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex items-center gap-2 h-11 px-6 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ background: T.accent }}
           >
             {isSubmitting ? (
               <>

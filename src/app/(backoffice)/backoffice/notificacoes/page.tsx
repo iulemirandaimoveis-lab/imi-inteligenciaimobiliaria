@@ -7,6 +7,7 @@ import {
     User, Home, DollarSign, FileText, AlertCircle, Info, CheckCircle,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 interface Notification {
     id: string
@@ -72,25 +73,51 @@ export default function NotificacoesPage() {
     const unreadCount = notifications.filter(n => !n.read).length
 
     if (loading) {
-        return <div className="flex items-center justify-center h-64"><Loader2 size={24} className="animate-spin" style={{ color: T.accent }} /></div>
+        return (
+            <div className="space-y-5 max-w-3xl mx-auto">
+                <div className="animate-pulse" style={{ height: '72px', borderRadius: '16px', background: T.surface, border: `1px solid ${T.border}` }} />
+                <div className="flex gap-2">
+                    <div className="animate-pulse h-9 w-28 rounded-xl" style={{ background: T.elevated }} />
+                    <div className="animate-pulse h-9 w-36 rounded-xl" style={{ background: T.elevated }} />
+                </div>
+                <div className="space-y-2">
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="animate-pulse flex items-start gap-3 p-4 rounded-2xl"
+                            style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: T.elevated, flexShrink: 0 }} />
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '7px' }}>
+                                <div style={{ height: '12px', width: '55%', borderRadius: '6px', background: T.elevated }} />
+                                <div style={{ height: '10px', width: '75%', borderRadius: '6px', background: T.elevated }} />
+                                <div style={{ height: '9px', width: '20%', borderRadius: '6px', background: T.elevated }} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
     }
 
     return (
         <div className="space-y-5 max-w-3xl mx-auto">
             {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Notificações</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
-                        {unreadCount > 0 ? `${unreadCount} não lida${unreadCount > 1 ? 's' : ''}` : 'Tudo em dia'}
-                    </p>
-                </div>
-                {unreadCount > 0 && (
-                    <button onClick={markAllRead} className="flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold"
-                        style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
-                        <CheckCheck size={14} /> Marcar todas como lidas
-                    </button>
-                )}
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+                <PageIntelHeader
+                    moduleLabel="SISTEMA · NOTIFICAÇÕES"
+                    title="Notificações"
+                    subtitle={unreadCount > 0 ? `${unreadCount} não lida${unreadCount > 1 ? 's' : ''}` : 'Tudo em dia'}
+                    live={unreadCount > 0}
+                    actions={
+                        unreadCount > 0 ? (
+                            <button
+                                onClick={markAllRead}
+                                className="flex items-center gap-2 px-4 rounded-xl text-xs font-semibold"
+                                style={{ height: '44px', background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}
+                            >
+                                <CheckCheck size={14} /> Marcar todas como lidas
+                            </button>
+                        ) : undefined
+                    }
+                />
             </motion.div>
 
             {/* Filter */}
@@ -110,13 +137,20 @@ export default function NotificacoesPage() {
 
             {/* List */}
             {filtered.length === 0 ? (
-                <div className="rounded-2xl p-12 text-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <Bell size={32} className="mx-auto mb-3 opacity-30" style={{ color: T.textDim }} />
-                    <p className="text-sm font-semibold" style={{ color: T.textMuted }}>
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-2xl p-14 text-center"
+                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                >
+                    <div className="mb-4" style={{ opacity: 0.12 }}>
+                        <Bell size={56} style={{ color: T.textMuted, margin: '0 auto' }} />
+                    </div>
+                    <p className="text-base font-bold mb-2" style={{ color: T.text }}>
                         {filter === 'unread' ? 'Nenhuma notificação não lida' : 'Nenhuma notificação'}
                     </p>
-                    <p className="text-xs mt-1" style={{ color: T.textDim }}>As notificações aparecerão aqui quando houver atividade</p>
-                </div>
+                    <p className="text-sm" style={{ color: T.textMuted }}>As notificações aparecerão aqui quando houver atividade</p>
+                </motion.div>
             ) : (
                 <div className="space-y-2">
                     {filtered.map((n, i) => {

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL } from '@/lib/modelos-contratos'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     rascunho: { label: 'Rascunho', text: '#4E5669', bg: 'rgba(78,86,105,0.15)', icon: FileText },
@@ -81,20 +82,27 @@ export default function ContratosPage() {
     return (
         <div className="space-y-5 max-w-7xl mx-auto">
             {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-                className="flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Contratos</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textDim }}>
-                        Geração por IA · Assinatura Digital · 5 idiomas
-                    </p>
-                </div>
-                <motion.button whileTap={{ scale: 0.96 }}
-                    onClick={() => router.push('/backoffice/contratos/novo')}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                    style={{ background: 'var(--bo-accent)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
-                    <Sparkles size={15} /> Novo Contrato
-                </motion.button>
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+                <PageIntelHeader
+                    moduleLabel="CONTRATOS · IA"
+                    title="Contratos"
+                    subtitle="Geração por IA · Assinatura Digital · 5 idiomas"
+                    actions={
+                        <motion.button
+                            whileTap={{ scale: 0.96 }}
+                            onClick={() => router.push('/backoffice/contratos/novo')}
+                            className="flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white flex-shrink-0"
+                            style={{
+                                height: '44px',
+                                background: 'linear-gradient(135deg, var(--bo-accent) 0%, #7C3AED 100%)',
+                                boxShadow: '0 4px 14px rgba(124,58,237,0.28)',
+                                border: 'none',
+                            }}
+                        >
+                            <Sparkles size={15} /> Novo Contrato
+                        </motion.button>
+                    }
+                />
             </motion.div>
 
             {/* KPIs */}
@@ -109,8 +117,8 @@ export default function ContratosPage() {
                             style={{ background: `${k.color}18` }}>
                             <k.icon size={16} style={{ color: k.color }} />
                         </div>
-                        <p className="text-2xl font-bold" style={{ color: T.text }}>{k.value}</p>
-                        <p className="text-xs mt-0.5" style={{ color: T.textDim }}>{k.label}</p>
+                        <p className="text-3xl font-black" style={{ color: T.text, fontVariantNumeric: 'tabular-nums' }}>{k.value}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: T.textDim }}>{k.label}</p>
                     </motion.div>
                 ))}
             </div>
@@ -165,8 +173,22 @@ export default function ContratosPage() {
                         </div>
 
                         {loading && (
-                            <div className="flex items-center justify-center py-16">
-                                <Loader2 className="w-6 h-6 animate-spin" style={{ color: T.accent }} />
+                            <div className="space-y-2">
+                                {[...Array(4)].map((_, i) => (
+                                    <div key={i} className="animate-pulse rounded-2xl p-4 flex items-center gap-3"
+                                        style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                                        <div className="w-10 h-10 rounded-xl flex-shrink-0" style={{ background: T.elevated }} />
+                                        <div className="flex-1 space-y-2">
+                                            <div style={{ height: '10px', width: '30%', borderRadius: '6px', background: T.elevated }} />
+                                            <div style={{ height: '13px', width: '55%', borderRadius: '6px', background: T.elevated }} />
+                                            <div style={{ height: '10px', width: '45%', borderRadius: '6px', background: T.elevated }} />
+                                        </div>
+                                        <div style={{ width: '60px', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' }}>
+                                            <div style={{ height: '10px', width: '50px', borderRadius: '6px', background: T.elevated }} />
+                                            <div style={{ height: '10px', width: '40px', borderRadius: '6px', background: T.elevated }} />
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
 
@@ -215,15 +237,34 @@ export default function ContratosPage() {
                         )}
 
                         {!loading && filtered.length === 0 && (
-                            <div className="text-center py-16" style={{ color: T.textDim }}>
-                                <FileText size={32} className="mx-auto mb-3 opacity-30" />
-                                <p className="text-sm mb-3">Nenhum contrato encontrado</p>
-                                <button onClick={() => router.push('/backoffice/contratos/novo')}
-                                    className="text-xs font-semibold px-4 py-2 rounded-xl text-white"
-                                    style={{ background: 'var(--bo-accent)' }}>
-                                    Gerar primeiro contrato
-                                </button>
-                            </div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="rounded-2xl p-12 text-center"
+                                style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                            >
+                                <div className="mb-4" style={{ opacity: 0.15 }}>
+                                    <FileText size={56} style={{ color: T.textMuted, margin: '0 auto' }} />
+                                </div>
+                                <p className="text-base font-bold mb-2" style={{ color: T.text }}>Nenhum contrato encontrado</p>
+                                <p className="text-sm mb-6" style={{ color: T.textMuted }}>
+                                    {search ? 'Tente buscar com outros termos' : 'Gere seu primeiro contrato com IA em menos de 2 minutos.'}
+                                </p>
+                                {!search && (
+                                    <button
+                                        onClick={() => router.push('/backoffice/contratos/novo')}
+                                        className="inline-flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white"
+                                        style={{
+                                            height: '44px',
+                                            background: 'linear-gradient(135deg, var(--bo-accent) 0%, #7C3AED 100%)',
+                                            boxShadow: '0 4px 14px rgba(124,58,237,0.22)',
+                                            border: 'none',
+                                        }}
+                                    >
+                                        <Sparkles size={15} /> Gerar primeiro contrato
+                                    </button>
+                                )}
+                            </motion.div>
                         )}
                     </motion.div>
                 )}

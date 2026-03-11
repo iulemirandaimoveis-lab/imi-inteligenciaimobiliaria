@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { ArrowLeft, User, Mail, Shield, Key, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 export default function NovoUsuarioPage() {
     const router = useRouter()
@@ -55,25 +55,20 @@ export default function NovoUsuarioPage() {
 
     return (
         <div className="max-w-2xl space-y-6">
-            {/* Header */}
-            <div className="flex items-center gap-4">
-                <Link
-                    href="/backoffice/settings/usuarios"
-                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                >
-                    <ArrowLeft size={18} style={{ color: T.textMuted }} />
-                </Link>
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Novo Usuário</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>
-                        Adicionar um novo usuário ao sistema
-                    </p>
-                </div>
-            </div>
+            <PageIntelHeader
+                title="Novo Usuário"
+                subtitle="Adicionar um novo usuário ao sistema"
+                actions={
+                    <button type="button" onClick={() => router.back()}
+                        className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-medium transition-all"
+                        style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: T.elevated }}>
+                        <ArrowLeft size={16} /> Voltar
+                    </button>
+                }
+            />
 
             {/* Form card */}
-            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                 <form onSubmit={handleCreate} className="space-y-5">
                     {/* Name */}
                     <div>
@@ -170,8 +165,8 @@ export default function NovoUsuarioPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-60"
-                            style={{ background: loading ? '#334E68' : '#1E3A5F', boxShadow: loading ? 'none' : '0 2px 8px rgba(30,58,95,0.4)' }}>
+                            className="flex-1 h-11 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110 disabled:opacity-60"
+                            style={{ background: T.accent }}>
                             {loading && <Loader2 size={15} className="animate-spin" />}
                             {loading ? 'Criando...' : 'Criar Usuário'}
                         </button>

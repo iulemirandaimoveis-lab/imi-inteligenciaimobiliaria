@@ -259,7 +259,10 @@ export default function LeadInboxDetailPage() {
                 animate={{ opacity: 1, y: 0 }}
                 style={{
                     borderRadius: 20, padding: 18, marginBottom: 16,
-                    background: T.elevated, border: `1px solid ${T.border}`,
+                    background: T.elevated,
+                    border: `1px solid ${T.border}`,
+                    boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)',
+                    backgroundImage: 'linear-gradient(135deg, rgba(59,130,246,0.05) 0%, transparent 60%)',
                 }}
             >
                 {/* Header row */}
@@ -418,8 +421,10 @@ export default function LeadInboxDetailPage() {
                 transition={{ delay: 0.13 }}
                 style={{
                     borderRadius: 20, overflow: 'hidden',
-                    background: T.elevated, border: `1px solid ${T.border}`,
+                    background: T.elevated,
+                    border: `1px solid ${T.border}`,
                     marginBottom: 16,
+                    boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)',
                 }}
             >
                 {/* Chat header */}
@@ -603,11 +608,12 @@ export default function LeadInboxDetailPage() {
                         style={{
                             flex: 1, height: 52, borderRadius: 16,
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                            fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                            fontSize: 14, fontWeight: 600, cursor: 'pointer',
                             background: assumed ? 'rgba(74,222,128,0.12)' : T.elevated,
                             border: `1.5px solid ${assumed ? '#4ADE80' : T.border}`,
                             color: assumed ? '#4ADE80' : T.text,
-                            transition: 'all 0.2s',
+                            boxShadow: assumed ? '0 0 16px rgba(74,222,128,0.2), inset 0 1px 0 rgba(255,255,255,0.06)' : 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                            transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
                         }}
                     >
                         {assumed ? <CheckCircle2 size={18} /> : <User size={18} />}
@@ -618,9 +624,10 @@ export default function LeadInboxDetailPage() {
                         style={{
                             flex: 1, height: 52, borderRadius: 16, textDecoration: 'none',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                            fontSize: 14, fontWeight: 700, color: '#ffffff',
+                            fontSize: 14, fontWeight: 600, color: '#ffffff',
                             background: 'var(--bo-accent)',
-                            boxShadow: '0 4px 20px rgba(59,130,246,0.35)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            boxShadow: '0 0 24px rgba(59,130,246,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',
                         }}
                     >
                         <Calendar size={18} />

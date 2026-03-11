@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 
 // Design tokens using --bo-* CSS variables
 interface Development {
@@ -174,67 +175,60 @@ export default function ConstrutoraDetalhesPage() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
-      <div className="flex items-start justify-between flex-wrap gap-4">
-        <div className="flex items-start gap-4">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors flex-shrink-0 hover:opacity-80"
-            style={{ border: `1px solid ${T.border}`, color: T.text }}
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div className="flex items-start gap-4">
-            {/* Logo */}
-            <div
-              className="relative w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
-              style={{ border: `1px solid ${T.border}`, background: T.surfaceAlt }}
+      <PageIntelHeader
+        moduleLabel="CONSTRUTORAS"
+        title={data.name}
+        subtitle={[data.legal_name, data.cnpj].filter(Boolean).join(' · ') || undefined}
+        actions={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.back()}
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors hover:opacity-80"
+              style={{ border: `1px solid ${T.border}`, background: T.elevated, color: T.textMuted }}
             >
-              {data.logo_url ? (
-                <Image src={data.logo_url} alt={data.name} fill className="object-contain p-1" />
-              ) : (
-                <Building2 size={28} style={{ color: T.textMuted }} />
-              )}
-            </div>
-            <div>
-              <div className="flex items-center gap-3 mb-1 flex-wrap">
-                <h1 className="text-2xl font-bold" style={{ color: T.text }}>{data.name}</h1>
-                <span
-                  className="px-3 py-1 rounded-lg text-xs font-medium"
-                  style={{
-                    backgroundColor: data.is_active ? 'rgba(16,185,129,0.15)' : 'rgba(107,114,128,0.15)',
-                    color: data.is_active ? '#10B981' : '#6B7280',
-                  }}
-                >
-                  {data.is_active ? 'Ativa' : 'Inativa'}
-                </span>
-              </div>
-              {data.legal_name && (
-                <p className="text-sm" style={{ color: T.textMuted }}>{data.legal_name}</p>
-              )}
-              {data.cnpj && (
-                <p className="text-xs font-mono mt-1" style={{ color: T.textMuted }}>{data.cnpj}</p>
-              )}
-            </div>
+              <ArrowLeft size={18} />
+            </button>
+            <Link
+              href={`/backoffice/construtoras/${params.id}/editar`}
+              className="flex items-center gap-2 h-10 px-5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition-colors"
+              style={{ backgroundColor: T.accent }}
+            >
+              <Edit size={15} />
+              Editar
+            </Link>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors"
+              style={{ border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', background: 'rgba(239,68,68,0.06)' }}
+            >
+              <Trash2 size={16} />
+            </button>
           </div>
-        </div>
+        }
+      />
 
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/backoffice/construtoras/${params.id}/editar`}
-            className="flex items-center gap-2 h-10 px-5 rounded-xl text-white text-sm font-medium hover:opacity-90 transition-colors"
-            style={{ backgroundColor: T.accent }}
-          >
-            <Edit size={16} />
-            Editar
-          </Link>
-          <button
-            onClick={() => setShowDeleteConfirm(true)}
-            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors hover:bg-red-500/20"
-            style={{ border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}
-          >
-            <Trash2 size={16} />
-          </button>
+      {/* Identity strip — logo + status badge */}
+      <div className="flex items-center gap-4">
+        <div
+          className="relative w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+          style={{ border: `1px solid ${T.border}`, background: T.surfaceAlt }}
+        >
+          {data.logo_url ? (
+            <Image src={data.logo_url} alt={data.name} fill className="object-contain p-1" />
+          ) : (
+            <Building2 size={24} style={{ color: T.textMuted }} />
+          )}
         </div>
+        <span
+          className="px-3 py-1 rounded-lg text-xs font-bold"
+          style={{
+            backgroundColor: data.is_active ? 'rgba(16,185,129,0.12)' : 'rgba(107,114,128,0.12)',
+            color: data.is_active ? '#10B981' : '#6B7280',
+            border: `1px solid ${data.is_active ? 'rgba(16,185,129,0.25)' : 'rgba(107,114,128,0.25)'}`,
+          }}
+        >
+          {data.is_active ? 'Ativa' : 'Inativa'}
+        </span>
       </div>
 
       {/* Delete Confirmation Modal */}

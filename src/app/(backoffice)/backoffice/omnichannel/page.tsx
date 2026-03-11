@@ -25,7 +25,6 @@ export default function OmniChannelPage() {
     const hasChatwoot = !!CHATWOOT_URL
 
     useEffect(() => {
-        // Fetch real lead stats for the summary cards
         fetch('/api/leads')
             .then(r => r.json())
             .then((json: any) => {
@@ -41,22 +40,28 @@ export default function OmniChannelPage() {
 
     if (loading) return (
         <div className="space-y-5">
-            <div><div className="skeleton h-6 w-48 mb-2" /><div className="skeleton h-4 w-64" /></div>
+            <div>
+                <div className="h-2.5 rounded mb-2 animate-pulse" style={{ background: T.elevated, width: 160 }} />
+                <div className="h-7 rounded mb-2 animate-pulse" style={{ background: T.elevated, width: 240 }} />
+                <div className="h-3 rounded animate-pulse" style={{ background: T.elevated, width: 320 }} />
+            </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {[...Array(4)].map((_, i) => (
-                    <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 100}ms` }}>
-                        <div className="skeleton w-9 h-9 rounded-xl mb-3" />
-                        <div className="skeleton lg h-5 w-16 mb-2" />
-                        <div className="skeleton h-3 w-24" />
+                    <div key={i} className="rounded-2xl p-4 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, animationDelay: `${i * 100}ms`, height: 88 }}>
+                        <div className="h-2.5 rounded mb-3" style={{ background: 'var(--bo-hover)', width: '60%' }} />
+                        <div className="h-7 rounded" style={{ background: 'var(--bo-hover)', width: '40%' }} />
                     </div>
                 ))}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[...Array(4)].map((_, i) => (
-                    <div key={i} className="skeleton-card p-5" style={{ animationDelay: `${i * 80}ms` }}>
+                    <div key={i} className="rounded-2xl p-5 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, animationDelay: `${i * 80}ms`, height: 76 }}>
                         <div className="flex items-center gap-3">
-                            <div className="skeleton w-12 h-12 rounded-xl" />
-                            <div><div className="skeleton h-4 w-24 mb-1" /><div className="skeleton h-3 w-16" /></div>
+                            <div className="w-12 h-12 rounded-xl" style={{ background: 'var(--bo-hover)' }} />
+                            <div>
+                                <div className="h-3.5 rounded mb-1.5" style={{ background: 'var(--bo-hover)', width: 96 }} />
+                                <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: 64 }} />
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -76,9 +81,9 @@ export default function OmniChannelPage() {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setActiveView('overview')}
-                                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
+                                className="h-10 px-4 rounded-xl text-xs font-semibold transition-all"
                                 style={{
-                                    background: activeView === 'overview' ? T.accent : T.hover,
+                                    background: activeView === 'overview' ? T.accent : T.elevated,
                                     color: activeView === 'overview' ? '#fff' : T.textMuted,
                                     border: `1px solid ${activeView === 'overview' ? T.accent : T.border}`,
                                 }}
@@ -87,23 +92,31 @@ export default function OmniChannelPage() {
                             </button>
                             <button
                                 onClick={() => setActiveView('chatwoot')}
-                                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+                                className="h-10 px-4 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
                                 style={{
-                                    background: activeView === 'chatwoot' ? T.accent : T.hover,
+                                    background: activeView === 'chatwoot' ? T.accent : T.elevated,
                                     color: activeView === 'chatwoot' ? '#fff' : T.textMuted,
                                     border: `1px solid ${activeView === 'chatwoot' ? T.accent : T.border}`,
                                 }}
                             >
-                                <Layers size={14} /> Chatwoot
+                                <Layers size={13} /> Chatwoot
                             </button>
                         </div>
                     ) : undefined
                 }
             />
 
-            {/* ═══════ OVERVIEW VIEW ═══════ */}
+            {/* OVERVIEW VIEW */}
             {activeView === 'overview' && (
                 <>
+                    {/* Stats Summary */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                        <KPICard label="Leads Hoje" value={String(realStats.hoje)} icon={<Users size={16} />} accent="blue" size="sm" />
+                        <KPICard label="Tempo Médio" value="—" icon={<Clock size={16} />} accent="cold" size="sm" />
+                        <KPICard label="Satisfação" value="—" icon={<Star size={16} />} accent="green" size="sm" />
+                        <KPICard label="Pendentes" value={String(realStats.pendentes)} icon={<AlertCircle size={16} />} accent="hot" size="sm" />
+                    </div>
+
                     {/* Channel Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {channels.map(ch => (
@@ -114,7 +127,6 @@ export default function OmniChannelPage() {
                                     background: T.elevated,
                                     border: `1px solid ${T.border}`,
                                 }}
-
                             >
                                 <div
                                     className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -132,7 +144,7 @@ export default function OmniChannelPage() {
                                 </div>
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <span
-                                        className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full"
+                                        className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
                                         style={{
                                             background: ch.status === 'Ativo' ? 'var(--s-done-bg)' : T.hover,
                                             color: ch.status === 'Ativo' ? 'var(--s-done)' : T.textMuted,
@@ -141,7 +153,7 @@ export default function OmniChannelPage() {
                                         {ch.status}
                                     </span>
                                     {ch.href && (
-                                        <a href={ch.href} className="p-1.5 rounded-lg transition-colors hover-card"
+                                        <a href={ch.href} className="p-1.5 rounded-xl transition-colors hover-card"
                                             style={{ color: T.textMuted }}>
                                             <ExternalLink size={14} />
                                         </a>
@@ -170,12 +182,12 @@ export default function OmniChannelPage() {
                                 </p>
                             </div>
                             {hasChatwoot ? (
-                                <span className="text-[10px] font-bold uppercase px-3 py-1.5 rounded-full flex-shrink-0"
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex-shrink-0"
                                     style={{ background: 'var(--s-done-bg)', color: 'var(--s-done)' }}>
-                                    ● Conectado
+                                    Conectado
                                 </span>
                             ) : (
-                                <span className="text-[10px] font-bold uppercase px-3 py-1.5 rounded-full flex-shrink-0"
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex-shrink-0"
                                     style={{ background: 'var(--s-warm-bg)', color: 'var(--s-warm)' }}>
                                     Aguardando Config
                                 </span>
@@ -183,33 +195,25 @@ export default function OmniChannelPage() {
                         </div>
 
                         {!hasChatwoot && (
-                            <div className="mt-4 p-4 rounded-xl" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                            <div className="mt-4 p-4 rounded-xl" style={{ background: T.surface ?? 'rgba(0,0,0,0.2)', border: `1px solid ${T.border}` }}>
                                 <p className="text-xs font-mono mb-2" style={{ color: T.textMuted }}>
                                     # No seu .env.local ou Vercel Environment Variables:
                                 </p>
-                                <code className="text-xs font-mono block p-3 rounded-lg"
+                                <code className="text-xs font-mono block p-3 rounded-xl"
                                     style={{ background: T.elevated, color: T.accent, border: `1px solid ${T.border}` }}>
                                     NEXT_PUBLIC_CHATWOOT_URL=https://seu-chatwoot.exemplo.com
                                 </code>
                             </div>
                         )}
                     </div>
-
-                    {/* Stats Summary */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
-                        <KPICard label="Leads Hoje" value={String(realStats.hoje)} icon={<Users size={16} />} accent="blue" size="sm" />
-                        <KPICard label="Tempo Médio" value="—" icon={<Clock size={16} />} accent="cold" size="sm" />
-                        <KPICard label="Satisfação" value="—" icon={<Star size={16} />} accent="green" size="sm" />
-                        <KPICard label="Pendentes" value={String(realStats.pendentes)} icon={<AlertCircle size={16} />} accent="hot" size="sm" />
-                    </div>
                 </>
             )}
 
-            {/* ═══════ CHATWOOT VIEW ═══════ */}
+            {/* CHATWOOT VIEW */}
             {activeView === 'chatwoot' && hasChatwoot && (
                 <div className="rounded-2xl overflow-hidden"
                     style={{ border: `1px solid ${T.border}`, background: T.elevated }}>
-                    <div className="flex items-center justify-between px-4 py-2"
+                    <div className="flex items-center justify-between px-4 py-3"
                         style={{ borderBottom: `1px solid ${T.border}` }}>
                         <div className="flex items-center gap-2">
                             <Layers size={14} style={{ color: T.accent }} />
@@ -217,14 +221,14 @@ export default function OmniChannelPage() {
                         </div>
                         <div className="flex items-center gap-1">
                             <button onClick={() => setIframeKey(k => k + 1)}
-                                className="p-1.5 rounded-lg transition-colors hover-card" style={{ color: T.textMuted }}
+                                className="p-2 rounded-xl transition-colors hover-card" style={{ color: T.textMuted }}
                                 title="Recarregar">
-                                <RefreshCw size={14} />
+                                <RefreshCw size={13} />
                             </button>
                             <a href={CHATWOOT_URL} target="_blank" rel="noopener noreferrer"
-                                className="p-1.5 rounded-lg transition-colors hover-card" style={{ color: T.textMuted }}
+                                className="p-2 rounded-xl transition-colors hover-card" style={{ color: T.textMuted }}
                                 title="Abrir em nova aba">
-                                <ExternalLink size={14} />
+                                <ExternalLink size={13} />
                             </a>
                         </div>
                     </div>

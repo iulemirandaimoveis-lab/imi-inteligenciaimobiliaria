@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react'
 import {
     Sparkles, Building2, Instagram, Linkedin, Mail,
     ChevronDown, Copy, Check, Calendar,
-    Loader2, Wand2, Bot, ImageIcon,
+    Loader2, Wand2, ImageIcon,
     Hash, MessageSquare
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const TEMAS = [
     { value: 'lancamento-luxo', label: 'Destaque de Lançamento de Luxo' },
@@ -115,15 +116,12 @@ export default function CriadorIAPage() {
 
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 28 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 2 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 12, background: 'var(--bo-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Bot size={20} style={{ color: '#fff' }} />
-                    </div>
-                    <div>
-                        <h1 style={{ fontSize: 22, fontWeight: 800, color: T.text, letterSpacing: '-0.3px', lineHeight: 1 }}>Criador IA</h1>
-                        <p style={{ fontSize: 10, color: T.textMuted, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Engine de Inteligência Imobiliária</p>
-                    </div>
-                </div>
+                <PageIntelHeader
+                    moduleLabel="CONTEÚDO"
+                    title="Criador IA"
+                    subtitle="Engine de Inteligência Imobiliária · Conteúdo premium"
+                    live
+                />
             </motion.div>
 
             {/* Step stepper pills */}
@@ -294,16 +292,19 @@ export default function CriadorIAPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
+                whileHover={{ scale: generating ? 1 : 1.01 }}
+                whileTap={{ scale: generating ? 1 : 0.98 }}
                 onClick={handleGenerate}
                 disabled={generating}
                 style={{
                     width: '100%', height: 52, borderRadius: 16,
-                    background: generating ? 'rgba(99,102,241,0.5)' : 'var(--bo-accent)',
-                    color: '#fff', fontSize: 15, fontWeight: 700,
+                    background: generating ? 'rgba(59,130,246,0.4)' : 'var(--bo-accent)',
+                    color: '#fff', fontSize: 15, fontWeight: 600,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-                    border: 'none', cursor: generating ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 20px rgba(99,102,241,0.3)',
-                    marginBottom: 28, transition: 'all 0.15s',
+                    border: generating ? 'none' : '1px solid rgba(255,255,255,0.12)',
+                    cursor: generating ? 'not-allowed' : 'pointer',
+                    boxShadow: generating ? 'none' : '0 0 24px rgba(59,130,246,0.32), inset 0 1px 0 rgba(255,255,255,0.12)',
+                    marginBottom: 28, transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                 }}
             >
                 {generating ? <Loader2 size={20} className="animate-spin" /> : <Wand2 size={20} />}
@@ -346,7 +347,7 @@ export default function CriadorIAPage() {
                         </div>
 
                         {/* Content card */}
-                        <div style={{ borderRadius: 18, background: 'linear-gradient(145deg, #1a2230, #111827)', border: '1px solid rgba(255,255,255,0.07)', padding: 20, marginBottom: 14, minHeight: 180 }}>
+                        <div style={{ borderRadius: 18, background: 'linear-gradient(145deg, #151d2a, #0d111a)', border: '1px solid rgba(255,255,255,0.09)', padding: 20, marginBottom: 14, minHeight: 180, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.3)' }}>
                             {generating ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 160 }}>
                                     <Loader2 size={28} className="animate-spin" style={{ color: '#6366F1' }} />
@@ -385,20 +386,24 @@ export default function CriadorIAPage() {
                                 <button
                                     onClick={() => currentOutputText && copyText(currentOutputText, outputTab)}
                                     style={{
-                                        flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 700,
+                                        flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 600,
                                         background: T.elevated, border: `1px solid ${T.border}`,
                                         color: T.text, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
+                                        transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                                     }}
                                 >
                                     {copied === outputTab ? <Check size={16} style={{ color: '#4ade80' }} /> : <Copy size={16} />}
-                                    {copied === outputTab ? 'Copiado!' : 'Ajustar'}
+                                    {copied === outputTab ? 'Copiado!' : 'Copiar'}
                                 </button>
                                 <button
                                     style={{
-                                        flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 700,
+                                        flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 600,
                                         background: 'var(--bo-accent)',
                                         color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                                        border: 'none', boxShadow: '0 4px 12px rgba(99,102,241,0.3)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        boxShadow: '0 0 20px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
+                                        transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                                     }}
                                     onClick={() => toast.success('Agendado para publicação!')}
                                 >
