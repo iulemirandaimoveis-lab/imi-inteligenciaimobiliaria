@@ -12,6 +12,7 @@ import { T } from '../../lib/theme'
 import { PageIntelHeader } from '../../components/ui/PageIntelHeader'
 import { KPICard } from '../../components/ui/KPICard'
 import { SectionHeader } from '../../components/ui/SectionHeader'
+import { AvatarGroup, type BrokerAvatar } from '@/components/ui/AvatarGroup'
 
 const NICHES = [
   { value: 'imoveis_premium', label: 'Imóveis Premium' },
@@ -473,8 +474,27 @@ export default function OrganizacaoPage() {
         {/* RIGHT: Members */}
         <div className="xl:col-span-2 space-y-4">
           <div className="rounded-2xl p-5" style={{ background: 'var(--bo-card)', border: `1px solid ${T.border}` }}>
+            {/* Header com AvatarGroup */}
             <div className="flex items-center justify-between mb-4">
-              <SectionHeader title="Membros da Equipe" />
+              <div className="flex items-center gap-3">
+                <SectionHeader title="Membros da Equipe" />
+                {members.length > 0 && (
+                  <AvatarGroup
+                    brokers={members.map((m): BrokerAvatar => ({
+                      id: m.id,
+                      name: ROLE_CONFIG[m.role]?.label || m.role,
+                      avatar_url: null,
+                      role: `#${m.user_id?.slice(0, 6)}`,
+                      last_login_at: null,
+                    }))}
+                    max={6}
+                    size={28}
+                    stiffness={320}
+                    damping={18}
+                    tooltipSide="top"
+                  />
+                )}
+              </div>
               {isOwnerOrAdmin && (
                 <button
                   onClick={() => setShowInviteModal(true)}
@@ -498,13 +518,16 @@ export default function OrganizacaoPage() {
                 const rc = ROLE_CONFIG[member.role] || ROLE_CONFIG.member
                 const RoleIcon = rc.icon
                 return (
-                  <div
+                  <motion.div
                     key={member.id}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2 }}
                     className="flex items-center gap-3 p-3 rounded-xl group"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                   >
                     <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
                       style={{ background: rc.color + '25', color: rc.color, border: `1px solid ${rc.color}30` }}
                     >
                       <RoleIcon size={14} />
@@ -535,7 +558,7 @@ export default function OrganizacaoPage() {
                         <Trash2 size={12} />
                       </button>
                     )}
-                  </div>
+                  </motion.div>
                 )
               })}
             </div>
