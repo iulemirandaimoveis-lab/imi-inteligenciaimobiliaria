@@ -9,7 +9,7 @@ import {
     Zap, CreditCard, Briefcase, CalendarDays, QrCode, Sparkles,
     FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
-    Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked
+    Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked, Bot
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -157,6 +157,7 @@ const SECTIONS: NavSection[] = [
             { label: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
             { label: 'Analytics', href: '/backoffice/tracking', icon: BarChart2 },
             { label: 'Central de IA', href: '/backoffice/ia', icon: Sparkles },
+            { label: 'Agentes IA', href: '/backoffice/ia/agentes', icon: Bot, badge: 'NEW' },
             { label: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles },
         ]
     },
@@ -209,8 +210,17 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     <span className="flex-1 text-left">{item.label}</span>
                     {item.badge && (
                         <span
-                            className="text-[10px] px-1.5 py-0.5 rounded-full font-bold text-white"
-                            style={{ background: 'var(--bo-card)' }}
+                            style={{
+                                fontSize: '9px',
+                                fontWeight: 800,
+                                padding: '2px 5px',
+                                borderRadius: 5,
+                                letterSpacing: '0.04em',
+                                ...(item.badge === 'NEW'
+                                    ? { background: 'rgba(74,222,128,0.18)', color: '#4ADE80', border: '1px solid rgba(74,222,128,0.30)' }
+                                    : { background: 'var(--bo-card)', color: '#fff', border: '1px solid transparent' }
+                                ),
+                            }}
                         >
                             {item.badge}
                         </span>
@@ -277,12 +287,19 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             <span className="flex-1">{item.label}</span>
             {item.badge && (
                 <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold border ${
-                        item.badge === 'BREVE'
-                            ? 'text-[var(--bo-text-muted)] bg-[var(--bo-hover)] border-[var(--bo-border)]'
-                            : 'text-white border-transparent'
-                    }`}
-                    style={item.badge !== 'BREVE' ? { background: 'var(--bo-card)' } : undefined}
+                    style={{
+                        fontSize: '9px',
+                        fontWeight: 800,
+                        padding: '2px 5px',
+                        borderRadius: 5,
+                        letterSpacing: '0.04em',
+                        ...(item.badge === 'NEW'
+                            ? { background: 'rgba(74,222,128,0.18)', color: '#4ADE80', border: '1px solid rgba(74,222,128,0.30)' }
+                            : item.badge === 'BREVE'
+                            ? { background: 'var(--bo-hover)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }
+                            : { background: 'var(--bo-card)', color: '#fff', border: '1px solid transparent' }
+                        ),
+                    }}
                 >
                     {item.badge}
                 </span>

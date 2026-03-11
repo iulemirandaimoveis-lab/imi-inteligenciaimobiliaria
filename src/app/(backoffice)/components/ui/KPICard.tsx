@@ -16,70 +16,20 @@ interface KPICardProps {
   onClick?: () => void
 }
 
-// ── Accent palette ──────────────────────────────────────────────────────
+// ── Accent palette — colors only, no hardcoded backgrounds ──────
 const ACCENT: Record<string, {
   color: string
-  border: string
-  glow: string
-  bg: string
+  borderColor: string
   iconBg: string
   deltaUp: string
   raw: string
 }> = {
-  blue: {
-    color:   'var(--imi-blue-bright)',
-    border:  '1px solid rgba(59,130,246,0.30)',
-    glow:    '0 0 24px rgba(59,130,246,0.12)',
-    bg:      'linear-gradient(160deg, rgba(59,130,246,0.11) 0%, rgba(59,130,246,0.03) 50%, transparent 100%)',
-    iconBg:  'rgba(59,130,246,0.15)',
-    deltaUp: 'var(--s-done)',
-    raw:     '59,130,246',
-  },
-  hot: {
-    color:   'var(--s-hot)',
-    border:  '1px solid rgba(248,113,113,0.28)',
-    glow:    '0 0 24px rgba(248,113,113,0.10)',
-    bg:      'linear-gradient(160deg, rgba(248,113,113,0.10) 0%, rgba(248,113,113,0.03) 50%, transparent 100%)',
-    iconBg:  'rgba(248,113,113,0.14)',
-    deltaUp: 'var(--s-done)',
-    raw:     '248,113,113',
-  },
-  warm: {
-    color:   'var(--s-warm)',
-    border:  '1px solid rgba(251,191,36,0.28)',
-    glow:    '0 0 24px rgba(251,191,36,0.10)',
-    bg:      'linear-gradient(160deg, rgba(251,191,36,0.10) 0%, rgba(251,191,36,0.03) 50%, transparent 100%)',
-    iconBg:  'rgba(251,191,36,0.14)',
-    deltaUp: 'var(--s-done)',
-    raw:     '251,191,36',
-  },
-  cold: {
-    color:   'var(--s-cold)',
-    border:  '1px solid rgba(34,211,238,0.28)',
-    glow:    '0 0 24px rgba(34,211,238,0.10)',
-    bg:      'linear-gradient(160deg, rgba(34,211,238,0.10) 0%, rgba(34,211,238,0.03) 50%, transparent 100%)',
-    iconBg:  'rgba(34,211,238,0.14)',
-    deltaUp: 'var(--s-done)',
-    raw:     '34,211,238',
-  },
-  ai: {
-    color:   'var(--imi-ai-gold)',
-    border:  '1px solid rgba(234,179,8,0.28)',
-    glow:    '0 0 24px rgba(234,179,8,0.10)',
-    bg:      'linear-gradient(160deg, rgba(234,179,8,0.10) 0%, rgba(234,179,8,0.03) 50%, transparent 100%)',
-    iconBg:  'rgba(234,179,8,0.14)',
-    deltaUp: 'var(--s-done)',
-    raw:     '234,179,8',
-  },
-  green: {
-    color:   'var(--s-done)',
-    border:  '1px solid rgba(74,222,128,0.28)',
-    glow:    '0 0 24px rgba(74,222,128,0.12)',
-    bg:      'linear-gradient(160deg, rgba(74,222,128,0.11) 0%, rgba(74,222,128,0.03) 50%, transparent 100%)',
-    iconBg:  'rgba(74,222,128,0.14)',
-    deltaUp: 'var(--s-done)',
-    raw:     '74,222,128',
-  },
+  blue:  { color: 'var(--imi-blue-bright)', borderColor: 'rgba(59,130,246,0.22)',  iconBg: 'rgba(59,130,246,0.12)',  deltaUp: 'var(--s-done)', raw: '59,130,246'  },
+  hot:   { color: 'var(--s-hot)',           borderColor: 'rgba(248,113,113,0.20)', iconBg: 'rgba(248,113,113,0.10)', deltaUp: 'var(--s-done)', raw: '248,113,113' },
+  warm:  { color: 'var(--s-warm)',          borderColor: 'rgba(251,191,36,0.20)',  iconBg: 'rgba(251,191,36,0.10)', deltaUp: 'var(--s-done)', raw: '251,191,36'  },
+  cold:  { color: 'var(--s-cold)',          borderColor: 'rgba(34,211,238,0.20)',  iconBg: 'rgba(34,211,238,0.10)', deltaUp: 'var(--s-done)', raw: '34,211,238'  },
+  ai:    { color: 'var(--imi-ai-gold)',     borderColor: 'rgba(234,179,8,0.20)',   iconBg: 'rgba(234,179,8,0.10)',  deltaUp: 'var(--s-done)', raw: '234,179,8'   },
+  green: { color: 'var(--s-done)',          borderColor: 'rgba(74,222,128,0.22)',  iconBg: 'rgba(74,222,128,0.10)', deltaUp: 'var(--s-done)', raw: '74,222,128'  },
 }
 
 const VALUE_SIZES: Record<string, string> = {
@@ -129,28 +79,26 @@ export function KPICard({
       className={`group relative overflow-hidden rounded-2xl transition-all duration-200 ${onClick ? 'cursor-pointer' : ''} ${className}`}
       style={{
         padding: PAD[size],
-        background: 'rgba(13,20,36,0.92)',
-        border: a.border,
-        boxShadow: `
-          ${a.glow},
-          0 1px 0 rgba(255,255,255,0.04) inset,
-          0 -1px 0 rgba(0,0,0,0.20) inset,
-          0 4px 24px rgba(0,0,0,0.30)
-        `,
+        background: 'var(--bo-elevated)',       // ← theme-aware: white in light, #111822 in dark
+        border: `1px solid ${a.borderColor}`,
+        boxShadow: 'var(--bo-card-shadow)',      // ← theme-aware shadow
       }}
       onClick={onClick}
     >
-      {/* Accent background gradient */}
+      {/* Very subtle accent tint — low opacity works in both themes */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: a.bg, borderRadius: 'inherit' }}
+        style={{
+          background: `linear-gradient(160deg, rgba(${a.raw},0.06) 0%, transparent 60%)`,
+          borderRadius: 'inherit',
+        }}
       />
 
-      {/* Top accent bar */}
+      {/* Top accent line */}
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
-          background: `linear-gradient(90deg, transparent 0%, rgba(${a.raw},0.7) 50%, transparent 100%)`,
+          background: `linear-gradient(90deg, transparent 0%, rgba(${a.raw},0.50) 50%, transparent 100%)`,
         }}
       />
 
@@ -182,7 +130,7 @@ export function KPICard({
                 height: 28,
                 borderRadius: 10,
                 background: a.iconBg,
-                border: `1px solid rgba(${a.raw},0.20)`,
+                border: `1px solid rgba(${a.raw},0.18)`,
                 flexShrink: 0,
               }}
             >
@@ -191,7 +139,7 @@ export function KPICard({
           )}
         </div>
 
-        {/* Value — the hero number */}
+        {/* Value */}
         <div
           style={{
             fontSize: VALUE_SIZES[size],
