@@ -1,33 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
-import EquipeClient from './EquipeClient'
+import { redirect } from 'next/navigation'
 
-// T object unused in server component (EquipeClient owns the UI)
-
-
-export default async function EquipePage() {
-    const supabase = await createClient()
-
-    // Query team_members directly — columns: id, name, email, phone, role, status, etc.
-    const { data: teamMembers } = await supabase
-        .from('team_members')
-        .select('id, name, email, phone, avatar_url, role, status, total_leads, total_sales, total_revenue, joined_at, last_active_at, updated_at')
-        .order('name', { ascending: true })
-
-    const activeTeam = (teamMembers || []).map(member => ({
-        id: member.id,
-        name: member.name || 'Sem nome',
-        email: member.email || '',
-        phone: member.phone || '',
-        role: member.role || 'viewer',
-        status: member.status || 'pending',
-        joinedAt: member.joined_at,
-        lastActive: member.last_active_at || member.updated_at || member.joined_at,
-        stats: {
-            leads: member.total_leads || 0,
-            sales: member.total_sales || 0,
-            revenue: Number(member.total_revenue) || 0,
-        }
-    }))
-
-    return <EquipeClient initialTeam={activeTeam} />
+// /equipe foi consolidado em /organizacao (660L com fetch real)
+export default function EquipePage() {
+    redirect('/backoffice/organizacao')
 }

@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
     LayoutDashboard, Building2, FileText, Users, Scale,
-    Settings, ChevronDown, ChevronRight, LogOut,
+    Settings, ChevronDown, LogOut,
     BookOpen, BarChart2, Target, TrendingUp, TrendingDown,
     Zap, CreditCard, Briefcase, CalendarDays, QrCode, Sparkles,
     FileStack, FolderOpen, Banknote, Building,
@@ -27,54 +27,22 @@ interface NavItem {
 interface NavSection {
     label: string
     items: NavItem[]
+    collapsible?: boolean      // se true, o grupo pode ser colapsado
+    defaultCollapsed?: boolean  // se true, começa colapsado
 }
+
+// ─── GRUPO 1: Dia a dia do corretor (sempre visível) ──────────────────────────
+// ─── GRUPO 2: Portfólio (colapsado por default) ───────────────────────────────
+// ─── GRUPO 3: Operação (colapsado por default) ────────────────────────────────
+// ─── GRUPO 4: Análise & Finanças (colapsado por default) ─────────────────────
+// ─── GRUPO 5: Configurações (fixo no bottom) ──────────────────────────────────
 
 const SECTIONS: NavSection[] = [
     {
-        label: 'Visão Executiva',
+        label: 'Principal',
+        collapsible: false,
         items: [
             { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
-            { label: 'Metas & Performance', href: '/backoffice/financeiro/metas', icon: Target },
-            { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
-            { label: 'Global Intelligence', href: '/backoffice/relatorios/executivo', icon: Brain },
-        ]
-    },
-    {
-        label: 'Captação',
-        items: [
-            {
-                label: 'Leads', icon: Users,
-                children: [
-                    { label: 'Todos os Leads', href: '/backoffice/leads', icon: Users },
-                    { label: 'Inbox IA', href: '/backoffice/leads/inbox', icon: Sparkles },
-                    { label: 'Comportamento', href: '/backoffice/leads/behavior', icon: BarChart3 },
-                    { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: Users },
-                ]
-            },
-            {
-                label: 'Campanhas', icon: Megaphone,
-                children: [
-                    { label: 'Todas', href: '/backoffice/campanhas', icon: Megaphone },
-                    { label: 'Ads Performance', href: '/backoffice/campanhas/ads', icon: BarChart2 },
-                    { label: 'Nova', href: '/backoffice/campanhas/nova', icon: Megaphone },
-                ]
-            },
-            { label: 'QR Tracking', href: '/backoffice/tracking/qr', icon: QrCode },
-            { label: 'Social Inbox', href: '/backoffice/omnichannel/inbox', icon: Layers },
-            { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
-        ]
-    },
-    {
-        label: 'Conversão',
-        items: [
-            { label: 'Pipeline', href: '/backoffice/leads/pipeline', icon: TrendingUp },
-            { label: 'Simulações', href: '/backoffice/credito/simulador', icon: CreditCard },
-            { label: 'Agenda', href: '/backoffice/agenda', icon: CalendarDays },
-        ]
-    },
-    {
-        label: 'Portfólio',
-        items: [
             {
                 label: 'Imóveis', icon: Building2,
                 children: [
@@ -83,6 +51,24 @@ const SECTIONS: NavSection[] = [
                     { label: 'Novo Imóvel', href: '/backoffice/imoveis/novo', icon: Building2 },
                 ]
             },
+            {
+                label: 'Leads', icon: Users,
+                children: [
+                    { label: 'Todos os Leads', href: '/backoffice/leads', icon: Users },
+                    { label: 'Kanban', href: '/backoffice/leads/kanban', icon: TrendingUp },
+                    { label: 'Inbox IA', href: '/backoffice/leads/inbox', icon: Sparkles },
+                    { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: Users },
+                ]
+            },
+            { label: 'Agenda', href: '/backoffice/agenda', icon: CalendarDays },
+            { label: 'Tracking', href: '/backoffice/tracking', icon: QrCode },
+        ]
+    },
+    {
+        label: 'Portfólio',
+        collapsible: true,
+        defaultCollapsed: true,
+        items: [
             { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building },
             { label: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
             {
@@ -92,30 +78,21 @@ const SECTIONS: NavSection[] = [
                     { label: 'Criador IA', href: '/backoffice/conteudo/criador', icon: Wand2 },
                     { label: 'eBook IA', href: '/backoffice/conteudo/ebook', icon: BookMarked },
                     { label: 'Vídeo IA', href: '/backoffice/conteudo/video', icon: Video },
-                    { label: 'Automação', href: '/backoffice/conteudo/automacao', icon: Zap },
                 ]
             },
-        ]
-    },
-    {
-        label: 'Inteligência',
-        items: [
-            { label: 'Ebooks', href: '/backoffice/inteligencia/ebooks', icon: BookOpen },
-            { label: 'Relatórios', href: '/backoffice/inteligencia/relatorios', icon: FileStack },
-            { label: 'Indicadores', href: '/backoffice/inteligencia/indicadores', icon: LineChart },
-            { label: 'Índices IMI', href: '/backoffice/inteligencia/indices', icon: Brain },
+            { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone },
         ]
     },
     {
         label: 'Operação',
+        collapsible: true,
+        defaultCollapsed: true,
         items: [
             {
                 label: 'Avaliações', icon: Scale,
                 children: [
                     { label: 'Todas', href: '/backoffice/avaliacoes', icon: Scale },
                     { label: 'Nova', href: '/backoffice/avaliacoes/nova', icon: Scale },
-                    { label: 'Email + Honorários', href: '/backoffice/avaliacoes/email-honorarios', icon: Scale },
-                    { label: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
                 ]
             },
             {
@@ -125,46 +102,30 @@ const SECTIONS: NavSection[] = [
                     { label: 'Novo', href: '/backoffice/contratos/novo', icon: FileSignature },
                 ]
             },
-            {
-                label: 'Consultoria', icon: Briefcase,
-                children: [
-                    { label: 'Consultorias', href: '/backoffice/consultorias', icon: Briefcase },
-                    { label: 'Nova', href: '/backoffice/consultorias/nova', icon: Briefcase },
-                ]
-            },
-            {
-                label: 'Crédito', icon: CreditCard,
-                children: [
-                    { label: 'Operações', href: '/backoffice/credito', icon: CreditCard },
-                    { label: 'Simulador', href: '/backoffice/credito/simulador', icon: CreditCard },
-                ]
-            },
+            { label: 'Consultoria', href: '/backoffice/consultorias', icon: Briefcase },
+            { label: 'Crédito', href: '/backoffice/credito', icon: CreditCard },
+            { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
         ]
     },
     {
-        label: 'Financeiro',
+        label: 'Análise & Finanças',
+        collapsible: true,
+        defaultCollapsed: true,
         items: [
-            { label: 'Visão Geral', href: '/backoffice/financeiro', icon: Banknote },
-            { label: 'A Receber', href: '/backoffice/financeiro/receber', icon: TrendingUp },
-            { label: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: TrendingDown },
+            { label: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote },
+            { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
             { label: 'Metas', href: '/backoffice/financeiro/metas', icon: Target },
-        ]
-    },
-    {
-        label: 'Crescimento',
-        items: [
-            { label: 'Automações', href: '/backoffice/automacoes', icon: Zap },
-            { label: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
+            { label: 'Inteligência', href: '/backoffice/inteligencia/indices', icon: Brain },
             { label: 'Analytics', href: '/backoffice/tracking', icon: BarChart2 },
             { label: 'Central de IA', href: '/backoffice/ia', icon: Sparkles },
-            { label: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles },
+            { label: 'Automações', href: '/backoffice/automacoes', icon: Zap },
         ]
     },
     {
         label: 'Configurações',
+        collapsible: false,
         items: [
             { label: 'Organização', href: '/backoffice/organizacao', icon: Building },
-            { label: 'Equipe', href: '/backoffice/equipe', icon: Users },
             { label: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
             {
                 label: 'Configurações', icon: Settings,
@@ -172,8 +133,8 @@ const SECTIONS: NavSection[] = [
                     { label: 'Geral', href: '/backoffice/settings', icon: Settings },
                     { label: 'Corretores', href: '/backoffice/settings/corretores', icon: Users },
                     { label: 'Permissões', href: '/backoffice/settings/permissoes', icon: Shield },
-                    { label: 'Logs do Sistema', href: '/backoffice/settings/logs', icon: FileText },
-                    { label: 'Configurações IA', href: '/backoffice/settings/ia', icon: Brain },
+                    { label: 'Logs', href: '/backoffice/settings/logs', icon: FileText },
+                    { label: 'Config IA', href: '/backoffice/settings/ia', icon: Brain },
                 ]
             },
         ]
@@ -264,7 +225,6 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 boxShadow: isActive ? '0 2px 12px rgba(0,0,0,0.15)' : 'none',
             }}
         >
-            {/* Active indicator bar */}
             {isActive && (
                 <motion.div
                     layoutId="sidebar-active"
@@ -288,6 +248,54 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                 </span>
             )}
         </Link>
+    )
+}
+
+// Seção colapsável (para grupos 2, 3, 4)
+function CollapsibleSection({ section, idx }: { section: NavSection; idx: number }) {
+    const pathname = usePathname()
+    const hasActiveChild = section.items.some(item => {
+        if (item.href && pathname.startsWith(item.href)) return true
+        if (item.children) return item.children.some(c => c.href && pathname.startsWith(c.href))
+        return false
+    })
+    const [open, setOpen] = useState(() => !section.defaultCollapsed || hasActiveChild)
+
+    return (
+        <div className={idx > 0 ? 'mt-2' : ''}>
+            <button
+                onClick={() => setOpen(o => !o)}
+                className="w-full flex items-center justify-between px-3 mb-1 group"
+            >
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em]"
+                    style={{ color: 'var(--bo-text-muted)', opacity: open ? 0.9 : 0.6 }}>
+                    {section.label}
+                </p>
+                <motion.span
+                    animate={{ rotate: open ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    style={{ opacity: 0.4, display: 'flex' }}
+                >
+                    <ChevronDown size={11} style={{ color: 'var(--bo-text-muted)' }} />
+                </motion.span>
+            </button>
+
+            <AnimatePresence initial={false}>
+                {open && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                        className="space-y-0.5 overflow-hidden"
+                    >
+                        {section.items.map(item => (
+                            <NavItemComponent key={item.href || item.label} item={item} />
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
     )
 }
 
@@ -331,23 +339,28 @@ export function DesktopSidebar() {
                 </span>
             </div>
 
-            {/* Nav — min-h-0 is critical for flex overflow-y-auto to scroll */}
-            <nav className="flex-1 overflow-y-auto min-h-0 py-3 px-2.5">
-                {SECTIONS.map((section, idx) => (
-                    <div key={section.label} className={idx > 0 ? 'mt-4' : ''}>
-                        <p
-                            className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em]"
-                            style={{ color: 'var(--bo-text-muted)', opacity: 0.7 }}
-                        >
-                            {section.label}
-                        </p>
-                        <div className="space-y-0.5">
-                            {section.items.map(item => (
-                                <NavItemComponent key={item.href || item.label} item={item} />
-                            ))}
+            {/* Nav */}
+            <nav className="flex-1 overflow-y-auto min-h-0 py-3 px-2.5 space-y-4">
+                {SECTIONS.map((section, idx) => {
+                    if (section.collapsible) {
+                        return <CollapsibleSection key={section.label} section={section} idx={0} />
+                    }
+                    return (
+                        <div key={section.label}>
+                            <p
+                                className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em]"
+                                style={{ color: 'var(--bo-text-muted)', opacity: 0.7 }}
+                            >
+                                {section.label}
+                            </p>
+                            <div className="space-y-0.5">
+                                {section.items.map(item => (
+                                    <NavItemComponent key={item.href || item.label} item={item} />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    )
+                })}
             </nav>
 
             {/* Footer / User */}
