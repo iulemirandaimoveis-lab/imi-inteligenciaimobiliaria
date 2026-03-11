@@ -23,7 +23,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 // Marker component — never rendered directly.
 // AvatarGroup extracts its children during render.
 export function AvatarGroupTooltip({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   children,
   layout: _layout,
 }: {
