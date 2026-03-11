@@ -140,11 +140,10 @@ export default function DashboardClient({
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.30 }}
-                className="flex items-start justify-between gap-4"
             >
-                <div>
-                    {/* Module eyebrow */}
-                    <div className="flex items-center gap-2 mb-2">
+                {/* Eyebrow row */}
+                <div className="flex items-center justify-between gap-3 mb-2">
+                    <div className="flex items-center gap-2">
                         <span style={{
                             width: 4, height: 4, borderRadius: '50%',
                             background: 'var(--imi-blue-bright)',
@@ -170,29 +169,17 @@ export default function DashboardClient({
                             }}>LIVE</span>
                         </span>
                     </div>
-                    {/* Title */}
-                    <h1 className="gradient-text" style={{
-                        fontSize: '26px', fontWeight: 800,
-                        lineHeight: 1.15, letterSpacing: '-0.03em', margin: 0,
-                    }}>
-                        Painel Executivo
-                    </h1>
-                    <p className="text-sm mt-0.5 capitalize" style={{ color: 'var(--bo-text-muted)', fontSize: '11px' }}>
-                        {dateStr}
-                    </p>
-                </div>
-
-                {/* Right side: avatars + CTA */}
-                <div className="flex flex-col items-end gap-2.5">
+                    {/* Avatars — only on sm+ */}
                     {brokers.length > 0 && (
-                        <Link href="/backoffice/settings/corretores" className="flex items-center gap-2 group">
+                        <Link href="/backoffice/settings/corretores"
+                            className="hidden sm:flex items-center gap-2 group">
                             <AvatarGroup translate="-8px" invertOverlap={false}>
                                 {brokers.slice(0, 5).map(b => {
                                     const [fg, bg] = getPalette(b.name)
                                     return (
-                                        <Avatar key={b.id} size={28} style={{ border: '2px solid var(--bo-bg)', flexShrink: 0 }}>
+                                        <Avatar key={b.id} size={26} style={{ border: '2px solid var(--bo-bg)', flexShrink: 0 }}>
                                             <AvatarImage src={b.avatar_url ?? undefined} />
-                                            <AvatarFallback style={{ background: bg, color: fg, fontSize: 10, fontWeight: 700 }}>
+                                            <AvatarFallback style={{ background: bg, color: fg, fontSize: 9, fontWeight: 700 }}>
                                                 {getInitials(b.name)}
                                             </AvatarFallback>
                                             <AvatarGroupTooltip>{b.name.split(' ').slice(0, 2).join(' ')}</AvatarGroupTooltip>
@@ -202,22 +189,38 @@ export default function DashboardClient({
                             </AvatarGroup>
                             <span className="text-[10px] font-medium opacity-50 group-hover:opacity-80 transition-opacity"
                                 style={{ color: 'var(--bo-text-muted)' }}>
-                                {brokers.length} corretores
+                                {brokers.length}
                             </span>
                         </Link>
                     )}
+                </div>
+
+                {/* Title + CTA row */}
+                <div className="flex items-end justify-between gap-3">
+                    <div>
+                        <h1 className="gradient-text" style={{
+                            fontSize: '26px', fontWeight: 800,
+                            lineHeight: 1.15, letterSpacing: '-0.03em', margin: 0,
+                        }}>
+                            Painel Executivo
+                        </h1>
+                        <p className="capitalize mt-0.5" style={{ color: 'var(--bo-text-muted)', fontSize: '11px' }}>
+                            {dateStr}
+                        </p>
+                    </div>
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         whileHover={{ scale: 1.02 }}
                         onClick={() => router.push('/backoffice/avaliacoes/nova')}
                         className="flex items-center gap-2 h-9 px-4 rounded-xl text-[13px] font-semibold text-white flex-shrink-0"
                         style={{
-                            background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
-                            boxShadow: '0 4px 20px rgba(37,99,235,0.35), 0 1px 0 rgba(255,255,255,0.08) inset',
+                            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                            boxShadow: '0 4px 20px rgba(37,99,235,0.40), 0 1px 0 rgba(255,255,255,0.10) inset',
                         }}
                     >
                         <Plus size={14} />
-                        <span>Nova Avaliação</span>
+                        <span className="hidden xs:inline">Nova Avaliação</span>
+                        <span className="xs:hidden">Nova</span>
                     </motion.button>
                 </div>
             </motion.div>
@@ -266,68 +269,65 @@ export default function DashboardClient({
                 transition={{ delay: 0.08, duration: 0.35 }}
                 className="relative overflow-hidden rounded-2xl"
                 style={{
-                    background: 'linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(37,99,235,0.05) 40%, rgba(13,20,36,0.95) 100%)',
-                    border: '1px solid rgba(59,130,246,0.25)',
-                    boxShadow: '0 0 40px rgba(37,99,235,0.10), 0 4px 24px rgba(0,0,0,0.30)',
-                    padding: '16px 20px',
+                    background: '#07101E',
+                    border: '1px solid rgba(59,130,246,0.28)',
+                    boxShadow: '0 0 0 1px rgba(59,130,246,0.06) inset, 0 8px 40px rgba(0,0,0,0.50)',
+                    padding: '18px 20px',
                 }}
             >
-                {/* Background glow */}
-                <div className="absolute top-0 left-0 w-32 h-32 rounded-full pointer-events-none"
-                    style={{
-                        background: 'radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%)',
-                        transform: 'translate(-30%, -30%)',
-                    }} />
+                {/* Blue accent overlay — top-left radial glow, fully decorative */}
+                <div className="absolute inset-0 pointer-events-none" style={{
+                    background: 'radial-gradient(ellipse 60% 80% at 0% 0%, rgba(37,99,235,0.22) 0%, transparent 70%)',
+                }} />
                 {/* Top accent line */}
-                <div className="absolute top-0 left-0 right-0 h-px"
-                    style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.7) 50%, transparent 100%)' }} />
+                <div className="absolute top-0 left-0 right-0 h-[1.5px]"
+                    style={{ background: 'linear-gradient(90deg, rgba(59,130,246,0.80) 0%, rgba(59,130,246,0.30) 60%, transparent 100%)' }} />
 
-                <div className="relative flex items-center justify-between gap-6 flex-wrap">
-                    {/* Primary metric — Receita total */}
+                <div className="relative flex items-center justify-between gap-4 flex-wrap">
+                    {/* Primary metric */}
                     <div>
-                        <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-blue-bright)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 4 }}>
+                        <p style={{ fontSize: '9px', fontWeight: 700, color: '#60A5FA', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 6 }}>
                             Honorários Totais Recebidos
                         </p>
-                        <div style={{ fontSize: '38px', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}
-                            className="gradient-text">
+                        <div style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums', color: '#FFFFFF' }}>
                             {fmtCompact(avStats.honorarios_recebidos)}
                         </div>
-                        <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginTop: 4 }}>
-                            {avStats.concluidas} avaliações concluídas
+                        <p style={{ fontSize: '11px', color: 'rgba(148,163,184,0.8)', marginTop: 5 }}>
+                            {avStats.concluidas} avaliação{avStats.concluidas !== 1 ? 'ões' : ''} concluída{avStats.concluidas !== 1 ? 's' : ''}
                         </p>
                     </div>
 
                     {/* Secondary stats */}
-                    <div className="flex items-center gap-4 flex-wrap">
-                        <div className="text-center">
-                            <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 2 }}>
+                    <div className="flex items-center gap-5 flex-wrap">
+                        <div>
+                            <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
                                 A Receber
                             </p>
-                            <p style={{ fontSize: '20px', fontWeight: 800, color: 'var(--s-warm)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontSize: '22px', fontWeight: 800, color: '#FBBF24', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {fmtCompact(avStats.honorarios_pendentes)}
                             </p>
-                            <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>{avStats.em_andamento} em andamento</p>
+                            <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.em_andamento} em andamento</p>
                         </div>
-                        <div className="w-px h-10" style={{ background: 'var(--bo-border)' }} />
-                        <div className="text-center">
-                            <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 2 }}>
-                                Taxa de Conclusão
+                        <div className="w-px h-10" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                        <div>
+                            <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
+                                Conclusão
                             </p>
-                            <p style={{ fontSize: '20px', fontWeight: 800, color: 'var(--s-done)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontSize: '22px', fontWeight: 800, color: '#4ADE80', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {completionRate}%
                             </p>
-                            <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>{avStats.total} avaliações total</p>
+                            <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.total} total</p>
                         </div>
-                        <div className="w-px h-10 hidden sm:block" style={{ background: 'var(--bo-border)' }} />
-                        <div className="text-center hidden sm:block">
-                            <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 2 }}>
-                                Leads Ativos
+                        <div className="w-px h-10 hidden sm:block" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                        <div className="hidden sm:block">
+                            <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
+                                Leads
                             </p>
-                            <p style={{ fontSize: '20px', fontWeight: 800, color: 'var(--imi-blue-bright)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontSize: '22px', fontWeight: 800, color: '#60A5FA', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {stats.total_leads}
                             </p>
-                            <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
-                                {stats.leads_today > 0 ? `+${stats.leads_today} hoje` : 'no pipeline'}
+                            <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>
+                                {stats.leads_today > 0 ? `+${stats.leads_today} hoje` : 'pipeline'}
                             </p>
                         </div>
                     </div>
