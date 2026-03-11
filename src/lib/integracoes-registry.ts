@@ -296,6 +296,97 @@ export const INTEGRACOES: Integracao[] = [
     ],
   },
 
+  {
+    id: 'gmail',
+    nome: 'Gmail (Google Workspace)',
+    descricao: 'Envio de emails transacionais via conta Gmail ou Google Workspace. Use OAuth 2.0 ou App Password para autenticação sem senha principal.',
+    categoria: 'google',
+    icon: 'Mail',
+    cor: '#EA4335',
+    status: 'nao_configurado',
+    gratuito: true,
+    docs_url: 'https://developers.google.com/gmail/api/guides',
+    requer_oauth: true,
+    campos_config: [
+      {
+        key: 'gmail_mode',
+        label: 'Modo de autenticação',
+        tipo: 'select',
+        opcoes: ['app_password', 'oauth2', 'service_account'],
+        required: true,
+        descricao: 'app_password = mais simples (Gmail pessoal). oauth2 = Google Workspace. service_account = sem interação manual.',
+      },
+      {
+        key: 'gmail_user',
+        label: 'Email da conta',
+        tipo: 'text',
+        placeholder: 'contato@imi.imb.br',
+        required: true,
+      },
+      {
+        key: 'gmail_app_password',
+        label: 'App Password (modo app_password)',
+        tipo: 'password',
+        placeholder: 'xxxx xxxx xxxx xxxx',
+        required: false,
+        masked: true,
+        descricao: 'Gere em myaccount.google.com → Segurança → Senhas de app. Requer verificação em 2 etapas ativa.',
+      },
+      {
+        key: 'gmail_client_id',
+        label: 'Client ID (modo oauth2)',
+        tipo: 'text',
+        placeholder: 'XXXXXXXXXXX.apps.googleusercontent.com',
+        required: false,
+      },
+      {
+        key: 'gmail_client_secret',
+        label: 'Client Secret (modo oauth2)',
+        tipo: 'password',
+        required: false,
+        masked: true,
+      },
+      {
+        key: 'gmail_refresh_token',
+        label: 'Refresh Token (modo oauth2)',
+        tipo: 'password',
+        required: false,
+        masked: true,
+        descricao: 'Obtido via fluxo OAuth. Use OAuth Playground: developers.google.com/oauthplayground.',
+      },
+    ],
+  },
+
+  {
+    id: 'google_sheets',
+    nome: 'Google Sheets',
+    descricao: 'Exportação automática de leads, contratos e relatórios para planilhas Google. Integra com Google Looker Studio para dashboards.',
+    categoria: 'google',
+    icon: 'Table',
+    cor: '#34A853',
+    status: 'nao_configurado',
+    gratuito: true,
+    docs_url: 'https://developers.google.com/sheets/api',
+    campos_config: [
+      {
+        key: 'gsheets_service_account_json',
+        label: 'Service Account JSON',
+        tipo: 'textarea' as any,
+        placeholder: '{ "type": "service_account", "project_id": "..." }',
+        required: true,
+        descricao: 'Crie no Google Cloud Console → IAM → Service Accounts. Compartilhe a planilha com o email da Service Account.',
+      },
+      {
+        key: 'gsheets_spreadsheet_id',
+        label: 'ID da planilha',
+        tipo: 'text',
+        placeholder: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74IT8kD-34',
+        required: true,
+        descricao: 'Encontre na URL da planilha: docs.google.com/spreadsheets/d/[ID]/edit',
+      },
+    ],
+  },
+
   // ══════════════════════════════════════════════════
   // REDES SOCIAIS / META
   // ══════════════════════════════════════════════════

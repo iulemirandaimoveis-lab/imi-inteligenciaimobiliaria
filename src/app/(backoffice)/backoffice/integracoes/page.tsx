@@ -8,7 +8,7 @@ import {
     Facebook, Instagram, CreditCard, Zap, Globe,
     CheckCircle, AlertCircle, XCircle, Clock,
     X, Eye, EyeOff, ExternalLink,
-    RefreshCw, Settings, Plug
+    RefreshCw, Settings, Plug, Sparkles, Table2,
 } from 'lucide-react'
 import { INTEGRACOES, CATEGORIAS_INTEGRACAO } from '@/lib/integracoes-registry'
 import type { Integracao, IntegracaoStatus } from '@/types/contratos'
@@ -18,20 +18,19 @@ import { T } from '../../lib/theme'
 const ICONES: Record<string, any> = {
     Shield, PenTool, Mail, Server, MessageCircle, HardDrive,
     Database, Calendar, BarChart2, Facebook, Instagram,
-    CreditCard, Zap, Globe, Settings,
+    CreditCard, Zap, Globe, Settings, Sparkles, Table: Table2,
 }
 
 const STATUS_CFG: Record<IntegracaoStatus, { label: string; text: string; bg: string; icon: any; dot: string }> = {
-    conectado: { label: 'Conectado', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle, dot: '#6BB87B' },
-    desconectado: { label: 'Desconectado', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: XCircle, dot: '#E8A87C' },
-    erro: { label: 'Erro', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle, dot: '#E57373' },
-    pendente: { label: 'Pendente', text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Clock, dot: 'var(--bo-accent)' },
-    nao_configurado: { label: 'Não configurado', text: '#4E5669', bg: 'rgba(78,86,105,0.12)', icon: XCircle, dot: '#4E5669' },
+    conectado:       { label: 'Conectado',       text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle, dot: '#6BB87B' },
+    desconectado:    { label: 'Desconectado',    text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: XCircle,    dot: '#E8A87C' },
+    erro:            { label: 'Erro',            text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle, dot: '#E57373' },
+    pendente:        { label: 'Pendente',        text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Clock, dot: 'var(--bo-accent)' },
+    nao_configurado: { label: 'Não configurado', text: '#4E5669', bg: 'rgba(78,86,105,0.12)', icon: XCircle,     dot: '#4E5669' },
 }
 
 function StatusBadge({ status }: { status: IntegracaoStatus }) {
     const cfg = STATUS_CFG[status]
-    const Icon = cfg.icon
     return (
         <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full"
             style={{ color: cfg.text, background: cfg.bg }}>
@@ -44,20 +43,27 @@ function StatusBadge({ status }: { status: IntegracaoStatus }) {
 // ── Modal de configuração ─────────────────────────────────────
 function ConfigModal({
     integracao,
+    initialValues,
+    sourceMap,
     onClose,
     onSave,
 }: {
     integracao: Integracao
+    initialValues?: Record<string, string>
+    sourceMap?: Record<string, 'db' | 'env'>
     onClose: () => void
     onSave: (id: string, values: Record<string, string>) => void
 }) {
-    const [values, setValues] = useState<Record<string, string>>({})
+    const [values, setValues] = useState<Record<string, string>>(initialValues || {})
     const [showMasked, setShowMasked] = useState<Record<string, boolean>>({})
     const [testing, setTesting] = useState(false)
     const [testResult, setTestResult] = useState<{ ok: boolean; msg: string } | null>(null)
     const [saving, setSaving] = useState(false)
+    const [syncing, setSyncing] = useState(false)
+    const [syncResult, setSyncResult] = useState<{ ok: boolean; msg: string } | null>(null)
 
     const Icon = ICONES[integracao.icon] || Settings
+    const isEnvConfigured = sourceMap?.[integracao.id] === 'env'
 
     const handleTest = async () => {
         setTesting(true)
@@ -98,6 +104,24 @@ function ConfigModal({
         }
     }
 
+    const handleMetaSync = async () => {
+        setSyncing(true)
+        setSyncResult(null)
+        try {
+            const res = await fetch('/api/meta-ads', { method: 'POST' })
+            const data = await res.json()
+            if (res.ok) {
+                setSyncResult({ ok: true, msg: `${data.synced || 0} campanhas sincronizadas com sucesso!` })
+            } else {
+                setSyncResult({ ok: false, msg: data.error || 'Erro ao sincronizar campanhas' })
+            }
+        } catch {
+            setSyncResult({ ok: false, msg: 'Erro de rede ao sincronizar' })
+        } finally {
+            setSyncing(false)
+        }
+    }
+
     return (
         <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -130,10 +154,19 @@ function ConfigModal({
                     </button>
                 </div>
 
+                {/* Env var notice */}
+                {isEnvConfigured && (
+                    <div className="mx-6 mt-4 rounded-xl p-3 text-xs"
+                        style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: '#6BB87B' }}>
+                        ✓ Esta integração está ativa via variável de ambiente no Vercel. Os campos abaixo permitem sobrescrever com uma configuração específica salva no banco.
+                    </div>
+                )}
+
                 {/* Campos */}
                 <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
                     {integracao.id === 'supabase_storage' ? (
-                        <div className="rounded-xl p-4 text-sm" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: '#6BB87B' }}>
+                        <div className="rounded-xl p-4 text-sm"
+                            style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: '#6BB87B' }}>
                             ✓ Supabase Storage é o armazenamento interno do projeto. Já está configurado automaticamente via variáveis de ambiente NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY.
                         </div>
                     ) : integracao.campos_config.length === 0 ? (
@@ -144,7 +177,8 @@ function ConfigModal({
                             const isTextarea = campo.tipo === 'textarea' as any
                             return (
                                 <div key={campo.key} className="space-y-1.5">
-                                    <label className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: T.textDim }}>
+                                    <label className="text-[11px] font-semibold uppercase tracking-wider"
+                                        style={{ color: T.textDim }}>
                                         {campo.label}{campo.required && <span style={{ color: T.accent }}> *</span>}
                                     </label>
                                     {campo.tipo === 'select' ? (
@@ -152,8 +186,7 @@ function ConfigModal({
                                             value={values[campo.key] || ''}
                                             onChange={e => setValues(p => ({ ...p, [campo.key]: e.target.value }))}
                                             className="w-full h-10 px-3 rounded-xl text-sm outline-none"
-                                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                                        >
+                                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
                                             <option value="">Selecionar...</option>
                                             {campo.opcoes?.map(o => <option key={o} value={o}>{o}</option>)}
                                         </select>
@@ -172,7 +205,7 @@ function ConfigModal({
                                                 type={isMasked ? 'password' : campo.tipo === 'url' ? 'url' : 'text'}
                                                 value={values[campo.key] || ''}
                                                 onChange={e => setValues(p => ({ ...p, [campo.key]: e.target.value }))}
-                                                placeholder={campo.placeholder}
+                                                placeholder={campo.placeholder || (isEnvConfigured && campo.masked ? '••••••• (via env var)' : campo.placeholder)}
                                                 className="w-full h-10 px-3 rounded-xl text-sm outline-none font-mono"
                                                 style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, paddingRight: campo.masked ? '40px' : undefined }}
                                             />
@@ -180,8 +213,7 @@ function ConfigModal({
                                                 <button
                                                     onClick={() => setShowMasked(p => ({ ...p, [campo.key]: !p[campo.key] }))}
                                                     className="absolute right-3 top-1/2 -translate-y-1/2"
-                                                    style={{ color: T.textDim }}
-                                                >
+                                                    style={{ color: T.textDim }}>
                                                     {showMasked[campo.key] ? <EyeOff size={13} /> : <Eye size={13} />}
                                                 </button>
                                             )}
@@ -193,6 +225,34 @@ function ConfigModal({
                                 </div>
                             )
                         })
+                    )}
+
+                    {/* Meta Ads — botão de sincronização */}
+                    {integracao.id === 'meta_ads' && (
+                        <div className="space-y-2 pt-2" style={{ borderTop: `1px solid ${T.border}` }}>
+                            <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: T.textDim }}>
+                                Campanhas
+                            </p>
+                            <button
+                                onClick={handleMetaSync}
+                                disabled={syncing}
+                                className="w-full h-10 rounded-xl text-xs font-semibold flex items-center justify-center gap-2"
+                                style={{ background: 'rgba(8,102,255,0.10)', border: '1px solid rgba(8,102,255,0.25)', color: '#0866FF' }}>
+                                {syncing
+                                    ? <><RefreshCw size={13} className="animate-spin" /> Sincronizando campanhas...</>
+                                    : <><RefreshCw size={13} /> Sincronizar Campanhas do Meta Ads</>}
+                            </button>
+                            {syncResult && (
+                                <div className="rounded-xl p-3 text-xs"
+                                    style={{
+                                        background: syncResult.ok ? 'rgba(107,184,123,0.10)' : 'rgba(229,115,115,0.10)',
+                                        border: `1px solid ${syncResult.ok ? 'rgba(107,184,123,0.25)' : 'rgba(229,115,115,0.25)'}`,
+                                        color: syncResult.ok ? '#6BB87B' : '#E57373',
+                                    }}>
+                                    {syncResult.ok ? '✓' : '⚠'} {syncResult.msg}
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     {/* Resultado do teste */}
@@ -218,20 +278,22 @@ function ConfigModal({
                         </a>
                     )}
 
-                    {integracao.campos_config.length > 0 && integracao.id !== 'supabase_storage' && (
+                    {(integracao.campos_config.length > 0 || isEnvConfigured) && integracao.id !== 'supabase_storage' && (
                         <button onClick={handleTest} disabled={testing}
                             className="flex items-center gap-1.5 px-4 h-10 rounded-xl text-xs font-medium"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
                             {testing ? <RefreshCw size={12} className="animate-spin" /> : <Plug size={12} />}
-                            Testar Conexão
+                            Testar
                         </button>
                     )}
 
-                    <button onClick={handleSave} disabled={saving}
-                        className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
-                        style={{ background: 'var(--bo-accent)' }}>
-                        {saving ? 'Salvando...' : 'Salvar Configuração'}
-                    </button>
+                    {integracao.id !== 'supabase_storage' && (
+                        <button onClick={handleSave} disabled={saving}
+                            className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
+                            style={{ background: 'var(--bo-accent)' }}>
+                            {saving ? 'Salvando...' : 'Salvar Configuração'}
+                        </button>
+                    )}
                 </div>
             </motion.div>
         </motion.div>
@@ -243,15 +305,16 @@ export default function IntegracoesPage() {
     const [categoriaAtiva, setCategoriaAtiva] = useState('todas')
     const [integracaoAberta, setIntegracaoAberta] = useState<Integracao | null>(null)
     const [statusOverride, setStatusOverride] = useState<Record<string, IntegracaoStatus>>({})
+    const [configMap, setConfigMap] = useState<Record<string, Record<string, string>>>({})
+    const [sourceMap, setSourceMap] = useState<Record<string, 'db' | 'env'>>({})
     const [loadingStatus, setLoadingStatus] = useState(true)
 
-    // Fetch saved integration statuses from DB on mount
     useEffect(() => {
         async function loadSavedStatuses() {
             try {
                 const res = await fetch('/api/integracoes/status')
                 if (res.ok) {
-                    const { statusMap } = await res.json()
+                    const { statusMap, configMap: cfgMap, sourceMap: srcMap } = await res.json()
                     if (statusMap && typeof statusMap === 'object') {
                         const overrides: Record<string, IntegracaoStatus> = {}
                         for (const [id, status] of Object.entries(statusMap)) {
@@ -261,6 +324,8 @@ export default function IntegracoesPage() {
                         }
                         setStatusOverride(overrides)
                     }
+                    if (cfgMap) setConfigMap(cfgMap as Record<string, Record<string, string>>)
+                    if (srcMap) setSourceMap(srcMap as Record<string, 'db' | 'env'>)
                 }
             } catch (err) {
                 console.error('[integracoes] Failed to load saved statuses:', err)
@@ -271,8 +336,10 @@ export default function IntegracoesPage() {
         loadSavedStatuses()
     }, [])
 
-    const handleSave = (id: string, _values: Record<string, string>) => {
+    const handleSave = (id: string, values: Record<string, string>) => {
         setStatusOverride(prev => ({ ...prev, [id]: 'conectado' }))
+        setConfigMap(prev => ({ ...prev, [id]: values }))
+        setSourceMap(prev => ({ ...prev, [id]: 'db' }))
     }
 
     const getStatus = (int: Integracao): IntegracaoStatus =>
@@ -282,8 +349,8 @@ export default function IntegracoesPage() {
         ? INTEGRACOES
         : INTEGRACOES.filter(i => i.categoria === categoriaAtiva)
 
-    const conectadas = INTEGRACOES.filter(i => getStatus(i) === 'conectado').length
-    const configurar = INTEGRACOES.filter(i => getStatus(i) === 'nao_configurado').length
+    const conectadas  = INTEGRACOES.filter(i => getStatus(i) === 'conectado').length
+    const configurar  = INTEGRACOES.filter(i => getStatus(i) === 'nao_configurado').length
 
     if (loadingStatus) return (
         <div className="space-y-5 max-w-7xl mx-auto">
@@ -319,18 +386,16 @@ export default function IntegracoesPage() {
         <>
             <div className="space-y-5 max-w-7xl mx-auto">
 
-                {/* Header */}
                 <PageIntelHeader
                     moduleLabel="INTEGRAÇÕES"
                     title="Integrações"
-                    subtitle="Conecte todas as plataformas — assinatura, email, WhatsApp, storage, redes sociais e pagamento"
+                    subtitle="Conecte todas as plataformas — IA, assinatura, email, WhatsApp, Google, redes sociais e pagamento"
                 />
 
-                {/* Status geral */}
                 <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                    <KPICard label="Conectadas" value={String(conectadas)} icon={<CheckCircle size={16} />} accent="green" size="sm" />
-                    <KPICard label="Disponíveis" value={String(INTEGRACOES.length)} icon={<Plug size={16} />} accent="blue" size="sm" />
-                    <KPICard label="A configurar" value={String(configurar)} icon={<Settings size={16} />} accent="warm" size="sm" />
+                    <KPICard label="Conectadas"  value={String(conectadas)}        icon={<CheckCircle size={16} />} accent="green" size="sm" />
+                    <KPICard label="Disponíveis" value={String(INTEGRACOES.length)} icon={<Plug size={16} />}       accent="blue"  size="sm" />
+                    <KPICard label="A configurar" value={String(configurar)}        icon={<Settings size={16} />}   accent="warm"  size="sm" />
                 </div>
 
                 {/* Categorias */}
@@ -340,8 +405,8 @@ export default function IntegracoesPage() {
                             className="px-3.5 h-9 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
                             style={{
                                 background: categoriaAtiva === cat.key ? 'var(--bo-accent)' : T.surface,
-                                color: categoriaAtiva === cat.key ? 'white' : T.textDim,
-                                border: `1px solid ${categoriaAtiva === cat.key ? T.borderGold : T.border}`,
+                                color:      categoriaAtiva === cat.key ? 'white' : T.textDim,
+                                border:     `1px solid ${categoriaAtiva === cat.key ? T.borderGold : T.border}`,
                             }}>
                             {cat.label}
                         </button>
@@ -351,9 +416,10 @@ export default function IntegracoesPage() {
                 {/* Grid de integrações */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {filtradas.map((integ, i) => {
-                        const status = getStatus(integ)
-                        const Icon = ICONES[integ.icon] || Settings
+                        const status    = getStatus(integ)
+                        const Icon      = ICONES[integ.icon] || Settings
                         const connected = status === 'conectado'
+                        const fromEnv   = sourceMap[integ.id] === 'env'
 
                         return (
                             <motion.div key={integ.id}
@@ -363,9 +429,7 @@ export default function IntegracoesPage() {
                                 style={{
                                     background: connected ? 'rgba(107,184,123,0.05)' : T.surface,
                                     border: `1px solid ${connected ? 'rgba(107,184,123,0.22)' : T.border}`,
-                                }}
-
-                            >
+                                }}>
                                 {/* Top */}
                                 <div className="flex items-start gap-3 mb-4">
                                     <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -373,7 +437,15 @@ export default function IntegracoesPage() {
                                         <Icon size={18} style={{ color: integ.cor }} />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-semibold" style={{ color: T.text }}>{integ.nome}</p>
+                                        <div className="flex items-center gap-1.5">
+                                            <p className="text-sm font-semibold" style={{ color: T.text }}>{integ.nome}</p>
+                                            {fromEnv && (
+                                                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase"
+                                                    style={{ background: 'rgba(107,184,123,0.15)', color: '#6BB87B' }}>
+                                                    env
+                                                </span>
+                                            )}
+                                        </div>
                                         <p className="text-[11px] leading-relaxed mt-0.5 line-clamp-2" style={{ color: T.textDim }}>
                                             {integ.descricao}
                                         </p>
@@ -405,9 +477,8 @@ export default function IntegracoesPage() {
                                     style={{
                                         background: connected ? 'rgba(107,184,123,0.12)' : 'var(--bo-active-bg)',
                                         border: `1px solid ${connected ? 'rgba(107,184,123,0.25)' : T.borderGold}`,
-                                        color: connected ? '#6BB87B' : T.accent,
-                                    }}
-                                >
+                                        color:  connected ? '#6BB87B' : T.accent,
+                                    }}>
                                     {connected ? '⚙ Gerenciar' : '+ Configurar'}
                                 </button>
                             </motion.div>
@@ -418,34 +489,38 @@ export default function IntegracoesPage() {
                 {/* Info .env */}
                 <div className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: T.textDim }}>
-                        Variáveis de Ambiente (.env.local)
+                        Variáveis de Ambiente — Vercel / .env.local
                     </p>
                     <p className="text-xs mb-3" style={{ color: T.textDim }}>
-                        As configurações salvas aqui são armazenadas criptografadas no Supabase. Para produção, adicione também ao Vercel → Settings → Environment Variables.
+                        Integrações marcadas com <strong style={{ color: '#6BB87B' }}>env</strong> estão ativas via variável de ambiente no Vercel.
+                        As configurações salvas aqui ficam no Supabase e sobrescrevem as env vars.
                     </p>
                     <div className="rounded-xl p-3 font-mono text-[10px] leading-relaxed overflow-x-auto"
                         style={{ background: 'var(--bo-surface)', border: `1px solid ${T.border}`, color: 'var(--s-done)' }}>
                         {[
-                            '# Assinatura Digital',
-                            'GOVBR_CLIENT_ID=',
-                            'GOVBR_CLIENT_SECRET=',
-                            'GOVBR_REDIRECT_URI=https://seusite.com/api/auth/govbr/callback',
-                            'GOVBR_ENVIRONMENT=staging',
-                            'CLICKSIGN_ACCESS_TOKEN=',
-                            'CLICKSIGN_ENVIRONMENT=sandbox',
+                            '# IA',
+                            'ANTHROPIC_API_KEY=sk-ant-api03-...',
+                            'OPENAI_API_KEY=sk-proj-...',
+                            'GOOGLE_AI_API_KEY=AIzaSy...',
+                            'GROQ_API_KEY=gsk_...',
+                            '',
+                            '# Meta / Redes Sociais',
+                            'META_ACCESS_TOKEN=',
+                            'META_AD_ACCOUNT_ID=act_XXXXXXXXX',
                             '',
                             '# Email',
                             'RESEND_API_KEY=re_...',
-                            'RESEND_FROM_EMAIL=contratos@imi.imb.br',
+                            'GMAIL_USER=contato@imi.imb.br',
+                            'GMAIL_APP_PASSWORD=',
                             '',
                             '# WhatsApp',
                             'EVOLUTION_API_URL=https://evolution.seudominio.com',
                             'EVOLUTION_API_KEY=',
-                            'EVOLUTION_INSTANCE=IMI',
                             '',
-                            '# Google Drive',
+                            '# Google',
                             'GDRIVE_FOLDER_ID=',
-                            'GDRIVE_SERVICE_ACCOUNT_JSON=',
+                            'GCAL_CLIENT_ID=',
+                            'GCAL_CLIENT_SECRET=',
                         ].map((line, i) => (
                             <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? 'var(--bo-accent)' : '#6BB87B' }}>
                                 {line || '\u00A0'}
@@ -460,6 +535,8 @@ export default function IntegracoesPage() {
                 {integracaoAberta && (
                     <ConfigModal
                         integracao={integracaoAberta}
+                        initialValues={configMap[integracaoAberta.id] as Record<string, string> | undefined}
+                        sourceMap={sourceMap}
                         onClose={() => setIntegracaoAberta(null)}
                         onSave={handleSave}
                     />
