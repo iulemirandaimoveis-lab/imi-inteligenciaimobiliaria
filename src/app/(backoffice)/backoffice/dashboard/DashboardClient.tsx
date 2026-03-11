@@ -213,8 +213,7 @@ export default function DashboardClient({
                         }}
                     >
                         <Plus size={14} />
-                        <span className="hidden sm:inline">Nova Avaliação</span>
-                        <span className="sm:hidden">+</span>
+                        <span>Nova Avaliação</span>
                     </motion.button>
                 </div>
             </motion.div>
