@@ -16,40 +16,82 @@ interface KPICardProps {
   onClick?: () => void
 }
 
-const ACCENT_COLORS: Record<string, string> = {
-  blue:  'var(--imi-blue-bright)',
-  hot:   'var(--s-hot)',
-  warm:  'var(--s-warm)',
-  cold:  'var(--s-cold)',
-  ai:    'var(--imi-ai-gold)',
-  green: 'var(--s-done)',
+// ── Accent palette ──────────────────────────────────────────────────────
+const ACCENT: Record<string, {
+  color: string
+  border: string
+  glow: string
+  bg: string
+  iconBg: string
+  deltaUp: string
+  raw: string
+}> = {
+  blue: {
+    color:   'var(--imi-blue-bright)',
+    border:  '1px solid rgba(59,130,246,0.30)',
+    glow:    '0 0 24px rgba(59,130,246,0.12)',
+    bg:      'linear-gradient(160deg, rgba(59,130,246,0.11) 0%, rgba(59,130,246,0.03) 50%, transparent 100%)',
+    iconBg:  'rgba(59,130,246,0.15)',
+    deltaUp: 'var(--s-done)',
+    raw:     '59,130,246',
+  },
+  hot: {
+    color:   'var(--s-hot)',
+    border:  '1px solid rgba(248,113,113,0.28)',
+    glow:    '0 0 24px rgba(248,113,113,0.10)',
+    bg:      'linear-gradient(160deg, rgba(248,113,113,0.10) 0%, rgba(248,113,113,0.03) 50%, transparent 100%)',
+    iconBg:  'rgba(248,113,113,0.14)',
+    deltaUp: 'var(--s-done)',
+    raw:     '248,113,113',
+  },
+  warm: {
+    color:   'var(--s-warm)',
+    border:  '1px solid rgba(251,191,36,0.28)',
+    glow:    '0 0 24px rgba(251,191,36,0.10)',
+    bg:      'linear-gradient(160deg, rgba(251,191,36,0.10) 0%, rgba(251,191,36,0.03) 50%, transparent 100%)',
+    iconBg:  'rgba(251,191,36,0.14)',
+    deltaUp: 'var(--s-done)',
+    raw:     '251,191,36',
+  },
+  cold: {
+    color:   'var(--s-cold)',
+    border:  '1px solid rgba(34,211,238,0.28)',
+    glow:    '0 0 24px rgba(34,211,238,0.10)',
+    bg:      'linear-gradient(160deg, rgba(34,211,238,0.10) 0%, rgba(34,211,238,0.03) 50%, transparent 100%)',
+    iconBg:  'rgba(34,211,238,0.14)',
+    deltaUp: 'var(--s-done)',
+    raw:     '34,211,238',
+  },
+  ai: {
+    color:   'var(--imi-ai-gold)',
+    border:  '1px solid rgba(234,179,8,0.28)',
+    glow:    '0 0 24px rgba(234,179,8,0.10)',
+    bg:      'linear-gradient(160deg, rgba(234,179,8,0.10) 0%, rgba(234,179,8,0.03) 50%, transparent 100%)',
+    iconBg:  'rgba(234,179,8,0.14)',
+    deltaUp: 'var(--s-done)',
+    raw:     '234,179,8',
+  },
+  green: {
+    color:   'var(--s-done)',
+    border:  '1px solid rgba(74,222,128,0.28)',
+    glow:    '0 0 24px rgba(74,222,128,0.12)',
+    bg:      'linear-gradient(160deg, rgba(74,222,128,0.11) 0%, rgba(74,222,128,0.03) 50%, transparent 100%)',
+    iconBg:  'rgba(74,222,128,0.14)',
+    deltaUp: 'var(--s-done)',
+    raw:     '74,222,128',
+  },
 }
 
-const ACCENT_TOP_BORDER: Record<string, string> = {
-  blue:  'rgba(59,130,246,0.45)',
-  hot:   'rgba(248,113,113,0.45)',
-  warm:  'rgba(251,191,36,0.45)',
-  cold:  'rgba(34,211,238,0.45)',
-  ai:    'rgba(234,179,8,0.45)',
-  green: 'rgba(74,222,128,0.45)',
+const VALUE_SIZES: Record<string, string> = {
+  sm: '26px',
+  md: '34px',
+  lg: '46px',
 }
 
-const ACCENT_BG_RAW: Record<string, string> = {
-  blue:  '59,130,246',
-  hot:   '248,113,113',
-  warm:  '251,191,36',
-  cold:  '34,211,238',
-  ai:    '234,179,8',
-  green: '74,222,128',
-}
-
-const ACCENT_ICON_BG: Record<string, string> = {
-  blue:  'rgba(59,130,246,0.14)',
-  hot:   'rgba(248,113,113,0.12)',
-  warm:  'rgba(251,191,36,0.12)',
-  cold:  'rgba(34,211,238,0.12)',
-  ai:    'rgba(234,179,8,0.12)',
-  green: 'rgba(74,222,128,0.12)',
+const PAD: Record<string, string> = {
+  sm: '12px 14px',
+  md: '16px 18px',
+  lg: '20px 22px',
 }
 
 export function KPICard({
@@ -64,97 +106,138 @@ export function KPICard({
   className = '',
   onClick,
 }: KPICardProps) {
-  const accentColor  = ACCENT_COLORS[accent]     ?? ACCENT_COLORS.blue
-  const topBorder    = ACCENT_TOP_BORDER[accent]  ?? ACCENT_TOP_BORDER.blue
-  const iconBg       = ACCENT_ICON_BG[accent]     ?? ACCENT_ICON_BG.blue
-  const rawRgb       = ACCENT_BG_RAW[accent]      ?? ACCENT_BG_RAW.blue
+  const a = ACCENT[accent] ?? ACCENT.blue
 
   const isPositive = delta !== undefined && delta > 0
   const isNegative = delta !== undefined && delta < 0
   const isStable   = delta !== undefined && delta === 0
 
-  const deltaColor = isPositive ? 'var(--s-done)' : isNegative ? 'var(--s-hot)' : 'var(--bo-text-muted)'
+  const deltaColor = isPositive
+    ? 'rgba(74,222,128,1)'
+    : isNegative
+    ? 'rgba(248,113,113,1)'
+    : 'rgba(148,163,184,1)'
 
-  const valueSizes: Record<string, string> = {
-    sm: '18px',
-    md: '22px',
-    lg: '28px',
-  }
-
-  const pad = size === 'lg' ? '16px' : size === 'sm' ? '10px 12px' : '14px'
+  const deltaBg = isPositive
+    ? 'rgba(74,222,128,0.12)'
+    : isNegative
+    ? 'rgba(248,113,113,0.10)'
+    : 'rgba(148,163,184,0.10)'
 
   return (
     <div
-      className={`intel-card ${onClick ? 'cursor-pointer active:scale-95 transition-transform' : ''} ${className}`}
+      className={`group relative overflow-hidden rounded-2xl transition-all duration-200 ${onClick ? 'cursor-pointer' : ''} ${className}`}
       style={{
-        padding: pad,
-        background: `linear-gradient(180deg, rgba(${rawRgb},0.08) 0%, transparent 55%), rgba(20,28,43,0.88)`,
-        borderTop: `1.5px solid ${topBorder}`,
+        padding: PAD[size],
+        background: 'rgba(13,20,36,0.92)',
+        border: a.border,
+        boxShadow: `
+          ${a.glow},
+          0 1px 0 rgba(255,255,255,0.04) inset,
+          0 -1px 0 rgba(0,0,0,0.20) inset,
+          0 4px 24px rgba(0,0,0,0.30)
+        `,
       }}
       onClick={onClick}
     >
-      {/* Icon + Label row */}
-      <div className="flex items-center gap-2 mb-2.5">
-        {icon && (
-          <span style={{
-            color: accentColor,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 26,
-            height: 26,
-            borderRadius: 8,
-            background: iconBg,
-            flexShrink: 0,
-          }}>
-            {icon}
+      {/* Accent background gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: a.bg, borderRadius: 'inherit' }}
+      />
+
+      {/* Top accent bar */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          background: `linear-gradient(90deg, transparent 0%, rgba(${a.raw},0.7) 50%, transparent 100%)`,
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative">
+        {/* Label + Icon row */}
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <span
+            style={{
+              fontSize: '9px',
+              fontWeight: 700,
+              color: 'var(--bo-text-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.10em',
+              lineHeight: 1.4,
+            }}
+          >
+            {label}
           </span>
-        )}
-        <span
+
+          {icon && (
+            <span
+              style={{
+                color: a.color,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 28,
+                height: 28,
+                borderRadius: 10,
+                background: a.iconBg,
+                border: `1px solid rgba(${a.raw},0.20)`,
+                flexShrink: 0,
+              }}
+            >
+              {icon}
+            </span>
+          )}
+        </div>
+
+        {/* Value — the hero number */}
+        <div
           style={{
-            fontSize: '9px',
-            fontWeight: 700,
-            color: 'var(--bo-text-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
+            fontSize: VALUE_SIZES[size],
+            fontWeight: 800,
+            color: 'var(--bo-text)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.03em',
+            fontVariantNumeric: 'tabular-nums',
+            marginBottom: (delta !== undefined || sublabel) ? '8px' : 0,
           }}
         >
-          {label}
-        </span>
-      </div>
-
-      {/* Value */}
-      <div
-        style={{
-          fontSize: valueSizes[size],
-          fontWeight: 800,
-          color: 'var(--bo-text)',
-          lineHeight: 1.1,
-          letterSpacing: '-0.02em',
-          marginBottom: delta !== undefined || sublabel ? '6px' : 0,
-        }}
-      >
-        {value}
-      </div>
-
-      {/* Delta or sublabel */}
-      {delta !== undefined && (
-        <div className="flex items-center gap-1" style={{ fontSize: '10px', fontWeight: 600, color: deltaColor }}>
-          {isPositive && <TrendingUp size={11} />}
-          {isNegative && <TrendingDown size={11} />}
-          {isStable   && <Minus size={11} />}
-          <span>
-            {isPositive ? '+' : ''}{delta}{typeof delta === 'number' ? '%' : ''}
-            {deltaLabel && ` ${deltaLabel}`}
-          </span>
+          {value}
         </div>
-      )}
 
-      {!delta && sublabel && (
-        <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', fontWeight: 500 }}>
-          {sublabel}
-        </span>
-      )}
+        {/* Delta badge */}
+        {delta !== undefined && (
+          <div className="flex items-center gap-2">
+            <span
+              className="flex items-center gap-1 px-1.5 py-0.5 rounded-md"
+              style={{
+                background: deltaBg,
+                fontSize: '10px',
+                fontWeight: 700,
+                color: deltaColor,
+              }}
+            >
+              {isPositive && <TrendingUp size={9} />}
+              {isNegative && <TrendingDown size={9} />}
+              {isStable   && <Minus size={9} />}
+              {isPositive ? '+' : ''}{delta}{typeof delta === 'number' ? '%' : ''}
+            </span>
+            {deltaLabel && (
+              <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', fontWeight: 500 }}>
+                {deltaLabel}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Sublabel */}
+        {delta === undefined && sublabel && (
+          <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', fontWeight: 500 }}>
+            {sublabel}
+          </span>
+        )}
+      </div>
     </div>
   )
 }
