@@ -24,6 +24,7 @@ export type AIModel =
     | 'gemini-pro'
     | 'gemini-flash'
     | 'grok-2'
+    | 'groq-llama'
     | 'kling'
 
 export type TaskType =
@@ -67,17 +68,17 @@ export interface AIRouterResponse {
 // ─── Mapeamento de modelo por task ─────────────────────────────────────────
 
 const MODEL_ROUTING: Record<TaskType, { primary: AIModel; fallback: AIModel }> = {
-    tema: { primary: 'claude-haiku', fallback: 'gemini-flash' },
+    tema: { primary: 'groq-llama', fallback: 'claude-haiku' },
     roteiro: { primary: 'claude-sonnet', fallback: 'gpt-4o' },
-    legenda: { primary: 'gemini-flash', fallback: 'claude-haiku' },
-    descricao: { primary: 'claude-haiku', fallback: 'gemini-flash' },
-    hashtags: { primary: 'gemini-flash', fallback: 'claude-haiku' },
+    legenda: { primary: 'groq-llama', fallback: 'gemini-flash' },
+    descricao: { primary: 'claude-haiku', fallback: 'groq-llama' },
+    hashtags: { primary: 'groq-llama', fallback: 'gemini-flash' },
     email: { primary: 'claude-sonnet', fallback: 'gpt-4o' },
-    imagem_prompt: { primary: 'claude-haiku', fallback: 'gemini-flash' },
+    imagem_prompt: { primary: 'groq-llama', fallback: 'claude-haiku' },
     imagem: { primary: 'gemini-pro', fallback: 'gpt-4o' },
     video: { primary: 'kling', fallback: 'kling' },
-    analise_lead: { primary: 'claude-sonnet', fallback: 'gpt-4o' },
-    custom: { primary: 'claude-sonnet', fallback: 'gpt-4o' },
+    analise_lead: { primary: 'claude-sonnet', fallback: 'groq-llama' },
+    custom: { primary: 'claude-sonnet', fallback: 'groq-llama' },
 }
 
 // ─── System prompts por task ────────────────────────────────────────────────
@@ -316,6 +317,54 @@ async function callGemini(
     }
 }
 
+// ─── Chamada Groq (Llama 3.3-70b) ───────────────────────────────────────────
+
+async function callGroq(
+    prompt: string,
+    systemPrompt: string,
+    temperature: number,
+    max_tokens: number
+): Promise<{ result: string; tokens_input: number; tokens_output: number; cost_usd: number }> {
+    const apiKey = process.env.GROQ_API_KEY
+    if (!apiKey) throw new Error('GROQ_API_KEY não configurada')
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            max_tokens,
+            temperature,
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: prompt },
+            ],
+        }),
+    })
+
+    if (!response.ok) {
+        const err = await response.text()
+        throw new Error(`Groq API error: ${response.status} ${err}`)
+    }
+
+    const data = await response.json()
+    const inputTokens = data.usage?.prompt_tokens || 0
+    const outputTokens = data.usage?.completion_tokens || 0
+
+    // Groq Llama 3.3-70b: gratuito no tier free (6000 RPD); pago: $0.59/$0.79 por 1M tokens
+    const cost_usd = (inputTokens * 0.59 + outputTokens * 0.79) / 1_000_000
+
+    return {
+        result: data.choices?.[0]?.message?.content || '',
+        tokens_input: inputTokens,
+        tokens_output: outputTokens,
+        cost_usd,
+    }
+}
+
 // ─── Stub Kling (video) ──────────────────────────────────────────────────────
 
 async function callKling(prompt: string): Promise<{ result: string; cost_usd: number }> {
@@ -375,6 +424,9 @@ export async function POST(request: NextRequest) {
                 if (m === 'grok-2') {
                     return { ...(await callGrok(fullPrompt, systemPrompt, m, temperature, max_tokens)), model_used: m }
                 }
+                if (m === 'groq-llama') {
+                    return { ...(await callGroq(fullPrompt, systemPrompt, temperature, max_tokens)), model_used: m }
+                }
                 if (m === 'gemini-pro' || m === 'gemini-flash') {
                     return { ...(await callGemini(fullPrompt, systemPrompt, m, temperature, max_tokens)), model_used: m }
                 }
@@ -433,7 +485,7 @@ export async function GET() {
     return NextResponse.json({
         status: 'ok',
         description: 'IMI AI Router — Multi-model orchestration',
-        models_available: ['claude-sonnet', 'claude-haiku', 'gpt-4o', 'gpt-4o-mini', 'gemini-pro', 'gemini-flash', 'grok-2', 'kling'],
+        models_available: ['claude-sonnet', 'claude-haiku', 'gpt-4o', 'gpt-4o-mini', 'gemini-pro', 'gemini-flash', 'grok-2', 'groq-llama', 'kling'],
         task_types: Object.keys(MODEL_ROUTING),
         routing: MODEL_ROUTING,
     })
