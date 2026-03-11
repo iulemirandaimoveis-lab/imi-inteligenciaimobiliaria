@@ -167,13 +167,71 @@ Rota Next.js: `src/app/api/agno/[...path]/route.ts`
 
 ---
 
+## UI Oficial do Agno (Opcional)
+
+O Agno tem um **chat UI open-source em Next.js** que se conecta ao AgentOS:
+
+```bash
+npx create-agent-ui@latest
+# ou
+git clone https://github.com/agno-agi/agent-ui.git
+cd agent-ui && pnpm install && pnpm dev
+```
+
+- Streaming em tempo real
+- Visualização de tool calls e raciocínio
+- Suporte multimodal (imagens, áudio)
+- Construído com Next.js + Tailwind + shadcn/ui
+
+Quando o AgentOS (Plano Pro) estiver ativo, aponte para `http://localhost:8001`.
+
+---
+
+## Níveis de Complexidade (Agno)
+
+| Nível | Capacidade | Status IMI |
+|-------|-----------|------------|
+| 1 | Agentes com ferramentas e instruções | ✅ Implementado |
+| 2 | Agentes com knowledge base e storage | 🔄 Próximo passo |
+| 3 | Agentes com memória e raciocínio | 🔄 Próximo passo |
+| 4 | Times que raciocinam e colaboram | ✅ Implementado (team) |
+| 5 | Workflows com estado e determinismo | 📋 Planejado |
+
+---
+
+## Pricing do Agno
+
+| Plano | Preço | Inclui |
+|-------|-------|--------|
+| **Free** | $0 | Framework open-source completo, AgentOS local |
+| **Pro** | $150/mês | AgentOS cloud, 1 conexão, 4 seats, monitoramento |
+| **Enterprise** | Custom | SSO/RBAC, Slack dedicado, self-hosted |
+
+> O framework Agno é **100% gratuito e open-source**. Você só paga as APIs dos LLMs (Anthropic, Groq, etc.) e opcionalmente o plano Pro do AgentOS para o painel cloud.
+
+---
+
 ## Documentação Agno
 
+**Framework:**
 - [Introdução](https://docs.agno.com/introduction)
 - [Criando Agentes](https://docs.agno.com/agents/building-agents)
 - [Times de Agentes](https://docs.agno.com/teams/introduction)
 - [Memória e Sessões](https://docs.agno.com/memory/introduction)
-- [Base de Conhecimento](https://docs.agno.com/knowledge/introduction)
-- [Ferramentas (Tools)](https://docs.agno.com/tools/introduction)
-- [Deploy com AgentOS](https://docs.agno.com/agentos/introduction)
-- [Referência da API](https://docs.agno.com/reference/agents/agent)
+- [Base de Conhecimento (RAG)](https://docs.agno.com/knowledge/introduction)
+- [Ferramentas (100+ integrações)](https://docs.agno.com/tools/introduction)
+- [Workflows](https://docs.agno.com/workflows/introduction)
+- [Guardrails](https://docs.agno.com/agents/guardrails)
+
+**Deploy & Integração:**
+- [AgentOS](https://docs.agno.com/agentos/introduction)
+- [API REST do AgentOS](https://docs.agno.com/agent-os/api)
+- [Usando a API](https://docs.agno.com/agent-os/using-the-api)
+- [Referência da Classe Agent](https://docs.agno.com/reference/agents/agent)
+
+**Repositórios:**
+- [agno-agi/agno](https://github.com/agno-agi/agno) — Framework Python
+- [agno-agi/agent-ui](https://github.com/agno-agi/agent-ui) — Chat UI (Next.js)
+- [agno-agi/agent-api](https://github.com/agno-agi/agent-api) — FastAPI starter
+- [PyPI: agno](https://pypi.org/project/agno/)
+- [os.agno.com](https://os.agno.com) — Painel AgentOS
