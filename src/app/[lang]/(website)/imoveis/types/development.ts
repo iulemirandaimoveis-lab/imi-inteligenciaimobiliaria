@@ -30,6 +30,7 @@ export interface DevelopmentSpecs {
     areaRange: string;                   // Ex: "29-251m²"
     bathroomsRange?: string;
     parkingRange?: string;
+    privateAreaSqm?: number;             // Área privativa em m² para cálculo de preço/m²
 }
 
 export interface DevelopmentPriceRange {

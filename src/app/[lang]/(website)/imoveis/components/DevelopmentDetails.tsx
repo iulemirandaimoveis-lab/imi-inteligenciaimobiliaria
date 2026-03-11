@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Bed, Maximize, Bath, Car, Check } from 'lucide-react';
+import { Bed, Maximize, Bath, Car, Check, TrendingUp } from 'lucide-react';
 import { Development } from '../types/development';
 import { slideUp, staggerContainer } from '@/lib/animations';
 
@@ -10,6 +10,13 @@ interface DevelopmentDetailsProps {
 }
 
 export default function DevelopmentDetails({ development }: DevelopmentDetailsProps) {
+    // Calculate price/m² if we have both price and area
+    const priceMin = development.priceRange.min;
+    const areaSqm = development.specs.privateAreaSqm;
+    const pricePerSqm = priceMin > 0 && areaSqm && areaSqm > 0
+        ? Math.round(priceMin / areaSqm)
+        : null;
+
     const specs = [
         { icon: Maximize, label: 'Área', value: development.specs.areaRange },
         { icon: Bed, label: 'Quartos', value: development.specs.bedroomsRange },
@@ -46,6 +53,15 @@ export default function DevelopmentDetails({ development }: DevelopmentDetailsPr
                         <p className="text-gray-900 font-bold text-lg">{spec.value}</p>
                     </div>
                 ))}
+                {pricePerSqm && (
+                    <div className="bg-[#F0F7FF] rounded-xl p-4 border border-[#BFDBFE]">
+                        <TrendingUp className="w-5 h-5 text-[#3B82F6] mb-2.5" strokeWidth={1.5} />
+                        <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold mb-0.5">Preço/m²</p>
+                        <p className="text-gray-900 font-bold text-lg">
+                            R$ {pricePerSqm.toLocaleString('pt-BR')}
+                        </p>
+                    </div>
+                )}
             </motion.div>
 
             {/* Features */}

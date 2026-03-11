@@ -90,6 +90,7 @@ export function mapDbPropertyToDevelopment(dbProp: any): Development {
             areaRange: area,
             bathroomsRange: dbProp.bathrooms ? `${dbProp.bathrooms}` : undefined,
             parkingRange: dbProp.parking_spaces || dbProp.parking_spots ? `${dbProp.parking_spaces || dbProp.parking_spots}` : undefined,
+            privateAreaSqm: dbProp.private_area || dbProp.area_from || dbProp.area_min || undefined,
         },
         priceRange: {
             min: Number(dbProp.price_from || dbProp.price_min) || 0,

@@ -8,9 +8,16 @@ import {
   ArrowLeft, Building2, MapPin, Ruler, Home, DollarSign,
   Image as ImageIcon, Upload, Check, Calendar, Save,
   Loader2, AlertCircle, BedDouble, Bath, Car, Sparkles, Star,
-  Play, FileText, X, CheckCircle, Globe, Eye, Zap,
+  Play, FileText, X, CheckCircle, Globe, Eye, Zap, Link as LinkIcon, GripVertical,
 } from 'lucide-react'
 import Image from 'next/image'
+import {
+  DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable, arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { uploadFile, uploadMultipleFiles } from '@/lib/supabase-storage'
 import { T } from '@/app/(backoffice)/lib/theme'
 
@@ -59,7 +66,7 @@ interface FormData {
   floorPlans: File[]; existingBrochure: string; brochure: File | null
   logo: File | null; existingLogo: string
   status: string; status_commercial: string; is_highlighted: boolean
-  videoUrl: string; videoShort: string
+  videoUrl: string; videoShort: string; virtualTourUrl: string
 }
 
 const INITIAL: FormData = {
@@ -69,7 +76,43 @@ const INITIAL: FormData = {
   availableUnits: '', deliveryDate: '', images: [], existingImages: [],
   existingFloorPlans: [], floorPlans: [], existingBrochure: '', brochure: null,
   logo: null, existingLogo: '', status: 'disponivel', status_commercial: 'draft',
-  is_highlighted: false, videoUrl: '', videoShort: '',
+  is_highlighted: false, videoUrl: '', videoShort: '', virtualTourUrl: '',
+}
+
+/* ── Sortable Image Item ── */
+function SortableImageItem({
+  url, index, onSetCover, onRemove,
+}: { url: string; index: number; onSetCover: () => void; onRemove: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: url })
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
+  return (
+    <div ref={setNodeRef} style={style}
+      className="relative group rounded-xl overflow-hidden"
+      {...attributes}>
+      <div className="absolute top-2 left-2 z-10 cursor-grab active:cursor-grabbing w-6 h-6 flex items-center justify-center rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ background: 'rgba(0,0,0,0.6)' }} {...listeners}>
+        <GripVertical size={12} color="white" />
+      </div>
+      <Image src={url} alt={`img ${index}`} width={200} height={120}
+        className="w-full h-28 object-cover"
+        style={{ border: `1px solid ${T.border}`, borderRadius: '0.75rem' }} />
+      {index === 0 && (
+        <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: T.accent, color: 'white' }}>Capa</div>
+      )}
+      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center gap-2 pb-2">
+        {index > 0 && (
+          <button onClick={onSetCover}
+            className="text-[10px] px-2 py-1 rounded-lg font-medium" style={{ background: T.accent, color: 'white' }}>
+            Capa
+          </button>
+        )}
+        <button onClick={onRemove}
+          className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: '#EF444480' }}>
+          <X size={14} color="white" />
+        </button>
+      </div>
+    </div>
+  )
 }
 
 export default function EditarImovelPage() {
@@ -112,12 +155,27 @@ export default function EditarImovelPage() {
           logo: null, existingLogo: d.developers?.logo_url || '',
           status: d.status || 'disponivel', status_commercial: d.status_commercial || d.status_comercial || 'draft',
           is_highlighted: !!d.is_highlighted, videoUrl: d.video_url || '', videoShort: d.video_short_url || '',
+          virtualTourUrl: d.virtual_tour_url || '',
         })
       } catch (err: any) {
         toast.error('Erro ao carregar dados do empreendimento')
       } finally { setIsLoading(false) }
     })()
   }, [params.id])
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (over && active.id !== over.id) {
+      const oldIndex = formData.existingImages.indexOf(active.id as string)
+      const newIndex = formData.existingImages.indexOf(over.id as string)
+      set('existingImages', arrayMove(formData.existingImages, oldIndex, newIndex))
+    }
+  }
 
   const set = (field: keyof FormData, value: any) => setFormData(p => ({ ...p, [field]: value }))
   const toggleFeature = (f: string) => set('features', formData.features.includes(f) ? formData.features.filter(x => x !== f) : [...formData.features, f])
@@ -179,6 +237,7 @@ export default function EditarImovelPage() {
           image: allImages[0] || null,
           floor_plans: [...formData.existingFloorPlans, ...newFpUrls],
           brochure_url: brochureUrl, video_url: formData.videoUrl || null, video_short_url: formData.videoShort || null,
+          virtual_tour_url: formData.virtualTourUrl || null,
         }),
       })
       if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'Erro ao atualizar') }
@@ -473,51 +532,45 @@ export default function EditarImovelPage() {
                   </label>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {formData.existingImages.map((url, i) => (
-                    <div key={url} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
-                      <Image src={url} alt={`img ${i}`} width={200} height={120} className="w-full h-28 object-cover" />
-                      {i === 0 && (
-                        <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: T.accent, color: 'white' }}>Capa</div>
-                      )}
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        {i > 0 && (
-                          <button onClick={() => {
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                  <SortableContext items={formData.existingImages} strategy={rectSortingStrategy}>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                      {formData.existingImages.map((url, i) => (
+                        <SortableImageItem
+                          key={url}
+                          url={url}
+                          index={i}
+                          onSetCover={() => {
                             const imgs = [...formData.existingImages]
                             const [main] = imgs.splice(i, 1)
                             set('existingImages', [main, ...imgs])
-                          }} className="text-[11px] px-2 py-1 rounded-lg font-medium" style={{ background: T.accent, color: 'white' }}>
-                            Definir capa
-                          </button>
-                        )}
-                        <button onClick={() => set('existingImages', formData.existingImages.filter(x => x !== url))}
-                          className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: '#EF444480' }}>
-                          <X size={14} color="white" />
-                        </button>
-                      </div>
+                          }}
+                          onRemove={() => set('existingImages', formData.existingImages.filter(x => x !== url))}
+                        />
+                      ))}
+                      {formData.images.map((file, i) => (
+                        <div key={i} className="relative group rounded-xl overflow-hidden" style={{ border: `2px dashed ${T.accent}40`, background: `${T.accent}08` }}>
+                          <img src={URL.createObjectURL(file)} alt="nova" className="w-full h-28 object-cover" />
+                          <div className="absolute top-2 right-2">
+                            <button onClick={() => set('images', formData.images.filter((_, j) => j !== i))}
+                              className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#EF444480' }}>
+                              <X size={12} color="white" />
+                            </button>
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 text-center text-[10px] py-1 font-medium" style={{ background: `${T.accent}80`, color: 'white' }}>Nova</div>
+                        </div>
+                      ))}
+                      {formData.existingImages.length === 0 && formData.images.length === 0 && (
+                        <label className="col-span-full cursor-pointer h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:opacity-80"
+                          style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
+                          <ImageIcon size={28} style={{ color: T.textDim }} />
+                          <span className="text-sm" style={{ color: T.textDim }}>Clique para adicionar fotos</span>
+                          <input type="file" accept="image/*" multiple className="hidden" onChange={e => set('images', Array.from(e.target.files || []))} />
+                        </label>
+                      )}
                     </div>
-                  ))}
-                  {formData.images.map((file, i) => (
-                    <div key={i} className="relative group rounded-xl overflow-hidden" style={{ border: `2px dashed ${T.accent}40`, background: `${T.accent}08` }}>
-                      <img src={URL.createObjectURL(file)} alt="nova" className="w-full h-28 object-cover" />
-                      <div className="absolute top-2 right-2">
-                        <button onClick={() => set('images', formData.images.filter((_, j) => j !== i))}
-                          className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#EF444480' }}>
-                          <X size={12} color="white" />
-                        </button>
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 text-center text-[10px] py-1 font-medium" style={{ background: `${T.accent}80`, color: 'white' }}>Nova</div>
-                    </div>
-                  ))}
-                  {formData.existingImages.length === 0 && formData.images.length === 0 && (
-                    <label className="col-span-full cursor-pointer h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:opacity-80"
-                      style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
-                      <ImageIcon size={28} style={{ color: T.textDim }} />
-                      <span className="text-sm" style={{ color: T.textDim }}>Clique para adicionar fotos</span>
-                      <input type="file" accept="image/*" multiple className="hidden" onChange={e => set('images', Array.from(e.target.files || []))} />
-                    </label>
-                  )}
-                </div>
+                  </SortableContext>
+                </DndContext>
               </div>
 
               {/* Vídeos */}
@@ -526,7 +579,7 @@ export default function EditarImovelPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
-                      <Play size={11} className="inline mr-1" />Tour Virtual (YouTube)
+                      <Play size={11} className="inline mr-1" />Vídeo YouTube
                     </label>
                     <input value={formData.videoUrl} onChange={e => set('videoUrl', e.target.value)}
                       placeholder="https://youtube.com/watch?v=..." className={inp} style={inpStyle} />
@@ -544,6 +597,31 @@ export default function EditarImovelPage() {
                       placeholder="https://youtube.com/shorts/..." className={inp} style={inpStyle} />
                   </div>
                 </div>
+              </div>
+
+              {/* Tour Virtual */}
+              <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
+                <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Tour Virtual 360°</h3>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
+                    <LinkIcon size={11} className="inline mr-1" />Link Matterport / Kuula / iGuide
+                  </label>
+                  <input value={formData.virtualTourUrl} onChange={e => set('virtualTourUrl', e.target.value)}
+                    placeholder="https://my.matterport.com/show/?m=..." className={inp} style={inpStyle} />
+                  <p className="text-xs mt-1.5" style={{ color: T.textDim }}>Cole a URL do tour 360°. Matterport, Kuula, iGuide e similares são suportados.</p>
+                </div>
+                {formData.virtualTourUrl && (
+                  <div className="mt-4 rounded-xl overflow-hidden" style={{ border: `1px solid ${T.accent}30`, background: `${T.accent}08` }}>
+                    <div className="flex items-center gap-3 px-4 py-3">
+                      <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#10b981' }} />
+                      <span className="text-xs font-medium flex-1 truncate" style={{ color: T.text }}>{formData.virtualTourUrl}</span>
+                      <a href={formData.virtualTourUrl} target="_blank" rel="noopener noreferrer"
+                        className="text-xs px-3 py-1.5 rounded-lg font-medium" style={{ background: T.elevated, color: T.accent, border: `1px solid ${T.border}` }}>
+                        Testar
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Plantas */}

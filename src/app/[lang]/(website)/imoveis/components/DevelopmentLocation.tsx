@@ -1,7 +1,7 @@
 'use client';
 
 import { Development } from '../types/development';
-import { MapPin } from 'lucide-react';
+import { MapPin, Navigation } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { slideUp } from '@/lib/animations';
 
@@ -12,6 +12,7 @@ interface DevelopmentLocationProps {
 export default function DevelopmentLocation({ development }: DevelopmentLocationProps) {
     const { lat, lng } = development.location.coordinates;
     const mapSrc = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+    const streetViewUrl = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
 
     return (
         <motion.div
@@ -36,7 +37,7 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
             {/* Map */}
             <motion.div
                 variants={slideUp}
-                className="aspect-[16/9] rounded-2xl overflow-hidden mb-5 border border-gray-100 shadow-sm"
+                className="aspect-[16/9] rounded-2xl overflow-hidden mb-3 border border-gray-100 shadow-sm relative group"
             >
                 <iframe
                     src={mapSrc}
@@ -48,6 +49,19 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                     referrerPolicy="no-referrer-when-downgrade"
                     className="grayscale contrast-110 hover:grayscale-0 transition-all duration-700"
                 />
+                {/* Street View button overlay */}
+                <div className="absolute bottom-3 right-3">
+                    <a
+                        href={streetViewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold shadow-lg transition-all duration-200 hover:scale-105"
+                        style={{ background: 'rgba(255,255,255,0.95)', color: '#102A43', border: '1px solid rgba(0,0,0,0.08)' }}
+                    >
+                        <Navigation className="w-3.5 h-3.5 text-[#4285F4]" />
+                        Street View
+                    </a>
+                </div>
             </motion.div>
 
             {/* Address */}
