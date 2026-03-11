@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
-  Sun, Moon, Sunset, Users, CalendarDays,
-  Phone, MessageCircle, ArrowRight, Building2,
-  TrendingUp, Scale, Clock, Zap,
+  Sun, Moon, Users, CalendarDays,
+  MessageCircle, Building2,
+  TrendingUp, Scale, Clock, Zap, Bot, Sparkles, CheckCircle2,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -41,9 +41,18 @@ const QUICK_ACTIONS = [
   { label: 'Novo Lead',   href: '/backoffice/leads/novo',        color: 'var(--s-hot)',       icon: Users },
   { label: 'Agendamento', href: '/backoffice/agenda',            color: 'var(--s-pend)',      icon: CalendarDays },
   { label: 'WhatsApp',    href: '/backoffice/whatsapp',          color: '#25D366',            icon: MessageCircle },
+  { label: 'Agentes IA',  href: '/backoffice/ia/agentes',        color: '#A78BFA',            icon: Bot,           isNew: true },
   { label: 'Avaliação',   href: '/backoffice/avaliacoes/nova',   color: 'var(--imi-ai-gold)', icon: Scale },
   { label: 'Imóveis',     href: '/backoffice/imoveis',           color: 'var(--s-cold)',      icon: Building2 },
   { label: 'Pipeline',    href: '/backoffice/leads',             color: 'var(--imi-blue-bright)', icon: TrendingUp },
+]
+
+// ── Agent activity data (static for now, can be wired to real API) ──
+const AGENT_ACTIVITY = [
+  { name: 'Qualificador', tasksToday: 47, color: '#3B82F6', raw: '59,130,246', status: 'active' },
+  { name: 'Conteúdo',     tasksToday: 23, color: '#8B5CF6', raw: '139,92,246', status: 'active' },
+  { name: 'Matchmaker',   tasksToday: 31, color: '#F59E0B', raw: '245,158,11', status: 'active' },
+  { name: 'Follow-up',    tasksToday: 12, color: '#EF4444', raw: '239,68,68',  status: 'idle'   },
 ]
 
 // ── Loading Skeleton ─────────────────────────────────────────────────
@@ -204,18 +213,27 @@ export default function HojePage() {
               transition={{ delay: 0.08 + i * 0.04 }}
               whileTap={{ scale: 0.90 }}
               onClick={() => router.push(a.href)}
-              className="flex-shrink-0 flex flex-col items-center gap-2"
+              className="flex-shrink-0 flex flex-col items-center gap-2 relative"
               style={{ minWidth: '64px', padding: '10px 8px' }}
             >
               {/* Icon circle */}
               <div style={{
                 width: '48px', height: '48px', borderRadius: '14px',
                 background: 'var(--bo-card)',
-                border: `1px solid var(--bo-border)`,
+                border: `1px solid ${(a as any).isNew ? 'rgba(167,139,250,0.30)' : 'var(--bo-border)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
+                flexShrink: 0, position: 'relative',
               }}>
                 <a.icon size={18} style={{ color: a.color }} />
+                {(a as any).isNew && (
+                  <span style={{
+                    position: 'absolute', top: -5, right: -5,
+                    fontSize: '7px', fontWeight: 800, padding: '1px 4px',
+                    borderRadius: 4, background: 'rgba(74,222,128,0.20)',
+                    color: '#4ADE80', border: '1px solid rgba(74,222,128,0.35)',
+                    letterSpacing: '0.03em',
+                  }}>NEW</span>
+                )}
               </div>
               <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--bo-text-muted)', textAlign: 'center', lineHeight: 1.2, maxWidth: '56px' }}>
                 {a.label}
@@ -279,6 +297,94 @@ export default function HojePage() {
             )}
           </span>
         </AIInsightCard>
+      </motion.div>
+
+      {/* ── Agentes IA — status strip ─────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.16 }}
+      >
+        <SectionHeader
+          title="Agentes IA Hoje"
+          action={{ label: 'Ver todos', href: '/backoffice/ia/agentes' }}
+        />
+        <div
+          className="rounded-2xl overflow-hidden"
+          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+        >
+          {/* Header */}
+          <div
+            className="px-4 py-2.5 flex items-center gap-2"
+            style={{
+              background: 'linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(59,130,246,0.05) 100%)',
+              borderBottom: '1px solid var(--bo-border)',
+            }}
+          >
+            <Bot size={12} style={{ color: '#A78BFA' }} />
+            <span style={{ fontSize: '10px', fontWeight: 700, color: '#A78BFA', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              {AGENT_ACTIVITY.filter(a => a.status === 'active').length} ativos agora
+            </span>
+            <span style={{ marginLeft: 'auto', fontSize: '9px', color: 'var(--bo-text-muted)' }}>
+              {AGENT_ACTIVITY.reduce((s, a) => s + a.tasksToday, 0)} tarefas hoje
+            </span>
+          </div>
+
+          {/* Agent rows */}
+          {AGENT_ACTIVITY.map((agent, i) => (
+            <div
+              key={agent.name}
+              className="flex items-center gap-3 px-4 py-3"
+              style={{ borderBottom: i < AGENT_ACTIVITY.length - 1 ? '1px solid var(--bo-border)' : 'none' }}
+            >
+              {/* Icon */}
+              <div style={{
+                width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+                background: `rgba(${agent.raw},0.12)`,
+                border: `1px solid rgba(${agent.raw},0.20)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Bot size={13} style={{ color: agent.color }} />
+              </div>
+
+              {/* Name + status */}
+              <div style={{ flex: 1 }}>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--bo-text)' }}>
+                  {agent.name}
+                </span>
+              </div>
+
+              {/* Status pill */}
+              <span style={{
+                fontSize: '9px', fontWeight: 700, padding: '2px 7px', borderRadius: 5,
+                background: agent.status === 'active' ? 'rgba(74,222,128,0.12)' : 'rgba(251,191,36,0.10)',
+                color: agent.status === 'active' ? '#4ADE80' : '#FBBF24',
+                border: `1px solid ${agent.status === 'active' ? 'rgba(74,222,128,0.25)' : 'rgba(251,191,36,0.20)'}`,
+              }}>
+                {agent.status === 'active' ? '● Ativo' : '○ Espera'}
+              </span>
+
+              {/* Tasks count */}
+              <span style={{ fontSize: '11px', fontWeight: 700, color: agent.color, minWidth: 24, textAlign: 'right' }}>
+                {agent.tasksToday}
+              </span>
+            </div>
+          ))}
+
+          {/* CTA footer */}
+          <button
+            onClick={() => router.push('/backoffice/ia/agentes')}
+            className="w-full flex items-center justify-center gap-2 py-3"
+            style={{
+              fontSize: '11px', fontWeight: 600, color: '#A78BFA',
+              background: 'transparent', border: 'none', cursor: 'pointer',
+              borderTop: '1px solid var(--bo-border)',
+            }}
+          >
+            <Sparkles size={11} />
+            Gerenciar agentes
+          </button>
+        </div>
       </motion.div>
 
       {/* ── Agenda de Hoje ────────────────────────────── */}
