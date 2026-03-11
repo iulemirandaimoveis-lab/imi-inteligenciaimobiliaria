@@ -1,6 +1,5 @@
-import { redirect } from 'next/navigation';
-import { T } from '@/app/(backoffice)/lib/theme'
+import { redirect } from 'next/navigation'
 
 export default function BackofficeRootPage() {
-    redirect('/backoffice/dashboard');
+    redirect('/backoffice/dashboard')
 }
