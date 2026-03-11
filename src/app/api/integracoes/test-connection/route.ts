@@ -111,6 +111,47 @@ export async function POST(req: NextRequest) {
           : { success: false, message: 'Access Token inválido' })
       }
 
+      case 'meta_ads': {
+        const token   = values.meta_access_token || process.env.META_ACCESS_TOKEN
+        const adAccId = values.meta_ad_account || process.env.META_AD_ACCOUNT_ID
+        if (!token) return NextResponse.json({ success: false, message: 'Access Token não informado' })
+        // Test by calling Meta Graph API /me endpoint
+        const res = await fetch(
+          `https://graph.facebook.com/v19.0/me?fields=id,name&access_token=${token}`,
+        ).catch(() => null)
+        if (!res) return NextResponse.json({ success: false, message: 'Não foi possível conectar ao Meta Graph API' })
+        if (res.ok) {
+          const d = await res.json()
+          const label = adAccId ? ` · Conta: ${adAccId}` : ''
+          return NextResponse.json({ success: true, message: `Meta Ads conectado! Conta: ${d.name || d.id}${label}` })
+        }
+        const err = await res.json().catch(() => ({}))
+        return NextResponse.json({ success: false, message: err?.error?.message || 'Access Token inválido ou expirado' })
+      }
+
+      case 'google_analytics': {
+        // GA4 — validate by checking if measurement ID / property ID looks correct
+        const propertyId = values.ga4_measurement_id || values.ga_property_id || process.env.GA_PROPERTY_ID
+        if (!propertyId) return NextResponse.json({ success: false, message: 'Property ID não informado' })
+        const clean = String(propertyId).replace(/\D/g, '')
+        // Also accept G-XXXXXXXXXX format
+        const isGFormat = String(propertyId).toUpperCase().startsWith('G-')
+        if (!isGFormat && (!clean || clean.length < 6)) return NextResponse.json({ success: false, message: 'Measurement ID inválido (formato esperado: G-XXXXXXXXXX)' })
+        return NextResponse.json({ success: true, message: `GA4 configurado com Measurement ID ${propertyId}. Confirme no Google Analytics → Administração → Fluxos de dados.` })
+      }
+
+      case 'abacatepay': {
+        const key = values.abacatepay_api_key || process.env.ABACATEPAY_API_KEY
+        if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
+        const res = await fetch('https://api.abacatepay.com/v1/billing/list', {
+          headers: { 'Authorization': `Bearer ${key}` },
+        }).catch(() => null)
+        if (!res) return NextResponse.json({ success: false, message: 'Não foi possível conectar ao AbacatePay' })
+        return NextResponse.json(res.ok || res.status === 404
+          ? { success: true, message: 'AbacatePay conectado com sucesso!' }
+          : { success: false, message: 'API Key inválida' })
+      }
+
       case 'supabase_storage': {
         return NextResponse.json({
           success: true,
