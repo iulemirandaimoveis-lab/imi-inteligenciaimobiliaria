@@ -71,6 +71,7 @@ interface Imovel {
     vagas: number
     preco: number
     construtora: string | null
+    construtora_logo: string | null
     visitas: number
     image: string | null
     liquidez: number
@@ -362,9 +363,19 @@ function ImovelCard({ imovel, index, onAction }: { imovel: Imovel; index: number
                                 {imovel.codigo}
                             </span>
                             {imovel.construtora && (
-                                <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-md truncate max-w-[96px]" style={{
+                                <span className="flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded-md truncate max-w-[96px]" style={{
                                     color: T.textDim, background: 'var(--bo-elevated)', border: `1px solid ${T.border}`,
                                 }}>
+                                    {imovel.construtora_logo && (
+                                        <Image
+                                            src={imovel.construtora_logo}
+                                            alt=""
+                                            width={12}
+                                            height={12}
+                                            className="rounded-sm object-contain flex-shrink-0"
+                                            style={{ filter: 'brightness(0) invert(1)', opacity: 0.7 }}
+                                        />
+                                    )}
                                     {imovel.construtora}
                                 </span>
                             )}
@@ -433,6 +444,8 @@ export default function ImoveisPage() {
     const [search, setSearch] = useState('')
     const [view, setView] = useState<'grid' | 'list'>('grid')
     const [filter, setFilter] = useState('all')
+    const [filterConstrutora, setFilterConstrutora] = useState('all')
+    const [filterTipo, setFilterTipo] = useState('all')
     const [imoveis, setImoveis] = useState<Imovel[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -477,6 +490,7 @@ export default function ImoveisPage() {
                                 vagas: d.parking_spaces || 0,
                                 preco: d.price_min || d.price_from || 0,
                                 construtora: d.developer || d.developers?.name || null,
+                                construtora_logo: d.developers?.logo_url || null,
                                 visitas: d.views || 0,
                                 image: d.image || (Array.isArray(d.gallery_images) && d.gallery_images[0]) || null,
                                 liquidez: Math.min(97, 22 + s.hot * 13 + s.warm * 8 + s.total * 3 + s.won * 16),
@@ -538,8 +552,20 @@ export default function ImoveisPage() {
         const q = search.toLowerCase()
         const matchSearch = im.titulo.toLowerCase().includes(q) || im.bairro.toLowerCase().includes(q) || im.codigo.toLowerCase().includes(q)
         const matchFilter = filter === 'all' || im.status === filter
-        return matchSearch && matchFilter
+        const matchConstrutora = filterConstrutora === 'all' || (im.construtora ?? '') === filterConstrutora
+        const matchTipo = filterTipo === 'all' || im.tipo.toLowerCase() === filterTipo.toLowerCase()
+        return matchSearch && matchFilter && matchConstrutora && matchTipo
     })
+
+    // Derived option lists (only entries that appear in current data)
+    const construtoras = Array.from(new Set(imoveis.map(i => i.construtora).filter(Boolean) as string[])).sort()
+    const tiposRaw     = Array.from(new Set(imoveis.map(i => i.tipo).filter(Boolean))).sort()
+    const TIPO_LABEL: Record<string, string> = {
+        apartamento: 'Apartamento', casa: 'Casa', flat: 'Flat', lote: 'Lote',
+        comercial: 'Comercial', resort: 'Resort', studio: 'Studio',
+        apartment: 'Apartamento', house: 'Casa', land: 'Lote', commercial: 'Comercial',
+    }
+    const activeFiltersCount = (filterConstrutora !== 'all' ? 1 : 0) + (filterTipo !== 'all' ? 1 : 0)
 
     /* ── Loading skeleton ── */
     if (loading) return (
@@ -714,6 +740,64 @@ export default function ImoveisPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Second row: Construtora + Tipo chips */}
+                {(construtoras.length > 0 || tiposRaw.length > 1) && (
+                    <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${T.border}` }}>
+                        {/* Construtora chips */}
+                        {construtoras.length > 0 && (
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-[9px] font-bold uppercase tracking-[0.08em] mr-0.5" style={{ color: T.textDim }}>Construtora:</span>
+                                {construtoras.map(c => (
+                                    <button
+                                        key={c}
+                                        onClick={() => setFilterConstrutora(filterConstrutora === c ? 'all' : c)}
+                                        className="px-2 h-6 rounded-lg text-[10px] font-semibold transition-all"
+                                        style={{
+                                            background: filterConstrutora === c ? T.accent : T.elevated,
+                                            color: filterConstrutora === c ? 'white' : T.textDim,
+                                            border: `1px solid ${filterConstrutora === c ? T.borderGold : T.border}`,
+                                        }}
+                                    >
+                                        {c}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Tipo chips */}
+                        {tiposRaw.length > 1 && (
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="text-[9px] font-bold uppercase tracking-[0.08em] mr-0.5" style={{ color: T.textDim }}>Tipo:</span>
+                                {tiposRaw.map(t => (
+                                    <button
+                                        key={t}
+                                        onClick={() => setFilterTipo(filterTipo.toLowerCase() === t.toLowerCase() ? 'all' : t)}
+                                        className="px-2 h-6 rounded-lg text-[10px] font-semibold transition-all"
+                                        style={{
+                                            background: filterTipo.toLowerCase() === t.toLowerCase() ? T.accent : T.elevated,
+                                            color: filterTipo.toLowerCase() === t.toLowerCase() ? 'white' : T.textDim,
+                                            border: `1px solid ${filterTipo.toLowerCase() === t.toLowerCase() ? T.borderGold : T.border}`,
+                                        }}
+                                    >
+                                        {TIPO_LABEL[t.toLowerCase()] ?? t}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Clear secondary filters */}
+                        {activeFiltersCount > 0 && (
+                            <button
+                                onClick={() => { setFilterConstrutora('all'); setFilterTipo('all') }}
+                                className="px-2 h-6 rounded-lg text-[10px] font-semibold ml-auto"
+                                style={{ color: '#f87171', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)' }}
+                            >
+                                ✕ Limpar
+                            </button>
+                        )}
+                    </div>
+                )}
             </motion.div>
 
             {/* Count */}

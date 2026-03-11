@@ -12,9 +12,9 @@ import {
 import { useLead } from '@/hooks/use-leads-complete'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { AIInsightCard } from '@/app/(backoffice)/components/ui/AIInsightCard'
-import { AIScore } from '@/app/(backoffice)/components/ui/AIScore'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { toast } from 'sonner'
 
 // ── Helpers ────────────────────────────────────────────────────────
 function formatCapital(capital: number | null): string {
@@ -86,11 +86,13 @@ export default function LeadDetailPage() {
   const params = useParams()
   const id = params?.id as string | undefined
 
-  const { lead, isLoading, isError } = useLead(id ?? null)
+  const { lead, isLoading, isError, revalidate } = useLead(id ?? null)
   const [activeTab, setActiveTab] = useState<'timeline' | 'history' | 'notes'>('timeline')
   const [note, setNote] = useState('')
   const [aiAnalysis, setAiAnalysis] = useState<any>(null)
   const [aiLoading, setAiLoading] = useState(false)
+  const [statusMenuOpen, setStatusMenuOpen] = useState(false)
+  const [localStatus, setLocalStatus] = useState<string | null>(null)
 
   // Fire Claude analysis once lead loads
   useEffect(() => {
@@ -132,10 +134,28 @@ export default function LeadDetailPage() {
   }
 
   const initials     = getInitials(lead.name)
-  const avatarBg     = AVATAR_GRADIENTS[lead.status] ?? AVATAR_GRADIENTS.cold
+  const leadStatus   = localStatus ?? lead.status ?? 'cold'
+  const avatarBg     = AVATAR_GRADIENTS[leadStatus] ?? AVATAR_GRADIENTS.cold
   const devName      = (lead as any).development?.name ?? null
   const aiIntentPct  = lead.score ?? 0
-  const leadStatus   = lead.status || 'cold'
+
+  async function changeStatus(newStatus: string) {
+    setLocalStatus(newStatus)
+    setStatusMenuOpen(false)
+    try {
+      const res = await fetch(`/api/leads/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (!res.ok) throw new Error('Falha ao atualizar')
+      toast.success('Status atualizado')
+      revalidate()
+    } catch {
+      setLocalStatus(null)
+      toast.error('Erro ao atualizar status')
+    }
+  }
 
   // AI insight — real Claude analysis with heuristic fallback
   const aiInsight = aiAnalysis?.insight ?? (
@@ -205,16 +225,101 @@ export default function LeadDetailPage() {
           >
             <Edit size={14} style={{ color: 'var(--bo-text-muted)' }} />
           </button>
-          <button
-            style={{
-              width: '34px', height: '34px', borderRadius: '10px',
-              background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            <MoreVertical size={14} style={{ color: 'var(--bo-text-muted)' }} />
-          </button>
+          {/* Quick Status Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setStatusMenuOpen(p => !p)}
+              style={{
+                width: '34px', height: '34px', borderRadius: '10px',
+                background: statusMenuOpen ? 'var(--bo-elevated)' : 'var(--bo-card)',
+                border: '1px solid var(--bo-border)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer',
+              }}
+            >
+              <MoreVertical size={14} style={{ color: 'var(--bo-text-muted)' }} />
+            </button>
+
+            {statusMenuOpen && (
+              <>
+                {/* Backdrop */}
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setStatusMenuOpen(false)}
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.14 }}
+                  style={{
+                    position: 'absolute', right: 0, top: '38px', zIndex: 50,
+                    background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
+                    borderRadius: '14px', padding: '8px', width: '180px',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
+                  }}
+                >
+                  {/* Temperature */}
+                  <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.09em', padding: '4px 8px 6px' }}>
+                    Temperatura
+                  </p>
+                  {[
+                    { key: 'hot',  emoji: '🔥', label: 'Hot',  color: 'var(--s-hot)' },
+                    { key: 'warm', emoji: '🌡',  label: 'Warm', color: 'var(--s-warm)' },
+                    { key: 'cold', emoji: '❄️', label: 'Cold', color: 'var(--s-cold)' },
+                  ].map(s => (
+                    <button
+                      key={s.key}
+                      onClick={() => changeStatus(s.key)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '8px',
+                        width: '100%', padding: '7px 8px', borderRadius: '8px',
+                        background: leadStatus === s.key ? 'rgba(255,255,255,0.06)' : 'transparent',
+                        border: 'none', cursor: 'pointer', fontSize: '13px',
+                        fontWeight: leadStatus === s.key ? 700 : 500,
+                        color: leadStatus === s.key ? s.color : 'var(--bo-text)',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <span>{s.emoji}</span>
+                      <span>{s.label}</span>
+                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '10px', color: s.color }}>✓</span>}
+                    </button>
+                  ))}
+
+                  <div style={{ height: '1px', background: 'var(--bo-border)', margin: '6px 0' }} />
+
+                  {/* Funil */}
+                  <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.09em', padding: '4px 8px 6px' }}>
+                    Funil de Vendas
+                  </p>
+                  {[
+                    { key: 'qualified', label: 'Qualificado' },
+                    { key: 'proposal',  label: 'Em Proposta' },
+                    { key: 'won',       label: 'Ganho' },
+                    { key: 'lost',      label: 'Perdido' },
+                  ].map(s => (
+                    <button
+                      key={s.key}
+                      onClick={() => changeStatus(s.key)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '8px',
+                        width: '100%', padding: '7px 8px', borderRadius: '8px',
+                        background: leadStatus === s.key ? 'rgba(255,255,255,0.06)' : 'transparent',
+                        border: 'none', cursor: 'pointer', fontSize: '13px',
+                        fontWeight: leadStatus === s.key ? 700 : 500,
+                        color: leadStatus === s.key ? 'var(--bo-accent)' : 'var(--bo-text)',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <span>{s.label}</span>
+                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '10px', color: 'var(--bo-accent)' }}>✓</span>}
+                    </button>
+                  ))}
+                </motion.div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
