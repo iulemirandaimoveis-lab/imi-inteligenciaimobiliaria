@@ -33,7 +33,7 @@ export function AvatarGroupTooltip({
 }
 
 // ── AvatarGroup ───────────────────────────────────────────────────
-interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+interface AvatarGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'translate'> {
   /** Mirror the overlap direction (leftmost on top vs rightmost on top) */
   invertOverlap?: boolean
   /** How much each avatar shifts left into the previous one. CSS value or px number. Default: '-10px' */
