@@ -266,12 +266,9 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             href={item.href!}
             className="hover-card relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all"
             style={{
-                color: isActive ? '#ffffff' : 'var(--sidebar-text)',
-                background: isActive
-                    ? 'var(--accent-500)'
-                    : 'transparent',
+                color: isActive ? 'var(--nav-active)' : 'var(--sidebar-text)',
+                background: 'transparent',
                 fontWeight: isActive ? 600 : 400,
-                boxShadow: isActive ? '0 2px 12px rgba(0,0,0,0.15)' : 'none',
             }}
         >
             {/* Active indicator bar */}
@@ -283,7 +280,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                     transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                 />
             )}
-            <item.icon size={15} className="flex-shrink-0" />
+            <item.icon size={15} className="flex-shrink-0" style={{ color: isActive ? 'var(--nav-active)' : undefined }} />
             <span className="flex-1">{item.label}</span>
             {item.badge && (
                 <span

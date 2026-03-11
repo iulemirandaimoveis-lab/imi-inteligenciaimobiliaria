@@ -202,7 +202,7 @@ export default function HojePage() {
       >
         <SectionHeader title="Ações Rápidas" />
         <div
-          className="flex gap-3 overflow-x-auto -mx-4 px-4"
+          className="flex gap-1.5 overflow-x-auto -mx-4 px-4"
           style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', paddingBottom: '4px' }}
         >
           {QUICK_ACTIONS.map((a, i) => (
@@ -213,18 +213,18 @@ export default function HojePage() {
               transition={{ delay: 0.08 + i * 0.04 }}
               whileTap={{ scale: 0.90 }}
               onClick={() => router.push(a.href)}
-              className="flex-shrink-0 flex flex-col items-center gap-2 relative"
-              style={{ minWidth: '64px', padding: '10px 8px' }}
+              className="flex-shrink-0 flex flex-col items-center gap-1.5 relative"
+              style={{ minWidth: '48px', padding: '6px 4px' }}
             >
               {/* Icon circle */}
               <div style={{
-                width: '48px', height: '48px', borderRadius: '14px',
+                width: '40px', height: '40px', borderRadius: '12px',
                 background: 'var(--bo-card)',
                 border: `1px solid ${(a as any).isNew ? 'rgba(167,139,250,0.30)' : 'var(--bo-border)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0, position: 'relative',
               }}>
-                <a.icon size={18} style={{ color: a.color }} />
+                <a.icon size={15} style={{ color: a.color }} />
                 {(a as any).isNew && (
                   <span style={{
                     position: 'absolute', top: -5, right: -5,
@@ -235,7 +235,7 @@ export default function HojePage() {
                   }}>NEW</span>
                 )}
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--bo-text-muted)', textAlign: 'center', lineHeight: 1.2, maxWidth: '56px' }}>
+              <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--bo-text-muted)', textAlign: 'center', lineHeight: 1.2, maxWidth: '44px' }}>
                 {a.label}
               </span>
             </motion.button>
@@ -488,28 +488,28 @@ export default function HojePage() {
         ) : (
           <div className="space-y-2">
             {hotLeads.map((l, i) => (
-              <MobileLeadCard
-                key={l.id}
-                id={l.id}
-                name={l.name || 'Sem nome'}
-                status="hot"
-                score={l.ai_score ?? 75}
-                aiState="qualifying"
-                aiSummary={
-                  l.interest
-                    ? `Lead interessado em ${l.interest}. IA identificou alta intenção de compra.`
-                    : undefined
-                }
-                meta={{
-                  origin: l.source || 'Meta Ads',
-                  location: l.city || undefined,
-                  lastActivity: 'hoje',
-                  product: l.interest || undefined,
-                }}
-                isNew={i === 0}
-                animDelay={i * 60}
-                onClick={() => router.push(`/backoffice/leads/${l.id}`)}
-              />
+              <div key={l.id} style={{ cursor: 'pointer' }} onClick={() => router.push(`/backoffice/leads/${l.id}`)}>
+                <MobileLeadCard
+                  id={l.id}
+                  name={l.name || 'Sem nome'}
+                  status="hot"
+                  score={l.ai_score ?? 75}
+                  aiState="qualifying"
+                  aiSummary={
+                    l.interest
+                      ? `Lead interessado em ${l.interest}. IA identificou alta intenção de compra.`
+                      : undefined
+                  }
+                  meta={{
+                    origin: l.source || 'Meta Ads',
+                    location: l.city || undefined,
+                    lastActivity: 'hoje',
+                    product: l.interest || undefined,
+                  }}
+                  isNew={i === 0}
+                  animDelay={i * 60}
+                />
+              </div>
             ))}
           </div>
         )}
@@ -565,6 +565,74 @@ export default function HojePage() {
             Ver empreendimentos
           </p>
         </motion.button>
+      </motion.div>
+
+      {/* ── Performance Rápida ───────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.28 }}
+      >
+        <SectionHeader title="Performance da Semana" action={{ label: 'Ver relatório', href: '/backoffice/relatorios' }} />
+        <div className="grid grid-cols-3 gap-2">
+          <div
+            className="rounded-2xl p-3 text-center"
+            style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+          >
+            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--s-hot)', lineHeight: 1 }}>{hotCount}</div>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Quentes</div>
+          </div>
+          <div
+            className="rounded-2xl p-3 text-center"
+            style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+          >
+            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--s-warm)', lineHeight: 1 }}>{warmCount}</div>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Mornos</div>
+          </div>
+          <div
+            className="rounded-2xl p-3 text-center"
+            style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+          >
+            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--s-cold)', lineHeight: 1 }}>{coldCount}</div>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Frios</div>
+          </div>
+        </div>
+
+        {/* Conversion funnel bar */}
+        <div
+          className="mt-2 rounded-2xl p-4"
+          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+        >
+          <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+            Funil de Conversão
+          </div>
+          {totalLeads > 0 ? (
+            <div className="space-y-2">
+              {[
+                { label: 'Total Leads', value: totalLeads, max: totalLeads, color: 'var(--imi-blue-bright)' },
+                { label: 'Quentes', value: hotCount, max: totalLeads, color: 'var(--s-hot)' },
+                { label: 'Mornos', value: warmCount, max: totalLeads, color: 'var(--s-warm)' },
+              ].map(item => (
+                <div key={item.label}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>{item.label}</span>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text)' }}>{item.value}</span>
+                  </div>
+                  <div style={{ height: 4, borderRadius: 2, background: 'var(--bo-hover)' }}>
+                    <div style={{
+                      height: '100%', borderRadius: 2,
+                      background: item.color,
+                      width: `${Math.round((item.value / item.max) * 100)}%`,
+                      transition: 'width 0.6s ease',
+                    }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', textAlign: 'center' }}>Sem dados de leads</p>
+          )}
+        </div>
       </motion.div>
 
     </div>
