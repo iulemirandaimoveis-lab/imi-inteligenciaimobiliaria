@@ -6,21 +6,10 @@ export const dynamic = 'force-dynamic';
 export default async function ConstrutorasPage({ params: { lang } }: { params: { lang: string } }) {
     const supabase = await createClient();
 
-    // Fetch active developers with their developments count
+    // Fetch active developers — sem join relacional para evitar erro de schema cache
     const { data: developersData, error } = await supabase
         .from('developers')
-        .select(`
-            id,
-            name,
-            slug,
-            logo_url,
-            website,
-            city,
-            state,
-            description,
-            developments (count),
-            is_active
-        `)
+        .select('id, name, slug, logo_url, website, city, state, description')
         .eq('is_active', true)
         .order('name', { ascending: true });
 
@@ -28,7 +17,18 @@ export default async function ConstrutorasPage({ params: { lang } }: { params: {
         console.error('Falha ao buscar construtoras na pagina pública:', error.message);
     }
 
-    // Mapear os dados para focar no contrato Frontend esperado
+    // Contagem de empreendimentos por construtora — query separada e segura
+    const countMap: Record<string, number> = {}
+    try {
+        const { data: devCounts } = await supabase
+            .from('developments')
+            .select('developer_id')
+            .not('developer_id', 'is', null)
+        devCounts?.forEach((d: { developer_id: string }) => {
+            if (d.developer_id) countMap[d.developer_id] = (countMap[d.developer_id] || 0) + 1
+        })
+    } catch (_) { /* silencia se FK não existir */ }
+
     const developers = (developersData || []).map((dev) => ({
         id: dev.id,
         name: dev.name,
@@ -38,7 +38,7 @@ export default async function ConstrutorasPage({ params: { lang } }: { params: {
         city: dev.city,
         state: dev.state,
         description: dev.description,
-        development_count: Array.isArray(dev.developments) ? dev.developments.length : 0,
+        development_count: countMap[dev.id] || 0,
     }));
 
     return (

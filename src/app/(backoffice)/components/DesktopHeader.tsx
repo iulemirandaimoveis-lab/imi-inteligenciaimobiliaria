@@ -76,11 +76,11 @@ function NotificationBell() {
     useEffect(() => {
         fetch('/api/notifications')
             .then(r => r.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    setNotifications(data.slice(0, 10))
-                    setUnread(data.filter((n: Notification) => !n.read).length)
-                }
+            .then(payload => {
+                // API retorna { data: [...], pagination: {} }
+                const list: Notification[] = Array.isArray(payload) ? payload : (payload?.data || [])
+                setNotifications(list.slice(0, 10))
+                setUnread(list.filter((n: Notification) => !n.read).length)
             })
             .catch(() => {})
     }, [pathname])

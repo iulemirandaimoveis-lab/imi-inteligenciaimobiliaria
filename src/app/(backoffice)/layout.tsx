@@ -8,6 +8,7 @@ import { CommandPalette } from '@/components/backoffice/CommandPalette'
 import { Toaster } from 'sonner'
 import { BackofficeRealtimeProvider } from './components/BackofficeRealtimeProvider'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import SystemActionBanner from './components/SystemActionBanner'
 
 export default async function BackofficeLayout({
     children,
@@ -32,6 +33,8 @@ export default async function BackofficeLayout({
 
             {/* Main Content — pt-14 on mobile for MobileHeader, lg:pt-16 for DesktopHeader */}
             <main className="pt-14 lg:pt-16 lg:pl-60 min-h-screen overflow-x-hidden" style={{ maxWidth: '100vw' }}>
+                {/* Banner de ações críticas do sistema — IA, migrações, chaves de API */}
+                <SystemActionBanner />
                 <div className="p-4 pb-28 lg:p-6 lg:pb-6">
                     <ErrorBoundary>
                         <BackofficeRealtimeProvider>

@@ -392,6 +392,47 @@ export default function IntegracoesPage() {
                     subtitle="Conecte todas as plataformas — IA, assinatura, email, WhatsApp, Google, redes sociais e pagamento"
                 />
 
+                {/* ── ALERTA CRÍTICO: Rotação de chave Anthropic ─────────────── */}
+                <div className="rounded-2xl p-4 flex flex-col sm:flex-row sm:items-start gap-4"
+                    style={{ background: 'rgba(229,115,115,0.08)', border: '2px solid rgba(229,115,115,0.35)' }}>
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                            style={{ background: 'rgba(229,115,115,0.15)' }}>
+                            <AlertCircle size={20} style={{ color: '#E57373' }} />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-sm font-bold" style={{ color: '#E57373' }}>
+                                Ação necessária: Trocar ANTHROPIC_API_KEY
+                            </p>
+                            <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--bo-text-muted)' }}>
+                                A chave atual da API Anthropic precisa ser revogada e substituída por uma nova.
+                                Acesse <strong style={{ color: 'var(--bo-text)' }}>console.anthropic.com → API Keys → Revoke</strong> e gere uma nova chave.
+                                Em seguida, atualize em <strong style={{ color: 'var(--bo-text)' }}>Vercel → Settings → Environment Variables → ANTHROPIC_API_KEY</strong>.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2 flex-shrink-0">
+                        <a
+                            href="https://console.anthropic.com/settings/keys"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-xs font-bold whitespace-nowrap"
+                            style={{ background: 'rgba(229,115,115,0.15)', border: '1px solid rgba(229,115,115,0.40)', color: '#E57373' }}
+                        >
+                            <ExternalLink size={12} /> Revogar Chave
+                        </a>
+                        <a
+                            href="https://vercel.com/dashboard"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-xs font-bold whitespace-nowrap"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
+                        >
+                            <ExternalLink size={12} /> Vercel
+                        </a>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-3 gap-2 sm:gap-3">
                     <KPICard label="Conectadas"  value={String(conectadas)}        icon={<CheckCircle size={16} />} accent="green" size="sm" />
                     <KPICard label="Disponíveis" value={String(INTEGRACOES.length)} icon={<Plug size={16} />}       accent="blue"  size="sm" />
