@@ -2,7 +2,7 @@
 # LIDO AUTOMATICAMENTE PELO CLAUDE CODE
 
 ## Stack
-Next.js 14, TypeScript, Tailwind CSS, Supabase, Vercel
+Next.js 14, TypeScript, Tailwind CSS, Supabase, Vercel, **Agno (Python AI Agents)**
 
 ## Deadline: 14/Mar/2026
 
@@ -31,6 +31,62 @@ Next.js 14, TypeScript, Tailwind CSS, Supabase, Vercel
 - `src/lib/supabase/` — clientes Supabase (server, client, admin)
 - `src/lib/schemas/` — schemas Zod para validação
 - `supabase/migrations/` — todas as migrations SQL
+- `agno/` — **Serviço Python de agentes AI (Agno Framework)**
+
+---
+
+## AGNO — AGENTES AI (https://docs.agno.com)
+
+### O que é o Agno
+Framework Python para agentes AI com memória, conhecimento e ferramentas.
+Cria um servidor FastAPI que o Next.js consome via proxy em `/api/agno/*`.
+
+### Iniciar o serviço localmente
+```bash
+cd agno
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8001
+```
+
+### Página no backoffice
+`/backoffice/agno` — Chat com 7 agentes especializados
+
+### Agentes disponíveis
+
+| ID | Especialidade | Modelo |
+|----|--------------|--------|
+| `lead-qualifier` | Score, temperatura e follow-up de leads | Claude Sonnet |
+| `property-copywriter` | Descrições para portais e redes sociais | Claude Sonnet |
+| `market-analyst` | Relatórios, precificação, tendências | Claude Sonnet |
+| `content-strategist` | Instagram, LinkedIn, WhatsApp, email | Groq Llama 3.3 |
+| `real-estate-consultant` | Compra/venda, financiamento, jurídico | Claude Sonnet |
+| `financial-analyst` | KPIs, metas, comissões | Claude Sonnet |
+| `team` | Auto-routing (decide qual agente usar) | Claude Sonnet |
+
+### Rotas API Next.js
+- `GET  /api/agno` — status + lista agentes
+- `POST /api/agno/agents?agent_id=XXX` — executa agente específico
+- `POST /api/agno/team` — time completo com auto-routing
+
+### Variável de ambiente
+```
+AGNO_SERVICE_URL=http://localhost:8001  # dev
+AGNO_SERVICE_URL=https://xxx.railway.app  # prod
+```
+
+### Estrutura `agno/`
+```
+agno/
+├── main.py              # FastAPI app
+├── requirements.txt     # pip install -r requirements.txt
+├── Dockerfile           # Deploy Railway/AWS
+├── docker-compose.yml   # Dev local
+├── agents/              # 6 agentes especializados
+└── teams/               # Time com auto-routing
+```
+
+---
 
 ### Componentes UI
 - `src/app/(backoffice)/components/ui/` — componentes reutilizáveis do backoffice
