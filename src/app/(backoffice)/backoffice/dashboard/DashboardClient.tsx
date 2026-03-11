@@ -219,8 +219,8 @@ export default function DashboardClient({
                         }}
                     >
                         <Plus size={14} />
-                        <span className="hidden xs:inline">Nova Avaliação</span>
-                        <span className="xs:hidden">Nova</span>
+                        <span className="hidden sm:inline">Nova Avaliação</span>
+                        <span className="sm:hidden">Nova</span>
                     </motion.button>
                 </div>
             </motion.div>
