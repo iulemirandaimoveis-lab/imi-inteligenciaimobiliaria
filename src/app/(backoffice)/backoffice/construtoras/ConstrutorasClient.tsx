@@ -18,7 +18,8 @@ import {
     DollarSign,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 // Interface para os dados reias do Supabase
 export interface Developer {
@@ -86,53 +87,62 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                 }
             />
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                {[
-                    { label: 'Total', value: stats.total, color: T.text, icon: Building2, iconColor: T.accent },
-                    { label: 'Ativas', value: stats.ativas, color: '#4ADE80', icon: TrendingUp, iconColor: '#4ADE80' },
-                    { label: 'Projetos', value: stats.projetos, color: '#60A5FA', icon: Building2, iconColor: '#60A5FA' },
-                    { label: 'Unid. Vendidas', value: stats.vendas, color: '#A78BFA', icon: Users, iconColor: '#A78BFA' },
-                    { label: 'VGV / Receita', value: formatPrice(stats.receita), color: '#34D399', icon: DollarSign, iconColor: '#34D399' },
-                ].map(s => {
-                    const Icon = s.icon
-                    return (
-                        <div key={s.label} className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                            <div className="flex items-center gap-2 mb-2">
-                                <Icon size={14} style={{ color: s.iconColor }} />
-                                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>{s.label}</p>
-                            </div>
-                            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                        </div>
-                    )
-                })}
+            {/* KPIs */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <KPICard
+                    label="Total Parceiros"
+                    value={stats.total}
+                    icon={<Building2 size={14} />}
+                    accent="blue"
+                    size="sm"
+                />
+                <KPICard
+                    label="Ativas"
+                    value={stats.ativas}
+                    icon={<TrendingUp size={14} />}
+                    accent="green"
+                    size="sm"
+                    delta={stats.total > 0 ? Math.round((stats.ativas / stats.total) * 100) : 0}
+                    deltaLabel="do portfólio"
+                />
+                <KPICard
+                    label="Unid. Vendidas"
+                    value={stats.vendas}
+                    icon={<Users size={14} />}
+                    accent="ai"
+                    size="sm"
+                />
+                <KPICard
+                    label="VGV Total"
+                    value={formatPrice(stats.receita)}
+                    icon={<DollarSign size={14} />}
+                    accent="cold"
+                    size="sm"
+                />
             </div>
 
             {/* Filtros */}
-            <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
-                        <input
-                            type="text"
-                            placeholder="Buscar pelo nome ou razão social..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 rounded-xl outline-none focus:ring-2 focus:ring-[#334E68] transition-all"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                        />
-                    </div>
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="h-11 px-4 rounded-xl outline-none focus:ring-2 focus:ring-[#334E68] transition-all"
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                <div className="relative flex-1 min-w-0">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={14} style={{ color: T.textMuted }} />
+                    <input
+                        type="text"
+                        placeholder="Buscar pelo nome ou razão social..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full h-10 pl-9 pr-4 rounded-xl outline-none text-sm"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                    >
-                        <option value="all">Todos os status</option>
-                        <option value="ativa">Ativa</option>
-                        <option value="inativa">Inativa</option>
-                    </select>
+                    />
                 </div>
+                <FilterTabs
+                    tabs={[
+                        { id: 'all',    label: 'Todas',  count: initialData.length },
+                        { id: 'ativa',  label: 'Ativas',  dotColor: '#4ADE80' },
+                        { id: 'inativa',label: 'Inativas', dotColor: '#64748B' },
+                    ] as FilterTab[]}
+                    active={statusFilter}
+                    onChange={setStatusFilter}
+                />
             </div>
 
             {/* Grid de Construtoras */}

@@ -14,7 +14,8 @@ import {
     Landmark,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -103,64 +104,61 @@ export default function ContasBancariasPage() {
                 }
             />
 
-            {/* Stats Cards */}
-            {loading ? (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="animate-pulse rounded-2xl h-20" style={{ background: T.elevated }} />
-                    ))}
-                </div>
-            ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                    <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Contas Ativas</p>
-                    <p className="text-3xl font-bold" style={{ color: T.text }}>{contasAtivas.length}</p>
-                </div>
-                <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                    <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: '#6BB87B' }}>Saldo Total</p>
-                    <p className="text-3xl font-bold" style={{ color: '#6BB87B' }}>{formatPrice(saldoTotal)}</p>
-                </div>
-                <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                    <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Média por Conta</p>
-                    <p className="text-3xl font-bold" style={{ color: T.text }}>
-                        {contasAtivas.length > 0 ? formatPrice(saldoTotal / contasAtivas.length) : '—'}
-                    </p>
-                </div>
-                <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                    <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Inativas</p>
-                    <p className="text-3xl font-bold" style={{ color: '#E57373' }}>
-                        {contas.filter(c => !c.is_active).length}
-                    </p>
-                </div>
+            {/* KPIs */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <KPICard
+                    label="Contas Ativas"
+                    value={loading ? '—' : contasAtivas.length}
+                    icon={<Landmark size={14} />}
+                    accent="blue"
+                    size="sm"
+                />
+                <KPICard
+                    label="Saldo Total"
+                    value={loading ? '—' : formatPrice(saldoTotal)}
+                    icon={<TrendingUp size={14} />}
+                    accent="green"
+                    size="sm"
+                />
+                <KPICard
+                    label="Média por Conta"
+                    value={loading ? '—' : (contasAtivas.length > 0 ? formatPrice(saldoTotal / contasAtivas.length) : '—')}
+                    icon={<Building2 size={14} />}
+                    accent="cold"
+                    size="sm"
+                />
+                <KPICard
+                    label="Inativas"
+                    value={loading ? '—' : contas.filter(c => !c.is_active).length}
+                    icon={<TrendingDown size={14} />}
+                    accent="hot"
+                    size="sm"
+                />
             </div>
-            )}
 
             {/* Filtros */}
-            <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={20} style={{ color: T.textMuted }} />
-                        <input
-                            type="text"
-                            placeholder="Buscar por banco ou conta..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full h-11 pl-10 pr-4 rounded-xl outline-none focus:ring-2 focus:ring-[#334E68]"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                        />
-                    </div>
-                    <select
-                        value={tipoFilter}
-                        onChange={(e) => setTipoFilter(e.target.value)}
-                        className="h-11 px-4 rounded-xl outline-none focus:ring-2 focus:ring-[#334E68]"
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                <div className="relative flex-1 min-w-0">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={14} style={{ color: T.textMuted }} />
+                    <input
+                        type="text"
+                        placeholder="Buscar por banco ou conta..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full h-10 pl-9 pr-4 rounded-xl outline-none text-sm"
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                    >
-                        <option value="all">Todos os tipos</option>
-                        <option value="Corrente">Corrente</option>
-                        <option value="Poupança">Poupança</option>
-                        <option value="Investimento">Investimento</option>
-                    </select>
+                    />
                 </div>
+                <FilterTabs
+                    tabs={[
+                        { id: 'all',          label: 'Todas',       count: contas.length },
+                        { id: 'Corrente',     label: 'Corrente',    dotColor: '#60A5FA' },
+                        { id: 'Poupança',     label: 'Poupança',    dotColor: '#4ADE80' },
+                        { id: 'Investimento', label: 'Investimento',dotColor: '#FBBF24' },
+                    ] as FilterTab[]}
+                    active={tipoFilter}
+                    onChange={setTipoFilter}
+                />
             </div>
 
             {/* Lista de Contas */}

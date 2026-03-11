@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 
 type MarketIndex = {
     id: string
@@ -115,18 +115,31 @@ export default function IndicesBackofficePage() {
                 }
             />
 
-            {/* Stats */}
+            {/* KPIs */}
             <div className="grid grid-cols-3 gap-3">
-                {[
-                    { label: 'Total Índices', value: indices.length, color: T.text },
-                    { label: 'Publicados', value: published, color: '#34d399' },
-                    { label: 'Rascunhos', value: drafts, color: T.textMuted },
-                ].map(s => (
-                    <div key={s.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{s.label}</p>
-                        <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                    </div>
-                ))}
+                <KPICard
+                    label="Total Índices"
+                    value={loading ? '—' : indices.length}
+                    icon={<TrendingUp size={14} />}
+                    accent="blue"
+                    size="sm"
+                />
+                <KPICard
+                    label="Publicados"
+                    value={loading ? '—' : published}
+                    icon={<Eye size={14} />}
+                    accent="green"
+                    size="sm"
+                    delta={indices.length > 0 ? Math.round((published / indices.length) * 100) : 0}
+                    deltaLabel="publicados"
+                />
+                <KPICard
+                    label="Rascunhos"
+                    value={loading ? '—' : drafts}
+                    icon={<EyeOff size={14} />}
+                    accent="warm"
+                    size="sm"
+                />
             </div>
 
             <div className="space-y-4">

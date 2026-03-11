@@ -9,7 +9,8 @@ import {
 } from 'lucide-react'
 import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL } from '@/lib/modelos-contratos'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     rascunho: { label: 'Rascunho', text: '#4E5669', bg: 'rgba(78,86,105,0.15)', icon: FileText },
@@ -107,20 +108,36 @@ export default function ContratosPage() {
 
             {/* KPIs */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {KPIS.map((k, i) => (
-                    <motion.div key={k.label}
-                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl p-4"
-                        style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
-                            style={{ background: `${k.color}18` }}>
-                            <k.icon size={16} style={{ color: k.color }} />
-                        </div>
-                        <p className="text-3xl font-black" style={{ color: T.text, fontVariantNumeric: 'tabular-nums' }}>{k.value}</p>
-                        <p className="text-[10px] font-bold uppercase tracking-widest mt-1" style={{ color: T.textDim }}>{k.label}</p>
-                    </motion.div>
-                ))}
+                <KPICard
+                    label="Total Contratos"
+                    value={kpiValues.total}
+                    icon={<FileText size={14} />}
+                    accent="blue"
+                    size="sm"
+                />
+                <KPICard
+                    label="Assinados"
+                    value={kpiValues.assinados}
+                    icon={<CheckCircle size={14} />}
+                    accent="green"
+                    size="sm"
+                    delta={kpiValues.total > 0 ? Math.round((kpiValues.assinados / kpiValues.total) * 100) : 0}
+                    deltaLabel="do total"
+                />
+                <KPICard
+                    label="Aguard. Assinatura"
+                    value={kpiValues.aguardando}
+                    icon={<Clock size={14} />}
+                    accent="warm"
+                    size="sm"
+                />
+                <KPICard
+                    label="Internacionais"
+                    value={kpiValues.internacionais}
+                    icon={<Globe size={14} />}
+                    accent="cold"
+                    size="sm"
+                />
             </div>
 
             {/* Tabs */}
@@ -156,19 +173,16 @@ export default function ContratosPage() {
                                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                                     />
                                 </div>
-                                <div className="flex gap-2 overflow-x-auto">
-                                    {['todos', 'assinado', 'aguardando_assinatura', 'gerado'].map(s => (
-                                        <button key={s} onClick={() => setFilterStatus(s)}
-                                            className="px-3 h-10 rounded-xl text-xs font-semibold flex-shrink-0"
-                                            style={{
-                                                background: filterStatus === s ? 'var(--bo-accent)' : T.elevated,
-                                                color: filterStatus === s ? 'white' : T.textDim,
-                                                border: `1px solid ${filterStatus === s ? T.borderGold : T.border}`,
-                                            }}>
-                                            {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.label || s}
-                                        </button>
-                                    ))}
-                                </div>
+                                <FilterTabs
+                                    tabs={[
+                                        { id: 'todos',                  label: 'Todos',             count: contratos.length },
+                                        { id: 'assinado',               label: 'Assinados',          dotColor: '#6BB87B' },
+                                        { id: 'aguardando_assinatura',  label: 'Aguard. Assinatura', dotColor: 'var(--bo-accent)' },
+                                        { id: 'gerado',                 label: 'Gerados',            dotColor: '#7B9EC4' },
+                                    ] as FilterTab[]}
+                                    active={filterStatus}
+                                    onChange={setFilterStatus}
+                                />
                             </div>
                         </div>
 

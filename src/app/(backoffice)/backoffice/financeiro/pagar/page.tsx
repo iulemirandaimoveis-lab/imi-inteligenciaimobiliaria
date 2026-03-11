@@ -9,7 +9,8 @@ import {
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
     pago:     { label: 'Pago',      text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
@@ -82,50 +83,50 @@ export default function PagarPage() {
             />
 
             {/* KPIs */}
-            <div className="grid grid-cols-3 gap-2">
-                {[
-                    { label: 'A Pagar',   value: fmt(totalPendente), color: '#E8A87C', icon: Clock },
-                    { label: 'Já Pago',   value: fmt(totalPago),     color: '#6BB87B', icon: CheckCircle },
-                    { label: 'Atrasados', value: String(countAtrasado), color: '#E57373', icon: AlertCircle },
-                ].map((k, i) => (
-                    <motion.div key={k.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
-                        <div className="flex items-center justify-between mb-2">
-                            <p className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: k.color }}>{k.label}</p>
-                            <k.icon size={15} style={{ color: k.color }} />
-                        </div>
-                        <p className="text-xl font-bold" style={{ color: T.text }}>{k.value}</p>
-                    </motion.div>
-                ))}
+            <div className="grid grid-cols-3 gap-3">
+                <KPICard
+                    label="A Pagar"
+                    value={fmt(totalPendente)}
+                    icon={<Clock size={14} />}
+                    accent="warm"
+                    size="sm"
+                />
+                <KPICard
+                    label="Já Pago"
+                    value={fmt(totalPago)}
+                    icon={<CheckCircle size={14} />}
+                    accent="green"
+                    size="sm"
+                />
+                <KPICard
+                    label="Atrasados"
+                    value={countAtrasado}
+                    icon={<AlertCircle size={14} />}
+                    accent="hot"
+                    size="sm"
+                />
             </div>
 
             {/* Filters */}
-            <div className="rounded-2xl p-4 space-y-3" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="relative flex-1">
-                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
-                        <input type="text" placeholder="Buscar por descrição ou categoria..."
-                            value={search} onChange={e => setSearch(e.target.value)}
-                            className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                            onFocus={e => (e.currentTarget.style.border = `1px solid ${T.borderGold}`)}
-                            onBlur={e => (e.currentTarget.style.border = `1px solid ${T.border}`)}
-                        />
-                    </div>
-                    <div className="flex gap-2 overflow-x-auto">
-                        {['todos', 'pendente', 'atrasado', 'pago'].map(s => (
-                            <button key={s} onClick={() => setStatusFilter(s)}
-                                className="px-3.5 h-10 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
-                                style={{
-                                    background: statusFilter === s ? T.accent : T.elevated,
-                                    color: statusFilter === s ? 'white' : T.textMuted,
-                                    border: `1px solid ${statusFilter === s ? T.borderGold : T.border}`,
-                                }}>
-                                {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.label || s}
-                            </button>
-                        ))}
-                    </div>
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                <div className="relative flex-1 min-w-0">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                    <input type="text" placeholder="Buscar por descrição ou categoria..."
+                        value={search} onChange={e => setSearch(e.target.value)}
+                        className="w-full h-10 pl-9 pr-4 rounded-xl text-sm outline-none"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                    />
                 </div>
+                <FilterTabs
+                    tabs={[
+                        { id: 'todos',    label: 'Todos',     count: transactions.filter(t => t.status !== 'cancelado').length },
+                        { id: 'pendente', label: 'Pendentes', dotColor: '#E8A87C' },
+                        { id: 'atrasado', label: 'Atrasados', dotColor: '#E57373' },
+                        { id: 'pago',     label: 'Pagos',     dotColor: '#4ADE80' },
+                    ] as FilterTab[]}
+                    active={statusFilter}
+                    onChange={setStatusFilter}
+                />
             </div>
 
             {/* List */}

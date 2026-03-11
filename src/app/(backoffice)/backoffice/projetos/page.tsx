@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { Building2, Plus, MapPin, TrendingUp, Users, DollarSign, Loader2, X } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 interface Projeto {
     id: string
@@ -112,40 +113,50 @@ export default function ProjetosPage() {
 
                 {/* KPIs */}
                 <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
-                    {[
-                        { l: 'VGV Total Portfólio', v: fmtCurrency(totalVGV), icon: DollarSign, color: 'var(--bo-accent)' },
-                        { l: 'Total de Unidades', v: totalUnidades, icon: Building2, color: 'var(--bo-accent)' },
-                        { l: 'Unidades Vendidas', v: totalVendidas, icon: Users, color: '#10B981' },
-                        { l: 'Taxa Média de Vendas', v: `${taxaMedia}%`, icon: TrendingUp, color: '#8B5CF6' },
-                    ].map(kpi => {
-                        const Icon = kpi.icon
-                        return (
-                            <div key={kpi.l} className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
-                                    style={{ backgroundColor: `${kpi.color}18` }}>
-                                    <Icon size={18} style={{ color: kpi.color }} />
-                                </div>
-                                <p className="text-2xl font-bold" style={{ color: T.text }}>{kpi.v}</p>
-                                <p className="text-[10px] font-medium mt-0.5 uppercase tracking-widest" style={{ color: T.textMuted }}>{kpi.l}</p>
-                            </div>
-                        )
-                    })}
+                    <KPICard
+                        label="VGV Total Portfólio"
+                        value={fmtCurrency(totalVGV)}
+                        icon={<DollarSign size={14} />}
+                        accent="blue"
+                        size="sm"
+                    />
+                    <KPICard
+                        label="Total de Unidades"
+                        value={totalUnidades}
+                        icon={<Building2 size={14} />}
+                        accent="cold"
+                        size="sm"
+                    />
+                    <KPICard
+                        label="Unidades Vendidas"
+                        value={totalVendidas}
+                        icon={<Users size={14} />}
+                        accent="green"
+                        size="sm"
+                        delta={taxaMedia}
+                        deltaLabel="taxa vendas"
+                    />
+                    <KPICard
+                        label="Taxa Média de Vendas"
+                        value={`${taxaMedia}%`}
+                        icon={<TrendingUp size={14} />}
+                        accent="ai"
+                        size="sm"
+                    />
                 </div>
 
                 {/* Filtros */}
-                <div className="flex gap-2 overflow-x-auto">
-                    {['todos', 'estruturacao', 'lancamento', 'obras', 'pronto'].map(s => (
-                        <button key={s} onClick={() => setFiltro(s)}
-                            className="h-8 px-3 rounded-xl text-xs font-medium whitespace-nowrap transition-colors"
-                            style={{
-                                background: filtro === s ? T.elevated : T.surface,
-                                color: filtro === s ? T.text : T.textMuted,
-                                border: `1px solid ${filtro === s ? T.accent : T.border}`,
-                            }}>
-                            {s === 'todos' ? 'Todos' : STATUS_CFG[s]?.l || s}
-                        </button>
-                    ))}
-                </div>
+                <FilterTabs
+                    tabs={[
+                        { id: 'todos',        label: 'Todos',        count: projetos.length },
+                        { id: 'estruturacao', label: 'Estruturação',  dotColor: 'var(--bo-accent)' },
+                        { id: 'lancamento',   label: 'Lançamento',    dotColor: '#10B981' },
+                        { id: 'obras',        label: 'Em Obras',      dotColor: '#F59E0B' },
+                        { id: 'pronto',       label: 'Pronto',        dotColor: '#22C55E' },
+                    ] as FilterTab[]}
+                    active={filtro}
+                    onChange={setFiltro}
+                />
 
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
