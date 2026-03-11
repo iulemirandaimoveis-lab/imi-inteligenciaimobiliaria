@@ -14,12 +14,21 @@ import { T } from '../../../lib/theme'
 import Image from 'next/image'
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
-  disponivel: { label: 'Disponível', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-  em_negociacao: { label: 'Negociação', color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)' },
-  reservado: { label: 'Reservado', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
-  vendido: { label: 'Vendido', color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
-  lancamento: { label: 'Lançamento', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-  arquivado: { label: 'Arquivado', color: '#6B7280', bg: 'rgba(107,114,128,0.12)' },
+  disponivel:    { label: 'Disponível',    color: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+  em_negociacao: { label: 'Negociação',    color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)' },
+  reservado:     { label: 'Reservado',     color: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
+  vendido:       { label: 'Vendido',       color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
+  lancamento:    { label: 'Lançamento',    color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
+  em_construcao: { label: 'Em Construção', color: '#a78bfa', bg: 'rgba(167,139,250,0.12)' },
+  arquivado:     { label: 'Arquivado',     color: '#6B7280', bg: 'rgba(107,114,128,0.12)' },
+}
+
+const DB_STATUS_TO_DISPLAY: Record<string, string> = {
+  launch: 'lancamento', available: 'disponivel', under_construction: 'em_construcao',
+  ready: 'disponivel', sold: 'vendido', reserved: 'reservado', negotiating: 'em_negociacao',
+  published: 'disponivel', draft: 'arquivado', campaign: 'lancamento', private: 'arquivado',
+  disponivel: 'disponivel', em_negociacao: 'em_negociacao', reservado: 'reservado',
+  vendido: 'vendido', lancamento: 'lancamento', em_construcao: 'em_construcao', arquivado: 'arquivado',
 }
 
 const formatPrice = (price: number) => {
@@ -44,7 +53,11 @@ export default function ImovelDetalhesPage() {
         const res = await fetch(`/api/developments?id=${params.id}`)
         if (!res.ok) throw new Error('Erro ao carregar')
         const d = await res.json()
-        setData(d)
+        // Normalize DB status → display key
+        setData({
+          ...d,
+          status: DB_STATUS_TO_DISPLAY[d.status] || DB_STATUS_TO_DISPLAY[d.status_commercial] || 'disponivel',
+        })
       } catch (err: any) {
         console.error(err)
         toast.error('Erro ao carregar empreendimento')

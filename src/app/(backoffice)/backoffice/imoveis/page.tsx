@@ -20,12 +20,40 @@ import { calcPricePerSqm } from '@/lib/utils'
 
 /* ─── STATUS CONFIG ──────────────────────────────────────────────── */
 const STATUS_MAP: Record<string, { label: string; text: string; bg: string; dot: string; icon: any }> = {
-    disponivel:    { label: 'Disponível',  text: '#34d399', bg: 'rgba(52,211,153,0.15)',   dot: '#34d399', icon: CheckCircle },
-    em_negociacao: { label: 'Negociação',  text: '#60A5FA', bg: 'rgba(96,165,250,0.15)',   dot: '#60A5FA', icon: Clock },
-    reservado:     { label: 'Reservado',   text: '#c084fc', bg: 'rgba(192,132,252,0.15)',  dot: '#c084fc', icon: AlertCircle },
-    vendido:       { label: 'Vendido',     text: '#fbbf24', bg: 'rgba(251,191,36,0.15)',   dot: '#fbbf24', icon: ShoppingCart },
-    lancamento:    { label: 'Lançamento',  text: '#fb923c', bg: 'rgba(251,146,60,0.15)',   dot: '#fb923c', icon: Tag },
-    arquivado:     { label: 'Arquivado',   text: '#64748B', bg: 'rgba(100,116,139,0.15)', dot: '#64748B', icon: Archive },
+    disponivel:    { label: 'Disponível',   text: '#34d399', bg: 'rgba(52,211,153,0.15)',   dot: '#34d399', icon: CheckCircle },
+    em_negociacao: { label: 'Negociação',   text: '#60A5FA', bg: 'rgba(96,165,250,0.15)',   dot: '#60A5FA', icon: Clock },
+    reservado:     { label: 'Reservado',    text: '#c084fc', bg: 'rgba(192,132,252,0.15)',  dot: '#c084fc', icon: AlertCircle },
+    vendido:       { label: 'Vendido',      text: '#fbbf24', bg: 'rgba(251,191,36,0.15)',   dot: '#fbbf24', icon: ShoppingCart },
+    lancamento:    { label: 'Lançamento',   text: '#fb923c', bg: 'rgba(251,146,60,0.15)',   dot: '#fb923c', icon: Tag },
+    em_construcao: { label: 'Em Construção',text: '#a78bfa', bg: 'rgba(167,139,250,0.15)',  dot: '#a78bfa', icon: Clock },
+    arquivado:     { label: 'Arquivado',    text: '#64748B', bg: 'rgba(100,116,139,0.15)',  dot: '#64748B', icon: Archive },
+}
+
+/**
+ * Map raw DB `status` column values → STATUS_MAP display keys.
+ * The DB can store English values (legacy), Portuguese values, or mixed.
+ */
+const DB_STATUS_TO_DISPLAY: Record<string, string> = {
+    // English API values
+    launch:            'lancamento',
+    available:         'disponivel',
+    under_construction:'em_construcao',
+    ready:             'disponivel',
+    sold:              'vendido',
+    reserved:          'reservado',
+    negotiating:       'em_negociacao',
+    published:         'disponivel',
+    draft:             'arquivado',
+    campaign:          'lancamento',
+    private:           'arquivado',
+    // Portuguese values already valid — pass-through
+    disponivel:        'disponivel',
+    em_negociacao:     'em_negociacao',
+    reservado:         'reservado',
+    vendido:           'vendido',
+    lancamento:        'lancamento',
+    em_construcao:     'em_construcao',
+    arquivado:         'arquivado',
 }
 
 /* ─── TYPES ──────────────────────────────────────────────────────── */
@@ -438,7 +466,7 @@ export default function ImoveisPage() {
                             return {
                                 id: d.id,
                                 codigo: d.slug ? `IMI-${d.slug.substring(0, 8).toUpperCase()}` : `IMI-${String(d.id).substring(0, 8)}`,
-                                status: d.status || 'disponivel',
+                                status: DB_STATUS_TO_DISPLAY[d.status] || DB_STATUS_TO_DISPLAY[d.status_commercial] || 'disponivel',
                                 destaque: !!d.is_highlighted,
                                 tipo: d.type || d.tipo || d.property_type || 'Imóvel',
                                 titulo: d.name || 'Empreendimento',
