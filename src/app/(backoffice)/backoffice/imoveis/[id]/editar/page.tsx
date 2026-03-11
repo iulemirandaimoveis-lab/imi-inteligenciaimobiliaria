@@ -143,14 +143,14 @@ export default function EditarImovelPage() {
       let newImageUrls: string[] = []
       if (formData.images.length > 0) {
         toast.info(`Enviando ${formData.images.length} imagem(ns)...`)
-        const r = await uploadMultipleFiles(formData.images, 'developments', `${params.id}`)
+        const r = await uploadMultipleFiles(formData.images, 'media', `developments/${params.id}`)
         newImageUrls = r.filter(x => !x.error).map(x => x.url)
         const failed = r.filter(x => x.error).length
         if (failed > 0) toast.warning(`${failed} imagem(ns) falharam`)
       }
       let newFpUrls: string[] = []
       if (formData.floorPlans.length > 0) {
-        const r = await uploadMultipleFiles(formData.floorPlans, 'developments', 'plantas')
+        const r = await uploadMultipleFiles(formData.floorPlans, 'media', `developments/${params.id}/plantas`)
         newFpUrls = r.filter(x => !x.error).map(x => x.url)
       }
       let brochureUrl: string | null = formData.existingBrochure || null
@@ -461,7 +461,7 @@ export default function EditarImovelPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-sm font-bold" style={{ color: T.text }}>Fotos do Empreendimento</h3>
-                    <p className="text-xs mt-0.5" style={{ color: T.textDim }}>A primeira foto é a capa. Arraste para reordenar.</p>
+                    <p className="text-xs mt-0.5" style={{ color: T.textDim }}>A primeira foto é a capa. Clique em "Definir capa" para alterar.</p>
                   </div>
                   <label className="cursor-pointer h-9 px-4 rounded-xl flex items-center gap-2 text-sm font-medium transition-all"
                     style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
