@@ -182,20 +182,23 @@ export default function FinanceiroPage() {
               >
                 <Download size={13} /> CSV
               </button>
-              <button
+              <motion.button
+                whileTap={{ scale: 0.94 }}
+                whileHover={{ scale: 1.02 }}
                 onClick={() => setShowForm(true)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '38px', padding: '0 18px', borderRadius: '12px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
-                  background: 'var(--bo-accent)',
+                  background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                  boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                   border: 'none', cursor: 'pointer',
                   flexShrink: 0,
                 }}
               >
                 <Plus size={15} />
                 Novo Lançamento
-              </button>
+              </motion.button>
             </div>
           }
         />
@@ -222,10 +225,11 @@ export default function FinanceiroPage() {
 
       {/* Transactions panel */}
       <motion.div
+        className="intel-card"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.14, duration: 0.35 }}
-        style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', overflow: 'hidden' }}
+        style={{ overflow: 'hidden' }}
       >
         <div style={{ padding: '14px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
           <SectionHeader title="Lançamentos" badge={filtered.length} />

@@ -126,9 +126,12 @@
 
 /* ── IMI INTELLIGENCE CARD ─────────────────────────────────── */
 .intel-card {
-  background: var(--bo-card);
-  border: 1px solid var(--bo-border);
+  background: rgba(20,28,43,0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.06);
   border-radius: 16px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 2px 12px rgba(0,0,0,0.18);
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
   overflow: hidden;
   min-width: 0;
@@ -136,8 +139,8 @@
 }
 
 .intel-card:hover {
-  border-color: var(--imi-blue-border);
-  box-shadow: 0 0 0 1px var(--imi-blue-dim), 0 8px 32px rgba(59,130,246,0.08), 0 2px 8px rgba(0,0,0,0.15);
+  border-color: rgba(59,130,246,0.28);
+  box-shadow: 0 0 0 1px rgba(59,130,246,0.10), 0 8px 32px rgba(59,130,246,0.09), 0 2px 12px rgba(0,0,0,0.22), 0 1px 0 rgba(255,255,255,0.04) inset;
   transform: translateY(-1px);
 }
 

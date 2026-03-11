@@ -557,7 +557,7 @@ export default function ImoveisPage() {
                         whileTap={{ scale: 0.95 }}
                         onClick={() => router.push('/backoffice/imoveis/novo')}
                         className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                        style={{ background: T.accent, boxShadow: `0 0 20px ${T.accent}40` }}
+                        style={{ background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)', boxShadow: '0 4px 14px rgba(37,99,235,0.28)' }}
                     >
                         <Plus size={16} />
                         <span className="hidden sm:inline">Novo Empreendimento</span>
@@ -733,7 +733,7 @@ export default function ImoveisPage() {
                                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                                 onClick={() => router.push('/backoffice/imoveis/novo')}
                                 className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white"
-                                style={{ background: T.accent }}
+                                style={{ background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)', boxShadow: '0 4px 14px rgba(37,99,235,0.28)' }}
                             >
                                 <Plus size={16} /> Cadastrar Imóvel
                             </motion.button>

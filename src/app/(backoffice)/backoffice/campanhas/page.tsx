@@ -129,16 +129,12 @@ function CampaignCard({ c, index, onClick }: { c: Campaign; index: number; onCli
 
   return (
     <motion.div
+      className="intel-card"
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.35, ease: 'easeOut' }}
       onClick={onClick}
-      style={{
-        background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
-        borderRadius: '16px', padding: '14px', cursor: 'pointer',
-        transition: 'border-color 0.18s ease',
-      }}
-      whileHover={{ borderColor: 'rgba(59,130,246,0.35)', y: -2 }}
+      style={{ padding: '14px', cursor: 'pointer' }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -295,20 +291,23 @@ export default function CampanhasPage() {
                   <span className="hidden sm:inline">{syncing ? 'Sincronizando…' : 'Sincronizar Meta'}</span>
                 </button>
               )}
-              <button
+              <motion.button
+                whileTap={{ scale: 0.94 }}
+                whileHover={{ scale: 1.02 }}
                 onClick={() => router.push('/backoffice/campanhas/nova')}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '38px', padding: '0 18px', borderRadius: '12px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
-                  background: 'var(--bo-accent)',
+                  background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                  boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                   border: 'none', cursor: 'pointer',
                   flexShrink: 0,
                 }}
               >
                 <Plus size={15} />
                 <span className="hidden sm:inline">Nova Campanha</span>
-              </button>
+              </motion.button>
             </div>
           }
         />
@@ -354,10 +353,11 @@ export default function CampanhasPage() {
       </motion.div>
 
       <motion.div
+        className="intel-card"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.14, duration: 0.3 }}
-        style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}
+        style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}
       >
         <div style={{ position: 'relative' }}>
           <Search size={13} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--bo-text-muted)', pointerEvents: 'none' }} />
@@ -411,8 +411,9 @@ export default function CampanhasPage() {
               marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
               height: '38px', padding: '0 18px', borderRadius: '12px',
               fontSize: '13px', fontWeight: 700, color: '#fff',
-              background: 'var(--bo-accent)',
-              border: 'none', cursor: 'pointer', 
+              background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+              boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
+              border: 'none', cursor: 'pointer',
             }}
           >
             <Plus size={15} />Nova Campanha

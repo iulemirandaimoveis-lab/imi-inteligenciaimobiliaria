@@ -88,7 +88,7 @@ export function KPICard({
       className={`intel-card ${onClick ? 'cursor-pointer active:scale-95 transition-transform' : ''} ${className}`}
       style={{
         padding: pad,
-        background: `linear-gradient(180deg, rgba(${rawRgb},0.07) 0%, transparent 55%), var(--bo-card)`,
+        background: `linear-gradient(180deg, rgba(${rawRgb},0.08) 0%, transparent 55%), rgba(20,28,43,0.88)`,
         borderTop: `1.5px solid ${topBorder}`,
       }}
       onClick={onClick}

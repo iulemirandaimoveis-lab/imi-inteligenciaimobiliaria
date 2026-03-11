@@ -11,8 +11,25 @@ import {
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import Link from 'next/link'
 import { KPICard, MetricBar, StatusBadge, SectionHeader } from '../../components/ui'
-import { AvatarGroup, type BrokerAvatar } from '@/components/ui/AvatarGroup'
+import { AvatarGroup as OldAvatarGroup, type BrokerAvatar } from '@/components/ui/AvatarGroup'
+import { AvatarGroup, AvatarGroupTooltip } from '@/components/animate-ui/components/animate/avatar-group'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { T } from '@/app/(backoffice)/lib/theme'
+
+// ── Avatar helpers ─────────────────────────────────────────────
+function getInitials(name: string) {
+    return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
+}
+const PALETTES = [
+    ['#60A5FA','rgba(96,165,250,0.20)'],['#4ADE80','rgba(74,222,128,0.18)'],
+    ['#F472B6','rgba(244,114,182,0.18)'],['#A78BFA','rgba(167,139,250,0.18)'],
+    ['#34D399','rgba(52,211,153,0.18)'],['#FBBF24','rgba(251,191,36,0.16)'],
+]
+function getPalette(name: string) {
+    let h = 0
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xff
+    return PALETTES[h % PALETTES.length]
+}
 
 // ── Animated counter ──────────────────────────────────────────
 function AnimNum({ value, prefix = '', suffix = '', decimals = 0 }: {
@@ -155,13 +172,35 @@ export default function DashboardClient({
                 </div>
                 <div className="flex flex-col items-end gap-2">
                     {brokers.length > 0 && (
-                        <AvatarGroup
-                            brokers={brokers}
-                            max={5}
-                            size={30}
-                            href="/backoffice/settings/corretores"
-                            label="Equipe"
-                        />
+                        <Link href="/backoffice/settings/corretores" className="flex items-center gap-2 group">
+                            <AvatarGroup translate="-8px" invertOverlap={false}>
+                                {brokers.slice(0, 5).map(b => {
+                                    const [fg, bg] = getPalette(b.name)
+                                    return (
+                                        <Avatar
+                                            key={b.id}
+                                            size={28}
+                                            style={{
+                                                border: '2px solid var(--bo-surface)',
+                                                flexShrink: 0,
+                                            }}
+                                        >
+                                            <AvatarImage src={b.avatar_url ?? undefined} />
+                                            <AvatarFallback style={{ background: bg, color: fg, fontSize: 10, fontWeight: 700 }}>
+                                                {getInitials(b.name)}
+                                            </AvatarFallback>
+                                            <AvatarGroupTooltip>
+                                                {b.name.split(' ').slice(0, 2).join(' ')}
+                                            </AvatarGroupTooltip>
+                                        </Avatar>
+                                    )
+                                })}
+                            </AvatarGroup>
+                            <span className="text-[11px] font-medium opacity-60 group-hover:opacity-90 transition-opacity"
+                                style={{ color: 'var(--bo-text-muted)' }}>
+                                Equipe
+                            </span>
+                        </Link>
                     )}
                     <motion.button
                         whileTap={{ scale: 0.96 }}

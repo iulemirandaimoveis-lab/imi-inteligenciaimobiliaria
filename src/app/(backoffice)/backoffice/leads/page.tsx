@@ -161,12 +161,14 @@ export default function LeadsPage() {
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.93 }}
+                whileHover={{ scale: 1.02 }}
                 onClick={() => router.push('/backoffice/leads/novo')}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '36px', padding: '0 14px', borderRadius: '10px',
                   fontSize: '12px', fontWeight: 700, color: '#fff',
-                  background: 'var(--bo-accent)',
+                  background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                  boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                   border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
                 }}
               >
