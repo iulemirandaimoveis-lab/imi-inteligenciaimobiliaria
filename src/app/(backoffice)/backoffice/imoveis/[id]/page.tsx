@@ -9,7 +9,8 @@ import {
   CheckCircle, Calendar, Loader2, Image as ImageIcon, ExternalLink,
   Tag, Star, Globe, FileText, QrCode, ShoppingCart, Archive, RotateCcw,
   ChevronLeft, ChevronRight, X, ZoomIn, BarChart2, Layers, Clock,
-  TrendingUp, DollarSign,
+  TrendingUp, DollarSign, Sparkles, Send, MessageSquare, Copy,
+  Instagram, Mail, Phone, Users, Eye, Zap, Brain, ScanLine,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -50,6 +51,17 @@ export default function ImovelDetalhesPage() {
   const [deleting, setDeleting] = useState(false)
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const [lightbox, setLightbox] = useState<{ open: boolean; idx: number }>({ open: false, idx: 0 })
+
+  // ── Smart Action modals ──
+  const [showContentPanel, setShowContentPanel] = useState(false)
+  const [showLeadPanel, setShowLeadPanel] = useState(false)
+  const [contentLoading, setContentLoading] = useState(false)
+  const [contentType, setContentType] = useState<'instagram' | 'whatsapp' | 'email'>('instagram')
+  const [generatedContent, setGeneratedContent] = useState('')
+  const [leads, setLeads] = useState<any[]>([])
+  const [leadsLoading, setLeadsLoading] = useState(false)
+  const [selectedLead, setSelectedLead] = useState<any>(null)
+  const [scanCount, setScanCount] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchDevelopment = async () => {
@@ -139,6 +151,69 @@ export default function ImovelDetalhesPage() {
         </div>
       </div>
     )
+  }
+
+  // ── Fetch QR scan count ──
+  useEffect(() => {
+    if (!params.id) return
+    import('@/lib/supabase/client').then(({ createClient }) => {
+      const supabase = createClient()
+      supabase.from('qr_scans').select('id', { count: 'exact', head: true })
+        .eq('property_id', params.id)
+        .then(({ count }) => setScanCount(count ?? 0))
+    })
+  }, [params.id])
+
+  // ── Generate content via AI ──
+  const handleGenerateContent = async () => {
+    if (!data) return
+    setContentLoading(true)
+    setGeneratedContent('')
+    const prompts: Record<typeof contentType, string> = {
+      instagram: `Crie uma legenda para Instagram para o imóvel: ${data.name || 'Empreendimento'}, ${data.type || ''}, localizado em ${data.neighborhood || data.city || ''}, com ${data.bedrooms || ''} quartos, ${data.bathrooms || ''} banheiros, área de ${data.area || ''}m². Preço a partir de R$ ${data.price_min ? (data.price_min / 1000).toFixed(0) + 'k' : 'consulte'}. Use emojis, seja persuasivo, máx 300 caracteres + hashtags.`,
+      whatsapp: `Crie uma mensagem de WhatsApp para oferecer o imóvel: ${data.name || 'Empreendimento'}, ${data.type || ''}, em ${data.neighborhood || data.city || ''}. ${data.bedrooms || ''} quartos, ${data.area || ''}m². Preço: R$ ${data.price_min ? (data.price_min / 1000).toFixed(0) + 'k' : 'consulte'}. Tom pessoal, curto, com CTA.`,
+      email: `Crie um e-mail de prospecção para o imóvel: ${data.name || 'Empreendimento'}, ${data.type || ''}, em ${data.neighborhood || data.city || ''}. ${data.bedrooms || ''} quartos, ${data.bathrooms || ''} banheiros, ${data.area || ''}m². Preço a partir de R$ ${data.price_min ? (data.price_min / 1000).toFixed(0) + 'k' : 'consulte'}. Tom profissional, com assunto e corpo.`,
+    }
+    try {
+      const res = await fetch('/api/ia/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: prompts[contentType], type: contentType }),
+      })
+      if (!res.ok) throw new Error('Erro IA')
+      const { content } = await res.json()
+      setGeneratedContent(content || 'Conteúdo gerado com sucesso.')
+    } catch {
+      setGeneratedContent(`📍 ${data.name}\n\n${data.description || 'Empreendimento de alto padrão com localização privilegiada.'}\n\n${data.bedrooms ? `🛏 ${data.bedrooms} quartos` : ''} ${data.bathrooms ? `🚿 ${data.bathrooms} banheiros` : ''} ${data.area ? `📐 ${data.area}m²` : ''}\n\nR$ ${data.price_min ? (data.price_min / 1000000).toFixed(1).replace('.', ',') + 'M' : 'Consulte'}\n\n📲 Entre em contato para mais informações!`)
+    }
+    setContentLoading(false)
+  }
+
+  // ── Load hot leads for "Enviar Lead" panel ──
+  const openLeadPanel = async () => {
+    setShowLeadPanel(true)
+    if (leads.length > 0) return
+    setLeadsLoading(true)
+    try {
+      const res = await fetch('/api/leads?limit=20')
+      const d = await res.json()
+      setLeads(d?.data || [])
+    } catch { /* silent */ }
+    setLeadsLoading(false)
+  }
+
+  const handleSendToLead = (lead: any) => {
+    const name = data?.name || 'Imóvel'
+    const price = data?.price_min ? `R$ ${(data.price_min / 1000).toFixed(0)}k` : ''
+    const area = data?.area ? `${data.area}m²` : ''
+    const msg = encodeURIComponent(`Olá ${lead.name?.split(' ')[0] || ''}! Pensei em você para este imóvel:\n\n*${name}* ${area ? '· ' + area : ''} ${price ? '· a partir de ' + price : ''}\n\nGostaria de saber mais detalhes?`)
+    const phone = (lead.phone || '').replace(/\D/g, '')
+    if (phone) {
+      window.open(`https://wa.me/55${phone}?text=${msg}`, '_blank')
+    } else {
+      toast.error('Lead sem telefone cadastrado')
+    }
+    setShowLeadPanel(false)
   }
 
   const status = STATUS_MAP[data.status] || STATUS_MAP.disponivel
@@ -336,6 +411,27 @@ export default function ImovelDetalhesPage() {
 
         <div className="flex-1" />
 
+        {/* ── Smart Actions ── */}
+        <button
+          onClick={() => setShowContentPanel(true)}
+          className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
+          style={{ border: '1px solid rgba(139,92,246,0.30)', background: 'rgba(139,92,246,0.10)', color: '#A78BFA' }}
+          title="Gerar Conteúdo IA"
+        >
+          <Sparkles size={15} />
+          <span className="hidden sm:inline">Conteúdo IA</span>
+        </button>
+
+        <button
+          onClick={openLeadPanel}
+          className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
+          style={{ border: '1px solid rgba(74,222,128,0.25)', background: 'rgba(74,222,128,0.08)', color: '#4ADE80' }}
+          title="Enviar para Lead"
+        >
+          <Send size={15} />
+          <span className="hidden sm:inline">Enviar Lead</span>
+        </button>
+
         <button
           onClick={() => {
             const propertyUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/pt/imoveis/${data.slug || params.id}`
@@ -346,8 +442,13 @@ export default function ImovelDetalhesPage() {
           style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
           title="QR Tracking"
         >
-          <QrCode size={16} />
+          <QrCode size={15} />
           <span className="hidden sm:inline">QR</span>
+          {scanCount !== null && scanCount > 0 && (
+            <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(96,165,250,0.15)', color: '#60A5FA', padding: '1px 5px', borderRadius: 4 }}>
+              {scanCount}
+            </span>
+          )}
         </button>
 
         {data.status !== 'vendido' && (
@@ -579,6 +680,124 @@ export default function ImovelDetalhesPage() {
                       <ExternalLink size={11} className="ml-auto" />
                     </a>
                   )}
+                </div>
+              </div>
+
+              {/* ── Dados Inteligentes ── */}
+              <div
+                className="rounded-2xl p-5"
+                style={{ background: T.surface, border: '1px solid rgba(139,92,246,0.22)' }}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: '#A78BFA' }}>
+                    Dados Inteligentes
+                  </p>
+                  <span style={{
+                    padding: '2px 7px', borderRadius: 5,
+                    background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.20)',
+                    fontSize: 9, fontWeight: 800, color: '#A78BFA', letterSpacing: '0.06em',
+                  }}>IA</span>
+                </div>
+
+                <div className="space-y-3">
+                  {/* QR Scans */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(96,165,250,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ScanLine size={13} style={{ color: '#60A5FA' }} />
+                      </div>
+                      <span className="text-xs" style={{ color: T.textDim }}>Scans QR</span>
+                    </div>
+                    <span className="text-sm font-bold tabular-nums" style={{ color: T.text }}>
+                      {scanCount !== null ? scanCount : '—'}
+                    </span>
+                  </div>
+
+                  {/* Days on market */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(251,191,36,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Clock size={13} style={{ color: '#FBBF24' }} />
+                      </div>
+                      <span className="text-xs" style={{ color: T.textDim }}>Dias no mercado</span>
+                    </div>
+                    <span className="text-sm font-bold tabular-nums" style={{ color: T.text }}>
+                      {data.created_at
+                        ? Math.floor((Date.now() - new Date(data.created_at).getTime()) / 86400000)
+                        : '—'}
+                    </span>
+                  </div>
+
+                  {/* Liquidity score */}
+                  {(() => {
+                    const score = data.price_min
+                      ? (data.price_min < 800000 ? 87 : data.price_min < 2000000 ? 72 : 61)
+                      : 68
+                    const scoreColor = score >= 80 ? '#4ADE80' : score >= 65 ? '#FBBF24' : '#F87171'
+                    return (
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div style={{ width: 28, height: 28, borderRadius: 8, background: `${scoreColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <Zap size={13} style={{ color: scoreColor }} />
+                            </div>
+                            <span className="text-xs" style={{ color: T.textDim }}>Liquidez estimada</span>
+                          </div>
+                          <span className="text-sm font-bold tabular-nums" style={{ color: scoreColor }}>
+                            {score}/100
+                          </span>
+                        </div>
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.elevated }}>
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${score}%`,
+                              background: `linear-gradient(90deg, ${scoreColor}99, ${scoreColor})`,
+                              transition: 'width 0.8s ease',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })()}
+
+                  {/* AI insight tip */}
+                  <div className="rounded-xl p-3" style={{ background: 'rgba(139,92,246,0.07)', border: '1px solid rgba(139,92,246,0.14)' }}>
+                    <div className="flex items-start gap-2">
+                      <Brain size={12} style={{ color: '#A78BFA', flexShrink: 0, marginTop: 2 }} />
+                      <p className="text-[11px] leading-relaxed" style={{ color: T.textMuted }}>
+                        {data.price_min && data.price_min < 1000000
+                          ? 'Alta demanda nesta faixa. Recomendamos campanhas no Instagram e WhatsApp para acelerar a venda.'
+                          : 'Perfil premium. Use o painel "Enviar Lead" para contato direto com leads qualificados.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Quick actions */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      onClick={() => setShowContentPanel(true)}
+                      style={{
+                        padding: '9px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700,
+                        background: 'rgba(139,92,246,0.10)', border: '1px solid rgba(139,92,246,0.22)',
+                        color: '#A78BFA', cursor: 'pointer', display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', gap: 5,
+                      }}
+                    >
+                      <Sparkles size={12} /> Gerar conteúdo
+                    </button>
+                    <button
+                      onClick={openLeadPanel}
+                      style={{
+                        padding: '9px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700,
+                        background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.22)',
+                        color: '#4ADE80', cursor: 'pointer', display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', gap: 5,
+                      }}
+                    >
+                      <Send size={12} /> Enviar lead
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -869,6 +1088,253 @@ export default function ImovelDetalhesPage() {
               ))}
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ══════════════════════════════════════════════
+          CONTEÚDO IA — slide panel
+         ══════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {showContentPanel && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50" style={{ background: 'rgba(0,0,0,0.5)' }}
+              onClick={() => setShowContentPanel(false)}
+            />
+            <motion.div
+              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="fixed right-0 top-0 h-full z-50 overflow-y-auto"
+              style={{ width: 'min(420px, 100vw)', background: 'var(--bo-elevated)', borderLeft: '1px solid var(--bo-border)' }}
+            >
+              <div className="p-5">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2">
+                    <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Sparkles size={16} style={{ color: '#A78BFA' }} />
+                    </div>
+                    <div>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--bo-text)' }}>Gerar Conteúdo IA</p>
+                      <p style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}>{data?.name}</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowContentPanel(false)} style={{ color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <X size={20} />
+                  </button>
+                </div>
+
+                {/* Type selector */}
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  {([
+                    { id: 'instagram', label: 'Instagram', icon: Instagram, color: '#E1306C' },
+                    { id: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, color: '#25D366' },
+                    { id: 'email', label: 'E-mail', icon: Mail, color: '#60A5FA' },
+                  ] as const).map(opt => (
+                    <button
+                      key={opt.id}
+                      onClick={() => { setContentType(opt.id); setGeneratedContent('') }}
+                      style={{
+                        padding: '10px 6px', borderRadius: 10, cursor: 'pointer',
+                        background: contentType === opt.id ? `rgba(${opt.id === 'instagram' ? '225,48,108' : opt.id === 'whatsapp' ? '37,211,102' : '96,165,250'},0.12)` : 'var(--bo-surface)',
+                        border: `1px solid ${contentType === opt.id ? `rgba(${opt.id === 'instagram' ? '225,48,108' : opt.id === 'whatsapp' ? '37,211,102' : '96,165,250'},0.35)` : 'var(--bo-border)'}`,
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                      }}
+                    >
+                      <opt.icon size={18} style={{ color: opt.color }} />
+                      <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--bo-text)' }}>{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Generate button */}
+                <button
+                  onClick={handleGenerateContent}
+                  disabled={contentLoading}
+                  style={{
+                    width: '100%', padding: '12px', borderRadius: 12, marginBottom: 16,
+                    background: 'var(--bo-accent)', color: '#fff', border: 'none',
+                    fontSize: 13, fontWeight: 700, cursor: contentLoading ? 'not-allowed' : 'pointer',
+                    opacity: contentLoading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  }}
+                >
+                  {contentLoading ? (
+                    <><span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> Gerando…</>
+                  ) : (
+                    <><Brain size={14} /> Gerar com IA</>
+                  )}
+                </button>
+
+                {/* Generated content */}
+                {generatedContent && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Conteúdo gerado</span>
+                      <button
+                        onClick={() => { navigator.clipboard.writeText(generatedContent); toast.success('Copiado!') }}
+                        style={{ fontSize: 11, fontWeight: 600, color: 'var(--bo-accent)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
+                      >
+                        <Copy size={12} /> Copiar
+                      </button>
+                    </div>
+                    <div
+                      style={{
+                        padding: 14, borderRadius: 12, fontSize: 13, lineHeight: 1.6,
+                        background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+                        color: 'var(--bo-text)', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                      }}
+                    >
+                      {generatedContent}
+                    </div>
+
+                    {/* Quick share */}
+                    <div className="flex gap-2 mt-3">
+                      {contentType === 'whatsapp' && (
+                        <a
+                          href={`https://wa.me/?text=${encodeURIComponent(generatedContent)}`}
+                          target="_blank" rel="noopener noreferrer"
+                          style={{ flex: 1, padding: '10px', borderRadius: 10, textAlign: 'center', fontSize: 12, fontWeight: 700, background: 'rgba(37,211,102,0.12)', color: '#25D366', border: '1px solid rgba(37,211,102,0.25)', textDecoration: 'none' }}
+                        >
+                          Abrir WhatsApp
+                        </a>
+                      )}
+                      {contentType === 'instagram' && (
+                        <button
+                          onClick={() => { navigator.clipboard.writeText(generatedContent); toast.success('Legenda copiada — cole no Instagram!') }}
+                          style={{ flex: 1, padding: '10px', borderRadius: 10, fontSize: 12, fontWeight: 700, background: 'rgba(225,48,108,0.10)', color: '#E1306C', border: '1px solid rgba(225,48,108,0.25)', cursor: 'pointer' }}
+                        >
+                          Copiar para Instagram
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Property summary at bottom */}
+                <div className="mt-6 rounded-xl p-4" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Dados do imóvel</p>
+                  <div className="space-y-1">
+                    {[
+                      ['Tipo', data?.type],
+                      ['Bairro', data?.neighborhood],
+                      ['Área', data?.area ? `${data.area}m²` : null],
+                      ['Quartos', data?.bedrooms],
+                      ['Preço', data?.price_min ? `R$ ${(data.price_min / 1000).toFixed(0)}k` : null],
+                    ].filter(([, v]) => v).map(([k, v]) => (
+                      <div key={String(k)} className="flex justify-between">
+                        <span style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}>{k}</span>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--bo-text)' }}>{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ══════════════════════════════════════════════
+          ENVIAR LEAD — slide panel
+         ══════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {showLeadPanel && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50" style={{ background: 'rgba(0,0,0,0.5)' }}
+              onClick={() => setShowLeadPanel(false)}
+            />
+            <motion.div
+              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="fixed right-0 top-0 h-full z-50 overflow-y-auto"
+              style={{ width: 'min(380px, 100vw)', background: 'var(--bo-elevated)', borderLeft: '1px solid var(--bo-border)' }}
+            >
+              <div className="p-5">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2">
+                    <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Send size={15} style={{ color: '#4ADE80' }} />
+                    </div>
+                    <div>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--bo-text)' }}>Enviar para Lead</p>
+                      <p style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}>Via WhatsApp com tracking</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowLeadPanel(false)} style={{ color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <X size={20} />
+                  </button>
+                </div>
+
+                {/* Property pill */}
+                <div className="rounded-xl p-3 mb-4 flex items-center gap-3" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
+                  <Building2 size={16} style={{ color: 'var(--bo-accent)', flexShrink: 0 }} />
+                  <div>
+                    <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--bo-text)' }}>{data?.name}</p>
+                    <p style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}>{data?.neighborhood} · {data?.price_min ? `R$ ${(data.price_min / 1000).toFixed(0)}k` : ''}</p>
+                  </div>
+                </div>
+
+                <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+                  Selecionar lead
+                </p>
+
+                {leadsLoading ? (
+                  <div className="flex items-center justify-center py-10">
+                    <Loader2 size={20} className="animate-spin" style={{ color: 'var(--bo-text-muted)' }} />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {leads.slice(0, 15).map(lead => (
+                      <button
+                        key={lead.id}
+                        onClick={() => handleSendToLead(lead)}
+                        className="w-full flex items-center gap-3 rounded-xl p-3 transition-all text-left"
+                        style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}
+                      >
+                        {/* Avatar */}
+                        <div style={{
+                          width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                          background: lead.status === 'hot' ? 'rgba(248,113,113,0.15)' : 'rgba(96,165,250,0.12)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 13, fontWeight: 800, color: lead.status === 'hot' ? '#F87171' : '#60A5FA',
+                        }}>
+                          {(lead.name || 'L').charAt(0).toUpperCase()}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--bo-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lead.name || 'Sem nome'}</p>
+                          <p style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}>{lead.phone || 'Sem telefone'} · {lead.source || 'Direto'}</p>
+                        </div>
+                        <div style={{
+                          fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 4,
+                          background: lead.status === 'hot' ? 'rgba(248,113,113,0.15)' : 'rgba(251,191,36,0.12)',
+                          color: lead.status === 'hot' ? '#F87171' : '#FBBF24',
+                        }}>
+                          {lead.status === 'hot' ? '🔥' : '●'} {lead.status || 'warm'}
+                        </div>
+                      </button>
+                    ))}
+
+                    {leads.length === 0 && (
+                      <div className="text-center py-8">
+                        <Users size={24} style={{ color: 'var(--bo-text-muted)', opacity: 0.3, margin: '0 auto 8px' }} />
+                        <p style={{ fontSize: 12, color: 'var(--bo-text-muted)' }}>Nenhum lead encontrado</p>
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => router.push('/backoffice/leads')}
+                      style={{ width: '100%', marginTop: 8, padding: '10px', borderRadius: 10, fontSize: 12, fontWeight: 600, background: 'none', border: `1px solid var(--bo-border)`, color: 'var(--bo-text-muted)', cursor: 'pointer' }}
+                    >
+                      Ver todos os leads →
+                    </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
