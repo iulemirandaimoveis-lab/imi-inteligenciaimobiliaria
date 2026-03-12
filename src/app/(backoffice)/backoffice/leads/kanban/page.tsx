@@ -6,19 +6,20 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
-// ── Pipeline stage config ─────────────────────────────────────────
+// ── Pipeline stage config (derived from centralized constants) ─────
 const STAGES = [
-    { key: 'novo',       label: 'NOVO LEAD',    dot: '#3B82F6', border: '#3B82F6', count: 0 },
-    { key: 'contatado',  label: 'CONTATADO',    dot: '#F59E0B', border: '#F59E0B', count: 0 },
-    { key: 'qualificado',label: 'QUALIFICADO',  dot: '#10B981', border: '#10B981', count: 0 },
-    { key: 'proposta',   label: 'PROPOSTA',     dot: '#8B5CF6', border: '#8B5CF6', count: 0 },
-    { key: 'negociacao', label: 'NEGOCIAÇÃO',   dot: '#F97316', border: '#F97316', count: 0 },
-    { key: 'ganho',      label: 'GANHO',        dot: '#22C55E', border: '#22C55E', count: 0 },
-]
+    { key: 'novo',        label: 'NOVO LEAD' },
+    { key: 'contatado',   label: 'CONTATADO' },
+    { key: 'qualificado', label: 'QUALIFICADO' },
+    { key: 'proposta',    label: 'PROPOSTA' },
+    { key: 'negociacao',  label: 'NEGOCIAÇÃO' },
+    { key: 'ganho',       label: 'GANHO' },
+].map(s => ({ ...s, dot: getStatusConfig(s.key).dot, border: getStatusConfig(s.key).dot, count: 0 }))
 
 // Map DB status → pipeline stage
 function toStage(status: string): string {

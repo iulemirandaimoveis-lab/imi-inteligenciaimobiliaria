@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 import { useBrokers, updateBrokerStatus, type Broker } from '@/hooks/use-brokers'
 import { PageIntelHeader, KPICard, FilterTabs, type FilterTab } from '../../components/ui'
 import { T } from '../../lib/theme'
+import { getStatusConfig } from '../../lib/constants'
 
 /* ─── ROLE CONFIG ──────────────────────────────────────────────── */
 const ROLE_CFG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
@@ -63,8 +64,8 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                 className="absolute top-0 left-0 right-0 h-[2px] transition-opacity duration-300"
                 style={{
                     background: isActive
-                        ? 'linear-gradient(90deg, transparent 0%, rgba(74,222,128,0.6) 50%, transparent 100%)'
-                        : 'linear-gradient(90deg, transparent 0%, rgba(100,116,139,0.3) 50%, transparent 100%)',
+                        ? `linear-gradient(90deg, transparent 0%, ${getStatusConfig('ativo').dot}99 50%, transparent 100%)`
+                        : `linear-gradient(90deg, transparent 0%, ${getStatusConfig('inativo').dot}4d 50%, transparent 100%)`,
                 }}
             />
 
@@ -96,7 +97,7 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                         <div
                             className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2"
                             style={{
-                                background: isActive ? '#4ADE80' : '#64748B',
+                                background: getStatusConfig(isActive ? 'ativo' : 'inativo').dot,
                                 borderColor: T.surface,
                             }}
                         />
@@ -115,16 +116,18 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                                 <RoleIcon size={9} />
                                 {role.label}
                             </span>
-                            <span
-                                className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md"
-                                style={{
-                                    color: isActive ? '#4ADE80' : '#64748B',
-                                    background: isActive ? 'rgba(74,222,128,0.10)' : 'rgba(100,116,139,0.10)',
-                                }}
-                            >
-                                {isActive ? <CheckCircle size={9} /> : <XCircle size={9} />}
-                                {isActive ? 'Ativo' : 'Inativo'}
-                            </span>
+                            {(() => {
+                                const sc = getStatusConfig(isActive ? 'ativo' : 'inativo')
+                                return (
+                                    <span
+                                        className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md"
+                                        style={{ color: sc.dot, background: `${sc.dot}1a` }}
+                                    >
+                                        {isActive ? <CheckCircle size={9} /> : <XCircle size={9} />}
+                                        {sc.label}
+                                    </span>
+                                )
+                            })()}
                         </div>
                     </div>
 
@@ -162,7 +165,7 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                                         <button
                                             onClick={() => { setMenuOpen(false); onToggleStatus(broker.id, broker.status) }}
                                             className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium hover:bg-[var(--bo-hover)] transition-colors"
-                                            style={{ color: isActive ? '#f87171' : '#4ADE80' }}
+                                            style={{ color: isActive ? T.error : T.success }}
                                         >
                                             {isActive ? <XCircle size={11} /> : <CheckCircle size={11} />}
                                             {isActive ? 'Desativar' : 'Ativar'}

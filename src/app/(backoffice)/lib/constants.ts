@@ -13,6 +13,24 @@ export const STATUS_CONFIG = {
   convertido: { label: 'Convertido', color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
   perdido:    { label: 'Perdido',    color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
 
+  // ── Lead Status (English DB values) ───────────────────────
+  hot:         { label: 'Qualificando',     color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#4ade80' },
+  warm:        { label: 'Warm',             color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#fbbf24' },
+  cold:        { label: 'Em Análise',       color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#94a3b8' },
+  contacted:   { label: 'Em Contato',       color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
+  qualified:   { label: 'Qualificado',      color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#4ade80' },
+  proposal:    { label: 'Proposta Enviada', color: '#a78bfa',             bg: 'rgba(167,139,250,0.14)', dot: '#a78bfa' },
+  won:         { label: 'Convertido',       color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#4ade80' },
+  lost:        { label: 'Perdido',          color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
+  new:         { label: 'Novo',             color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
+
+  // ── Pipeline Kanban Stages ────────────────────────────────
+  contatado:   { label: 'Contatado',   color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#f59e0b' },
+  qualificado: { label: 'Qualificado', color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#10b981' },
+  proposta:    { label: 'Proposta',    color: '#8b5cf6',             bg: 'rgba(139,92,246,0.14)',  dot: '#8b5cf6' },
+  negociacao:  { label: 'Negociação',  color: '#f97316',             bg: 'rgba(249,115,22,0.14)',  dot: '#f97316' },
+  ganho:       { label: 'Ganho',       color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#22c55e' },
+
   // ── Imóveis / Empreendimentos ──────────────────────────
   publicado:  { label: 'Publicado',  color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
   rascunho:   { label: 'Rascunho',   color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },

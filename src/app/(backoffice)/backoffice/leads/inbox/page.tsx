@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // Neon temperature colors (from Stitch design)
@@ -16,17 +17,13 @@ const TEMP = {
     cold: { bg: 'rgba(0,245,255,0.10)',  text: '#00E5FF', border: 'rgba(0,245,255,0.35)', glow: '0 0 10px rgba(0,245,255,0.28)'  },
 }
 
-const STATUS_CFG: Record<string, { label: string; bg: string; text: string }> = {
-    hot:        { label: 'QUALIFICANDO',      bg: 'rgba(74,222,128,0.15)',  text: '#4ADE80' },
-    warm:       { label: 'WARM',              bg: 'rgba(251,191,36,0.14)',  text: '#FBBF24' },
-    cold:       { label: 'EM ANÁLISE',        bg: 'rgba(148,163,184,0.12)', text: '#94A3B8' },
-    contacted:  { label: 'EM CONTATO',        bg: 'rgba(59,130,246,0.14)',  text: '#60A5FA' },
-    qualified:  { label: 'QUALIFICADO',       bg: 'rgba(74,222,128,0.15)',  text: '#4ADE80' },
-    proposal:   { label: 'PROPOSTA ENVIADA',  bg: 'rgba(167,139,250,0.14)', text: '#A78BFA' },
-    won:        { label: 'CONVERTIDO',        bg: 'rgba(74,222,128,0.15)',  text: '#4ADE80' },
-    lost:       { label: 'PERDIDO',           bg: 'rgba(239,68,68,0.12)',   text: '#F87171' },
-    new:        { label: 'NOVO',              bg: 'rgba(59,130,246,0.14)',  text: '#60A5FA' },
-}
+// Derive STATUS_CFG from centralized constants (colors + labels)
+const STATUS_CFG: Record<string, { label: string; bg: string; text: string }> = Object.fromEntries(
+    ['hot', 'warm', 'cold', 'contacted', 'qualified', 'proposal', 'won', 'lost', 'new'].map(key => {
+        const cfg = getStatusConfig(key)
+        return [key, { label: cfg.label.toUpperCase(), bg: `${cfg.dot}26`, text: cfg.dot }]
+    })
+)
 
 const SOURCE_ICON: Record<string, string> = {
     'google':     '🔍',
