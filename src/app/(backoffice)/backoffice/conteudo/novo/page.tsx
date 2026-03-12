@@ -407,16 +407,18 @@ export default function NovoConteudoPage() {
                 <button
                   key={sugestao.id}
                   onClick={() => gerarComIA(sugestao.task, sugestao.id)}
-                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/10 text-xs text-white/90 hover:text-white transition-all group"
+                  className="w-full flex items-center justify-between p-3 rounded-xl text-xs transition-all group hover:brightness-105"
+                  style={{ color: T.text }}
                 >
                   <span>{sugestao.label}</span>
-                  <Zap size={14} className="text-white/30 group-hover:text-white group-hover:fill-white transition-all" />
+                  <Zap size={14} style={{ color: T.accent }} className="opacity-40 group-hover:opacity-100 transition-all" />
                 </button>
               ))}
-              <div className="pt-2 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="pt-2 mt-2" style={{ borderTop: `1px solid ${T.border}` }}>
                 <button
                   onClick={usarTemplate}
-                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/10 text-xs text-white/70 hover:text-white transition-all font-bold"
+                  className="w-full flex items-center justify-between p-3 rounded-xl text-xs transition-all font-bold hover:brightness-105"
+                  style={{ color: T.textMuted }}
                 >
                   <span>Preencher Template</span>
                   <FileText size={14} className="opacity-50" />
