@@ -214,8 +214,8 @@ export default function DashboardClient({
                         onClick={() => router.push('/backoffice/avaliacoes/nova')}
                         className="flex items-center gap-2 h-9 px-4 rounded-xl text-[13px] font-semibold text-white flex-shrink-0"
                         style={{
-                            background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
-                            boxShadow: '0 4px 20px rgba(37,99,235,0.40), 0 1px 0 rgba(255,255,255,0.10) inset',
+                            background: T.accent,
+                            boxShadow: '0 4px 16px rgba(59,130,246,0.25)',
                         }}
                     >
                         <Plus size={14} />
@@ -269,9 +269,9 @@ export default function DashboardClient({
                 transition={{ delay: 0.08, duration: 0.35 }}
                 className="relative overflow-hidden rounded-2xl"
                 style={{
-                    background: '#07101E',
-                    border: '1px solid rgba(59,130,246,0.28)',
-                    boxShadow: '0 0 0 1px rgba(59,130,246,0.06) inset, 0 8px 40px rgba(0,0,0,0.50)',
+                    background: T.card,
+                    border: `1px solid rgba(59,130,246,0.28)`,
+                    boxShadow: '0 0 0 1px rgba(59,130,246,0.06) inset, 0 4px 20px rgba(0,0,0,0.15)',
                     padding: '18px 20px',
                 }}
             >
@@ -289,7 +289,7 @@ export default function DashboardClient({
                         <p style={{ fontSize: '9px', fontWeight: 700, color: '#60A5FA', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 6 }}>
                             Honorários Totais Recebidos
                         </p>
-                        <div style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums', color: '#FFFFFF' }}>
+                        <div style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums', color: T.text }}>
                             {fmtCompact(avStats.honorarios_recebidos)}
                         </div>
                         <p style={{ fontSize: '11px', color: 'rgba(148,163,184,0.8)', marginTop: 5 }}>
@@ -393,9 +393,9 @@ export default function DashboardClient({
                     transition={{ delay: 0.22, duration: 0.35 }}
                     className="md:col-span-2 lg:col-span-2 rounded-2xl overflow-hidden"
                     style={{
-                        background: 'rgba(13,20,36,0.92)',
-                        border: '1px solid rgba(59,130,246,0.20)',
-                        boxShadow: '0 0 24px rgba(59,130,246,0.08), 0 4px 24px rgba(0,0,0,0.28)',
+                        background: T.card,
+                        border: `1px solid ${T.border}`,
+                        boxShadow: T.shadowMd,
                         padding: '18px',
                     }}
                 >
@@ -455,12 +455,12 @@ export default function DashboardClient({
                                     <YAxis hide />
                                     <Tooltip
                                         contentStyle={{
-                                            background: '#0D1424',
-                                            border: '1px solid rgba(59,130,246,0.25)',
+                                            background: 'var(--bo-elevated)',
+                                            border: '1px solid var(--bo-border)',
                                             borderRadius: 10,
                                             color: 'var(--bo-text)',
                                             fontSize: 11,
-                                            boxShadow: '0 8px 32px rgba(0,0,0,0.40)',
+                                            boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
                                         }}
                                         formatter={(v: any, name?: string) => [
                                             name === 'leads' ? `${v} leads` : `R$ ${v}k`,
@@ -492,9 +492,9 @@ export default function DashboardClient({
                     transition={{ delay: 0.28, duration: 0.35 }}
                     className="rounded-2xl overflow-hidden"
                     style={{
-                        background: 'rgba(13,20,36,0.92)',
+                        background: T.card,
                         border: '1px solid var(--bo-border)',
-                        boxShadow: '0 4px 24px rgba(0,0,0,0.28)',
+                        boxShadow: T.shadowMd,
                         padding: '18px',
                     }}
                 >
@@ -546,9 +546,9 @@ export default function DashboardClient({
                     transition={{ delay: 0.35, duration: 0.35 }}
                     className="rounded-2xl overflow-hidden"
                     style={{
-                        background: 'rgba(13,20,36,0.92)',
+                        background: T.card,
                         border: '1px solid var(--bo-border)',
-                        boxShadow: '0 4px 24px rgba(0,0,0,0.28)',
+                        boxShadow: T.shadowMd,
                         padding: '18px',
                     }}
                 >
@@ -587,9 +587,9 @@ export default function DashboardClient({
                     transition={{ delay: 0.40, duration: 0.35 }}
                     className="rounded-2xl overflow-hidden"
                     style={{
-                        background: 'rgba(13,20,36,0.92)',
+                        background: T.card,
                         border: '1px solid var(--bo-border)',
-                        boxShadow: '0 4px 24px rgba(0,0,0,0.28)',
+                        boxShadow: T.shadowMd,
                     }}
                 >
                     <div className="flex items-center justify-between px-4 py-3"
@@ -613,7 +613,7 @@ export default function DashboardClient({
                             return (
                                 <Link key={lead.id} href={`/backoffice/leads/${lead.id}`}>
                                     <div className="flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-all"
-                                        style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                                        style={{ borderBottom: `1px solid ${T.border}` }}
                                         onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
                                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                     >
@@ -650,9 +650,9 @@ export default function DashboardClient({
                     transition={{ delay: 0.45, duration: 0.35 }}
                     className="rounded-2xl overflow-hidden"
                     style={{
-                        background: 'rgba(13,20,36,0.92)',
+                        background: T.card,
                         border: '1px solid var(--bo-border)',
-                        boxShadow: '0 4px 24px rgba(0,0,0,0.28)',
+                        boxShadow: T.shadowMd,
                     }}
                 >
                     <div className="flex items-center justify-between px-4 py-3"
@@ -676,7 +676,7 @@ export default function DashboardClient({
                             return (
                                 <div key={av.id}
                                     className="flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-all"
-                                    style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                                    style={{ borderBottom: `1px solid ${T.border}` }}
                                     onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
                                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >

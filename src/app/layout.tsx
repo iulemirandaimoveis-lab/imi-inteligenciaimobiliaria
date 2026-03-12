@@ -37,7 +37,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="pt-BR" suppressHydrationWarning className={`${playfair.variable} ${inter.variable}`}>
-            <body className={`${inter.className} min-h-screen bg-[#0D0F14] relative`}>
+            <body className={`${inter.className} min-h-screen bg-[var(--bo-bg,#0D0F14)] relative`}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="dark"

@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Link from 'next/link'
 import { StatusBadge } from './StatusBadge'
 import { AIScore } from './AIScore'
 import { Clock, MapPin, Globe, MessageCircle } from 'lucide-react'
@@ -22,6 +23,7 @@ interface MobileLeadCardProps {
   aiSummary?: string       // short AI insight text
   meta?: LeadMeta
   isNew?: boolean
+  href?: string            // Link destination (preferred over onClick)
   onClick?: () => void
   className?: string
   animDelay?: number       // for staggered entrance
@@ -84,6 +86,7 @@ export function MobileLeadCard({
   aiSummary,
   meta,
   isNew = false,
+  href,
   onClick,
   className = '',
   animDelay,
@@ -99,17 +102,13 @@ export function MobileLeadCard({
   }
   const avatarBg = avatarColors[status.toLowerCase()] ?? 'linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%)'
 
+  const Wrapper = href ? Link : 'div'
+  const wrapperProps = href
+    ? { href, className: `intel-card animate-fade-in-up ${className} cursor-pointer no-underline block`, style: { padding: '14px 16px', animationDelay: animDelay !== undefined ? `${animDelay}ms` : undefined, position: 'relative' as const, overflow: 'hidden' as const } }
+    : { className: `intel-card animate-fade-in-up ${className} ${onClick ? 'cursor-pointer' : ''}`, style: { padding: '14px 16px', animationDelay: animDelay !== undefined ? `${animDelay}ms` : undefined, position: 'relative' as const, overflow: 'hidden' as const }, onClick }
+
   return (
-    <div
-      className={`intel-card animate-fade-in-up ${className} ${onClick ? 'cursor-pointer' : ''}`}
-      style={{
-        padding: '14px 16px',
-        animationDelay: animDelay !== undefined ? `${animDelay}ms` : undefined,
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-      onClick={onClick}
-    >
+    <Wrapper {...(wrapperProps as any)}>
       {/* NEW badge — top right accent line */}
       {isNew && (
         <div
@@ -284,6 +283,6 @@ export function MobileLeadCard({
           </span>
         </div>
       )}
-    </div>
+    </Wrapper>
   )
 }

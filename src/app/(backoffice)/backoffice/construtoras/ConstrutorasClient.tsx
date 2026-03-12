@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import {
     Plus,
@@ -149,11 +150,11 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
             {/* Grid de Construtoras */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {filteredConstrutoras.map((construtora) => (
-                    <div
+                    <Link
                         key={construtora.id}
-                        className="rounded-2xl p-6 transition-all cursor-pointer flex flex-col h-full hover:brightness-105"
+                        href={`/backoffice/construtoras/${construtora.id}`}
+                        className="rounded-2xl p-6 transition-all cursor-pointer flex flex-col h-full hover:brightness-105 no-underline"
                         style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                        onClick={() => router.push(`/backoffice/construtoras/${construtora.id}`)}
                     >
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
@@ -221,15 +222,17 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                                 <TrendingUp size={12} className="text-emerald-400" />
                                 <span>Parceria: {construtora.parceriaDuracao || 'Nova'}</span>
                             </div>
-                            <ActionMenu
-                                size="sm"
-                                items={[
-                                    { label: 'Ver Portfólio', icon: <Eye size={14} />, onClick: () => router.push(`/backoffice/construtoras/${construtora.id}`) },
-                                    { label: 'Editar', icon: <Edit size={14} />, onClick: () => router.push(`/backoffice/construtoras/${construtora.id}/editar`) },
-                                ]}
-                            />
+                            <div onClick={e => e.preventDefault()}>
+                                <ActionMenu
+                                    size="sm"
+                                    items={[
+                                        { label: 'Ver Portfólio', icon: <Eye size={14} />, onClick: () => router.push(`/backoffice/construtoras/${construtora.id}`) },
+                                        { label: 'Editar', icon: <Edit size={14} />, onClick: () => router.push(`/backoffice/construtoras/${construtora.id}/editar`) },
+                                    ]}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
 

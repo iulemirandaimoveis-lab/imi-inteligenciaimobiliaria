@@ -1008,9 +1008,9 @@ export default function ImovelDetalhesPage() {
 
       {/* ── STICKY BOTTOM ACTION BAR ── */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-end gap-3 px-6 py-4"
+        className="fixed bottom-20 lg:bottom-0 left-0 right-0 lg:left-60 z-40 flex items-center justify-end gap-3 px-6 py-4"
         style={{
-          background: 'rgba(0,0,0,0.7)',
+          background: T.elevated,
           backdropFilter: 'blur(20px)',
           borderTop: `1px solid ${T.border}`,
         }}

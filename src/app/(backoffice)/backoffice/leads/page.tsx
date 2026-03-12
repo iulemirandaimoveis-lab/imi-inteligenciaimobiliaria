@@ -364,7 +364,7 @@ export default function LeadsPage() {
                       }}
                       isNew={i === 0 && lead.status === 'hot'}
                       animDelay={i * 50}
-                      onClick={() => router.push(`/backoffice/leads/${lead.id}`)}
+                      href={`/backoffice/leads/${lead.id}`}
                     />
                   </motion.div>
                 )

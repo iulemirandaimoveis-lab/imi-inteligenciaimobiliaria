@@ -71,7 +71,9 @@
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
   /* Backoffice Theme Variables - Light Mode */
+  --bo-bg: #f0f2f5;
   --bo-surface: #f4f7fc;
+  --bo-surface-alt: #eef1f6;
   --bo-elevated: #ffffff;
   --bo-border: rgba(0, 0, 0, 0.08);
   --bo-border-light: rgba(0, 0, 0, 0.04);
@@ -122,7 +124,9 @@
 
 .dark {
   /* ── IMI INTELLIGENCE DARK THEME v5.0 — Bloomberg Terminal Precision ── */
+  --bo-bg: #0D0F14;
   --bo-surface: #0C1017;
+  --bo-surface-alt: #0F1520;
   --bo-elevated: #111822;
   --bo-border: rgba(255, 255, 255, 0.07);
   --bo-border-light: rgba(255, 255, 255, 0.04);
