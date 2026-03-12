@@ -60,6 +60,9 @@ export default function ImovelDetalhesPage() {
   const [leadsLoading, setLeadsLoading] = useState(false)
   const [selectedLead, setSelectedLead] = useState<any>(null)
   const [scanCount, setScanCount] = useState<number | null>(null)
+  // Property-specific leads for overview tab
+  const [propertyLeads, setPropertyLeads] = useState<any[]>([])
+  const [propertyLeadsLoading, setPropertyLeadsLoading] = useState(false)
 
   useEffect(() => {
     const fetchDevelopment = async () => {
@@ -81,14 +84,27 @@ export default function ImovelDetalhesPage() {
     if (params.id) fetchDevelopment()
   }, [params.id])
 
-  // Fetch QR scan count
+  // Fetch QR scan count + property-specific leads (in parallel, after data loads)
   useEffect(() => {
     if (!params.id || !data) return
     import('@/lib/supabase/client').then(({ createClient }) => {
       const supabase = createClient()
+      // QR scan count
       supabase.from('qr_scans').select('id', { count: 'exact', head: true })
         .eq('property_id', params.id)
         .then(({ count }) => setScanCount(count ?? 0))
+      // Property leads
+      setPropertyLeadsLoading(true)
+      supabase
+        .from('leads')
+        .select('id, name, email, phone, status, created_at, source')
+        .eq('development_id', params.id)
+        .order('created_at', { ascending: false })
+        .limit(6)
+        .then(({ data: ld }) => {
+          setPropertyLeads(ld || [])
+          setPropertyLeadsLoading(false)
+        })
     })
   }, [params.id, data])
 
@@ -538,6 +554,86 @@ export default function ImovelDetalhesPage() {
                       </span>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* ── Leads Interessados ── */}
+              {(propertyLeadsLoading || propertyLeads.length > 0) && (
+                <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: T.textMuted }}>
+                      Leads Interessados
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="text-[10px] font-bold px-2 py-[2px] rounded-full"
+                        style={{ background: 'rgba(248,113,113,0.12)', color: '#F87171', border: '1px solid rgba(248,113,113,0.2)' }}
+                      >
+                        {propertyLeads.length}
+                      </span>
+                      <button
+                        onClick={() => router.push('/backoffice/leads')}
+                        className="text-[10px] font-semibold transition-opacity hover:opacity-70"
+                        style={{ color: T.accent }}
+                      >
+                        Ver todos →
+                      </button>
+                    </div>
+                  </div>
+
+                  {propertyLeadsLoading ? (
+                    <div className="flex items-center justify-center py-5">
+                      <Loader2 size={16} className="animate-spin" style={{ color: T.textMuted }} />
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {propertyLeads.map((lead) => {
+                        const isHot = lead.status === 'hot' || lead.status === 'negotiating'
+                        const isCold = lead.status === 'cold' || lead.status === 'lost'
+                        const dotColor = isHot ? '#F87171' : isCold ? '#9ca3af' : '#fbbf24'
+                        return (
+                          <div
+                            key={lead.id}
+                            className="flex items-center gap-3 p-2.5 rounded-xl"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                          >
+                            <div
+                              className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+                              style={{ background: isHot ? 'rgba(248,113,113,0.15)' : 'rgba(96,165,250,0.12)', color: isHot ? '#F87171' : '#60A5FA' }}
+                            >
+                              {(lead.name || 'L').charAt(0).toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12px] font-semibold truncate" style={{ color: T.text }}>{lead.name || 'Sem nome'}</p>
+                              <p className="text-[10px] truncate" style={{ color: T.textMuted }}>
+                                {lead.source || 'Direto'} · {new Date(lead.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                              <span
+                                className="w-[6px] h-[6px] rounded-full flex-shrink-0"
+                                style={{ background: dotColor }}
+                              />
+                              <span className="text-[9px] font-bold capitalize" style={{ color: dotColor }}>
+                                {lead.status || 'novo'}
+                              </span>
+                              {lead.phone && (
+                                <a
+                                  href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
+                                  target="_blank" rel="noopener noreferrer"
+                                  onClick={e => e.stopPropagation()}
+                                  className="w-6 h-6 rounded-lg flex items-center justify-center transition-colors"
+                                  style={{ background: 'rgba(37,211,102,0.12)', border: '1px solid rgba(37,211,102,0.2)', color: '#25D366' }}
+                                >
+                                  <Phone size={10} />
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 

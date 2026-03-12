@@ -9,7 +9,8 @@ import {
 import {
     Plus, Search, Grid3X3, List, Building2, MapPin, Bed, Bath, Ruler,
     DollarSign, Star, MoreHorizontal, Eye, Edit, CheckCircle, Clock,
-    AlertCircle, Tag, Archive, Trash2, ShoppingCart, X,
+    AlertCircle, Tag, Archive, Trash2, ShoppingCart, X, ArrowUpDown,
+    TrendingUp, Users, Flame,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -77,6 +78,8 @@ interface Imovel {
     visitas: number
     image: string | null
     liquidez: number
+    hotLeads: number
+    totalLeads: number
 }
 
 /* ─── ANIMATED COUNTER ───────────────────────────────────────────── */
@@ -294,7 +297,7 @@ function ImovelCard({ imovel, index, onAction }: { imovel: Imovel; index: number
                             <CardActionsMenu imovel={imovel} onAction={onAction} />
                         </div>
 
-                        {/* Bottom: status + views (always visible) */}
+                        {/* Bottom: status + leads/views (always visible) */}
                         <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 flex items-end justify-between pointer-events-none">
                             <motion.span
                                 layout
@@ -314,9 +317,27 @@ function ImovelCard({ imovel, index, onAction }: { imovel: Imovel; index: number
                                 />
                                 {s.label}
                             </motion.span>
-                            <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.42)' }}>
-                                {imovel.visitas > 0 ? `${imovel.visitas} views` : ''}
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                                {imovel.hotLeads > 0 && (
+                                    <motion.span
+                                        initial={{ scale: 0, opacity: 0 }}
+                                        animate={{ scale: 1, opacity: 1 }}
+                                        transition={{ type: 'spring', delay: index * 0.05 + 0.4, stiffness: 300 }}
+                                        className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-[3px] rounded-full"
+                                        style={{
+                                            color: '#F87171',
+                                            background: 'rgba(0,0,0,0.58)',
+                                            border: '1px solid rgba(248,113,113,0.3)',
+                                            backdropFilter: 'blur(8px)',
+                                        }}
+                                    >
+                                        <Flame size={8} fill="#F87171" /> {imovel.hotLeads}
+                                    </motion.span>
+                                )}
+                                <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.42)' }}>
+                                    {imovel.visitas > 0 ? `${imovel.visitas}v` : ''}
+                                </span>
+                            </div>
                         </div>
 
                         {/* Hover quick-actions row */}
@@ -448,6 +469,8 @@ export default function ImoveisPage() {
     const [filter, setFilter] = useState('all')
     const [filterConstrutora, setFilterConstrutora] = useState('all')
     const [filterTipo, setFilterTipo] = useState('all')
+    const [sort, setSort] = useState<'recentes' | 'preco_asc' | 'preco_desc' | 'liquidez' | 'visitas' | 'leads'>('recentes')
+    const [showSortMenu, setShowSortMenu] = useState(false)
     const [imoveis, setImoveis] = useState<Imovel[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -496,6 +519,8 @@ export default function ImoveisPage() {
                                 visitas: d.views || 0,
                                 image: d.image || (Array.isArray(d.gallery_images) && d.gallery_images[0]) || null,
                                 liquidez: Math.min(97, 22 + s.hot * 13 + s.warm * 8 + s.total * 3 + s.won * 16),
+                                hotLeads: s.hot,
+                                totalLeads: s.total,
                             }
                         }))
                         setLoading(false)
@@ -558,6 +583,28 @@ export default function ImoveisPage() {
         const matchTipo = filterTipo === 'all' || im.tipo.toLowerCase() === filterTipo.toLowerCase()
         return matchSearch && matchFilter && matchConstrutora && matchTipo
     })
+
+    // Status counts for filter chips
+    const statusCounts: Record<string, number> = Object.fromEntries(
+        Object.keys(STATUS_MAP).map(k => [k, imoveis.filter(i => i.status === k).length])
+    )
+
+    // Sort filtered results
+    const sorted = [...filtered].sort((a, b) => {
+        switch (sort) {
+            case 'preco_asc':  return (a.preco || 0) - (b.preco || 0)
+            case 'preco_desc': return (b.preco || 0) - (a.preco || 0)
+            case 'liquidez':   return b.liquidez - a.liquidez
+            case 'visitas':    return b.visitas - a.visitas
+            case 'leads':      return b.totalLeads - a.totalLeads
+            default:           return 0  // recentes — preserve API order
+        }
+    })
+
+    const SORT_LABELS: Record<string, string> = {
+        recentes: 'Recentes', preco_desc: 'Maior preço', preco_asc: 'Menor preço',
+        liquidez: 'Liquidez ↓', visitas: 'Visualizações ↓', leads: 'Mais leads',
+    }
 
     // Derived option lists (only entries that appear in current data)
     const construtoras = Array.from(new Set(imoveis.map(i => i.construtora).filter(Boolean) as string[])).sort()
@@ -718,10 +765,69 @@ export default function ImoveisPage() {
                                             style={{ background: filter === s ? 'rgba(255,255,255,0.7)' : STATUS_MAP[s]?.dot }}
                                         />
                                     )}
-                                    {s === 'all' ? 'Todos' : STATUS_MAP[s]?.label}
+                                    {s === 'all'
+                                        ? `Todos (${imoveis.length})`
+                                        : statusCounts[s] > 0
+                                            ? `${STATUS_MAP[s]?.label} (${statusCounts[s]})`
+                                            : STATUS_MAP[s]?.label
+                                    }
                                 </motion.button>
                             ))}
                         </LayoutGroup>
+
+                        {/* Sort dropdown */}
+                        <div className="relative">
+                            <motion.button
+                                onClick={() => setShowSortMenu(!showSortMenu)}
+                                whileTap={{ scale: 0.92 }}
+                                className="h-9 px-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap"
+                                style={{
+                                    background: sort !== 'recentes' ? T.accentBg : T.elevated,
+                                    border: `1px solid ${sort !== 'recentes' ? T.borderGold : T.border}`,
+                                    color: sort !== 'recentes' ? T.accent : T.textDim,
+                                }}
+                            >
+                                <ArrowUpDown size={12} />
+                                <span className="hidden lg:inline">{SORT_LABELS[sort]}</span>
+                            </motion.button>
+                            <AnimatePresence>
+                                {showSortMenu && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={() => setShowSortMenu(false)} />
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.88, y: -8 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.88, y: -8 }}
+                                            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                                            className="absolute right-0 top-11 z-50 w-44 rounded-xl overflow-hidden shadow-2xl"
+                                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                                        >
+                                            {[
+                                                { key: 'recentes',   label: 'Mais recentes' },
+                                                { key: 'preco_desc', label: 'Maior preço' },
+                                                { key: 'preco_asc',  label: 'Menor preço' },
+                                                { key: 'liquidez',   label: 'Maior liquidez' },
+                                                { key: 'leads',      label: 'Mais leads' },
+                                                { key: 'visitas',    label: 'Mais visualizações' },
+                                            ].map((opt) => (
+                                                <button
+                                                    key={opt.key}
+                                                    onClick={() => { setSort(opt.key as typeof sort); setShowSortMenu(false) }}
+                                                    className="flex items-center w-full px-3 py-2.5 text-xs text-left hover:bg-[var(--bo-hover)] transition-colors"
+                                                    style={{
+                                                        color: sort === opt.key ? T.accent : T.text,
+                                                        fontWeight: sort === opt.key ? 700 : 500,
+                                                    }}
+                                                >
+                                                    {sort === opt.key && <CheckCircle size={10} className="mr-1.5 flex-shrink-0" />}
+                                                    {opt.label}
+                                                </button>
+                                            ))}
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
+                        </div>
 
                         {/* View toggle */}
                         <div className="flex items-center rounded-xl overflow-hidden ml-0.5" style={{ border: `1px solid ${T.border}` }}>
@@ -813,13 +919,13 @@ export default function ImoveisPage() {
                     className="text-[11px]"
                     style={{ color: T.textDim }}
                 >
-                    {filtered.length} imóvel{filtered.length !== 1 ? 's' : ''} encontrado{filtered.length !== 1 ? 's' : ''}
+                    {filtered.length} imóvel{filtered.length !== 1 ? 's' : ''} encontrado{filtered.length !== 1 ? 's' : ''}{sort !== 'recentes' && ` · ordenado por ${SORT_LABELS[sort].toLowerCase()}`}
                 </motion.p>
             </AnimatePresence>
 
             {/* Empty state */}
             <AnimatePresence>
-                {filtered.length === 0 && (
+                {sorted.length === 0 && (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.96, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -868,72 +974,151 @@ export default function ImoveisPage() {
 
             {/* Grid */}
             <AnimatePresence>
-                {filtered.length > 0 && view === 'grid' && (
+                {sorted.length > 0 && view === 'grid' && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
                     >
-                        {filtered.map((im, i) => (
+                        {sorted.map((im, i) => (
                             <ImovelCard key={im.id} imovel={im} index={i} onAction={handleAction} />
                         ))}
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* List */}
+            {/* List — proper data table */}
             <AnimatePresence>
-                {filtered.length > 0 && view === 'list' && (
+                {sorted.length > 0 && view === 'list' && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="space-y-1.5"
+                        className="rounded-2xl overflow-hidden"
+                        style={{ border: `1px solid ${T.border}` }}
                     >
-                        {filtered.map((im, i) => {
+                        {/* Table header */}
+                        <div
+                            className="hidden sm:grid items-center px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.08em]"
+                            style={{
+                                gridTemplateColumns: '48px 1fr 90px 100px 70px 80px 80px 44px',
+                                gap: '12px',
+                                color: T.textDim,
+                                background: T.elevated,
+                                borderBottom: `1px solid ${T.border}`,
+                            }}
+                        >
+                            <span />
+                            <span>Empreendimento</span>
+                            <span>Status</span>
+                            <span>Preço</span>
+                            <span>Área</span>
+                            <span>Liquidez</span>
+                            <span>Leads</span>
+                            <span />
+                        </div>
+                        {sorted.map((im, i) => {
                             const s = STATUS_MAP[im.status] || STATUS_MAP.disponivel
                             return (
                                 <motion.div
                                     key={im.id}
-                                    initial={{ opacity: 0, x: -12 }}
+                                    initial={{ opacity: 0, x: -8 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.025, duration: 0.3, ease: 'easeOut' }}
-                                    whileHover={{ x: 3, borderColor: 'rgba(255,255,255,0.09)' }}
-                                    className="group flex items-center gap-3 p-3 rounded-xl transition-colors"
-                                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+                                    transition={{ delay: i * 0.02, duration: 0.25, ease: 'easeOut' }}
+                                    className="group"
+                                    style={{ borderBottom: i < sorted.length - 1 ? `1px solid ${T.border}` : 'none', background: T.surface }}
                                 >
-                                    <Link href={`/backoffice/imoveis/${im.id}`} className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer">
-                                        <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'var(--bo-elevated)' }}>
-                                            {im.image ? (
-                                                <Image src={im.image} alt={im.titulo} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="48px" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center">
-                                                    <Building2 size={20} style={{ color: T.accent, opacity: 0.3 }} />
-                                                </div>
-                                            )}
+                                    {/* Mobile: compact row */}
+                                    <Link href={`/backoffice/imoveis/${im.id}`} className="flex sm:hidden items-center gap-3 p-3 cursor-pointer">
+                                        <div className="relative w-11 h-11 rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'var(--bo-elevated)' }}>
+                                            {im.image
+                                                ? <Image src={im.image} alt={im.titulo} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="44px" />
+                                                : <div className="w-full h-full flex items-center justify-center"><Building2 size={18} style={{ color: T.accent, opacity: 0.3 }} /></div>
+                                            }
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-1.5 mb-0.5">
-                                                <p className="text-[13px] font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
-                                                {im.destaque && <Star size={11} fill={T.accent} style={{ color: T.accent, flexShrink: 0 }} />}
-                                            </div>
-                                            <p className="text-[11px] truncate" style={{ color: T.textDim }}>
-                                                {im.codigo} · {im.bairro}{im.area > 0 ? ` · ${im.area.toLocaleString('pt-BR')}m²` : ''}
-                                            </p>
+                                            <p className="text-[13px] font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
+                                            <p className="text-[11px]" style={{ color: T.textDim }}>{im.bairro}</p>
                                         </div>
-                                        <div className="flex items-center gap-3 flex-shrink-0">
-                                            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-[3px] rounded-full" style={{ color: s.text, background: s.bg }}>
-                                                <span className="w-[5px] h-[5px] rounded-full" style={{ background: s.dot }} />
-                                                {s.label}
+                                        <div className="flex items-center gap-2 flex-shrink-0">
+                                            <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-[3px] rounded-full" style={{ color: s.text, background: s.bg }}>
+                                                <span className="w-[4px] h-[4px] rounded-full" style={{ background: s.dot }} />{s.label}
                                             </span>
-                                            <p className="text-sm font-bold hidden sm:block" style={{ color: T.accent }}>
-                                                {fmtPreco(im.preco, im.tipo)}
-                                            </p>
+                                            <p className="text-[12px] font-bold" style={{ color: T.accent }}>{fmtPreco(im.preco, im.tipo)}</p>
                                         </div>
                                     </Link>
-                                    <div className="flex-shrink-0">
-                                        <CardActionsMenu imovel={im} onAction={handleAction} />
+
+                                    {/* Desktop: full table row */}
+                                    <div
+                                        className="hidden sm:grid items-center px-4 py-3 hover:bg-[var(--bo-hover)] transition-colors"
+                                        style={{ gridTemplateColumns: '48px 1fr 90px 100px 70px 80px 80px 44px', gap: '12px' }}
+                                    >
+                                        <Link href={`/backoffice/imoveis/${im.id}`} className="contents cursor-pointer">
+                                            {/* Thumbnail */}
+                                            <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'var(--bo-elevated)' }}>
+                                                {im.image
+                                                    ? <Image src={im.image} alt={im.titulo} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="48px" />
+                                                    : <div className="w-full h-full flex items-center justify-center"><Building2 size={20} style={{ color: T.accent, opacity: 0.3 }} /></div>
+                                                }
+                                            </div>
+                                            {/* Name + location */}
+                                            <div className="min-w-0">
+                                                <div className="flex items-center gap-1.5 mb-0.5">
+                                                    <p className="text-[13px] font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
+                                                    {im.destaque && <Star size={10} fill={T.accent} style={{ color: T.accent, flexShrink: 0 }} />}
+                                                </div>
+                                                <p className="text-[10px] truncate" style={{ color: T.textDim }}>
+                                                    {im.bairro} {im.construtora ? `· ${im.construtora}` : ''}
+                                                </p>
+                                            </div>
+                                            {/* Status */}
+                                            <div>
+                                                <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-[3px] rounded-full" style={{ color: s.text, background: s.bg }}>
+                                                    <span className="w-[4px] h-[4px] rounded-full flex-shrink-0" style={{ background: s.dot }} />
+                                                    {s.label}
+                                                </span>
+                                            </div>
+                                            {/* Price */}
+                                            <p className="text-[13px] font-bold" style={{ color: T.accent }}>{fmtPreco(im.preco, im.tipo)}</p>
+                                            {/* Area */}
+                                            <p className="text-[12px]" style={{ color: T.textMuted }}>
+                                                {im.area > 0 ? `${im.area.toLocaleString('pt-BR')}m²` : '—'}
+                                            </p>
+                                            {/* Liquidez */}
+                                            <div className="w-full">
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                                                        <div
+                                                            className="h-full rounded-full transition-all duration-700"
+                                                            style={{
+                                                                width: `${im.liquidez}%`,
+                                                                background: im.liquidez >= 75 ? '#34d399' : im.liquidez >= 55 ? '#a3e635' : im.liquidez >= 40 ? '#fbbf24' : '#f87171',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <span className="text-[10px] font-bold tabular-nums flex-shrink-0" style={{ color: im.liquidez >= 75 ? '#34d399' : im.liquidez >= 40 ? '#fbbf24' : '#f87171' }}>
+                                                        {im.liquidez}%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            {/* Leads */}
+                                            <div className="flex items-center gap-1">
+                                                {im.hotLeads > 0 && (
+                                                    <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-[2px] rounded-md" style={{ color: '#F87171', background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.2)' }}>
+                                                        <Flame size={8} fill="#F87171" /> {im.hotLeads}
+                                                    </span>
+                                                )}
+                                                {im.totalLeads > im.hotLeads && (
+                                                    <span className="text-[10px]" style={{ color: T.textDim }}>+{im.totalLeads - im.hotLeads}</span>
+                                                )}
+                                                {im.totalLeads === 0 && <span className="text-[10px]" style={{ color: T.textDim }}>—</span>}
+                                            </div>
+                                        </Link>
+                                        {/* Actions */}
+                                        <div className="flex items-center justify-end">
+                                            <CardActionsMenu imovel={im} onAction={handleAction} />
+                                        </div>
                                     </div>
                                 </motion.div>
                             )
