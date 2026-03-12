@@ -10,8 +10,8 @@ import DevelopmentLocation from '../components/DevelopmentLocation'
 import DevelopmentUnits from '../components/DevelopmentUnits'
 import DevelopmentCTA from '../components/DevelopmentCTA'
 
-// Forcing dynamic for real-time updates from Backoffice
-export const dynamic = 'force-dynamic'
+// ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
+export const revalidate = 60
 
 const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'

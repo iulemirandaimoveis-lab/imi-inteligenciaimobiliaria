@@ -13,12 +13,12 @@ interface DevelopmentUnitsProps {
 }
 
 export default function DevelopmentUnits({ propertyId, propertyName }: DevelopmentUnitsProps) {
-    const supabase = createClient();
     const [units, setUnits] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showAll, setShowAll] = useState(false);
 
     useEffect(() => {
+        const supabase = createClient();
         async function fetchUnits() {
             const { data, error } = await supabase
                 .from('development_units')
@@ -32,7 +32,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
             setIsLoading(false);
         }
         fetchUnits();
-    }, [propertyId, supabase]);
+    }, [propertyId]);
 
     if (isLoading) {
         return (

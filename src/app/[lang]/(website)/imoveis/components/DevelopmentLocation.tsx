@@ -30,7 +30,9 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
             </div>
 
             <p className="text-gray-500 font-light text-[15px] mb-6 max-w-xl">
-                Situado em uma das regiões mais valorizadas, com acesso privilegiado a serviços e infraestrutura completa.
+                {development.location.address
+                    ? `${development.location.address}, ${development.location.neighborhood} — ${development.location.city}, ${development.location.state}`
+                    : `${development.location.neighborhood}, ${development.location.city} — ${development.location.state}`}
             </p>
 
             {/* Map */}

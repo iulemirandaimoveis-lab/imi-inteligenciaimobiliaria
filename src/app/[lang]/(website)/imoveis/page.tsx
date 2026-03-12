@@ -3,8 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import ImoveisClient from './ImoveisClient'
 import { mapDbPropertyToDevelopment } from '@/modules/imoveis/utils/propertyMapper'
 
-// Forcing dynamic for real-time updates from Backoffice
-export const dynamic = 'force-dynamic'
+// ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
+export const revalidate = 60
 
 export default async function ImoveisPage({
     params,

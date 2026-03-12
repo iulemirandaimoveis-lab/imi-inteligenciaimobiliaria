@@ -137,6 +137,17 @@ export default function ImovelDetalhesPage() {
     )
   }
 
+  // ── Fetch QR scan count (must be before any conditional returns — React hooks rules) ──
+  useEffect(() => {
+    if (!params.id || !data) return
+    import('@/lib/supabase/client').then(({ createClient }) => {
+      const supabase = createClient()
+      supabase.from('qr_scans').select('id', { count: 'exact', head: true })
+        .eq('property_id', params.id)
+        .then(({ count }) => setScanCount(count ?? 0))
+    })
+  }, [params.id, data])
+
   if (!data) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -150,17 +161,6 @@ export default function ImovelDetalhesPage() {
       </div>
     )
   }
-
-  // ── Fetch QR scan count ──
-  useEffect(() => {
-    if (!params.id) return
-    import('@/lib/supabase/client').then(({ createClient }) => {
-      const supabase = createClient()
-      supabase.from('qr_scans').select('id', { count: 'exact', head: true })
-        .eq('property_id', params.id)
-        .then(({ count }) => setScanCount(count ?? 0))
-    })
-  }, [params.id])
 
   // ── Generate content via AI ──
   const handleGenerateContent = async () => {

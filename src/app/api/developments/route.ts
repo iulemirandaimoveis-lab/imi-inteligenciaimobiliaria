@@ -265,11 +265,31 @@ export async function PUT(request: Request) {
 
         const normalized = normalizeFields(body)
 
-        // Ensure type fields stay in sync
-        if (normalized.type || normalized.tipo || normalized.property_type) {
-            const typeVal = normalized.type || normalized.tipo || normalized.property_type
-            normalized.tipo = typeVal
-            normalized.property_type = typeVal
+        // Ensure type fields stay in sync (only if normalizeFields didn't already handle it)
+        // normalizeFields maps capitalized form values (e.g. 'Apartamento') to all three columns
+        // This block handles cases where lowercase values come in (e.g. from edit form)
+        if (normalized.type && !normalized.tipo) {
+            // EN type provided without PT — look up reverse mapping
+            const enToPt: Record<string, string> = {
+                apartment: 'apartamento', house: 'casa', penthouse: 'apartamento',
+                studio: 'apartamento', land: 'lote', commercial: 'comercial',
+                resort: 'resort', flat: 'flat',
+            }
+            const enToPropType: Record<string, string> = {
+                apartment: 'apartment', house: 'house', penthouse: 'apartment',
+                studio: 'apartment', land: 'land', commercial: 'commercial',
+                resort: 'mixed', flat: 'apartment',
+            }
+            normalized.tipo = enToPt[normalized.type] || normalized.type
+            normalized.property_type = enToPropType[normalized.type] || normalized.type
+        } else if (normalized.tipo && !normalized.type) {
+            // PT tipo provided without EN — look up forward mapping
+            const ptToEn: Record<string, string> = {
+                apartamento: 'apartment', casa: 'house', flat: 'apartment',
+                lote: 'land', comercial: 'commercial', resort: 'resort',
+            }
+            normalized.type = ptToEn[normalized.tipo] || normalized.tipo
+            normalized.property_type = ptToEn[normalized.tipo] || 'mixed'
         }
 
         normalized.updated_at = new Date().toISOString()
