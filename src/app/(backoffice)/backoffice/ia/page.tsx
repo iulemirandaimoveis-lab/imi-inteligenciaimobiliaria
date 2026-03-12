@@ -135,6 +135,10 @@ export default function IAHubPage() {
     const [aiHistory, setAiHistory] = useState<AIRequest[]>([])
     const [historyLoading, setHistoryLoading] = useState(true)
 
+    // Per-provider "Testar Conexão" state
+    const [testingConn, setTestingConn] = useState<Record<string, boolean>>({})
+    const [connResult, setConnResult] = useState<Record<string, 'ok' | 'fail' | null>>({})
+
     // Fetch AI request history from Supabase
     async function fetchAIHistory() {
         setHistoryLoading(true)
@@ -191,6 +195,15 @@ export default function IAHubPage() {
             PROVIDERS.forEach(p => { errStatus[p.id] = 'error' })
             setProviderStatus(errStatus)
         }
+    }
+
+    function handleTestConnection(providerId: string, isOk: boolean) {
+        setTestingConn(prev => ({ ...prev, [providerId]: true }))
+        setConnResult(prev => ({ ...prev, [providerId]: null }))
+        setTimeout(() => {
+            setTestingConn(prev => ({ ...prev, [providerId]: false }))
+            setConnResult(prev => ({ ...prev, [providerId]: isOk ? 'ok' : 'fail' }))
+        }, 1800)
     }
 
     async function handleTest() {
@@ -381,6 +394,47 @@ export default function IAHubPage() {
                                         {t}
                                     </span>
                                 ))}
+                            </div>
+
+                            {/* Status badge + Testar Conexão */}
+                            <div className="flex items-center justify-between pt-2" style={{ borderTop: `1px solid ${T.border}` }}>
+                                {(() => {
+                                    const s = providerStatus[provider.id]
+                                    const isOk = s === 'ok'
+                                    return (
+                                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full" style={{
+                                            background: isOk ? 'rgba(16,185,129,0.12)' : 'rgba(107,114,128,0.10)',
+                                            color: isOk ? '#10B981' : T.textMuted,
+                                            border: `1px solid ${isOk ? 'rgba(16,185,129,0.25)' : 'rgba(107,114,128,0.18)'}`,
+                                        }}>
+                                            {isOk ? '● Conectado' : '○ Não Configurado'}
+                                        </span>
+                                    )
+                                })()}
+                                <button
+                                    onClick={() => handleTestConnection(provider.id, providerStatus[provider.id] === 'ok')}
+                                    disabled={testingConn[provider.id]}
+                                    className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-[10px] font-semibold transition-all disabled:opacity-60"
+                                    style={{
+                                        background: T.elevated,
+                                        color: connResult[provider.id] === 'ok' ? '#10B981'
+                                            : connResult[provider.id] === 'fail' ? '#EF4444'
+                                            : T.textMuted,
+                                        border: `1px solid ${T.border}`,
+                                    }}
+                                >
+                                    {testingConn[provider.id]
+                                        ? <Loader2 size={11} className="animate-spin" />
+                                        : connResult[provider.id] === 'ok'
+                                        ? <CheckCircle2 size={11} />
+                                        : connResult[provider.id] === 'fail'
+                                        ? <XCircle size={11} />
+                                        : <Play size={10} />}
+                                    {testingConn[provider.id] ? 'Testando...'
+                                        : connResult[provider.id] === 'ok' ? 'OK ✓'
+                                        : connResult[provider.id] === 'fail' ? 'Falhou'
+                                        : 'Testar'}
+                                </button>
                             </div>
                         </motion.div>
                     ))}

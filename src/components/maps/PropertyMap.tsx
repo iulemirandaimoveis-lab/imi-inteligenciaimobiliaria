@@ -68,6 +68,9 @@ export default function PropertyMap({
     const [mapLoaded, setMapLoaded] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
+    // Floating card state — shown when a marker is clicked
+    const [selectedProperty, setSelectedProperty] = useState<Development | null>(null)
+
     // Keep callback ref fresh without re-init
     useEffect(() => { onMarkerClickRef.current = onMarkerClick }, [onMarkerClick])
 
@@ -193,6 +196,7 @@ export default function PropertyMap({
                 // Click fires onMarkerClick callback for sidebar sync
                 el.addEventListener('click', () => {
                     onMarkerClickRef.current?.(dev.id)
+                    setSelectedProperty(dev)
                 })
 
                 const popupHTML = `
@@ -310,6 +314,8 @@ export default function PropertyMap({
                 essential: true,
             })
         }
+        // Also show floating card
+        if (dev) setSelectedProperty(dev)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedId, mapLoaded])
 
@@ -397,6 +403,127 @@ export default function PropertyMap({
             {/* Map container */}
             <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
 
+            {/* Floating property card — shown on marker click */}
+            {selectedProperty && (() => {
+                const sc = STATUS_COLORS[selectedProperty.status] || '#3B82F6'
+                return (
+                    <div style={{
+                        position: 'absolute',
+                        bottom: 20,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 20,
+                        width: 'min(340px, calc(100% - 32px))',
+                        background: 'rgba(16, 20, 35, 0.97)',
+                        backdropFilter: 'blur(20px)',
+                        borderRadius: 18,
+                        overflow: 'hidden',
+                        boxShadow: '0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)',
+                        animation: 'floatCardIn 0.22s cubic-bezier(0.16,1,0.3,1)',
+                    }}>
+                        {/* Close button */}
+                        <button
+                            onClick={() => setSelectedProperty(null)}
+                            style={{
+                                position: 'absolute', top: 10, right: 10, zIndex: 2,
+                                width: 28, height: 28, borderRadius: '50%',
+                                background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+                                border: '1px solid rgba(255,255,255,0.15)',
+                                color: 'rgba(255,255,255,0.8)', fontSize: 18, lineHeight: '1',
+                                cursor: 'pointer', display: 'flex', alignItems: 'center',
+                                justifyContent: 'center', fontWeight: 300,
+                            }}
+                            aria-label="Fechar"
+                        >
+                            ×
+                        </button>
+
+                        {/* Property photo */}
+                        {selectedProperty.images.main ? (
+                            <div style={{ position: 'relative' }}>
+                                <img
+                                    src={selectedProperty.images.main}
+                                    alt={selectedProperty.name}
+                                    style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}
+                                />
+                                <div style={{
+                                    position: 'absolute', bottom: 10, left: 12,
+                                    background: sc + '22',
+                                    color: sc,
+                                    fontSize: 9, fontWeight: 700,
+                                    textTransform: 'uppercase' as const, letterSpacing: '0.12em',
+                                    padding: '3px 8px', borderRadius: 999,
+                                    border: `1px solid ${sc}44`,
+                                    backdropFilter: 'blur(4px)',
+                                }}>
+                                    {STATUS_LABELS[selectedProperty.status] || selectedProperty.status}
+                                </div>
+                            </div>
+                        ) : (
+                            <div style={{
+                                height: 64,
+                                background: 'linear-gradient(135deg,rgba(29,78,216,0.12),rgba(59,130,246,0.12))',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: 28,
+                            }}>
+                                🏢
+                            </div>
+                        )}
+
+                        {/* Card body */}
+                        <div style={{ padding: '14px 16px 16px' }}>
+                            <p style={{
+                                fontWeight: 800, fontSize: 14, color: '#F9FAFB',
+                                margin: '0 0 3px', lineHeight: 1.3,
+                            }}>
+                                {selectedProperty.name}
+                            </p>
+                            <p style={{ fontSize: 11, color: '#9CA3AF', margin: '0 0 10px' }}>
+                                {selectedProperty.location.neighborhood
+                                    ? `${selectedProperty.location.neighborhood}, `
+                                    : ''}
+                                {selectedProperty.location.city}
+                            </p>
+
+                            {/* Price */}
+                            <div style={{ marginBottom: 14 }}>
+                                {selectedProperty.priceRange.min > 0 ? (
+                                    <>
+                                        <p style={{ fontSize: 10, color: '#9CA3AF', margin: '0 0 2px', fontWeight: 600 }}>
+                                            A partir de
+                                        </p>
+                                        <p style={{
+                                            fontSize: 20, fontWeight: 900, color: '#60A5FA',
+                                            margin: 0, letterSpacing: '-0.02em',
+                                        }}>
+                                            {formatCurrency(selectedProperty.priceRange.min)}
+                                        </p>
+                                    </>
+                                ) : (
+                                    <p style={{ fontSize: 16, fontWeight: 700, color: '#F59E0B', margin: 0 }}>
+                                        Sob Consulta
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* CTA */}
+                            <a
+                                href={`/${lang}/imoveis/${selectedProperty.slug}`}
+                                style={{
+                                    display: 'block', textAlign: 'center',
+                                    background: 'linear-gradient(135deg,#1D4ED8,#3B82F6)',
+                                    color: 'white', fontSize: 13, fontWeight: 700,
+                                    padding: '10px 16px', borderRadius: 10,
+                                    textDecoration: 'none', letterSpacing: '0.01em',
+                                }}
+                            >
+                                Ver Detalhes →
+                            </a>
+                        </div>
+                    </div>
+                )
+            })()}
+
             {/* Popup CSS overrides — works for both mapboxgl and maplibregl classes */}
             <style>{`
                 .imi-popup .mapboxgl-popup-content,
@@ -416,6 +543,10 @@ export default function PropertyMap({
                 .maplibregl-ctrl-attrib, .maplibregl-ctrl-logo { display: none !important; }
                 .imi-property-marker { z-index: 1; }
                 .imi-property-marker:hover { z-index: 10; }
+                @keyframes floatCardIn {
+                    from { opacity: 0; transform: translateX(-50%) translateY(14px); }
+                    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+                }
             `}</style>
         </div>
     )
