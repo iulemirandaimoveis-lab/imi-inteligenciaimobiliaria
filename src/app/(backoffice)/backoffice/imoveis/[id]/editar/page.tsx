@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
@@ -8,11 +8,89 @@ import {
   ArrowLeft, Building2, MapPin, Ruler, Home, DollarSign,
   Image as ImageIcon, Upload, Check, Calendar, Save,
   Loader2, AlertCircle, BedDouble, Bath, Car, Sparkles, Star,
-  Play, FileText, X, CheckCircle, Globe, Eye, Zap,
+  Play, FileText, X, CheckCircle, Globe, Eye, Zap, GripVertical,
+  Maximize,
 } from 'lucide-react'
 import Image from 'next/image'
 import { uploadFile, uploadMultipleFiles } from '@/lib/supabase-storage'
 import { T } from '@/app/(backoffice)/lib/theme'
+import {
+  DndContext, closestCenter, KeyboardSensor, PointerSensor,
+  useSensor, useSensors, DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  arrayMove, SortableContext, sortableKeyboardCoordinates,
+  rectSortingStrategy, useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+
+/* ── Sortable gallery image ── */
+interface SortableGalleryItemProps {
+  id: string
+  url: string // URL or blob URL
+  label?: string
+  isCover: boolean
+  onSetCover: () => void
+  onDelete: () => void
+  onPreview: () => void
+}
+function SortableGalleryItem({ id, url, label, isCover, onSetCover, onDelete, onPreview }: SortableGalleryItemProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 30 : 1,
+  }
+  return (
+    <div ref={setNodeRef} style={style} className="relative group rounded-xl overflow-hidden"
+      {...attributes}>
+      <div className="w-full h-28 relative" style={{ border: `1px solid ${T.border}`, borderRadius: 12, overflow: 'hidden' }}>
+        <img src={url} alt="" className="w-full h-full object-cover" />
+        {/* Drag handle */}
+        <div {...listeners} className="absolute top-2 left-2 w-6 h-6 rounded-lg flex items-center justify-center cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
+          <GripVertical size={12} color="white" />
+        </div>
+        {/* Index badge */}
+        <div className="absolute top-2 left-10 w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold pointer-events-none"
+          style={{ background: 'rgba(0,0,0,0.5)', color: 'white' }}>
+          {parseInt(id.replace('img-', '')) + 1}
+        </div>
+        {/* Cover badge */}
+        {isCover && (
+          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold"
+            style={{ background: T.accent, color: 'white' }}>Capa</div>
+        )}
+        {/* "Nova" label */}
+        {label && (
+          <div className="absolute bottom-0 left-0 right-0 text-center text-[10px] py-0.5 font-medium"
+            style={{ background: `${T.accent}80`, color: 'white' }}>{label}</div>
+        )}
+        {/* Hover actions */}
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
+          <button type="button" onClick={onPreview}
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)' }}>
+            <Maximize size={12} color="white" />
+          </button>
+          {!isCover && (
+            <button type="button" onClick={onSetCover}
+              className="text-[10px] px-2 py-1 rounded-lg font-medium"
+              style={{ background: T.accent, color: 'white' }}>
+              Capa
+            </button>
+          )}
+          <button type="button" onClick={onDelete}
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: '#EF444480' }}>
+            <X size={12} color="white" />
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 /* ── helpers ── */
 function getYoutubeId(url: string): string | null {
@@ -49,13 +127,20 @@ const featuresOptions = [
   'Cinema', 'Spa', 'Jardim', 'Portaria 24h', 'Segurança', 'Elevador',
 ]
 
+// Unified gallery item: either an existing URL or a new File
+interface GalleryItem {
+  type: 'existing' | 'new'
+  url: string      // URL for existing, blob URL for new
+  file?: File      // only for new items
+}
+
 interface FormData {
   name: string; type: string; location: string; address: string
   developer: string; developer_id: string; description: string
   area: string; bedrooms: string; bathrooms: string; parking: string; floor: string
   features: string[]; priceMin: string; priceMax: string; pricePerSqm: string
   totalUnits: string; availableUnits: string; deliveryDate: string
-  images: File[]; existingImages: string[]; existingFloorPlans: string[]
+  galleryItems: GalleryItem[]; existingFloorPlans: string[]
   floorPlans: File[]; existingBrochure: string; brochure: File | null
   logo: File | null; existingLogo: string
   status: string; status_commercial: string; is_highlighted: boolean
@@ -66,10 +151,243 @@ const INITIAL: FormData = {
   name: '', type: '', location: '', address: '', developer: '', developer_id: '',
   description: '', area: '', bedrooms: '', bathrooms: '', parking: '', floor: '',
   features: [], priceMin: '', priceMax: '', pricePerSqm: '', totalUnits: '',
-  availableUnits: '', deliveryDate: '', images: [], existingImages: [],
+  availableUnits: '', deliveryDate: '', galleryItems: [],
   existingFloorPlans: [], floorPlans: [], existingBrochure: '', brochure: null,
   logo: null, existingLogo: '', status: 'disponivel', status_commercial: 'draft',
   is_highlighted: false, videoUrl: '', videoShort: '',
+}
+
+/* ── Gallery Tab with Drag-and-Drop (Fotos + Vídeos + Plantas + Brochure) ── */
+function GalleryTabContent({ formData, set, params }: { formData: FormData; set: (k: keyof FormData, v: any) => void; params: any }) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const inp = `w-full h-11 px-4 rounded-xl text-sm outline-none transition-all`
+  const inpStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  )
+
+  const galleryIds = useMemo(
+    () => formData.galleryItems.map((_, i) => `img-${i}`),
+    [formData.galleryItems.length]
+  )
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const oldIdx = parseInt((active.id as string).replace('img-', ''))
+    const newIdx = parseInt((over.id as string).replace('img-', ''))
+    const reordered = arrayMove([...formData.galleryItems], oldIdx, newIdx)
+    set('galleryItems', reordered)
+    toast.success('Ordem atualizada!')
+  }
+
+  const addNewFiles = (files: File[]) => {
+    const newItems: GalleryItem[] = files.map(f => ({
+      type: 'new' as const,
+      url: URL.createObjectURL(f),
+      file: f,
+    }))
+    set('galleryItems', [...formData.galleryItems, ...newItems])
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* ── Fotos com Drag-and-Drop ── */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-bold" style={{ color: T.text }}>Fotos do Empreendimento</h3>
+            <p className="text-xs mt-0.5" style={{ color: T.textDim }}>
+              Arraste para reordenar. A 1ª foto é a capa. {formData.galleryItems.length} foto(s).
+            </p>
+          </div>
+          <label className="cursor-pointer h-9 px-4 rounded-xl flex items-center gap-2 text-sm font-medium transition-all"
+            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
+            <Upload size={15} /> Adicionar
+            <input type="file" accept="image/*" multiple className="hidden" onChange={e => {
+              const files = Array.from(e.target.files || [])
+              if (files.length > 0) addNewFiles(files)
+              e.target.value = ''
+            }} />
+          </label>
+        </div>
+
+        {formData.galleryItems.length > 0 ? (
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={galleryIds} strategy={rectSortingStrategy}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {formData.galleryItems.map((item, i) => (
+                  <SortableGalleryItem
+                    key={`img-${i}`}
+                    id={`img-${i}`}
+                    url={item.url}
+                    label={item.type === 'new' ? 'Nova' : undefined}
+                    isCover={i === 0}
+                    onSetCover={() => {
+                      const items = [...formData.galleryItems]
+                      const [moved] = items.splice(i, 1)
+                      set('galleryItems', [moved, ...items])
+                    }}
+                    onDelete={() => {
+                      set('galleryItems', formData.galleryItems.filter((_, j) => j !== i))
+                    }}
+                    onPreview={() => setPreviewUrl(item.url)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        ) : (
+          <label className="cursor-pointer h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:opacity-80"
+            style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
+            <ImageIcon size={28} style={{ color: T.textDim }} />
+            <span className="text-sm" style={{ color: T.textDim }}>Clique para adicionar fotos</span>
+            <input type="file" accept="image/*" multiple className="hidden" onChange={e => {
+              addNewFiles(Array.from(e.target.files || []))
+              e.target.value = ''
+            }} />
+          </label>
+        )}
+
+        {formData.galleryItems.length > 1 && (
+          <p className="text-[10px] mt-2 flex items-center gap-1" style={{ color: T.textDim }}>
+            <GripVertical size={10} /> Arraste as imagens para reordenar
+          </p>
+        )}
+      </div>
+
+      {/* ── Vídeos ── */}
+      <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
+        <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Vídeos</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
+              <Play size={11} className="inline mr-1" />Tour Virtual (YouTube)
+            </label>
+            <input value={formData.videoUrl} onChange={e => set('videoUrl', e.target.value)}
+              placeholder="https://youtube.com/watch?v=..." className={inp} style={inpStyle} />
+            {formData.videoUrl && getYoutubeEmbedUrl(formData.videoUrl) && (
+              <div className="mt-3 rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                <iframe src={getYoutubeEmbedUrl(formData.videoUrl)!} className="w-full h-40" allow="autoplay; encrypted-media" allowFullScreen />
+              </div>
+            )}
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
+              <Zap size={11} className="inline mr-1" />Vídeo Curto (Shorts/Reels)
+            </label>
+            <input value={formData.videoShort} onChange={e => set('videoShort', e.target.value)}
+              placeholder="https://youtube.com/shorts/..." className={inp} style={inpStyle} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Plantas ── */}
+      <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-bold" style={{ color: T.text }}>Plantas do Imóvel</h3>
+          <label className="cursor-pointer h-9 px-4 rounded-xl flex items-center gap-2 text-sm font-medium"
+            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
+            <Upload size={15} /> Adicionar planta
+            <input type="file" accept="image/*" multiple className="hidden" onChange={e => set('floorPlans', [...formData.floorPlans, ...Array.from(e.target.files || [])])} />
+          </label>
+        </div>
+        {(formData.existingFloorPlans.length > 0 || formData.floorPlans.length > 0) ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {formData.existingFloorPlans.map((url, i) => (
+              <div key={url} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                <img src={url} alt={`planta ${i}`} className="w-full h-28 object-cover" />
+                <button type="button" onClick={() => set('existingFloorPlans', formData.existingFloorPlans.filter(x => x !== url))}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                  style={{ background: '#EF444480' }}><X size={12} color="white" /></button>
+              </div>
+            ))}
+            {formData.floorPlans.map((file, i) => (
+              <div key={i} className="relative group rounded-xl overflow-hidden" style={{ border: `2px dashed ${T.accent}40` }}>
+                <img src={URL.createObjectURL(file)} alt="planta nova" className="w-full h-28 object-cover" />
+                <button type="button" onClick={() => set('floorPlans', formData.floorPlans.filter((_, j) => j !== i))}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
+                  style={{ background: '#EF444480' }}><X size={12} color="white" /></button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8 rounded-xl" style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
+            <FileText size={28} className="mx-auto mb-2" style={{ color: T.textDim }} />
+            <p className="text-sm" style={{ color: T.textDim }}>Nenhuma planta adicionada</p>
+          </div>
+        )}
+      </div>
+
+      {/* ── Brochure ── */}
+      <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
+        <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Brochure / Material PDF</h3>
+        {formData.existingBrochure ? (
+          <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+            <FileText size={20} style={{ color: T.accent }} />
+            <div className="flex-1">
+              <p className="text-sm font-medium" style={{ color: T.text }}>Brochure atual</p>
+              <a href={formData.existingBrochure} target="_blank" rel="noopener" className="text-xs underline" style={{ color: T.accent }}>Ver PDF</a>
+            </div>
+            <button type="button" onClick={() => set('existingBrochure', '')} className="text-xs px-3 py-1.5 rounded-lg"
+              style={{ background: '#EF444415', color: '#EF4444', border: '1px solid #EF444430' }}>
+              Remover
+            </button>
+          </div>
+        ) : (
+          <label className="cursor-pointer flex items-center gap-3 p-4 rounded-xl transition-all hover:opacity-80"
+            style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
+            <FileText size={20} style={{ color: T.textDim }} />
+            <div>
+              <p className="text-sm font-medium" style={{ color: T.text }}>
+                {formData.brochure ? formData.brochure.name : 'Fazer upload do brochure'}
+              </p>
+              <p className="text-xs" style={{ color: T.textDim }}>PDF, máx. 50MB</p>
+            </div>
+            <input type="file" accept=".pdf" className="hidden" onChange={e => e.target.files?.[0] && set('brochure', e.target.files[0])} />
+          </label>
+        )}
+      </div>
+
+      {/* ── Visibilidade ── */}
+      <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
+        <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: `${T.accent}08`, border: `1px solid ${T.accent}20` }}>
+          <Globe size={18} style={{ color: T.accent }} />
+          <div className="flex-1">
+            <p className="text-sm font-medium" style={{ color: T.text }}>Visibilidade no site público</p>
+            <p className="text-xs" style={{ color: T.textDim }}>Controla se aparece em iulemirandaimoveis.com.br</p>
+          </div>
+          <select value={formData.status_commercial} onChange={e => set('status_commercial', e.target.value)}
+            className="h-9 px-3 rounded-xl text-sm outline-none"
+            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
+            <option value="published">Publicado</option>
+            <option value="draft">Rascunho</option>
+            <option value="campaign">Campanha</option>
+            <option value="private">Privado</option>
+            <option value="sold">Vendido</option>
+          </select>
+        </div>
+      </div>
+
+      {/* ── Preview Modal ── */}
+      {previewUrl && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] flex items-center justify-center p-4"
+          onClick={() => setPreviewUrl(null)}>
+          <div className="relative max-w-5xl w-full">
+            <button onClick={() => setPreviewUrl(null)}
+              className="absolute -top-12 right-0 p-2 rounded-full"
+              style={{ background: 'rgba(255,255,255,0.1)' }}>
+              <X size={24} color="white" />
+            </button>
+            <img src={previewUrl} alt="Preview" className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl mx-auto"
+              onClick={e => e.stopPropagation()} />
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function EditarImovelPage() {
@@ -106,7 +424,7 @@ export default function EditarImovelPage() {
           totalUnits: d.units_count?.toString() || d.total_units?.toString() || '',
           availableUnits: d.available_units?.toString() || '',
           deliveryDate: d.delivery_date ? d.delivery_date.substring(0, 7) : '',
-          images: [], existingImages: galleryImgs,
+          galleryItems: galleryImgs.map((url: string) => ({ type: 'existing' as const, url })),
           existingFloorPlans: Array.isArray(d.floor_plans) ? d.floor_plans : [],
           floorPlans: [], existingBrochure: d.brochure_url || '', brochure: null,
           logo: null, existingLogo: d.developers?.logo_url || '',
@@ -140,14 +458,24 @@ export default function EditarImovelPage() {
     if (!formData.name.trim()) { toast.error('Nome é obrigatório'); setActiveTab('basico'); return }
     setIsSubmitting(true)
     try {
-      let newImageUrls: string[] = []
-      if (formData.images.length > 0) {
-        toast.info(`Enviando ${formData.images.length} imagem(ns)...`)
-        const r = await uploadMultipleFiles(formData.images, 'media', `developments/${params.id}`)
-        newImageUrls = r.filter(x => !x.error).map(x => x.url)
+      // Upload new gallery images (preserving order from galleryItems)
+      const newFiles = formData.galleryItems.filter(g => g.type === 'new' && g.file)
+      let newImageUrls: Map<string, string> = new Map() // blobUrl → uploadedUrl
+      if (newFiles.length > 0) {
+        toast.info(`Enviando ${newFiles.length} imagem(ns)...`)
+        const files = newFiles.map(g => g.file!)
+        const r = await uploadMultipleFiles(files, 'media', `developments/${params.id}`)
+        newFiles.forEach((g, i) => {
+          if (!r[i]?.error) newImageUrls.set(g.url, r[i].url)
+        })
         const failed = r.filter(x => x.error).length
         if (failed > 0) toast.warning(`${failed} imagem(ns) falharam`)
       }
+      // Build final image array in the exact user-defined order
+      const allImages = formData.galleryItems
+        .map(g => g.type === 'existing' ? g.url : newImageUrls.get(g.url) || null)
+        .filter(Boolean) as string[]
+
       let newFpUrls: string[] = []
       if (formData.floorPlans.length > 0) {
         const r = await uploadMultipleFiles(formData.floorPlans, 'media', `developments/${params.id}/plantas`)
@@ -158,7 +486,6 @@ export default function EditarImovelPage() {
         const r = await uploadFile(formData.brochure, 'media', 'developments/brochures')
         if (!r.error) brochureUrl = r.url
       }
-      const allImages = [...formData.existingImages, ...newImageUrls]
       const res = await fetch('/api/developments', {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -184,9 +511,12 @@ export default function EditarImovelPage() {
       if (!res.ok) { const e = await res.json(); throw new Error(e.error || 'Erro ao atualizar') }
       setLastSaved(new Date())
       toast.success('Empreendimento salvo!')
-      // Update file state
-      const saved = await res.json()
-      setFormData(p => ({ ...p, images: [], floorPlans: [], brochure: null }))
+      // Convert newly-uploaded items to existing items (with real URLs)
+      setFormData(p => ({
+        ...p,
+        galleryItems: allImages.map(url => ({ type: 'existing' as const, url })),
+        floorPlans: [], brochure: null,
+      }))
     } catch (err: any) {
       toast.error('Erro ao salvar: ' + err.message)
     } finally { setIsSubmitting(false) }
@@ -208,7 +538,7 @@ export default function EditarImovelPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-0">
       {/* ── Sticky Header ── */}
-      <div className="sticky top-0 z-20 backdrop-blur-xl rounded-b-2xl mb-6" style={{ background: `${T.bg}ee`, borderBottom: `1px solid ${T.border}` }}>
+      <div className="sticky top-14 lg:top-0 z-20 backdrop-blur-xl rounded-b-2xl mb-6" style={{ background: `${T.bg}ee`, borderBottom: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ border: `1px solid ${T.border}`, background: T.surface }}>
@@ -455,189 +785,13 @@ export default function EditarImovelPage() {
 
           {/* ── MÍDIA ── */}
           {activeTab === 'midia' && (
-            <div className="space-y-8">
-              {/* Fotos */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-sm font-bold" style={{ color: T.text }}>Fotos do Empreendimento</h3>
-                    <p className="text-xs mt-0.5" style={{ color: T.textDim }}>A primeira foto é a capa. Clique em "Definir capa" para alterar.</p>
-                  </div>
-                  <label className="cursor-pointer h-9 px-4 rounded-xl flex items-center gap-2 text-sm font-medium transition-all"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
-                    <Upload size={15} /> Adicionar
-                    <input type="file" accept="image/*" multiple className="hidden" onChange={e => {
-                      const files = Array.from(e.target.files || [])
-                      set('images', [...formData.images, ...files])
-                    }} />
-                  </label>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {formData.existingImages.map((url, i) => (
-                    <div key={url} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
-                      <Image src={url} alt={`img ${i}`} width={200} height={120} className="w-full h-28 object-cover" />
-                      {i === 0 && (
-                        <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: T.accent, color: 'white' }}>Capa</div>
-                      )}
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        {i > 0 && (
-                          <button onClick={() => {
-                            const imgs = [...formData.existingImages]
-                            const [main] = imgs.splice(i, 1)
-                            set('existingImages', [main, ...imgs])
-                          }} className="text-[11px] px-2 py-1 rounded-lg font-medium" style={{ background: T.accent, color: 'white' }}>
-                            Definir capa
-                          </button>
-                        )}
-                        <button onClick={() => set('existingImages', formData.existingImages.filter(x => x !== url))}
-                          className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: '#EF444480' }}>
-                          <X size={14} color="white" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  {formData.images.map((file, i) => (
-                    <div key={i} className="relative group rounded-xl overflow-hidden" style={{ border: `2px dashed ${T.accent}40`, background: `${T.accent}08` }}>
-                      <img src={URL.createObjectURL(file)} alt="nova" className="w-full h-28 object-cover" />
-                      <div className="absolute top-2 right-2">
-                        <button onClick={() => set('images', formData.images.filter((_, j) => j !== i))}
-                          className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#EF444480' }}>
-                          <X size={12} color="white" />
-                        </button>
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 text-center text-[10px] py-1 font-medium" style={{ background: `${T.accent}80`, color: 'white' }}>Nova</div>
-                    </div>
-                  ))}
-                  {formData.existingImages.length === 0 && formData.images.length === 0 && (
-                    <label className="col-span-full cursor-pointer h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all hover:opacity-80"
-                      style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
-                      <ImageIcon size={28} style={{ color: T.textDim }} />
-                      <span className="text-sm" style={{ color: T.textDim }}>Clique para adicionar fotos</span>
-                      <input type="file" accept="image/*" multiple className="hidden" onChange={e => set('images', Array.from(e.target.files || []))} />
-                    </label>
-                  )}
-                </div>
-              </div>
-
-              {/* Vídeos */}
-              <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
-                <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Vídeos</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
-                      <Play size={11} className="inline mr-1" />Tour Virtual (YouTube)
-                    </label>
-                    <input value={formData.videoUrl} onChange={e => set('videoUrl', e.target.value)}
-                      placeholder="https://youtube.com/watch?v=..." className={inp} style={inpStyle} />
-                    {formData.videoUrl && getYoutubeEmbedUrl(formData.videoUrl) && (
-                      <div className="mt-3 rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
-                        <iframe src={getYoutubeEmbedUrl(formData.videoUrl)!} className="w-full h-40" allow="autoplay; encrypted-media" allowFullScreen />
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
-                      <Zap size={11} className="inline mr-1" />Vídeo Curto (Shorts/Reels)
-                    </label>
-                    <input value={formData.videoShort} onChange={e => set('videoShort', e.target.value)}
-                      placeholder="https://youtube.com/shorts/..." className={inp} style={inpStyle} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Plantas */}
-              <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold" style={{ color: T.text }}>Plantas do Imóvel</h3>
-                  <label className="cursor-pointer h-9 px-4 rounded-xl flex items-center gap-2 text-sm font-medium"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
-                    <Upload size={15} /> Adicionar planta
-                    <input type="file" accept="image/*" multiple className="hidden" onChange={e => set('floorPlans', [...formData.floorPlans, ...Array.from(e.target.files || [])])} />
-                  </label>
-                </div>
-                {(formData.existingFloorPlans.length > 0 || formData.floorPlans.length > 0) ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {formData.existingFloorPlans.map((url, i) => (
-                      <div key={url} className="relative group rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
-                        <Image src={url} alt={`planta ${i}`} width={200} height={120} className="w-full h-28 object-cover" />
-                        <button onClick={() => set('existingFloorPlans', formData.existingFloorPlans.filter(x => x !== url))}
-                          className="absolute top-2 right-2 w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
-                          style={{ background: '#EF444480' }}><X size={12} color="white" /></button>
-                      </div>
-                    ))}
-                    {formData.floorPlans.map((file, i) => (
-                      <div key={i} className="relative group rounded-xl overflow-hidden" style={{ border: `2px dashed ${T.accent}40` }}>
-                        <img src={URL.createObjectURL(file)} alt="planta nova" className="w-full h-28 object-cover" />
-                        <button onClick={() => set('floorPlans', formData.floorPlans.filter((_, j) => j !== i))}
-                          className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
-                          style={{ background: '#EF444480' }}><X size={12} color="white" /></button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 rounded-xl" style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
-                    <FileText size={28} className="mx-auto mb-2" style={{ color: T.textDim }} />
-                    <p className="text-sm" style={{ color: T.textDim }}>Nenhuma planta adicionada</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Brochure */}
-              <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
-                <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Brochure / Material PDF</h3>
-                {formData.existingBrochure ? (
-                  <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                    <FileText size={20} style={{ color: T.accent }} />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium" style={{ color: T.text }}>Brochure atual</p>
-                      <a href={formData.existingBrochure} target="_blank" rel="noopener" className="text-xs underline" style={{ color: T.accent }}>Ver PDF</a>
-                    </div>
-                    <button onClick={() => set('existingBrochure', '')} className="text-xs px-3 py-1.5 rounded-lg" style={{ background: '#EF444415', color: '#EF4444', border: '1px solid #EF444430' }}>
-                      Remover
-                    </button>
-                  </div>
-                ) : (
-                  <label className="cursor-pointer flex items-center gap-3 p-4 rounded-xl transition-all hover:opacity-80"
-                    style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
-                    <FileText size={20} style={{ color: T.textDim }} />
-                    <div>
-                      <p className="text-sm font-medium" style={{ color: T.text }}>
-                        {formData.brochure ? formData.brochure.name : 'Fazer upload do brochure'}
-                      </p>
-                      <p className="text-xs" style={{ color: T.textDim }}>PDF, máx. 50MB</p>
-                    </div>
-                    <input type="file" accept=".pdf" className="hidden" onChange={e => e.target.files?.[0] && set('brochure', e.target.files[0])} />
-                  </label>
-                )}
-              </div>
-
-              {/* Site visibility */}
-              <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
-                <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: `${T.accent}08`, border: `1px solid ${T.accent}20` }}>
-                  <Globe size={18} style={{ color: T.accent }} />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium" style={{ color: T.text }}>Visibilidade no site público</p>
-                    <p className="text-xs" style={{ color: T.textDim }}>Controla se aparece em iulemirandaimoveis.com.br</p>
-                  </div>
-                  <select value={formData.status_commercial} onChange={e => set('status_commercial', e.target.value)}
-                    className="h-9 px-3 rounded-xl text-sm outline-none"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
-                    <option value="published">Publicado</option>
-                    <option value="draft">Rascunho</option>
-                    <option value="campaign">Campanha</option>
-                    <option value="private">Privado</option>
-                    <option value="sold">Vendido</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            <GalleryTabContent formData={formData} set={set} params={params} />
           )}
         </motion.div>
       </AnimatePresence>
 
       {/* ── Bottom Save ── */}
-      <div className="flex items-center justify-between py-4 px-2">
+      <div className="flex items-center justify-between py-4 pb-32 lg:pb-4 px-2">
         <button onClick={() => router.push(`/backoffice/imoveis/${params.id}`)}
           className="text-sm flex items-center gap-1.5" style={{ color: T.textDim }}>
           <ArrowLeft size={14} /> Cancelar

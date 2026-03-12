@@ -1430,7 +1430,7 @@ export default function NovoImovelPage() {
             </div>
 
             {/* ── Navigation Buttons ── */}
-            <div className="flex items-center justify-between pb-8">
+            <div className="flex items-center justify-between pb-32 lg:pb-8">
                 <button
                     type="button"
                     onClick={handlePrev}
