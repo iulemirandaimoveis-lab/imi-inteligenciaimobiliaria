@@ -28,6 +28,7 @@ import {
   Upload,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const BTN_PRIMARY = {
   background: 'var(--bo-accent)',
@@ -284,24 +285,26 @@ export default function NovaCampanhaPage() {
 
   return (
     <div className="space-y-6">
+      <PageIntelHeader
+        moduleLabel="CAMPANHAS"
+        title="Nova Campanha"
+        subtitle={`${steps[currentStep - 1].label} · Passo ${currentStep}/3`}
+        breadcrumbs={[
+          { label: 'Campanhas', href: '/backoffice/campanhas' },
+          { label: 'Nova' },
+        ]}
+      />
+
       {/* Sticky Step Header */}
       <div className="sticky top-0 z-20 rounded-2xl px-6 py-4"
         style={{ background: T.surface, border: `1px solid ${T.border}`, backdropFilter: 'blur(12px)' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.back()}
-              className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors hover:opacity-80"
-              style={{ border: `1px solid ${T.border}`, background: T.elevated }}
-            >
-              <ArrowLeft size={18} style={{ color: T.text }} />
-            </button>
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-widest mb-0.5" style={{ color: T.textMuted }}>Nova Campanha</p>
-              <h1 className="text-base font-bold leading-tight" style={{ color: T.text }}>
+              <h2 className="text-base font-bold leading-tight" style={{ color: T.text }}>
                 {steps[currentStep - 1].label}
                 <span className="ml-2 text-xs font-normal" style={{ color: T.textMuted }}>Passo {currentStep}/3</span>
-              </h1>
+              </h2>
             </div>
           </div>
           <div className="flex items-center gap-3">

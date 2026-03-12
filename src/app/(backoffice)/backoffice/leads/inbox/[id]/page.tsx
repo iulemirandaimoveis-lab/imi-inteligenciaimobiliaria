@@ -3,13 +3,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
-    ArrowLeft, Bot, User, Zap, Phone, MessageSquare,
+    Bot, User, Zap, Phone, MessageSquare,
     Calendar, CheckCircle2, Send, Brain, TrendingUp
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 function getScore(lead: any): number {
     if (lead.score && lead.score > 0) return lead.score
@@ -217,41 +218,30 @@ export default function LeadInboxDetailPage() {
 
     return (
         <div style={{ maxWidth: 640, paddingBottom: 140 }}>
-
-            {/* ── Header ── */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <button
-                    onClick={() => router.back()}
-                    style={{
-                        width: 36, height: 36, borderRadius: 12,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: T.elevated, border: `1px solid ${T.border}`,
-                        cursor: 'pointer', flexShrink: 0,
-                    }}
-                >
-                    <ArrowLeft size={16} style={{ color: T.text }} />
-                </button>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 18, fontWeight: 800, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {lead.name}
-                    </p>
-                    {(lead.email || lead.phone) && (
-                        <p style={{ fontSize: 11, color: T.textMuted, marginTop: 1 }}>{lead.email || lead.phone}</p>
-                    )}
-                </div>
-                <div style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
-                    padding: '6px 12px', borderRadius: 20,
-                    background: assumed ? 'rgba(74,222,128,0.12)' : 'rgba(74,222,128,0.1)',
-                    border: `1px solid ${assumed ? '#4ADE80' : 'rgba(74,222,128,0.3)'}`,
-                    flexShrink: 0,
-                }}>
-                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ADE80', animation: 'pulse 2s infinite' }} />
-                    <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '0.1em', color: '#4ADE80', textTransform: 'uppercase' }}>
-                        {assumed ? 'EM ATENDIMENTO' : 'IA ATIVA · QUALIFICANDO'}
-                    </span>
-                </div>
-            </div>
+            <PageIntelHeader
+                moduleLabel="LEADS"
+                title={lead.name}
+                subtitle={lead.email || lead.phone || 'Conversa com IA'}
+                breadcrumbs={[
+                    { label: 'Leads', href: '/backoffice/leads' },
+                    { label: 'Inbox', href: '/backoffice/leads/inbox' },
+                    { label: lead.name },
+                ]}
+                actions={
+                    <div style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        padding: '6px 12px', borderRadius: 20,
+                        background: assumed ? 'rgba(74,222,128,0.12)' : 'rgba(74,222,128,0.1)',
+                        border: `1px solid ${assumed ? '#4ADE80' : 'rgba(74,222,128,0.3)'}`,
+                        flexShrink: 0,
+                    }}>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ADE80', animation: 'pulse 2s infinite' }} />
+                        <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '0.1em', color: '#4ADE80', textTransform: 'uppercase' }}>
+                            {assumed ? 'EM ATENDIMENTO' : 'IA ATIVA · QUALIFICANDO'}
+                        </span>
+                    </div>
+                }
+            />
 
             {/* ── Qualification Card ── */}
             <motion.div

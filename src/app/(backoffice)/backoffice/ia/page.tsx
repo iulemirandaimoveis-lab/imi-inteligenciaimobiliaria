@@ -7,6 +7,7 @@ import {
     ChevronRight, BarChart3, Settings, Cpu, Braces, Clock, History,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
@@ -331,45 +332,32 @@ export default function IAHubPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: T.elevated }}>
-                        <Sparkles size={24} style={{ color: T.accent }} />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold" style={{ color: T.text }}>Central de IA</h1>
-                        <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>
-                            Gerencie modelos de linguagem e geração de imagens
-                        </p>
-                    </div>
-                </div>
-                <button
-                    onClick={checkAllProviders}
-                    className="flex items-center gap-2 h-10 px-4 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
-                    style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}
-                >
-                    <RefreshCw size={14} />
-                    Verificar Status
-                </button>
-            </div>
+            <PageIntelHeader
+                moduleLabel="INTELIGÊNCIA"
+                title="Central de IA"
+                subtitle="Gerencie modelos de linguagem e geração de imagens"
+                breadcrumbs={[
+                    { label: 'Inteligência', href: '/backoffice/inteligencia' },
+                    { label: 'Central de IA' },
+                ]}
+                actions={
+                    <button
+                        onClick={checkAllProviders}
+                        className="flex items-center gap-2 h-10 px-4 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex-shrink-0"
+                        style={{ background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}
+                    >
+                        <RefreshCw size={14} />
+                        Verificar Status
+                    </button>
+                }
+            />
 
             {/* Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {[
-                    { label: 'Providers', value: PROVIDERS.length, sub: 'suportados', color: T.accent, icon: Bot },
-                    { label: 'Configurados', value: configured, sub: `de ${PROVIDERS.length}`, color: T.success, icon: CheckCircle2 },
-                    { label: 'Tasks Mapeadas', value: ROUTING_TABLE.length, sub: 'com fallback', color: '#8B5CF6', icon: Braces },
-                    { label: 'Modelos', value: PROVIDERS.reduce((n, p) => n + p.models.length, 0), sub: 'disponíveis', color: '#60A5FA', icon: Cpu },
-                ].map((s) => (
-                    <div key={s.label} className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: T.textMuted }}>{s.label}</p>
-                        <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold" style={{ color: T.text }}>{s.value}</p>
-                            <s.icon size={20} style={{ color: s.color }} className="mb-1" />
-                        </div>
-                        <p className="text-[10px] font-medium mt-1" style={{ color: T.textMuted }}>{s.sub}</p>
-                    </div>
-                ))}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <KPICard label="Providers"     value={String(PROVIDERS.length)}                                icon={<Bot size={14} />} size="sm" />
+                <KPICard label="Configurados"  value={String(configured)}                                     icon={<CheckCircle2 size={14} />} accent="green" size="sm" />
+                <KPICard label="Tasks Mapeadas" value={String(ROUTING_TABLE.length)}                          icon={<Braces size={14} />} accent="blue" size="sm" />
+                <KPICard label="Modelos"       value={String(PROVIDERS.reduce((n, p) => n + p.models.length, 0))} icon={<Cpu size={14} />} size="sm" />
             </div>
 
             {/* Providers Grid */}

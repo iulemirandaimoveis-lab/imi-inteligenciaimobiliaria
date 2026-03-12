@@ -14,6 +14,7 @@ import {
 import Image from 'next/image'
 import { uploadFile, uploadMultipleFiles } from '@/lib/supabase-storage'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
   useSensor, useSensors, DragEndEvent,
@@ -537,13 +538,20 @@ export default function EditarImovelPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-0">
+      <PageIntelHeader
+        moduleLabel="IMÓVEIS"
+        title="Editar Imóvel"
+        subtitle={formData.name || 'Carregando...'}
+        breadcrumbs={[
+          { label: 'Imóveis', href: '/backoffice/imoveis' },
+          { label: 'Editar' },
+        ]}
+      />
+
       {/* ── Sticky Header ── */}
       <div className="sticky top-14 lg:top-0 z-20 backdrop-blur-xl rounded-b-2xl mb-6" style={{ background: `${T.bg}ee`, borderBottom: `1px solid ${T.border}` }}>
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ border: `1px solid ${T.border}`, background: T.surface }}>
-              <ArrowLeft size={18} style={{ color: T.text }} />
-            </button>
             <div>
               <p className="text-sm font-bold truncate max-w-[200px]" style={{ color: T.text }}>{formData.name || 'Sem nome'}</p>
               {lastSaved && <p className="text-[10px]" style={{ color: T.textDim }}>Salvo {lastSaved.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>}

@@ -10,6 +10,7 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -162,29 +163,29 @@ export default function CreditoNovoPage() {
 
     return (
         <div className="space-y-6">
+            <PageIntelHeader
+                moduleLabel="CRÉDITO"
+                title="Protocolar Crédito"
+                subtitle={`Etapa ${currentStep}/${STEPS.length} — ${currentStepData.name}`}
+                breadcrumbs={[
+                    { label: 'Crédito', href: '/backoffice/credito' },
+                    { label: 'Novo' },
+                ]}
+            />
+
             {/* Sticky step header */}
             <div className="sticky top-0 z-20 rounded-2xl px-5 py-4"
                 style={{ background: T.surface, border: `1px solid ${T.border}`, backdropFilter: 'blur(12px)' }}>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => router.back()}
-                            className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors hover:opacity-80"
-                            style={{ border: `1px solid ${T.border}`, background: T.elevated }}
-                        >
-                            <ArrowLeft size={16} style={{ color: T.text }} />
-                        </button>
                         <div>
-                            <p className="text-[9px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
-                                PROTOCOLAR CRÉDITO
-                            </p>
-                            <h1 className="text-sm font-bold leading-tight flex items-center gap-2" style={{ color: T.text }}>
+                            <h2 className="text-sm font-bold leading-tight flex items-center gap-2" style={{ color: T.text }}>
                                 <StepIcon size={13} style={{ color: T.accent }} />
                                 {currentStepData.name}
                                 <span className="text-xs font-normal" style={{ color: T.textMuted }}>
                                     Etapa {currentStep}/{STEPS.length}
                                 </span>
-                            </h1>
+                            </h2>
                         </div>
                     </div>
                     {/* Step indicators */}

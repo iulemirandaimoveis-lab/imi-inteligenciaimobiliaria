@@ -34,6 +34,8 @@ import {
     X,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 const REGRAS_INICIAIS = [
     {
@@ -223,37 +225,29 @@ export default function LeadRulesPage() {
     const categorias = [...new Set(regras.map(r => r.categoria))]
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold" style={{ color: T.text }}>Regras de Pontuação</h1>
-                    <p className="text-sm mt-1" style={{ color: T.textMuted }}>
-                        Configure como leads são qualificados automaticamente
-                    </p>
-                </div>
-                <button
-                    className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium transition-colors"
-                    style={{ background: 'var(--bo-accent)' }}
-                >
-                    <Plus size={18} />
-                    Nova Regra
-                </button>
-            </div>
+            <PageIntelHeader
+                moduleLabel="LEADS"
+                title="Regras de Pontuação"
+                subtitle="Configure como leads são qualificados automaticamente"
+                actions={
+                    <button
+                        className="flex items-center gap-2 h-11 px-5 text-white rounded-xl font-semibold text-sm transition-colors"
+                        style={{ background: 'var(--bo-accent)' }}
+                    >
+                        <Plus size={16} />
+                        Nova Regra
+                    </button>
+                }
+            />
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                    { label: 'Total de Regras', value: stats.total },
-                    { label: 'Regras Ativas', value: stats.ativas, valueColor: '#34d399' },
-                    { label: 'Score Máximo', value: `${stats.scoreMaximo} pts` },
-                    { label: 'Execuções Totais', value: stats.execucoesTotais.toLocaleString('pt-BR'), valueColor: '#60a5fa' },
-                ].map(s => (
-                    <div key={s.label} className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>{s.label}</p>
-                        <p className="text-2xl font-bold mt-1" style={{ color: s.valueColor ?? T.text }}>{s.value}</p>
-                    </div>
-                ))}
+            {/* KPIs */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <KPICard label="Total de Regras"    value={String(stats.total)}                                   icon={<Settings size={14} />} size="sm" />
+                <KPICard label="Regras Ativas"      value={String(stats.ativas)}                                  icon={<Zap size={14} />} accent="green" size="sm" />
+                <KPICard label="Score Máximo"       value={`${stats.scoreMaximo} pts`}                           icon={<Target size={14} />} accent="blue" size="sm" />
+                <KPICard label="Execuções Totais"   value={stats.execucoesTotais.toLocaleString('pt-BR')}         icon={<TrendingUp size={14} />} size="sm" />
             </div>
 
             {/* Info box */}
@@ -270,41 +264,27 @@ export default function LeadRulesPage() {
             </div>
 
             {/* Filtros */}
-            <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Categoria:</span>
+            <div className="flex flex-wrap items-center gap-3">
+                <FilterTabs
+                    tabs={[
+                        { id: '__all__', label: 'Todas', count: regras.length },
+                        ...categorias.map(cat => ({
+                            id: cat,
+                            label: CATEGORIAS_LABEL[cat] || cat,
+                            count: regras.filter(r => r.categoria === cat).length,
+                        })),
+                    ] as FilterTab[]}
+                    active={filtroCategoria ?? '__all__'}
+                    onChange={(v) => setFiltroCategoria(v === '__all__' ? null : v)}
+                />
                 <button
-                    onClick={() => setFiltroCategoria(null)}
-                    className="px-3 py-1.5 rounded-xl text-sm font-medium transition-colors"
-                    style={!filtroCategoria
-                        ? { background: T.text, color: 'var(--bo-bg)' }
-                        : { background: T.elevated, color: T.textMuted }
-                    }
+                    onClick={() => setMostrarInativas(!mostrarInativas)}
+                    className="flex items-center gap-1.5 text-xs font-semibold transition-colors hover:opacity-80 ml-auto"
+                    style={{ color: T.textMuted }}
                 >
-                    Todas
+                    {mostrarInativas ? <ToggleRight size={16} style={{ color: T.accent }} /> : <ToggleLeft size={16} />}
+                    Mostrar inativas
                 </button>
-                {categorias.map(cat => (
-                    <button
-                        key={cat}
-                        onClick={() => setFiltroCategoria(filtroCategoria === cat ? null : cat)}
-                        className="px-3 py-1.5 rounded-xl text-sm font-medium transition-colors capitalize"
-                        style={filtroCategoria === cat
-                            ? { background: T.text, color: 'var(--bo-bg)' }
-                            : { background: T.elevated, color: T.textMuted }
-                        }
-                    >
-                        {CATEGORIAS_LABEL[cat] || cat}
-                    </button>
-                ))}
-                <div className="ml-auto flex items-center gap-2">
-                    <button
-                        onClick={() => setMostrarInativas(!mostrarInativas)}
-                        className="flex items-center gap-1.5 text-sm transition-colors hover:opacity-80"
-                        style={{ color: T.textMuted }}
-                    >
-                        {mostrarInativas ? <ToggleRight size={18} style={{ color: T.accent }} /> : <ToggleLeft size={18} />}
-                        Mostrar inativas
-                    </button>
-                </div>
             </div>
 
             {/* Lista de regras */}

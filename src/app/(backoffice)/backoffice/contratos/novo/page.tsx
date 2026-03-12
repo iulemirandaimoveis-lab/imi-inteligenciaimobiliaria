@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL, getModeloById } from '@/lib/modelos-contratos'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const ICONES_CAT: Record<string, string> = {
     locacao: '🏠', venda: '📋', captacao: '🎯', avaliacao: '⚖️', credito: '💳',
@@ -188,15 +189,15 @@ function NovoContratoInner() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-5">
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-                <button onClick={() => router.back()} className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                    <ChevronLeft size={16} style={{ color: T.textMuted }} />
-                </button>
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>{gerado ? `✓ ${resultado?.numero}` : 'Novo Contrato'}</h1>
-                    <p className="text-xs mt-0.5" style={{ color: T.textDim }}>{modelo ? modelo.nome : 'Selecione um modelo'}</p>
-                </div>
-            </motion.div>
+            <PageIntelHeader
+                moduleLabel="CONTRATOS"
+                title={gerado ? `✓ ${resultado?.numero}` : 'Novo Contrato'}
+                subtitle={modelo ? modelo.nome : 'Selecione um modelo'}
+                breadcrumbs={[
+                    { label: 'Contratos', href: '/backoffice/contratos' },
+                    { label: 'Novo' },
+                ]}
+            />
 
             {!gerado && (
                 <div className="flex items-center gap-0 overflow-x-auto pb-1">

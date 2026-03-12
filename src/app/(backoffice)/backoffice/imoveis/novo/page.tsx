@@ -32,6 +32,7 @@ function getYoutubeEmbedUrl(url: string): string | null {
 }
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -600,6 +601,16 @@ export default function NovoImovelPage() {
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
+            <PageIntelHeader
+                moduleLabel="IMÓVEIS"
+                title="Novo Empreendimento"
+                subtitle={`Passo ${currentStep} de 4`}
+                breadcrumbs={[
+                    { label: 'Imóveis', href: '/backoffice/imoveis' },
+                    { label: 'Novo' },
+                ]}
+            />
+
             {/* ── Draft restore banner ── */}
             {hasDraft && (
                 <div
@@ -631,24 +642,6 @@ export default function NovoImovelPage() {
                 </div>
             )}
 
-            {/* ── Header ── */}
-            <div className="flex items-center gap-4">
-                <button
-                    onClick={() => router.back()}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                >
-                    <ArrowLeft size={18} style={{ color: T.text }} />
-                </button>
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>
-                        Novo Empreendimento
-                    </h1>
-                    <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>
-                        Passo {currentStep} de 4
-                    </p>
-                </div>
-            </div>
 
             {/* ── Step Progress ── */}
             <div

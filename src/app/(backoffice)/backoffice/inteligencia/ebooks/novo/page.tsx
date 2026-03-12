@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Save, Loader2 } from 'lucide-react'
+import { Save, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 export default function NovoEbookPage() {
     const router = useRouter()
@@ -66,22 +67,17 @@ export default function NovoEbookPage() {
     }
 
     return (
-        <div className="p-6 lg:p-8 max-w-2xl">
-            <div className="flex items-center gap-4 mb-8">
-                <Link
-                    href="/backoffice/inteligencia/ebooks"
-                    className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-[var(--bo-hover)]"
-                    style={{ background: 'var(--bo-icon-bg)' }}
-                >
-                    <ArrowLeft size={15} style={{ color: 'var(--bo-text-muted)' }} />
-                </Link>
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: 'var(--bo-text)', fontFamily: "'Playfair Display', serif" }}>
-                        Novo Ebook
-                    </h1>
-                    <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>Adicionar publicação à biblioteca</p>
-                </div>
-            </div>
+        <div className="space-y-5 max-w-2xl">
+            <PageIntelHeader
+                moduleLabel="INTELIGÊNCIA"
+                title="Novo Ebook"
+                subtitle="Adicionar publicação à biblioteca"
+                breadcrumbs={[
+                    { label: 'Inteligência', href: '/backoffice/inteligencia' },
+                    { label: 'Ebooks', href: '/backoffice/inteligencia/ebooks' },
+                    { label: 'Novo' },
+                ]}
+            />
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="p-6 rounded-2xl space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>

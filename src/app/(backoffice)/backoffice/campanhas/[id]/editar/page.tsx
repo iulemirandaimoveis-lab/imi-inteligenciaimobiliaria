@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 type Step = 1 | 2 | 3
 
@@ -288,29 +289,21 @@ export default function EditarCampanhaPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
-            style={{ border: `1px solid ${T.border}`, background: T.elevated, color: T.text }}
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold" style={{ color: T.text }}>Editar Campanha de Marketing</h1>
-            <p className="text-sm mt-1" style={{ color: T.textMuted }}>Passo {currentStep} de 3</p>
-          </div>
-        </div>
-
-        {selectedChannel && (
-          <div className={`px-4 py-2 ${selectedChannel.color} text-white rounded-xl flex items-center gap-2`}>
+      <PageIntelHeader
+        moduleLabel="CAMPANHAS"
+        title="Editar Campanha"
+        subtitle={`Passo ${currentStep} de 3`}
+        breadcrumbs={[
+          { label: 'Campanhas', href: '/backoffice/campanhas' },
+          { label: 'Editar' },
+        ]}
+        actions={selectedChannel ? (
+          <div className={`px-4 py-2 ${selectedChannel.color} text-white rounded-xl flex items-center gap-2 flex-shrink-0`}>
             <selectedChannel.icon size={16} />
             <span className="text-sm font-medium">{selectedChannel.label}</span>
           </div>
-        )}
-      </div>
+        ) : undefined}
+      />
 
       {/* Progress Bar */}
       <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>

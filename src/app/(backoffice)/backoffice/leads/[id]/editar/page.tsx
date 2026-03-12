@@ -5,7 +5,6 @@ import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import {
-    ArrowLeft,
     User,
     Mail,
     Phone,
@@ -25,6 +24,7 @@ import {
     MessageSquare,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // ⚠️ Opções reais Recife (mesmas do /novo)
 const origens = [
@@ -284,39 +284,30 @@ export default function EditarLeadPage() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4 min-w-0">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-10 h-10 rounded-xl flex items-center justify-center transition-all flex-shrink-0"
-                        style={{ border: `1px solid ${T.border}`, background: T.elevated }}
-                        onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                        onMouseLeave={e => (e.currentTarget.style.background = T.elevated)}
-                    >
-                        <ArrowLeft size={18} style={{ color: T.text }} />
-                    </button>
-                    <div className="min-w-0">
-                        <h1 className="text-xl font-bold truncate" style={{ color: T.text }}>Editar Lead</h1>
-                        <p className="text-sm truncate" style={{ color: T.textMuted }}>{formData.name || 'Carregando...'}</p>
-                    </div>
-                </div>
-
-                {/* Score Badge */}
-                <div className="flex-shrink-0 px-5 py-3 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                    <div className="flex items-center gap-3">
-                        <Sparkles size={18} style={{ color: T.accent }} />
-                        <div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Score</p>
-                            <p className={`text-xl font-bold ${getScoreColor()}`}>{score}<span className="text-xs font-normal opacity-60">/20</span></p>
+            <PageIntelHeader
+                moduleLabel="LEADS"
+                title="Editar Lead"
+                subtitle={formData.name || 'Carregando...'}
+                breadcrumbs={[
+                    { label: 'Leads', href: '/backoffice/leads' },
+                    { label: 'Editar' },
+                ]}
+                actions={
+                    <div className="flex-shrink-0 px-5 py-3 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="flex items-center gap-3">
+                            <Sparkles size={18} style={{ color: T.accent }} />
+                            <div>
+                                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Score</p>
+                                <p className={`text-xl font-bold ${getScoreColor()}`}>{score}<span className="text-xs font-normal opacity-60">/20</span></p>
+                            </div>
+                            <span className={`text-xs font-bold px-2 py-1 rounded-lg ${getScoreColor()}`}
+                                style={{ background: score >= 15 ? 'rgba(52,211,153,0.12)' : score >= 10 ? 'rgba(251,146,60,0.12)' : 'rgba(96,165,250,0.12)' }}>
+                                {getScoreLabel()}
+                            </span>
                         </div>
-                        <span className={`text-xs font-bold px-2 py-1 rounded-lg ${getScoreColor()}`}
-                            style={{ background: score >= 15 ? 'rgba(52,211,153,0.12)' : score >= 10 ? 'rgba(251,146,60,0.12)' : 'rgba(96,165,250,0.12)' }}>
-                            {getScoreLabel()}
-                        </span>
                     </div>
-                </div>
-            </div>
+                }
+            />
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Form */}

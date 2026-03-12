@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Save, Loader2 } from 'lucide-react'
+import { Save, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const CATEGORIES = ['Panorama Anual', 'Dossiê de Bairro', 'Análise Comparativa', 'Estudo de Viabilidade', 'Laudo Técnico']
 
@@ -60,16 +61,17 @@ export default function NovoRelatorioPage() {
     const inputStyle = { background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }
 
     return (
-        <div className="p-6 lg:p-8 max-w-2xl">
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/backoffice/inteligencia/relatorios" className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[var(--bo-hover)]" style={{ background: 'var(--bo-icon-bg)' }}>
-                    <ArrowLeft size={15} style={{ color: 'var(--bo-text-muted)' }} />
-                </Link>
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: 'var(--bo-text)', fontFamily: "'Playfair Display', serif" }}>Novo Relatório</h1>
-                    <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>Adicionar estudo técnico de mercado</p>
-                </div>
-            </div>
+        <div className="space-y-5 max-w-2xl">
+            <PageIntelHeader
+                moduleLabel="INTELIGÊNCIA"
+                title="Novo Relatório"
+                subtitle="Adicionar estudo técnico de mercado"
+                breadcrumbs={[
+                    { label: 'Inteligência', href: '/backoffice/inteligencia' },
+                    { label: 'Relatórios', href: '/backoffice/inteligencia/relatorios' },
+                    { label: 'Novo' },
+                ]}
+            />
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="p-6 rounded-2xl space-y-5" style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}>

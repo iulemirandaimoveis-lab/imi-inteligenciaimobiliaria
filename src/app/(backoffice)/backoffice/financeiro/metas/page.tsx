@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
     Target, TrendingUp, DollarSign, Scale, Plus,
-    ChevronRight, Loader2, CheckCircle, Pencil, Save, X,
+    Loader2, CheckCircle, Pencil, Save, X,
 } from 'lucide-react'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 
 const fmt = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
@@ -132,28 +132,34 @@ export default function MetasPage() {
     const avalPct    = avalTarget > 0 ? Math.round((actuals.avaliacoes / avalTarget) * 100) : 0
 
     return (
-        <div className="space-y-6 max-w-5xl mx-auto">
+        <div className="space-y-5 max-w-5xl mx-auto">
             {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textMuted }}>
-                            Financeiro
-                        </Link>
-                        <ChevronRight size={12} style={{ color: T.textMuted }} />
-                        <span className="text-xs font-medium" style={{ color: T.text }}>Metas</span>
-                    </div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Metas & Performance</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>{monthLabel(currentMonth)}</p>
-                </div>
-                <button
-                    onClick={() => setEditing(!editing)}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all"
-                    style={{ background: editing ? 'rgba(229,115,115,0.2)' : T.accent, color: editing ? '#E57373' : 'white' }}
-                >
-                    {editing ? <><X size={15} /> Cancelar</> : <><Pencil size={15} /> Editar Metas</>}
-                </button>
-            </motion.div>
+            <PageIntelHeader
+                moduleLabel="FINANCEIRO"
+                title="Metas & Performance"
+                subtitle={monthLabel(currentMonth)}
+                breadcrumbs={[
+                    { label: 'Financeiro', href: '/backoffice/financeiro' },
+                    { label: 'Metas' },
+                ]}
+                actions={
+                    <button
+                        onClick={() => setEditing(!editing)}
+                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold flex-shrink-0 transition-all"
+                        style={{ background: editing ? 'rgba(229,115,115,0.12)' : T.accent, color: editing ? '#E57373' : 'white', border: editing ? '1px solid rgba(229,115,115,0.3)' : 'none' }}
+                    >
+                        {editing ? <><X size={15} /> Cancelar</> : <><Pencil size={15} /> Editar Metas</>}
+                    </button>
+                }
+            />
+
+            {/* KPI strip */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <KPICard label="Receita Atual"    value={loading ? '—' : fmt(actuals.revenue)}        icon={<DollarSign size={14} />} accent="green" size="sm" />
+                <KPICard label="Meta Receita"     value={loading ? '—' : (revTarget > 0 ? fmt(revTarget) : 'N/D')} icon={<Target size={14} />} size="sm" />
+                <KPICard label="% Receita"        value={loading ? '—' : (revTarget > 0 ? `${revPct}%` : '—')} icon={<TrendingUp size={14} />} accent={revPct >= 100 ? 'green' : 'blue'} size="sm" />
+                <KPICard label="Avaliações/Hon."  value={loading ? '—' : String(actuals.avaliacoes)}  icon={<Scale size={14} />} size="sm" />
+            </div>
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">

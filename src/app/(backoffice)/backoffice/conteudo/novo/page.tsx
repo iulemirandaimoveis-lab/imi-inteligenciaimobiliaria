@@ -40,13 +40,13 @@ import {
   Hash,
   AlignLeft,
   Zap,
-  ArrowLeft,
   Info,
   Facebook,
   Clock,
   X,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
 const TIPOS_CONTEUDO = [
@@ -294,43 +294,36 @@ export default function NovoConteudoPage() {
 
   return (
     <div className="space-y-6" style={{ color: T.text }}>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
-            style={{ background: T.elevated }}
-          >
-            <ArrowLeft size={20} style={{ color: T.textMuted }} />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold" style={{ color: T.text }}>Novo Conteúdo</h1>
-            <p className="text-sm font-medium" style={{ color: T.textMuted }}>
-              Editor inteligente com assistência de IA
-            </p>
+      <PageIntelHeader
+        moduleLabel="CONTEÚDO"
+        title="Novo Conteúdo"
+        subtitle="Editor inteligente com assistência de IA"
+        breadcrumbs={[
+          { label: 'Conteúdo', href: '/backoffice/conteudo' },
+          { label: 'Novo' },
+        ]}
+        actions={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPreview(!preview)}
+              className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-bold transition-colors flex-shrink-0"
+              style={{ background: T.elevated, color: T.text }}
+            >
+              <Eye size={16} />
+              {preview ? 'Editor' : 'Preview'}
+            </button>
+            <button
+              onClick={salvarConteudo}
+              disabled={!titulo || !corpo || salvo}
+              className="flex items-center gap-2 h-10 px-5 text-white rounded-xl text-sm font-bold hover:brightness-110 disabled:opacity-50 transition-all flex-shrink-0"
+              style={{ background: T.accent }}
+            >
+              {salvo ? <Check size={16} /> : <Save size={16} />}
+              {salvo ? 'Salvo!' : 'Salvar'}
+            </button>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setPreview(!preview)}
-            className="flex items-center gap-2 h-11 px-4 rounded-xl text-sm font-bold transition-colors"
-            style={{ background: T.elevated, color: T.text }}
-          >
-            <Eye size={18} />
-            {preview ? 'Voltar ao Editor' : 'Visualizar'}
-          </button>
-          <button
-            onClick={salvarConteudo}
-            disabled={!titulo || !corpo || salvo}
-            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-bold hover:brightness-110 disabled:opacity-50 transition-all shadow-lg"
-            style={{ background: T.accent }}
-          >
-            {salvo ? <Check size={18} /> : <Save size={18} />}
-            {salvo ? 'Salvo com Sucesso!' : 'Salvar no Sistema'}
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ── Painel esquerdo: configuração ──────────────────────────────── */}

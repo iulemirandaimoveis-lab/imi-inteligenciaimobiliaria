@@ -9,6 +9,7 @@ import {
     Phone, Globe, Star, Archive, Reply, MoreHorizontal,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import { toast } from 'sonner'
 
 // ── Types ──────────────────────────────────────────────────────────────
@@ -246,40 +247,36 @@ export default function SocialInboxPage() {
     const channelCount = (ch: Exclude<Channel, 'all'>) => messages.filter(m => m.channel === ch).length
 
     return (
-        <div className="flex flex-col overflow-hidden rounded-2xl"
-            style={{ height: 'calc(100vh - 80px)', background: T.elevated, border: `1px solid ${T.border}` }}>
+        <div className="flex flex-col gap-4" style={{ height: 'calc(100vh - 80px)' }}>
+            <PageIntelHeader
+                moduleLabel="OMNICHANNEL"
+                title="Social Inbox"
+                subtitle={unreadCount > 0 ? `${unreadCount} mensagens não lidas` : 'Tudo em dia'}
+                breadcrumbs={[
+                    { label: 'Omnichannel', href: '/backoffice/omnichannel' },
+                    { label: 'Inbox' },
+                ]}
+                actions={
+                    <div className="flex items-center gap-2">
+                        <button onClick={fetchMessages}
+                            className="p-2 rounded-xl transition-colors hover:opacity-70 flex-shrink-0"
+                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                            <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
+                        </button>
+                        {!gmailConnected && (
+                            <a href="/api/auth/google"
+                                className="flex items-center gap-1.5 h-10 px-4 rounded-xl text-xs font-semibold flex-shrink-0"
+                                style={{ background: 'rgba(234,67,53,0.12)', color: '#EA4335' }}>
+                                <Mail size={13} />
+                                Conectar Gmail
+                            </a>
+                        )}
+                    </div>
+                }
+            />
 
-            {/* Header bar */}
-            <div className="px-5 py-3.5 flex items-center justify-between flex-shrink-0"
-                style={{ borderBottom: `1px solid ${T.border}` }}>
-                <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-                        style={{ background: 'var(--bo-active-bg)' }}>
-                        <MessageCircle size={17} style={{ color: 'var(--bo-accent)' }} />
-                    </div>
-                    <div>
-                        <h1 className="text-[14px] font-bold" style={{ color: T.text }}>Social Inbox</h1>
-                        <p className="text-[11px]" style={{ color: T.textMuted }}>
-                            {unreadCount > 0 ? `${unreadCount} não lidas` : 'Tudo em dia'}
-                        </p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button onClick={fetchMessages}
-                        className="p-2 rounded-xl transition-colors hover:opacity-70"
-                        style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}>
-                        <RefreshCw size={13} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
-                    </button>
-                    {!gmailConnected && (
-                        <a href="/api/auth/google"
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold"
-                            style={{ background: 'rgba(234,67,53,0.12)', color: '#EA4335' }}>
-                            <Mail size={12} />
-                            Conectar Gmail
-                        </a>
-                    )}
-                </div>
-            </div>
+            <div className="flex flex-col flex-1 min-h-0 overflow-hidden rounded-2xl"
+            style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
 
             {/* Channel tabs */}
             <div className="flex gap-1 px-4 py-2 overflow-x-auto flex-shrink-0"
@@ -468,6 +465,7 @@ export default function SocialInboxPage() {
                         </>
                     )}
                 </div>
+            </div>
             </div>
         </div>
     )
