@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { useWhatsapp, WhatsappConversation, WhatsappMessage } from '@/hooks/backoffice/use-whatsapp'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 /* ── Design Tokens ──────────────────────────────────────────── */
 const TEMPLATES_WHATSAPP = [
@@ -123,10 +124,19 @@ export default function WhatsappPage() {
   )
 
   return (
+    <div className="flex flex-col gap-3" style={{ height: 'calc(100vh - 80px)' }}>
+      <PageIntelHeader
+        moduleLabel="OMNICHANNEL"
+        title="WhatsApp"
+        subtitle={`${conversations.length} conversas`}
+        breadcrumbs={[
+          { label: 'Omnichannel', href: '/backoffice/omnichannel' },
+          { label: 'WhatsApp' },
+        ]}
+      />
     <div
-      className="flex overflow-hidden rounded-2xl lg:rounded-3xl"
+      className="flex overflow-hidden rounded-2xl lg:rounded-3xl flex-1 min-h-0"
       style={{
-        height: 'calc(100vh - 140px)',
         background: T.elevated,
         border: `1px solid ${T.border}`,
         boxShadow: T.shadow,
@@ -456,6 +466,7 @@ export default function WhatsappPage() {
           </div>
         </div>
       )}
+    </div>
     </div>
   )
 }

@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import {
-    ArrowLeft,
     DollarSign,
     Home,
     Calendar,
@@ -166,49 +166,38 @@ export default function CreditoDetalhesPage() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-start justify-between flex-wrap gap-4">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-10 h-10 rounded-lg flex items-center justify-center"
-                        style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
-                    >
-                        <ArrowLeft size={20} />
-                    </button>
-                    <div>
-                        <h1 className="text-2xl font-bold" style={{ color: T.text }}>Crédito Imobiliário</h1>
-                        <div className="flex items-center gap-3 mt-2 flex-wrap">
-                            <span className="text-sm font-medium" style={{ color: T.textMuted }}>
-                                Protocolo: {credit.protocol}
-                            </span>
-                            <span style={{ color: T.border }}>•</span>
-                            {getStatusBadge(credit.status)}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => toast.info('Exportação em desenvolvimento')}
-                        className="h-10 px-4 rounded-xl font-medium flex items-center gap-2"
-                        style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
-                    >
-                        <Download size={18} />
-                        Exportar
-                    </button>
-                    {credit.client_email && (
-                        <a
-                            href={`mailto:${credit.client_email}`}
-                            className="h-10 px-4 rounded-xl font-medium flex items-center gap-2"
+            <PageIntelHeader
+                moduleLabel="CRÉDITO"
+                title="Crédito Imobiliário"
+                subtitle={`Protocolo: ${credit.protocol}`}
+                breadcrumbs={[
+                    { label: 'Crédito', href: '/backoffice/credito' },
+                    { label: credit.protocol },
+                ]}
+                actions={
+                    <div className="flex items-center gap-2">
+                        {getStatusBadge(credit.status)}
+                        <button
+                            onClick={() => toast.info('Exportação em desenvolvimento')}
+                            className="h-9 px-3 rounded-xl font-medium flex items-center gap-2 text-sm flex-shrink-0"
                             style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
                         >
-                            <Mail size={18} />
-                            Enviar Email
-                        </a>
-                    )}
-                </div>
-            </div>
+                            <Download size={15} />
+                            Exportar
+                        </button>
+                        {credit.client_email && (
+                            <a
+                                href={`mailto:${credit.client_email}`}
+                                className="h-9 px-3 rounded-xl font-medium flex items-center gap-2 text-sm flex-shrink-0"
+                                style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
+                            >
+                                <Mail size={15} />
+                                Email
+                            </a>
+                        )}
+                    </div>
+                }
+            />
 
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

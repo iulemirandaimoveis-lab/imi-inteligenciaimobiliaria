@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
-  ArrowLeft, Phone, Mail, MapPin, Building2, DollarSign,
+  Phone, Mail, MapPin, Building2, DollarSign,
   Calendar, Edit, MessageSquare, FileText,
   Clock, TrendingUp, Eye, MousePointerClick,
   AlertCircle, Send, Globe, MoreVertical, Sparkles, Loader2,
@@ -13,6 +13,7 @@ import { useLead } from '@/hooks/use-leads-complete'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { AIInsightCard } from '@/app/(backoffice)/components/ui/AIInsightCard'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { toast } from 'sonner'
 
@@ -119,7 +120,7 @@ export default function LeadDetailPage() {
           className="flex items-center gap-2 mb-6"
           style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
         >
-          <ArrowLeft size={15} /> Leads
+          ← Leads
         </button>
         <div
           className="rounded-2xl text-center"
@@ -204,29 +205,29 @@ export default function LeadDetailPage() {
   return (
     <div className="max-w-2xl mx-auto pb-24 space-y-4">
 
-      {/* ── Top Nav ───────────────────────────────────── */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2"
-          style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
-        >
-          <ArrowLeft size={15} /> Leads
-        </button>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => router.push(`/backoffice/leads/${id}/editar`)}
-            style={{
-              width: '34px', height: '34px', borderRadius: '10px',
-              background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            <Edit size={14} style={{ color: 'var(--bo-text-muted)' }} />
-          </button>
-          {/* Quick Status Dropdown */}
-          <div className="relative">
+      <PageIntelHeader
+        moduleLabel="LEADS"
+        title={lead.name}
+        subtitle={[lead.source || 'Direto', lead.interest].filter(Boolean).join(' · ')}
+        breadcrumbs={[
+          { label: 'Leads', href: '/backoffice/leads' },
+          { label: lead.name },
+        ]}
+        actions={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push(`/backoffice/leads/${id}/editar`)}
+              style={{
+                width: '34px', height: '34px', borderRadius: '10px',
+                background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer',
+              }}
+            >
+              <Edit size={14} style={{ color: 'var(--bo-text-muted)' }} />
+            </button>
+            {/* Quick Status Dropdown */}
+            <div className="relative">
             <button
               onClick={() => setStatusMenuOpen(p => !p)}
               style={{
@@ -319,9 +320,10 @@ export default function LeadDetailPage() {
                 </motion.div>
               </>
             )}
+            </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* ── Hero Profile Card ─────────────────────────── */}
       <motion.div
