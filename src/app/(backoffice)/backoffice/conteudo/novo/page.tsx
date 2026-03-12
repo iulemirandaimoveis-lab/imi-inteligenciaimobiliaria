@@ -323,7 +323,8 @@ export default function NovoConteudoPage() {
           <button
             onClick={salvarConteudo}
             disabled={!titulo || !corpo || salvo}
-            className="flex items-center gap-2 h-11 px-6 bg-[#16162A] text-white rounded-xl text-sm font-bold hover:bg-[#0F0F1E] disabled:opacity-50 transition-all shadow-lg"
+            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-bold hover:brightness-110 disabled:opacity-50 transition-all shadow-lg"
+            style={{ background: T.accent }}
           >
             {salvo ? <Check size={18} /> : <Save size={18} />}
             {salvo ? 'Salvo com Sucesso!' : 'Salvar no Sistema'}
@@ -390,12 +391,12 @@ export default function NovoConteudoPage() {
           </div>
 
           {/* Assistente IA */}
-          <div className="bg-gradient-to-br from-[#243B53] to-[#0F0F1E] rounded-2xl p-5 shadow-lg text-white">
+          <div className="rounded-2xl p-5 shadow-lg" style={{ background: `linear-gradient(135deg, ${T.accent}18, ${T.card})`, border: `1px solid ${T.borderGold}` }}>
             <div className="flex items-center justify-between mb-4">
-              <label className="text-[10px] font-bold text-white/70 uppercase tracking-widest">
+              <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
                 Multi-Model Assistant
               </label>
-              <Sparkles size={16} className="text-white animate-pulse" />
+              <Sparkles size={16} style={{ color: T.accent }} className="animate-pulse" />
             </div>
             <div className="space-y-1.5 font-medium">
               {AI_SUGGESTIONS.filter(s => {
@@ -508,7 +509,7 @@ export default function NovoConteudoPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: T.accent }}>
-                    <div className="w-2 h-2 bg-[#102A43] rounded-full animate-pulse" />
+                    <div className="w-2 h-2 bg-[var(--bo-accent)] rounded-full animate-pulse" />
                     Backup Automático Ativo
                   </div>
                 </div>
@@ -563,17 +564,18 @@ export default function NovoConteudoPage() {
         <div className="fixed inset-0 backdrop-blur-md z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300" style={{ background: "rgba(0,0,0,0.5)" }}>
           <div className="rounded-3xl border shadow-2xl w-full max-w-xl overflow-hidden scale-in-center" style={{ background: T.surface, borderColor: T.border }}>
             {/* Header */}
-            <div className="flex items-center justify-between p-6 bg-[#16162A] text-white">
+            <div className="flex items-center justify-between p-6" style={{ background: T.elevated, borderBottom: `1px solid ${T.border}` }}>
               <div className="flex items-center gap-3">
                 <Sparkles size={20} className="animate-pulse" />
                 <div>
-                  <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest block leading-none mb-1">Cérebro Artificial</span>
-                  <span className="text-base font-bold">Assistente Stratégico IMI</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest block leading-none mb-1" style={{ color: T.textMuted }}>Cérebro Artificial</span>
+                  <span className="text-base font-bold" style={{ color: T.text }}>Assistente Stratégico IMI</span>
                 </div>
               </div>
               <button
                 onClick={() => setAiPanel(p => ({ ...p, open: false }))}
-                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 transition-colors text-2xl leading-none"
+                className="w-10 h-10 flex items-center justify-center rounded-2xl transition-colors text-2xl leading-none"
+                style={{ color: T.textDim }}
               >
                 <X size={20} />
               </button>
@@ -586,7 +588,7 @@ export default function NovoConteudoPage() {
                   <div className="relative">
                     <Loader2 size={48} className="animate-spin text-[var(--bo-accent)]" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-2 h-2 bg-[#16162A] rounded-full" />
+                      <div className="w-2 h-2 rounded-full" style={{ background: T.accent }} />
                     </div>
                   </div>
                   <div className="text-center">
@@ -605,7 +607,8 @@ export default function NovoConteudoPage() {
                   <div className="flex flex-col sm:flex-row items-center gap-3 font-bold">
                     <button
                       onClick={() => aplicarSugestao(aiPanel.result)}
-                      className="flex items-center gap-2 h-12 px-6 bg-[#16162A] text-white rounded-2xl text-sm hover:bg-[#0F0F1E] w-full sm:flex-1 justify-center shadow-lg transition-all"
+                      className="flex items-center gap-2 h-12 px-6 text-white rounded-2xl text-sm hover:brightness-110 w-full sm:flex-1 justify-center shadow-lg transition-all"
+                      style={{ background: T.accent }}
                     >
                       <Check size={18} />
                       Aplicar no Texto

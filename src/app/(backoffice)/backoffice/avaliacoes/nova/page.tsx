@@ -525,8 +525,10 @@ export default function NovaAvaliacaoPage() {
               <div className="flex flex-wrap gap-2 mt-1">
                 {CARACTERISTICAS.map(c => (
                   <button key={c} type="button" onClick={() => toggleCaracteristica(c)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${formData.caracteristicas.includes(c) ? 'bg-[#102A43] text-white border-[#334E68]' : 'hover:border-[#334E68]'}`}
-                    style={!formData.caracteristicas.includes(c) ? { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` } : undefined}>
+                    className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all"
+                    style={formData.caracteristicas.includes(c)
+                      ? { background: T.accent, color: '#fff', borderColor: 'transparent' }
+                      : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
                     {c}
                   </button>
                 ))}
@@ -543,8 +545,10 @@ export default function NovaAvaliacaoPage() {
             <div className="flex gap-3">
               {(['PF', 'PJ'] as const).map(t => (
                 <button key={t} type="button" onClick={() => handleChange('clienteTipo', t)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${formData.clienteTipo === t ? 'bg-[#102A43] text-white border-[#334E68]' : 'hover:border-[#334E68]'}`}
-                  style={formData.clienteTipo !== t ? { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` } : undefined}>
+                  className="px-4 py-2 rounded-lg text-sm font-medium border transition-all"
+                  style={formData.clienteTipo === t
+                    ? { background: T.accent, color: '#fff', borderColor: 'transparent' }
+                    : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
                   {t === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
                 </button>
               ))}

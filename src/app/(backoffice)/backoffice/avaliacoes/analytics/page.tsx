@@ -389,11 +389,11 @@ export default function AvaliacoesAnalyticsPage() {
             </div>
 
             {/* Executive Summary */}
-            <div className="rounded-2xl p-8 relative overflow-hidden" style={{ background: '#0D1117', border: '1px solid #334E68' }}>
+            <div className="rounded-2xl p-8 relative overflow-hidden" style={{ background: T.card, border: `1px solid ${T.border}` }}>
                 <div className="absolute top-0 right-0 p-8 opacity-5">
                     <PieChart size={180} />
                 </div>
-                <h3 className="text-base font-bold text-white mb-6">Executive Summary</h3>
+                <h3 className="text-base font-bold mb-6" style={{ color: T.text }}>Executive Summary</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {[
                         { label: 'Efficiency Score', value: `${completionRate}%`, sub: `${data.completed} Entregas / ${data.total} Demandas`, color: '#34D399' },

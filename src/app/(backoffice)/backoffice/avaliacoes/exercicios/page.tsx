@@ -380,7 +380,7 @@ export default function ExerciciosPage() {
                 <div key={cat} className="flex items-center gap-3">
                   <span className="text-sm w-32 truncate" style={{ color: T.textMuted }}>{cat}</span>
                   <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: T.border }}>
-                    <div className="h-full bg-[#102A43] rounded-full transition-all" style={{ width: `${(data.corretas / data.total) * 100}%` }} />
+                    <div className="h-full rounded-full transition-all" style={{ width: `${(data.corretas / data.total) * 100}%`, background: T.accent }} />
                   </div>
                   <span className="text-xs w-12 text-right" style={{ color: T.textMuted }}>{data.corretas}/{data.total}</span>
                 </div>
