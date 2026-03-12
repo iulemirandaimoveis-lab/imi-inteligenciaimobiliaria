@@ -127,7 +127,7 @@ export default function TrackingDashboardPage() {
                             { icon: Eye, label: 'Page Views', value: data.kpis.totalPageViews.toLocaleString('pt-BR'), color: '#627D98' },
                             { icon: Users, label: 'Sessões', value: data.kpis.totalSessions.toLocaleString('pt-BR'), color: '#a78bfa' },
                             { icon: MousePointer, label: 'Cliques', value: data.kpis.totalClicks.toLocaleString('pt-BR'), color: '#f59e0b' },
-                            { icon: TrendingUp, label: 'Leads', value: data.kpis.totalLeads.toLocaleString('pt-BR'), color: '#34d399' },
+                            { icon: TrendingUp, label: 'Leads', value: data.kpis.totalLeads.toLocaleString('pt-BR'), color: T.success },
                             { icon: Timer, label: 'Tempo Médio', value: formatDuration(data.kpis.avgDurationSeconds), color: '#f472b6' },
                             { icon: Percent, label: 'Conversão', value: `${data.kpis.conversionRate}%`, color: '#c084fc' },
                         ].map(({ icon: Icon, label, value, color }) => (
@@ -179,7 +179,7 @@ export default function TrackingDashboardPage() {
                                             className="flex-1 rounded-t transition-all hover:opacity-80 relative group"
                                             style={{
                                                 height: `${Math.max(pct, 3)}%`,
-                                                background: total > 0 ? (day.leads > 0 ? '#34d399' : T.accent) : T.hover,
+                                                background: total > 0 ? (day.leads > 0 ? T.success : T.accent) : T.hover,
                                                 minWidth: 3,
                                             }}
                                             title={`${day.day}: ${day.views} views, ${day.clicks} cliques, ${day.leads} leads`}
@@ -196,7 +196,7 @@ export default function TrackingDashboardPage() {
                                 <span className="text-[10px]" style={{ color: T.textMuted }}>Views + Cliques</span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <div className="w-2.5 h-2.5 rounded-sm" style={{ background: '#34d399' }} />
+                                <div className="w-2.5 h-2.5 rounded-sm" style={{ background: T.success }} />
                                 <span className="text-[10px]" style={{ color: T.textMuted }}>Dia com Lead</span>
                             </div>
                         </div>
@@ -370,7 +370,7 @@ export default function TrackingDashboardPage() {
                                                     className="px-2 py-0.5 rounded text-[10px] font-bold"
                                                     style={{
                                                         background: c.conversionRate >= 5 ? 'rgba(52,211,153,0.1)' : T.accentBg,
-                                                        color: c.conversionRate >= 5 ? '#34d399' : T.accent,
+                                                        color: c.conversionRate >= 5 ? T.success : T.accent,
                                                     }}
                                                 >
                                                     {c.conversionRate}%

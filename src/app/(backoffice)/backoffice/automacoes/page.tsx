@@ -275,7 +275,7 @@ export default function AutomacoesPage() {
                                         <span
                                             className="px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5"
                                             style={wf.is_active
-                                                ? { background: 'rgba(52,211,153,0.12)', color: '#34d399', border: '1px solid rgba(52,211,153,0.25)' }
+                                                ? { background: 'rgba(52,211,153,0.12)', color: T.success, border: '1px solid rgba(52,211,153,0.25)' }
                                                 : { background: 'rgba(251,191,36,0.12)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.25)' }
                                             }
                                         >
@@ -328,7 +328,7 @@ export default function AutomacoesPage() {
                                         >
                                             {wf.is_active
                                                 ? <Pause size={16} style={{ color: '#fbbf24' }} />
-                                                : <Play size={16} style={{ color: '#34d399' }} />}
+                                                : <Play size={16} style={{ color: T.success }} />}
                                         </button>
                                         <button
                                             onClick={() => handleDelete(wf.id, wf.name)}
@@ -337,7 +337,7 @@ export default function AutomacoesPage() {
                                             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(248,113,113,0.1)')}
                                             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                         >
-                                            <X size={16} style={{ color: '#f87171' }} />
+                                            <X size={16} style={{ color: T.error }} />
                                         </button>
                                     </div>
                                 </div>

@@ -155,7 +155,7 @@ const REGRAS_INICIAIS = [
         ativa: true,
         categoria: 'decay',
         icone: TrendingUp,
-        color: '#f87171',
+        color: T.error,
         execucoes: 56,
     },
     {
@@ -396,7 +396,7 @@ export default function LeadRulesPage() {
                     {[
                         { label: 'Lead Frio', range: '0–19 pts', bgColor: T.elevated, textColor: T.textMuted, desc: 'Nutrição automática' },
                         { label: 'Lead Morno', range: '20–49 pts', bgColor: 'rgba(249,115,22,0.1)', textColor: '#fb923c', desc: 'Follow-up em 48h' },
-                        { label: 'Lead Quente', range: '50+ pts', bgColor: 'rgba(239,68,68,0.1)', textColor: '#f87171', desc: 'Contato imediato' },
+                        { label: 'Lead Quente', range: '50+ pts', bgColor: 'rgba(239,68,68,0.1)', textColor: T.error, desc: 'Contato imediato' },
                     ].map(cat => (
                         <div key={cat.label} className="rounded-xl p-4" style={{ background: cat.bgColor }}>
                             <p className="text-sm font-bold" style={{ color: cat.textColor }}>{cat.label}</p>
