@@ -251,12 +251,13 @@ export default function IntegracoesPage() {
             try {
                 const res = await fetch('/api/integracoes/status')
                 if (res.ok) {
-                    const { statusMap } = await res.json()
-                    if (statusMap && typeof statusMap === 'object') {
+                    const { data } = await res.json()
+                    if (Array.isArray(data) && data.length > 0) {
                         const overrides: Record<string, IntegracaoStatus> = {}
-                        for (const [id, status] of Object.entries(statusMap)) {
-                            if (status && status !== 'nao_configurado') {
-                                overrides[id] = status as IntegracaoStatus
+                        for (const row of data) {
+                            const { integration_id, status } = row
+                            if (integration_id && status && status !== 'nao_configurado') {
+                                overrides[integration_id] = status as IntegracaoStatus
                             }
                         }
                         setStatusOverride(overrides)
