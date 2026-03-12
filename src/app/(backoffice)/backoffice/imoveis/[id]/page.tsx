@@ -1201,28 +1201,26 @@ export default function ImovelDetalhesPage() {
 
       {/* ── STICKY BOTTOM ACTION BAR ── */}
       <div
-        className="fixed bottom-20 lg:bottom-0 left-0 right-0 lg:left-60 z-40 flex items-center justify-end gap-3 px-6 py-4"
+        className="fixed bottom-20 lg:bottom-0 left-0 right-0 lg:left-60 z-40 flex items-center justify-end gap-2 px-6 py-3"
         style={{
-          background: T.elevated,
-          backdropFilter: 'blur(20px)',
+          background: `${T.elevated}f0`,
+          backdropFilter: 'blur(16px)',
           borderTop: `1px solid ${T.border}`,
         }}
       >
         <button
           onClick={handleDelete}
           disabled={deleting}
-          className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
-          style={{ border: `1px solid rgba(239,68,68,0.3)`, color: '#EF4444', background: 'rgba(239,68,68,0.08)' }}
+          className="bo-btn bo-btn-danger bo-btn-sm"
         >
-          {deleting ? <Loader2 size={15} className="animate-spin" /> : <Archive size={15} />}
+          {deleting ? <Loader2 size={13} className="animate-spin" /> : <Archive size={13} />}
           {deleting ? 'Arquivando...' : 'Arquivar'}
         </button>
         <button
           onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
-          className="h-10 px-6 rounded-xl transition-colors flex items-center gap-2 text-sm font-semibold text-white"
-          style={{ background: T.accent, boxShadow: '0 4px 16px rgba(59,130,246,0.35)' }}
+          className="bo-btn bo-btn-primary bo-btn-sm"
         >
-          <Edit size={15} />
+          <Edit size={13} />
           Editar Imóvel
         </button>
       </div>

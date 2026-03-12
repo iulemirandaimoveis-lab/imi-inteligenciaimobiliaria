@@ -100,7 +100,7 @@ export default function AvaliacoesPage() {
                 display: 'flex', alignItems: 'center', gap: '6px',
                 height: '44px', padding: '0 20px', borderRadius: '14px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
-                background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                background: 'var(--bo-accent)',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                 border: 'none', cursor: 'pointer',
                 flexShrink: 0,
@@ -303,7 +303,7 @@ export default function AvaliacoesPage() {
                 marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
                 height: '44px', padding: '0 20px', borderRadius: '14px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
-                background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                background: 'var(--bo-accent)',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.22)',
                 border: 'none', cursor: 'pointer',
               }}

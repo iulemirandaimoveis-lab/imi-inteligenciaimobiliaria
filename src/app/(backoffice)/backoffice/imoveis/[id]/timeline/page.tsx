@@ -94,7 +94,7 @@ export default function PropertyTimelinePage() {
                 actions={
                     <button
                         className="h-10 px-5 rounded-xl font-semibold text-sm flex items-center gap-2 text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        style={{ background: T.accent, boxShadow: '0 4px 16px rgba(59,130,246,0.3)' }}
+                        style={{ background: T.accent }}
                     >
                         <Plus size={16} />
                         Registrar Evento

@@ -275,7 +275,7 @@ export default function IndicesBackofficePage() {
                                         <button
                                             onClick={() => saveEdit(idx.id)}
                                             disabled={saving}
-                                            className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white disabled:opacity-60 transition-all"
+                                            className="bo-btn bo-btn-primary"
                                             style={{ background: 'var(--bo-accent)' }}
                                         >
                                             {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}

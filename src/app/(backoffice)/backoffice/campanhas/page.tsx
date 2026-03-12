@@ -299,7 +299,7 @@ export default function CampanhasPage() {
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '38px', padding: '0 18px', borderRadius: '12px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
-                  background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                  background: 'var(--bo-accent)',
                   boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                   border: 'none', cursor: 'pointer',
                   flexShrink: 0,
@@ -411,7 +411,7 @@ export default function CampanhasPage() {
               marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
               height: '38px', padding: '0 18px', borderRadius: '12px',
               fontSize: '13px', fontWeight: 700, color: '#fff',
-              background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+              background: 'var(--bo-accent)',
               boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
               border: 'none', cursor: 'pointer',
             }}

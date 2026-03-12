@@ -216,7 +216,7 @@ export default function NovoEbookPage() {
                     <button
                         type="submit"
                         disabled={saving}
-                        className="flex items-center gap-2 h-9 px-5 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-60"
+                        className="bo-btn bo-btn-primary"
                         style={{ background: 'var(--accent-500)' }}
                     >
                         {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}

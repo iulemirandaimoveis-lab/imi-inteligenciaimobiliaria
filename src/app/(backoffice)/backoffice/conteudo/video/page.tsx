@@ -169,7 +169,7 @@ export default function VideoCreatorPage() {
                         whileTap={{ scale: 0.95 }}
                         onClick={handleRender}
                         disabled={!showPlayer || renderStatus === 'rendering'}
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 disabled:opacity-50"
+                        className="bo-btn bo-btn-primary"
                         style={{ background: T.success, boxShadow: '0 0 20px rgba(52,211,153,0.3)' }}
                     >
                         {renderStatus === 'rendering'
@@ -443,7 +443,7 @@ export default function VideoCreatorPage() {
                                 <motion.button
                                     onClick={() => setTab('editor')}
                                     whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
+                                    className="bo-btn bo-btn-primary"
                                     style={{ background: T.accent }}
                                 >
                                     <Sparkles size={14} /> Criar Vídeo

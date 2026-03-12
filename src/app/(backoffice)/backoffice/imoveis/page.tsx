@@ -743,16 +743,14 @@ export default function ImoveisPage() {
                 title="Portfólio / Empreendimentos"
                 subtitle={`Gestão Global IMI · ${total} ativos comerciais`}
                 actions={
-                    <motion.button
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.95 }}
+                    <button
                         onClick={() => router.push('/backoffice/imoveis/novo')}
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                        style={{ background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)', boxShadow: '0 4px 14px rgba(37,99,235,0.28)' }}
+                        className="bo-btn bo-btn-primary"
                     >
-                        <Plus size={16} />
+                        <Plus size={14} />
                         <span className="hidden sm:inline">Novo Empreendimento</span>
-                    </motion.button>
+                        <span className="sm:hidden">Novo</span>
+                    </button>
                 }
             />
 
@@ -1089,8 +1087,8 @@ export default function ImoveisPage() {
                             <motion.button
                                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
                                 onClick={() => router.push('/backoffice/imoveis/novo')}
-                                className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white"
-                                style={{ background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)', boxShadow: '0 4px 14px rgba(37,99,235,0.28)' }}
+                                className="bo-btn bo-btn-primary"
+                                style={{ background: 'var(--bo-accent)' }}
                             >
                                 <Plus size={16} /> Cadastrar Imóvel
                             </motion.button>

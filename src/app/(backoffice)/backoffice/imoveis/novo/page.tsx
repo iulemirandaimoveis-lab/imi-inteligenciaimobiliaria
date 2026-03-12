@@ -1428,33 +1428,30 @@ export default function NovoImovelPage() {
                     type="button"
                     onClick={handlePrev}
                     disabled={currentStep === 1}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold transition-all disabled:opacity-30"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                    className="bo-btn bo-btn-secondary"
                 >
-                    <ArrowLeft size={16} /> Anterior
+                    <ArrowLeft size={14} /> Anterior
                 </button>
 
                 {currentStep < 4 ? (
                     <button
                         type="button"
                         onClick={handleNext}
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white transition-all"
-                        style={{ background: T.accent }}
+                        className="bo-btn bo-btn-primary"
                     >
-                        Próximo <ArrowRight size={16} />
+                        Próximo <ArrowRight size={14} />
                     </button>
                 ) : (
                     <button
                         type="button"
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50"
-                        style={{ background: T.success }}
+                        className="bo-btn bo-btn-primary"
                     >
                         {isSubmitting ? (
-                            <><Loader2 size={16} className="animate-spin" /> Publicando...</>
+                            <><Loader2 size={14} className="animate-spin" /> Publicando...</>
                         ) : (
-                            <><Save size={16} /> Publicar Empreendimento</>
+                            <><Save size={14} /> Publicar Empreendimento</>
                         )}
                     </button>
                 )}

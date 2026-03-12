@@ -120,7 +120,7 @@ export default function ConteudosPage() {
                         </motion.button>
                         <motion.button whileTap={{ scale: 0.96 }}
                             onClick={() => router.push('/backoffice/conteudo/novo')}
-                            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                            className="bo-btn bo-btn-primary"
                             style={{ background: T.accent }}>
                             <Plus size={15} /> <span className="hidden sm:inline">Novo</span>
                         </motion.button>
@@ -253,7 +253,7 @@ export default function ConteudosPage() {
                                         return (
                                             <motion.button key={item.label} whileTap={{ scale: 0.96 }}
                                                 onClick={() => router.push(item.href)}
-                                                className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
+                                                className="bo-btn bo-btn-primary"
                                                 style={{ background: T.accent }}>
                                                 <Icon size={15} /> {item.label}
                                             </motion.button>

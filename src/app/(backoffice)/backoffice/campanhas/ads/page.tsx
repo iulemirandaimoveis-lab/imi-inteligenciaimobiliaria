@@ -133,7 +133,7 @@ export default function AdsPerformancePage() {
                 actions={
                     <Link
                         href="/backoffice/campanhas/nova"
-                        className="flex items-center gap-1.5 h-11 px-5 rounded-xl text-sm font-semibold text-white"
+                        className="bo-btn bo-btn-primary"
                         style={{ background: 'var(--bo-accent)' }}
                     >
                         <Plus size={14} /> Nova Campanha

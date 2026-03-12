@@ -167,7 +167,7 @@ export default function LeadsPage() {
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '36px', padding: '0 14px', borderRadius: '10px',
                   fontSize: '12px', fontWeight: 700, color: '#fff',
-                  background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                  background: 'var(--bo-accent)',
                   boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                   border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
                 }}

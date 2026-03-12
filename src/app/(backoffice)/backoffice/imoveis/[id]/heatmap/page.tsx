@@ -352,7 +352,7 @@ export default function ImovelHeatmapPage() {
 
                 <button
                     className="w-full mt-5 h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99]"
-                    style={{ background: '#3B82F6', color: '#fff', boxShadow: '0 4px 16px rgba(59,130,246,0.3)' }}
+                    style={{ background: '#3B82F6', color: '#fff' }}
                 >
                     <Share2 size={14} /> Compartilhar Analytics
                 </button>

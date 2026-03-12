@@ -319,7 +319,7 @@ export default function IndicadoresPage() {
                         </button>
                         <button
                             onClick={() => { setAddingNew(true); setEditingId(null) }}
-                            className="flex items-center gap-1.5 h-10 px-4 rounded-xl text-sm font-semibold text-white"
+                            className="bo-btn bo-btn-primary"
                             style={{ background: 'var(--bo-accent)' }}
                         >
                             <Plus size={14} />

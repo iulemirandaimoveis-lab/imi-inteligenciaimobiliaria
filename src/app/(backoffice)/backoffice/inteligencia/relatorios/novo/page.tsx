@@ -119,7 +119,7 @@ export default function NovoRelatorioPage() {
 
                 <div className="flex items-center gap-3 justify-end">
                     <Link href="/backoffice/inteligencia/relatorios" className="h-9 px-5 rounded-xl text-sm font-medium" style={{ color: 'var(--bo-text-muted)', background: 'var(--bo-icon-bg)' }}>Cancelar</Link>
-                    <button type="submit" disabled={saving} className="flex items-center gap-2 h-9 px-5 rounded-xl text-sm font-semibold text-white disabled:opacity-60" style={{ background: 'var(--accent-500)' }}>
+                    <button type="submit" disabled={saving} className="bo-btn bo-btn-primary" style={{ background: 'var(--accent-500)' }}>
                         {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                         Salvar
                     </button>

@@ -141,7 +141,7 @@ export default function CampanhaDetalhesPage() {
                         </span>
                         <button
                             onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
-                            className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                            className="bo-btn bo-btn-primary"
                             style={{ background: T.accent }}>
                             <Edit size={14} /> Editar
                         </button>

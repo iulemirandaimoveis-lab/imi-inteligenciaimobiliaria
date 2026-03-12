@@ -39,7 +39,7 @@ export default function CorretoresPage() {
                 subtitle="Controle de acesso, permissões e desempenho da equipe comercial"
                 actions={
                     <Link href="/backoffice/settings/corretores/novo"
-                        className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-110"
+                        className="bo-btn bo-btn-primary"
                         style={{ background: T.accent }}>
                         <Plus size={16} /> Novo Corretor
                     </Link>

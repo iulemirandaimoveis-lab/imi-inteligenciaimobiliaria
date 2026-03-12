@@ -31,3 +31,6 @@ export type { Column, DataTableProps } from './DataTable'
 export { ActionMenu } from './ActionMenu'
 
 export { FormField } from './FormField'
+
+export { Btn } from './Btn'
+export type { BtnVariant, BtnSize } from './Btn'

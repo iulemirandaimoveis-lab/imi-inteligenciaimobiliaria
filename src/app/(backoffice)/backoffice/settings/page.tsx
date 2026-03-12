@@ -181,7 +181,7 @@ export default function SettingsPage() {
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all disabled:opacity-50"
+            className="bo-btn bo-btn-primary"
             style={{ background: T.accent }}
           >
             {isSaving ? (

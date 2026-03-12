@@ -105,7 +105,7 @@ export default function RelatoriosBackofficePage() {
                         </button>
                         <Link
                             href="/backoffice/inteligencia/relatorios/novo"
-                            className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white transition-all"
+                            className="bo-btn bo-btn-primary"
                             style={{ background: 'var(--bo-accent)' }}
                         >
                             <Plus size={15} />
@@ -156,7 +156,7 @@ export default function RelatoriosBackofficePage() {
                         <p className="text-xs mb-4" style={{ color: T.textMuted }}>Publique estudos e dossiês de mercado</p>
                         <Link
                             href="/backoffice/inteligencia/relatorios/novo"
-                            className="inline-flex items-center gap-1.5 h-9 px-4 rounded-xl text-xs font-semibold text-white"
+                            className="bo-btn bo-btn-primary"
                             style={{ background: 'var(--bo-accent)' }}
                         >
                             <Plus size={13} /> Cadastrar primeiro relatório

@@ -99,7 +99,7 @@ export default function ContratosPage() {
                             className="flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white flex-shrink-0"
                             style={{
                                 height: '44px',
-                                background: 'linear-gradient(135deg, var(--bo-accent) 0%, #7C3AED 100%)',
+                                background: 'var(--bo-accent)',
                                 boxShadow: '0 4px 14px rgba(124,58,237,0.28)',
                                 border: 'none',
                             }}
@@ -276,7 +276,7 @@ export default function ContratosPage() {
                                         className="inline-flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white"
                                         style={{
                                             height: '44px',
-                                            background: 'linear-gradient(135deg, var(--bo-accent) 0%, #7C3AED 100%)',
+                                            background: 'var(--bo-accent)',
                                             boxShadow: '0 4px 14px rgba(124,58,237,0.22)',
                                             border: 'none',
                                         }}

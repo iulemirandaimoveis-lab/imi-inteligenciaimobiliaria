@@ -77,7 +77,7 @@ export default function PagarPage() {
                 actions={
                     <Link
                         href="/backoffice/financeiro"
-                        className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-80"
+                        className="bo-btn bo-btn-primary"
                         style={{ background: T.accent }}
                     >
                         <Plus size={15} /> Novo Lançamento
@@ -149,7 +149,7 @@ export default function PagarPage() {
                         Registre despesas e contas a pagar no módulo Financeiro
                     </p>
                     <Link href="/backoffice/financeiro"
-                        className="inline-flex items-center gap-2 h-9 px-5 rounded-xl text-xs font-semibold text-white"
+                        className="bo-btn bo-btn-primary"
                         style={{ background: T.accent }}>
                         <Plus size={14} /> Novo Lançamento
                     </Link>

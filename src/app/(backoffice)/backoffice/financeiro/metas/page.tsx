@@ -264,7 +264,7 @@ export default function MetasPage() {
                     {editing && (
                         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                             <button onClick={saveGoal} disabled={saving}
-                                className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white transition-all"
+                                className="bo-btn bo-btn-primary"
                                 style={{ background: '#6BB87B', opacity: saving ? 0.7 : 1 }}>
                                 {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
                                 {saving ? 'Salvando...' : 'Salvar Metas'}
@@ -309,7 +309,7 @@ export default function MetasPage() {
                             <p className="text-sm font-semibold mb-1" style={{ color: T.textMuted }}>Metas não definidas para {monthLabel(currentMonth)}</p>
                             <p className="text-xs mb-4" style={{ color: T.textMuted }}>Defina sua meta de receita e avaliações para acompanhar o progresso</p>
                             <button onClick={() => setEditing(true)}
-                                className="inline-flex items-center gap-2 h-9 px-5 rounded-xl text-xs font-semibold text-white"
+                                className="bo-btn bo-btn-primary"
                                 style={{ background: T.accent }}>
                                 <Plus size={13} /> Definir Metas
                             </button>

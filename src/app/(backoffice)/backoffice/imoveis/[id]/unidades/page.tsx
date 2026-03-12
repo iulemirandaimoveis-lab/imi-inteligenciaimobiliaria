@@ -127,7 +127,7 @@ export default function ImoveisUnidadesPage() {
                         <button
                             onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
                             className="flex items-center gap-2 h-10 px-5 text-white rounded-xl font-semibold text-sm transition-all hover:scale-[1.02]"
-                            style={{ background: T.accent, boxShadow: '0 4px 16px rgba(59,130,246,0.3)' }}
+                            style={{ background: T.accent }}
                         >
                             <Plus size={15} />
                             <span className="hidden sm:inline">Nova Unidade</span>

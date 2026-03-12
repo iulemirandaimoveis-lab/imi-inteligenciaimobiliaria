@@ -239,7 +239,7 @@ function EmptyEquipe({ onAddFirst }: { onAddFirst: () => void }) {
             </p>
             <button
                 onClick={onAddFirst}
-                className="inline-flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-110"
+                className="bo-btn bo-btn-primary"
                 style={{ background: T.accent }}
             >
                 <Plus size={15} /> Adicionar Primeiro Membro
@@ -296,7 +296,7 @@ export default function EquipePage() {
                 actions={
                     <Link
                         href="/backoffice/settings/corretores/novo"
-                        className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-110"
+                        className="bo-btn bo-btn-primary"
                         style={{ background: T.accent }}
                     >
                         <Plus size={15} /> Novo Membro

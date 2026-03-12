@@ -326,7 +326,7 @@ export default function OrganizacaoPage() {
             <button
               onClick={handleSaveSettings}
               disabled={saving}
-              className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white transition-all"
+              className="bo-btn bo-btn-primary"
               style={{ background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)', opacity: saving ? 0.7 : 1 }}
             >
               {saved ? <Check size={15} /> : saving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
