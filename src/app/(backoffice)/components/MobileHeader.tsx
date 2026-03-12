@@ -82,7 +82,7 @@ export default function MobileHeader() {
     const [accountOpen, setAccountOpen] = useState(false)
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [unreadCount, setUnreadCount] = useState(0)
-    const [userInfo, setUserInfo] = useState<{ name: string; email: string; initials: string } | null>(null)
+    const [userInfo, setUserInfo] = useState<{ name: string; email: string; initials: string; role?: string } | null>(null)
     const panelRef = useRef<HTMLDivElement>(null)
     const accountPanelRef = useRef<HTMLDivElement>(null)
 
@@ -118,11 +118,21 @@ export default function MobileHeader() {
     // Load Supabase user info for account drawer
     useEffect(() => {
         const supabase = createClient()
-        supabase.auth.getUser().then(({ data: { user } }) => {
+        supabase.auth.getUser().then(async ({ data: { user } }) => {
             if (user) {
                 const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Admin'
                 const initials = name.split(' ').slice(0, 2).map((n: string) => n[0]).join('').toUpperCase()
-                setUserInfo({ name, email: user.email || '', initials })
+                // Fetch role from users table
+                let role: string | undefined
+                try {
+                    const { data: dbUser } = await supabase
+                        .from('users')
+                        .select('role')
+                        .eq('email', user.email)
+                        .single()
+                    role = dbUser?.role as string | undefined
+                } catch {}
+                setUserInfo({ name, email: user.email || '', initials, role })
             }
         })
     }, [])
@@ -326,6 +336,14 @@ export default function MobileHeader() {
                                     <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--bo-text-muted)' }}>
                                         {userInfo?.email ?? ''}
                                     </p>
+                                    {userInfo?.role && (
+                                        <span
+                                            className="inline-block mt-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide"
+                                            style={{ background: 'var(--bo-active-bg)', color: 'var(--bo-accent)' }}
+                                        >
+                                            {userInfo.role}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 
