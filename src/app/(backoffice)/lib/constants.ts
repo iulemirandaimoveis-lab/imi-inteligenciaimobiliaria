@@ -48,6 +48,9 @@ export const STATUS_CONFIG = {
   assinado:   { label: 'Assinado',   color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
   vencido:    { label: 'Vencido',    color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
   em_revisao: { label: 'Em Revisão', color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
+  gerado:     { label: 'Gerado',     color: '#7b9ec4',            bg: 'rgba(123,158,196,0.12)', dot: '#7b9ec4' },
+  aguardando_assinatura: { label: 'Aguard. Assinatura', color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', dot: '#3b82f6' },
+  assinado_parcial:      { label: 'Parcial. Assinado',  color: '#e8a87c',          bg: 'rgba(232,168,124,0.12)', dot: '#e8a87c' },
 
   // ── Financeiro ─────────────────────────────────────────
   pago:       { label: 'Pago',       color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },

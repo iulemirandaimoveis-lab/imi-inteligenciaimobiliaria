@@ -9,17 +9,21 @@ import {
 } from 'lucide-react'
 import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL } from '@/lib/modelos-contratos'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
-const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
-    rascunho: { label: 'Rascunho', text: '#4E5669', bg: 'rgba(78,86,105,0.15)', icon: FileText },
-    gerado: { label: 'Gerado', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: CheckCircle },
-    aguardando_assinatura: { label: 'Aguard. Assinatura', text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Clock },
-    assinado_parcial: { label: 'Parcialmente Assinado', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
-    assinado: { label: 'Assinado', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    cancelado: { label: 'Cancelado', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: X },
+// Derive STATUS_CFG from centralized constants
+const STATUS_ICONS: Record<string, any> = {
+    rascunho: FileText, gerado: CheckCircle, aguardando_assinatura: Clock,
+    assinado_parcial: AlertCircle, assinado: CheckCircle, cancelado: X,
 }
+const STATUS_CFG = Object.fromEntries(
+    ['rascunho', 'gerado', 'aguardando_assinatura', 'assinado_parcial', 'assinado', 'cancelado'].map(key => {
+        const cfg = getStatusConfig(key)
+        return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS[key] || FileText }]
+    })
+) as Record<string, { label: string; text: string; bg: string; icon: any }>
 
 function StatusBadge({ status }: { status: string }) {
     const cfg = STATUS_CFG[status] || STATUS_CFG.rascunho
@@ -176,9 +180,9 @@ export default function ContratosPage() {
                                 <FilterTabs
                                     tabs={[
                                         { id: 'todos',                  label: 'Todos',             count: contratos.length },
-                                        { id: 'assinado',               label: 'Assinados',          dotColor: '#6BB87B' },
-                                        { id: 'aguardando_assinatura',  label: 'Aguard. Assinatura', dotColor: 'var(--bo-accent)' },
-                                        { id: 'gerado',                 label: 'Gerados',            dotColor: '#7B9EC4' },
+                                        { id: 'assinado',               label: 'Assinados',          dotColor: getStatusConfig('assinado').dot },
+                                        { id: 'aguardando_assinatura',  label: 'Aguard. Assinatura', dotColor: getStatusConfig('aguardando_assinatura').dot },
+                                        { id: 'gerado',                 label: 'Gerados',            dotColor: getStatusConfig('gerado').dot },
                                     ] as FilterTab[]}
                                     active={filterStatus}
                                     onChange={setFilterStatus}

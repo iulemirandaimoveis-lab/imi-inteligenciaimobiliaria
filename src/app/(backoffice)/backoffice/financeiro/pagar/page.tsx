@@ -9,15 +9,18 @@ import {
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
-const STATUS_CFG: Record<string, { label: string; text: string; bg: string; icon: any }> = {
-    pago:     { label: 'Pago',      text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    pendente: { label: 'Pendente',  text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Clock },
-    atrasado: { label: 'Atrasado',  text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle },
-    cancelado:{ label: 'Cancelado', text: '#627D98', bg: 'rgba(98,125,152,0.12)',  icon: AlertCircle },
-}
+// Derive STATUS_CFG from centralized constants
+const STATUS_ICONS: Record<string, any> = { pago: CheckCircle, pendente: Clock, atrasado: AlertCircle, cancelado: AlertCircle }
+const STATUS_CFG = Object.fromEntries(
+    ['pago', 'pendente', 'atrasado', 'cancelado'].map(key => {
+        const cfg = getStatusConfig(key)
+        return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS[key] || AlertCircle }]
+    })
+) as Record<string, { label: string; text: string; bg: string; icon: any }>
 
 const fmt = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
@@ -120,9 +123,9 @@ export default function PagarPage() {
                 <FilterTabs
                     tabs={[
                         { id: 'todos',    label: 'Todos',     count: transactions.filter(t => t.status !== 'cancelado').length },
-                        { id: 'pendente', label: 'Pendentes', dotColor: '#E8A87C' },
-                        { id: 'atrasado', label: 'Atrasados', dotColor: '#E57373' },
-                        { id: 'pago',     label: 'Pagos',     dotColor: '#4ADE80' },
+                        { id: 'pendente', label: 'Pendentes', dotColor: getStatusConfig('pendente').dot },
+                        { id: 'atrasado', label: 'Atrasados', dotColor: getStatusConfig('atrasado').dot },
+                        { id: 'pago',     label: 'Pagos',     dotColor: getStatusConfig('pago').dot },
                     ] as FilterTab[]}
                     active={statusFilter}
                     onChange={setStatusFilter}

@@ -14,7 +14,8 @@ import {
     Landmark,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, KPICard, FilterTabs, ActionMenu, StatusBadge } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
@@ -193,16 +194,10 @@ export default function ContasBancariasPage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        {conta.is_active ? (
-                                            <span className="px-2 py-1 text-xs font-semibold rounded-lg"
-                                                style={{ background: 'rgba(107,184,123,0.12)', color: '#6BB87B' }}>Ativa</span>
-                                        ) : (
-                                            <span className="px-2 py-1 text-xs font-medium rounded-lg"
-                                                style={{ background: T.elevated, color: T.textMuted }}>Inativa</span>
-                                        )}
+                                        <StatusBadge statusKey={conta.is_active ? 'ativo' : 'inativo'} size="xs" dot />
                                         {conta.tipo && (
                                             <span className="px-2 py-1 text-xs font-semibold rounded-lg"
-                                                style={{ background: 'rgba(96,165,250,0.12)', color: '#60A5FA' }}>
+                                                style={{ background: `${getStatusConfig('em_negociacao').dot}1f`, color: getStatusConfig('em_negociacao').dot }}>
                                                 {conta.tipo}
                                             </span>
                                         )}
@@ -261,34 +256,13 @@ export default function ContasBancariasPage() {
                                     <span className="text-xs" style={{ color: T.textMuted }}>
                                         Última movimentação: {getTimeAgo(conta.ultima_movimentacao)}
                                     </span>
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                router.push(`/backoffice/financeiro/contas/${conta.id}/extrato`)
-                                            }}
-                                            className="p-2 rounded-lg transition-colors"
-                                            style={{ color: T.textMuted }}
-                                            onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                                            title="Ver extrato"
-                                        >
-                                            <Eye size={16} />
-                                        </button>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                router.push(`/backoffice/financeiro/contas/${conta.id}/editar`)
-                                            }}
-                                            className="p-2 rounded-lg transition-colors"
-                                            style={{ color: T.textMuted }}
-                                            onMouseEnter={e => (e.currentTarget.style.background = T.hover)}
-                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                                            title="Editar conta"
-                                        >
-                                            <Edit size={16} />
-                                        </button>
-                                    </div>
+                                    <ActionMenu
+                                        size="sm"
+                                        items={[
+                                            { label: 'Ver Extrato', icon: <Eye size={14} />, onClick: () => router.push(`/backoffice/financeiro/contas/${conta.id}/extrato`) },
+                                            { label: 'Editar', icon: <Edit size={14} />, onClick: () => router.push(`/backoffice/financeiro/contas/${conta.id}/editar`) },
+                                        ]}
+                                    />
                                 </div>
                             </div>
                         )
