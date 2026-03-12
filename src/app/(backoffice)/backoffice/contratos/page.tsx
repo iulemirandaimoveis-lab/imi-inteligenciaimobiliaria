@@ -144,21 +144,23 @@ export default function ContratosPage() {
                 />
             </div>
 
-            {/* Tabs — horizontal scroll on mobile */}
-            <div className="tab-scroll-row">
+            {/* Tabs — equal-width on mobile, auto on desktop */}
+            <div className="flex gap-2">
                 {[
-                    { key: 'lista', label: 'Meus Contratos', icon: FileText },
-                    { key: 'modelos', label: 'Modelos Disponíveis', icon: Sparkles },
+                    { key: 'lista',   label: 'Meus Contratos',     labelSm: 'Contratos',  icon: FileText },
+                    { key: 'modelos', label: 'Modelos Disponíveis', labelSm: 'Modelos',    icon: Sparkles },
                 ].map(tab => (
                     <button key={tab.key}
                         onClick={() => setActiveTab(tab.key as any)}
-                        className="flex items-center gap-2 px-4 h-9 rounded-xl text-[13px] font-semibold transition-all flex-shrink-0 whitespace-nowrap"
+                        className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl text-xs font-semibold transition-all"
                         style={{
                             background: activeTab === tab.key ? 'var(--bo-accent)' : T.surface,
                             color: activeTab === tab.key ? 'white' : T.textDim,
                             border: `1px solid ${activeTab === tab.key ? T.borderGold : T.border}`,
                         }}>
-                        <tab.icon size={13} /> {tab.label}
+                        <tab.icon size={12} />
+                        <span className="sm:hidden">{tab.labelSm}</span>
+                        <span className="hidden sm:inline">{tab.label}</span>
                     </button>
                 ))}
             </div>
