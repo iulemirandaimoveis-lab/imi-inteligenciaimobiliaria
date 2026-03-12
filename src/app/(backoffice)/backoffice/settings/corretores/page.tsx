@@ -8,7 +8,8 @@ import { useBrokers, updateBrokerStatus } from '@/hooks/use-brokers'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, StatusBadge } from '@/app/(backoffice)/components/ui'
 
 export default function CorretoresPage() {
     const [searchTerm, setSearchTerm] = useState('')
@@ -47,8 +48,8 @@ export default function CorretoresPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
                     { label: 'Total Registrados', value: brokers.length, color: T.accent, bg: 'rgba(72,101,129,0.12)', icon: UserCircle },
-                    { label: 'Ativos', value: activeBrokers, color: '#4ADE80', bg: 'rgba(74,222,128,0.1)', icon: CheckCircle },
-                    { label: 'Inativos', value: inactiveBrokers, color: T.textMuted, bg: 'rgba(148,163,184,0.1)', icon: XCircle },
+                    { label: 'Ativos', value: activeBrokers, color: getStatusConfig('ativo').dot, bg: `${getStatusConfig('ativo').dot}1a`, icon: CheckCircle },
+                    { label: 'Inativos', value: inactiveBrokers, color: getStatusConfig('inativo').dot, bg: `${getStatusConfig('inativo').dot}1a`, icon: XCircle },
                 ].map(s => {
                     const Icon = s.icon
                     return (
@@ -144,13 +145,7 @@ export default function CorretoresPage() {
                                             </code>
                                         </td>
                                         <td className="px-5 py-4">
-                                            <span className="text-xs px-2.5 py-1 rounded-full font-semibold"
-                                                style={{
-                                                    background: broker.status === 'active' ? 'rgba(74,222,128,0.12)' : 'rgba(148,163,184,0.1)',
-                                                    color: broker.status === 'active' ? '#4ADE80' : T.textMuted,
-                                                }}>
-                                                {broker.status === 'active' ? 'Ativo' : 'Inativo'}
-                                            </span>
+                                            <StatusBadge statusKey={broker.status === 'active' ? 'ativo' : 'inativo'} size="xs" />
                                         </td>
                                         <td className="px-5 py-4">
                                             <div className="flex items-center gap-2">
@@ -164,7 +159,7 @@ export default function CorretoresPage() {
                                             <button
                                                 onClick={() => handleStatusToggle(broker.id, broker.status)}
                                                 className="p-2 rounded-lg transition-all hover:opacity-80"
-                                                style={{ color: broker.status === 'active' ? '#F87171' : '#4ADE80' }}
+                                                style={{ color: broker.status === 'active' ? getStatusConfig('perdido').dot : getStatusConfig('ativo').dot }}
                                                 title={broker.status === 'active' ? 'Desativar' : 'Ativar'}>
                                                 {broker.status === 'active' ? <XCircle size={18} /> : <CheckCircle size={18} />}
                                             </button>

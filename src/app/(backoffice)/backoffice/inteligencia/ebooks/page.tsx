@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, StatusBadge } from '@/app/(backoffice)/components/ui'
 
 type Ebook = {
     id: string
@@ -85,7 +86,7 @@ export default function EbooksPage() {
             <div className="grid grid-cols-3 gap-3">
                 {[
                     { label: 'Total', value: ebooks.length, color: T.text },
-                    { label: 'Publicados', value: published, color: '#34d399' },
+                    { label: 'Publicados', value: published, color: getStatusConfig('publicado').dot },
                     { label: 'Rascunhos', value: drafts, color: T.textMuted },
                 ].map(s => (
                     <div key={s.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
@@ -167,15 +168,7 @@ export default function EbooksPage() {
                                             </div>
                                         </td>
                                         <td className="px-5 py-4">
-                                            <span
-                                                className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full whitespace-nowrap"
-                                                style={e.is_published
-                                                    ? { color: '#34d399', background: 'rgba(52,211,153,0.1)' }
-                                                    : { color: T.textMuted, background: 'rgba(255,255,255,0.05)' }
-                                                }
-                                            >
-                                                {e.is_published ? 'Publicado' : 'Rascunho'}
-                                            </span>
+                                            <StatusBadge statusKey={e.is_published ? 'publicado' : 'rascunho'} size="xs" />
                                         </td>
                                         <td className="px-5 py-4">
                                             <span className="text-xs font-mono" style={{ color: T.textMuted }}>{e.sort_order}</span>

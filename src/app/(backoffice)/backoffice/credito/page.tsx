@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
+import { getStatusConfig } from '../../lib/constants'
 
 const supabase = createClient()
 
@@ -44,17 +45,16 @@ function useCreditApplications() {
   })
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
-  pending:       { label: 'Pendente',     color: 'var(--bo-text-muted)', bg: 'rgba(148,163,184,0.08)', icon: Clock },
-  approved:      { label: 'Aprovado',     color: 'var(--s-done)',        bg: 'var(--s-done-bg)',       icon: CheckCircle },
-  under_review:  { label: 'Em Análise',   color: 'var(--s-cold)',        bg: 'var(--s-cold-bg)',       icon: Clock },
-  documents:     { label: 'Documentação', color: 'var(--s-warm)',        bg: 'var(--s-warm-bg)',       icon: AlertCircle },
-  rejected:      { label: 'Recusado',     color: 'var(--s-hot)',         bg: 'var(--s-hot-bg)',        icon: AlertCircle },
-  aprovado:      { label: 'Aprovado',     color: 'var(--s-done)',        bg: 'var(--s-done-bg)',       icon: CheckCircle },
-  analise:       { label: 'Em Análise',   color: 'var(--s-cold)',        bg: 'var(--s-cold-bg)',       icon: Clock },
-  documentacao:  { label: 'Documentação', color: 'var(--s-warm)',        bg: 'var(--s-warm-bg)',       icon: AlertCircle },
-  recusado:      { label: 'Recusado',     color: 'var(--s-hot)',         bg: 'var(--s-hot-bg)',        icon: AlertCircle },
+const STATUS_ICONS: Record<string, React.ElementType> = {
+  pending: Clock, approved: CheckCircle, under_review: Clock, documents: AlertCircle,
+  rejected: AlertCircle, aprovado: CheckCircle, analise: Clock, documentacao: AlertCircle, recusado: AlertCircle,
 }
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = Object.fromEntries(
+  ['pending', 'approved', 'under_review', 'documents', 'rejected', 'aprovado', 'analise', 'documentacao', 'recusado'].map(key => {
+    const cfg = getStatusConfig(key)
+    return [key, { label: cfg.label, color: cfg.dot, bg: `${cfg.dot}14`, icon: STATUS_ICONS[key] || Clock }]
+  })
+) as Record<string, { label: string; color: string; bg: string; icon: React.ElementType }>
 
 function SimuladorCredito() {
   const [valorImovel, setValorImovel] = useState(600000)

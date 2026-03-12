@@ -58,9 +58,18 @@ export const STATUS_CONFIG = {
   aberto:     { label: 'Em Aberto',  color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#fbbf24' },
 
   // ── Crédito ────────────────────────────────────────────
-  em_analise: { label: 'Em Análise', color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
-  aprovado:   { label: 'Aprovado',   color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
-  negado:     { label: 'Negado',     color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
+  em_analise:   { label: 'Em Análise',   color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
+  aprovado:     { label: 'Aprovado',     color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
+  negado:       { label: 'Negado',       color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
+  documentacao: { label: 'Documentação', color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#fbbf24' },
+  recusado:     { label: 'Recusado',     color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
+  // English aliases for credit
+  pending:      { label: 'Pendente',     color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#94a3b8' },
+  under_review: { label: 'Em Análise',   color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
+  documents:    { label: 'Documentação', color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#fbbf24' },
+  approved:     { label: 'Aprovado',     color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
+  rejected:     { label: 'Recusado',     color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
+  analise:      { label: 'Em Análise',   color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
 
   // ── Projetos ───────────────────────────────────────────
   em_andamento:{ label: 'Em Andamento', color: 'var(--bo-info)',   bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },

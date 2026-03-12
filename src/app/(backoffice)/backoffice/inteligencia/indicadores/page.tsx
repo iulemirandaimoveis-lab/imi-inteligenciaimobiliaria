@@ -9,6 +9,7 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 type Indicator = {
@@ -44,9 +45,9 @@ const CATEGORY_META: Record<string, { label: string; color: string; bg: string; 
 }
 
 const TREND_META = {
-    up:     { label: 'Alta',    color: '#34D399', Icon: TrendingUp },
-    down:   { label: 'Queda',   color: '#F87171', Icon: TrendingDown },
-    stable: { label: 'Estável', color: '#FBBF24', Icon: Minus },
+    up:     { label: 'Alta',    color: getStatusConfig('convertido').dot, Icon: TrendingUp },
+    down:   { label: 'Queda',   color: getStatusConfig('perdido').dot,    Icon: TrendingDown },
+    stable: { label: 'Estável', color: getStatusConfig('morno').dot,      Icon: Minus },
 }
 
 function formatDate(iso: string) {

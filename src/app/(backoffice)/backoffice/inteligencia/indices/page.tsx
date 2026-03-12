@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, KPICard, StatusBadge } from '@/app/(backoffice)/components/ui'
 
 type MarketIndex = {
     id: string
@@ -31,16 +32,16 @@ function formatVar(v: number | null) {
 
 function varColor(v: number | null) {
     if (v === null) return 'var(--bo-text-muted)'
-    if (v > 0) return '#34d399'
-    if (v < 0) return '#ef4444'
-    return '#fbbf24'
+    if (v > 0) return getStatusConfig('convertido').dot
+    if (v < 0) return getStatusConfig('perdido').dot
+    return getStatusConfig('morno').dot
 }
 
 function VarIcon({ v }: { v: number | null }) {
     if (v === null) return <Minus size={11} style={{ color: 'var(--bo-text-muted)' }} />
-    if (v > 0) return <TrendingUp size={11} style={{ color: '#34d399' }} />
-    if (v < 0) return <TrendingDown size={11} style={{ color: '#ef4444' }} />
-    return <Minus size={11} style={{ color: '#fbbf24' }} />
+    if (v > 0) return <TrendingUp size={11} style={{ color: getStatusConfig('convertido').dot }} />
+    if (v < 0) return <TrendingDown size={11} style={{ color: getStatusConfig('perdido').dot }} />
+    return <Minus size={11} style={{ color: getStatusConfig('morno').dot }} />
 }
 
 export default function IndicesBackofficePage() {
@@ -183,14 +184,7 @@ export default function IndicesBackofficePage() {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
-                                        style={idx.is_published
-                                            ? { color: '#34d399', background: 'rgba(52,211,153,0.1)' }
-                                            : { color: T.textMuted, background: 'rgba(255,255,255,0.05)' }
-                                        }
-                                    >
-                                        {idx.is_published ? 'Publicado' : 'Rascunho'}
-                                    </span>
+                                    <StatusBadge statusKey={idx.is_published ? 'publicado' : 'rascunho'} size="xs" />
                                     <button
                                         onClick={() => togglePublish(idx.id, idx.is_published)}
                                         className="w-9 h-9 rounded-xl flex items-center justify-center hover:opacity-70 transition-opacity"
