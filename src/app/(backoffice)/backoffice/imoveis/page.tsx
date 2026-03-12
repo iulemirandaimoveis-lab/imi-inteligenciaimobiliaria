@@ -843,7 +843,7 @@ export default function ImoveisPage() {
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 0.88, y: -8 }}
                                         transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                                        className="absolute right-0 top-11 z-50 w-44 rounded-xl overflow-hidden shadow-2xl"
+                                        className="absolute right-0 top-11 z-50 w-48 rounded-xl overflow-hidden shadow-2xl"
                                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                     >
                                         {[
@@ -894,29 +894,18 @@ export default function ImoveisPage() {
                     </div>
                 </div>
 
-                {/* Row 2: Status filter chips — wraps naturally */}
-                <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                    {/* Mobile select */}
-                    <select
-                        value={filter}
-                        onChange={e => setFilter(e.target.value)}
-                        className="sm:hidden h-8 px-3 rounded-xl text-xs font-semibold outline-none"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                    >
-                        <option value="all">Todos</option>
-                        {Object.entries(STATUS_MAP).map(([k, v]) => (
-                            <option key={k} value={k}>{v.label}</option>
-                        ))}
-                    </select>
-
-                    {/* Desktop filter chips */}
+                {/* Row 2: Status filter chips — horizontal scroll on all sizes */}
+                <div
+                    className="flex items-center gap-1.5 mt-2"
+                    style={{ overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+                >
                     <LayoutGroup>
                         {['all', ...Object.keys(STATUS_MAP)].map(s => (
                             <motion.button
                                 key={s}
                                 layout
                                 onClick={() => setFilter(s)}
-                                className="relative px-2.5 h-8 rounded-xl text-xs font-semibold transition-colors hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap"
+                                className="relative px-2.5 h-7 rounded-xl text-[11px] font-semibold transition-colors inline-flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap"
                                 style={{
                                     background: filter === s ? T.accent : T.elevated,
                                     color: filter === s ? 'white' : T.textDim,
@@ -941,104 +930,117 @@ export default function ImoveisPage() {
                     </LayoutGroup>
                 </div>
 
-                {/* Filtros Inteligentes IMI */}
-                <div className="flex flex-wrap items-center gap-1.5 mt-2 pt-2" style={{ borderTop: `1px solid ${T.border}` }}>
-                    <div className="flex items-center gap-1 mr-0.5">
-                        <Zap size={9} style={{ color: T.accent }} />
-                        <span className="text-[9px] font-bold uppercase tracking-[0.1em]" style={{ color: T.textDim }}>Filtros IA</span>
-                    </div>
-                    {[
-                        { key: 'top_score',      label: 'Top IMI Score',    icon: Award },
-                        { key: 'melhor_roi',     label: 'Melhor ROI',       icon: TrendingUp },
-                        { key: 'alta_liquidez',  label: 'Alta Liquidez',    icon: BarChart2 },
-                        { key: 'abaixo_mercado', label: 'Abaixo do Mercado',icon: Percent },
-                        { key: 'lancamentos',    label: 'Lançamentos',      icon: Tag },
-                    ].map(sf => {
-                        const Icon = sf.icon
-                        const active = smartFilter === sf.key
-                        return (
-                            <motion.button
-                                key={sf.key}
-                                onClick={() => setSmartFilter(active ? '' : sf.key)}
-                                whileTap={{ scale: 0.92 }}
-                                className="flex items-center gap-1 text-[10px] font-semibold px-2 h-6 rounded-lg transition-all"
-                                style={{
-                                    background: active ? 'rgba(200,164,106,0.15)' : T.elevated,
-                                    color: active ? '#C8A46A' : T.textDim,
-                                    border: `1px solid ${active ? 'rgba(200,164,106,0.45)' : T.border}`,
-                                }}
-                            >
-                                <Icon size={9} />
-                                {sf.label}
-                            </motion.button>
-                        )
-                    })}
-                    {smartFilter && (
-                        <button
-                            onClick={() => setSmartFilter('')}
-                            className="text-[9px] font-semibold ml-auto"
-                            style={{ color: '#f87171' }}
-                        >
-                            ✕ limpar
-                        </button>
-                    )}
-                </div>
-
-                {/* Third row: Construtora + Tipo chips */}
-                {(construtoras.length > 0 || tiposRaw.length > 1) && (
-                    <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${T.border}` }}>
-                        {/* Construtora chips */}
-                        {construtoras.length > 0 && (
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="text-[9px] font-bold uppercase tracking-[0.08em] mr-0.5" style={{ color: T.textDim }}>Construtora:</span>
-                                {construtoras.map(c => (
-                                    <button
-                                        key={c}
-                                        onClick={() => setFilterConstrutora(filterConstrutora === c ? 'all' : c)}
-                                        className="px-2 h-6 rounded-lg text-[10px] font-semibold transition-all"
-                                        style={{
-                                            background: filterConstrutora === c ? T.accent : T.elevated,
-                                            color: filterConstrutora === c ? 'white' : T.textDim,
-                                            border: `1px solid ${filterConstrutora === c ? T.borderGold : T.border}`,
-                                        }}
-                                    >
-                                        {c}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Tipo chips */}
-                        {tiposRaw.length > 1 && (
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="text-[9px] font-bold uppercase tracking-[0.08em] mr-0.5" style={{ color: T.textDim }}>Tipo:</span>
-                                {tiposRaw.map(t => (
-                                    <button
-                                        key={t}
-                                        onClick={() => setFilterTipo(filterTipo.toLowerCase() === t.toLowerCase() ? 'all' : t)}
-                                        className="px-2 h-6 rounded-lg text-[10px] font-semibold transition-all"
-                                        style={{
-                                            background: filterTipo.toLowerCase() === t.toLowerCase() ? T.accent : T.elevated,
-                                            color: filterTipo.toLowerCase() === t.toLowerCase() ? 'white' : T.textDim,
-                                            border: `1px solid ${filterTipo.toLowerCase() === t.toLowerCase() ? T.borderGold : T.border}`,
-                                        }}
-                                    >
-                                        {TIPO_LABEL[t.toLowerCase()] ?? t}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Clear secondary filters */}
-                        {activeFiltersCount > 0 && (
+                {/* Filtros Inteligentes IMI — horizontal scroll on mobile */}
+                <div className="mt-2 pt-2" style={{ borderTop: `1px solid ${T.border}` }}>
+                    <div
+                        className="flex items-center gap-1.5"
+                        style={{ overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+                    >
+                        <div className="flex items-center gap-1 flex-shrink-0 mr-0.5">
+                            <Zap size={9} style={{ color: T.accent }} />
+                            <span className="text-[9px] font-bold uppercase tracking-[0.1em] whitespace-nowrap" style={{ color: T.textDim }}>Filtros IA</span>
+                        </div>
+                        {[
+                            { key: 'top_score',      label: 'Top IMI Score',    icon: Award },
+                            { key: 'melhor_roi',     label: 'Melhor ROI',       icon: TrendingUp },
+                            { key: 'alta_liquidez',  label: 'Alta Liquidez',    icon: BarChart2 },
+                            { key: 'abaixo_mercado', label: 'Abaixo Mercado',   icon: Percent },
+                            { key: 'lancamentos',    label: 'Lançamentos',      icon: Tag },
+                        ].map(sf => {
+                            const Icon = sf.icon
+                            const active = smartFilter === sf.key
+                            return (
+                                <motion.button
+                                    key={sf.key}
+                                    onClick={() => setSmartFilter(active ? '' : sf.key)}
+                                    whileTap={{ scale: 0.92 }}
+                                    className="flex items-center gap-1 text-[10px] font-semibold px-2 h-7 rounded-lg transition-all flex-shrink-0 whitespace-nowrap"
+                                    style={{
+                                        background: active ? 'rgba(200,164,106,0.15)' : T.elevated,
+                                        color: active ? '#C8A46A' : T.textDim,
+                                        border: `1px solid ${active ? 'rgba(200,164,106,0.45)' : T.border}`,
+                                    }}
+                                >
+                                    <Icon size={9} />
+                                    {sf.label}
+                                </motion.button>
+                            )
+                        })}
+                        {smartFilter && (
                             <button
-                                onClick={() => { setFilterConstrutora('all'); setFilterTipo('all') }}
-                                className="px-2 h-6 rounded-lg text-[10px] font-semibold ml-auto"
-                                style={{ color: '#f87171', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)' }}
+                                onClick={() => setSmartFilter('')}
+                                className="text-[9px] font-semibold flex-shrink-0 ml-1"
+                                style={{ color: '#f87171', whiteSpace: 'nowrap' }}
                             >
-                                ✕ Limpar
+                                ✕ limpar
                             </button>
                         )}
+                    </div>
+                </div>
+
+                {/* Third row: Construtora + Tipo chips — horizontal scroll on mobile */}
+                {(construtoras.length > 0 || tiposRaw.length > 1) && (
+                    <div className="mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${T.border}` }}>
+                        <div
+                            className="flex items-center gap-1.5"
+                            style={{ overflowX: 'auto', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+                        >
+                            {/* Construtora chips */}
+                            {construtoras.length > 0 && (
+                                <>
+                                    <span className="text-[9px] font-bold uppercase tracking-[0.08em] flex-shrink-0 whitespace-nowrap" style={{ color: T.textDim }}>Construtora:</span>
+                                    {construtoras.map(c => (
+                                        <button
+                                            key={c}
+                                            onClick={() => setFilterConstrutora(filterConstrutora === c ? 'all' : c)}
+                                            className="px-2 h-7 rounded-lg text-[10px] font-semibold transition-all flex-shrink-0 whitespace-nowrap"
+                                            style={{
+                                                background: filterConstrutora === c ? T.accent : T.elevated,
+                                                color: filterConstrutora === c ? 'white' : T.textDim,
+                                                border: `1px solid ${filterConstrutora === c ? T.borderGold : T.border}`,
+                                            }}
+                                        >
+                                            {c}
+                                        </button>
+                                    ))}
+                                </>
+                            )}
+
+                            {/* Tipo chips */}
+                            {tiposRaw.length > 1 && (
+                                <>
+                                    {construtoras.length > 0 && (
+                                        <span className="flex-shrink-0" style={{ width: '1px', height: '16px', background: T.border }} />
+                                    )}
+                                    <span className="text-[9px] font-bold uppercase tracking-[0.08em] flex-shrink-0 whitespace-nowrap" style={{ color: T.textDim }}>Tipo:</span>
+                                    {tiposRaw.map(t => (
+                                        <button
+                                            key={t}
+                                            onClick={() => setFilterTipo(filterTipo.toLowerCase() === t.toLowerCase() ? 'all' : t)}
+                                            className="px-2 h-7 rounded-lg text-[10px] font-semibold transition-all flex-shrink-0 whitespace-nowrap"
+                                            style={{
+                                                background: filterTipo.toLowerCase() === t.toLowerCase() ? T.accent : T.elevated,
+                                                color: filterTipo.toLowerCase() === t.toLowerCase() ? 'white' : T.textDim,
+                                                border: `1px solid ${filterTipo.toLowerCase() === t.toLowerCase() ? T.borderGold : T.border}`,
+                                            }}
+                                        >
+                                            {TIPO_LABEL[t.toLowerCase()] ?? t}
+                                        </button>
+                                    ))}
+                                </>
+                            )}
+
+                            {/* Clear secondary filters */}
+                            {activeFiltersCount > 0 && (
+                                <button
+                                    onClick={() => { setFilterConstrutora('all'); setFilterTipo('all') }}
+                                    className="px-2 h-7 rounded-lg text-[10px] font-semibold flex-shrink-0 ml-1"
+                                    style={{ color: '#f87171', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)', whiteSpace: 'nowrap' }}
+                                >
+                                    ✕ Limpar
+                                </button>
+                            )}
+                        </div>
                     </div>
                 )}
             </motion.div>

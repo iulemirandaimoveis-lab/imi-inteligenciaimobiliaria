@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Users, TrendingUp, Phone, ChevronRight, BarChart2, Zap, ArrowUpRight } from 'lucide-react'
+import { Users, TrendingUp, Phone, ChevronRight, BarChart2, Zap } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 
 const TEMP_COLORS = {
     hot:  { bg: 'rgba(255,49,49,0.15)',  text: '#FF3131', border: 'rgba(255,49,49,0.35)',  label: 'HOT'  },
@@ -132,50 +132,21 @@ export default function LeadBehaviorPage() {
             />
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
-                <motion.div
-                    initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-                    className="rounded-2xl p-4"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                >
-                    <div className="flex items-center gap-2 mb-3">
-                        <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(96,165,250,0.14)' }}>
-                            <Users size={14} style={{ color: '#60A5FA' }} />
-                        </div>
-                        <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: T.textMuted }}>
-                            Leads Ativos
-                        </span>
-                    </div>
-                    <p className="text-3xl font-black mb-1" style={{ color: T.text, letterSpacing: '-0.04em' }}>
-                        {loading ? '—' : activeLeads}
-                    </p>
-                    <div className="flex items-center gap-1 text-[10px] font-semibold" style={{ color: '#4ADE80' }}>
-                        <ArrowUpRight size={11} />
-                        +12% vs anterior
-                    </div>
-                </motion.div>
-
-                <motion.div
-                    initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.10 }}
-                    className="rounded-2xl p-4"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                >
-                    <div className="flex items-center gap-2 mb-3">
-                        <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(74,222,128,0.14)' }}>
-                            <TrendingUp size={14} style={{ color: '#4ADE80' }} />
-                        </div>
-                        <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: T.textMuted }}>
-                            Conversão
-                        </span>
-                    </div>
-                    <p className="text-3xl font-black mb-1" style={{ color: T.text, letterSpacing: '-0.04em' }}>
-                        {loading ? '—' : `${conversionRate}%`}
-                    </p>
-                    <div className="flex items-center gap-1 text-[10px] font-semibold" style={{ color: '#4ADE80' }}>
-                        <ArrowUpRight size={11} />
-                        +5.4% vs anterior
-                    </div>
-                </motion.div>
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-5">
+                <KPICard
+                    label="Leads Ativos"
+                    value={loading ? '—' : String(activeLeads)}
+                    icon={<Users size={14} />}
+                    accent="blue"
+                    size="sm"
+                />
+                <KPICard
+                    label="Conversão"
+                    value={loading ? '—' : `${conversionRate}%`}
+                    icon={<TrendingUp size={14} />}
+                    accent="green"
+                    size="sm"
+                />
             </div>
 
             {/* Recent High Engagement */}

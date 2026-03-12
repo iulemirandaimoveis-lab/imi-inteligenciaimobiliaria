@@ -7,7 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader, StatusBadge } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, FilterTabs, StatusBadge } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 type Ebook = {
     id: string
@@ -25,6 +26,7 @@ type Ebook = {
 export default function EbooksPage() {
     const [ebooks, setEbooks] = useState<Ebook[]>([])
     const [loading, setLoading] = useState(true)
+    const [filterTab, setFilterTab] = useState('todos')
 
     async function load() {
         setLoading(true)
@@ -62,6 +64,11 @@ export default function EbooksPage() {
 
     const published = ebooks.filter(e => e.is_published).length
     const drafts = ebooks.filter(e => !e.is_published).length
+    const filtered = ebooks.filter(e => {
+        if (filterTab === 'publicados') return e.is_published
+        if (filterTab === 'rascunhos') return !e.is_published
+        return true
+    })
 
     return (
         <div className="space-y-5">
@@ -82,19 +89,23 @@ export default function EbooksPage() {
                 }
             />
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-3">
-                {[
-                    { label: 'Total', value: ebooks.length, color: T.text },
-                    { label: 'Publicados', value: published, color: getStatusConfig('publicado').dot },
-                    { label: 'Rascunhos', value: drafts, color: T.textMuted },
-                ].map(s => (
-                    <div key={s.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{s.label}</p>
-                        <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                    </div>
-                ))}
+            {/* KPIs */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <KPICard label="Total" value={String(ebooks.length)} icon={<BookOpen size={14} />} size="sm" />
+                <KPICard label="Publicados" value={String(published)} icon={<Eye size={14} />} accent="green" size="sm" />
+                <KPICard label="Rascunhos" value={String(drafts)} icon={<EyeOff size={14} />} size="sm" />
             </div>
+
+            {/* Filter tabs */}
+            <FilterTabs
+                tabs={[
+                    { id: 'todos',      label: 'Todos',      count: ebooks.length },
+                    { id: 'publicados', label: 'Publicados', count: published,  dotColor: getStatusConfig('publicado').dot },
+                    { id: 'rascunhos',  label: 'Rascunhos',  count: drafts,     dotColor: getStatusConfig('rascunho').dot },
+                ] as FilterTab[]}
+                active={filterTab}
+                onChange={setFilterTab}
+            />
 
             {/* Table */}
             <div
@@ -145,10 +156,10 @@ export default function EbooksPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {ebooks.map((e, idx) => (
+                                {filtered.map((e, idx) => (
                                     <tr
                                         key={e.id}
-                                        style={{ borderBottom: idx < ebooks.length - 1 ? `1px solid ${T.border}` : 'none' }}
+                                        style={{ borderBottom: idx < filtered.length - 1 ? `1px solid ${T.border}` : 'none' }}
                                         className="transition-colors hover:opacity-90"
                                     >
                                         <td className="px-5 py-4">

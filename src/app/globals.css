@@ -1681,3 +1681,102 @@
     opacity: 1 !important;
   }
 }
+
+/* ── STANDARDIZED CHIP / FILTER SCROLL ROWS ────────────────── */
+/* Use .chip-scroll-row for any horizontal-scrollable chip row */
+.chip-scroll-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE/Edge */
+}
+.chip-scroll-row::-webkit-scrollbar {
+  display: none;                /* Chrome/Safari */
+}
+
+/* Standard chip button — h-7, rounded-xl, 11px, no-wrap */
+.chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  border: 1px solid var(--bo-border);
+  background: var(--bo-elevated);
+  color: var(--bo-text-muted);
+}
+.chip-btn:active { opacity: 0.82; transform: scale(0.96); }
+.chip-btn.active {
+  background: var(--bo-active-bg);
+  border-color: var(--bo-border-gold);
+  color: var(--bo-accent);
+  font-weight: 700;
+}
+.chip-btn.active-solid {
+  background: var(--bo-accent);
+  border-color: var(--bo-accent);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* Standard toolbar input */
+.toolbar-input {
+  height: 36px;
+  padding: 0 8px 0 32px;
+  border-radius: 12px;
+  font-size: 12px;
+  border: 1px solid var(--bo-border);
+  background: var(--bo-elevated);
+  color: var(--bo-text);
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+.toolbar-input:focus {
+  border-color: var(--bo-border-gold);
+}
+.toolbar-input::placeholder {
+  color: var(--bo-text-dim);
+}
+
+/* Standard icon-only square button (sort, view toggle) */
+.toolbar-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 12px;
+  border: 1px solid var(--bo-border);
+  background: var(--bo-elevated);
+  color: var(--bo-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.toolbar-icon-btn:active { opacity: 0.8; }
+.toolbar-icon-btn.active {
+  background: var(--bo-accent);
+  border-color: var(--bo-accent);
+  color: #ffffff;
+}
+
+/* Contratos / any 2-tab row that might overflow */
+.tab-scroll-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tab-scroll-row::-webkit-scrollbar { display: none; }

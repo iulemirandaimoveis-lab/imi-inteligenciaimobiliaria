@@ -9,7 +9,8 @@ import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader, StatusBadge } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, FilterTabs, StatusBadge } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 export default function CorretoresPage() {
     const [searchTerm, setSearchTerm] = useState('')
@@ -33,6 +34,7 @@ export default function CorretoresPage() {
     return (
         <div className="space-y-6">
             <PageIntelHeader
+                moduleLabel="SETTINGS · EQUIPE"
                 title="Gestão de Corretores"
                 subtitle="Controle de acesso, permissões e desempenho da equipe comercial"
                 actions={
@@ -44,58 +46,38 @@ export default function CorretoresPage() {
                 }
             />
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                    { label: 'Total Registrados', value: brokers.length, color: T.accent, bg: 'rgba(72,101,129,0.12)', icon: UserCircle },
-                    { label: 'Ativos', value: activeBrokers, color: getStatusConfig('ativo').dot, bg: `${getStatusConfig('ativo').dot}1a`, icon: CheckCircle },
-                    { label: 'Inativos', value: inactiveBrokers, color: getStatusConfig('inativo').dot, bg: `${getStatusConfig('inativo').dot}1a`, icon: XCircle },
-                ].map(s => {
-                    const Icon = s.icon
-                    return (
-                        <div key={s.label} className="flex items-center justify-between rounded-2xl p-5"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                            <div>
-                                <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>{s.label}</p>
-                                <p className="text-3xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                            </div>
-                            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: s.bg }}>
-                                <Icon size={22} style={{ color: s.color }} />
-                            </div>
-                        </div>
-                    )
-                })}
+            {/* KPIs */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                <KPICard label="Total Registrados" value={String(brokers.length)} icon={<UserCircle size={15} />} size="sm" />
+                <KPICard label="Ativos" value={String(activeBrokers)} icon={<CheckCircle size={15} />} accent="green" size="sm" />
+                <KPICard label="Inativos" value={String(inactiveBrokers)} icon={<XCircle size={15} />} size="sm" />
             </div>
 
             {/* Filters + List */}
             <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 {/* Filter bar */}
-                <div className="p-5 border-b flex flex-col md:flex-row gap-4 justify-between items-center"
+                <div className="p-4 border-b space-y-3"
                     style={{ borderColor: T.border, background: T.elevated }}>
-                    <div className="relative w-full md:w-80">
-                        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
+                    <div className="relative">
+                        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
                         <input
                             type="text"
                             placeholder="Buscar por nome, email ou CRECI..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full h-10 pl-9 pr-3 rounded-xl text-sm outline-none"
+                            className="w-full h-9 pl-8 pr-3 rounded-xl text-xs outline-none"
                             style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
                         />
                     </div>
-                    <div className="flex gap-2">
-                        {[{ v: 'all', l: 'Todos' }, { v: 'active', l: 'Ativos' }, { v: 'inactive', l: 'Inativos' }].map(tab => (
-                            <button key={tab.v} onClick={() => setStatusFilter(tab.v)}
-                                className="px-4 py-2 rounded-xl text-xs font-bold transition-all"
-                                style={{
-                                    background: statusFilter === tab.v ? T.accent : 'transparent',
-                                    color: statusFilter === tab.v ? '#fff' : T.textMuted,
-                                    border: `1px solid ${statusFilter === tab.v ? T.accent : T.border}`,
-                                }}>
-                                {tab.l}
-                            </button>
-                        ))}
-                    </div>
+                    <FilterTabs
+                        tabs={[
+                            { id: 'all',      label: 'Todos',   count: brokers.length },
+                            { id: 'active',   label: 'Ativos',  count: activeBrokers,   dotColor: getStatusConfig('ativo').dot },
+                            { id: 'inactive', label: 'Inativos',count: inactiveBrokers, dotColor: getStatusConfig('inativo').dot },
+                        ] as FilterTab[]}
+                        active={statusFilter}
+                        onChange={setStatusFilter}
+                    />
                 </div>
 
                 {isLoading ? (
