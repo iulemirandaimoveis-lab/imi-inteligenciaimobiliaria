@@ -701,7 +701,8 @@ export default function ImoveisPage() {
                 className="rounded-2xl p-3.5"
                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
             >
-                <div className="flex flex-col sm:flex-row gap-2.5">
+                {/* Row 1: Search + Sort + View toggle — always fully visible */}
+                <div className="flex items-center gap-2">
                     <div className="relative flex-1">
                         <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
                         <input
@@ -730,123 +731,124 @@ export default function ImoveisPage() {
                         </AnimatePresence>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
-                        {/* Mobile select */}
-                        <select
-                            value={filter}
-                            onChange={e => setFilter(e.target.value)}
-                            className="sm:hidden h-9 px-3 rounded-xl text-xs font-semibold outline-none flex-1"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                    {/* Sort dropdown */}
+                    <div className="relative flex-shrink-0">
+                        <motion.button
+                            onClick={() => setShowSortMenu(!showSortMenu)}
+                            whileTap={{ scale: 0.92 }}
+                            className="h-9 px-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap"
+                            style={{
+                                background: sort !== 'recentes' ? T.accentBg : T.elevated,
+                                border: `1px solid ${sort !== 'recentes' ? T.borderGold : T.border}`,
+                                color: sort !== 'recentes' ? T.accent : T.textDim,
+                            }}
                         >
-                            <option value="all">Todos</option>
-                            {Object.entries(STATUS_MAP).map(([k, v]) => (
-                                <option key={k} value={k}>{v.label}</option>
-                            ))}
-                        </select>
-
-                        {/* Desktop filter chips with layoutId indicator */}
-                        <LayoutGroup>
-                            {['all', ...Object.keys(STATUS_MAP)].map(s => (
-                                <motion.button
-                                    key={s}
-                                    layout
-                                    onClick={() => setFilter(s)}
-                                    className="relative px-2.5 h-9 rounded-xl text-xs font-semibold transition-colors hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap"
-                                    style={{
-                                        background: filter === s ? T.accent : T.elevated,
-                                        color: filter === s ? 'white' : T.textDim,
-                                        border: `1px solid ${filter === s ? T.borderGold : T.border}`,
-                                    }}
-                                    whileTap={{ scale: 0.94 }}
-                                >
-                                    {s !== 'all' && (
-                                        <span
-                                            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                                            style={{ background: filter === s ? 'rgba(255,255,255,0.7)' : STATUS_MAP[s]?.dot }}
-                                        />
-                                    )}
-                                    {s === 'all'
-                                        ? `Todos (${imoveis.length})`
-                                        : statusCounts[s] > 0
-                                            ? `${STATUS_MAP[s]?.label} (${statusCounts[s]})`
-                                            : STATUS_MAP[s]?.label
-                                    }
-                                </motion.button>
-                            ))}
-                        </LayoutGroup>
-
-                        {/* Sort dropdown */}
-                        <div className="relative">
-                            <motion.button
-                                onClick={() => setShowSortMenu(!showSortMenu)}
-                                whileTap={{ scale: 0.92 }}
-                                className="h-9 px-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap"
-                                style={{
-                                    background: sort !== 'recentes' ? T.accentBg : T.elevated,
-                                    border: `1px solid ${sort !== 'recentes' ? T.borderGold : T.border}`,
-                                    color: sort !== 'recentes' ? T.accent : T.textDim,
-                                }}
-                            >
-                                <ArrowUpDown size={12} />
-                                <span className="hidden lg:inline">{SORT_LABELS[sort]}</span>
-                            </motion.button>
-                            <AnimatePresence>
-                                {showSortMenu && (
-                                    <>
-                                        <div className="fixed inset-0 z-40" onClick={() => setShowSortMenu(false)} />
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.88, y: -8 }}
-                                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                                            exit={{ opacity: 0, scale: 0.88, y: -8 }}
-                                            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                                            className="absolute right-0 top-11 z-50 w-44 rounded-xl overflow-hidden shadow-2xl"
-                                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                                        >
-                                            {[
-                                                { key: 'recentes',   label: 'Mais recentes' },
-                                                { key: 'preco_desc', label: 'Maior preço' },
-                                                { key: 'preco_asc',  label: 'Menor preço' },
-                                                { key: 'liquidez',   label: 'Maior liquidez' },
-                                                { key: 'leads',      label: 'Mais leads' },
-                                                { key: 'visitas',    label: 'Mais visualizações' },
-                                            ].map((opt) => (
-                                                <button
-                                                    key={opt.key}
-                                                    onClick={() => { setSort(opt.key as typeof sort); setShowSortMenu(false) }}
-                                                    className="flex items-center w-full px-3 py-2.5 text-xs text-left hover:bg-[var(--bo-hover)] transition-colors"
-                                                    style={{
-                                                        color: sort === opt.key ? T.accent : T.text,
-                                                        fontWeight: sort === opt.key ? 700 : 500,
-                                                    }}
-                                                >
-                                                    {sort === opt.key && <CheckCircle size={10} className="mr-1.5 flex-shrink-0" />}
-                                                    {opt.label}
-                                                </button>
-                                            ))}
-                                        </motion.div>
-                                    </>
-                                )}
-                            </AnimatePresence>
-                        </div>
-
-                        {/* View toggle */}
-                        <div className="flex items-center rounded-xl overflow-hidden ml-0.5" style={{ border: `1px solid ${T.border}` }}>
-                            {(['grid', 'list'] as const).map(v => (
-                                <motion.button
-                                    key={v}
-                                    onClick={() => setView(v)}
-                                    whileTap={{ scale: 0.88 }}
-                                    className="w-9 h-9 flex items-center justify-center transition-colors"
-                                    style={{ background: view === v ? T.accent : T.elevated }}
-                                >
-                                    {v === 'grid'
-                                        ? <Grid3X3 size={13} style={{ color: view === v ? 'white' : T.textDim }} />
-                                        : <List size={13} style={{ color: view === v ? 'white' : T.textDim }} />
-                                    }
-                                </motion.button>
-                            ))}
-                        </div>
+                            <ArrowUpDown size={12} />
+                            <span className="hidden sm:inline">{SORT_LABELS[sort]}</span>
+                        </motion.button>
+                        <AnimatePresence>
+                            {showSortMenu && (
+                                <>
+                                    <div className="fixed inset-0 z-40" onClick={() => setShowSortMenu(false)} />
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.88, y: -8 }}
+                                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.88, y: -8 }}
+                                        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                                        className="absolute right-0 top-11 z-50 w-44 rounded-xl overflow-hidden shadow-2xl"
+                                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                                    >
+                                        {[
+                                            { key: 'recentes',   label: 'Mais recentes' },
+                                            { key: 'preco_desc', label: 'Maior preço' },
+                                            { key: 'preco_asc',  label: 'Menor preço' },
+                                            { key: 'liquidez',   label: 'Maior liquidez' },
+                                            { key: 'leads',      label: 'Mais leads' },
+                                            { key: 'visitas',    label: 'Mais visualizações' },
+                                        ].map((opt) => (
+                                            <button
+                                                key={opt.key}
+                                                onClick={() => { setSort(opt.key as typeof sort); setShowSortMenu(false) }}
+                                                className="flex items-center w-full px-3 py-2.5 text-xs text-left hover:bg-[var(--bo-hover)] transition-colors"
+                                                style={{
+                                                    color: sort === opt.key ? T.accent : T.text,
+                                                    fontWeight: sort === opt.key ? 700 : 500,
+                                                }}
+                                            >
+                                                {sort === opt.key && <CheckCircle size={10} className="mr-1.5 flex-shrink-0" />}
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                </>
+                            )}
+                        </AnimatePresence>
                     </div>
+
+                    {/* View toggle */}
+                    <div className="flex items-center rounded-xl overflow-hidden flex-shrink-0" style={{ border: `1px solid ${T.border}` }}>
+                        {(['grid', 'list'] as const).map(v => (
+                            <motion.button
+                                key={v}
+                                onClick={() => setView(v)}
+                                whileTap={{ scale: 0.88 }}
+                                className="w-9 h-9 flex items-center justify-center transition-colors"
+                                style={{ background: view === v ? T.accent : T.elevated }}
+                            >
+                                {v === 'grid'
+                                    ? <Grid3X3 size={13} style={{ color: view === v ? 'white' : T.textDim }} />
+                                    : <List size={13} style={{ color: view === v ? 'white' : T.textDim }} />
+                                }
+                            </motion.button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Row 2: Status filter chips — wraps naturally */}
+                <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                    {/* Mobile select */}
+                    <select
+                        value={filter}
+                        onChange={e => setFilter(e.target.value)}
+                        className="sm:hidden h-8 px-3 rounded-xl text-xs font-semibold outline-none"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                    >
+                        <option value="all">Todos</option>
+                        {Object.entries(STATUS_MAP).map(([k, v]) => (
+                            <option key={k} value={k}>{v.label}</option>
+                        ))}
+                    </select>
+
+                    {/* Desktop filter chips */}
+                    <LayoutGroup>
+                        {['all', ...Object.keys(STATUS_MAP)].map(s => (
+                            <motion.button
+                                key={s}
+                                layout
+                                onClick={() => setFilter(s)}
+                                className="relative px-2.5 h-8 rounded-xl text-xs font-semibold transition-colors hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap"
+                                style={{
+                                    background: filter === s ? T.accent : T.elevated,
+                                    color: filter === s ? 'white' : T.textDim,
+                                    border: `1px solid ${filter === s ? T.borderGold : T.border}`,
+                                }}
+                                whileTap={{ scale: 0.94 }}
+                            >
+                                {s !== 'all' && (
+                                    <span
+                                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                                        style={{ background: filter === s ? 'rgba(255,255,255,0.7)' : STATUS_MAP[s]?.dot }}
+                                    />
+                                )}
+                                {s === 'all'
+                                    ? `Todos (${imoveis.length})`
+                                    : statusCounts[s] > 0
+                                        ? `${STATUS_MAP[s]?.label} (${statusCounts[s]})`
+                                        : STATUS_MAP[s]?.label
+                                }
+                            </motion.button>
+                        ))}
+                    </LayoutGroup>
                 </div>
 
                 {/* Second row: Construtora + Tipo chips */}
