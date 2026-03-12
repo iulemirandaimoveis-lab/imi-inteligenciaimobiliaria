@@ -115,26 +115,35 @@ export default function CreditoNovoPage() {
         if (!validateStep(currentStep)) return
         setIsSubmitting(true)
         try {
-            const { error } = await supabase.from('credit_requests').insert({
+            // Build full address from parts
+            const fullAddress = [formData.property_address, formData.property_city, formData.property_state]
+                .filter(Boolean).join(', ')
+
+            const { error } = await supabase.from('credit_applications').insert({
                 client_name: formData.client_name,
                 client_email: formData.client_email,
                 client_phone: formData.client_phone.replace(/\D/g, ''),
                 client_cpf: formData.client_cpf.replace(/\D/g, ''),
-                client_birthdate: formData.client_birthdate || null,
-                client_marital_status: formData.client_marital_status || null,
+                client_income: Number(formData.income) || null,
+                client_occupation: formData.employment_type || null,
                 property_type: formData.property_type,
                 property_value: Number(formData.property_value),
-                property_address: formData.property_address || null,
-                property_city: formData.property_city,
-                property_state: formData.property_state || null,
-                requested_amount: Number(formData.requested_amount),
-                income: Number(formData.income),
-                employment_type: formData.employment_type,
-                employment_time: formData.employment_time || null,
-                has_fgts: formData.has_fgts === 'yes',
-                fgts_value: formData.has_fgts === 'yes' ? Number(formData.fgts_value) : null,
-                notes: formData.notes || null,
+                property_address: fullAddress || null,
+                financed_amount: Number(formData.requested_amount) || null,
                 status: 'pending',
+                documents: {
+                    birthdate: formData.client_birthdate || null,
+                    marital_status: formData.client_marital_status || null,
+                    employment_time: formData.employment_time || null,
+                    has_fgts: formData.has_fgts === 'yes',
+                    fgts_value: formData.has_fgts === 'yes' ? Number(formData.fgts_value) : null,
+                    notes: formData.notes || null,
+                },
+                timeline: [{
+                    date: new Date().toISOString(),
+                    event: 'Solicitação criada via backoffice',
+                    status: 'pending',
+                }],
             })
             if (error) throw error
             toast.success('Solicitação de crédito enviada para análise com sucesso!')

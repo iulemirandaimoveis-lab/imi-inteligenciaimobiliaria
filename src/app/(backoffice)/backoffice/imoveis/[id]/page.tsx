@@ -81,6 +81,17 @@ export default function ImovelDetalhesPage() {
     if (params.id) fetchDevelopment()
   }, [params.id])
 
+  // Fetch QR scan count
+  useEffect(() => {
+    if (!params.id || !data) return
+    import('@/lib/supabase/client').then(({ createClient }) => {
+      const supabase = createClient()
+      supabase.from('qr_scans').select('id', { count: 'exact', head: true })
+        .eq('property_id', params.id)
+        .then(({ count }) => setScanCount(count ?? 0))
+    })
+  }, [params.id, data])
+
   const handleStatusChange = async (newStatus: string) => {
     const labelMap: Record<string, string> = {
       vendido: 'Vendido', arquivado: 'Arquivado', disponivel: 'Disponível',
@@ -136,17 +147,6 @@ export default function ImovelDetalhesPage() {
       </div>
     )
   }
-
-  // ── Fetch QR scan count (must be before any conditional returns — React hooks rules) ──
-  useEffect(() => {
-    if (!params.id || !data) return
-    import('@/lib/supabase/client').then(({ createClient }) => {
-      const supabase = createClient()
-      supabase.from('qr_scans').select('id', { count: 'exact', head: true })
-        .eq('property_id', params.id)
-        .then(({ count }) => setScanCount(count ?? 0))
-    })
-  }, [params.id, data])
 
   if (!data) {
     return (
