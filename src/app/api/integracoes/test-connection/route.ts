@@ -159,6 +159,90 @@ export async function POST(req: NextRequest) {
         })
       }
 
+      case 'anthropic_claude': {
+        const key = values.anthropic_api_key || process.env.ANTHROPIC_API_KEY
+        if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': key,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 5,
+            messages: [{ role: 'user', content: 'Hi' }],
+          }),
+        }).catch(() => null)
+        if (!res) return NextResponse.json({ success: false, message: 'Não foi possível conectar à API Anthropic' })
+        if (res.ok || res.status === 200) {
+          return NextResponse.json({ success: true, message: 'Anthropic Claude conectado! API Key válida.' })
+        }
+        const errBody = await res.json().catch(() => ({}))
+        if (res.status === 401) return NextResponse.json({ success: false, message: 'API Key inválida' })
+        // 429 = rate limited but key works, 400 = key works but bad request format
+        if (res.status === 429 || res.status === 400) {
+          return NextResponse.json({ success: true, message: 'Anthropic Claude conectado! API Key válida.' })
+        }
+        return NextResponse.json({ success: false, message: errBody?.error?.message || 'Erro ao validar API Key' })
+      }
+
+      case 'openai_gpt': {
+        const key = values.openai_api_key || process.env.OPENAI_API_KEY
+        if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
+        const res = await fetch('https://api.openai.com/v1/models', {
+          headers: { 'Authorization': `Bearer ${key}` },
+        }).catch(() => null)
+        if (!res) return NextResponse.json({ success: false, message: 'Não foi possível conectar à API OpenAI' })
+        return NextResponse.json(res.ok
+          ? { success: true, message: 'OpenAI GPT conectado com sucesso!' }
+          : { success: false, message: 'API Key inválida' })
+      }
+
+      case 'google_gemini_ai': {
+        const key = values.google_ai_api_key || process.env.GOOGLE_AI_API_KEY
+        if (!key) return NextResponse.json({ success: false, message: 'API Key não informada' })
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`).catch(() => null)
+        if (!res) return NextResponse.json({ success: false, message: 'Não foi possível conectar à API Google AI' })
+        return NextResponse.json(res.ok
+          ? { success: true, message: 'Google Gemini conectado com sucesso!' }
+          : { success: false, message: 'API Key inválida' })
+      }
+
+      case 'linkedin_ads': {
+        const token = values.linkedin_access_token || process.env.LINKEDIN_ACCESS_TOKEN
+        if (!token) return NextResponse.json({ success: false, message: 'Access Token não informado' })
+        const res = await fetch('https://api.linkedin.com/v2/me', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        }).catch(() => null)
+        if (!res) return NextResponse.json({ success: false, message: 'Não foi possível conectar ao LinkedIn API' })
+        if (res.ok) {
+          const d = await res.json().catch(() => ({}))
+          return NextResponse.json({ success: true, message: `LinkedIn conectado! Conta: ${d.localizedFirstName || ''} ${d.localizedLastName || ''}`.trim() })
+        }
+        return NextResponse.json({ success: false, message: 'Access Token inválido ou expirado' })
+      }
+
+      case 'tiktok_ads': {
+        const token = values.tiktok_access_token || process.env.TIKTOK_ACCESS_TOKEN
+        const advId = values.tiktok_advertiser_id || process.env.TIKTOK_ADVERTISER_ID
+        if (!token) return NextResponse.json({ success: false, message: 'Access Token não informado' })
+        const res = await fetch(`https://business-api.tiktok.com/open_api/v1.3/advertiser/info/?advertiser_ids=["${advId || ''}"]`, {
+          headers: { 'Access-Token': token },
+        }).catch(() => null)
+        if (!res) return NextResponse.json({ success: false, message: 'Não foi possível conectar ao TikTok Ads API' })
+        const data = await res.json().catch(() => ({}))
+        if (data.code === 0) {
+          return NextResponse.json({ success: true, message: 'TikTok Ads conectado com sucesso!' })
+        }
+        // Token is valid even if advertiser ID wrong
+        if (res.ok) {
+          return NextResponse.json({ success: true, message: 'TikTok Ads conectado! Verifique o Advertiser ID.' })
+        }
+        return NextResponse.json({ success: false, message: 'Access Token inválido ou expirado' })
+      }
+
       default:
         return NextResponse.json({
           success: true,

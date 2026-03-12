@@ -330,6 +330,38 @@ export const INTEGRACOES: Integracao[] = [
     ],
   },
 
+  {
+    id: 'linkedin_ads',
+    nome: 'LinkedIn Ads',
+    descricao: 'Campanhas de anúncios imobiliários no LinkedIn. Ideal para empreendimentos corporativos, lajes comerciais e investidores qualificados.',
+    categoria: 'redes_sociais',
+    icon: 'Linkedin',
+    cor: '#0A66C2',
+    status: 'nao_configurado',
+    docs_url: 'https://learn.microsoft.com/en-us/linkedin/marketing/',
+    campos_config: [
+      { key: 'linkedin_access_token', label: 'Access Token', tipo: 'password', required: true, masked: true, descricao: 'Token de acesso OAuth 2.0 do LinkedIn Marketing API.' },
+      { key: 'linkedin_ad_account',   label: 'Ad Account ID', tipo: 'text', placeholder: 'urn:li:sponsoredAccount:XXXXXXX', required: true, descricao: 'ID da conta de anúncios no Campaign Manager.' },
+      { key: 'linkedin_org_id',       label: 'Organization ID', tipo: 'text', placeholder: 'urn:li:organization:XXXXXXX', required: false, descricao: 'ID da organização (página da empresa) no LinkedIn.' },
+    ],
+  },
+
+  {
+    id: 'tiktok_ads',
+    nome: 'TikTok Ads',
+    descricao: 'Campanhas de imóveis no TikTok — vídeos curtos, carrossel e lead forms. Alcance massivo para público jovem e primeiro imóvel.',
+    categoria: 'redes_sociais',
+    icon: 'Music2',
+    cor: '#000000',
+    status: 'nao_configurado',
+    docs_url: 'https://business-api.tiktok.com/portal/docs',
+    campos_config: [
+      { key: 'tiktok_access_token',  label: 'Access Token',   tipo: 'password', required: true, masked: true, descricao: 'Token de acesso do TikTok for Business API.' },
+      { key: 'tiktok_advertiser_id', label: 'Advertiser ID',  tipo: 'text', placeholder: 'XXXXXXXXXXXXXXXXX', required: true, descricao: 'ID do anunciante no TikTok Ads Manager.' },
+      { key: 'tiktok_pixel_id',      label: 'Pixel ID',       tipo: 'text', required: false, descricao: 'ID do TikTok Pixel para rastreamento de conversões.' },
+    ],
+  },
+
   // ══════════════════════════════════════════════════
   // PAGAMENTO
   // ══════════════════════════════════════════════════

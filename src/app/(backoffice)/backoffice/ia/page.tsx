@@ -173,21 +173,32 @@ export default function IAHubPage() {
         PROVIDERS.forEach(p => { initial[p.id] = 'loading' })
         setProviderStatus(initial)
 
-        // Test router GET endpoint to see available models
+        // Check integration status endpoint — it detects env vars server-side
         try {
-            const res = await fetch('/api/ai/router')
+            const res = await fetch('/api/integracoes/status')
             if (res.ok) {
-                const data = await res.json()
-                const available = data.models_available as string[] || []
+                const { data } = await res.json()
+                const statusMap: Record<string, string> = {}
+                for (const row of data || []) {
+                    statusMap[row.integration_id] = row.status
+                }
+
+                // Map integration IDs to provider IDs
+                const intToProvider: Record<string, string> = {
+                    anthropic_claude: 'anthropic',
+                    openai_gpt: 'openai',
+                    google_gemini_ai: 'google',
+                    xai_grok: 'xai',
+                    azure_openai: 'azure',
+                    groq_ai: 'groq',
+                }
+
                 const newStatus: Record<string, 'ok' | 'unconfigured'> = {}
                 PROVIDERS.forEach(p => {
-                    const hasModel = p.models.some(m => available.some(a => a.includes(p.id === 'google' ? 'gemini' : p.id === 'openai' ? 'gpt' : p.id === 'xai' ? 'grok' : p.id)))
-                    newStatus[p.id] = 'ok' // Assume configured — real check would hit each API
+                    const intId = Object.entries(intToProvider).find(([, v]) => v === p.id)?.[0]
+                    const intStatus = intId ? statusMap[intId] : undefined
+                    newStatus[p.id] = intStatus === 'conectado' ? 'ok' : 'unconfigured'
                 })
-                // Mark as unconfigured if env key name suggests it might not be set
-                newStatus['xai'] = 'unconfigured'
-                newStatus['azure'] = 'unconfigured'
-                newStatus['groq'] = 'unconfigured'
                 setProviderStatus(newStatus)
             }
         } catch {
@@ -197,13 +208,41 @@ export default function IAHubPage() {
         }
     }
 
-    function handleTestConnection(providerId: string, isOk: boolean) {
+    async function handleTestConnection(providerId: string) {
+        // Map provider ID to integration ID
+        const providerToInt: Record<string, string> = {
+            anthropic: 'anthropic_claude',
+            openai: 'openai_gpt',
+            google: 'google_gemini_ai',
+            xai: 'xai_grok',
+            azure: 'azure_openai',
+            groq: 'groq_ai',
+        }
+        const integrationId = providerToInt[providerId] || providerId
+
         setTestingConn(prev => ({ ...prev, [providerId]: true }))
         setConnResult(prev => ({ ...prev, [providerId]: null }))
-        setTimeout(() => {
+
+        try {
+            const res = await fetch('/api/integracoes/test-connection', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ integration_id: integrationId, values: {} }),
+            })
+            const data = await res.json()
+            setConnResult(prev => ({ ...prev, [providerId]: data.success ? 'ok' : 'fail' }))
+            if (data.success) {
+                setProviderStatus(prev => ({ ...prev, [providerId]: 'ok' }))
+                toast.success(data.message || 'Conexão verificada!')
+            } else {
+                toast.error(data.message || 'Falha na conexão')
+            }
+        } catch {
+            setConnResult(prev => ({ ...prev, [providerId]: 'fail' }))
+            toast.error('Erro ao testar conexão')
+        } finally {
             setTestingConn(prev => ({ ...prev, [providerId]: false }))
-            setConnResult(prev => ({ ...prev, [providerId]: isOk ? 'ok' : 'fail' }))
-        }, 1800)
+        }
     }
 
     async function handleTest() {
@@ -412,7 +451,7 @@ export default function IAHubPage() {
                                     )
                                 })()}
                                 <button
-                                    onClick={() => handleTestConnection(provider.id, providerStatus[provider.id] === 'ok')}
+                                    onClick={() => handleTestConnection(provider.id)}
                                     disabled={testingConn[provider.id]}
                                     className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-[10px] font-semibold transition-all disabled:opacity-60"
                                     style={{

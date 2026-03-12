@@ -8,7 +8,8 @@ import {
     Facebook, Instagram, CreditCard, Zap, Globe,
     CheckCircle, AlertCircle, XCircle, Clock,
     X, Eye, EyeOff, ExternalLink,
-    RefreshCw, Settings, Plug
+    RefreshCw, Settings, Plug, Linkedin, Music2,
+    Sparkles
 } from 'lucide-react'
 import { INTEGRACOES, CATEGORIAS_INTEGRACAO } from '@/lib/integracoes-registry'
 import type { Integracao, IntegracaoStatus } from '@/types/contratos'
@@ -19,7 +20,8 @@ import { getStatusConfig } from '../../lib/constants'
 const ICONES: Record<string, any> = {
     Shield, PenTool, Mail, Server, MessageCircle, HardDrive,
     Database, Calendar, BarChart2, Facebook, Instagram,
-    CreditCard, Zap, Globe, Settings,
+    CreditCard, Zap, Globe, Settings, Linkedin, Music2,
+    Sparkles,
 }
 
 const STATUS_ICONS_INT: Record<string, any> = {
