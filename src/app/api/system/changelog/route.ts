@@ -21,6 +21,20 @@ const CHANGELOG: Array<{
   changes: string[]
 }> = [
   {
+    version: '2.9.0',
+    date: '2026-03-12',
+    title: '🛡️ Sistema de Notificações + Auditoria + Bugfixes',
+    message: 'Sistema de changelog com notificações automáticas para cada atualização. ErrorBoundary agora reporta erros para auditoria. Corrigidos: build quebrado por useEffect condicional, tabela de crédito desconectada da listagem.',
+    changes: [
+      'Notificações de atualização do sistema no backoffice',
+      'ErrorBoundary auto-reporta erros para /api/system/report-error',
+      'Tabela system_error_logs para auditoria de erros',
+      'Fix: useEffect condicional em imoveis/[id] quebrava lint/build',
+      'Fix: crédito novo → tabela credit_applications (antes: credit_requests)',
+      'Changelog API: GET /api/system/changelog',
+    ],
+  },
+  {
     version: '2.8.0',
     date: '2026-03-12',
     title: '🖼️ Galeria com Drag-and-Drop + Fix Navbar',
