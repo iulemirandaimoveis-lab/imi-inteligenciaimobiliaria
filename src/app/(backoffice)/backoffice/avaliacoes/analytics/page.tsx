@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 interface Avaliacao {
     id: string
@@ -168,17 +168,26 @@ export default function AvaliacoesAnalyticsPage() {
                 title="Analytics: Laudos & Avaliações"
                 subtitle={`Performance analítica do motor de avaliação imobiliária · ${data.total} avaliações no período`}
                 actions={
-                    <select
-                        value={timeRange}
-                        onChange={e => setTimeRange(e.target.value)}
-                        className="h-11 px-4 rounded-xl text-sm outline-none shrink-0"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                    >
-                        <option value="30d">Últimos 30 dias</option>
-                        <option value="3m">Últimos 3 meses</option>
-                        <option value="6m">Últimos 6 meses</option>
-                        <option value="year">Último ano</option>
-                    </select>
+                    <div className="flex rounded-xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                        {([
+                            { key: '30d', label: '30d' },
+                            { key: '3m',  label: '3m'  },
+                            { key: '6m',  label: '6m'  },
+                            { key: 'year',label: '1a'  },
+                        ] as { key: string; label: string }[]).map(r => (
+                            <button
+                                key={r.key}
+                                onClick={() => setTimeRange(r.key)}
+                                className="px-3 h-10 text-[10px] font-bold transition-colors"
+                                style={{
+                                    background: timeRange === r.key ? T.accent : 'transparent',
+                                    color: timeRange === r.key ? '#fff' : T.textMuted,
+                                }}
+                            >
+                                {r.label}
+                            </button>
+                        ))}
+                    </div>
                 }
             />
 

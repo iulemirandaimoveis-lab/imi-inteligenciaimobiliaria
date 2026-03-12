@@ -14,7 +14,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 
 interface AuditLog {
   id: string
@@ -201,18 +201,11 @@ export default function LogsPage() {
       />
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[
-          { label: 'Total Eventos', value: stats.total, color: T.text },
-          { label: 'Sucesso', value: stats.success, color: '#6BB87B' },
-          { label: 'Erros', value: stats.errors, color: '#E57373' },
-          { label: 'Avisos', value: stats.warnings, color: '#E8A87C' },
-        ].map(s => (
-          <div key={s.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-            <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{s.label}</p>
-            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        <KPICard label="Total Eventos" value={loading ? '—' : String(stats.total)}   icon={<Activity size={14} />}     size="sm" />
+        <KPICard label="Sucesso"       value={loading ? '—' : String(stats.success)} icon={<CheckCircle size={14} />}  accent="green" size="sm" />
+        <KPICard label="Erros"         value={loading ? '—' : String(stats.errors)}  icon={<XCircle size={14} />}      accent="hot" size="sm" />
+        <KPICard label="Avisos"        value={loading ? '—' : String(stats.warnings)}icon={<AlertCircle size={14} />}  size="sm" />
       </div>
 
       {/* Filtros */}

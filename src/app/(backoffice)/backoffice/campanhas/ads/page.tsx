@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, StatusBadge } from '@/app/(backoffice)/components/ui'
 
 const STATUS_MAP = Object.fromEntries(
     Object.entries({ active: 'ATIVO', paused: 'PAUSADO', ended: 'ENCERRADO', draft: 'RASCUNHO', learning: 'LEARNING' }).map(([key, label]) => {
@@ -123,7 +123,7 @@ export default function AdsPerformancePage() {
     })
 
     return (
-        <div style={{ paddingBottom: 48 }}>
+        <div className="space-y-5 pb-12">
 
             {/* Header */}
             <PageIntelHeader
@@ -131,54 +131,38 @@ export default function AdsPerformancePage() {
                 title="Ads Performance"
                 subtitle="Monitoramento em tempo real de campanhas pagas e orgânicas"
                 actions={
-                    <Link href="/backoffice/campanhas/nova"
-                        style={{
-                            display: 'flex', alignItems: 'center', gap: 6,
-                            height: 38, padding: '0 16px', borderRadius: 12,
-                            background: T.accent,
-                            color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none',
-                        }}>
+                    <Link
+                        href="/backoffice/campanhas/nova"
+                        className="flex items-center gap-1.5 h-11 px-5 rounded-xl text-sm font-semibold text-white"
+                        style={{ background: 'var(--bo-accent)' }}
+                    >
                         <Plus size={14} /> Nova Campanha
                     </Link>
                 }
             />
 
             {/* KPI Cards */}
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-                style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 24 }}>
-                {[
-                    { label: 'Total Gasto', value: loading ? '—' : fmtBRL(totalSpent), accent: T.accent },
-                    { label: 'Total Leads', value: loading ? '—' : totalLeads.toLocaleString('pt-BR'), accent: '#4CAF7D' },
-                    { label: 'CPL Médio', value: loading ? '—' : fmtBRL(avgCPL), accent: '#E8A87C' },
-                ].map((kpi, i) => (
-                    <div key={kpi.label} style={{
-                        padding: '16px', borderRadius: 16,
-                        background: T.elevated,
-                        border: `1px solid ${T.border}`,
-                        borderLeft: `3px solid ${kpi.accent}`,
-                    }}>
-                        <p style={{ fontSize: 9, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>
-                            {kpi.label}
-                        </p>
-                        <p style={{ fontSize: 20, fontWeight: 800, color: kpi.accent, letterSpacing: '-0.5px', fontFamily: 'monospace' }}>
-                            {kpi.value}
-                        </p>
-                    </div>
-                ))}
-            </motion.div>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <KPICard label="Total Gasto"  value={loading ? '—' : fmtBRL(totalSpent)}                      icon={<DollarSign size={14} />} accent="blue" size="sm" />
+                <KPICard label="Total Leads"  value={loading ? '—' : totalLeads.toLocaleString('pt-BR')}      icon={<Users size={14} />}      accent="green" size="sm" />
+                <KPICard label="CPL Médio"    value={loading ? '—' : fmtBRL(avgCPL)}                          icon={<MousePointerClick size={14} />} size="sm" />
+            </div>
 
             {/* Leads Trend Chart — 30 dias reais */}
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                style={{ borderRadius: 20, padding: '18px 18px 14px', background: T.elevated, border: `1px solid ${T.border}`, marginBottom: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-                    <p style={{ fontSize: 14, fontWeight: 700, color: T.text }}>Leads — Últimos 30 dias</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#3B82F6' }} />
-                        <span style={{ fontSize: 9, color: T.textMuted, fontWeight: 600 }}>LEADS</span>
+            <motion.div
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                className="rounded-2xl p-5"
+                style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+            >
+                <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm font-bold" style={{ color: T.text }}>Leads — Últimos 30 dias</p>
+                    <div className="flex items-center gap-1.5">
+                        <div className="w-2 h-2 rounded-full" style={{ background: '#3B82F6' }} />
+                        <span className="text-[9px] font-semibold uppercase" style={{ color: T.textMuted }}>Leads</span>
                     </div>
                 </div>
                 {loading ? (
-                    <div style={{ height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="h-20 flex items-center justify-center">
                         <Loader2 size={20} className="animate-spin" style={{ color: T.textMuted }} />
                     </div>
                 ) : (
@@ -187,50 +171,48 @@ export default function AdsPerformancePage() {
             </motion.div>
 
             {/* Channel Tabs */}
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-                style={{ marginBottom: 20, overflowX: 'auto', scrollbarWidth: 'none' }}>
-                <div style={{ display: 'flex', gap: 6, paddingBottom: 4 }}>
-                    {CHANNELS.map(ch => (
-                        <button key={ch} onClick={() => setChannel(ch)}
-                            style={{
-                                padding: '8px 16px', borderRadius: 20, whiteSpace: 'nowrap',
-                                fontSize: 12, fontWeight: 700,
-                                background: channel === ch ? '#3B82F6' : T.elevated,
-                                border: `1px solid ${channel === ch ? '#3B82F6' : T.border}`,
-                                color: channel === ch ? '#fff' : T.textMuted,
-                                cursor: 'pointer', transition: 'all 0.15s', flexShrink: 0,
-                            }}>
-                            {ch}
-                        </button>
-                    ))}
-                </div>
-            </motion.div>
+            <div className="chip-scroll-row">
+                {CHANNELS.map(ch => (
+                    <button
+                        key={ch}
+                        onClick={() => setChannel(ch)}
+                        className="flex-shrink-0 px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all"
+                        style={{
+                            background: channel === ch ? T.accent : T.elevated,
+                            border: `1px solid ${channel === ch ? T.accent : T.border}`,
+                            color: channel === ch ? '#fff' : T.textMuted,
+                        }}
+                    >
+                        {ch}
+                    </button>
+                ))}
+            </div>
 
             {/* Active Campaigns */}
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                    <p style={{ fontSize: 14, fontWeight: 800, color: T.text }}>
+            <div>
+                <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-bold" style={{ color: T.text }}>
                         Campanhas {filtered.length > 0 ? `(${filtered.length})` : ''}
                     </p>
-                    <Link href="/backoffice/campanhas" style={{ fontSize: 11, fontWeight: 700, color: '#3B82F6', textDecoration: 'none' }}>
+                    <Link href="/backoffice/campanhas" className="text-[11px] font-semibold" style={{ color: T.accent }}>
                         Ver relatórios →
                     </Link>
                 </div>
 
                 {loading ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div className="space-y-2.5">
                         {[1, 2].map(i => (
-                            <div key={i} style={{ height: 100, borderRadius: 18, background: T.elevated, border: `1px solid ${T.border}`, opacity: 0.5 }} />
+                            <div key={i} className="animate-pulse rounded-2xl h-24" style={{ background: T.elevated, border: `1px solid ${T.border}` }} />
                         ))}
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '40px 20px', borderRadius: 18, background: T.elevated, border: `1px solid ${T.border}` }}>
-                        <BarChart3 size={32} style={{ color: T.textMuted, opacity: 0.3, margin: '0 auto 8px' }} />
-                        <p style={{ fontSize: 13, color: T.textMuted }}>Nenhuma campanha encontrada</p>
-                        <p style={{ fontSize: 12, color: T.textMuted, marginTop: 4, opacity: 0.7 }}>Crie a primeira campanha para ver métricas</p>
+                    <div className="text-center py-10 rounded-2xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <BarChart3 size={32} className="mx-auto mb-2" style={{ color: T.textMuted, opacity: 0.3 }} />
+                        <p className="text-sm" style={{ color: T.textMuted }}>Nenhuma campanha encontrada</p>
+                        <p className="text-xs mt-1 opacity-70" style={{ color: T.textMuted }}>Crie a primeira campanha para ver métricas</p>
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div className="space-y-2.5">
                         {filtered.map((c, i) => {
                             const st = STATUS_MAP[c.status] || STATUS_MAP.draft
                             return (
@@ -239,45 +221,45 @@ export default function AdsPerformancePage() {
                                     initial={{ opacity: 0, x: -8 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.2 + i * 0.06 }}
-                                    style={{ borderRadius: 18, padding: '16px', background: T.elevated, border: `1px solid ${T.border}`, borderLeft: `3px solid ${st.color}` }}
+                                    className="rounded-2xl p-4"
+                                    style={{ background: T.elevated, border: `1px solid ${T.border}`, borderLeft: `3px solid ${st.color}` }}
                                 >
-                                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 4 }}>
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <p style={{ fontSize: 14, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                                {c.name}
-                                            </p>
-                                            <p style={{ fontSize: 11, color: T.textMuted, marginTop: 2 }}>
+                                    <div className="flex items-start justify-between gap-2 mb-3">
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-bold truncate" style={{ color: T.text }}>{c.name}</p>
+                                            <p className="text-[11px] mt-0.5" style={{ color: T.textMuted }}>
                                                 {c.channel || 'Canal não definido'}
                                                 {c.objective ? ` · ${c.objective}` : ''}
                                             </p>
                                         </div>
-                                        <span style={{
-                                            padding: '4px 10px', borderRadius: 8, fontSize: 9, fontWeight: 800,
-                                            textTransform: 'uppercase', letterSpacing: '0.08em',
-                                            color: st.color, background: st.bg, flexShrink: 0, marginLeft: 8,
-                                        }}>{st.label}</span>
+                                        <span
+                                            className="flex-shrink-0 px-2 py-0.5 rounded-lg text-[9px] font-black uppercase"
+                                            style={{ color: st.color, background: st.bg }}
+                                        >
+                                            {st.label}
+                                        </span>
                                     </div>
 
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 12 }}>
+                                    <div className="grid grid-cols-4 gap-2">
                                         {[
-                                            { label: 'LEADS META', value: c.expected_leads ? String(c.expected_leads) : '—' },
+                                            { label: 'META', value: c.expected_leads ? String(c.expected_leads) : '—' },
                                             { label: 'CPL', value: c.cost_per_lead ? fmtBRL(Number(c.cost_per_lead)) : '—' },
                                             { label: 'GASTO', value: c.spent ? fmtBRL(Number(c.spent)) : '—' },
                                             { label: 'BUDGET', value: c.budget ? fmtBRL(Number(c.budget)) : '—' },
                                         ].map(stat => (
                                             <div key={stat.label}>
-                                                <p style={{ fontSize: 8, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 3 }}>
-                                                    {stat.label}
-                                                </p>
-                                                <p style={{ fontSize: 14, fontWeight: 700, color: T.text, fontFamily: 'monospace' }}>
-                                                    {stat.value}
-                                                </p>
+                                                <p className="text-[8px] font-bold uppercase tracking-wider mb-0.5" style={{ color: T.textMuted }}>{stat.label}</p>
+                                                <p className="text-sm font-bold font-mono" style={{ color: T.text }}>{stat.value}</p>
                                             </div>
                                         ))}
                                     </div>
 
-                                    <Link href={`/backoffice/campanhas/${c.id}`} style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 12, fontSize: 11, fontWeight: 700, color: '#3B82F6', textDecoration: 'none' }}>
-                                        Ver detalhes <ArrowUpRight size={12} />
+                                    <Link
+                                        href={`/backoffice/campanhas/${c.id}`}
+                                        className="inline-flex items-center gap-1 mt-3 text-[11px] font-bold"
+                                        style={{ color: T.accent }}
+                                    >
+                                        Ver detalhes <ArrowUpRight size={11} />
                                     </Link>
                                 </motion.div>
                             )
@@ -286,19 +268,17 @@ export default function AdsPerformancePage() {
                 )}
 
                 {/* New campaign CTA */}
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} style={{ marginTop: 16 }}>
-                    <Link href="/backoffice/campanhas/nova" style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                        height: 52, borderRadius: 16,
-                        background: 'var(--bo-accent)',
-                        color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none',
-                        boxShadow: '0 4px 20px rgba(59,130,246,0.3)',
-                    }}>
-                        <Zap size={18} />
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-4">
+                    <Link
+                        href="/backoffice/campanhas/nova"
+                        className="flex items-center justify-center gap-2 h-13 rounded-2xl text-sm font-bold text-white"
+                        style={{ background: 'var(--bo-accent)', boxShadow: '0 4px 20px rgba(59,130,246,0.3)', height: 52 }}
+                    >
+                        <Zap size={16} />
                         Nova Campanha
                     </Link>
                 </motion.div>
-            </motion.div>
+            </div>
         </div>
     )
 }
