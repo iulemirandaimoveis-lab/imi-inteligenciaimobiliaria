@@ -2,16 +2,18 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, SlidersHorizontal, ChevronDown, Check, MapPin, Building, BedDouble, DollarSign, Zap, Search, ArrowUpDown } from 'lucide-react';
+import { X, SlidersHorizontal, ChevronDown, Check, MapPin, Building, BedDouble, DollarSign, Zap, Search, ArrowUpDown, Ruler } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export interface FilterState {
+    search: string;
     status: string[];
     type: string[];
     bedrooms: number | null;
     priceRange: [number, number];
+    areaRange: [number, number];
     location: string | null;
     neighborhood: string | null;
     sort: 'price-asc' | 'price-desc' | 'newest' | 'relevant';
@@ -55,6 +57,23 @@ const SORT_LABEL: Record<string, string> = {
     relevant: 'Relevância', 'price-asc': 'Menor Preço',
     'price-desc': 'Maior Preço', newest: 'Mais Recente',
 };
+
+// ── Area constants ───────────────────────────────────────────────────────────
+const AREA_MIN = 0;
+const AREA_MAX = 500;
+
+const AREA_PRESETS: { label: string; range: [number, number] }[] = [
+    { label: 'Até 50m²', range: [0, 50] },
+    { label: 'Até 100m²', range: [0, 100] },
+    { label: 'Até 200m²', range: [0, 200] },
+    { label: 'Acima 200m²', range: [200, AREA_MAX] },
+];
+
+function fmtArea(v: number): string {
+    if (v <= 0) return 'Sem mínimo';
+    if (v >= AREA_MAX) return 'Sem limite';
+    return `${v}m²`;
+}
 
 // ── Price formatting ──────────────────────────────────────────────────────────
 function fmtPrice(v: number): string {
@@ -274,8 +293,8 @@ export default function AdvancedFilter({
 
     const clearFilters = () => {
         const cleared: FilterState = {
-            status: [], type: [], bedrooms: null,
-            priceRange: [PRICE_MIN, maxPrice],
+            search: '', status: [], type: [], bedrooms: null,
+            priceRange: [PRICE_MIN, maxPrice], areaRange: [AREA_MIN, AREA_MAX],
             location: null, neighborhood: null, sort: 'relevant',
         };
         onFilterChange(cleared);
@@ -290,12 +309,14 @@ export default function AdvancedFilter({
 
     // Badge count — all active filter categories
     const activeFilterCount = [
+        filters.search ? 1 : 0,
         filters.location ? 1 : 0,
         filters.neighborhood ? 1 : 0,
         filters.status.length > 0 ? 1 : 0,
         filters.type.length > 0 ? 1 : 0,
         filters.bedrooms ? 1 : 0,
         (filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice) ? 1 : 0,
+        (filters.areaRange[0] > 0 || filters.areaRange[1] < AREA_MAX) ? 1 : 0,
     ].reduce((a, b) => a + b, 0);
 
     const hasAnyFilter = activeFilterCount > 0;
@@ -323,6 +344,26 @@ export default function AdvancedFilter({
 
                         {/* ── Desktop filter bar ────────────────────────── */}
                         <div className="hidden lg:flex items-center gap-2 flex-wrap overflow-visible">
+
+                            {/* Search */}
+                            <div className="relative">
+                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280] pointer-events-none" />
+                                <input
+                                    type="text"
+                                    value={filters.search}
+                                    onChange={e => updateFilter('search', e.target.value)}
+                                    placeholder="Buscar..."
+                                    className="w-[180px] focus:w-[260px] pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-[#6B7280] outline-none focus:border-[#334E68] focus:bg-white/[0.08] transition-all duration-300"
+                                />
+                                {filters.search && (
+                                    <button
+                                        onClick={() => updateFilter('search', '')}
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-[#6B7280] hover:text-white transition-colors"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                )}
+                            </div>
 
                             {/* Location */}
                             <div className="relative">
@@ -503,6 +544,41 @@ export default function AdvancedFilter({
                                 )}
                             </div>
 
+                            {/* Area */}
+                            <div className="relative">
+                                <FilterButton
+                                    label={
+                                        filters.areaRange[0] > 0 || filters.areaRange[1] < AREA_MAX
+                                            ? `${fmtArea(filters.areaRange[0])} – ${fmtArea(filters.areaRange[1])}`
+                                            : "Área"
+                                    }
+                                    icon={Ruler}
+                                    active={activeDropdown === 'area'}
+                                    hasValue={filters.areaRange[0] > 0 || filters.areaRange[1] < AREA_MAX}
+                                    onClick={() => openDropdown('area')}
+                                />
+                                {activeDropdown === 'area' && (
+                                    <DropdownPanel width={220}>
+                                        <DropdownItem
+                                            label="Qualquer área"
+                                            active={filters.areaRange[0] === AREA_MIN && filters.areaRange[1] === AREA_MAX}
+                                            onClick={() => { updateFilter('areaRange', [AREA_MIN, AREA_MAX]); setActiveDropdown(null); }}
+                                        />
+                                        {AREA_PRESETS.map(p => {
+                                            const active = filters.areaRange[0] === p.range[0] && filters.areaRange[1] === p.range[1];
+                                            return (
+                                                <DropdownItem
+                                                    key={p.label}
+                                                    label={p.label}
+                                                    active={active}
+                                                    onClick={() => { updateFilter('areaRange', p.range); setActiveDropdown(null); }}
+                                                />
+                                            );
+                                        })}
+                                    </DropdownPanel>
+                                )}
+                            </div>
+
                             {/* Price — range slider dropdown */}
                             <div className="relative">
                                 <FilterButton
@@ -611,6 +687,29 @@ export default function AdvancedFilter({
 
                             {/* Scrollable content */}
                             <div className="flex-1 overflow-y-auto p-6 space-y-8">
+
+                                {/* Busca */}
+                                <div>
+                                    <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Buscar</h3>
+                                    <div className="relative">
+                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280] pointer-events-none" />
+                                        <input
+                                            type="text"
+                                            value={mobileFilters.search}
+                                            onChange={e => updateMobileFilter('search', e.target.value)}
+                                            placeholder="Nome, bairro, cidade, construtora..."
+                                            className="w-full pl-11 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-[#6B7280] outline-none focus:border-[#334E68] transition-colors"
+                                        />
+                                        {mobileFilters.search && (
+                                            <button
+                                                onClick={() => updateMobileFilter('search', '')}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#6B7280] hover:text-white transition-colors"
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
 
                                 {/* Localização */}
                                 <div>
@@ -744,6 +843,45 @@ export default function AdvancedFilter({
                                                 {n}+
                                             </button>
                                         ))}
+                                    </div>
+                                </div>
+
+                                {/* Área */}
+                                <div>
+                                    <h3 className="text-[11px] font-bold text-[#6C757D] uppercase tracking-[0.15em] mb-4">Área (m²)</h3>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            onClick={() => updateMobileFilter('areaRange', [AREA_MIN, AREA_MAX])}
+                                            className={cn(
+                                                "px-4 py-3 rounded-xl text-[13px] font-semibold border flex justify-between items-center transition-all",
+                                                mobileFilters.areaRange[0] === AREA_MIN && mobileFilters.areaRange[1] === AREA_MAX
+                                                    ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581]"
+                                                    : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
+                                            )}
+                                        >
+                                            Qualquer
+                                            {mobileFilters.areaRange[0] === AREA_MIN && mobileFilters.areaRange[1] === AREA_MAX && (
+                                                <Check className="w-4 h-4 text-[#486581]" />
+                                            )}
+                                        </button>
+                                        {AREA_PRESETS.map(p => {
+                                            const sel = mobileFilters.areaRange[0] === p.range[0] && mobileFilters.areaRange[1] === p.range[1];
+                                            return (
+                                                <button
+                                                    key={p.label}
+                                                    onClick={() => updateMobileFilter('areaRange', p.range)}
+                                                    className={cn(
+                                                        "px-4 py-3 rounded-xl text-[13px] font-semibold border flex justify-between items-center transition-all",
+                                                        sel
+                                                            ? "bg-[#102A43]/10 border-[#334E68]/50 text-[#486581]"
+                                                            : "bg-transparent border-white/10 text-[#9CA3AF] hover:bg-white/5"
+                                                    )}
+                                                >
+                                                    {p.label}
+                                                    {sel && <Check className="w-4 h-4 text-[#486581]" />}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
 

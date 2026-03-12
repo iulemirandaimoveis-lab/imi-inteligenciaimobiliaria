@@ -14,10 +14,12 @@ const ITEMS_PER_PAGE = 12;
 const SPLIT_MAP_HEIGHT = 'clamp(500px, calc(100vh - 180px), 860px)';
 
 const DEFAULT_FILTERS: FilterState = {
+    search: '',
     status: [],
     type: [],
     bedrooms: null,
     priceRange: [0, 10000000],
+    areaRange: [0, 500],
     location: null,
     neighborhood: null,
     sort: 'relevant',
@@ -143,11 +145,16 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         if (!params.toString()) return;
         setFilters(prev => ({
             ...prev,
+            search: params.get('q') || prev.search,
             type: params.get('type') ? params.get('type')!.split(',') : prev.type,
             bedrooms: params.get('beds') ? Number(params.get('beds')) : prev.bedrooms,
             priceRange: [
                 params.get('price_min') ? Number(params.get('price_min')) : prev.priceRange[0],
                 params.get('price_max') ? Number(params.get('price_max')) : prev.priceRange[1],
+            ],
+            areaRange: [
+                params.get('area_min') ? Number(params.get('area_min')) : prev.areaRange[0],
+                params.get('area_max') ? Number(params.get('area_max')) : prev.areaRange[1],
             ],
             location: params.get('location') || prev.location,
             status: params.get('status') ? params.get('status')!.split(',') : prev.status,
@@ -159,10 +166,13 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
     useEffect(() => {
         if (typeof window === 'undefined') return;
         const params = new URLSearchParams();
+        if (filters.search) params.set('q', filters.search);
         if (filters.type.length > 0) params.set('type', filters.type.join(','));
         if (filters.bedrooms) params.set('beds', String(filters.bedrooms));
         if (filters.priceRange[0] > 0) params.set('price_min', String(filters.priceRange[0]));
         if (filters.priceRange[1] < 10000000) params.set('price_max', String(filters.priceRange[1]));
+        if (filters.areaRange[0] > 0) params.set('area_min', String(filters.areaRange[0]));
+        if (filters.areaRange[1] < 500) params.set('area_max', String(filters.areaRange[1]));
         if (filters.location) params.set('location', filters.location);
         if (filters.status.length > 0) params.set('status', filters.status.join(','));
         const search = params.toString();
@@ -212,6 +222,15 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
 
     const filteredDevelopments = useMemo(() => {
         return initialDevelopments.filter((dev) => {
+            // Text search — match name, neighborhood, city, developer, description
+            if (filters.search) {
+                const q = filters.search.toLowerCase().trim();
+                const haystack = [
+                    dev.name, dev.developer, dev.location.neighborhood,
+                    dev.location.city, dev.location.state, dev.shortDescription,
+                ].filter(Boolean).join(' ').toLowerCase();
+                if (!haystack.includes(q)) return false;
+            }
             // Location
             if (filters.location) {
                 const matchCity = dev.location.city === filters.location;
@@ -249,6 +268,17 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 });
                 if (!typeMatches) return false;
             }
+            // Area — parse areaRange string (e.g., "29-251m²") and check overlap
+            if (filters.areaRange[0] > 0 || filters.areaRange[1] < 500) {
+                const areaStr = dev.specs.areaRange;
+                if (areaStr && areaStr !== '—') {
+                    const nums = areaStr.replace(/[^\d\-–]/g, '').split(/[-–]/).map(Number).filter(n => !isNaN(n));
+                    const devAreaMin = nums[0] || 0;
+                    const devAreaMax = nums.length > 1 ? nums[1] : devAreaMin;
+                    // Check overlap: dev range must overlap filter range
+                    if (devAreaMax < filters.areaRange[0] || devAreaMin > filters.areaRange[1]) return false;
+                }
+            }
             return true;
         }).sort((a, b) => {
             if (filters.sort === 'price-asc') return a.priceRange.min - b.priceRange.min;
@@ -261,18 +291,21 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
     // ── Active filter count ───────────────────────────────────────────────────
     const activeFilterCount = useMemo(() => {
         let count = 0;
+        if (filters.search) count++;
         if (filters.type.length > 0) count++;
         if (filters.bedrooms) count++;
         if (filters.status.length > 0) count++;
         if (filters.location) count++;
         if (filters.neighborhood) count++;
         if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000) count++;
+        if (filters.areaRange[0] > 0 || filters.areaRange[1] < 500) count++;
         return count;
     }, [filters]);
 
     // Special "Pronta Entrega" section — only when no active filters
-    const showReadySection = !filters.location && !filters.neighborhood
-        && !filters.bedrooms && filters.type.length === 0 && filters.status.length === 0;
+    const showReadySection = !filters.search && !filters.location && !filters.neighborhood
+        && !filters.bedrooms && filters.type.length === 0 && filters.status.length === 0
+        && filters.areaRange[0] === 0 && filters.areaRange[1] === 500;
     const readyDevelopments = showReadySection
         ? initialDevelopments.filter(dev => dev.status === 'ready' && dev.region === 'paraiba')
         : [];
