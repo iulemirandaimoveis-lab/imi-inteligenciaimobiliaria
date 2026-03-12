@@ -7,7 +7,9 @@ import {
   Plus, Search, Mail, Phone, Shield, Clock, CheckCircle, XCircle, Edit, MoreVertical,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, KPICard, FilterTabs, StatusBadge } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -91,15 +93,6 @@ export default function UsuariosPage() {
     height: '44px', borderRadius: '12px', padding: '0 12px', fontSize: '13px', outline: 'none',
   }
 
-  const STAT_CARDS = [
-    { label: 'Total', value: stats.total, color: T.text },
-    { label: 'Ativos', value: stats.ativos, color: '#6BB87B' },
-    { label: 'Admin', value: stats.porRole.Admin, color: '#E57373' },
-    { label: 'Gestor', value: stats.porRole.Gestor, color: '#E8A87C' },
-    { label: 'Corretor', value: stats.porRole.Corretor, color: '#8CA4B8' },
-    { label: 'Avaliador', value: stats.porRole.Avaliador, color: '#A78BFA' },
-    { label: 'Marketing', value: stats.porRole.Marketing, color: '#6BB87B' },
-  ]
 
   return (
     <div className="space-y-5">
@@ -120,63 +113,61 @@ export default function UsuariosPage() {
         }
       />
 
+      {/* KPIs */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        <KPICard label="Total" value={loading ? '—' : String(stats.total)} icon={<Shield size={14} />} size="sm" />
+        <KPICard label="Ativos" value={loading ? '—' : String(stats.ativos)} icon={<CheckCircle size={14} />} accent="green" size="sm" />
+        <KPICard label="Inativos" value={loading ? '—' : String(stats.inativos)} icon={<XCircle size={14} />} size="sm" />
+        <KPICard label="Admins" value={loading ? '—' : String(stats.porRole.Admin)} icon={<Shield size={14} />} accent="hot" size="sm" />
+      </div>
+
+      {/* Filtros */}
+      <div className="rounded-2xl p-4 space-y-3" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={14} style={{ color: T.textMuted }} />
+          <input
+            type="text"
+            placeholder="Buscar por nome ou email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full h-9 pl-9 pr-4 rounded-xl text-sm outline-none"
+            style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
+          />
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          <FilterTabs
+            tabs={[
+              { id: 'all',     label: 'Todos',    count: usuariosData.length },
+              { id: 'ativo',   label: 'Ativos',   count: stats.ativos,   dotColor: getStatusConfig('ativo').dot },
+              { id: 'inativo', label: 'Inativos', count: stats.inativos, dotColor: getStatusConfig('inativo').dot },
+            ] as FilterTab[]}
+            active={statusFilter}
+            onChange={setStatusFilter}
+          />
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            className="h-9 px-3 rounded-xl text-xs font-semibold outline-none"
+            style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.text }}
+          >
+            <option value="all">Todas as roles</option>
+            <option value="ADMIN">Admin</option>
+            <option value="GESTOR">Gestor</option>
+            <option value="CORRETOR">Corretor</option>
+            <option value="AVALIADOR">Avaliador</option>
+            <option value="MARKETING">Marketing</option>
+          </select>
+        </div>
+      </div>
+
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-2xl p-4 animate-pulse" style={{ background: T.elevated, border: `1px solid ${T.border}`, height: 80 }}>
-              <div className="h-2.5 rounded mb-3" style={{ background: 'var(--bo-hover)', width: '50%' }} />
-              <div className="h-7 rounded" style={{ background: 'var(--bo-hover)', width: '40%' }} />
-            </div>
+            <div key={i} className="animate-pulse rounded-2xl h-16" style={{ background: T.elevated }} />
           ))}
         </div>
       ) : (
         <>
-          {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-            {STAT_CARDS.map(s => (
-              <div key={s.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{s.label}</p>
-                <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Filtros */}
-          <div className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={14} style={{ color: T.textMuted }} />
-                <input
-                  type="text"
-                  placeholder="Buscar por nome ou email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ ...inputStyle, width: '100%', paddingLeft: '36px' }}
-                />
-              </div>
-              <select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                style={{ ...inputStyle, width: '100%' }}
-              >
-                <option value="all" style={{ background: 'var(--bo-elevated)' }}>Todas as roles</option>
-                <option value="ADMIN" style={{ background: 'var(--bo-elevated)' }}>Admin</option>
-                <option value="GESTOR" style={{ background: 'var(--bo-elevated)' }}>Gestor</option>
-                <option value="CORRETOR" style={{ background: 'var(--bo-elevated)' }}>Corretor</option>
-                <option value="AVALIADOR" style={{ background: 'var(--bo-elevated)' }}>Avaliador</option>
-                <option value="MARKETING" style={{ background: 'var(--bo-elevated)' }}>Marketing</option>
-              </select>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                style={{ ...inputStyle, width: '100%' }}
-              >
-                <option value="all" style={{ background: 'var(--bo-elevated)' }}>Todos os status</option>
-                <option value="ativo" style={{ background: 'var(--bo-elevated)' }}>Ativo</option>
-                <option value="inativo" style={{ background: 'var(--bo-elevated)' }}>Inativo</option>
-              </select>
-            </div>
-          </div>
 
           {/* Lista */}
           <div className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
@@ -215,10 +206,7 @@ export default function UsuariosPage() {
                             >
                               {user.role}
                             </span>
-                            {user.status === 'ativo'
-                              ? <CheckCircle size={14} style={{ color: '#6BB87B' }} />
-                              : <XCircle size={14} style={{ color: T.textMuted }} />
-                            }
+                            <StatusBadge statusKey={user.status === 'ativo' ? 'ativo' : 'inativo'} size="xs" dot />
                           </div>
                           <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: T.textMuted }}>
                             <span className="flex items-center gap-1">
