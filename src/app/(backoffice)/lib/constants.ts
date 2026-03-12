@@ -16,9 +16,14 @@ export const STATUS_CONFIG = {
   // ── Imóveis / Empreendimentos ──────────────────────────
   publicado:  { label: 'Publicado',  color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
   rascunho:   { label: 'Rascunho',   color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
-  vendido:    { label: 'Vendido',    color: 'var(--bo-accent)',    bg: 'var(--bo-active-bg)',    dot: '#3b82f6' },
+  vendido:    { label: 'Vendido',    color: '#fbbf24',             bg: 'rgba(251,191,36,0.12)',  dot: '#fbbf24' },
   privado:    { label: 'Privado',    color: 'var(--bo-text-dim)',  bg: 'var(--bo-hover)',        dot: '#6b7280' },
   campanha:   { label: 'Campanha',   color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#fbbf24' },
+  disponivel:    { label: 'Disponível',    color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
+  em_negociacao: { label: 'Negociação',    color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
+  reservado:     { label: 'Reservado',     color: '#c084fc',            bg: 'rgba(192,132,252,0.12)', dot: '#c084fc' },
+  lancamento:    { label: 'Lançamento',    color: '#fb923c',            bg: 'rgba(251,146,60,0.12)',  dot: '#fb923c' },
+  em_construcao: { label: 'Em Construção', color: '#a78bfa',            bg: 'rgba(167,139,250,0.12)', dot: '#a78bfa' },
 
   // ── Contratos ──────────────────────────────────────────
   pendente:   { label: 'Pendente',   color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#fbbf24' },
@@ -40,6 +45,9 @@ export const STATUS_CONFIG = {
   em_andamento:{ label: 'Em Andamento', color: 'var(--bo-info)',   bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
   concluido:  { label: 'Concluído',  color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
   arquivado:  { label: 'Arquivado',  color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
+  estruturacao: { label: 'Estruturação', color: 'var(--bo-accent)',    bg: 'var(--bo-active-bg)',    dot: '#3b82f6' },
+  obras:        { label: 'Em Obras',     color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#f59e0b' },
+  pronto:       { label: 'Pronto',       color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#22c55e' },
 
   // ── Genérico ───────────────────────────────────────────
   ativo:      { label: 'Ativo',      color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
@@ -49,7 +57,7 @@ export const STATUS_CONFIG = {
   // ── English aliases (for DB status_commercial) ─────────
   published:  { label: 'Publicado',  color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
   draft:      { label: 'Rascunho',   color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
-  sold:       { label: 'Vendido',    color: 'var(--bo-accent)',    bg: 'var(--bo-active-bg)',    dot: '#3b82f6' },
+  sold:       { label: 'Vendido',    color: '#fbbf24',             bg: 'rgba(251,191,36,0.12)',  dot: '#fbbf24' },
   private:    { label: 'Privado',    color: 'var(--bo-text-dim)',  bg: 'var(--bo-hover)',        dot: '#6b7280' },
 } as const
 

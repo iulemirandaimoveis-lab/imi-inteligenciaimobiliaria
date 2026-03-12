@@ -18,7 +18,8 @@ import {
     DollarSign,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, KPICard, FilterTabs, ActionMenu, StatusBadge } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 // Interface para os dados reias do Supabase
@@ -136,9 +137,9 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                 </div>
                 <FilterTabs
                     tabs={[
-                        { id: 'all',    label: 'Todas',  count: initialData.length },
-                        { id: 'ativa',  label: 'Ativas',  dotColor: '#4ADE80' },
-                        { id: 'inativa',label: 'Inativas', dotColor: '#64748B' },
+                        { id: 'all',    label: 'Todas',    count: initialData.length },
+                        { id: 'ativa',  label: 'Ativas',   dotColor: getStatusConfig('ativo').dot },
+                        { id: 'inativa',label: 'Inativas',  dotColor: getStatusConfig('inativo').dot },
                     ] as FilterTab[]}
                     active={statusFilter}
                     onChange={setStatusFilter}
@@ -172,10 +173,7 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                                 </div>
                             </div>
                             <div className="flex flex-col items-end gap-2">
-                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${construtora.is_active ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-[rgba(148,163,184,0.1)] text-[#94A3B8] border border-[rgba(148,163,184,0.2)]'
-                                    }`}>
-                                    {construtora.is_active ? 'Ativa' : 'Inativa'}
-                                </span>
+                                <StatusBadge statusKey={construtora.is_active ? 'ativo' : 'inativo'} size="xs" dot />
                                 <div className="flex items-center gap-1 mt-1">
                                     <Star size={12} className="text-yellow-400 fill-current" />
                                     <span className="text-sm font-bold" style={{ color: T.text }}>{construtora.rating?.toFixed(1) || '4.0'}</span>
@@ -223,28 +221,13 @@ export default function ConstrutorasClient({ initialData }: { initialData: Devel
                                 <TrendingUp size={12} className="text-emerald-400" />
                                 <span>Parceria: {construtora.parceriaDuracao || 'Nova'}</span>
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        router.push(`/backoffice/construtoras/${construtora.id}`)
-                                    }}
-                                    className="w-8 h-8 flex justify-center items-center rounded-lg transition-colors"
-                                    style={{ border: `1px solid ${T.border}`, color: T.textMuted }}
-                                >
-                                    <Eye size={14} />
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        router.push(`/backoffice/construtoras/${construtora.id}/editar`)
-                                    }}
-                                    className="w-8 h-8 flex justify-center items-center rounded-lg transition-colors"
-                                    style={{ border: `1px solid ${T.border}`, color: T.textMuted }}
-                                >
-                                    <Edit size={14} />
-                                </button>
-                            </div>
+                            <ActionMenu
+                                size="sm"
+                                items={[
+                                    { label: 'Ver Portfólio', icon: <Eye size={14} />, onClick: () => router.push(`/backoffice/construtoras/${construtora.id}`) },
+                                    { label: 'Editar', icon: <Edit size={14} />, onClick: () => router.push(`/backoffice/construtoras/${construtora.id}/editar`) },
+                                ]}
+                            />
                         </div>
                     </div>
                 ))}

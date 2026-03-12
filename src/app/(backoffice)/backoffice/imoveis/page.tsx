@@ -16,18 +16,20 @@ import Image from 'next/image'
 import { toast } from 'sonner'
 import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
+import { getStatusConfig } from '../../lib/constants'
 import { calcPricePerSqm } from '@/lib/utils'
 
-/* ─── STATUS CONFIG ──────────────────────────────────────────────── */
-const STATUS_MAP: Record<string, { label: string; text: string; bg: string; dot: string; icon: any }> = {
-    disponivel:    { label: 'Disponível',   text: '#34d399', bg: 'rgba(52,211,153,0.15)',   dot: '#34d399', icon: CheckCircle },
-    em_negociacao: { label: 'Negociação',   text: '#60A5FA', bg: 'rgba(96,165,250,0.15)',   dot: '#60A5FA', icon: Clock },
-    reservado:     { label: 'Reservado',    text: '#c084fc', bg: 'rgba(192,132,252,0.15)',  dot: '#c084fc', icon: AlertCircle },
-    vendido:       { label: 'Vendido',      text: '#fbbf24', bg: 'rgba(251,191,36,0.15)',   dot: '#fbbf24', icon: ShoppingCart },
-    lancamento:    { label: 'Lançamento',   text: '#fb923c', bg: 'rgba(251,146,60,0.15)',   dot: '#fb923c', icon: Tag },
-    em_construcao: { label: 'Em Construção',text: '#a78bfa', bg: 'rgba(167,139,250,0.15)',  dot: '#a78bfa', icon: Clock },
-    arquivado:     { label: 'Arquivado',    text: '#64748B', bg: 'rgba(100,116,139,0.15)',  dot: '#64748B', icon: Archive },
+/* ─── STATUS CONFIG (from centralized constants) ─────────────────── */
+const STATUS_ICONS: Record<string, any> = {
+    disponivel: CheckCircle, em_negociacao: Clock, reservado: AlertCircle,
+    vendido: ShoppingCart, lancamento: Tag, em_construcao: Clock, arquivado: Archive,
 }
+const STATUS_MAP = Object.fromEntries(
+    Object.entries(STATUS_ICONS).map(([key, icon]) => {
+        const cfg = getStatusConfig(key)
+        return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}26`, dot: cfg.dot, icon }]
+    })
+) as Record<string, { label: string; text: string; bg: string; dot: string; icon: any }>
 
 /**
  * Map raw DB `status` column values → STATUS_MAP display keys.

@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { Building2, Plus, MapPin, TrendingUp, Users, DollarSign, Loader2, X } from 'lucide-react'
+import { Building2, Plus, MapPin, TrendingUp, Users, DollarSign, Loader2, X, Eye, Edit } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, KPICard, FilterTabs, ActionMenu } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 interface Projeto {
@@ -26,12 +27,12 @@ interface Projeto {
     created_at: string
 }
 
-const STATUS_CFG: Record<string, { l: string; color: string }> = {
-    estruturacao: { l: 'Estruturação', color: 'var(--bo-accent)' },
-    lancamento: { l: 'Lançamento', color: '#10B981' },
-    obras: { l: 'Em Obras', color: '#F59E0B' },
-    pronto: { l: 'Pronto', color: '#22C55E' },
-}
+const STATUS_CFG = Object.fromEntries(
+    ['estruturacao', 'lancamento', 'obras', 'pronto'].map(key => {
+        const cfg = getStatusConfig(key)
+        return [key, { l: cfg.label, color: cfg.dot }]
+    })
+) as Record<string, { l: string; color: string }>
 
 export default function ProjetosPage() {
     const [projetos, setProjetos] = useState<Projeto[]>([])
@@ -149,10 +150,10 @@ export default function ProjetosPage() {
                 <FilterTabs
                     tabs={[
                         { id: 'todos',        label: 'Todos',        count: projetos.length },
-                        { id: 'estruturacao', label: 'Estruturação',  dotColor: 'var(--bo-accent)' },
-                        { id: 'lancamento',   label: 'Lançamento',    dotColor: '#10B981' },
-                        { id: 'obras',        label: 'Em Obras',      dotColor: '#F59E0B' },
-                        { id: 'pronto',       label: 'Pronto',        dotColor: '#22C55E' },
+                        { id: 'estruturacao', label: 'Estruturação',  dotColor: getStatusConfig('estruturacao').dot },
+                        { id: 'lancamento',   label: 'Lançamento',    dotColor: getStatusConfig('lancamento').dot },
+                        { id: 'obras',        label: 'Em Obras',      dotColor: getStatusConfig('obras').dot },
+                        { id: 'pronto',       label: 'Pronto',        dotColor: getStatusConfig('pronto').dot },
                     ] as FilterTab[]}
                     active={filtro}
                     onChange={setFiltro}
@@ -230,16 +231,23 @@ export default function ProjetosPage() {
                                                 <div className="h-full rounded-full transition-all"
                                                     style={{
                                                         width: `${pct}%`,
-                                                        backgroundColor: pct >= 75 ? '#22C55E' : 'var(--bo-accent)',
+                                                        backgroundColor: pct >= 75 ? getStatusConfig('pronto').dot : 'var(--bo-accent)',
                                                     }} />
                                             </div>
                                         </div>
 
-                                        {/* Métricas */}
+                                        {/* Métricas + Ações */}
                                         <div className="flex items-center justify-between pt-1" style={{ borderTop: `1px solid ${T.border}` }}>
                                             <span className="text-xs" style={{ color: T.textMuted }}>
                                                 {p.area_total_m2 ? `Área: ${Number(p.area_total_m2).toLocaleString('pt-BR')} m²` : '—'}
                                             </span>
+                                            <ActionMenu
+                                                size="sm"
+                                                items={[
+                                                    { label: 'Ver Detalhes', icon: <Eye size={14} />, onClick: () => window.location.href = `/backoffice/projetos/${p.id}` },
+                                                    { label: 'Editar', icon: <Edit size={14} />, onClick: () => window.location.href = `/backoffice/projetos/${p.id}/editar` },
+                                                ]}
+                                            />
                                         </div>
                                     </div>
                                 </div>
