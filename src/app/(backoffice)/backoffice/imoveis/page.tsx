@@ -10,7 +10,7 @@ import {
     Plus, Search, Grid3X3, List, Building2, MapPin, Bed, Bath, Ruler,
     DollarSign, Star, MoreHorizontal, Eye, Edit, CheckCircle, Clock,
     AlertCircle, Tag, Archive, Trash2, ShoppingCart, X, ArrowUpDown,
-    TrendingUp, Users, Flame,
+    TrendingUp, Users, Flame, Zap, Award, BarChart2, Percent,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -80,6 +80,11 @@ interface Imovel {
     liquidez: number
     hotLeads: number
     totalLeads: number
+    // ── Investment intelligence ────────────────────────────
+    imiScore: number      // 0–99 composite investment score
+    roi: number           // estimated annual ROI %
+    valorizacao: number   // estimated appreciation potential %
+    pricePerSqm: number   // R$/m²
 }
 
 /* ─── ANIMATED COUNTER ───────────────────────────────────────────── */
@@ -103,26 +108,69 @@ function AnimatedNumber({ value, prefix = '', suffix = '' }: { value: number; pr
     return <>{prefix}{display.toLocaleString('pt-BR')}{suffix}</>
 }
 
-/* ─── LIQUIDEZ BAR ───────────────────────────────────────────────── */
-function LiquidezBar({ score }: { score: number }) {
-    const color = score >= 75 ? '#34d399' : score >= 55 ? '#a3e635' : score >= 40 ? '#fbbf24' : '#f87171'
-    const label = score >= 75 ? 'Alta' : score >= 55 ? 'Média' : score >= 40 ? 'Moderada' : 'Baixa'
+/* ─── IMI SCORE BAR ──────────────────────────────────────────────── */
+function IMIScoreBar({ score, liquidez }: { score: number; liquidez: number }) {
+    const color = score >= 80 ? '#C8A46A' : score >= 65 ? '#34d399' : score >= 50 ? '#fbbf24' : '#f87171'
+    const label = score >= 80 ? 'Excelente' : score >= 65 ? 'Bom' : score >= 50 ? 'Regular' : 'Baixo'
+    const dots = Math.min(5, Math.round(score / 20))
+    const liqColor = liquidez >= 75 ? '#34d399' : liquidez >= 55 ? '#a3e635' : liquidez >= 40 ? '#fbbf24' : '#f87171'
     return (
-        <div className="flex items-center gap-2">
-            <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
-                <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${score}%` }}
-                    transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-                    className="h-full rounded-full"
-                    style={{ background: `linear-gradient(90deg, ${color}55, ${color})` }}
-                />
+        <div className="space-y-1.5">
+            {/* IMI Score dots + value */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.12em]" style={{ color: 'rgba(255,255,255,0.22)' }}>IMI Score</span>
+                    <div className="flex gap-[3px]">
+                        {[1,2,3,4,5].map(d => (
+                            <motion.span
+                                key={d}
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: d * 0.06 + 0.3, type: 'spring', stiffness: 300 }}
+                                className="w-[6px] h-[6px] rounded-full"
+                                style={{ background: d <= dots ? color : 'rgba(255,255,255,0.08)' }}
+                            />
+                        ))}
+                    </div>
+                </div>
+                <div className="flex items-center gap-1">
+                    <span className="text-[11px] font-bold tabular-nums" style={{ color }}>{score}</span>
+                    <span className="text-[9px]" style={{ color: 'rgba(255,255,255,0.2)' }}>/ {label}</span>
+                </div>
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
-                <span className="text-[10px] font-bold tabular-nums" style={{ color }}>{score}%</span>
-                <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.22)' }}>·</span>
-                <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.32)' }}>{label}</span>
+            {/* Liquidity bar */}
+            <div className="flex items-center gap-2">
+                <div className="flex-1 h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${liquidez}%` }}
+                        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+                        className="h-full rounded-full"
+                        style={{ background: `linear-gradient(90deg, ${liqColor}44, ${liqColor})` }}
+                    />
+                </div>
+                <span className="text-[9px] tabular-nums flex-shrink-0" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                    Liq {liquidez}%
+                </span>
             </div>
+        </div>
+    )
+}
+
+/* ─── INVEST METRICS STRIP ───────────────────────────────────────── */
+function InvestMetrics({ roi, valorizacao, pricePerSqm }: { roi: number; valorizacao: number; pricePerSqm: number }) {
+    return (
+        <div className="grid grid-cols-3 divide-x divide-white/5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            {[
+                { label: 'ROI a.a.', value: `${roi}%`,        color: '#34d399' },
+                { label: 'Val. Est.',value: `+${valorizacao}%`, color: '#C8A46A' },
+                { label: 'R$/m²',    value: pricePerSqm > 0 ? `${(pricePerSqm/1000).toFixed(0)}k` : '—', color: 'rgba(255,255,255,0.55)' },
+            ].map(({ label, value, color }) => (
+                <div key={label} className="flex flex-col items-center py-2">
+                    <span className="text-[8px] font-bold uppercase tracking-[0.1em] mb-0.5" style={{ color: 'rgba(255,255,255,0.2)' }}>{label}</span>
+                    <span className="text-[12px] font-bold tabular-nums" style={{ color }}>{value}</span>
+                </div>
+            ))}
         </div>
     )
 }
@@ -447,12 +495,14 @@ function ImovelCard({ imovel, index, onAction }: { imovel: Imovel; index: number
                             </div>
                         </div>
 
-                        {/* Liquidez */}
-                        <div className="pt-2.5" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                            <p className="text-[9px] font-semibold uppercase tracking-[0.1em] mb-1.5" style={{ color: 'rgba(255,255,255,0.2)' }}>
-                                Índice Liquidez IMI
-                            </p>
-                            <LiquidezBar score={imovel.liquidez} />
+                        {/* IMI Score */}
+                        <div className="pt-2.5 mb-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                            <IMIScoreBar score={imovel.imiScore} liquidez={imovel.liquidez} />
+                        </div>
+
+                        {/* Investment metrics strip */}
+                        <div className="rounded-xl overflow-hidden -mx-4 mb-0" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <InvestMetrics roi={imovel.roi} valorizacao={imovel.valorizacao} pricePerSqm={imovel.pricePerSqm} />
                         </div>
                     </div>
                 </motion.div>
@@ -469,8 +519,9 @@ export default function ImoveisPage() {
     const [filter, setFilter] = useState('all')
     const [filterConstrutora, setFilterConstrutora] = useState('all')
     const [filterTipo, setFilterTipo] = useState('all')
-    const [sort, setSort] = useState<'recentes' | 'preco_asc' | 'preco_desc' | 'liquidez' | 'visitas' | 'leads'>('recentes')
+    const [sort, setSort] = useState<'recentes' | 'preco_asc' | 'preco_desc' | 'liquidez' | 'visitas' | 'leads' | 'roi' | 'score'>('recentes')
     const [showSortMenu, setShowSortMenu] = useState(false)
+    const [smartFilter, setSmartFilter] = useState('')
     const [imoveis, setImoveis] = useState<Imovel[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -501,6 +552,19 @@ export default function ImoveisPage() {
                     if (Array.isArray(data) && data.length > 0) {
                         setImoveis(data.map((d: any) => {
                             const s = leadsMap[d.id] || { hot: 0, warm: 0, total: 0, won: 0 }
+                            const preco    = d.price_min || d.price_from || 0
+                            const area     = d.private_area || d.area_from || 0
+                            const liquidez = Math.min(97, 22 + s.hot * 13 + s.warm * 8 + s.total * 3 + s.won * 16)
+                            const pricePerSqm = area > 0 && preco > 0 ? preco / area : 0
+                            // Investment intelligence — heuristic until market data API
+                            const roi        = parseFloat((4.2 + (liquidez / 100) * 7.8).toFixed(1))
+                            const valorizacao = parseFloat((5.5 + (liquidez / 100) * 6.5).toFixed(1))
+                            const leadActivityScore = Math.min(100, s.total * 8 + s.hot * 20 + s.won * 25)
+                            const imiScore = Math.min(99, Math.round(
+                                liquidez * 0.45 +
+                                leadActivityScore * 0.35 +
+                                (roi / 12 * 100) * 0.20
+                            ))
                             return {
                                 id: d.id,
                                 codigo: d.slug ? `IMI-${d.slug.substring(0, 8).toUpperCase()}` : `IMI-${String(d.id).substring(0, 8)}`,
@@ -509,18 +573,22 @@ export default function ImoveisPage() {
                                 tipo: d.type || d.tipo || d.property_type || 'Imóvel',
                                 titulo: d.name || 'Empreendimento',
                                 bairro: d.neighborhood || d.region || 'Localização',
-                                area: d.private_area || d.area_from || 0,
+                                area,
                                 quartos: d.bedrooms || 0,
                                 banheiros: d.bathrooms || 0,
                                 vagas: d.parking_spaces || 0,
-                                preco: d.price_min || d.price_from || 0,
+                                preco,
                                 construtora: d.developer || d.developers?.name || null,
                                 construtora_logo: d.developers?.logo_url || null,
                                 visitas: d.views || 0,
                                 image: d.image || (Array.isArray(d.gallery_images) && d.gallery_images[0]) || null,
-                                liquidez: Math.min(97, 22 + s.hot * 13 + s.warm * 8 + s.total * 3 + s.won * 16),
+                                liquidez,
                                 hotLeads: s.hot,
                                 totalLeads: s.total,
+                                imiScore,
+                                roi,
+                                valorizacao,
+                                pricePerSqm,
                             }
                         }))
                         setLoading(false)
@@ -563,10 +631,17 @@ export default function ImoveisPage() {
     }
 
     const total = imoveis.length
-    const destaquesCount = imoveis.filter(i => i.destaque).length
     const lancamentosCount = imoveis.filter(i => i.status === 'lancamento').length
     const disponiveis = imoveis.filter(i => i.status === 'disponivel').length
     const vgvEstimado = imoveis.reduce((sum, i) => sum + (i.preco || 0), 0)
+    const totalLeadsAll = imoveis.reduce((sum, i) => sum + i.totalLeads, 0)
+    const roiMedio = imoveis.length > 0
+        ? (imoveis.reduce((sum, i) => sum + i.roi, 0) / imoveis.length).toFixed(1)
+        : '—'
+    const avgPricePerSqm = (() => {
+        const valid = imoveis.filter(i => i.pricePerSqm > 0)
+        return valid.length > 0 ? valid.reduce((s, i) => s + i.pricePerSqm, 0) / valid.length : 0
+    })()
 
     const fmtVGV = (v: number) => {
         if (v >= 1_000_000_000) return `${(v / 1_000_000_000).toFixed(1).replace('.', ',')}B`
@@ -581,7 +656,17 @@ export default function ImoveisPage() {
         const matchFilter = filter === 'all' || im.status === filter
         const matchConstrutora = filterConstrutora === 'all' || (im.construtora ?? '') === filterConstrutora
         const matchTipo = filterTipo === 'all' || im.tipo.toLowerCase() === filterTipo.toLowerCase()
-        return matchSearch && matchFilter && matchConstrutora && matchTipo
+        const matchSmart = !smartFilter || (() => {
+            switch (smartFilter) {
+                case 'alta_liquidez':   return im.liquidez >= 72
+                case 'melhor_roi':      return im.roi >= 9.5
+                case 'abaixo_mercado':  return avgPricePerSqm > 0 && im.pricePerSqm > 0 && im.pricePerSqm < avgPricePerSqm * 0.9
+                case 'top_score':       return im.imiScore >= 65
+                case 'lancamentos':     return im.status === 'lancamento'
+                default: return true
+            }
+        })()
+        return matchSearch && matchFilter && matchConstrutora && matchTipo && matchSmart
     })
 
     // Status counts for filter chips
@@ -597,6 +682,8 @@ export default function ImoveisPage() {
             case 'liquidez':   return b.liquidez - a.liquidez
             case 'visitas':    return b.visitas - a.visitas
             case 'leads':      return b.totalLeads - a.totalLeads
+            case 'roi':        return b.roi - a.roi
+            case 'score':      return b.imiScore - a.imiScore
             default:           return 0  // recentes — preserve API order
         }
     })
@@ -604,6 +691,7 @@ export default function ImoveisPage() {
     const SORT_LABELS: Record<string, string> = {
         recentes: 'Recentes', preco_desc: 'Maior preço', preco_asc: 'Menor preço',
         liquidez: 'Liquidez ↓', visitas: 'Visualizações ↓', leads: 'Mais leads',
+        roi: 'Maior ROI', score: 'IMI Score ↓',
     }
 
     // Derived option lists (only entries that appear in current data)
@@ -668,13 +756,13 @@ export default function ImoveisPage() {
                 }
             />
 
-            {/* KPIs with animated numbers */}
+            {/* KPIs — investment intelligence */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                 {[
-                    { label: 'VGV Global (Est.)', rawVal: vgvEstimado, display: `R$ ${fmtVGV(vgvEstimado)}`, icon: DollarSign },
-                    { label: 'Lançamentos',       rawVal: lancamentosCount, display: null, icon: Tag },
-                    { label: 'Em Destaque',        rawVal: destaquesCount,   display: null, icon: Star },
-                    { label: 'Disponíveis',        rawVal: disponiveis,      display: null, icon: CheckCircle },
+                    { label: 'VGV Global (Est.)', display: `R$ ${fmtVGV(vgvEstimado)}`, icon: DollarSign, accent: 'blue' as const },
+                    { label: 'ROI Médio Portfolio', display: `${roiMedio}%`,             icon: TrendingUp,  accent: 'green' as const },
+                    { label: 'Leads Captados',      display: String(totalLeadsAll),       icon: Users,       accent: 'blue' as const },
+                    { label: 'Disponíveis',          display: String(disponiveis),         icon: CheckCircle, accent: 'blue' as const },
                 ].map((s, i) => (
                     <motion.div
                         key={s.label}
@@ -684,9 +772,9 @@ export default function ImoveisPage() {
                     >
                         <KPICard
                             label={s.label}
-                            value={s.display ?? String(s.rawVal)}
+                            value={s.display}
                             icon={<s.icon size={16} />}
-                            accent="blue"
+                            accent={s.accent}
                             size="sm"
                         />
                     </motion.div>
@@ -760,9 +848,11 @@ export default function ImoveisPage() {
                                     >
                                         {[
                                             { key: 'recentes',   label: 'Mais recentes' },
+                                            { key: 'score',      label: 'IMI Score ↓' },
+                                            { key: 'roi',        label: 'Maior ROI' },
+                                            { key: 'liquidez',   label: 'Maior liquidez' },
                                             { key: 'preco_desc', label: 'Maior preço' },
                                             { key: 'preco_asc',  label: 'Menor preço' },
-                                            { key: 'liquidez',   label: 'Maior liquidez' },
                                             { key: 'leads',      label: 'Mais leads' },
                                             { key: 'visitas',    label: 'Mais visualizações' },
                                         ].map((opt) => (
@@ -851,7 +941,50 @@ export default function ImoveisPage() {
                     </LayoutGroup>
                 </div>
 
-                {/* Second row: Construtora + Tipo chips */}
+                {/* Filtros Inteligentes IMI */}
+                <div className="flex flex-wrap items-center gap-1.5 mt-2 pt-2" style={{ borderTop: `1px solid ${T.border}` }}>
+                    <div className="flex items-center gap-1 mr-0.5">
+                        <Zap size={9} style={{ color: T.accent }} />
+                        <span className="text-[9px] font-bold uppercase tracking-[0.1em]" style={{ color: T.textDim }}>Filtros IA</span>
+                    </div>
+                    {[
+                        { key: 'top_score',      label: 'Top IMI Score',    icon: Award },
+                        { key: 'melhor_roi',     label: 'Melhor ROI',       icon: TrendingUp },
+                        { key: 'alta_liquidez',  label: 'Alta Liquidez',    icon: BarChart2 },
+                        { key: 'abaixo_mercado', label: 'Abaixo do Mercado',icon: Percent },
+                        { key: 'lancamentos',    label: 'Lançamentos',      icon: Tag },
+                    ].map(sf => {
+                        const Icon = sf.icon
+                        const active = smartFilter === sf.key
+                        return (
+                            <motion.button
+                                key={sf.key}
+                                onClick={() => setSmartFilter(active ? '' : sf.key)}
+                                whileTap={{ scale: 0.92 }}
+                                className="flex items-center gap-1 text-[10px] font-semibold px-2 h-6 rounded-lg transition-all"
+                                style={{
+                                    background: active ? 'rgba(200,164,106,0.15)' : T.elevated,
+                                    color: active ? '#C8A46A' : T.textDim,
+                                    border: `1px solid ${active ? 'rgba(200,164,106,0.45)' : T.border}`,
+                                }}
+                            >
+                                <Icon size={9} />
+                                {sf.label}
+                            </motion.button>
+                        )
+                    })}
+                    {smartFilter && (
+                        <button
+                            onClick={() => setSmartFilter('')}
+                            className="text-[9px] font-semibold ml-auto"
+                            style={{ color: '#f87171' }}
+                        >
+                            ✕ limpar
+                        </button>
+                    )}
+                </div>
+
+                {/* Third row: Construtora + Tipo chips */}
                 {(construtoras.length > 0 || tiposRaw.length > 1) && (
                     <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${T.border}` }}>
                         {/* Construtora chips */}
@@ -1004,8 +1137,8 @@ export default function ImoveisPage() {
                         <div
                             className="hidden sm:grid items-center px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.08em]"
                             style={{
-                                gridTemplateColumns: '48px 1fr 90px 100px 70px 80px 80px 44px',
-                                gap: '12px',
+                                gridTemplateColumns: '48px 1fr 90px 110px 80px 76px 64px 64px 44px',
+                                gap: '10px',
                                 color: T.textDim,
                                 background: T.elevated,
                                 borderBottom: `1px solid ${T.border}`,
@@ -1015,8 +1148,9 @@ export default function ImoveisPage() {
                             <span>Empreendimento</span>
                             <span>Status</span>
                             <span>Preço</span>
-                            <span>Área</span>
+                            <span>IMI Score</span>
                             <span>Liquidez</span>
+                            <span>ROI</span>
                             <span>Leads</span>
                             <span />
                         </div>
@@ -1054,7 +1188,7 @@ export default function ImoveisPage() {
                                     {/* Desktop: full table row */}
                                     <div
                                         className="hidden sm:grid items-center px-4 py-3 hover:bg-[var(--bo-hover)] transition-colors"
-                                        style={{ gridTemplateColumns: '48px 1fr 90px 100px 70px 80px 80px 44px', gap: '12px' }}
+                                        style={{ gridTemplateColumns: '48px 1fr 90px 110px 80px 76px 64px 64px 44px', gap: '10px' }}
                                     >
                                         <Link href={`/backoffice/imoveis/${im.id}`} className="contents cursor-pointer">
                                             {/* Thumbnail */}
@@ -1081,16 +1215,36 @@ export default function ImoveisPage() {
                                                     {s.label}
                                                 </span>
                                             </div>
-                                            {/* Price */}
-                                            <p className="text-[13px] font-bold" style={{ color: T.accent }}>{fmtPreco(im.preco, im.tipo)}</p>
-                                            {/* Area */}
-                                            <p className="text-[12px]" style={{ color: T.textMuted }}>
-                                                {im.area > 0 ? `${im.area.toLocaleString('pt-BR')}m²` : '—'}
-                                            </p>
+                                            {/* Price + R$/m² */}
+                                            <div>
+                                                <p className="text-[13px] font-bold leading-tight" style={{ color: T.accent }}>{fmtPreco(im.preco, im.tipo)}</p>
+                                                {im.pricePerSqm > 0 && (
+                                                    <p className="text-[9px] tabular-nums" style={{ color: T.textDim }}>
+                                                        R$ {Math.round(im.pricePerSqm).toLocaleString('pt-BR')}/m²
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {/* IMI Score */}
+                                            <div>
+                                                {(() => {
+                                                    const c = im.imiScore >= 80 ? '#C8A46A' : im.imiScore >= 65 ? '#34d399' : im.imiScore >= 50 ? '#fbbf24' : '#f87171'
+                                                    const dots = Math.min(5, Math.round(im.imiScore / 20))
+                                                    return (
+                                                        <div className="flex items-center gap-1.5">
+                                                            <div className="flex gap-[3px]">
+                                                                {[1,2,3,4,5].map(d => (
+                                                                    <span key={d} className="w-[5px] h-[5px] rounded-full" style={{ background: d <= dots ? c : 'rgba(255,255,255,0.08)' }} />
+                                                                ))}
+                                                            </div>
+                                                            <span className="text-[10px] font-bold tabular-nums" style={{ color: c }}>{im.imiScore}</span>
+                                                        </div>
+                                                    )
+                                                })()}
+                                            </div>
                                             {/* Liquidez */}
                                             <div className="w-full">
                                                 <div className="flex items-center gap-1.5">
-                                                    <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                                                    <div className="flex-1 h-[2px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
                                                         <div
                                                             className="h-full rounded-full transition-all duration-700"
                                                             style={{
@@ -1103,6 +1257,11 @@ export default function ImoveisPage() {
                                                         {im.liquidez}%
                                                     </span>
                                                 </div>
+                                            </div>
+                                            {/* ROI */}
+                                            <div>
+                                                <p className="text-[11px] font-bold tabular-nums" style={{ color: '#34d399' }}>{im.roi}%</p>
+                                                <p className="text-[9px]" style={{ color: T.textDim }}>a.a.</p>
                                             </div>
                                             {/* Leads */}
                                             <div className="flex items-center gap-1">
