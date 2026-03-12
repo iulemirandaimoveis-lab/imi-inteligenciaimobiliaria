@@ -72,17 +72,47 @@ export const STATUS_CONFIG = {
   analise:      { label: 'Em Análise',   color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
 
   // ── Projetos ───────────────────────────────────────────
-  em_andamento:{ label: 'Em Andamento', color: 'var(--bo-info)',   bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
+  planejamento:{ label: 'Planejamento', color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
+  em_andamento:{ label: 'Em Andamento', color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
   concluido:  { label: 'Concluído',  color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
   arquivado:  { label: 'Arquivado',  color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
   estruturacao: { label: 'Estruturação', color: 'var(--bo-accent)',    bg: 'var(--bo-active-bg)',    dot: '#3b82f6' },
   obras:        { label: 'Em Obras',     color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#f59e0b' },
   pronto:       { label: 'Pronto',       color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#22c55e' },
 
+  // ── Consultorias / Avaliações ─────────────────────────
+  concluida:        { label: 'Concluída',       color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#6BB87B' },
+  cancelada:        { label: 'Cancelada',       color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#E57373' },
+  aguardando_docs:  { label: 'Aguard. Docs',    color: '#a89ec4',            bg: 'rgba(168,158,196,0.12)', dot: '#a89ec4' },
+  parcial:          { label: 'Parcial',         color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#fbbf24' },
+
+  // ── Conteúdos ─────────────────────────────────────────
+  agendado:   { label: 'Agendado',   color: '#e8a87c',            bg: 'rgba(232,168,124,0.12)', dot: '#e8a87c' },
+
+  // ── Integrações ───────────────────────────────────────
+  conectado:        { label: 'Conectado',       color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
+  desconectado:     { label: 'Desconectado',    color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
+  erro:             { label: 'Erro',            color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
+  nao_configurado:  { label: 'Não Configurado', color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#6b7280' },
+
+  // ── IA Agentes ────────────────────────────────────────
+  idle:       { label: 'Ocioso',     color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#fbbf24' },
+  scheduled:  { label: 'Agendado',   color: 'var(--bo-info)',      bg: 'var(--bo-info-bg)',      dot: '#60a5fa' },
+  error:      { label: 'Erro',       color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
+
   // ── Genérico ───────────────────────────────────────────
   ativo:      { label: 'Ativo',      color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },
   inativo:    { label: 'Inativo',    color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
   cancelado:  { label: 'Cancelado',  color: 'var(--bo-error)',     bg: 'var(--bo-error-bg)',     dot: '#f87171' },
+
+  // ── English aliases (generic + campanhas + equipe) ────
+  active:     { label: 'Ativo',      color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#4CAF7D' },
+  inactive:   { label: 'Inativo',    color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#9ca3af' },
+  paused:     { label: 'Pausado',    color: '#e8a87c',            bg: 'rgba(232,168,124,0.12)', dot: '#e8a87c' },
+  completed:  { label: 'Concluído',  color: '#7b9ec4',            bg: 'rgba(123,158,196,0.12)', dot: '#7b9ec4' },
+  archived:   { label: 'Arquivado',  color: 'var(--bo-text-muted)',bg: 'var(--bo-hover)',        dot: '#6b7280' },
+  ended:      { label: 'Encerrado',  color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#f59e0b' },
+  learning:   { label: 'Aprendendo', color: 'var(--bo-warning)',   bg: 'var(--bo-warning-bg)',   dot: '#f59e0b' },
 
   // ── English aliases (for DB status_commercial) ─────────
   published:  { label: 'Publicado',  color: 'var(--bo-success)',   bg: 'var(--bo-success-bg)',   dot: '#34d399' },

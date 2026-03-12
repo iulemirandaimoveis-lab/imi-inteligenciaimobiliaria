@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 
 type UserRole = 'admin' | 'manager' | 'agent' | 'viewer' | string
 type UserStatus = 'active' | 'inactive' | 'pending' | string
@@ -33,11 +34,13 @@ const ROLE_CFG: Record<string, { label: string; color: string; bg: string; icon:
     viewer:   { label: 'Visualizador',  color: '#8B93A7', bg: 'rgba(139,147,167,0.12)', icon: Users },
 }
 
-const STATUS_CFG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-    active:   { label: 'Ativo',    color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
-    inactive: { label: 'Inativo',  color: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
-    pending:  { label: 'Pendente', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: Clock },
-}
+const STATUS_ICONS_EQUIPE: Record<string, any> = { active: CheckCircle, inactive: XCircle, pending: Clock }
+const STATUS_CFG = Object.fromEntries(
+    Object.entries({ active: 'ativo', inactive: 'inativo', pending: 'pendente' }).map(([key, cfgKey]) => {
+        const cfg = getStatusConfig(cfgKey)
+        return [key, { label: cfg.label, color: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS_EQUIPE[key] || Clock }]
+    })
+) as Record<string, { label: string; color: string; bg: string; icon: any }>
 
 const EMPTY_FORM = { name: '', email: '', phone: '', role: 'agent', status: 'active' }
 
@@ -346,7 +349,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                         <p className="text-[10px]" style={{ color: T.textDim }}>leads</p>
                                     </div>
                                     <div>
-                                        <p className="text-sm font-bold" style={{ color: '#6BB87B' }}>{member.stats?.sales || 0}</p>
+                                        <p className="text-sm font-bold" style={{ color: getStatusConfig('ativo').dot }}>{member.stats?.sales || 0}</p>
                                         <p className="text-[10px]" style={{ color: T.textDim }}>vendas</p>
                                     </div>
                                     <div>
@@ -397,8 +400,8 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                                 <button
                                                     onClick={() => handleDeleteConfirm(member)}
                                                     className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-left transition-colors hover:bg-red-500/10">
-                                                    <Trash2 size={13} style={{ color: '#E57373' }} />
-                                                    <span style={{ color: '#E57373' }}>Remover</span>
+                                                    <Trash2 size={13} style={{ color: getStatusConfig('cancelada').dot }} />
+                                                    <span style={{ color: getStatusConfig('cancelada').dot }}>Remover</span>
                                                 </button>
                                             </motion.div>
                                         )}
@@ -582,7 +585,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                         >
                             <div className="pointer-events-auto rounded-2xl p-6 w-full max-w-sm text-center"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                                <Trash2 size={28} className="mx-auto mb-3" style={{ color: '#E57373' }} />
+                                <Trash2 size={28} className="mx-auto mb-3" style={{ color: getStatusConfig('erro').dot }} />
                                 <h3 className="text-base font-bold mb-1" style={{ color: T.text }}>Remover membro?</h3>
                                 <p className="text-sm mb-5" style={{ color: T.textDim }}>
                                     <strong>{confirmDelete.name}</strong> será removido da equipe. Esta ação não pode ser desfeita.
@@ -597,7 +600,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                                     <button
                                         onClick={handleDelete}
                                         className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
-                                        style={{ background: '#E57373' }}>
+                                        style={{ background: getStatusConfig('erro').dot }}>
                                         Remover
                                     </button>
                                 </div>

@@ -10,16 +10,15 @@ import {
 import { toast } from 'sonner'
 import { IDIOMAS_LABEL } from '@/lib/modelos-contratos'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
-const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
-    rascunho: { label: 'Rascunho', text: '#4E5669', bg: 'rgba(78,86,105,0.15)' },
-    gerado: { label: 'Gerado', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
-    aguardando_assinatura: { label: 'Aguard. Assinatura', text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)' },
-    assinado_parcial: { label: 'Parcialmente Assinado', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-    assinado: { label: 'Assinado', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-    cancelado: { label: 'Cancelado', text: '#E57373', bg: 'rgba(229,115,115,0.12)' },
-}
+const STATUS_CFG = Object.fromEntries(
+    ['rascunho', 'gerado', 'aguardando_assinatura', 'assinado_parcial', 'assinado', 'cancelado'].map(key => {
+        const cfg = getStatusConfig(key)
+        return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}1f` }]
+    })
+) as Record<string, { label: string; text: string; bg: string }>
 
 export default function ContratoDetalhePage() {
     const params = useParams()

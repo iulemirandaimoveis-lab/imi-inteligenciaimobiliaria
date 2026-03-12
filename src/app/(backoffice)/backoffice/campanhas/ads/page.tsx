@@ -10,15 +10,15 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
-const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
-    active:   { label: 'ATIVO',    color: '#22C55E', bg: 'rgba(34,197,94,0.12)' },
-    paused:   { label: 'PAUSADO',  color: '#6B7280', bg: 'rgba(107,114,128,0.12)' },
-    ended:    { label: 'ENCERRADO',color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
-    draft:    { label: 'RASCUNHO', color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
-    learning: { label: 'LEARNING', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
-}
+const STATUS_MAP = Object.fromEntries(
+    Object.entries({ active: 'ATIVO', paused: 'PAUSADO', ended: 'ENCERRADO', draft: 'RASCUNHO', learning: 'LEARNING' }).map(([key, label]) => {
+        const cfg = getStatusConfig(key)
+        return [key, { label, color: cfg.dot, bg: `${cfg.dot}1f` }]
+    })
+) as Record<string, { label: string; color: string; bg: string }>
 
 const CHANNELS = ['Todos', 'Meta Ads', 'Google Ads', 'LinkedIn', 'WhatsApp']
 

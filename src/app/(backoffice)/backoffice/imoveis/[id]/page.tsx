@@ -13,18 +13,16 @@ import {
   Instagram, Mail, Phone, Users, Eye, Zap, Brain, ScanLine,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import Image from 'next/image'
 
-const STATUS_MAP: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-  disponivel:    { label: 'Disponível',    color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', dot: '#6BB87B' },
-  em_negociacao: { label: 'Negociação',    color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', dot: 'var(--bo-accent)' },
-  reservado:     { label: 'Reservado',     color: '#A89EC4', bg: 'rgba(168,158,196,0.12)', dot: '#A89EC4' },
-  vendido:       { label: 'Vendido',       color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', dot: '#F59E0B' },
-  lancamento:    { label: 'Lançamento',    color: '#E8A87C', bg: 'rgba(232,168,124,0.12)', dot: '#E8A87C' },
-  em_construcao: { label: 'Em Construção', color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', dot: '#a78bfa' },
-  arquivado:     { label: 'Arquivado',     color: '#6B7280', bg: 'rgba(107,114,128,0.12)', dot: '#6B7280' },
-}
+const STATUS_MAP = Object.fromEntries(
+  ['disponivel', 'em_negociacao', 'reservado', 'vendido', 'lancamento', 'em_construcao', 'arquivado'].map(key => {
+    const cfg = getStatusConfig(key)
+    return [key, { label: cfg.label, color: cfg.dot, bg: `${cfg.dot}1f`, dot: cfg.dot }]
+  })
+) as Record<string, { label: string; color: string; bg: string; dot: string }>
 
 const DB_STATUS_TO_DISPLAY: Record<string, string> = {
   launch: 'lancamento', available: 'disponivel', under_construction: 'em_construcao',

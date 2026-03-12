@@ -11,6 +11,7 @@ import {
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 
 const TYPE_MAP: Record<string, { label: string; icon: any }> = {
     google_ads: { label: 'Google Ads', icon: Globe },
@@ -25,13 +26,12 @@ const TYPE_MAP: Record<string, { label: string; icon: any }> = {
     other: { label: 'Outro', icon: BarChart3 },
 }
 
-const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
-    active: { label: 'Ativa', color: '#4CAF7D', bg: 'rgba(76,175,125,0.10)' },
-    paused: { label: 'Pausada', color: '#E8A87C', bg: 'rgba(232,168,124,0.10)' },
-    completed: { label: 'Concluída', color: '#7B9EC4', bg: 'rgba(123,158,196,0.10)' },
-    draft: { label: 'Rascunho', color: '#A89EC4', bg: 'rgba(168,158,196,0.10)' },
-    archived: { label: 'Arquivada', color: '#6B7280', bg: 'rgba(107,114,128,0.10)' },
-}
+const STATUS_MAP = Object.fromEntries(
+    Object.entries({ active: 'Ativa', paused: 'Pausada', completed: 'Concluída', draft: 'Rascunho', archived: 'Arquivada' }).map(([key, label]) => {
+        const cfg = getStatusConfig(key)
+        return [key, { label, color: cfg.dot, bg: `${cfg.dot}1a` }]
+    })
+) as Record<string, { label: string; color: string; bg: string }>
 
 const fmtBRL = (v: number | null | undefined) => {
     if (v == null) return '—'

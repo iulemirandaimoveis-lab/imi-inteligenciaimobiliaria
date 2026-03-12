@@ -8,6 +8,7 @@ import {
     AlertCircle, ChevronRight, Plus, Cpu, Globe
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { toast } from 'sonner'
@@ -114,12 +115,13 @@ const CATEGORIES = [
     { id: 'inteligencia', label: 'Inteligência' },
 ]
 
-const STATUS_MAP = {
-    active: { label: 'Ativo', color: '#4ADE80', bg: 'rgba(74,222,128,0.12)', icon: CheckCircle2 },
-    idle: { label: 'Em espera', color: '#FBBF24', bg: 'rgba(251,191,36,0.10)', icon: Clock },
-    scheduled: { label: 'Agendado', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: Clock },
-    error: { label: 'Erro', color: '#F87171', bg: 'rgba(248,113,113,0.10)', icon: AlertCircle },
-}
+const STATUS_ICONS_IA: Record<string, any> = { active: CheckCircle2, idle: Clock, scheduled: Clock, error: AlertCircle }
+const STATUS_MAP = Object.fromEntries(
+    Object.entries({ active: 'Ativo', idle: 'Em espera', scheduled: 'Agendado', error: 'Erro' }).map(([key, label]) => {
+        const cfg = getStatusConfig(key)
+        return [key, { label, color: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS_IA[key] || Clock }]
+    })
+) as Record<string, { label: string; color: string; bg: string; icon: any }>
 
 export default function AgentesIAPage() {
     const [category, setCategory] = useState('todos')

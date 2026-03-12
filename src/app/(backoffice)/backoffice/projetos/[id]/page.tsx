@@ -7,6 +7,7 @@ import {
     Loader2, TrendingUp, Layers, DollarSign, Target,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -23,13 +24,12 @@ function fmtDate(d: string | null) {
     return new Date(d + 'T12:00:00').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
 }
 
-const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
-    planejamento:  { label: 'Planejamento',  color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
-    estruturacao:  { label: 'Estruturação',  color: '#A78BFA', bg: 'rgba(167,139,250,0.12)' },
-    em_andamento:  { label: 'Em Andamento',  color: T.accent, bg: 'rgba(72,101,129,0.12)' },
-    concluido:     { label: 'Concluído',     color: '#34D399', bg: 'rgba(52,211,153,0.12)' },
-    cancelado:     { label: 'Cancelado',     color: '#F87171', bg: 'rgba(248,113,113,0.12)' },
-}
+const STATUS_MAP = Object.fromEntries(
+    ['planejamento', 'estruturacao', 'em_andamento', 'concluido', 'cancelado'].map(key => {
+        const cfg = getStatusConfig(key)
+        return [key, { label: cfg.label, color: cfg.dot, bg: `${cfg.dot}1f` }]
+    })
+) as Record<string, { label: string; color: string; bg: string }>
 
 export default function ProjetoDetalhePage() {
     const params = useParams()
@@ -119,17 +119,17 @@ export default function ProjetoDetalhePage() {
                 </div>
                 <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-2 mb-3">
-                        <Layers size={14} style={{ color: '#60A5FA' }} />
+                        <Layers size={14} style={{ color: getStatusConfig('novo').dot }} />
                         <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Unidades</p>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>{projeto.unidades ?? '—'}</p>
                     {projeto.unidades > 0 && (
-                        <p className="text-xs mt-1" style={{ color: '#34D399' }}>{projeto.unidades_vendidas ?? 0} vendidas</p>
+                        <p className="text-xs mt-1" style={{ color: getStatusConfig('convertido').dot }}>{projeto.unidades_vendidas ?? 0} vendidas</p>
                     )}
                 </div>
                 <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-2 mb-3">
-                        <Target size={14} style={{ color: '#A78BFA' }} />
+                        <Target size={14} style={{ color: getStatusConfig('estruturacao').dot }} />
                         <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Área Total</p>
                     </div>
                     <p className="text-2xl font-bold" style={{ color: T.text }}>
@@ -138,10 +138,10 @@ export default function ProjetoDetalhePage() {
                 </div>
                 <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-2 mb-3">
-                        <TrendingUp size={14} style={{ color: '#34D399' }} />
+                        <TrendingUp size={14} style={{ color: getStatusConfig('convertido').dot }} />
                         <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>Vendas</p>
                     </div>
-                    <p className="text-2xl font-bold" style={{ color: '#34D399' }}>{progressVendas}%</p>
+                    <p className="text-2xl font-bold" style={{ color: getStatusConfig('convertido').dot }}>{progressVendas}%</p>
                     <p className="text-xs mt-1" style={{ color: T.textMuted }}>do total vendido</p>
                 </div>
             </div>

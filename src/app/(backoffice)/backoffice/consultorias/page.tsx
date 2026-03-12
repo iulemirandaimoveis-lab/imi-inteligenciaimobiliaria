@@ -10,6 +10,7 @@ import {
 import { toast } from 'sonner'
 import { PageIntelHeader, KPICard, FilterTabs } from '../../components/ui'
 import { T } from '../../lib/theme'
+import { getStatusConfig } from '../../lib/constants'
 
 // ── Types ─────────────────────────────────────────────────────
 interface Consultoria {
@@ -32,17 +33,18 @@ const TIPO_LABEL: Record<string, string> = {
     estrategica: 'Estratégica', tributaria: 'Tributária',
     patrimonial: 'Patrimonial', mercado: 'Análise de Mercado', juridica: 'Jurídica',
 }
-const STATUS_CFG: Record<string, { l: string; text: string; bg: string }> = {
-    em_andamento: { l: 'Em Andamento', text: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.15)' },
-    concluida:    { l: 'Concluída',    text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-    proposta:     { l: 'Proposta',     text: '#B87BB8', bg: 'rgba(184,123,184,0.12)' },
-    cancelada:    { l: 'Cancelada',    text: '#E87B7B', bg: 'rgba(232,123,123,0.12)' },
-}
-const HON_CFG: Record<string, { l: string; color: string }> = {
-    pago:     { l: 'Pago',     color: '#6BB87B' },
-    parcial:  { l: 'Parcial',  color: '#E8A87C' },
-    pendente: { l: 'Pendente', color: '#E87B7B' },
-}
+const STATUS_CFG = Object.fromEntries(
+    Object.entries({ em_andamento: 'Em Andamento', concluida: 'Concluída', proposta: 'Proposta', cancelada: 'Cancelada' }).map(([key, l]) => {
+        const cfg = getStatusConfig(key)
+        return [key, { l, text: cfg.dot, bg: `${cfg.dot}1f` }]
+    })
+) as Record<string, { l: string; text: string; bg: string }>
+const HON_CFG = Object.fromEntries(
+    Object.entries({ pago: 'Pago', parcial: 'Parcial', pendente: 'Pendente' }).map(([key, l]) => {
+        const cfg = getStatusConfig(key)
+        return [key, { l, color: cfg.dot }]
+    })
+) as Record<string, { l: string; color: string }>
 
 const fmtCurrency = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)

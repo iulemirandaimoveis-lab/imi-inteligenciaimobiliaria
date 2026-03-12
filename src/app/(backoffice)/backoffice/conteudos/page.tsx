@@ -11,6 +11,7 @@ import {
 import { toast } from 'sonner'
 import { PageIntelHeader, KPICard, FilterTabs } from '../../components/ui'
 import { T } from '../../lib/theme'
+import { getStatusConfig } from '../../lib/constants'
 
 interface Conteudo {
     id: string
@@ -24,12 +25,12 @@ interface Conteudo {
     created_at: string
 }
 
-const STATUS_CFG: Record<string, { l: string; text: string; bg: string }> = {
-    publicado:  { l: 'Publicado',  text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-    agendado:   { l: 'Agendado',   text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-    rascunho:   { l: 'Rascunho',   text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
-    arquivado:  { l: 'Arquivado',  text: '#7B7B9C', bg: 'rgba(123,123,156,0.12)' },
-}
+const STATUS_CFG = Object.fromEntries(
+    Object.entries({ publicado: 'Publicado', agendado: 'Agendado', rascunho: 'Rascunho', arquivado: 'Arquivado' }).map(([key, l]) => {
+        const cfg = getStatusConfig(key)
+        return [key, { l, text: cfg.dot, bg: `${cfg.dot}1f` }]
+    })
+) as Record<string, { l: string; text: string; bg: string }>
 
 const TIPO_ICON: Record<string, any> = {
     blog: FileText, email: Mail, social: Instagram,
@@ -150,9 +151,9 @@ export default function ConteudosPage() {
                     <FilterTabs
                         tabs={[
                             { id: 'todos', label: 'Todos', count: conteudos.length },
-                            { id: 'publicado', label: 'Publicados', count: conteudos.filter(c => c.status === 'publicado').length, dotColor: '#6BB87B' },
-                            { id: 'agendado', label: 'Agendados', count: conteudos.filter(c => c.status === 'agendado').length, dotColor: '#E8A87C' },
-                            { id: 'rascunho', label: 'Rascunhos', count: conteudos.filter(c => c.status === 'rascunho').length, dotColor: '#7B9EC4' },
+                            { id: 'publicado', label: 'Publicados', count: conteudos.filter(c => c.status === 'publicado').length, dotColor: getStatusConfig('publicado').dot },
+                            { id: 'agendado', label: 'Agendados', count: conteudos.filter(c => c.status === 'agendado').length, dotColor: getStatusConfig('agendado').dot },
+                            { id: 'rascunho', label: 'Rascunhos', count: conteudos.filter(c => c.status === 'rascunho').length, dotColor: getStatusConfig('rascunho').dot },
                         ]}
                         active={statusFilter}
                         onChange={setStatusFilter}

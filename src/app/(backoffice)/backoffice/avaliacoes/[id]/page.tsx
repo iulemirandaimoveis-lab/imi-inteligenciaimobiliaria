@@ -11,14 +11,15 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
-const STATUS_CFG: Record<string, { label: string; text: string; bg: string }> = {
-    concluida: { label: 'Concluída', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
-    em_andamento: { label: 'Em Andamento', text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)' },
-    aguardando_docs: { label: 'Aguard. Docs', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
-    cancelada: { label: 'Cancelada', text: '#E57373', bg: 'rgba(229,115,115,0.12)' },
-}
+const STATUS_CFG = Object.fromEntries(
+    ['concluida', 'em_andamento', 'aguardando_docs', 'cancelada'].map(key => {
+        const cfg = getStatusConfig(key)
+        return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}1f` }]
+    })
+) as Record<string, { label: string; text: string; bg: string }>
 
 const formatPrice = (price: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0 }).format(price)

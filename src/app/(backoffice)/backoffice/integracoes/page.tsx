@@ -14,6 +14,7 @@ import { INTEGRACOES, CATEGORIAS_INTEGRACAO } from '@/lib/integracoes-registry'
 import type { Integracao, IntegracaoStatus } from '@/types/contratos'
 import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
+import { getStatusConfig } from '../../lib/constants'
 
 const ICONES: Record<string, any> = {
     Shield, PenTool, Mail, Server, MessageCircle, HardDrive,
@@ -21,13 +22,15 @@ const ICONES: Record<string, any> = {
     CreditCard, Zap, Globe, Settings,
 }
 
-const STATUS_CFG: Record<IntegracaoStatus, { label: string; text: string; bg: string; icon: any; dot: string }> = {
-    conectado: { label: 'Conectado', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle, dot: '#6BB87B' },
-    desconectado: { label: 'Desconectado', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: XCircle, dot: '#E8A87C' },
-    erro: { label: 'Erro', text: '#E57373', bg: 'rgba(229,115,115,0.12)', icon: AlertCircle, dot: '#E57373' },
-    pendente: { label: 'Pendente', text: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Clock, dot: 'var(--bo-accent)' },
-    nao_configurado: { label: 'Não configurado', text: '#4E5669', bg: 'rgba(78,86,105,0.12)', icon: XCircle, dot: '#4E5669' },
+const STATUS_ICONS_INT: Record<string, any> = {
+    conectado: CheckCircle, desconectado: XCircle, erro: AlertCircle, pendente: Clock, nao_configurado: XCircle,
 }
+const STATUS_CFG = Object.fromEntries(
+    ['conectado', 'desconectado', 'erro', 'pendente', 'nao_configurado'].map(key => {
+        const cfg = getStatusConfig(key)
+        return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS_INT[key] || Clock, dot: cfg.dot }]
+    })
+) as Record<IntegracaoStatus, { label: string; text: string; bg: string; icon: any; dot: string }>
 
 function StatusBadge({ status }: { status: IntegracaoStatus }) {
     const cfg = STATUS_CFG[status]
