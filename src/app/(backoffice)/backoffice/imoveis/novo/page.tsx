@@ -8,7 +8,7 @@ import {
     DollarSign, Image as ImageIcon, Upload, Check, Calendar,
     Briefcase, X, Save, Loader2, AlertCircle, Sparkles,
     BedDouble, Bath, Car, Maximize, Globe, Flag, Star, FileText,
-    Play, Link as LinkIcon, Cloud, CloudOff,
+    Play, Link as LinkIcon, Cloud, CloudOff, Zap,
 } from 'lucide-react'
 
 /* ── YouTube helpers ── */
@@ -48,6 +48,7 @@ interface FormData {
     // Step 1: Básico + localização
     name: string
     type: string
+    condition: 'lancamento' | 'em_construcao' | 'pronto' | 'seminovo' | 'usado'
     country: string
     state: string
     city: string
@@ -86,9 +87,25 @@ interface FormData {
     videoShort: string
 }
 
-const tiposImovel = [
-    'Apartamento', 'Casa', 'Cobertura', 'Studio', 'Loft',
-    'Terreno', 'Comercial', 'Flat', 'Penthouse', 'Villa',
+/* ── Property type visual cards ── */
+const PROPERTY_TYPES = [
+    { value: 'Apartamento', label: 'Apartamento', icon: Building2, desc: 'Condomínio, residencial' },
+    { value: 'Casa', label: 'Casa', icon: Home, desc: 'Unifamiliar, terreno' },
+    { value: 'Cobertura', label: 'Cobertura', icon: Star, desc: 'Último andar, rooftop' },
+    { value: 'Studio', label: 'Studio/Flat', icon: Maximize, desc: 'Compacto, investimento' },
+    { value: 'Loft', label: 'Loft', icon: Globe, desc: 'Pé direito duplo' },
+    { value: 'Terreno', label: 'Terreno/Lote', icon: Flag, desc: 'Loteamento, gleba' },
+    { value: 'Comercial', label: 'Comercial', icon: Briefcase, desc: 'Sala, loja, andar' },
+    { value: 'Villa', label: 'Villa/Resort', icon: Star, desc: 'Premium, resort' },
+]
+
+/* ── Condition options ── */
+const CONDITION_OPTIONS = [
+    { value: 'lancamento', label: '🚀 Lançamento', color: '#A78BFA' },
+    { value: 'em_construcao', label: '🏗️ Em Construção', color: '#FBBF24' },
+    { value: 'pronto', label: '✅ Pronto p/ Morar', color: '#4ADE80' },
+    { value: 'seminovo', label: '⭐ Seminovo', color: '#F59E0B' },
+    { value: 'usado', label: '🏠 Usado/Revenda', color: '#94A3B8' },
 ]
 
 const featuresOptions = [
@@ -203,6 +220,7 @@ export default function NovoImovelPage() {
 
     const [formData, setFormData] = useState<FormData>({
         name: '', type: '',
+        condition: 'lancamento',
         country: 'Brasil', state: '', city: '', neighborhood: '',
         address: '', developer_id: '', developer: '',
         area: '', bedrooms: '', bathrooms: '', parking: '', floor: '',
@@ -341,6 +359,7 @@ export default function NovoImovelPage() {
         const timer = setTimeout(() => {
             const draft = {
                 name: formData.name, type: formData.type,
+                condition: formData.condition,
                 country: formData.country, state: formData.state,
                 city: formData.city, neighborhood: formData.neighborhood,
                 address: formData.address,
@@ -356,7 +375,7 @@ export default function NovoImovelPage() {
                 is_highlighted: formData.is_highlighted,
                 videoUrl: formData.videoUrl, videoShort: formData.videoShort,
             }
-            if (Object.values(draft).some(v => v && v !== 'Brasil' && (typeof v === 'boolean' ? v : typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.length > 0 : false))) {
+            if (Object.values(draft).some(v => v && v !== 'Brasil' && v !== 'lancamento' && (typeof v === 'boolean' ? v : typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.length > 0 : false))) {
                 localStorage.setItem('imi-draft-imovel', JSON.stringify(draft))
                 setDraftSaved(true)
                 setTimeout(() => setDraftSaved(false), 2000)
@@ -414,6 +433,32 @@ export default function NovoImovelPage() {
     const discardDraft = () => {
         localStorage.removeItem('imi-draft-imovel')
         setHasDraft(false)
+    }
+
+    /* ─── Quick mode — jump to step 3 ─── */
+    const handleModoRapido = () => {
+        // Save whatever is in the draft so far
+        const draft = {
+            name: formData.name, type: formData.type,
+            condition: formData.condition,
+            country: formData.country, state: formData.state,
+            city: formData.city, neighborhood: formData.neighborhood,
+            address: formData.address,
+            developer_id: formData.developer_id, developer: formData.developer,
+            area: formData.area, bedrooms: formData.bedrooms,
+            bathrooms: formData.bathrooms, parking: formData.parking, floor: formData.floor,
+            features: formData.features,
+            priceMin: formData.priceMin, priceMax: formData.priceMax,
+            pricePerSqm: formData.pricePerSqm, totalUnits: formData.totalUnits,
+            availableUnits: formData.availableUnits, deliveryDate: formData.deliveryDate,
+            description: formData.description,
+            status_commercial: formData.status_commercial,
+            is_highlighted: formData.is_highlighted,
+            videoUrl: formData.videoUrl, videoShort: formData.videoShort,
+        }
+        localStorage.setItem('imi-draft-imovel', JSON.stringify(draft))
+        setCurrentStep(3)
+        toast.success('Modo Rápido ativado — direto aos Valores!')
     }
 
     /* ─── Validation ─── */
@@ -477,6 +522,7 @@ export default function NovoImovelPage() {
             const payload = {
                 name: formData.name,
                 type: formData.type,
+                condition: formData.condition,
                 country: formData.country || 'Brasil',
                 state: formData.state,
                 city: formData.city,
@@ -545,10 +591,10 @@ export default function NovoImovelPage() {
 
     /* ─── Step Config ─── */
     const steps = [
-        { number: 1, label: 'Básico', icon: Building2 },
-        { number: 2, label: 'Características', icon: Home },
+        { number: 1, label: 'Tipo', icon: Building2 },
+        { number: 2, label: 'Dados', icon: Home },
         { number: 3, label: 'Valores', icon: DollarSign },
-        { number: 4, label: 'Mídia', icon: ImageIcon },
+        { number: 4, label: 'Fotos', icon: ImageIcon },
     ]
     const progress = (currentStep / 4) * 100
 
@@ -634,7 +680,7 @@ export default function NovoImovelPage() {
                                         className="text-[11px] font-semibold mt-1.5"
                                         style={{ color: isActive ? T.accent : isDone ? T.success : T.textMuted }}
                                     >
-                                        {step.label}
+                                        {step.number} {step.label}
                                     </p>
                                 </div>
                                 {index < steps.length - 1 && (
@@ -660,77 +706,165 @@ export default function NovoImovelPage() {
                 className="rounded-2xl p-6 sm:p-8"
                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
             >
-                {/* ── STEP 1: Básico + Localização ── */}
+                {/* ── STEP 1: Tipo + Condição + Localização ── */}
                 {currentStep === 1 && (
                     <div className="space-y-6">
-                        <div className="flex items-center justify-between mb-2">
-                            <h2 className="text-base font-bold" style={{ color: T.text }}>
-                                Informações Básicas
-                            </h2>
-                            {/* PDF Auto-fill */}
-                            <div className="relative">
-                                <input
-                                    type="file"
-                                    accept=".pdf"
-                                    onChange={handlePdfUpload}
-                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                    disabled={isParsingPdf}
-                                />
-                                <button
-                                    type="button"
-                                    disabled={isParsingPdf}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all"
-                                    style={{
-                                        background: T.accentBg,
-                                        color: T.accent,
-                                        border: `1px solid ${T.accent}40`,
-                                    }}
-                                >
-                                    {isParsingPdf ? (
-                                        <><Loader2 size={14} className="animate-spin" /> Extraindo...</>
-                                    ) : (
-                                        <><Sparkles size={14} /> Preencher via PDF</>
-                                    )}
-                                </button>
+                        {/* Modo Rápido alert */}
+                        <div
+                            className="flex items-center justify-between px-4 py-3 rounded-xl"
+                            style={{ background: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.2)' }}
+                        >
+                            <p className="text-xs" style={{ color: T.textMuted }}>
+                                Tem pressa? Pule direto para os valores e publique em segundos.
+                            </p>
+                            <button
+                                type="button"
+                                onClick={handleModoRapido}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap ml-3 flex-shrink-0 transition-all hover:opacity-80"
+                                style={{ background: '#A78BFA22', color: '#A78BFA', border: '1px solid #A78BFA44' }}
+                            >
+                                <Zap size={12} /> Modo Rápido
+                            </button>
+                        </div>
+
+                        {/* PDF Auto-fill card */}
+                        <div
+                            className="relative overflow-hidden rounded-2xl p-5"
+                            style={{ background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.18)' }}
+                        >
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-bold" style={{ color: T.text }}>
+                                        Preencha automaticamente com PDF do empreendimento ⚡
+                                    </p>
+                                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
+                                        Faça upload do material e a IA extrai nome, tipo, localização e características
+                                    </p>
+                                </div>
+                                <div className="relative flex-shrink-0 ml-4">
+                                    <input
+                                        type="file"
+                                        accept=".pdf"
+                                        onChange={handlePdfUpload}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        disabled={isParsingPdf}
+                                    />
+                                    <button
+                                        type="button"
+                                        disabled={isParsingPdf}
+                                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all"
+                                        style={{
+                                            background: 'rgba(96,165,250,0.15)',
+                                            color: '#60A5FA',
+                                            border: '1px solid rgba(96,165,250,0.3)',
+                                        }}
+                                    >
+                                        {isParsingPdf ? (
+                                            <><Loader2 size={14} className="animate-spin" /> Extraindo...</>
+                                        ) : (
+                                            <><Sparkles size={14} /> Enviar PDF</>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            {/* Nome */}
-                            <div className="md:col-span-2">
-                                <Label required>Nome do Empreendimento</Label>
-                                <Input
-                                    icon={Building2}
-                                    value={formData.name}
-                                    onChange={v => handleChange('name', v)}
-                                    placeholder="Ex: Reserva Imperial"
-                                    error={errors.name}
-                                />
+                        {/* Type visual card grid */}
+                        <div>
+                            <Label required>Tipo de Imóvel</Label>
+                            {errors.type && (
+                                <p className="mb-2 text-xs flex items-center gap-1" style={{ color: T.error }}>
+                                    <AlertCircle size={12} /> {errors.type}
+                                </p>
+                            )}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                {PROPERTY_TYPES.map(pt => {
+                                    const Icon = pt.icon
+                                    const isSelected = formData.type === pt.value
+                                    return (
+                                        <button
+                                            key={pt.value}
+                                            type="button"
+                                            onClick={() => handleChange('type', pt.value)}
+                                            className="flex flex-col items-start gap-1.5 p-4 rounded-xl text-left transition-all hover:opacity-90"
+                                            style={{
+                                                background: isSelected ? 'rgba(96,165,250,0.12)' : T.surface,
+                                                border: `1.5px solid ${isSelected ? '#60A5FA' : T.border}`,
+                                            }}
+                                        >
+                                            <Icon
+                                                size={22}
+                                                style={{ color: isSelected ? '#60A5FA' : T.textMuted }}
+                                            />
+                                            <span
+                                                className="text-sm font-semibold leading-tight"
+                                                style={{ color: isSelected ? '#60A5FA' : T.text }}
+                                            >
+                                                {pt.label}
+                                            </span>
+                                            <span
+                                                className="text-[11px] leading-tight"
+                                                style={{ color: T.textMuted }}
+                                            >
+                                                {pt.desc}
+                                            </span>
+                                        </button>
+                                    )
+                                })}
                             </div>
+                        </div>
 
-                            {/* Tipo */}
-                            <div>
-                                <Label required>Tipo de Imóvel</Label>
-                                <Select
-                                    icon={Home}
-                                    value={formData.type}
-                                    onChange={v => handleChange('type', v)}
-                                    options={tiposImovel.map(t => ({ value: t, label: t }))}
-                                    placeholder="Selecione o tipo..."
-                                    error={errors.type}
-                                />
+                        {/* Condition toggle row */}
+                        <div>
+                            <Label>Estado do Imóvel</Label>
+                            <div className="flex flex-wrap gap-2">
+                                {CONDITION_OPTIONS.map(opt => {
+                                    const isSelected = formData.condition === opt.value
+                                    return (
+                                        <button
+                                            key={opt.value}
+                                            type="button"
+                                            onClick={() => handleChange('condition', opt.value)}
+                                            className="px-4 py-2 rounded-full text-xs font-semibold transition-all"
+                                            style={{
+                                                background: isSelected ? opt.color + '22' : T.surface,
+                                                color: isSelected ? opt.color : T.textMuted,
+                                                border: `1.5px solid ${isSelected ? opt.color : T.border}`,
+                                            }}
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    )
+                                })}
                             </div>
+                        </div>
 
-                            {/* Construtora (dynamic from Supabase) */}
-                            <div>
-                                <Label>Construtora / Incorporadora</Label>
-                                <Select
-                                    icon={Briefcase}
-                                    value={formData.developer_id}
-                                    onChange={handleDeveloperChange}
-                                    options={developers.map(d => ({ value: d.id, label: d.name }))}
-                                    placeholder={developers.length === 0 ? 'Carregando...' : 'Selecione...'}
-                                />
+                        {/* Name + Developer */}
+                        <div className="pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                {/* Nome */}
+                                <div className="md:col-span-2">
+                                    <Label required>Nome do Empreendimento</Label>
+                                    <Input
+                                        icon={Building2}
+                                        value={formData.name}
+                                        onChange={v => handleChange('name', v)}
+                                        placeholder="Ex: Reserva Imperial"
+                                        error={errors.name}
+                                    />
+                                </div>
+
+                                {/* Construtora (dynamic from Supabase) */}
+                                <div className="md:col-span-2">
+                                    <Label>Construtora / Incorporadora</Label>
+                                    <Select
+                                        icon={Briefcase}
+                                        value={formData.developer_id}
+                                        onChange={handleDeveloperChange}
+                                        options={developers.map(d => ({ value: d.id, label: d.name }))}
+                                        placeholder={developers.length === 0 ? 'Carregando...' : 'Selecione...'}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -982,6 +1116,15 @@ export default function NovoImovelPage() {
                                 />
                             </div>
                         </div>
+
+                        {/* Price hint */}
+                        {formData.neighborhood && (
+                            <div className="rounded-xl p-3" style={{ background: 'rgba(96,165,250,0.07)', border: '1px solid rgba(96,165,250,0.15)' }}>
+                                <p className="text-[11px]" style={{ color: T.textMuted }}>
+                                    💡 Imóveis similares em <strong style={{ color: T.text }}>{formData.neighborhood}</strong>: consulte o mercado para precificação ideal.
+                                </p>
+                            </div>
+                        )}
 
                         {/* Destaque na Home */}
                         <div className="rounded-xl p-4 flex items-center justify-between" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
