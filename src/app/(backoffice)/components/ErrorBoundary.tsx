@@ -22,8 +22,22 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     componentDidCatch(error: Error, info: { componentStack: string }) {
-        // Log to console in development; could send to Sentry/Datadog here
         console.error('[ErrorBoundary] Caught error:', error, info.componentStack)
+        // Auto-report error to backend for auditing
+        try {
+            fetch('/api/system/report-error', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    error: error.message,
+                    stack: error.stack,
+                    page: typeof window !== 'undefined' ? window.location.pathname : null,
+                    component: info.componentStack?.substring(0, 300),
+                    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+                    timestamp: new Date().toISOString(),
+                }),
+            }).catch(() => {}) // fire-and-forget
+        } catch {}
     }
 
     handleReset = () => {

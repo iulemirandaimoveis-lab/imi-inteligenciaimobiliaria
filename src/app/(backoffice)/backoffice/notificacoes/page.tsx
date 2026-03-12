@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import {
     Bell, Check, CheckCheck, Loader2,
     User, Home, DollarSign, FileText, AlertCircle, Info, CheckCircle,
+    Sparkles, Bug, Zap,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -22,10 +23,12 @@ interface Notification {
 const TYPE_ICONS: Record<string, any> = {
     lead: User, imovel: Home, financeiro: DollarSign, contrato: FileText,
     alerta: AlertCircle, info: Info, sucesso: CheckCircle,
+    system: Zap, development: Home, evaluation: Sparkles, comment: FileText,
 }
 const TYPE_COLORS: Record<string, string> = {
     lead: '#7B9EC4', imovel: '#6BB87B', financeiro: 'var(--bo-accent)', contrato: '#A89EC4',
     alerta: '#E57373', info: '#7B9EC4', sucesso: '#6BB87B',
+    system: '#8B5CF6', development: '#6BB87B', evaluation: '#F59E0B', comment: '#64748B',
 }
 
 const timeAgo = (d: string) => {
@@ -43,8 +46,12 @@ export default function NotificacoesPage() {
 
     const fetchNotifications = async () => {
         try {
-            const res = await fetch('/api/notifications')
-            if (res.ok) setNotifications(await res.json())
+            const res = await fetch('/api/notifications?limit=100')
+            if (res.ok) {
+                const json = await res.json()
+                // API returns { data: [...], pagination: {...} }
+                setNotifications(Array.isArray(json) ? json : (json.data || []))
+            }
         } catch (err) { console.error(err) }
         finally { setLoading(false) }
     }
