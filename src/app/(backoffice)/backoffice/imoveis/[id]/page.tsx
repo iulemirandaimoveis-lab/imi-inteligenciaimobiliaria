@@ -10,7 +10,7 @@ import {
   Tag, Star, Globe, FileText, QrCode, ShoppingCart, Archive, RotateCcw,
   ChevronLeft, ChevronRight, X, ZoomIn, BarChart2, Layers, Clock,
   TrendingUp, DollarSign, Sparkles, Send, MessageSquare, Copy,
-  Instagram, Mail, Phone, Users, Eye, Zap, Brain, ScanLine,
+  Instagram, Mail, Phone, Users, Eye, Zap, Brain, ScanLine, Play,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -39,7 +39,13 @@ const formatPrice = (price: number) => {
   return `R$ ${price.toLocaleString('pt-BR')}`
 }
 
-type TabKey = 'overview' | 'gallery' | 'mapa' | 'info'
+const getYouTubeEmbedUrl = (url: string | null | undefined): string | null => {
+  if (!url) return null
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  return match ? `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1` : null
+}
+
+type TabKey = 'overview' | 'gallery' | 'mapa' | 'info' | 'tour'
 
 export default function ImovelDetalhesPage() {
   const router = useRouter()
@@ -241,6 +247,7 @@ export default function ImovelDetalhesPage() {
     { key: 'gallery', label: `Galeria${galleryImages.length > 0 ? ` (${galleryImages.length})` : ''}` },
     { key: 'mapa', label: 'Mapa' },
     { key: 'info', label: 'Informações' },
+    ...(data.virtual_tour_url ? [{ key: 'tour' as TabKey, label: 'Tour Virtual' }] : []),
   ]
 
   const priceDisplay = (data.price_min || data.price_max)
@@ -258,19 +265,15 @@ export default function ImovelDetalhesPage() {
   return (
     <div className="space-y-0 max-w-7xl mx-auto pb-32">
 
-      {/* Back button + page label */}
-      <div className="flex items-center gap-3 mb-5">
-        <button
-          onClick={() => router.back()}
-          className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors flex-shrink-0"
-          style={{ border: `1px solid ${T.border}`, background: T.surface }}
-        >
-          <ArrowLeft size={17} style={{ color: T.text }} />
-        </button>
-        <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: T.textMuted }}>
-          Imóveis / Detalhe
-        </span>
-      </div>
+      <PageIntelHeader
+        moduleLabel="IMÓVEIS"
+        title={data.name}
+        subtitle={[data.neighborhood, data.city].filter(Boolean).join(', ') || 'Empreendimento'}
+        breadcrumbs={[
+          { label: 'Imóveis', href: '/backoffice/imoveis' },
+          { label: data.name },
+        ]}
+      />
 
       {/* ── HERO SECTION ── */}
       <motion.div
@@ -556,6 +559,43 @@ export default function ImovelDetalhesPage() {
                   </div>
                 </div>
               )}
+
+              {/* ── Vídeo do Empreendimento ── */}
+              {(() => {
+                const embedUrl = getYouTubeEmbedUrl(data.video_url)
+                if (!embedUrl) return null
+                return (
+                  <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
+                    <div className="p-4 flex items-center gap-2" style={{ background: T.surface }}>
+                      <div
+                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: 'rgba(239,68,68,0.12)' }}
+                      >
+                        <Play size={13} style={{ color: '#EF4444' }} />
+                      </div>
+                      <p className="text-sm font-semibold" style={{ color: T.text }}>Vídeo do Empreendimento</p>
+                      <a
+                        href={data.video_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-auto flex items-center gap-1 text-xs"
+                        style={{ color: T.accent }}
+                      >
+                        YouTube <ExternalLink size={11} />
+                      </a>
+                    </div>
+                    <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                      <iframe
+                        src={embedUrl}
+                        className="absolute inset-0 w-full h-full"
+                        allowFullScreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        style={{ border: 0 }}
+                      />
+                    </div>
+                  </div>
+                )
+              })()}
 
               {/* ── Leads Interessados ── */}
               {(propertyLeadsLoading || propertyLeads.length > 0) && (
@@ -1098,6 +1138,63 @@ export default function ImovelDetalhesPage() {
                 </div>
               )}
             </div>
+          </motion.div>
+        )}
+
+        {activeTab === 'tour' && (
+          <motion.div
+            key="tour"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="rounded-2xl overflow-hidden"
+            style={{ border: `1px solid ${T.border}` }}
+          >
+            {data.virtual_tour_url ? (
+              <>
+                <div className="p-4 flex items-center gap-2" style={{ background: T.surface }}>
+                  <div
+                    className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ background: 'rgba(59,130,246,0.12)' }}
+                  >
+                    <Globe size={13} style={{ color: T.accent }} />
+                  </div>
+                  <p className="text-sm font-semibold" style={{ color: T.text }}>Tour Virtual 360°</p>
+                  <a
+                    href={data.virtual_tour_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-auto flex items-center gap-1 text-xs"
+                    style={{ color: T.accent }}
+                  >
+                    Abrir em nova aba <ExternalLink size={11} />
+                  </a>
+                </div>
+                <iframe
+                  src={data.virtual_tour_url}
+                  className="w-full"
+                  height="560"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  allow="xr-spatial-tracking; gyroscope; accelerometer"
+                />
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 gap-4" style={{ background: T.surface }}>
+                <Globe size={48} style={{ color: T.textDim }} />
+                <div className="text-center">
+                  <p className="text-sm font-medium mb-1" style={{ color: T.text }}>Tour virtual não cadastrado</p>
+                  <p className="text-xs" style={{ color: T.textDim }}>Adicione um link de tour virtual para visualizar aqui</p>
+                </div>
+                <button
+                  onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
+                  className="h-9 px-4 rounded-xl text-sm font-medium"
+                  style={{ background: T.accent, color: 'white' }}
+                >
+                  Adicionar tour
+                </button>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
