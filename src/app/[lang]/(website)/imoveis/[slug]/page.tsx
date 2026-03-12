@@ -9,6 +9,9 @@ import DevelopmentGallery from '../components/DevelopmentGallery'
 import DevelopmentLocation from '../components/DevelopmentLocation'
 import DevelopmentUnits from '../components/DevelopmentUnits'
 import DevelopmentCTA from '../components/DevelopmentCTA'
+import AnchorNav from '../components/AnchorNav'
+import Breadcrumbs from '../components/Breadcrumbs'
+import SimilarProperties from '../components/SimilarProperties'
 
 // ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
 export const revalidate = 60
@@ -81,6 +84,13 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
     }
 }
 
+const ANCHOR_SECTIONS = [
+    { id: 'detalhes', label: 'Detalhes' },
+    { id: 'galeria', label: 'Galeria' },
+    { id: 'unidades', label: 'Unidades' },
+    { id: 'localizacao', label: 'Localização' },
+]
+
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
     const supabase = await createClient()
 
@@ -105,6 +115,17 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
     const development = mapDbPropertyToDevelopment(data)
 
+    // Fetch similar properties (same city, different slug, max 4)
+    const { data: similarRaw } = await supabase
+        .from('developments')
+        .select(`*, developers(id, name, slug, logo_url)`)
+        .eq('status_commercial', 'published')
+        .eq('city', data.city || 'Recife')
+        .neq('slug', params.slug)
+        .limit(4)
+
+    const similarDevs = (similarRaw || []).map(mapDbPropertyToDevelopment)
+
     // JSON-LD structured data for rich search results
     const priceMin = Number(data.price_from || data.price_min) || undefined
     const location = [data.neighborhood, data.city, data.country !== 'Brasil' ? data.country : data.state].filter(Boolean).join(', ')
@@ -112,6 +133,14 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     const gallery: string[] = Array.isArray(imagesJson.gallery) ? imagesJson.gallery : (Array.isArray(data.gallery_images) ? data.gallery_images : [])
     const rawImg: string = imagesJson.main || gallery[0] || (data as any).image || ''
     const mainImage: string = rawImg ? (rawImg.startsWith('http') ? rawImg : `${BASE}${rawImg}`) : ''
+
+    // Breadcrumbs for SEO + navigation
+    const breadcrumbs = [
+        { label: 'Imóveis', href: `/${params.lang}/imoveis` },
+        ...(data.city ? [{ label: data.city }] : []),
+        ...(data.neighborhood ? [{ label: data.neighborhood }] : []),
+        { label: development.name },
+    ]
 
     const jsonLd = {
         '@context': 'https://schema.org',
@@ -143,16 +172,33 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
+
             <DevelopmentHero development={development} />
 
-            <div className="container-custom py-10 md:py-20">
+            {/* Breadcrumbs */}
+            <div className="container-custom pt-4 pb-0">
+                <Breadcrumbs items={breadcrumbs} />
+            </div>
+
+            {/* Anchor Navigation */}
+            <AnchorNav sections={ANCHOR_SECTIONS} />
+
+            <div className="container-custom py-10 md:py-16">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
                     {/* Main content */}
                     <div className="lg:col-span-8 space-y-12 md:space-y-20">
-                        <DevelopmentDetails development={development} />
-                        <DevelopmentGallery development={development} />
-                        <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
-                        <DevelopmentLocation development={development} />
+                        <section id="detalhes">
+                            <DevelopmentDetails development={development} />
+                        </section>
+                        <section id="galeria">
+                            <DevelopmentGallery development={development} />
+                        </section>
+                        <section id="unidades">
+                            <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
+                        </section>
+                        <section id="localizacao">
+                            <DevelopmentLocation development={development} />
+                        </section>
                     </div>
 
                     {/* Sidebar — desktop only */}
@@ -161,6 +207,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     </aside>
                 </div>
             </div>
+
+            {/* Similar Properties */}
+            {similarDevs.length > 0 && (
+                <SimilarProperties developments={similarDevs} lang={params.lang} />
+            )}
 
             {/* Mobile Sticky CTA Bar */}
             <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 backdrop-blur-lg border-t border-gray-200 px-4 py-3 safe-area-pb">
