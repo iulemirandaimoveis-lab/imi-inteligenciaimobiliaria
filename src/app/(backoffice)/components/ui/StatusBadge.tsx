@@ -1,11 +1,15 @@
 'use client'
 
 import React from 'react'
+import { getStatusConfig, type StatusKey } from '@/app/(backoffice)/lib/constants'
 
 type StatusType = 'hot' | 'warm' | 'cold' | 'done' | 'pend' | 'cancel' | 'active' | 'draft' | 'live' | 'ai'
 
 interface StatusBadgeProps {
-  status: StatusType | string
+  /** Legacy status type (hot/warm/cold/done/pend/cancel/active/draft/live/ai) */
+  status?: StatusType | string
+  /** New: use a key from centralized STATUS_CONFIG (publicado/rascunho/vendido/etc.) */
+  statusKey?: StatusKey | string
   label?: string
   size?: 'xs' | 'sm' | 'md'
   glow?: boolean
@@ -14,7 +18,7 @@ interface StatusBadgeProps {
   className?: string
 }
 
-const STATUS_CONFIG: Record<string, {
+const LOCAL_STATUS_CONFIG: Record<string, {
   label: string
   color: string
   bg: string
@@ -97,6 +101,7 @@ const SIZE_STYLES = {
 
 export function StatusBadge({
   status,
+  statusKey,
   label,
   size = 'sm',
   glow = false,
@@ -104,12 +109,20 @@ export function StatusBadge({
   pulse = false,
   className = '',
 }: StatusBadgeProps) {
-  const cfg = STATUS_CONFIG[status.toLowerCase()] ?? {
-    label: status.toUpperCase(),
-    color: 'var(--bo-text-muted)',
-    bg: 'rgba(255,255,255,0.06)',
-    dotColor: 'var(--bo-text-muted)',
-  }
+  // Resolve config: prefer statusKey (centralized) over status (legacy local)
+  const cfg: { label: string; color: string; bg: string; dotColor: string; glowClass?: string } = (() => {
+    if (statusKey) {
+      const central = getStatusConfig(statusKey)
+      return { label: central.label, color: central.color, bg: central.bg, dotColor: central.dot }
+    }
+    const key = (status || 'draft').toLowerCase()
+    return LOCAL_STATUS_CONFIG[key] ?? {
+      label: key.toUpperCase(),
+      color: 'var(--bo-text-muted)',
+      bg: 'rgba(255,255,255,0.06)',
+      dotColor: 'var(--bo-text-muted)',
+    }
+  })()
 
   const sz = SIZE_STYLES[size]
   const displayLabel = label ?? cfg.label

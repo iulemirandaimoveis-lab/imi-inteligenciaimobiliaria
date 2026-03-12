@@ -24,3 +24,10 @@ export { MetricBar } from './MetricBar'
 export { LoadingSkeleton } from './LoadingSkeleton'
 
 export { EmptyState } from './EmptyState'
+
+export { DataTable } from './DataTable'
+export type { Column, DataTableProps } from './DataTable'
+
+export { ActionMenu } from './ActionMenu'
+
+export { FormField } from './FormField'
