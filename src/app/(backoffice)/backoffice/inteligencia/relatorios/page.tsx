@@ -6,7 +6,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, KPICard, FilterTabs, StatusBadge } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 type Report = {
     id: string
@@ -41,6 +43,7 @@ function getCategoryStyle(cat: string | null) {
 export default function RelatoriosBackofficePage() {
     const [reports, setReports] = useState<Report[]>([])
     const [loading, setLoading] = useState(true)
+    const [filterTab, setFilterTab] = useState('todos')
 
     async function load() {
         setLoading(true)
@@ -78,6 +81,11 @@ export default function RelatoriosBackofficePage() {
 
     const published = reports.filter(r => r.is_published).length
     const drafts = reports.filter(r => !r.is_published).length
+    const filtered = reports.filter(r => {
+        if (filterTab === 'publicados') return r.is_published
+        if (filterTab === 'rascunhos') return !r.is_published
+        return true
+    })
 
     return (
         <div className="space-y-5">
@@ -107,19 +115,23 @@ export default function RelatoriosBackofficePage() {
                 }
             />
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-3">
-                {[
-                    { label: 'Total', value: reports.length, color: T.text },
-                    { label: 'Publicados', value: published, color: '#34d399' },
-                    { label: 'Rascunhos', value: drafts, color: T.textMuted },
-                ].map(s => (
-                    <div key={s.label} className="rounded-2xl p-4" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{s.label}</p>
-                        <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                    </div>
-                ))}
+            {/* KPIs */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <KPICard label="Total" value={String(reports.length)} icon={<FileText size={14} />} size="sm" />
+                <KPICard label="Publicados" value={String(published)} icon={<Eye size={14} />} accent="green" size="sm" />
+                <KPICard label="Rascunhos" value={String(drafts)} icon={<EyeOff size={14} />} size="sm" />
             </div>
+
+            {/* Filter tabs */}
+            <FilterTabs
+                tabs={[
+                    { id: 'todos',      label: 'Todos',      count: reports.length },
+                    { id: 'publicados', label: 'Publicados', count: published,  dotColor: getStatusConfig('publicado').dot },
+                    { id: 'rascunhos',  label: 'Rascunhos',  count: drafts,     dotColor: getStatusConfig('rascunho').dot },
+                ] as FilterTab[]}
+                active={filterTab}
+                onChange={setFilterTab}
+            />
 
             {/* Table */}
             <div className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
@@ -137,7 +149,7 @@ export default function RelatoriosBackofficePage() {
                             </div>
                         ))}
                     </div>
-                ) : reports.length === 0 ? (
+                ) : filtered.length === 0 ? (
                     <div className="text-center py-20">
                         <FileText size={40} style={{ color: T.textMuted, opacity: 0.25 }} className="mx-auto mb-4" />
                         <p className="text-sm font-semibold mb-1" style={{ color: T.text }}>Nenhum relatório cadastrado</p>
@@ -165,11 +177,11 @@ export default function RelatoriosBackofficePage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {reports.map((r, idx) => {
+                                {filtered.map((r, idx) => {
                                     const catStyle = getCategoryStyle(r.category)
                                     return (
                                         <tr key={r.id}
-                                            style={{ borderBottom: idx < reports.length - 1 ? `1px solid ${T.border}` : 'none' }}
+                                            style={{ borderBottom: idx < filtered.length - 1 ? `1px solid ${T.border}` : 'none' }}
                                             className="transition-colors hover:opacity-90">
                                             <td className="px-5 py-4">
                                                 <div className="flex items-center gap-3">
@@ -205,14 +217,7 @@ export default function RelatoriosBackofficePage() {
                                                 )}
                                             </td>
                                             <td className="px-5 py-4">
-                                                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full whitespace-nowrap"
-                                                    style={r.is_published
-                                                        ? { color: '#34d399', background: 'rgba(52,211,153,0.1)' }
-                                                        : { color: T.textMuted, background: 'rgba(255,255,255,0.05)' }
-                                                    }
-                                                >
-                                                    {r.is_published ? 'Publicado' : 'Rascunho'}
-                                                </span>
+                                                <StatusBadge statusKey={r.is_published ? 'publicado' : 'rascunho'} size="xs" />
                                             </td>
                                             <td className="px-5 py-4">
                                                 <div className="flex items-center gap-1">

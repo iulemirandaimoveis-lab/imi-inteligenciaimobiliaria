@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 
 type Indicator = {
     id: string
@@ -329,8 +329,15 @@ export default function IndicadoresPage() {
                 }
             />
 
+            {/* KPIs */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <KPICard label="Total" value={loading ? '—' : String(indicators.length)} icon={<BarChart3 size={14} />} size="sm" />
+                <KPICard label="Em Alta" value={loading ? '—' : String(indicators.filter(i => i.trend === 'up').length)} icon={<TrendingUp size={14} />} accent="green" size="sm" />
+                <KPICard label="Em Queda" value={loading ? '—' : String(indicators.filter(i => i.trend === 'down').length)} icon={<TrendingDown size={14} />} accent="hot" size="sm" />
+            </div>
+
             {/* Category filter tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-1 scroll-row">
+            <div className="chip-scroll-row pb-1">
                 <button
                     onClick={() => setCategoryFilter('all')}
                     className="flex-shrink-0 h-8 px-3 rounded-xl text-xs font-semibold transition-all"

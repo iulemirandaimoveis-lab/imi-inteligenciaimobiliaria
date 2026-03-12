@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp, BarChart3 } from 'lucide-react'
+import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp, BarChart3, Users } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 
 const supabase = createClient()
 
@@ -215,25 +215,10 @@ export default function PipelineKanbanPage() {
                 />
 
                 {/* KPI strip */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
-                    {[
-                        { label: 'TOTAL EM NEGOCIAÇÃO', value: loading ? '—' : formatTotal(totalBudget), accent: T.accent },
-                        { label: 'TICKETS ATIVOS', value: loading ? '—' : `${totalLeads}`, accent: '#7BA3C2' },
-                        { label: 'FECHAMENTOS', value: loading ? '—' : String(ganhoCount).padStart(2, '0'), accent: '#22C55E' },
-                    ].map(kpi => (
-                        <div key={kpi.label} style={{
-                            padding: '12px 14px', borderRadius: 12,
-                            background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
-                            borderLeft: `3px solid ${kpi.accent}`,
-                        }}>
-                            <p style={{ fontSize: 8, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
-                                {kpi.label}
-                            </p>
-                            <p style={{ fontSize: 18, fontWeight: 800, color: kpi.accent, letterSpacing: '-0.3px', fontFamily: 'monospace' }}>
-                                {kpi.value}
-                            </p>
-                        </div>
-                    ))}
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                    <KPICard label="Negociações" value={loading ? '—' : formatTotal(totalBudget)} icon={<TrendingUp size={13} />} accent="blue" size="sm" />
+                    <KPICard label="Total Leads" value={loading ? '—' : String(totalLeads)} icon={<Users size={13} />} size="sm" />
+                    <KPICard label="Fechamentos" value={loading ? '—' : String(ganhoCount).padStart(2, '0')} icon={<Zap size={13} />} accent="green" size="sm" />
                 </div>
 
                 {/* Search */}
