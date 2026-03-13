@@ -5,12 +5,14 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     Plus, Search, FileText, CheckCircle, Clock, AlertCircle,
-    Globe, FileSignature, ChevronRight, Sparkles, X, Loader2
+    Globe, FileSignature, ChevronRight, Sparkles, X, Loader2,
+    Edit, Ban, Eye,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL } from '@/lib/modelos-contratos'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, FilterTabs, ActionMenu } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 // Derive STATUS_CFG from centralized constants
@@ -44,22 +46,42 @@ export default function ContratosPage() {
     const [contratos, setContratos] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        async function fetchContratos() {
-            try {
-                const res = await fetch('/api/contratos')
-                if (!res.ok) throw new Error('Falha ao carregar')
-                const result = await res.json()
-                setContratos(result.data || [])
-            } catch (err) {
-                console.error('Erro ao buscar contratos:', err)
-                setContratos([])
-            } finally {
-                setLoading(false)
-            }
+    const loadContratos = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch('/api/contratos')
+            if (!res.ok) throw new Error('Falha ao carregar')
+            const result = await res.json()
+            setContratos(result.data || [])
+        } catch (err) {
+            console.error('Erro ao buscar contratos:', err)
+            setContratos([])
+        } finally {
+            setLoading(false)
         }
-        fetchContratos()
-    }, [])
+    }
+
+    useEffect(() => { loadContratos() }, [])
+
+    const updateContratoStatus = async (id: string, status: string, successMsg: string) => {
+        try {
+            const res = await fetch('/api/contratos', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status }),
+            })
+            if (res.ok) { toast.success(successMsg); loadContratos() }
+            else toast.error('Erro ao atualizar')
+        } catch { toast.error('Erro de conexão') }
+    }
+
+    const cancelContrato = async (id: string) => {
+        try {
+            const res = await fetch(`/api/contratos?id=${id}`, { method: 'DELETE' })
+            if (res.ok) { toast.success('Contrato cancelado'); loadContratos() }
+            else toast.error('Erro ao cancelar')
+        } catch { toast.error('Erro de conexão') }
+    }
 
     const filtered = contratos.filter(c => {
         const q = search.toLowerCase()
@@ -76,13 +98,6 @@ export default function ContratosPage() {
         aguardando: contratos.filter(c => c.status === 'aguardando_assinatura').length,
         internacionais: contratos.filter(c => c.idioma && c.idioma !== 'pt').length,
     }
-
-    const KPIS = [
-        { label: 'Total', value: kpiValues.total, icon: FileText, color: '#7B9EC4' },
-        { label: 'Assinados', value: kpiValues.assinados, icon: CheckCircle, color: '#6BB87B' },
-        { label: 'Aguard. Assinatura', value: kpiValues.aguardando, icon: Clock, color: 'var(--bo-accent)' },
-        { label: 'Internacionais', value: kpiValues.internacionais, icon: Globe, color: '#E8A87C' },
-    ]
 
     return (
         <div className="space-y-5 max-w-7xl mx-auto">
@@ -248,7 +263,18 @@ export default function ContratosPage() {
                                                         {c.criado_em ? new Date(c.criado_em).toLocaleDateString('pt-BR') : '—'}
                                                     </p>
                                                 </div>
-                                                <ChevronRight size={14} style={{ color: T.textDim, flexShrink: 0 }} />
+                                                <div onClick={e => e.stopPropagation()}>
+                                                    <ActionMenu items={[
+                                                        { label: 'Ver Detalhes', icon: <Eye size={14} />, onClick: () => router.push(`/backoffice/contratos/${c.id}`) },
+                                                        { label: 'Editar', icon: <Edit size={14} />, onClick: () => router.push(`/backoffice/contratos/${c.id}`) },
+                                                        ...(c.status === 'gerado' || c.status === 'aguardando_assinatura'
+                                                            ? [{ label: 'Marcar Assinado', icon: <CheckCircle size={14} />, onClick: () => updateContratoStatus(c.id, 'assinado', 'Contrato assinado!') }]
+                                                            : []),
+                                                        ...(c.status !== 'cancelado' && c.status !== 'assinado'
+                                                            ? [{ label: 'Cancelar', icon: <Ban size={14} />, onClick: () => cancelContrato(c.id), variant: 'danger' as const }]
+                                                            : []),
+                                                    ]} />
+                                                </div>
                                             </div>
                                         </motion.div>
                                     )

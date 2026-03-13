@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
     TrendingUp, Plus, Search, CheckCircle, Clock, AlertCircle,
-    ArrowUpCircle,
+    ArrowUpCircle, Edit, Ban,
 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, FilterTabs, ActionMenu } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 // Derive STATUS_CFG from centralized constants (override pago label for receita context)
@@ -54,6 +54,14 @@ export default function ReceberPage() {
             })
             if (res.ok) { toast.success('Marcado como recebido'); load() }
             else toast.error('Erro ao atualizar')
+        } catch { toast.error('Erro de conexão') }
+    }
+
+    const cancelTransaction = async (id: string) => {
+        try {
+            const res = await fetch(`/api/financeiro?id=${id}`, { method: 'DELETE' })
+            if (res.ok) { toast.success('Lançamento cancelado'); load() }
+            else toast.error('Erro ao cancelar')
         } catch { toast.error('Erro de conexão') }
     }
 
@@ -167,35 +175,32 @@ export default function ReceberPage() {
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
 >
                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                    style={{ background: 'rgba(107,184,123,0.10)' }}>
-                                    <ArrowUpCircle size={18} style={{ color: '#6BB87B' }} />
+                                    style={{ background: 'var(--bo-success-bg)' }}>
+                                    <ArrowUpCircle size={18} style={{ color: 'var(--bo-success)' }} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-semibold truncate" style={{ color: T.text }}>{t.description}</p>
                                     <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                                         <span className="text-[10px] font-medium" style={{ color: T.textMuted }}>{t.category}</span>
                                         <span className="text-[10px]" style={{ color: T.textMuted }}>·</span>
-                                        <span className="text-[10px]" style={{ color: isOverdue ? '#E57373' : T.textMuted }}>
+                                        <span className="text-[10px]" style={{ color: isOverdue ? 'var(--bo-error)' : T.textMuted }}>
                                             Vence {fmtDate(t.due_date)}
                                         </span>
                                         <span
                                             className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                            style={{ color: isOverdue ? '#E57373' : sc.text, background: isOverdue ? 'rgba(229,115,115,0.12)' : sc.bg }}>
+                                            style={{ color: isOverdue ? 'var(--bo-error)' : sc.text, background: isOverdue ? 'rgba(229,115,115,0.12)' : sc.bg }}>
                                             <Icon size={9} /> {isOverdue ? 'Atrasado' : sc.label}
                                         </span>
                                     </div>
                                 </div>
                                 <div className="text-right flex-shrink-0">
-                                    <p className="text-base font-bold" style={{ color: '#6BB87B' }}>{fmt(Number(t.amount))}</p>
+                                    <p className="text-base font-bold" style={{ color: 'var(--bo-success)' }}>{fmt(Number(t.amount))}</p>
                                 </div>
-                                {t.status === 'pendente' && (
-                                    <button onClick={() => markReceived(t.id)}
-                                        title="Marcar como recebido"
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all hover:scale-105"
-                                        style={{ background: 'rgba(107,184,123,0.10)' }}>
-                                        <CheckCircle size={17} style={{ color: '#6BB87B' }} />
-                                    </button>
-                                )}
+                                <ActionMenu items={[
+                                    ...(t.status === 'pendente' ? [{ label: 'Marcar Recebido', icon: <CheckCircle size={14} />, onClick: () => markReceived(t.id) }] : []),
+                                    { label: 'Editar', icon: <Edit size={14} />, onClick: () => window.location.href = '/backoffice/financeiro' },
+                                    { label: 'Cancelar', icon: <Ban size={14} />, onClick: () => cancelTransaction(t.id), variant: 'danger' as const },
+                                ]} />
                             </motion.div>
                         )
                     })}

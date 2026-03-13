@@ -224,7 +224,7 @@ export default function EbooksPage() {
                                                     className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors hover:bg-red-500/10"
                                                     style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
                                                 >
-                                                    <Trash2 size={13} style={{ color: '#ef4444' }} />
+                                                    <Trash2 size={13} style={{ color: 'var(--bo-error)' }} />
                                                 </button>
                                             </div>
                                         </td>

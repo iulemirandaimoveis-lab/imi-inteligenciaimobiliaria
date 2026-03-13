@@ -7,7 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader, KPICard, StatusBadge } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, StatusBadge, FilterTabs } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
 type MarketIndex = {
     id: string
@@ -95,8 +96,15 @@ export default function IndicesBackofficePage() {
     const inputClass = "h-9 px-3 rounded-xl text-sm outline-none transition-all w-full"
     const inputStyle = { background: T.surface ?? T.elevated, border: `1px solid ${T.border}`, color: T.text }
 
+    const [filterTab, setFilterTab] = useState('todos')
+
     const published = indices.filter(i => i.is_published).length
     const drafts = indices.filter(i => !i.is_published).length
+    const filteredIndices = indices.filter(i => {
+        if (filterTab === 'publicados') return i.is_published
+        if (filterTab === 'rascunhos') return !i.is_published
+        return true
+    })
 
     return (
         <div className="space-y-5">
@@ -143,6 +151,17 @@ export default function IndicesBackofficePage() {
                 />
             </div>
 
+            {/* Filter tabs */}
+            <FilterTabs
+                tabs={[
+                    { id: 'todos',      label: 'Todos',      count: indices.length },
+                    { id: 'publicados', label: 'Publicados', count: published,  dotColor: getStatusConfig('publicado').dot },
+                    { id: 'rascunhos',  label: 'Rascunhos',  count: drafts,     dotColor: getStatusConfig('rascunho').dot },
+                ] as FilterTab[]}
+                active={filterTab}
+                onChange={setFilterTab}
+            />
+
             <div className="space-y-4">
                 {loading ? (
                     <div className="space-y-3">
@@ -170,13 +189,13 @@ export default function IndicesBackofficePage() {
                         <p className="text-xs" style={{ color: T.textMuted }}>Adicione índices via migração SQL ou painel admin</p>
                     </div>
                 ) : (
-                    indices.map((idx) => (
+                    filteredIndices.map((idx) => (
                         <div key={idx.id} className="rounded-2xl overflow-hidden" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             {/* Header row */}
                             <div className="p-5 flex items-center justify-between" style={{ borderBottom: `1px solid ${T.border}` }}>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.12)' }}>
-                                        <TrendingUp size={15} style={{ color: '#3B82F6' }} />
+                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'var(--bo-info-bg)' }}>
+                                        <TrendingUp size={15} style={{ color: 'var(--bo-info)' }} />
                                     </div>
                                     <div>
                                         <p className="font-semibold text-sm" style={{ color: T.text }}>{idx.name}</p>
@@ -198,16 +217,16 @@ export default function IndicesBackofficePage() {
                                     <button
                                         onClick={() => { setEditingId(editingId === idx.id ? null : idx.id); setEditForm(idx) }}
                                         className="w-9 h-9 rounded-xl flex items-center justify-center hover:opacity-70 transition-opacity"
-                                        style={{ background: editingId === idx.id ? 'rgba(59,130,246,0.12)' : 'rgba(255,255,255,0.04)', border: `1px solid ${editingId === idx.id ? '#3B82F6' : T.border}` }}
+                                        style={{ background: editingId === idx.id ? 'var(--bo-info-bg)' : 'rgba(255,255,255,0.04)', border: `1px solid ${editingId === idx.id ? 'var(--bo-info)' : T.border}` }}
                                     >
-                                        <Save size={14} style={{ color: editingId === idx.id ? '#3B82F6' : T.textMuted }} />
+                                        <Save size={14} style={{ color: editingId === idx.id ? 'var(--bo-info)' : T.textMuted }} />
                                     </button>
                                     <button
                                         onClick={() => deleteIndex(idx.id)}
                                         className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-red-500/10 transition-colors"
                                         style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.border}` }}
                                     >
-                                        <Trash2 size={14} style={{ color: '#ef4444' }} />
+                                        <Trash2 size={14} style={{ color: 'var(--bo-error)' }} />
                                     </button>
                                 </div>
                             </div>

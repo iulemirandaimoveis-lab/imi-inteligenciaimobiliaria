@@ -223,18 +223,17 @@ export default function OnboardingTutorial({
                         onClick={skip}
                     />
 
-                    {/* Dialog */}
+                    {/* Dialog — use flexbox centering so Framer Motion transforms don't conflict */}
+                    <div
+                        className="fixed inset-0 z-[10000] flex items-center justify-center pointer-events-none"
+                        style={{ padding: '16px' }}
+                    >
                     <motion.div
                         initial={{ opacity: 0, scale: 0.92, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.92, y: 20 }}
                         transition={{ type: 'spring', damping: 28, stiffness: 380 }}
-                        className="fixed z-[10000] w-[92vw] max-w-lg"
-                        style={{
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                        }}
+                        className="w-[92vw] max-w-lg pointer-events-auto"
                         onClick={e => e.stopPropagation()}
                     >
                         <div
@@ -369,6 +368,7 @@ export default function OnboardingTutorial({
                             </div>
                         </div>
                     </motion.div>
+                    </div>
                 </>
             )}
         </AnimatePresence>

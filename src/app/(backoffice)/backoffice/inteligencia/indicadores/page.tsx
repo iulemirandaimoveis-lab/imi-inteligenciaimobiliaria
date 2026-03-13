@@ -112,7 +112,7 @@ function IndicatorCard({
                         className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-red-500/10"
                         style={{ background: 'var(--bo-hover)' }}
                     >
-                        <Trash2 size={11} color="#EF4444" />
+                        <Trash2 size={11} color="var(--bo-error)" />
                     </button>
                 </div>
             </div>

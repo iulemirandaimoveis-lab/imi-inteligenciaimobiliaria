@@ -154,8 +154,8 @@ export default function ContasBancariasPage() {
                     tabs={[
                         { id: 'all',          label: 'Todas',       count: contas.length },
                         { id: 'Corrente',     label: 'Corrente',    dotColor: '#60A5FA' },
-                        { id: 'Poupança',     label: 'Poupança',    dotColor: '#4ADE80' },
-                        { id: 'Investimento', label: 'Investimento',dotColor: '#FBBF24' },
+                        { id: 'Poupança',     label: 'Poupança',    dotColor: 'var(--bo-success)' },
+                        { id: 'Investimento', label: 'Investimento',dotColor: 'var(--bo-warning)' },
                     ] as FilterTab[]}
                     active={tipoFilter}
                     onChange={setTipoFilter}
@@ -214,7 +214,7 @@ export default function ContasBancariasPage() {
                                         </p>
                                         {conta.saldo_anterior != null && conta.saldo_anterior > 0 && (
                                             <div className="flex items-center gap-1 text-sm font-medium"
-                                                style={{ color: variacaoPositiva ? '#6BB87B' : '#E57373' }}>
+                                                style={{ color: variacaoPositiva ? 'var(--bo-success)' : 'var(--bo-error)' }}>
                                                 {variacaoPositiva ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                                                 {Math.abs(variacao).toFixed(1)}%
                                             </div>
