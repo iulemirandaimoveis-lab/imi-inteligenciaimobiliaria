@@ -9,7 +9,7 @@ export async function GET(request: Request) {
         const { data: { user } } = await supabase.auth.getUser();
 
         if (!user) {
-            return NextResponse.json([], { status: 200 });
+            return NextResponse.json({ error: 'Unauthorized', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 401 });
         }
 
         const { searchParams } = new URL(request.url)
@@ -26,8 +26,7 @@ export async function GET(request: Request) {
 
         if (error) {
             console.error('Error fetching leads:', error);
-            // Return empty array instead of error — frontend expects array
-            return NextResponse.json([], { status: 200 });
+            return NextResponse.json({ error: error.message, data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 });
         }
 
         // Map to the format the frontend expects
@@ -67,7 +66,7 @@ export async function GET(request: Request) {
         });
     } catch (error) {
         console.error('Error in GET /api/leads:', error);
-        return NextResponse.json([], { status: 200 });
+        return NextResponse.json({ error: 'Internal Server Error', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 500 });
     }
 }
 
@@ -155,6 +154,43 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true, lead })
     } catch (error) {
         console.error('Error in POST /api/leads:', error)
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    }
+}
+
+export async function DELETE(request: Request) {
+    try {
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
+        const { searchParams } = new URL(request.url)
+        const id = searchParams.get('id')
+        if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
+
+        // Soft delete — set status to archived
+        const { error } = await supabase
+            .from('leads')
+            .update({ status: 'archived', updated_at: new Date().toISOString() })
+            .eq('id', id)
+
+        if (error) {
+            console.error('Error archiving lead:', error)
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        const meta = getRequestMeta(request)
+        logAudit({
+            user_id: user.id,
+            action: 'archive',
+            entity_type: 'lead',
+            entity_id: id,
+            ...meta,
+        })
+
+        return NextResponse.json({ success: true })
+    } catch (error) {
+        console.error('Error in DELETE /api/leads:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }

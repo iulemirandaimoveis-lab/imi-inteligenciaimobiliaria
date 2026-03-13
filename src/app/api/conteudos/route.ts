@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const id = searchParams.get('id')
 
-        if (!user) return NextResponse.json([], { status: 200 })
+        if (!user) return NextResponse.json({ error: 'Unauthorized', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 401 })
 
         if (id) {
             const { data, error } = await supabase
@@ -31,7 +31,10 @@ export async function GET(request: NextRequest) {
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1)
 
-        if (error) return NextResponse.json([], { status: 200 })
+        if (error) {
+            console.error('Error fetching conteudos:', error)
+            return NextResponse.json({ error: error.message, data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 })
+        }
         return NextResponse.json({
             data: data || [],
             pagination: {
@@ -41,8 +44,9 @@ export async function GET(request: NextRequest) {
                 pages: Math.ceil((count || 0) / limit),
             },
         })
-    } catch {
-        return NextResponse.json([], { status: 200 })
+    } catch (err: any) {
+        console.error('Error in GET /api/conteudos:', err)
+        return NextResponse.json({ error: 'Internal Server Error', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 500 })
     }
 }
 

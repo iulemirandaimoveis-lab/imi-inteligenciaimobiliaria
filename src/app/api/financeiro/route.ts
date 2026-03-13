@@ -55,14 +55,18 @@ export async function GET(req: NextRequest) {
         }
 
         const { data, error, count } = await query
-        if (error) return NextResponse.json({ data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 200 })
+        if (error) {
+            console.error('Error fetching transactions:', error)
+            return NextResponse.json({ error: error.message, data: [], pagination: { page, limit, total: 0, pages: 0 } }, { status: 500 })
+        }
         return NextResponse.json({
             data: data || [],
             pagination: { page, limit, total: count || 0, pages: Math.ceil((count || 0) / limit) },
         })
 
-    } catch {
-        return NextResponse.json([], { status: 200 })
+    } catch (err: any) {
+        console.error('Error in GET /api/financeiro:', err)
+        return NextResponse.json({ error: 'Internal Server Error', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 500 })
     }
 }
 
