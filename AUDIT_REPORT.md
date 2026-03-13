@@ -134,37 +134,91 @@
 
 ---
 
-## 5. Recomendações Pendentes
+## 5. Correções de Segurança do Banco de Dados (12/03/2026)
 
-### Prioridade Alta
-1. **Policies RLS granulares** — substituir `true` por policies baseadas em `auth.uid()` nas tabelas críticas (leads, developments, financial_transactions, contracts)
-2. **Views security_definer** — converter para `security_invoker` ou adicionar RLS-safe wrappers
-3. **Funções com mutable search_path** — fixar `SET search_path = public` em 16 funções
+### 5A. RLS Policies — Limpeza de Duplicatas
+| Tabela | Antes | Depois | Ação |
+|--------|-------|--------|------|
+| developments | 16 policies | 2 | Removidas 14 duplicatas, mantida 1 auth ALL + 1 public read filtrada |
+| developers | 11 policies | 2 | Removidas 9 duplicatas, mantida 1 auth ALL + 1 public read filtrada |
+| content | 7 policies | 2 | Removidas 5 duplicatas |
+| settings | 7 policies | 3 | Removidas 4 policies públicas (override perigoso) |
+| brokers | 6 policies | 2 | Removidas 4 duplicatas, mantida admin ALL + own data |
+| notifications | 6 policies | 5 | Removida 1 SELECT duplicada |
+| executive_reports | 5 policies | 1 | Removidas 4 duplicatas |
+| content_publications | 5 policies | 2 | Removidas 3 tenant-scoped (single-tenant) |
+| consultations | 5 policies | 2 | Removida policy ALL pública PERIGOSA |
+| integration_configs | 4 policies | 1 | Removidas 3 duplicatas |
+| evaluations | 4 policies | 1 | Removidas 3 sobrepostas |
+| appraisal_requests | 4 policies | 2 | Removidas duplicatas auth + anon |
+| audit_log | 2 policies | 2 | Trocadas de public → authenticated only |
+| calendar_events | 1 policy | 2 | Adicionada policy authenticated ALL |
 
-### Prioridade Média
-4. **Rate limiting** — adicionar rate limiting a API routes de escrita (leads/create, brokers/create)
-5. **Input validation** — adicionar Zod schemas em routes que ainda não têm (agenda, developers)
-6. **Audit logging centralizado** — algumas routes logam auditoria, outras não (padronizar)
+### 5B. Views security_definer → security_invoker
+| View | Risco | Correção |
+|------|-------|----------|
+| analytics_consolidated | Bypass RLS + anon full access | Recriada com security_invoker, revogado anon |
+| qr_links | Bypass RLS + anon full access | Recriada com security_invoker, revogado anon |
+| daily_sales_stats | Bypass RLS | Recriada com security_invoker |
+| publications_pending | Bypass RLS | Recriada com security_invoker |
+| ads_campaigns_summary | Bypass RLS | Recriada com security_invoker |
+| content_analytics | Bypass RLS | Recriada com security_invoker |
 
-### Prioridade Baixa
-7. **Testes automatizados** — nenhum teste existe; priorizar API routes críticas
-8. **Email validation** — normalizar case em brokers/create (atualmente case-sensitive)
-9. **Pagination limit** — agenda hard-limits 200 results sem pagination
+### 5C. Funções com search_path fixado
+- ✅ **7 SECURITY DEFINER** functions: broker_has_permission, check_broker_permission, get_avaliacoes_stats, get_dashboard_stats, increment_qr_scans, log_audit_event, handle_new_user
+- ✅ **24 SECURITY INVOKER** functions: all trigger/utility functions (update_updated_at, generate_short_code, etc.)
+- Total: **31 funções** corrigidas com `SET search_path = public`
+
+### 5D. Input Validation — Zod Schemas Adicionados
+| Rota | Schema |
+|------|--------|
+| `/api/agenda` POST/PUT | calendarEventSchema / calendarEventUpdateSchema |
+| `/api/developers` POST/PUT | developerSchema / developerUpdateSchema |
+| `/api/brokers/create` POST | brokerCreateSchema |
+| (já existente) `/api/financeiro` POST/PUT | transactionSchema / transactionUpdateSchema |
+| (já existente) `/api/contratos` POST/PUT | contratoSchema / contratoUpdateSchema |
+| (já existente) `/api/leads` POST | leadSchema |
 
 ---
 
-## 6. Commits desta Auditoria
+## 6. Recomendações Restantes
+
+### Prioridade Média
+1. **Rate limiting** — adicionar rate limiting a API routes de escrita (leads/create, brokers/create)
+2. **Audit logging centralizado** — algumas routes logam auditoria, outras não (padronizar)
+3. **Zod em routes AI** — routes `/api/ai/*` ainda sem Zod (menor risco — passam dados para Claude/Gemini)
+
+### Prioridade Baixa
+4. **Testes automatizados** — nenhum teste existe; priorizar API routes críticas
+5. **Email validation** — normalizar case em brokers/create (atualmente case-sensitive)
+6. **Pagination limit** — agenda hard-limits 200 results sem pagination
+
+---
+
+## 7. Commits desta Auditoria
 
 ```
 98d8802 fix(api): critical API audit — error handling, auth, missing endpoints
 62aa716 fix(ui): mobile responsiveness + broken frontend features
 7a2df12 feat(onboarding): guided tour tutorial system with step navigation
 9c1fef8 fix(security): add auth checks to 4 unprotected API routes + webhook validation
+d3f09a2 docs: comprehensive system audit report
+c11646f fix(security): Zod validation for agenda, developers, brokers/create routes
+```
+
+Supabase Migrations (banco de dados):
+```
+cleanup_rls_policies_developments_settings_audit_calendar
+cleanup_rls_policies_batch2_10_tables
+fix_security_definer_views_revoke_anon
+fix_remaining_security_definer_views
+fix_security_definer_functions_search_path
+fix_invoker_functions_search_path_batch
 ```
 
 ---
 
-## 7. Métricas de Qualidade
+## 8. Métricas de Qualidade
 
 | Métrica | Antes | Depois |
 |---------|-------|--------|
@@ -177,3 +231,8 @@
 | Decorative buttons (no-op) | 3 | 0 |
 | TypeScript errors | 0 | 0 |
 | Onboarding tutorial | Inexistente | 9-step guided tour |
+| RLS policies duplicadas | 80+ | 0 |
+| Views security_definer | 6 | 0 |
+| Functions sem search_path | 31 | 0 |
+| API routes sem Zod (críticas) | 3 | 0 |
+| Security advisor ERRORS | 4 | 0 |
