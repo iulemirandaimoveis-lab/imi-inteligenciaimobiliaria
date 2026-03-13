@@ -80,28 +80,31 @@ export async function GET(
     if (reqMedium) utms.medium = reqMedium
     if (reqCampaign) utms.campaign = reqCampaign
 
-    // 6. Log tracking event (non-blocking — don't await to avoid delaying redirect)
-    void supabaseAdmin
-        .from('link_events')
-        .insert({
-            tracked_link_id: link.id,
-            event_type: 'click',
-            device_type: deviceType,
-            browser,
-            os,
-            ip_address: ip,
-            referrer: referer,
-            utm_params: utms,
-            metadata: {
-                user_agent: userAgent.substring(0, 500),
-                short_code: shortCode,
-            },
-            created_at: new Date().toISOString()
-        })
-
-    // 7. Increment click count (non-blocking)
-    void supabaseAdmin
-        .rpc('increment_link_clicks', { link_id: link.id } as any)
+    // 6 & 7. Track event + increment counter — await both in parallel BEFORE redirecting.
+    // Serverless functions (Vercel) terminate immediately after returning a response;
+    // fire-and-forget void calls never complete. Promise.allSettled ensures both run
+    // even if one fails, without blocking longer than necessary.
+    await Promise.allSettled([
+        supabaseAdmin
+            .from('link_events')
+            .insert({
+                tracked_link_id: link.id,
+                event_type: 'click',
+                device_type: deviceType,
+                browser,
+                os,
+                ip_address: ip,
+                referrer: referer,
+                utm_params: utms,
+                metadata: {
+                    user_agent: userAgent.substring(0, 500),
+                    short_code: shortCode,
+                },
+                created_at: new Date().toISOString()
+            }),
+        supabaseAdmin
+            .rpc('increment_link_clicks', { link_id: link.id } as any),
+    ])
 
     // 8. Build final redirect URL with UTM passthrough
     let finalUrl = targetUrl

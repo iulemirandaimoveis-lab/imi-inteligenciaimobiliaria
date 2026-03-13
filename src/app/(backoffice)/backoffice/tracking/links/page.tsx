@@ -101,14 +101,14 @@ export default function TrackingLinksPage() {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => router.push('/backoffice/tracking')}
-                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            className="w-10 h-10 rounded flex items-center justify-center transition-all hover:opacity-80"
                             style={{ background: T.card, border: `1px solid ${T.border}` }}
                         >
                             <ArrowLeft size={18} style={{ color: T.text }} />
                         </button>
                         <button
                             onClick={() => router.push('/backoffice/tracking/qr')}
-                            className="h-10 px-4 rounded-xl text-sm font-semibold flex items-center gap-2 text-white"
+                            className="h-10 px-4 rounded text-sm font-semibold flex items-center gap-2 text-white"
                             style={{ background: T.accent }}
                         >
                             <QrCode size={16} />
@@ -133,7 +133,7 @@ export default function TrackingLinksPage() {
                 </div>
                 <button
                     onClick={loadLinks}
-                    className="h-10 w-10 rounded-xl flex items-center justify-center"
+                    className="h-10 w-10 rounded flex items-center justify-center"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                 >
                     <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
@@ -211,7 +211,7 @@ export default function TrackingLinksPage() {
                                     <div className="flex items-center gap-1">
                                         <button
                                             onClick={() => handleCopy(link.short_url || link.url || '', link.id)}
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                            className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
                                             style={{ background: T.hover }}
                                             title="Copiar link"
                                         >
@@ -224,7 +224,7 @@ export default function TrackingLinksPage() {
                                         {link.short_url && (
                                             <button
                                                 onClick={() => handleDownloadQR(link.short_url, link.campaign_name || link.short_code)}
-                                                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                                className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
                                                 style={{ background: T.hover }}
                                                 title="Baixar QR Code"
                                             >
@@ -232,8 +232,8 @@ export default function TrackingLinksPage() {
                                             </button>
                                         )}
                                         <button
-                                            onClick={() => window.open(link.url || link.short_url, '_blank')}
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                            onClick={() => window.open(link.short_url || link.url, '_blank')}
+                                            className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
                                             style={{ background: T.hover }}
                                             title="Abrir link"
                                         >
@@ -241,7 +241,7 @@ export default function TrackingLinksPage() {
                                         </button>
                                         <button
                                             onClick={() => handleDelete(link.id, link.campaign_name)}
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                            className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
                                             style={{ background: T.hover }}
                                             title="Excluir"
                                         >

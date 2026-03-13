@@ -20,7 +20,7 @@ export async function GET(
       return NextResponse.redirect(new URL('/', req.url))
     }
 
-    // Log the scan (fire & forget — don't block redirect)
+    // Log the scan — await before redirect (serverless terminates on response return)
     const ua = req.headers.get('user-agent') ?? ''
     const referer = req.headers.get('referer') ?? ''
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0] ?? req.headers.get('x-real-ip') ?? ''
@@ -28,22 +28,22 @@ export async function GET(
     const country = req.headers.get('x-vercel-ip-country') ?? ''
     const city = req.headers.get('x-vercel-ip-city') ?? ''
 
-    supabase.from('qr_scans').insert({
-      qr_link_id: id,
-      property_id: link.property_id ?? null,
-      source: link.source ?? 'qr',
-      campaign_name: link.campaign_name ?? null,
-      user_agent: ua.slice(0, 500),
-      referer: referer.slice(0, 500),
-      ip_address: ip.slice(0, 45),
-      is_mobile: isMobile,
-      country: country,
-      city: city,
-      scanned_at: new Date().toISOString(),
-    }).then(() => {
-      // Update total_scans counter on qr_links
-      supabase.rpc('increment_qr_scans', { link_id: id }).then(() => {})
-    })
+    await Promise.allSettled([
+      supabase.from('qr_scans').insert({
+        qr_link_id: id,
+        property_id: link.property_id ?? null,
+        source: link.source ?? 'qr',
+        campaign_name: link.campaign_name ?? null,
+        user_agent: ua.slice(0, 500),
+        referer: referer.slice(0, 500),
+        ip_address: ip.slice(0, 45),
+        is_mobile: isMobile,
+        country: country,
+        city: city,
+        scanned_at: new Date().toISOString(),
+      }),
+      supabase.rpc('increment_qr_scans', { link_id: id }),
+    ])
 
     // Redirect to destination
     const dest = link.destination_url.startsWith('http')

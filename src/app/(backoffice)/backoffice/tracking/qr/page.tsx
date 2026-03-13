@@ -217,12 +217,12 @@ export default function QRGeneratorPage() {
                 actions={
                     <div className="flex items-center gap-2">
                         <a href="/backoffice/tracking"
-                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            className="w-10 h-10 rounded flex items-center justify-center transition-all hover:opacity-80"
                             style={{ background: T.card, border: `1px solid ${T.border}`, textDecoration: 'none' }}>
                             <ArrowLeft size={18} style={{ color: T.text }} />
                         </a>
                         <a href="/backoffice/tracking/links"
-                            className="h-10 px-4 rounded-xl flex items-center gap-1.5 text-xs font-semibold hover:opacity-80 transition-opacity"
+                            className="h-10 px-4 rounded flex items-center gap-1.5 text-xs font-semibold hover:opacity-80 transition-opacity"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.accent, textDecoration: 'none' }}>
                             Todos os links <ChevronRight size={13} />
                         </a>
@@ -479,13 +479,13 @@ export default function QRGeneratorPage() {
                                     {shortUrl.replace('https://www.iulemirandaimoveis.com.br', 'imi.com.br')}
                                 </span>
                                 <button onClick={() => copyUrl(shortUrl)}
-                                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
+                                    className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0 transition-all"
                                     style={{ background: copied ? 'rgba(34,197,94,0.15)' : 'rgba(59,130,246,0.15)', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'rgba(59,130,246,0.3)'}` }}
                                 >
                                     {copied ? <Check size={13} style={{ color: '#4ade80' }} /> : <Copy size={13} style={{ color: '#60A5FA' }} />}
                                 </button>
                                 <button onClick={handleDownload} disabled={!qrDataUrl}
-                                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-30"
+                                    className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-30"
                                     style={{ background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)' }}
                                 >
                                     <Download size={13} style={{ color: '#4ade80' }} />
@@ -612,7 +612,7 @@ export default function QRGeneratorPage() {
 
                                                 {linkShortUrl && (
                                                     <button onClick={() => copyUrl(linkShortUrl, link.id)}
-                                                        className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                                        className="w-7 h-7 rounded flex items-center justify-center transition-all"
                                                         style={{ background: copiedId === link.id ? 'rgba(34,197,94,0.12)' : T.elevated, border: 'none' }}
                                                     >
                                                         {copiedId === link.id
@@ -623,7 +623,7 @@ export default function QRGeneratorPage() {
 
                                                 {linkShortUrl && (
                                                     <a href={linkShortUrl} target="_blank" rel="noopener noreferrer"
-                                                        className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                                        className="w-7 h-7 rounded flex items-center justify-center transition-all"
                                                         style={{ background: T.elevated, textDecoration: 'none' }}
                                                     >
                                                         <ExternalLink size={11} style={{ color: T.textMuted }} />
@@ -632,7 +632,7 @@ export default function QRGeneratorPage() {
 
                                                 <button
                                                     onClick={() => setExpandedLink(isExpanded ? null : link.id)}
-                                                    className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                                    className="w-7 h-7 rounded flex items-center justify-center transition-all"
                                                     style={{ background: isExpanded ? 'rgba(96,165,250,0.12)' : T.elevated }}
                                                     title="Ver analytics"
                                                 >
@@ -640,7 +640,7 @@ export default function QRGeneratorPage() {
                                                 </button>
 
                                                 <button onClick={() => handleDelete(link.id)}
-                                                    className="w-7 h-7 rounded-lg flex items-center justify-center opacity-30 hover:opacity-70 transition-opacity"
+                                                    className="w-7 h-7 rounded flex items-center justify-center opacity-30 hover:opacity-70 transition-opacity"
                                                     style={{ background: 'transparent' }}
                                                 >
                                                     <Trash2 size={11} style={{ color: T.text }} />

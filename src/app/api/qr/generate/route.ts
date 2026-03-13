@@ -39,8 +39,8 @@ export async function POST(request: Request) {
 
         const devSlug = dev.slug || dev.name.toLowerCase().replace(/\s+/g, '-')
 
-        // Build UTM URL
-        const baseUrl = 'https://www.iulemirandaimoveis.com.br'
+        // Build UTM URL — use env var so short links route through THIS deployment
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://youthful-fermi.vercel.app'
         const params = new URLSearchParams()
         params.set('utm_source', utm_source)
         params.set('utm_medium', utm_medium)
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        // Generate QR code data URL
+        // Short URL routes through the backoffice deployment where /l/[shortCode] lives
         const shortUrl = `${baseUrl}/l/${shortCode}`
         const qrDataUrl = await QRCode.toDataURL(shortUrl, {
             width: 600,
