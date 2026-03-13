@@ -4,31 +4,32 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import {
     Building2, Bed, Bath, Maximize2,
-    Plus, Search, Filter, BarChart2,
-    Eye, ExternalLink,
+    Plus, Search, BarChart2,
+    Eye, ExternalLink, Tag,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-    publicado:  { label: 'Publicado',   color: '#4ade80', bg: 'rgba(74,222,128,0.12)' },
-    published:  { label: 'Publicado',   color: '#4ade80', bg: 'rgba(74,222,128,0.12)' },
-    rascunho:   { label: 'Rascunho',    color: '#facc15', bg: 'rgba(250,204,21,0.12)' },
-    draft:      { label: 'Rascunho',    color: '#facc15', bg: 'rgba(250,204,21,0.12)' },
-    vendido:    { label: 'Sold Out',    color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
-    sold:       { label: 'Sold Out',    color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
-    campanha:   { label: 'Em Campanha', color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
-    campaign:   { label: 'Em Campanha', color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
+// Derive status config from centralized constants
+const buildStatus = (key: string) => {
+    const cfg = getStatusConfig(key)
+    return { label: cfg.label, color: cfg.dot, bg: `${cfg.dot}1f` }
 }
-
-const TYPE_FILTERS = [
-    { value: 'all',        label: 'Todos' },
-    { value: 'apartment',  label: 'Residencial' },
-    { value: 'commercial', label: 'Comercial' },
-]
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+    publicado:  buildStatus('publicado'),
+    published:  buildStatus('publicado'),
+    rascunho:   buildStatus('rascunho'),
+    draft:      buildStatus('rascunho'),
+    vendido:    buildStatus('vendido'),
+    sold:       buildStatus('vendido'),
+    campanha:   buildStatus('lancamento'),
+    campaign:   buildStatus('lancamento'),
+}
 
 const VIEW_TABS = [
     { key: 'listings',     label: 'Listagem' },
@@ -67,7 +68,9 @@ export default function InventarioPage() {
 
     const filtered = developments.filter(d => {
         if (busca && !d.name?.toLowerCase().includes(busca.toLowerCase())) return false
+        const s = d.status_commercial || d.status_comercial || ''
         if (activeType === 'all') return true
+        if (activeType === 'draft') return ['draft', 'rascunho'].includes(s)
         if (activeType === 'commercial') return d.type === 'commercial' || d.tipo === 'comercial'
         return d.type !== 'commercial' && d.tipo !== 'comercial'
     })
@@ -95,35 +98,63 @@ export default function InventarioPage() {
     const totalPublished = developments.filter(d => ['published', 'publicado'].includes(d.status_commercial || d.status_comercial || '')).length
     const totalSold = developments.filter(d => ['sold', 'vendido'].includes(d.status_commercial || d.status_comercial || '')).length
 
+    const totalCampaign = developments.filter(d => ['campaign', 'campanha'].includes(d.status_commercial || d.status_comercial || '')).length
+    const totalDraft = developments.filter(d => ['draft', 'rascunho'].includes(d.status_commercial || d.status_comercial || '')).length
+
     return (
         <div className="space-y-6 pb-10">
             {/* Header */}
             <PageIntelHeader
                 moduleLabel="REAL ESTATE INVENTORY"
                 title="Inventário"
-                subtitle={loading ? 'Carregando...' : `${developments.length} empreendimentos · ${totalPublished} publicados · ${totalSold} vendidos`}
+                subtitle="Portfólio completo de empreendimentos"
                 actions={
                     <Link
                         href="/backoffice/imoveis/novo"
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl font-semibold text-sm text-white transition-all hover:scale-[1.02]"
-                        style={{
-                            background: T.accent,
-                            textDecoration: 'none',
-                            boxShadow: '0 4px 16px rgba(59,130,246,0.3)',
-                        }}
+                        className="flex items-center gap-2 h-10 px-5 rounded-xl font-semibold text-sm text-white transition-all hover:brightness-110"
+                        style={{ background: T.accent, textDecoration: 'none' }}
                     >
                         <Plus size={15} /> Novo Imóvel
                     </Link>
                 }
             />
 
-            {/* Controls row: view tabs + search */}
-            <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 }}
-                className="flex items-center gap-3 flex-wrap"
-            >
+            {/* KPIs */}
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+                <KPICard
+                    label="Total"
+                    value={loading ? '—' : String(developments.length)}
+                    icon={<Building2 size={14} />}
+                    accent="blue"
+                    size="sm"
+                />
+                <KPICard
+                    label="Publicados"
+                    value={loading ? '—' : String(totalPublished)}
+                    icon={<Eye size={14} />}
+                    accent="green"
+                    size="sm"
+                    delta={developments.length > 0 ? Math.round((totalPublished / developments.length) * 100) : 0}
+                    deltaLabel="do portfólio"
+                />
+                <KPICard
+                    label="Vendidos"
+                    value={loading ? '—' : String(totalSold)}
+                    icon={<Building2 size={14} />}
+                    accent="warm"
+                    size="sm"
+                />
+                <KPICard
+                    label="Em Campanha"
+                    value={loading ? '—' : String(totalCampaign)}
+                    icon={<Tag size={14} />}
+                    accent="ai"
+                    size="sm"
+                />
+            </div>
+
+            {/* Controls row: view tabs + search + type filter */}
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                 {/* View tabs */}
                 <div className="flex gap-1 p-1 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                     {VIEW_TABS.map(tab => (
@@ -150,43 +181,22 @@ export default function InventarioPage() {
                         onChange={e => setBusca(e.target.value)}
                         placeholder="Buscar empreendimento..."
                         className="w-full h-10 pl-9 pr-4 rounded-xl text-sm focus:outline-none"
-                        style={{
-                            background: T.elevated,
-                            border: `1px solid ${T.border}`,
-                            color: T.text,
-                        }}
+                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                 </div>
-            </motion.div>
+            </div>
 
-            {/* Type filter chips */}
-            <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.08 }}
-                className="flex items-center gap-2 flex-wrap"
-            >
-                {TYPE_FILTERS.map(f => (
-                    <button
-                        key={f.value}
-                        onClick={() => setActiveType(f.value)}
-                        className="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
-                        style={{
-                            background: activeType === f.value ? T.accent : T.elevated,
-                            border: `1px solid ${activeType === f.value ? T.accent : T.border}`,
-                            color: activeType === f.value ? '#fff' : T.textMuted,
-                        }}
-                    >
-                        {f.label}
-                    </button>
-                ))}
-                <button
-                    className="ml-auto flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-semibold"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
-                >
-                    <Filter size={12} /> Filtrar
-                </button>
-            </motion.div>
+            {/* Type FilterTabs */}
+            <FilterTabs
+                tabs={[
+                    { id: 'all',        label: 'Todos',       count: developments.length },
+                    { id: 'apartment',  label: 'Residencial', count: developments.filter(d => d.type !== 'commercial' && d.tipo !== 'comercial').length },
+                    { id: 'commercial', label: 'Comercial',   count: developments.filter(d => d.type === 'commercial' || d.tipo === 'comercial').length },
+                    { id: 'draft',      label: 'Rascunhos',   count: totalDraft, dotColor: getStatusConfig('rascunho').dot },
+                ] as FilterTab[]}
+                active={activeType}
+                onChange={setActiveType}
+            />
 
             {/* Loading skeleton */}
             {loading && (
