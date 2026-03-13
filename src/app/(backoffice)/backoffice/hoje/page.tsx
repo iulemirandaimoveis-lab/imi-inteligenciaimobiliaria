@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import {
   Sun, Moon, Users, CalendarDays,
   MessageCircle, Building2,
-  TrendingUp, Scale, Clock, Zap, Bot, Sparkles, CheckCircle2,
+  TrendingUp, Scale, Clock, Zap, Bot, Sparkles, CheckCircle2, LayoutDashboard,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -38,6 +38,7 @@ function formatTime(iso: string) {
 
 // ── Quick action config ──────────────────────────────────────────────
 const QUICK_ACTIONS = [
+  { label: 'Dashboard',   href: '/backoffice/dashboard',         color: 'var(--bo-accent)',   icon: LayoutDashboard },
   { label: 'Novo Lead',   href: '/backoffice/leads/novo',        color: 'var(--s-hot)',       icon: Users },
   { label: 'Agendamento', href: '/backoffice/agenda',            color: 'var(--s-pend)',      icon: CalendarDays },
   { label: 'WhatsApp',    href: '/backoffice/whatsapp',          color: '#25D366',            icon: MessageCircle },
