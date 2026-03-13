@@ -39,15 +39,18 @@ export async function POST(request: Request) {
 
         const devSlug = dev.slug || dev.name.toLowerCase().replace(/\s+/g, '-')
 
-        // Build UTM URL — use env var so short links route through THIS deployment
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://youthful-fermi.vercel.app'
+        // originalUrl = public website (destination after redirect)
+        // shortUrl base = THIS deployment (where /l/[shortCode] route lives)
+        const publicSiteUrl = 'https://www.iulemirandaimoveis.com.br'
+        const trackingBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://youthful-fermi.vercel.app'
+
         const params = new URLSearchParams()
         params.set('utm_source', utm_source)
         params.set('utm_medium', utm_medium)
         params.set('utm_campaign', utm_campaign)
         if (utm_content) params.set('utm_content', utm_content)
 
-        const originalUrl = `${baseUrl}/imoveis/${devSlug}?${params.toString()}`
+        const originalUrl = `${publicSiteUrl}/imoveis/${devSlug}?${params.toString()}`
 
         // Generate short code
         let shortCode = custom_slug || generateShortCode()
@@ -91,7 +94,7 @@ export async function POST(request: Request) {
         }
 
         // Short URL routes through the backoffice deployment where /l/[shortCode] lives
-        const shortUrl = `${baseUrl}/l/${shortCode}`
+        const shortUrl = `${trackingBaseUrl}/l/${shortCode}`
         const qrDataUrl = await QRCode.toDataURL(shortUrl, {
             width: 600,
             margin: 2,
