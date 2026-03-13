@@ -164,7 +164,7 @@ export default function NovaConstrutora() {
                   <button type="button"
                     onClick={() => { setLogoFile(null); setLogoPreview(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
                     className="absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center text-white"
-                    style={{ background: '#ef4444' }}>
+                    style={{ background: 'var(--bo-error)' }}>
                     <X size={11} />
                   </button>
                 </>

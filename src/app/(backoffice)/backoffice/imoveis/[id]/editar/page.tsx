@@ -333,7 +333,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
               <a href={formData.existingBrochure} target="_blank" rel="noopener" className="text-xs underline" style={{ color: T.accent }}>Ver PDF</a>
             </div>
             <button type="button" onClick={() => set('existingBrochure', '')} className="text-xs px-3 py-1.5 rounded-lg"
-              style={{ background: '#EF444415', color: '#EF4444', border: '1px solid #EF444430' }}>
+              style={{ background: '#EF444415', color: 'var(--bo-error)', border: '1px solid #EF444430' }}>
               Remover
             </button>
           </div>
@@ -687,7 +687,7 @@ export default function EditarImovelPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium flex items-center gap-1.5" style={{ color: T.text }}>
-                        <Star size={14} style={{ color: '#fbbf24', fill: formData.is_highlighted ? '#fbbf24' : 'none' }} />
+                        <Star size={14} style={{ color: 'var(--bo-warning)', fill: formData.is_highlighted ? 'var(--bo-warning)' : 'none' }} />
                         Destaque na página inicial
                       </p>
                       <p className="text-xs mt-0.5" style={{ color: T.textDim }}>Aparece na seção de imóveis em destaque</p>

@@ -402,14 +402,14 @@ export default function NovaAvaliacaoPage() {
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all"
                     style={{
-                      background: done ? '#6BB87B' : active ? 'var(--bo-accent)' : T.elevated,
+                      background: done ? 'var(--bo-success)' : active ? 'var(--bo-accent)' : T.elevated,
                       color: done || active ? 'white' : T.textMuted,
                     }}
                   >
                     {done ? <Check size={16} /> : <Icon size={16} />}
                   </div>
                   <span className="text-xs mt-1 hidden sm:block font-medium"
-                    style={{ color: active ? 'var(--bo-accent)' : done ? '#6BB87B' : T.textMuted }}>
+                    style={{ color: active ? 'var(--bo-accent)' : done ? 'var(--bo-success)' : T.textMuted }}>
                     {step.label}
                   </span>
                 </div>
@@ -777,7 +777,7 @@ export default function NovaAvaliacaoPage() {
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
                 style={{
-                  background: formData.comparaveis.length >= 5 ? '#6BB87B' : formData.comparaveis.length >= 3 ? '#F59E0B' : '#E57373',
+                  background: formData.comparaveis.length >= 5 ? 'var(--bo-success)' : formData.comparaveis.length >= 3 ? '#F59E0B' : 'var(--bo-error)',
                   color: 'white',
                 }}
               >
@@ -901,7 +901,7 @@ export default function NovaAvaliacaoPage() {
               {['Matrícula do imóvel (RI Digital / ONR)', 'IPTU vigente', 'Plantas / Croquis', 'Memorial descritivo', 'Fotos do imóvel (mín. 8 fotos)', 'Habite-se (edificações)'].map(d => (
                 <div key={d} className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded flex items-center justify-center" style={{ background: 'rgba(107,184,123,0.15)', border: '1px solid rgba(107,184,123,0.30)' }}>
-                    <Check size={10} style={{ color: '#6BB87B' }} />
+                    <Check size={10} style={{ color: 'var(--bo-success)' }} />
                   </div>
                   <span className="text-xs" style={{ color: T.textMuted }}>{d}</span>
                 </div>
@@ -949,9 +949,9 @@ export default function NovaAvaliacaoPage() {
               </a>
               <a href="https://mapa.onr.org.br/" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-2 p-2 rounded-lg transition-colors group" style={{ color: T.text }}>
-                <MapPin size={16} style={{ color: '#6BB87B' }} />
+                <MapPin size={16} style={{ color: 'var(--bo-success)' }} />
                 <div>
-                  <p className="text-sm group-hover:underline" style={{ color: '#6BB87B' }}>ONR — Mapa Registral</p>
+                  <p className="text-sm group-hover:underline" style={{ color: 'var(--bo-success)' }}>ONR — Mapa Registral</p>
                   <p className="text-xs" style={{ color: T.textMuted }}>mapa.onr.org.br</p>
                 </div>
               </a>
@@ -998,7 +998,7 @@ export default function NovaAvaliacaoPage() {
         ) : (
           <button type="button" onClick={handleSubmit} disabled={isSubmitting}
             className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 hover:opacity-80"
-            style={{ background: '#6BB87B' }}>
+            style={{ background: 'var(--bo-success)' }}>
             {isSubmitting ? <><Loader2 size={18} className="animate-spin" /> Criando...</> : <><Save size={18} /> Criar Avaliação</>}
           </button>
         )}

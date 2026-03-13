@@ -530,7 +530,7 @@ export default function OrganizacaoPage() {
                       <button
                         onClick={() => handleRemoveMember(member.id)}
                         className="w-7 h-7 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{ background: 'rgba(239,68,68,0.1)', color: '#EF4444' }}
+                        style={{ background: 'rgba(239,68,68,0.1)', color: 'var(--bo-error)' }}
                       >
                         <Trash2 size={12} />
                       </button>

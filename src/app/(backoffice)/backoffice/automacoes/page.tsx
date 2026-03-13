@@ -61,7 +61,7 @@ const TRIGGER_COLORS: Record<string, string> = {
     follow_up: '#8B5CF6',
     schedule: '#F59E0B',
     team: '#10B981',
-    report: '#EF4444',
+    report: 'var(--bo-error)',
     pipeline: 'var(--bo-accent)',
     manual: '#6B7280',
 }

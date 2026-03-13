@@ -445,7 +445,7 @@ export default function IAHubPage() {
                                     style={{
                                         background: T.elevated,
                                         color: connResult[provider.id] === 'ok' ? '#10B981'
-                                            : connResult[provider.id] === 'fail' ? '#EF4444'
+                                            : connResult[provider.id] === 'fail' ? 'var(--bo-error)'
                                             : T.textMuted,
                                         border: `1px solid ${T.border}`,
                                     }}

@@ -171,7 +171,7 @@ export default function IASettingsPage() {
       {/* System Status Banner */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <div style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.25)', borderRadius: '16px', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ADE80', boxShadow: '0 0 8px rgba(74,222,128,0.6)', flexShrink: 0, animation: 'pulse 2s infinite' }} />
+          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--bo-success)', boxShadow: '0 0 8px rgba(74,222,128,0.6)', flexShrink: 0, animation: 'pulse 2s infinite' }} />
           <div>
             <p style={{ fontSize: '11px', fontWeight: 800, color: '#3B82F6', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
               System Core: Active
@@ -181,8 +181,8 @@ export default function IASettingsPage() {
             </p>
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)' }}>
-            <Zap size={13} color="#4ADE80" />
-            <span style={{ fontSize: '11px', fontWeight: 700, color: '#4ADE80' }}>Online</span>
+            <Zap size={13} color="var(--bo-success)" />
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-success)' }}>Online</span>
           </div>
         </div>
       </motion.div>
@@ -204,8 +204,8 @@ export default function IASettingsPage() {
 
           <ScoreSlider label="Tempo no Site" value={weights.timeOnSite} onChange={v => setWeights(w => ({ ...w, timeOnSite: v }))} icon={Zap} color="#3B82F6" />
           <ScoreSlider label="Imóveis Visualizados" value={weights.propertiesViewed} onChange={v => setWeights(w => ({ ...w, propertiesViewed: v }))} icon={Briefcase} color="#A78BFA" />
-          <ScoreSlider label="Formulário Completo" value={weights.formCompletion} onChange={v => setWeights(w => ({ ...w, formCompletion: v }))} icon={Check} color="#4ADE80" />
-          <ScoreSlider label="Engajamento WhatsApp" value={weights.whatsappEngagement} onChange={v => setWeights(w => ({ ...w, whatsappEngagement: v }))} icon={MessageSquare} color="#FBBF24" />
+          <ScoreSlider label="Formulário Completo" value={weights.formCompletion} onChange={v => setWeights(w => ({ ...w, formCompletion: v }))} icon={Check} color="var(--bo-success)" />
+          <ScoreSlider label="Engajamento WhatsApp" value={weights.whatsappEngagement} onChange={v => setWeights(w => ({ ...w, whatsappEngagement: v }))} icon={MessageSquare} color="var(--bo-warning)" />
           <ScoreSlider label="Match de Budget" value={weights.budgetMatch} onChange={v => setWeights(w => ({ ...w, budgetMatch: v }))} icon={AlertTriangle} color="#F472B6" />
 
           <div style={{ padding: '12px 14px', borderRadius: '12px', background: T.surface ?? T.elevated, display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', border: `1px solid ${T.border}` }}>
@@ -284,7 +284,7 @@ export default function IASettingsPage() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '9px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <AlertTriangle size={15} color="#FBBF24" />
+                  <AlertTriangle size={15} color="var(--bo-warning)" />
                 </div>
                 <div>
                   <p style={{ fontSize: '13px', fontWeight: 700, color: T.text }}>Min. Score Threshold</p>
@@ -312,7 +312,7 @@ export default function IASettingsPage() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', borderRadius: '12px', background: T.surface ?? T.elevated, border: `1px solid ${T.border}` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '9px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <MessageSquare size={15} color="#4ADE80" />
+                  <MessageSquare size={15} color="var(--bo-success)" />
                 </div>
                 <div>
                   <p style={{ fontSize: '13px', fontWeight: 700, color: T.text }}>Auto-Reply WhatsApp</p>

@@ -103,8 +103,8 @@ const PROPERTY_TYPES = [
 /* ── Condition options ── */
 const CONDITION_OPTIONS = [
     { value: 'lancamento', label: '🚀 Lançamento', color: '#A78BFA' },
-    { value: 'em_construcao', label: '🏗️ Em Construção', color: '#FBBF24' },
-    { value: 'pronto', label: '✅ Pronto p/ Morar', color: '#4ADE80' },
+    { value: 'em_construcao', label: '🏗️ Em Construção', color: 'var(--bo-warning)' },
+    { value: 'pronto', label: '✅ Pronto p/ Morar', color: 'var(--bo-success)' },
     { value: 'seminovo', label: '⭐ Seminovo', color: '#F59E0B' },
     { value: 'usado', label: '🏠 Usado/Revenda', color: '#94A3B8' },
 ]

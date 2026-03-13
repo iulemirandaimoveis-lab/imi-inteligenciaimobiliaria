@@ -145,7 +145,7 @@ export default function ContratoDetalhePage() {
                         )}
                         <button onClick={() => setShowDeleteConfirm(true)}
                             className="h-10 px-3 rounded-xl text-sm font-medium hover:bg-red-500/20"
-                            style={{ border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}>
+                            style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--bo-error)' }}>
                             <Trash2 size={16} />
                         </button>
                     </div>

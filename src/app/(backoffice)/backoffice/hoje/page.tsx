@@ -53,7 +53,7 @@ const AGENT_ACTIVITY = [
   { name: 'Qualificador', tasksToday: 47, color: '#3B82F6', raw: '59,130,246', status: 'active' },
   { name: 'Conteúdo',     tasksToday: 23, color: '#8B5CF6', raw: '139,92,246', status: 'active' },
   { name: 'Matchmaker',   tasksToday: 31, color: '#F59E0B', raw: '245,158,11', status: 'active' },
-  { name: 'Follow-up',    tasksToday: 12, color: '#EF4444', raw: '239,68,68',  status: 'idle'   },
+  { name: 'Follow-up',    tasksToday: 12, color: 'var(--bo-error)', raw: '239,68,68',  status: 'idle'   },
 ]
 
 // ── Loading Skeleton ─────────────────────────────────────────────────
@@ -231,7 +231,7 @@ export default function HojePage() {
                     position: 'absolute', top: -5, right: -5,
                     fontSize: '7px', fontWeight: 800, padding: '1px 4px',
                     borderRadius: 4, background: 'rgba(74,222,128,0.20)',
-                    color: '#4ADE80', border: '1px solid rgba(74,222,128,0.35)',
+                    color: 'var(--bo-success)', border: '1px solid rgba(74,222,128,0.35)',
                     letterSpacing: '0.03em',
                   }}>NEW</span>
                 )}
@@ -359,7 +359,7 @@ export default function HojePage() {
               <span style={{
                 fontSize: '9px', fontWeight: 700, padding: '2px 7px', borderRadius: 5,
                 background: agent.status === 'active' ? 'rgba(74,222,128,0.12)' : 'rgba(251,191,36,0.10)',
-                color: agent.status === 'active' ? '#4ADE80' : '#FBBF24',
+                color: agent.status === 'active' ? 'var(--bo-success)' : 'var(--bo-warning)',
                 border: `1px solid ${agent.status === 'active' ? 'rgba(74,222,128,0.25)' : 'rgba(251,191,36,0.20)'}`,
               }}>
                 {agent.status === 'active' ? '● Ativo' : '○ Espera'}

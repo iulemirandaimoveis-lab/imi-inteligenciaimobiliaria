@@ -161,7 +161,7 @@ export default function AvaliacaoDetalhesPage() {
         ? { label: 'Alta Confiança', color: '#10B981', bg: 'rgba(16,185,129,0.12)' }
         : rangeSpread < 20
         ? { label: 'Média Confiança', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' }
-        : { label: 'Confiança Baixa', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' }
+        : { label: 'Confiança Baixa', color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' }
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
@@ -192,7 +192,7 @@ export default function AvaliacaoDetalhesPage() {
                         )}
                         <button onClick={() => setShowDeleteConfirm(true)}
                             className="h-10 px-3 rounded-xl text-sm font-medium hover:bg-red-500/20"
-                            style={{ border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444' }}>
+                            style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--bo-error)' }}>
                             <Trash2 size={16} />
                         </button>
                     </div>
@@ -279,7 +279,7 @@ export default function AvaliacaoDetalhesPage() {
                         <p className="text-lg font-bold leading-tight" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
                         {data.honorarios_status && (
                             <p className="text-[10px] font-bold mt-1.5" style={{
-                                color: data.honorarios_status === 'pago' ? '#6BB87B' : data.honorarios_status === 'parcial' ? 'var(--bo-accent)' : '#E8A87C'
+                                color: data.honorarios_status === 'pago' ? 'var(--bo-success)' : data.honorarios_status === 'parcial' ? 'var(--bo-accent)' : '#E8A87C'
                             }}>
                                 ● {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
                             </p>
@@ -632,7 +632,7 @@ export default function AvaliacaoDetalhesPage() {
                                             <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Grau Invest.</p>
                                                 <p className="text-lg font-bold" style={{
-                                                    color: aiAnalysis.investmentGrade === 'A' ? '#10B981' : aiAnalysis.investmentGrade === 'B' ? '#3B82F6' : aiAnalysis.investmentGrade === 'C' ? '#F59E0B' : '#EF4444'
+                                                    color: aiAnalysis.investmentGrade === 'A' ? '#10B981' : aiAnalysis.investmentGrade === 'B' ? '#3B82F6' : aiAnalysis.investmentGrade === 'C' ? '#F59E0B' : 'var(--bo-error)'
                                                 }}>{aiAnalysis.investmentGrade}</p>
                                             </div>
                                         )}
@@ -640,7 +640,7 @@ export default function AvaliacaoDetalhesPage() {
                                             <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Tendência</p>
                                                 <p className="text-sm font-bold" style={{
-                                                    color: aiAnalysis.marketTrend === 'alta' ? '#10B981' : aiAnalysis.marketTrend === 'queda' ? '#EF4444' : '#F59E0B'
+                                                    color: aiAnalysis.marketTrend === 'alta' ? '#10B981' : aiAnalysis.marketTrend === 'queda' ? 'var(--bo-error)' : '#F59E0B'
                                                 }}>{aiAnalysis.marketTrend}</p>
                                             </div>
                                         )}

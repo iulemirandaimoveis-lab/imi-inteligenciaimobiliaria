@@ -373,13 +373,13 @@ function ImovelCard({ imovel, index, onAction }: { imovel: Imovel; index: number
                                         transition={{ type: 'spring', delay: index * 0.05 + 0.4, stiffness: 300 }}
                                         className="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-[3px] rounded-full"
                                         style={{
-                                            color: '#F87171',
+                                            color: 'var(--bo-error)',
                                             background: 'rgba(0,0,0,0.58)',
                                             border: '1px solid rgba(248,113,113,0.3)',
                                             backdropFilter: 'blur(8px)',
                                         }}
                                     >
-                                        <Flame size={8} fill="#F87171" /> {imovel.hotLeads}
+                                        <Flame size={8} fill="var(--bo-error)" /> {imovel.hotLeads}
                                     </motion.span>
                                 )}
                                 <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.42)' }}>
@@ -1266,8 +1266,8 @@ export default function ImoveisPage() {
                                             {/* Leads */}
                                             <div className="flex items-center gap-1">
                                                 {im.hotLeads > 0 && (
-                                                    <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-[2px] rounded-md" style={{ color: '#F87171', background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.2)' }}>
-                                                        <Flame size={8} fill="#F87171" /> {im.hotLeads}
+                                                    <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-[2px] rounded-md" style={{ color: 'var(--bo-error)', background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.2)' }}>
+                                                        <Flame size={8} fill="var(--bo-error)" /> {im.hotLeads}
                                                     </span>
                                                 )}
                                                 {im.totalLeads > im.hotLeads && (

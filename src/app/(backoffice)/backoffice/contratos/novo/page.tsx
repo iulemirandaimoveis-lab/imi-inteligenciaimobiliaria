@@ -30,7 +30,7 @@ const PLATAFORMAS = [
     { id: 'sem_assinatura', label: 'Sem assinatura digital', sub: 'Gera e baixa — assine fisicamente ou via outro meio', icon: FileText, cor: '#4E5669', gratuito: true, env: '' },
     { id: 'clicksign', label: 'ClickSign', sub: 'Juridicamente válido BR · WhatsApp integrado · ~R$99/mês', icon: FileSignature, cor: 'var(--bo-accent)', gratuito: false, env: 'CLICKSIGN_ACCESS_TOKEN' },
     { id: 'docusign', label: 'DocuSign', sub: 'Aceito globalmente · maior plataforma de assinatura do mundo', icon: Shield, cor: '#7B9EC4', gratuito: false, env: 'DOCUSIGN_ACCESS_TOKEN' },
-    { id: 'govbr', label: 'Gov.br Assinatura', sub: 'Gratuito · válido no Brasil · exige CPF autenticado via Gov.br', icon: Lock, cor: '#6BB87B', gratuito: true, env: 'GOVBR_CLIENT_ID' },
+    { id: 'govbr', label: 'Gov.br Assinatura', sub: 'Gratuito · válido no Brasil · exige CPF autenticado via Gov.br', icon: Lock, cor: 'var(--bo-success)', gratuito: true, env: 'GOVBR_CLIENT_ID' },
 ]
 const SEC_LABELS: Record<string, string> = {
     objeto: '📦 Objeto', valores: '💰 Valores', prazos: '📅 Prazos',
@@ -205,12 +205,12 @@ function NovoContratoInner() {
                         <div key={s.id} className="flex items-center flex-shrink-0">
                             <div className="flex flex-col items-center">
                                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
-                                    style={{ background: i < step ? '#6BB87B' : i === step ? 'var(--bo-accent)' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
+                                    style={{ background: i < step ? 'var(--bo-success)' : i === step ? 'var(--bo-accent)' : T.surface, color: i <= step ? 'white' : T.textDim, border: i > step ? `1px solid ${T.border}` : 'none' }}>
                                     {i < step ? '✓' : i + 1}
                                 </div>
                                 <span className="text-[10px] mt-1 hidden sm:block" style={{ color: i === step ? T.accent : T.textDim }}>{s.label}</span>
                             </div>
-                            {i < STEPS.length - 1 && <div className="w-6 sm:w-8 h-px mx-1" style={{ background: i < step ? '#6BB87B' : T.border }} />}
+                            {i < STEPS.length - 1 && <div className="w-6 sm:w-8 h-px mx-1" style={{ background: i < step ? 'var(--bo-success)' : T.border }} />}
                         </div>
                     ))}
                 </div>
@@ -309,7 +309,7 @@ function NovoContratoInner() {
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2">
                                                     <p className="text-sm font-semibold" style={{ color: sel ? p.cor : T.text }}>{p.label}</p>
-                                                    {p.gratuito && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(107,184,123,0.15)', color: '#6BB87B' }}>GRATUITO</span>}
+                                                    {p.gratuito && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(107,184,123,0.15)', color: 'var(--bo-success)' }}>GRATUITO</span>}
                                                 </div>
                                                 <p className="text-[10px] mt-0.5" style={{ color: T.textDim }}>{p.sub}</p>
                                                 {p.env && <p className="text-[9px] mt-0.5 font-mono" style={{ color: T.textDim }}>{p.env}</p>}
@@ -346,7 +346,7 @@ function NovoContratoInner() {
                                         {campos.map((c: any) => (
                                             <div key={c.key} className={c.width === 'full' ? 'sm:col-span-2' : ''}>
                                                 <label className="text-[11px] font-semibold mb-1.5 block" style={{ color: T.textDim }}>
-                                                    {c.label}{c.required && <span style={{ color: '#E57373' }}> *</span>}
+                                                    {c.label}{c.required && <span style={{ color: 'var(--bo-error)' }}> *</span>}
                                                 </label>
                                                 <Campo campo={c} value={dados[c.key]} onChange={(v: any) => setDados((p: any) => ({ ...p, [c.key]: v }))} />
                                             </div>
@@ -379,11 +379,11 @@ function NovoContratoInner() {
                             </div>
                         </div>
                         {erro && <div className="flex items-start gap-3 p-4 rounded-2xl" style={{ background: 'rgba(229,115,115,0.08)', border: '1px solid rgba(229,115,115,0.20)' }}>
-                            <AlertCircle size={16} className="flex-shrink-0 mt-0.5" style={{ color: '#E57373' }} />
+                            <AlertCircle size={16} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--bo-error)' }} />
                             <div className="flex-1 min-w-0">
-                                <p className="text-xs font-semibold mb-1" style={{ color: '#E57373' }}>Erro ao gerar contrato</p>
-                                <p className="text-xs" style={{ color: '#E57373' }}>{erro}</p>
-                                <button onClick={() => setErro(null)} className="text-[11px] font-semibold mt-2 underline" style={{ color: '#E57373' }}>Tentar novamente</button>
+                                <p className="text-xs font-semibold mb-1" style={{ color: 'var(--bo-error)' }}>Erro ao gerar contrato</p>
+                                <p className="text-xs" style={{ color: 'var(--bo-error)' }}>{erro}</p>
+                                <button onClick={() => setErro(null)} className="text-[11px] font-semibold mt-2 underline" style={{ color: 'var(--bo-error)' }}>Tentar novamente</button>
                             </div>
                         </div>}
                         <div className="space-y-2">
@@ -405,8 +405,8 @@ function NovoContratoInner() {
                 {gerado && resultado && (
                     <motion.div key="result" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="space-y-4">
                         <div className="flex items-center gap-3 p-4 rounded-2xl" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.22)' }}>
-                            <CheckCircle size={20} style={{ color: '#6BB87B' }} />
-                            <div><p className="text-sm font-bold" style={{ color: '#6BB87B' }}>Contrato gerado com sucesso!</p><p className="text-xs mt-0.5" style={{ color: T.textDim }}>{resultado.numero} · salvo automaticamente</p></div>
+                            <CheckCircle size={20} style={{ color: 'var(--bo-success)' }} />
+                            <div><p className="text-sm font-bold" style={{ color: 'var(--bo-success)' }}>Contrato gerado com sucesso!</p><p className="text-xs mt-0.5" style={{ color: T.textDim }}>{resultado.numero} · salvo automaticamente</p></div>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             {[
@@ -434,7 +434,7 @@ function NovoContratoInner() {
                                 ))}
                             </div>
                             {envioOk
-                                ? <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: '#6BB87B' }} /><p className="text-xs font-semibold" style={{ color: '#6BB87B' }}>Enviado com sucesso!</p></div>
+                                ? <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: 'var(--bo-success)' }} /><p className="text-xs font-semibold" style={{ color: 'var(--bo-success)' }}>Enviado com sucesso!</p></div>
                                 : <button onClick={enviar} disabled={enviando} className="w-full rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2" style={{ height: '44px', background: 'var(--bo-accent)', boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}>
                                     {enviando ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                                     {enviando ? 'Enviando...' : `Enviar via ${canal}`}

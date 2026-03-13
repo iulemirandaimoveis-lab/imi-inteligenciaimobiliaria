@@ -372,7 +372,7 @@ export default function ImovelDetalhesPage() {
         className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"
       >
         {[
-          { icon: Ruler, label: 'Área Privativa', value: data.private_area ? `${data.private_area}m²` : 'N/A', color: '#6BB87B' },
+          { icon: Ruler, label: 'Área Privativa', value: data.private_area ? `${data.private_area}m²` : 'N/A', color: 'var(--bo-success)' },
           { icon: Bed, label: 'Quartos', value: data.bedrooms ?? 'N/A', color: '#7B9EC4' },
           { icon: Bath, label: 'Banheiros', value: data.bathrooms ?? 'N/A', color: '#A89EC4' },
           { icon: Car, label: 'Vagas', value: data.parking_spaces ?? 'N/A', color: '#E8A87C' },
@@ -566,7 +566,7 @@ export default function ImovelDetalhesPage() {
                         className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{ background: 'rgba(239,68,68,0.12)' }}
                       >
-                        <Play size={13} style={{ color: '#EF4444' }} />
+                        <Play size={13} style={{ color: 'var(--bo-error)' }} />
                       </div>
                       <p className="text-sm font-semibold" style={{ color: T.text }}>Vídeo do Empreendimento</p>
                       <a
@@ -602,7 +602,7 @@ export default function ImovelDetalhesPage() {
                     <div className="flex items-center gap-2">
                       <span
                         className="text-[10px] font-bold px-2 py-[2px] rounded-full"
-                        style={{ background: 'rgba(248,113,113,0.12)', color: '#F87171', border: '1px solid rgba(248,113,113,0.2)' }}
+                        style={{ background: 'rgba(248,113,113,0.12)', color: 'var(--bo-error)', border: '1px solid rgba(248,113,113,0.2)' }}
                       >
                         {propertyLeads.length}
                       </span>
@@ -625,7 +625,7 @@ export default function ImovelDetalhesPage() {
                       {propertyLeads.map((lead) => {
                         const isHot = lead.status === 'hot' || lead.status === 'negotiating'
                         const isCold = lead.status === 'cold' || lead.status === 'lost'
-                        const dotColor = isHot ? '#F87171' : isCold ? '#9ca3af' : '#fbbf24'
+                        const dotColor = isHot ? 'var(--bo-error)' : isCold ? '#9ca3af' : 'var(--bo-warning)'
                         return (
                           <div
                             key={lead.id}
@@ -634,7 +634,7 @@ export default function ImovelDetalhesPage() {
                           >
                             <div
                               className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
-                              style={{ background: isHot ? 'rgba(248,113,113,0.15)' : 'rgba(96,165,250,0.12)', color: isHot ? '#F87171' : '#60A5FA' }}
+                              style={{ background: isHot ? 'rgba(248,113,113,0.15)' : 'rgba(96,165,250,0.12)', color: isHot ? 'var(--bo-error)' : '#60A5FA' }}
                             >
                               {(lead.name || 'L').charAt(0).toUpperCase()}
                             </div>
@@ -676,7 +676,7 @@ export default function ImovelDetalhesPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   { label: 'Analytics', icon: BarChart2, color: '#A89EC4', href: `/backoffice/imoveis/${params.id}/analytics`, desc: 'Cliques, leads, conversões' },
-                  { label: 'Unidades', icon: Layers, color: '#6BB87B', href: `/backoffice/imoveis/${params.id}/unidades`, desc: 'Inventário de unidades' },
+                  { label: 'Unidades', icon: Layers, color: 'var(--bo-success)', href: `/backoffice/imoveis/${params.id}/unidades`, desc: 'Inventário de unidades' },
                   { label: 'Timeline', icon: TrendingUp, color: '#E8A87C', href: `/backoffice/imoveis/${params.id}/timeline`, desc: 'Histórico do ativo' },
                 ].map(link => (
                   <button
@@ -749,7 +749,7 @@ export default function ImovelDetalhesPage() {
                   {data.available_units != null && (
                     <div className="flex justify-between">
                       <span className="text-xs" style={{ color: T.textDim }}>Disponíveis</span>
-                      <span className="text-sm font-bold" style={{ color: '#6BB87B' }}>{data.available_units}</span>
+                      <span className="text-sm font-bold" style={{ color: 'var(--bo-success)' }}>{data.available_units}</span>
                     </div>
                   )}
                 </div>
@@ -846,7 +846,7 @@ export default function ImovelDetalhesPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(251,191,36,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Clock size={13} style={{ color: '#FBBF24' }} />
+                        <Clock size={13} style={{ color: 'var(--bo-warning)' }} />
                       </div>
                       <span className="text-xs" style={{ color: T.textDim }}>Dias no mercado</span>
                     </div>
@@ -862,7 +862,7 @@ export default function ImovelDetalhesPage() {
                     const score = data.price_min
                       ? (data.price_min < 800000 ? 87 : data.price_min < 2000000 ? 72 : 61)
                       : 68
-                    const scoreColor = score >= 80 ? '#4ADE80' : score >= 65 ? '#FBBF24' : '#F87171'
+                    const scoreColor = score >= 80 ? 'var(--bo-success)' : score >= 65 ? 'var(--bo-warning)' : 'var(--bo-error)'
                     return (
                       <div>
                         <div className="flex items-center justify-between mb-2">
@@ -920,7 +920,7 @@ export default function ImovelDetalhesPage() {
                       style={{
                         padding: '9px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700,
                         background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.22)',
-                        color: '#4ADE80', cursor: 'pointer', display: 'flex', alignItems: 'center',
+                        color: 'var(--bo-success)', cursor: 'pointer', display: 'flex', alignItems: 'center',
                         justifyContent: 'center', gap: 5,
                       }}
                     >
@@ -1440,7 +1440,7 @@ export default function ImovelDetalhesPage() {
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2">
                     <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Send size={15} style={{ color: '#4ADE80' }} />
+                      <Send size={15} style={{ color: 'var(--bo-success)' }} />
                     </div>
                     <div>
                       <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--bo-text)' }}>Enviar para Lead</p>
@@ -1483,7 +1483,7 @@ export default function ImovelDetalhesPage() {
                           width: 36, height: 36, borderRadius: 10, flexShrink: 0,
                           background: lead.status === 'hot' ? 'rgba(248,113,113,0.15)' : 'rgba(96,165,250,0.12)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: 13, fontWeight: 800, color: lead.status === 'hot' ? '#F87171' : '#60A5FA',
+                          fontSize: 13, fontWeight: 800, color: lead.status === 'hot' ? 'var(--bo-error)' : '#60A5FA',
                         }}>
                           {(lead.name || 'L').charAt(0).toUpperCase()}
                         </div>
@@ -1494,7 +1494,7 @@ export default function ImovelDetalhesPage() {
                         <div style={{
                           fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 4,
                           background: lead.status === 'hot' ? 'rgba(248,113,113,0.15)' : 'rgba(251,191,36,0.12)',
-                          color: lead.status === 'hot' ? '#F87171' : '#FBBF24',
+                          color: lead.status === 'hot' ? 'var(--bo-error)' : 'var(--bo-warning)',
                         }}>
                           {lead.status === 'hot' ? '🔥' : '●'} {lead.status || 'warm'}
                         </div>

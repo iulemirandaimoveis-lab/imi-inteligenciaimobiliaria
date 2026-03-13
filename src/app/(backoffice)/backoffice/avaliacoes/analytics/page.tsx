@@ -217,7 +217,7 @@ export default function AvaliacoesAnalyticsPage() {
                 {[
                     { label: 'Concluídas', value: data.completed, color: '#10B981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.2)' },
                     { label: 'Em Andamento', value: data.pending, color: '#3B82F6', bg: 'rgba(59,130,246,0.08)', border: 'rgba(59,130,246,0.2)' },
-                    { label: 'Canceladas', value: data.cancelled, color: '#EF4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)' },
+                    { label: 'Canceladas', value: data.cancelled, color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)' },
                 ].map(({ label, value, color, bg, border }) => (
                     <div key={label} className="rounded-xl p-4 text-center" style={{ background: bg, border: `1px solid ${border}` }}>
                         <p className="text-2xl font-bold" style={{ color }}>{value}</p>

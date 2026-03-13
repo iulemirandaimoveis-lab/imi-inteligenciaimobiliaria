@@ -61,7 +61,7 @@ type RenderStatus = 'idle' | 'rendering' | 'done' | 'error'
 function RenderStatusBadge({ status }: { status: RenderStatus }) {
     const cfg = {
         idle:      { label: 'Pronto',        color: T.textDim, icon: null },
-        rendering: { label: 'Renderizando…', color: '#fbbf24', icon: Loader2 },
+        rendering: { label: 'Renderizando…', color: 'var(--bo-warning)', icon: Loader2 },
         done:      { label: 'Concluído!',    color: T.success, icon: CheckCircle2 },
         error:     { label: 'Erro',          color: T.error, icon: RefreshCw },
     }

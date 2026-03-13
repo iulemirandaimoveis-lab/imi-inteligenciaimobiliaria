@@ -138,7 +138,7 @@ function ConfigModal({
                 {/* Campos */}
                 <div className="p-6 space-y-4 max-h-96 overflow-y-auto">
                     {integracao.id === 'supabase_storage' ? (
-                        <div className="rounded-xl p-4 text-sm" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: '#6BB87B' }}>
+                        <div className="rounded-xl p-4 text-sm" style={{ background: 'rgba(107,184,123,0.08)', border: '1px solid rgba(107,184,123,0.20)', color: 'var(--bo-success)' }}>
                             ✓ Supabase Storage é o armazenamento interno do projeto. Já está configurado automaticamente via variáveis de ambiente NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY.
                         </div>
                     ) : integracao.campos_config.length === 0 ? (
@@ -206,7 +206,7 @@ function ConfigModal({
                             style={{
                                 background: testResult.ok ? 'rgba(107,184,123,0.10)' : 'rgba(229,115,115,0.10)',
                                 border: `1px solid ${testResult.ok ? 'rgba(107,184,123,0.25)' : 'rgba(229,115,115,0.25)'}`,
-                                color: testResult.ok ? '#6BB87B' : '#E57373',
+                                color: testResult.ok ? 'var(--bo-success)' : 'var(--bo-error)',
                             }}>
                             {testResult.ok ? '✓' : '⚠'} {testResult.msg}
                         </div>
@@ -392,7 +392,7 @@ export default function IntegracoesPage() {
                                     <div className="flex items-center gap-1.5">
                                         {integ.gratuito && (
                                             <span className="text-[9px] font-bold px-2 py-0.5 rounded-full"
-                                                style={{ background: 'rgba(107,184,123,0.12)', color: '#6BB87B' }}>
+                                                style={{ background: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' }}>
                                                 Grátis
                                             </span>
                                         )}
@@ -411,7 +411,7 @@ export default function IntegracoesPage() {
                                     style={{
                                         background: connected ? 'rgba(107,184,123,0.12)' : 'var(--bo-active-bg)',
                                         border: `1px solid ${connected ? 'rgba(107,184,123,0.25)' : T.borderGold}`,
-                                        color: connected ? '#6BB87B' : T.accent,
+                                        color: connected ? 'var(--bo-success)' : T.accent,
                                     }}
                                 >
                                     {connected ? '⚙ Gerenciar' : '+ Configurar'}
@@ -453,7 +453,7 @@ export default function IntegracoesPage() {
                             'GDRIVE_FOLDER_ID=',
                             'GDRIVE_SERVICE_ACCOUNT_JSON=',
                         ].map((line, i) => (
-                            <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? 'var(--bo-accent)' : '#6BB87B' }}>
+                            <div key={i} style={{ color: line.startsWith('#') ? T.textDim : line.includes('=') ? 'var(--bo-accent)' : 'var(--bo-success)' }}>
                                 {line || '\u00A0'}
                             </div>
                         ))}

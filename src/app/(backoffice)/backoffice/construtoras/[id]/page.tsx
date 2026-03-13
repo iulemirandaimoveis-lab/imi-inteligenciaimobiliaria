@@ -199,7 +199,7 @@ export default function ConstrutoraDetalhesPage() {
             <button
               onClick={() => setShowDeleteConfirm(true)}
               className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors"
-              style={{ border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', background: 'rgba(239,68,68,0.06)' }}
+              style={{ border: '1px solid rgba(239,68,68,0.3)', color: 'var(--bo-error)', background: 'rgba(239,68,68,0.06)' }}
             >
               <Trash2 size={16} />
             </button>

@@ -13,8 +13,8 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeade
 type Period = 'monthly' | 'quarterly' | 'yearly'
 
 const MONTHS_SHORT = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-const CHANNEL_COLORS = ['#3B82F6', '#8B5CF6', '#4ADE80', '#FBBF24', '#F87171']
-const AGENT_COLORS   = ['#3B82F6', '#A78BFA', '#4ADE80', '#FBBF24']
+const CHANNEL_COLORS = ['#3B82F6', '#8B5CF6', 'var(--bo-success)', 'var(--bo-warning)', 'var(--bo-error)']
+const AGENT_COLORS   = ['#3B82F6', '#A78BFA', 'var(--bo-success)', 'var(--bo-warning)']
 
 type VelocityData = Record<Period, number[]>
 type ChannelItem  = { label: string; pct: number; color: string }
@@ -165,8 +165,8 @@ export default function RelatoriosExecutivoPage() {
   const currentChannels = channelData.length > 0 ? channelData : [
     { label: 'Meta Ads', pct: 42, color: '#3B82F6' },
     { label: 'Google Search', pct: 31, color: '#8B5CF6' },
-    { label: 'Direct Link', pct: 18, color: '#4ADE80' },
-    { label: 'Referral', pct: 9, color: '#FBBF24' },
+    { label: 'Direct Link', pct: 18, color: 'var(--bo-success)' },
+    { label: 'Referral', pct: 9, color: 'var(--bo-warning)' },
   ]
   const currentAgents = topAgents.length > 0 ? topAgents : []
 
@@ -268,7 +268,7 @@ export default function RelatoriosExecutivoPage() {
           <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Users size={15} color="#4ADE80" />
+                <Users size={15} color="var(--bo-success)" />
               </div>
               <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Total Leads
@@ -279,7 +279,7 @@ export default function RelatoriosExecutivoPage() {
             </p>
             <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>Base total da plataforma</p>
             <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
-              <Users size={52} color="#4ADE80" />
+              <Users size={52} color="var(--bo-success)" />
             </div>
           </div>
 
@@ -287,7 +287,7 @@ export default function RelatoriosExecutivoPage() {
           <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '18px', padding: '20px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TrendingUp size={15} color="#FBBF24" />
+                <TrendingUp size={15} color="var(--bo-warning)" />
               </div>
               <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Receita / Mês
@@ -300,7 +300,7 @@ export default function RelatoriosExecutivoPage() {
             </p>
             <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>{totalProperties} imóveis no portfólio</p>
             <div style={{ position: 'absolute', bottom: '12px', right: '12px', opacity: 0.07 }}>
-              <TrendingUp size={52} color="#FBBF24" />
+              <TrendingUp size={52} color="var(--bo-warning)" />
             </div>
           </div>
         </div>
@@ -475,7 +475,7 @@ export default function RelatoriosExecutivoPage() {
                 <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text)' }}>{agent.name}</span>
               </div>
               <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.leads}</span>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#4ADE80', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.conv}%</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-success)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.conv}%</span>
               <span style={{ fontSize: '13px', fontWeight: 800, color: '#3B82F6', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>R${agent.volume}M</span>
             </motion.div>
           ))}

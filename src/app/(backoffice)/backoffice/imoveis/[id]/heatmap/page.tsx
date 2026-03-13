@@ -15,9 +15,9 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeade
 
 // Section heatmap segments — in real production these would come from page_views/tracking
 const SECTIONS_DEFAULT = [
-    { key: 'gallery',   label: 'Fotos & Galeria',      icon: ImageIcon,    retention: 92, trend: 'up',   color: '#4ADE80', detail: 'Seção com maior engajamento' },
-    { key: 'pricing',   label: 'Preços & Financeiro',   icon: DollarSign,   retention: 68, trend: 'down', color: '#F87171', detail: 'Drop-off crítico — usuários saem ao ver preços' },
-    { key: 'video',     label: 'Vídeo / Tour Virtual',  icon: Video,        retention: 76, trend: 'up',   color: '#FBBF24', detail: 'Boa retenção após galeria' },
+    { key: 'gallery',   label: 'Fotos & Galeria',      icon: ImageIcon,    retention: 92, trend: 'up',   color: 'var(--bo-success)', detail: 'Seção com maior engajamento' },
+    { key: 'pricing',   label: 'Preços & Financeiro',   icon: DollarSign,   retention: 68, trend: 'down', color: 'var(--bo-error)', detail: 'Drop-off crítico — usuários saem ao ver preços' },
+    { key: 'video',     label: 'Vídeo / Tour Virtual',  icon: Video,        retention: 76, trend: 'up',   color: 'var(--bo-warning)', detail: 'Boa retenção após galeria' },
     { key: 'floorplan', label: 'Plantas & Unidades',    icon: Map,          retention: 88, trend: 'up',   color: '#60A5FA', detail: 'Alta retenção — leads qualificados chegam aqui' },
 ]
 
@@ -190,7 +190,7 @@ export default function ImovelHeatmapPage() {
                             </div>
                             <span
                                 className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase"
-                                style={{ background: 'rgba(74,222,128,0.15)', color: '#4ADE80', border: '1px solid rgba(74,222,128,0.3)' }}
+                                style={{ background: 'rgba(74,222,128,0.15)', color: 'var(--bo-success)', border: '1px solid rgba(74,222,128,0.3)' }}
                             >
                                 ATIVO
                             </span>
@@ -202,8 +202,8 @@ export default function ImovelHeatmapPage() {
                 <div className="grid grid-cols-3" style={{ borderTop: `1px solid ${T.border}` }}>
                     {[
                         { label: 'Tempo Médio', value: avgDuration > 0 ? `${Math.floor(avgDuration / 60)}:${String(avgDuration % 60).padStart(2, '0')}m` : '—', icon: Clock, color: '#60A5FA' },
-                        { label: 'Bounce Rate', value: '24.8%', icon: TrendingDown, color: '#F87171', sub: '-4%' },
-                        { label: 'Velocidade', value: 'Alta', icon: TrendingUp, color: '#4ADE80', sub: 'Top 5%' },
+                        { label: 'Bounce Rate', value: '24.8%', icon: TrendingDown, color: 'var(--bo-error)', sub: '-4%' },
+                        { label: 'Velocidade', value: 'Alta', icon: TrendingUp, color: 'var(--bo-success)', sub: 'Top 5%' },
                     ].map((kpi, i) => (
                         <div
                             key={i}
@@ -236,11 +236,11 @@ export default function ImovelHeatmapPage() {
                     </div>
                     <div className="flex items-center gap-3 text-[10px]">
                         <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full" style={{ background: '#4ADE80' }} />
+                            <div className="w-2 h-2 rounded-full" style={{ background: 'var(--bo-success)' }} />
                             <span style={{ color: T.textMuted }}>Retenção</span>
                         </div>
                         <div className="flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full" style={{ background: '#F87171' }} />
+                            <div className="w-2 h-2 rounded-full" style={{ background: 'var(--bo-error)' }} />
                             <span style={{ color: T.textMuted }}>Drop-off</span>
                         </div>
                     </div>
@@ -268,7 +268,7 @@ export default function ImovelHeatmapPage() {
                                         className="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
                                         style={{
                                             background: isDropOff ? 'rgba(248,113,113,0.12)' : 'rgba(74,222,128,0.12)',
-                                            color: isDropOff ? '#F87171' : '#4ADE80',
+                                            color: isDropOff ? 'var(--bo-error)' : 'var(--bo-success)',
                                         }}
                                     >
                                         {section.retention}% {isDropOff ? 'Drop-off' : 'Retenção'}
@@ -292,10 +292,10 @@ export default function ImovelHeatmapPage() {
                 <div className="mt-5 pt-4 flex items-start gap-3" style={{ borderTop: `1px solid ${T.border}` }}>
                     <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{ background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.2)' }}>
-                        <Zap size={14} style={{ color: '#FBBF24' }} />
+                        <Zap size={14} style={{ color: 'var(--bo-warning)' }} />
                     </div>
                     <div>
-                        <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#FBBF24' }}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--bo-warning)' }}>
                             Insight IA
                         </p>
                         <p className="text-xs leading-relaxed" style={{ color: T.textMuted }}>
@@ -322,7 +322,7 @@ export default function ImovelHeatmapPage() {
                     </div>
                     <span
                         className="text-sm font-bold px-3 py-1 rounded-full"
-                        style={{ background: 'rgba(74,222,128,0.12)', color: '#4ADE80' }}
+                        style={{ background: 'rgba(74,222,128,0.12)', color: 'var(--bo-success)' }}
                     >
                         +{totalTrend} vis.
                     </span>

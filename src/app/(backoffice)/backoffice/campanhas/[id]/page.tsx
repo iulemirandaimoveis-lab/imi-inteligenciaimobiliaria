@@ -119,7 +119,7 @@ export default function CampanhaDetalhesPage() {
         { label: 'Leads', value: fmtN(campanha.leads), color: T.accent },
         { label: 'Conversões', value: fmtN(campanha.conversions), color: '#4CAF7D' },
         { label: 'CPL', value: fmtBRL(campanha.cost_per_lead), color: '#E8A87C' },
-        { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: '#6BB87B' },
+        { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: 'var(--bo-success)' },
         { label: 'Orçamento', value: fmtBRL(campanha.budget), color: T.text },
     ]
 
@@ -204,7 +204,7 @@ export default function CampanhaDetalhesPage() {
                                 <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                     <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Performance</p>
                                     <p className="text-sm font-bold" style={{
-                                        color: aiAnalysis.status === 'excelente' ? '#10B981' : aiAnalysis.status === 'bom' ? '#3B82F6' : aiAnalysis.status === 'regular' ? '#F59E0B' : '#EF4444'
+                                        color: aiAnalysis.status === 'excelente' ? '#10B981' : aiAnalysis.status === 'bom' ? '#3B82F6' : aiAnalysis.status === 'regular' ? '#F59E0B' : 'var(--bo-error)'
                                     }}>{aiAnalysis.status}</p>
                                 </div>
                             )}

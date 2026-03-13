@@ -73,10 +73,10 @@ export default function UsuariosPage() {
 
   const getRoleBadge = (role: string) => {
     const r = role?.toUpperCase()
-    if (r === 'ADMIN') return { bg: 'rgba(229,115,115,0.12)', color: '#E57373', border: 'rgba(229,115,115,0.2)' }
+    if (r === 'ADMIN') return { bg: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)', border: 'rgba(229,115,115,0.2)' }
     if (r === 'GESTOR') return { bg: 'rgba(232,168,124,0.12)', color: '#E8A87C', border: 'rgba(232,168,124,0.2)' }
     if (r === 'AVALIADOR') return { bg: 'rgba(167,139,250,0.12)', color: '#A78BFA', border: 'rgba(167,139,250,0.2)' }
-    if (r === 'MARKETING') return { bg: 'rgba(107,184,123,0.12)', color: '#6BB87B', border: 'rgba(107,184,123,0.2)' }
+    if (r === 'MARKETING') return { bg: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)', border: 'rgba(107,184,123,0.2)' }
     return { bg: 'rgba(72,101,129,0.12)', color: '#8CA4B8', border: 'rgba(72,101,129,0.2)' }
   }
 

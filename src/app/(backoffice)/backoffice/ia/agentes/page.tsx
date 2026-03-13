@@ -80,7 +80,7 @@ const AGENTS = [
         name: 'Agente Follow-up',
         description: 'Detecta leads sem resposta há mais de 48h e envia mensagens personalizadas de reengajamento no momento certo.',
         icon: MessageSquare,
-        color: '#EF4444',
+        color: 'var(--bo-error)',
         colorRaw: '239,68,68',
         status: 'idle' as const,
         model: 'Claude Haiku',
@@ -305,7 +305,7 @@ export default function AgentesIAPage() {
                                     <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Sucesso
                                     </div>
-                                    <div style={{ fontSize: 20, fontWeight: 800, color: agent.successRate >= 90 ? '#4ADE80' : agent.successRate >= 70 ? '#FBBF24' : '#F87171' }}>
+                                    <div style={{ fontSize: 20, fontWeight: 800, color: agent.successRate >= 90 ? 'var(--bo-success)' : agent.successRate >= 70 ? 'var(--bo-warning)' : 'var(--bo-error)' }}>
                                         {agent.successRate}%
                                     </div>
                                 </div>

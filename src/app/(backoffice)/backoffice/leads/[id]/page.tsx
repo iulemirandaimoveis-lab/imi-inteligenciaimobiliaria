@@ -526,7 +526,7 @@ export default function LeadDetailPage() {
                   {aiAnalysis.urgency && (
                     <span style={{
                       fontSize: '10px', fontWeight: 700,
-                      color: aiAnalysis.urgency === 'alta' ? '#EF4444' : aiAnalysis.urgency === 'media' ? '#F59E0B' : '#6B7280',
+                      color: aiAnalysis.urgency === 'alta' ? 'var(--bo-error)' : aiAnalysis.urgency === 'media' ? '#F59E0B' : '#6B7280',
                       background: aiAnalysis.urgency === 'alta' ? 'rgba(239,68,68,0.12)' : aiAnalysis.urgency === 'media' ? 'rgba(245,158,11,0.12)' : 'rgba(107,114,128,0.12)',
                       padding: '2px 8px', borderRadius: '6px',
                     }}>

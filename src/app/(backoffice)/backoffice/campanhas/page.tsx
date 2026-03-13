@@ -74,7 +74,7 @@ const CHANNEL_MAP: Record<string, { label: string; icon: React.ElementType; colo
   facebook: { label: 'Facebook', icon: Facebook, color: '#6366F1' },
   instagram: { label: 'Instagram', icon: Instagram, color: '#F472B6' },
   email: { label: 'Email', icon: Mail, color: '#22D3EE' },
-  whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: '#4ADE80' },
+  whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: 'var(--bo-success)' },
   site: { label: 'Site', icon: Globe, color: '#34D399' },
   // Legacy keys for backward compat
   google_ads: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },

@@ -29,8 +29,8 @@ interface TeamMember {
 const ROLE_CFG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
     admin:    { label: 'Administrador', color: '#A89EC4', bg: 'rgba(168,158,196,0.12)', icon: Shield },
     manager:  { label: 'Gerente',       color: '#7B9EC4', bg: 'rgba(123,158,196,0.12)', icon: Award },
-    agent:    { label: 'Corretor',      color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: Users },
-    corretor: { label: 'Corretor',      color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: Users },
+    agent:    { label: 'Corretor',      color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Users },
+    corretor: { label: 'Corretor',      color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Users },
     viewer:   { label: 'Visualizador',  color: '#8B93A7', bg: 'rgba(139,147,167,0.12)', icon: Users },
 }
 
@@ -183,7 +183,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
 
     const KPIS = [
         { label: 'Membros', value: team.length, icon: Users, color: '#7B9EC4' },
-        { label: `Ativos`, value: team.filter(m => m.status === 'active').length, icon: CheckCircle, color: '#6BB87B' },
+        { label: `Ativos`, value: team.filter(m => m.status === 'active').length, icon: CheckCircle, color: 'var(--bo-success)' },
         { label: 'Leads Total', value: totalStats.leads, icon: TrendingUp, color: '#E8A87C' },
     ]
 

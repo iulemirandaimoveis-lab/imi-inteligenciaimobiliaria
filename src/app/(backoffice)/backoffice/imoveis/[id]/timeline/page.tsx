@@ -26,7 +26,7 @@ const supabase = createClient()
 
 const EVENT_CONFIG: Record<string, { color: string; bg: string; icon: any }> = {
     creation:       { color: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: Plus },
-    price_change:   { color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
+    price_change:   { color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
     campaign_start: { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', icon: Activity },
     sold:           { color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', icon: CheckCircle2 },
     visit:          { color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Users },

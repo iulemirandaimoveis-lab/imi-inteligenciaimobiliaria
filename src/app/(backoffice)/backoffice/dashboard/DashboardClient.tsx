@@ -21,9 +21,9 @@ function getInitials(name: string) {
     return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
 }
 const PALETTES = [
-    ['#60A5FA','rgba(96,165,250,0.20)'],['#4ADE80','rgba(74,222,128,0.18)'],
+    ['#60A5FA','rgba(96,165,250,0.20)'],['var(--bo-success)','rgba(74,222,128,0.18)'],
     ['#F472B6','rgba(244,114,182,0.18)'],['#A78BFA','rgba(167,139,250,0.18)'],
-    ['#34D399','rgba(52,211,153,0.18)'],['#FBBF24','rgba(251,191,36,0.16)'],
+    ['#34D399','rgba(52,211,153,0.18)'],['var(--bo-warning)','rgba(251,191,36,0.16)'],
 ]
 function getPalette(name: string) {
     let h = 0
@@ -124,7 +124,7 @@ export default function DashboardClient({
     }
     const alertaColor: Record<string, { border: string; bg: string; text: string; btn: string }> = {
         warning: { border: 'rgba(245,158,11,0.3)',  bg: 'rgba(245,158,11,0.06)',  text: '#F59E0B', btn: 'rgba(245,158,11,0.15)' },
-        danger:  { border: 'rgba(239,68,68,0.3)',   bg: 'rgba(239,68,68,0.06)',   text: '#EF4444', btn: 'rgba(239,68,68,0.15)' },
+        danger:  { border: 'rgba(239,68,68,0.3)',   bg: 'rgba(239,68,68,0.06)',   text: 'var(--bo-error)', btn: 'rgba(239,68,68,0.15)' },
         info:    { border: 'rgba(59,130,246,0.3)',  bg: 'rgba(59,130,246,0.06)',  text: '#3B82F6', btn: 'rgba(59,130,246,0.15)' },
     }
 
@@ -303,7 +303,7 @@ export default function DashboardClient({
                             <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
                                 A Receber
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: '#FBBF24', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--bo-warning)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {fmtCompact(avStats.honorarios_pendentes)}
                             </p>
                             <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.em_andamento} em andamento</p>
@@ -313,7 +313,7 @@ export default function DashboardClient({
                             <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
                                 Conclusão
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: '#4ADE80', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--bo-success)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {completionRate}%
                             </p>
                             <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.total} total</p>

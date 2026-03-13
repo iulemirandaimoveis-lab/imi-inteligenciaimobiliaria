@@ -235,7 +235,7 @@ export default function QRGeneratorPage() {
                 <div className="grid grid-cols-3 gap-3">
                     {[
                         { label: 'Links Ativos', value: activeLinks, icon: <QrCode size={13} />, color: '#60A5FA' },
-                        { label: 'Total Cliques', value: totalClicks, icon: <MousePointer size={13} />, color: '#4ADE80' },
+                        { label: 'Total Cliques', value: totalClicks, icon: <MousePointer size={13} />, color: 'var(--bo-success)' },
                         { label: 'Melhor Canal', value: topSourceLink ? (srcInfo(topSourceLink.utm_source).label || '—') : '—', icon: <TrendingUp size={13} />, color: '#F59E0B' },
                     ].map(s => (
                         <div key={s.label} className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
@@ -604,8 +604,8 @@ export default function QRGeneratorPage() {
                                             <div className="flex items-center gap-1.5 flex-shrink-0">
                                                 <div className="text-center mr-1">
                                                     <div className="flex items-center gap-1">
-                                                        <BarChart2 size={10} style={{ color: (link.clicks || 0) > 0 ? '#4ADE80' : T.textMuted }} />
-                                                        <p className="text-sm font-bold" style={{ color: (link.clicks || 0) > 0 ? '#4ADE80' : T.text }}>{link.clicks ?? 0}</p>
+                                                        <BarChart2 size={10} style={{ color: (link.clicks || 0) > 0 ? 'var(--bo-success)' : T.textMuted }} />
+                                                        <p className="text-sm font-bold" style={{ color: (link.clicks || 0) > 0 ? 'var(--bo-success)' : T.text }}>{link.clicks ?? 0}</p>
                                                     </div>
                                                     <p className="text-[9px]" style={{ color: T.textMuted }}>cliques</p>
                                                 </div>
@@ -661,7 +661,7 @@ export default function QRGeneratorPage() {
                                                     <div className="px-4 pb-4 pt-1" style={{ borderTop: `1px solid ${T.border}` }}>
                                                         <div className="grid grid-cols-3 gap-2 mt-3">
                                                             {[
-                                                                { label: 'Total cliques', value: link.clicks ?? 0, color: '#4ADE80' },
+                                                                { label: 'Total cliques', value: link.clicks ?? 0, color: 'var(--bo-success)' },
                                                                 { label: 'Cliques únicos', value: link.unique_clicks ?? 0, color: '#60A5FA' },
                                                                 { label: 'Criado', value: link.created_at ? new Date(link.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : '—', color: T.textMuted as string },
                                                             ].map(s => (

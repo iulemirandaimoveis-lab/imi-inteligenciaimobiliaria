@@ -88,7 +88,7 @@ const RELATORIOS = [
 
 const CAT_MAP: Record<string, { label: string; text: string; bg: string }> = {
     avaliacoes: { label: 'Avaliações', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
-    financeiro: { label: 'Financeiro', text: '#6BB87B', bg: 'rgba(107,184,123,0.12)' },
+    financeiro: { label: 'Financeiro', text: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)' },
     crm: { label: 'CRM', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
     imoveis: { label: 'Imóveis', text: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)' },
     consultorias: { label: 'Consultorias', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
@@ -323,7 +323,7 @@ export default function RelatoriosPage() {
                                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                                     {f === 'PDF'
                                                         ? <File size={11} style={{ color: '#E8A87C' }} />
-                                                        : <FileSpreadsheet size={11} style={{ color: '#6BB87B' }} />}
+                                                        : <FileSpreadsheet size={11} style={{ color: 'var(--bo-success)' }} />}
                                                     <span className="text-[10px] font-semibold" style={{ color: T.textDim }}>{f}</span>
                                                 </div>
                                             ))}

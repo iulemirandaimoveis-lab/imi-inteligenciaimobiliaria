@@ -21,7 +21,7 @@ import { getStatusConfig } from '../../lib/constants'
 /* ─── ROLE CONFIG ──────────────────────────────────────────────── */
 const ROLE_CFG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
     broker:         { label: 'Corretor',  icon: User,   color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
-    broker_manager: { label: 'Gerente',   icon: Crown,  color: '#FBBF24', bg: 'rgba(251,191,36,0.12)' },
+    broker_manager: { label: 'Gerente',   icon: Crown,  color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.12)' },
     admin:          { label: 'Admin',     icon: Shield, color: '#A78BFA', bg: 'rgba(167,139,250,0.12)' },
 }
 

@@ -145,7 +145,7 @@ export default function NovoLeadPage() {
     }
 
     const getScoreColor = (): React.CSSProperties => {
-        if (score >= 15) return { background: 'rgba(34,197,94,0.12)', border: '1.5px solid rgba(34,197,94,0.35)', color: '#4ADE80' }
+        if (score >= 15) return { background: 'rgba(34,197,94,0.12)', border: '1.5px solid rgba(34,197,94,0.35)', color: 'var(--bo-success)' }
         if (score >= 10) return { background: 'rgba(245,158,11,0.12)', border: '1.5px solid rgba(245,158,11,0.35)', color: '#FCD34D' }
         return { background: 'rgba(72,101,129,0.12)', border: '1.5px solid rgba(72,101,129,0.3)', color: '#7EA8CC' }
     }
@@ -212,7 +212,7 @@ export default function NovoLeadPage() {
                                         style={{ ...inputStyle, border: errors.name ? '1px solid #ef4444' : `1px solid ${T.border}` }}
                                     />
                                 </div>
-                                {errors.name && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: '#E57373' }}><AlertCircle size={12} />{errors.name}</p>}
+                                {errors.name && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error)' }}><AlertCircle size={12} />{errors.name}</p>}
                             </div>
 
                             {/* Email */}
@@ -228,7 +228,7 @@ export default function NovoLeadPage() {
                                         style={{ ...inputStyle, border: errors.email ? '1px solid #ef4444' : `1px solid ${T.border}` }}
                                     />
                                 </div>
-                                {errors.email && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: '#E57373' }}><AlertCircle size={12} />{errors.email}</p>}
+                                {errors.email && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error)' }}><AlertCircle size={12} />{errors.email}</p>}
                             </div>
 
                             {/* Telefone */}
@@ -245,7 +245,7 @@ export default function NovoLeadPage() {
                                         style={{ ...inputStyle, border: errors.phone ? '1px solid #ef4444' : `1px solid ${T.border}` }}
                                     />
                                 </div>
-                                {errors.phone && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: '#E57373' }}><AlertCircle size={12} />{errors.phone}</p>}
+                                {errors.phone && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error)' }}><AlertCircle size={12} />{errors.phone}</p>}
                             </div>
 
                             {/* CPF */}
@@ -284,7 +284,7 @@ export default function NovoLeadPage() {
                                         {origens.map(o => <option key={o} value={o}>{o}</option>)}
                                     </select>
                                 </div>
-                                {errors.origem && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: '#E57373' }}><AlertCircle size={12} />{errors.origem}</p>}
+                                {errors.origem && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error)' }}><AlertCircle size={12} />{errors.origem}</p>}
                             </div>
 
                             {/* Tipo de Imóvel */}
@@ -386,14 +386,14 @@ export default function NovoLeadPage() {
                                 ].map(item => (
                                     <div key={item.label} className="flex items-center justify-between">
                                         <span style={{ color: T.textMuted }}>{item.label}</span>
-                                        <span style={{ color: item.active ? '#4ADE80' : T.textMuted, fontWeight: item.active ? 600 : 400 }}>
+                                        <span style={{ color: item.active ? 'var(--bo-success)' : T.textMuted, fontWeight: item.active ? 600 : 400 }}>
                                             {item.active ? item.pts : '0'}
                                         </span>
                                     </div>
                                 ))}
                                 <div className="flex items-center justify-between">
                                     <span style={{ color: T.textMuted }}>Orçamento</span>
-                                    <span style={{ color: formData.orcamento ? '#4ADE80' : T.textMuted, fontWeight: formData.orcamento ? 600 : 400 }}>
+                                    <span style={{ color: formData.orcamento ? 'var(--bo-success)' : T.textMuted, fontWeight: formData.orcamento ? 600 : 400 }}>
                                         {formData.orcamento ? `+${faixasOrcamento.find(f => f.label === formData.orcamento)?.score || 0}` : '0'}
                                     </span>
                                 </div>

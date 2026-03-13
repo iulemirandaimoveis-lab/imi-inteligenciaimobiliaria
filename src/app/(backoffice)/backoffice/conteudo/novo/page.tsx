@@ -51,11 +51,11 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
 const TIPOS_CONTEUDO = [
   { id: 'blog',      label: 'Artigo Blog',       icon: FileText,  desc: 'SEO-friendly, 800-2000 palavras',     color: '#3B82F6', bg: 'rgba(59,130,246,0.12)'  },
-  { id: 'email',     label: 'E-mail Marketing',  icon: Mail,      desc: 'Newsletter, follow-up, prospecção',   color: '#4ADE80', bg: 'rgba(74,222,128,0.12)'  },
+  { id: 'email',     label: 'E-mail Marketing',  icon: Mail,      desc: 'Newsletter, follow-up, prospecção',   color: 'var(--bo-success)', bg: 'rgba(74,222,128,0.12)'  },
   { id: 'instagram', label: 'Post Instagram',    icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars',  color: '#F472B6', bg: 'rgba(244,114,182,0.12)' },
   { id: 'linkedin',  label: 'Post LinkedIn',     icon: Linkedin,  desc: 'Artigo ou post profissional',         color: '#60A5FA', bg: 'rgba(96,165,250,0.12)'  },
   { id: 'facebook',  label: 'Post Facebook',     icon: Facebook,  desc: 'Post com engajamento',                color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
-  { id: 'landing',   label: 'Landing Page Copy', icon: Globe,     desc: 'Hero, benefícios, CTA',              color: '#FBBF24', bg: 'rgba(251,191,36,0.12)'  },
+  { id: 'landing',   label: 'Landing Page Copy', icon: Globe,     desc: 'Hero, benefícios, CTA',              color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.12)'  },
 ]
 
 // ⚠️ NÃO MODIFICAR - Templates por tipo

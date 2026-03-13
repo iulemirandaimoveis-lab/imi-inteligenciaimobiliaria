@@ -21,7 +21,7 @@ const SOURCE_COLORS: Record<string, { bg: string; text: string; label: string }>
     'meta ads':   { bg: '#E1306C', text: '#fff', label: 'META ADS'    },
     'facebook':   { bg: '#1877F2', text: '#fff', label: 'FACEBOOK'    },
     'instagram':  { bg: '#C13584', text: '#fff', label: 'INSTAGRAM'   },
-    'organic':    { bg: '#4ADE80', text: '#0F0F1E', label: 'ORGÂNICO' },
+    'organic':    { bg: 'var(--bo-success)', text: '#0F0F1E', label: 'ORGÂNICO' },
     'direct':     { bg: '#94A3B8', text: '#0F0F1E', label: 'DIRETO'   },
     'referral':   { bg: '#A78BFA', text: '#fff', label: 'INDICAÇÃO'   },
     'whatsapp':   { bg: '#25D366', text: '#fff', label: 'WHATSAPP'    },

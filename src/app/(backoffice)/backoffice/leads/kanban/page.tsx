@@ -60,7 +60,7 @@ function timeAgo(iso: string | null): string {
 function urgencyBadge(lead: any): { label: string; color: string; bg: string } | null {
     const score = lead.score || 0
     const status = (lead.status || '').toLowerCase()
-    if (score >= 85 || status === 'hot') return { label: 'URGENTE', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' }
+    if (score >= 85 || status === 'hot') return { label: 'URGENTE', color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' }
     if (score >= 60 || status === 'warm') return { label: 'QUENTE', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' }
     return { label: 'NORMAL', color: '#6B7280', bg: 'rgba(107,114,128,0.12)' }
 }

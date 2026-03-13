@@ -75,7 +75,7 @@ export default function ImovelAnalyticsPage() {
         { label: 'Total Cliques', value: kpis.totalClicks.toLocaleString('pt-BR'), icon: MousePointer, color: '#A89EC4' },
         { label: 'Links Ativos', value: kpis.trackedLinksCount, icon: Link2, color: 'var(--bo-accent)' },
         { label: 'Leads Gerados', value: kpis.totalLeads, icon: Users, color: '#E8A87C' },
-        { label: 'Conversões', value: kpis.convertedLeads, icon: Target, color: '#6BB87B' },
+        { label: 'Conversões', value: kpis.convertedLeads, icon: Target, color: 'var(--bo-success)' },
         { label: 'Taxa Conversão', value: `${kpis.taxaConversao}%`, icon: TrendingUp, color: 'var(--bo-accent)' },
         { label: 'Eventos', value: kpis.totalEvents, icon: BarChart3, color: '#A89EC4' },
     ]
@@ -171,7 +171,7 @@ export default function ImovelAnalyticsPage() {
                             <span style={{ color: T.textDim }}>Cliques</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                            <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#6BB87B' }} />
+                            <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--bo-success)' }} />
                             <span style={{ color: T.textDim }}>Leads</span>
                         </div>
                     </div>
@@ -204,14 +204,14 @@ export default function ImovelAnalyticsPage() {
                                         <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(107,184,123,0.15)' }}>
                                             <div
                                                 className="h-full rounded-full transition-all"
-                                                style={{ width: `${leadWidth}%`, background: '#6BB87B' }}
+                                                style={{ width: `${leadWidth}%`, background: 'var(--bo-success)' }}
                                             />
                                         </div>
                                     </div>
                                     <div className="text-right min-w-[56px]">
                                         <div className="text-[11px] font-bold" style={{ color: T.text }}>{day.clicks}</div>
                                         {day.leads > 0 && (
-                                            <div className="text-[10px] font-semibold" style={{ color: '#6BB87B' }}>{day.leads}L</div>
+                                            <div className="text-[10px] font-semibold" style={{ color: 'var(--bo-success)' }}>{day.leads}L</div>
                                         )}
                                     </div>
                                 </div>
@@ -352,7 +352,7 @@ export default function ImovelAnalyticsPage() {
                                             <div className="text-[10px]" style={{ color: T.textDim }}>cliques</div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-xs font-bold" style={{ color: '#6BB87B' }}>{c.leads}</div>
+                                            <div className="text-xs font-bold" style={{ color: 'var(--bo-success)' }}>{c.leads}</div>
                                             <div className="text-[10px]" style={{ color: T.textDim }}>leads</div>
                                         </div>
                                     </div>

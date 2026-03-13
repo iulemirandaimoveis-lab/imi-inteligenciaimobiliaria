@@ -29,8 +29,8 @@ interface CalendarEvent {
 const EVENT_TYPES: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
   vistoria: { label: 'Vistoria',  color: '#3B82F6', bg: 'rgba(59,130,246,0.14)',  icon: Home     },
   reuniao:  { label: 'Reunião',   color: '#A78BFA', bg: 'rgba(167,139,250,0.14)', icon: Users    },
-  visita:   { label: 'Visita',    color: '#4ADE80', bg: 'rgba(74,222,128,0.12)',  icon: MapPin   },
-  entrega:  { label: 'Entrega',   color: '#FBBF24', bg: 'rgba(251,191,36,0.14)',  icon: FileText },
+  visita:   { label: 'Visita',    color: 'var(--bo-success)', bg: 'rgba(74,222,128,0.12)',  icon: MapPin   },
+  entrega:  { label: 'Entrega',   color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.14)',  icon: FileText },
   evento:   { label: 'Evento',    color: '#F472B6', bg: 'rgba(244,114,182,0.14)', icon: Calendar },
   outro:    { label: 'Outro',     color: '#8B949E', bg: 'rgba(139,148,158,0.12)', icon: Calendar },
 }

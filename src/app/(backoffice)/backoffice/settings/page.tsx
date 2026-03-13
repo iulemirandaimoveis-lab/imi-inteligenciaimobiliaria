@@ -197,7 +197,7 @@ export default function SettingsPage() {
 
       {/* Error banner */}
       {saveError && (
-        <div className="rounded-xl p-3 text-sm" style={{ background: 'rgba(229,115,115,0.10)', border: '1px solid rgba(229,115,115,0.25)', color: '#E57373' }}>
+        <div className="rounded-xl p-3 text-sm" style={{ background: 'rgba(229,115,115,0.10)', border: '1px solid rgba(229,115,115,0.25)', color: 'var(--bo-error)' }}>
           ⚠ {saveError}
         </div>
       )}
@@ -284,7 +284,7 @@ export default function SettingsPage() {
                         try { localStorage.removeItem('imi-company-logo') } catch {}
                       }}
                       className="text-xs mt-1"
-                      style={{ color: '#E57373' }}
+                      style={{ color: 'var(--bo-error)' }}
                     >
                       Remover logo
                     </button>
