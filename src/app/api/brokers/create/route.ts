@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export async function POST(request: Request) {
     try {
+        // Auth check — only authenticated users can create brokers
+        const supabase = await createClient()
+        const { data: { user }, error: sessionErr } = await supabase.auth.getUser()
+        if (sessionErr || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
         const body = await request.json()
         const { name, email, phone, creci, password, status, permissions } = body
 

@@ -6,6 +6,7 @@
 //   Engagement       (0–25): pages visited, time on site (from page_views/sessions)
 //   Budget fit       (0–25): budget vs median development price
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 // Source quality weights
@@ -57,6 +58,13 @@ function scoreBudget(budget: number | null, medianPrice: number): number {
 
 export async function POST(request: NextRequest) {
     try {
+        // Auth: allow authenticated users or internal server-to-server calls
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+
         const body = await request.json()
         const { lead_id } = body
 
