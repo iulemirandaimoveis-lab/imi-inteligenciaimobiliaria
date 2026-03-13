@@ -330,7 +330,7 @@ export default function IAHubPage() {
     const configured = Object.values(providerStatus).filter(s => s === 'ok').length
 
     return (
-        <div className="space-y-6">
+        <div data-tour="ia-hub" className="space-y-6">
             {/* Header */}
             <PageIntelHeader
                 moduleLabel="INTELIGÊNCIA"

@@ -168,7 +168,7 @@ export default function MetasPage() {
             ) : (
                 <>
                     {/* Current Month Progress */}
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div data-tour="goals" className="grid md:grid-cols-2 gap-4">
                         {/* Receita */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                             className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>

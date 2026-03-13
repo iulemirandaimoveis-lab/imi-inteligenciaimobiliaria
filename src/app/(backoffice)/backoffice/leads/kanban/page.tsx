@@ -242,6 +242,7 @@ export default function PipelineKanbanPage() {
 
             {/* ── Kanban Board (horizontal scroll) ── */}
             <div
+                data-tour="kanban"
                 ref={scrollRef}
                 style={{
                     display: 'flex', gap: 14, overflowX: 'auto', overflowY: 'hidden',

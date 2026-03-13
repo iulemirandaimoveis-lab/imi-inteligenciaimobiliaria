@@ -94,7 +94,7 @@ export default function ReceberPage() {
             />
 
             {/* KPIs */}
-            <div className="grid grid-cols-3 gap-3">
+            <div data-tour="kpis" className="grid grid-cols-3 gap-3">
                 <KPICard
                     label="A Receber"
                     value={fmt(totalPendente)}

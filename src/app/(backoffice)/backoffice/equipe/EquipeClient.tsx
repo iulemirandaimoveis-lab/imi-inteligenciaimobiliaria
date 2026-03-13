@@ -10,6 +10,7 @@ import {
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import PerformanceDashboard from '@/app/(backoffice)/components/equipe/PerformanceDashboard'
 
 type UserRole = 'admin' | 'manager' | 'agent' | 'viewer' | string
 type UserStatus = 'active' | 'inactive' | 'pending' | string
@@ -63,6 +64,7 @@ function memberFromJson(json: any): TeamMember {
 }
 
 export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[] }) {
+    const [activeView, setActiveView] = useState<'team' | 'performance'>('team')
     const [team, setTeam] = useState<TeamMember[]>(initialTeam)
     const [searchTerm, setSearchTerm] = useState('')
     const [roleFilter, setRoleFilter] = useState<string>('all')
@@ -220,6 +222,33 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                 </motion.button>
             </motion.div>
 
+            {/* View Toggle */}
+            <div className="flex items-center gap-1 p-1 rounded-xl w-fit" style={{ background: T.elevated }}>
+                {[
+                    { key: 'team' as const, label: 'Equipe', icon: Users },
+                    { key: 'performance' as const, label: 'Performance', icon: TrendingUp },
+                ].map(tab => (
+                    <button
+                        key={tab.key}
+                        onClick={() => setActiveView(tab.key)}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold transition-all"
+                        style={{
+                            background: activeView === tab.key ? T.accent : 'transparent',
+                            color: activeView === tab.key ? '#fff' : T.textMuted,
+                        }}
+                    >
+                        <tab.icon size={12} />
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* Performance Dashboard Tab */}
+            {activeView === 'performance' && <PerformanceDashboard />}
+
+            {/* Team Management Tab */}
+            {activeView === 'team' && <>
+
             {/* Stats */}
             <div className="grid grid-cols-3 gap-3">
                 {KPIS.map((k, i) => (
@@ -267,7 +296,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
             </div>
 
             {/* Team list */}
-            <div className="space-y-2">
+            <div data-tour="team-list" className="space-y-2">
                 {filteredTeam.length === 0 && (
                     <motion.div
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -412,6 +441,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                     )
                 })}
             </div>
+            </>}
 
             {/* ADD / EDIT MODAL */}
             <AnimatePresence>

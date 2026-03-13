@@ -24,7 +24,7 @@ export default function Error({
                 className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
                 style={{ background: 'rgba(229,115,115,0.10)' }}
             >
-                <AlertTriangle size={28} style={{ color: '#E57373' }} />
+                <AlertTriangle size={28} style={{ color: 'var(--bo-error)' }} />
             </div>
 
             {/* Title */}

@@ -738,6 +738,7 @@ export default function ImoveisPage() {
         <div className="space-y-5">
 
             {/* Header */}
+            <div data-tour="actions">
             <PageIntelHeader
                 moduleLabel="IMOVEIS"
                 title="Portfólio / Empreendimentos"
@@ -753,6 +754,7 @@ export default function ImoveisPage() {
                     </button>
                 }
             />
+            </div>
 
             {/* KPIs — investment intelligence */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
@@ -1111,6 +1113,7 @@ export default function ImoveisPage() {
             <AnimatePresence>
                 {sorted.length > 0 && view === 'grid' && (
                     <motion.div
+                        data-tour="imoveis-list"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}

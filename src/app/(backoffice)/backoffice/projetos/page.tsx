@@ -178,7 +178,7 @@ export default function ProjetosPage() {
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4" data-tour="projetos-list">
                         {projetos.map(p => {
                             const stt = STATUS_CFG[p.status] || { l: p.status, color: '#6B7280' }
                             const pct = p.unidades > 0 ? Math.round((p.unidades_vendidas / p.unidades) * 100) : 0

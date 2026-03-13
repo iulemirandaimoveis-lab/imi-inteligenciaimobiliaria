@@ -169,7 +169,7 @@ export default function AutomacoesPage() {
     if (loading) return <AutomacoesSkeleton />
 
     return (
-        <div className="space-y-5">
+        <div data-tour="automations" className="space-y-5">
 
             {/* ── Header ─────────────────────────────────── */}
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>

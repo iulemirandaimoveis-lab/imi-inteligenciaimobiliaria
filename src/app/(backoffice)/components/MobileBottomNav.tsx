@@ -28,7 +28,7 @@ const QUICK_CREATE = [
     { label: 'Novo Lead',      desc: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: '#E8A87C', bg: 'rgba(232,168,124,0.13)' },
     { label: 'Novo Evento',    desc: 'Agendar compromisso',      href: '/backoffice/agenda',          icon: CalendarPlus, color: '#8B5CF6', bg: 'rgba(139,92,246,0.13)'  },
     { label: 'Novo Imóvel',    desc: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: '#486581', bg: 'rgba(72,101,129,0.16)'  },
-    { label: 'Nova Avaliação', desc: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: '#6BB87B', bg: 'rgba(107,184,123,0.13)' },
+    { label: 'Nova Avaliação', desc: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--bo-success)', bg: 'var(--bo-success-bg)' },
 ]
 
 // Full nav groups — horizontal Netflix-style rows
@@ -56,7 +56,7 @@ const GROUPS = [
         ],
     },
     {
-        label: 'Conversão', color: '#6BB87B', bg: 'rgba(107,184,123,0.12)',
+        label: 'Conversão', color: 'var(--bo-success)', bg: 'var(--bo-success-bg)',
         items: [
             { name: 'Pipeline',   href: '/backoffice/leads/pipeline',    icon: TrendingUp },
             { name: 'Simulações', href: '/backoffice/credito/simulador', icon: CreditCard },

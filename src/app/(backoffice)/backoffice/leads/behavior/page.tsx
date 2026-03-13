@@ -132,7 +132,7 @@ export default function LeadBehaviorPage() {
             />
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-5">
+            <div data-tour="kpis" className="grid grid-cols-2 gap-2 sm:gap-3 mb-5">
                 <KPICard
                     label="Leads Ativos"
                     value={loading ? '—' : String(activeLeads)}

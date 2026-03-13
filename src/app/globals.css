@@ -123,46 +123,46 @@
 }
 
 .dark {
-  /* ── IMI INTELLIGENCE DARK THEME v5.0 — Bloomberg Terminal Precision ── */
-  --bo-bg: #0D0F14;
-  --bo-surface: #0C1017;
-  --bo-surface-alt: #0F1520;
-  --bo-elevated: #111822;
-  --bo-border: rgba(255, 255, 255, 0.07);
-  --bo-border-light: rgba(255, 255, 255, 0.04);
-  --bo-border-gold: rgba(37, 99, 235, 0.22);
-  --bo-text: #E8EDF2;
-  --bo-text-muted: #8B949E;
-  --bo-text-tertiary: #475569;
-  --bo-text-dim: #5b6879;
-  --bo-text-accent: #60A5FA;
-  --bo-text-accent-dim: #2563EB;
-  --bo-hover: rgba(255, 255, 255, 0.045);
-  --bo-active-bg: rgba(37, 99, 235, 0.12);
-  --bo-icon-bg: rgba(255, 255, 255, 0.06);
-  /* Premium layered shadows — depth without blur wash */
-  --bo-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
-  --bo-card-shadow: 0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
-  --bo-shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.60), 0 0 0 1px rgba(255,255,255,0.04);
-  /* Subtle top-edge light for "floating" cards */
-  --bo-surface-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
-  --bo-drawer-bg: #0C1017;
-  --header-bg: rgba(10,13,19,0.92);
-  --backdrop-bg: rgba(5,7,11,0.80);
-  /* Responsive accent — electric blue #3B82F6 (Revolut / N26 precision) */
-  --bo-accent: #3B82F6;
-  --bo-accent-dim: #1D4ED8;
-  /* Card surface */
-  --bo-card: #141C2B;
-  --bo-card-hover: #19243A;
+  /* ── IMI INTELLIGENCE DARK THEME v6.0 — Navy × Gold Brand Edition ── */
+  /* IMI Brandkit: navy #0D1B2A · gold #C9A84C · Playfair Display + Montserrat */
+  --bo-bg: #0D1B2A;
+  --bo-surface: #0D1B2A;
+  --bo-surface-alt: #142130;
+  --bo-elevated: #1C2F42;
+  --bo-border: rgba(201, 168, 76, 0.10);
+  --bo-border-light: rgba(201, 168, 76, 0.06);
+  --bo-border-gold: rgba(201, 168, 76, 0.22);
+  --bo-text: #F0EDE8;
+  --bo-text-muted: #A8B0BC;
+  --bo-text-tertiary: #6B7785;
+  --bo-text-dim: #556070;
+  --bo-text-accent: #D4B86A;
+  --bo-text-accent-dim: #C9A84C;
+  --bo-hover: rgba(201, 168, 76, 0.06);
+  --bo-active-bg: rgba(201, 168, 76, 0.12);
+  --bo-icon-bg: rgba(201, 168, 76, 0.08);
+  /* Layered navy shadows with subtle gold shimmer */
+  --bo-shadow: 0 1px 3px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.05);
+  --bo-card-shadow: 0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(201,168,76,0.06);
+  --bo-shadow-elevated: 0 20px 48px rgba(0,0,0,0.70), 0 0 0 1px rgba(201,168,76,0.08);
+  --bo-surface-highlight: inset 0 1px 0 rgba(201,168,76,0.07);
+  --bo-drawer-bg: #0D1B2A;
+  --header-bg: rgba(13,27,42,0.95);
+  --backdrop-bg: rgba(8,16,26,0.85);
+  /* IMI Gold accent — luxury real estate */
+  --bo-accent: #C9A84C;
+  --bo-accent-dim: #8B6914;
+  /* Card surface — navy depth */
+  --bo-card: #1C2F42;
+  --bo-card-hover: #1E3045;
   /* Extended borders */
-  --bo-border-subtle: rgba(255,255,255,0.05);
-  --bo-border-strong: rgba(255,255,255,0.16);
-  /* Navigation tokens — dark mode */
-  --nav-bg: rgba(12,16,23,0.96);
-  --nav-border: rgba(37,99,235,0.12);
-  --nav-active: #60A5FA;
-  --nav-inactive: #475569;
+  --bo-border-subtle: rgba(201,168,76,0.06);
+  --bo-border-strong: rgba(201,168,76,0.28);
+  /* Navigation tokens — navy/gold */
+  --nav-bg: rgba(13,27,42,0.97);
+  --nav-border: rgba(201,168,76,0.14);
+  --nav-active: #C9A84C;
+  --nav-inactive: #6B7785;
   /* Semantic status colors — dark mode (same values, scoped) */
   --bo-success: #34d399;
   --bo-success-bg: rgba(52,211,153,0.12);

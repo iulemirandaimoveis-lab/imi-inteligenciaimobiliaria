@@ -146,7 +146,7 @@ export default function AgentesIAPage() {
     }
 
     return (
-        <div style={{ color: T.text }}>
+        <div data-tour="agents" style={{ color: T.text }}>
             <PageIntelHeader
                 title="Agentes IA"
                 subtitle="Agentes autônomos com memória, ferramentas e raciocínio multi-step · Powered by Agno"

@@ -12,7 +12,9 @@ import {
   Maximize,
 } from 'lucide-react'
 import Image from 'next/image'
-import { uploadFile, uploadMultipleFiles } from '@/lib/supabase-storage'
+import { uploadFile, uploadMultipleImages } from '@/lib/supabase-storage'
+import type { ImageUploadFileStatus } from '@/lib/supabase-storage'
+import UploadProgressPanel from '@/app/(backoffice)/components/ui/UploadProgressPanel'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import {
@@ -463,9 +465,14 @@ export default function EditarImovelPage() {
       const newFiles = formData.galleryItems.filter(g => g.type === 'new' && g.file)
       let newImageUrls: Map<string, string> = new Map() // blobUrl → uploadedUrl
       if (newFiles.length > 0) {
-        toast.info(`Enviando ${newFiles.length} imagem(ns)...`)
+        toast.info(`Comprimindo e enviando ${newFiles.length} imagem(ns)...`)
         const files = newFiles.map(g => g.file!)
-        const r = await uploadMultipleFiles(files, 'media', `developments/${params.id}`)
+        const r = await uploadMultipleImages(files, {
+          bucket: 'media',
+          folder: `developments/${params.id}`,
+          concurrency: 3,
+          maxRetries: 2,
+        })
         newFiles.forEach((g, i) => {
           if (!r[i]?.error) newImageUrls.set(g.url, r[i].url)
         })
@@ -479,7 +486,11 @@ export default function EditarImovelPage() {
 
       let newFpUrls: string[] = []
       if (formData.floorPlans.length > 0) {
-        const r = await uploadMultipleFiles(formData.floorPlans, 'media', `developments/${params.id}/plantas`)
+        const r = await uploadMultipleImages(formData.floorPlans, {
+          bucket: 'media',
+          folder: `developments/${params.id}/plantas`,
+          concurrency: 3,
+        })
         newFpUrls = r.filter(x => !x.error).map(x => x.url)
       }
       let brochureUrl: string | null = formData.existingBrochure || null

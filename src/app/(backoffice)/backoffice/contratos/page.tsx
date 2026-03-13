@@ -228,7 +228,7 @@ export default function ContratosPage() {
                         )}
 
                         {!loading && (
-                            <div className="space-y-2">
+                            <div data-tour="contratos-list" className="space-y-2">
                                 {filtered.map((c, i) => {
                                     const idiomaPrimario = c.idioma || 'pt'
                                     return (

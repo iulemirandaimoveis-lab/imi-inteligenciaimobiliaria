@@ -365,7 +365,7 @@ export default function CreditoPage() {
               </Link>
             </div>
           ) : (
-            <div className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+            <div data-tour="credito-list" className="rounded-2xl overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
               {list.map((op, i) => {
                 const stt = STATUS_CONFIG[op.status] ?? STATUS_CONFIG.pending
                 const StatusIcon = stt.icon

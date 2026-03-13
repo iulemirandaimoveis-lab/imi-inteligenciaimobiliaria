@@ -114,6 +114,13 @@ const SECTIONS: NavSection[] = [
                 ]
             },
             {
+                label: 'Propostas', icon: FileText,
+                children: [
+                    { label: 'Todas',    href: '/backoffice/propostas',     icon: FileText },
+                    { label: 'Nova',     href: '/backoffice/propostas/nova',icon: FileText },
+                ]
+            },
+            {
                 label: 'Contratos', icon: FileSignature,
                 children: [
                     { label: 'Gerenciador', href: '/backoffice/contratos',     icon: FileSignature },
@@ -215,7 +222,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                                 borderRadius: 5,
                                 letterSpacing: '0.04em',
                                 ...(item.badge === 'NEW'
-                                    ? { background: 'rgba(74,222,128,0.18)', color: '#4ADE80', border: '1px solid rgba(74,222,128,0.30)' }
+                                    ? { background: 'var(--bo-success-bg)', color: 'var(--bo-success)', border: '1px solid rgba(52,211,153,0.30)' }
                                     : { background: 'var(--bo-card)', color: '#fff', border: '1px solid transparent' }
                                 ),
                             }}
@@ -289,7 +296,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                         borderRadius: 5,
                         letterSpacing: '0.04em',
                         ...(item.badge === 'NEW'
-                            ? { background: 'rgba(74,222,128,0.18)', color: '#4ADE80', border: '1px solid rgba(74,222,128,0.30)' }
+                            ? { background: 'var(--bo-success-bg)', color: 'var(--bo-success)', border: '1px solid rgba(52,211,153,0.30)' }
                             : item.badge === 'BREVE'
                             ? { background: 'var(--bo-hover)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }
                             : { background: 'var(--bo-card)', color: '#fff', border: '1px solid transparent' }

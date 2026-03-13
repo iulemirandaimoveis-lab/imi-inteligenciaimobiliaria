@@ -171,7 +171,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-5">
+    <div data-tour="settings" className="space-y-5">
       {/* Header */}
       <PageIntelHeader
         moduleLabel="CONFIGURAÇÕES"

@@ -112,7 +112,7 @@ export default function CriadorIAPage() {
         : null
 
     return (
-        <div style={{ maxWidth: 540, margin: '0 auto', paddingBottom: 48 }}>
+        <div data-tour="content-creator" style={{ maxWidth: 540, margin: '0 auto', paddingBottom: 48 }}>
 
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 28 }}>

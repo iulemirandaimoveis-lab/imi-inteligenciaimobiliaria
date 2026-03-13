@@ -1,12 +1,26 @@
 import type { Metadata, Viewport } from 'next';
-import { Playfair_Display, Inter } from 'next/font/google';
-// DEPLOY_VERSION: v1.6.4 - RESTORE APPROVED STATE
+import { Playfair_Display, Montserrat, DM_Mono, Inter } from 'next/font/google';
+// DEPLOY_VERSION: v1.6.5 - BRANDKIT NAVY×GOLD
 import './globals.css';
 
 const playfair = Playfair_Display({
     subsets: ['latin'],
-    weight: ['400', '600', '700'],
+    weight: ['400', '500', '600', '700'],
     variable: '--font-playfair',
+    display: 'swap',
+});
+
+const montserrat = Montserrat({
+    subsets: ['latin'],
+    weight: ['300', '400', '500', '600', '700'],
+    variable: '--font-montserrat',
+    display: 'swap',
+});
+
+const dmMono = DM_Mono({
+    subsets: ['latin'],
+    weight: ['300', '400', '500'],
+    variable: '--font-dm-mono',
     display: 'swap',
 });
 
@@ -36,8 +50,8 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="pt-BR" suppressHydrationWarning className={`${playfair.variable} ${inter.variable}`}>
-            <body className={`${inter.className} min-h-screen bg-[var(--bo-bg,#0D0F14)] relative`}>
+        <html lang="pt-BR" suppressHydrationWarning className={`${playfair.variable} ${montserrat.variable} ${dmMono.variable} ${inter.variable}`}>
+            <body className={`${montserrat.className} min-h-screen bg-[var(--bo-bg,#0D1B2A)] relative`}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="dark"

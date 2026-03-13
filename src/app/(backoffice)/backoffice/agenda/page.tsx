@@ -318,6 +318,7 @@ export default function AgendaPage() {
 
       {/* ── Week Strip ──────────────────────────────────────────────────── */}
       <motion.div
+        data-tour="calendar"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}

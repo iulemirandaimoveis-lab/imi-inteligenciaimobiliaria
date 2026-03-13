@@ -60,7 +60,7 @@ export class ErrorBoundary extends Component<Props, State> {
                         className="flex items-center justify-center w-14 h-14 rounded-full"
                         style={{ background: 'rgba(239,68,68,0.1)' }}
                     >
-                        <AlertTriangle size={28} style={{ color: '#ef4444' }} />
+                        <AlertTriangle size={28} style={{ color: 'var(--bo-error)' }} />
                     </div>
 
                     <div className="text-center max-w-md">

@@ -355,7 +355,7 @@ export default function IntegracoesPage() {
                 </div>
 
                 {/* Grid de integrações */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div data-tour="integrations" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {filtradas.map((integ, i) => {
                         const status = getStatus(integ)
                         const Icon = ICONES[integ.icon] || Settings

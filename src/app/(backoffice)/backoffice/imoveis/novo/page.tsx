@@ -10,6 +10,7 @@ import {
     BedDouble, Bath, Car, Maximize, Globe, Flag, Star, FileText,
     Play, Link as LinkIcon, Cloud, CloudOff, Zap,
 } from 'lucide-react'
+import UploadProgressPanel from '@/app/(backoffice)/components/ui/UploadProgressPanel'
 
 /* ── YouTube helpers ── */
 function getYoutubeId(url: string): string | null {
@@ -238,6 +239,8 @@ export default function NovoImovelPage() {
     const [draftSaved, setDraftSaved] = useState(false)
     const [hasDraft, setHasDraft] = useState(false)
     const [aiGenerating, setAiGenerating] = useState(false)
+    const [uploadStatuses, setUploadStatuses] = useState<import('@/lib/supabase-storage').ImageUploadFileStatus[]>([])
+    const [showUploadProgress, setShowUploadProgress] = useState(false)
 
     /* Load developers from Supabase */
     useEffect(() => {
@@ -495,21 +498,41 @@ export default function NovoImovelPage() {
         if (!validateStep(currentStep)) return
         setIsSubmitting(true)
         try {
-            const { uploadMultipleFiles, uploadFile } = await import('@/lib/supabase-storage')
+            const { uploadMultipleImages, uploadFile } = await import('@/lib/supabase-storage')
 
             let imageUrls: string[] = []
             if (formData.images.length > 0) {
-                toast.info(`Enviando ${formData.images.length} foto(s)...`)
-                const results = await uploadMultipleFiles(formData.images, 'media', 'developments/gallery')
+                setShowUploadProgress(true)
+                setUploadStatuses(formData.images.map((f, i) => ({
+                    index: i, fileName: f.name, status: 'pending' as const, percent: 0
+                })))
+                const results = await uploadMultipleImages(formData.images, {
+                    bucket: 'media',
+                    folder: 'developments/gallery',
+                    concurrency: 3,
+                    maxRetries: 2,
+                    onFileStatus: (status) => {
+                        setUploadStatuses(prev => {
+                            const next = [...prev]
+                            next[status.index] = status
+                            return next
+                        })
+                    },
+                })
                 imageUrls = results.filter(r => !r.error).map(r => r.url)
                 const fails = results.filter(r => r.error).length
-                if (fails > 0) toast.warning(`${fails} foto(s) falharam`)
+                if (fails > 0) toast.warning(`${fails} foto(s) falharam no upload`)
+                setShowUploadProgress(false)
             }
 
             let floorPlanUrls: string[] = []
             if (formData.floorPlans.length > 0) {
                 toast.info(`Enviando ${formData.floorPlans.length} planta(s)...`)
-                const results = await uploadMultipleFiles(formData.floorPlans, 'media', 'developments/plantas')
+                const results = await uploadMultipleImages(formData.floorPlans, {
+                    bucket: 'media',
+                    folder: 'developments/plantas',
+                    concurrency: 3,
+                })
                 floorPlanUrls = results.filter(r => !r.error).map(r => r.url)
             }
 
@@ -645,6 +668,7 @@ export default function NovoImovelPage() {
 
             {/* ── Step Progress ── */}
             <div
+                data-tour="wizard"
                 className="rounded-2xl p-5"
                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
             >
@@ -1421,6 +1445,15 @@ export default function NovoImovelPage() {
                     </div>
                 )}
             </div>
+
+            {/* ── Upload Progress Panel ── */}
+            {showUploadProgress && (
+                <UploadProgressPanel
+                    files={uploadStatuses}
+                    total={formData.images.length}
+                    visible={showUploadProgress}
+                />
+            )}
 
             {/* ── Navigation Buttons ── */}
             <div className="flex items-center justify-between pb-32 lg:pb-8">

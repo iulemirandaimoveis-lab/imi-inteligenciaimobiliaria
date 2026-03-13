@@ -15,6 +15,7 @@ import {
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import PropertyInsightsPanel from '@/app/(backoffice)/components/PropertyInsightsPanel'
 import Image from 'next/image'
 
 const STATUS_MAP = Object.fromEntries(
@@ -425,6 +426,17 @@ export default function ImovelDetalhesPage() {
 
         <div className="flex-1" />
 
+        {/* ── Criar Proposta ── */}
+        <button
+          onClick={() => router.push(`/backoffice/propostas/nova?property_id=${params.id}`)}
+          className="bo-btn bo-btn-sm"
+          style={{ background: 'rgba(201,168,76,0.12)', color: '#C9A84C', borderColor: 'rgba(201,168,76,0.25)' }}
+          title="Criar Proposta"
+        >
+          <FileText size={13} />
+          <span className="hidden sm:inline">Criar Proposta</span>
+        </button>
+
         {/* ── Smart Actions ── */}
         <button
           onClick={() => setShowContentPanel(true)}
@@ -717,6 +729,9 @@ export default function ImovelDetalhesPage() {
                   {developerInfo?.phone && <p className="text-xs" style={{ color: T.textMuted }}>{developerInfo.phone}</p>}
                 </div>
               )}
+
+              {/* AI Insights */}
+              <PropertyInsightsPanel developmentId={params.id as string} data={data} />
 
               {/* Pricing */}
               <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>

@@ -207,7 +207,7 @@ export default function AvaliacoesPage() {
       {!loading && filtered.length > 0 && (
         <>
           <SectionHeader title="Avaliações" badge={filtered.length} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div data-tour="avaliacoes-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {filtered.map((av, i) => {
               const sc = STATUS_CFG[av.status] || STATUS_CFG.em_andamento
               const hc = HONOR_CFG[av.honorarios_status] || HONOR_CFG.pendente

@@ -204,6 +204,123 @@ export async function uploadImage(
     }
 }
 
+// ── Enhanced multi-image status ─────────────────────────────
+export type ImageUploadStatus = 'pending' | 'compressing' | 'uploading' | 'done' | 'error' | 'retrying'
+
+export interface ImageUploadFileStatus {
+    index: number
+    fileName: string
+    status: ImageUploadStatus
+    percent: number
+    error?: string
+    url?: string
+}
+
+/**
+ * Upload múltiplo de IMAGENS com compressão automática, concurrency pool e retry.
+ * Resolve o problema de upload de 20+ fotos: comprime antes de enviar (1920×1080 JPEG 0.85)
+ * e limita a 3 uploads simultâneos para evitar timeout/rate-limit.
+ */
+export async function uploadMultipleImages(
+    files: File[],
+    options: {
+        bucket?: string
+        folder?: string
+        maxWidth?: number
+        maxHeight?: number
+        quality?: number
+        concurrency?: number
+        maxRetries?: number
+        onFileStatus?: (status: ImageUploadFileStatus) => void
+    } = {}
+): Promise<UploadResult[]> {
+    const {
+        bucket = 'media',
+        folder = 'images',
+        maxWidth = 1920,
+        maxHeight = 1080,
+        quality = 0.85,
+        concurrency = 3,
+        maxRetries = 2,
+        onFileStatus,
+    } = options
+
+    const results: UploadResult[] = new Array(files.length)
+    let nextIndex = 0
+
+    const notify = (index: number, status: ImageUploadStatus, percent: number, error?: string, url?: string) => {
+        onFileStatus?.({
+            index,
+            fileName: files[index].name,
+            status,
+            percent,
+            error,
+            url,
+        })
+    }
+
+    // Worker que processa um arquivo de cada vez
+    const worker = async () => {
+        while (nextIndex < files.length) {
+            const i = nextIndex++
+            const file = files[i]
+
+            let lastError = ''
+            let success = false
+
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                try {
+                    if (attempt > 0) {
+                        notify(i, 'retrying', 0)
+                        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt - 1))) // 1s, 2s backoff
+                    }
+
+                    // Compress if it's an image
+                    if (file.type.startsWith('image/')) {
+                        notify(i, 'compressing', 10)
+                        const result = await uploadImage(file, { bucket, folder, maxWidth, maxHeight, quality })
+
+                        if (result.error) {
+                            throw new Error(result.error)
+                        }
+
+                        notify(i, 'done', 100, undefined, result.url)
+                        results[i] = result
+                        success = true
+                        break
+                    } else {
+                        // Non-image files: direct upload
+                        notify(i, 'uploading', 30)
+                        const result = await uploadFile(file, bucket, folder)
+
+                        if (result.error) {
+                            throw new Error(result.error)
+                        }
+
+                        notify(i, 'done', 100, undefined, result.url)
+                        results[i] = result
+                        success = true
+                        break
+                    }
+                } catch (err: any) {
+                    lastError = err.message || 'Erro no upload'
+                }
+            }
+
+            if (!success) {
+                notify(i, 'error', 0, lastError)
+                results[i] = { url: '', path: '', error: lastError }
+            }
+        }
+    }
+
+    // Start N concurrent workers
+    const workers = Array.from({ length: Math.min(concurrency, files.length) }, () => worker())
+    await Promise.all(workers)
+
+    return results
+}
+
 /**
  * Deletar arquivo do Storage
  */

@@ -95,6 +95,89 @@ const fmtCompact = (v: number) => {
     return fmt(v)
 }
 
+// ── AI Daily Summary Card ────────────────────────────────────
+function AIDailySummary() {
+    const [summary, setSummary] = useState<any>(null)
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        // Check cache
+        if (typeof window === 'undefined') return
+        const cached = localStorage.getItem('imi_daily_summary')
+        if (cached) {
+            try {
+                const { data, ts } = JSON.parse(cached)
+                if (Date.now() - ts < 8 * 60 * 60 * 1000) { setSummary(data); return }
+            } catch { /* ignore */ }
+        }
+
+        // Auto-fetch on first load
+        setLoading(true)
+        fetch('/api/ai/daily-summary')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data?.summary) {
+                    setSummary(data.summary)
+                    localStorage.setItem('imi_daily_summary', JSON.stringify({ data: data.summary, ts: Date.now() }))
+                }
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false))
+    }, [])
+
+    if (!summary && !loading) return null
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="rounded-2xl p-4"
+            style={{
+                background: 'linear-gradient(135deg, rgba(59,130,246,0.06) 0%, rgba(168,85,247,0.04) 100%)',
+                border: '1px solid rgba(59,130,246,0.15)',
+            }}
+        >
+            {loading ? (
+                <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full animate-pulse" style={{ background: T.accent }} />
+                    <span className="text-xs" style={{ color: T.textMuted }}>Gerando resumo do dia com IA...</span>
+                </div>
+            ) : summary ? (
+                <div>
+                    <div className="flex items-center gap-2 mb-2">
+                        <Zap size={12} style={{ color: T.accent }} />
+                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.accent }}>
+                            Resumo IA do Dia
+                        </span>
+                    </div>
+                    <p className="text-xs font-medium mb-2" style={{ color: T.text }}>{summary.greeting}</p>
+                    <div className="space-y-1 mb-2">
+                        {summary.highlights?.map((h: string, i: number) => (
+                            <div key={i} className="flex items-start gap-2">
+                                <span className="text-[10px] mt-0.5" style={{ color: T.accent }}>▸</span>
+                                <span className="text-xs" style={{ color: T.textMuted }}>{h}</span>
+                            </div>
+                        ))}
+                    </div>
+                    {summary.alert && (
+                        <div className="flex items-start gap-2 px-2 py-1.5 rounded-lg mb-2"
+                            style={{ background: 'rgba(245,158,11,0.08)' }}>
+                            <AlertTriangle size={11} className="mt-0.5" style={{ color: 'var(--bo-warning)' }} />
+                            <span className="text-[11px]" style={{ color: 'var(--bo-warning)' }}>{summary.alert}</span>
+                        </div>
+                    )}
+                    {summary.suggestion && (
+                        <p className="text-[11px]" style={{ color: T.accent }}>
+                            💡 {summary.suggestion}
+                        </p>
+                    )}
+                </div>
+            ) : null}
+        </motion.div>
+    )
+}
+
 export default function DashboardClient({
     stats, avStats, recentLeads, recentAvaliacoes,
     imoveisCount, chartData, canalPerformance, alertas, brokers = [],
@@ -228,6 +311,7 @@ export default function DashboardClient({
             {/* ── Alertas Críticos ─────────────────────────────── */}
             {alertas.length > 0 && (
                 <motion.div
+                    data-tour="alerts"
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05, duration: 0.30 }}
@@ -334,12 +418,16 @@ export default function DashboardClient({
                 </div>
             </motion.div>
 
+            {/* ── AI Daily Summary ────────────────────────────── */}
+            <AIDailySummary />
+
             {/* ── KPI Row ──────────────────────────────────────── */}
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.14, duration: 0.35 }}
                 className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+                data-tour="kpis"
             >
                 <Link href="/backoffice/financeiro">
                     <KPICard
@@ -388,6 +476,7 @@ export default function DashboardClient({
 
                 {/* Gráfico de Performance */}
                 <motion.div
+                    data-tour="chart"
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.22, duration: 0.35 }}

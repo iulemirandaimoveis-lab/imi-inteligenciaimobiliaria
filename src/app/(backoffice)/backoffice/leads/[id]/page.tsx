@@ -216,6 +216,15 @@ export default function LeadDetailPage() {
         actions={
           <div className="flex items-center gap-2">
             <button
+              onClick={() => router.push(`/backoffice/propostas/nova?lead_id=${id}`)}
+              className="bo-btn bo-btn-sm"
+              style={{ background: 'rgba(201,168,76,0.12)', color: '#C9A84C', borderColor: 'rgba(201,168,76,0.25)' }}
+              title="Criar Proposta"
+            >
+              <FileText size={13} />
+              <span className="hidden sm:inline">Proposta</span>
+            </button>
+            <button
               onClick={() => router.push(`/backoffice/leads/${id}/editar`)}
               style={{
                 width: '34px', height: '34px', borderRadius: '10px',
