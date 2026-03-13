@@ -215,7 +215,7 @@ export default function PipelineKanbanPage() {
                 />
 
                 {/* KPI strip */}
-                <div className="grid grid-cols-3 gap-2 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
                     <KPICard label="Negociações" value={loading ? '—' : formatTotal(totalBudget)} icon={<TrendingUp size={13} />} accent="blue" size="sm" />
                     <KPICard label="Total Leads" value={loading ? '—' : String(totalLeads)} icon={<Users size={13} />} size="sm" />
                     <KPICard label="Fechamentos" value={loading ? '—' : String(ganhoCount).padStart(2, '0')} icon={<Zap size={13} />} accent="green" size="sm" />
@@ -259,7 +259,7 @@ export default function PipelineKanbanPage() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: si * 0.06 }}
                             style={{
-                                width: 280, minWidth: 280, flexShrink: 0,
+                                width: 280, minWidth: 260, flexShrink: 0,
                                 display: 'flex', flexDirection: 'column', gap: 0,
                             }}
                         >

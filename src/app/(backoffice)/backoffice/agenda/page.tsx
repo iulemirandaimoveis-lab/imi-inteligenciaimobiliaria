@@ -333,7 +333,7 @@ export default function AgendaPage() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
             <button
               onClick={() => navigateWeek(-1)}
-              style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <ChevronLeft size={16} color="var(--bo-text-muted)" />
             </button>
@@ -342,14 +342,14 @@ export default function AgendaPage() {
             </span>
             <button
               onClick={() => navigateWeek(1)}
-              style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <ChevronRight size={16} color="var(--bo-text-muted)" />
             </button>
           </div>
 
           {/* Day buttons */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '4px' }}>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-1">
             {weekDays.map(dayStr => {
               const isSelected = dayStr === selectedDay
               const todayBool = isToday(dayStr)
@@ -459,7 +459,7 @@ export default function AgendaPage() {
                         {/* Info */}
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                            <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '220px' }}>
+                            <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
                               {ev.title}
                             </h3>
                             <span style={{ fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '6px', background: cfg.bg, color: cfg.color, flexShrink: 0 }}>

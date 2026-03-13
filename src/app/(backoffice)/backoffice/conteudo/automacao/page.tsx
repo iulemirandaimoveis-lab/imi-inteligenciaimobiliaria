@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react'
 import {
     Zap, Bot, RefreshCw, Plus, Play, Settings,
     Calendar, Instagram, Linkedin, Mail, FileText,
-    BarChart3, Search, MoreVertical, ArrowRight,
-    Sparkles, ChevronRight, Pause, Loader2,
+    BarChart3, Search, Pause, Loader2,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
@@ -232,11 +231,13 @@ export default function AutomacaoConteudoPage() {
                                             >
                                                 {wf.is_active ? <Pause size={18} /> : <Play size={18} />}
                                             </button>
-                                            <button className="w-10 h-10 flex items-center justify-center rounded-xl transition-all" style={{ background: T.elevated, color: T.textMuted }}>
+                                            <button
+                                                onClick={() => toast.info(`Configurações de "${wf.name}" — em breve`)}
+                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:brightness-110"
+                                                style={{ background: T.elevated, color: T.textMuted }}
+                                                title="Configurações"
+                                            >
                                                 <Settings size={18} />
-                                            </button>
-                                            <button className="w-10 h-10 flex items-center justify-center rounded-xl opacity-0 group-hover:opacity-100 transition-all" style={{ color: T.textMuted }}>
-                                                <MoreVertical size={18} />
                                             </button>
                                         </div>
                                     </div>
@@ -246,11 +247,13 @@ export default function AutomacaoConteudoPage() {
                     </div>
                 )}
 
-                <div className="p-4 text-center" style={{ background: T.elevated, borderTop: `1px solid ${T.border}` }}>
-                    <button className="text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 mx-auto hover:opacity-80" style={{ color: T.textMuted }}>
-                        Ver Logs de Automação Completos <ArrowRight size={14} />
-                    </button>
-                </div>
+                {workflows.length > 0 && (
+                    <div className="p-4 text-center" style={{ background: T.elevated, borderTop: `1px solid ${T.border}` }}>
+                        <p className="text-xs font-medium" style={{ color: T.textMuted }}>
+                            {workflows.length} pipeline{workflows.length !== 1 ? 's' : ''} configurado{workflows.length !== 1 ? 's' : ''} · {ativos} ativo{ativos !== 1 ? 's' : ''}
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     )
