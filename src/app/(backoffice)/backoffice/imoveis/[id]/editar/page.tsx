@@ -110,6 +110,12 @@ function getYoutubeEmbedUrl(url: string): string | null {
   const id = getYoutubeId(url); return id ? `https://www.youtube.com/embed/${id}` : null
 }
 
+/* ── Field error message ── */
+function ErrMsg({ msg }: { msg?: string }) {
+  if (!msg) return null
+  return <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error, #f87171)' }}><AlertCircle size={11} />{msg}</p>
+}
+
 const TABS = [
   { id: 'basico',        label: 'Básico',           icon: Building2,  desc: 'Nome, tipo, status' },
   { id: 'detalhes',      label: 'Características',  icon: Home,       desc: 'Área, quartos, amenities' },
@@ -124,11 +130,12 @@ const dbTypeToForm: Record<string, string> = {
   flat: 'Flat', lote: 'Terreno', land: 'Terreno', comercial: 'Comercial', commercial: 'Comercial',
   resort: 'Villa', penthouse: 'Penthouse', studio: 'Studio', mixed: 'Empreendimento',
 }
-const featuresOptions = [
+const featuresOptions = Array.from(new Set([
   'Piscina', 'Academia', 'Salão de festas', 'Churrasqueira', 'Playground', 'Quadra esportiva',
   'Sauna', 'Espaço gourmet', 'Coworking', 'Pet place', 'Brinquedoteca', 'Salão de jogos',
   'Cinema', 'Spa', 'Jardim', 'Portaria 24h', 'Segurança', 'Elevador',
-]
+  'Bicicletário', 'Varanda gourmet', 'Área de lazer', 'Rooftop',
+]))
 
 // Unified gallery item: either an existing URL or a new File
 interface GalleryItem {
@@ -139,6 +146,8 @@ interface GalleryItem {
 
 interface FormData {
   name: string; type: string; location: string; address: string
+  cep: string; street: string; streetNumber: string; complement: string
+  neighborhood: string; city: string; stateUf: string
   developer: string; developer_id: string; description: string
   area: string; bedrooms: string; bathrooms: string; parking: string; floor: string
   features: string[]; priceMin: string; priceMax: string; pricePerSqm: string
@@ -151,7 +160,9 @@ interface FormData {
 }
 
 const INITIAL: FormData = {
-  name: '', type: '', location: '', address: '', developer: '', developer_id: '',
+  name: '', type: '', location: '', address: '',
+  cep: '', street: '', streetNumber: '', complement: '', neighborhood: '', city: '', stateUf: '',
+  developer: '', developer_id: '',
   description: '', area: '', bedrooms: '', bathrooms: '', parking: '', floor: '',
   features: [], priceMin: '', priceMax: '', pricePerSqm: '', totalUnits: '',
   availableUnits: '', deliveryDate: '', galleryItems: [],
@@ -205,8 +216,11 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
             <p className="text-xs mt-0.5" style={{ color: T.textDim }}>
               Arraste para reordenar. A 1ª foto é a capa. {formData.galleryItems.length} foto(s).
             </p>
+            <p className="text-[11px] mt-0.5" style={{ color: T.textDim }}>
+              Formatos: JPG, PNG, WEBP · Máx. 10MB por imagem
+            </p>
           </div>
-          <label className="cursor-pointer h-9 px-4 rounded-xl flex items-center gap-2 text-sm font-medium transition-all"
+          <label className="cursor-pointer h-9 px-4 rounded flex items-center gap-2 text-sm font-medium transition-all"
             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
             <Upload size={15} /> Adicionar
             <input type="file" accept="image/*" multiple className="hidden" onChange={e => {
@@ -291,7 +305,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
       <div style={{ borderTop: `1px solid ${T.border}` }} className="pt-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-bold" style={{ color: T.text }}>Plantas do Imóvel</h3>
-          <label className="cursor-pointer h-9 px-4 rounded-xl flex items-center gap-2 text-sm font-medium"
+          <label className="cursor-pointer h-9 px-4 rounded flex items-center gap-2 text-sm font-medium"
             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
             <Upload size={15} /> Adicionar planta
             <input type="file" accept="image/*" multiple className="hidden" onChange={e => set('floorPlans', [...formData.floorPlans, ...Array.from(e.target.files || [])])} />
@@ -320,6 +334,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
           <div className="text-center py-8 rounded-xl" style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
             <FileText size={28} className="mx-auto mb-2" style={{ color: T.textDim }} />
             <p className="text-sm" style={{ color: T.textDim }}>Nenhuma planta adicionada</p>
+            <p className="text-xs mt-1" style={{ color: T.textDim }}>JPG, PNG, WEBP · Máx. 10MB</p>
           </div>
         )}
       </div>
@@ -334,7 +349,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
               <p className="text-sm font-medium" style={{ color: T.text }}>Brochure atual</p>
               <a href={formData.existingBrochure} target="_blank" rel="noopener" className="text-xs underline" style={{ color: T.accent }}>Ver PDF</a>
             </div>
-            <button type="button" onClick={() => set('existingBrochure', '')} className="text-xs px-3 py-1.5 rounded-lg"
+            <button type="button" onClick={() => set('existingBrochure', '')} className="text-xs px-3 py-1.5 rounded"
               style={{ background: '#EF444415', color: 'var(--bo-error)', border: '1px solid #EF444430' }}>
               Remover
             </button>
@@ -363,7 +378,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
             <p className="text-xs" style={{ color: T.textDim }}>Controla se aparece em iulemirandaimoveis.com.br</p>
           </div>
           <select value={formData.status_commercial} onChange={e => set('status_commercial', e.target.value)}
-            className="h-9 px-3 rounded-xl text-sm outline-none"
+            className="h-9 px-3 rounded text-sm outline-none"
             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
             <option value="published">Publicado</option>
             <option value="draft">Rascunho</option>
@@ -402,6 +417,32 @@ export default function EditarImovelPage() {
   const [aiGenerating, setAiGenerating] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [formData, setFormData] = useState<FormData>(INITIAL)
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+
+  const validateAll = (): boolean => {
+    const errs: Record<string, string> = {}
+    const pMin = Number(formData.priceMin)
+    const pMax = Number(formData.priceMax)
+    const total = Number(formData.totalUnits)
+    const avail = Number(formData.availableUnits)
+    const beds  = Number(formData.bedrooms)
+    const baths = Number(formData.bathrooms)
+    const park  = Number(formData.parking)
+
+    if (formData.priceMin && formData.priceMax && pMax < pMin)
+      errs.priceMax = 'Preço máximo deve ser ≥ ao mínimo'
+    if (formData.totalUnits && formData.availableUnits && avail > total)
+      errs.availableUnits = 'Disponíveis não pode exceder o total'
+    if (formData.bedrooms && beds < 0)
+      errs.bedrooms = 'Não pode ser negativo'
+    if (formData.bathrooms && baths < 0)
+      errs.bathrooms = 'Não pode ser negativo'
+    if (formData.parking && park < 0)
+      errs.parking = 'Não pode ser negativo'
+
+    setValidationErrors(errs)
+    return Object.keys(errs).length === 0
+  }
 
   /* Load */
   useEffect(() => {
@@ -416,6 +457,9 @@ export default function EditarImovelPage() {
         setFormData({
           name: d.name || '', type: dbTypeToForm[d.tipo] || dbTypeToForm[d.property_type] || dbTypeToForm[d.type] || d.tipo || '',
           location: d.neighborhood || d.region || '', address: d.address || '',
+          cep: d.cep || '', street: d.street || '', streetNumber: d.street_number || '',
+          complement: d.complement || '', neighborhood: d.neighborhood || d.region || '',
+          city: d.city || '', stateUf: d.state_uf || '',
           developer: d.developer || d.developers?.name || '', developer_id: d.developer_id || '',
           description: d.description || '', area: d.private_area?.toString() || d.area_from?.toString() || '',
           bedrooms: d.bedrooms?.toString() || '', bathrooms: d.bathrooms?.toString() || '',
@@ -440,7 +484,10 @@ export default function EditarImovelPage() {
     })()
   }, [params.id])
 
-  const set = (field: keyof FormData, value: any) => setFormData(p => ({ ...p, [field]: value }))
+  const set = (field: keyof FormData, value: any) => {
+    setFormData(p => ({ ...p, [field]: value }))
+    if (validationErrors[field]) setValidationErrors(p => { const n = { ...p }; delete n[field]; return n })
+  }
   const toggleFeature = (f: string) => set('features', formData.features.includes(f) ? formData.features.filter(x => x !== f) : [...formData.features, f])
 
   const generateDescription = async () => {
@@ -459,6 +506,13 @@ export default function EditarImovelPage() {
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) { toast.error('Nome é obrigatório'); setActiveTab('basico'); return }
+    if (!validateAll()) {
+      toast.error('Corrija os erros de validação antes de salvar')
+      // Navigate to the tab that has errors
+      if (validationErrors.priceMax || validationErrors.availableUnits) setActiveTab('valores')
+      else if (validationErrors.bedrooms || validationErrors.bathrooms || validationErrors.parking) setActiveTab('detalhes')
+      return
+    }
     setIsSubmitting(true)
     try {
       // Upload new gallery images (preserving order from galleryItems)
@@ -502,7 +556,11 @@ export default function EditarImovelPage() {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: params.id, name: formData.name, type: formData.type,
-          neighborhood: formData.location || null, address: formData.address || null,
+          address: [formData.street, formData.streetNumber, formData.complement].filter(Boolean).join(', ') || formData.address || null,
+          neighborhood: formData.neighborhood || formData.location || null,
+          cep: formData.cep || null, street: formData.street || null,
+          street_number: formData.streetNumber || null, complement: formData.complement || null,
+          city: formData.city || null, state_uf: formData.stateUf || null,
           developer: formData.developer || null, developer_id: formData.developer_id || null,
           description: formData.description || null,
           private_area: Number(formData.area) || null, bedrooms: Number(formData.bedrooms) || null,
@@ -569,10 +627,10 @@ export default function EditarImovelPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap overflow-hidden min-w-0">
             {/* Status quick-toggle */}
             <select value={formData.status_commercial} onChange={e => set('status_commercial', e.target.value)}
-              className="h-9 px-3 rounded-xl text-xs font-semibold outline-none cursor-pointer"
+              className="h-9 px-3 rounded text-xs font-semibold outline-none cursor-pointer"
               style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}>
               <option value="published">🟢 Publicado</option>
               <option value="draft">⚪ Rascunho</option>
@@ -582,13 +640,13 @@ export default function EditarImovelPage() {
             </select>
 
             <button onClick={() => router.push(`/backoffice/imoveis/${params.id}`)}
-              className="h-9 px-3 rounded-xl text-xs font-medium flex items-center gap-1.5"
+              className="h-9 px-3 rounded text-xs font-medium flex items-center gap-1.5"
               style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.textMuted }}>
               <Eye size={14} /> Ver
             </button>
 
             <button onClick={handleSubmit} disabled={isSubmitting}
-              className="h-9 px-5 rounded-xl text-sm font-bold text-white flex items-center gap-2 disabled:opacity-60 transition-all"
+              className="h-9 px-5 rounded text-sm font-bold text-white flex items-center gap-2 disabled:opacity-60 transition-all"
               style={{ background: isSubmitting ? T.textDim : T.accent }}>
               {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               {isSubmitting ? 'Salvando...' : 'Salvar'}
@@ -652,15 +710,6 @@ export default function EditarImovelPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>Bairro / Região</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: T.textDim }} />
-                    <input value={formData.location} onChange={e => set('location', e.target.value)}
-                      placeholder="Boa Viagem, Pina, Derby..." className={inp} style={{ ...inpStyle, paddingLeft: '2.25rem' }} />
-                  </div>
-                </div>
-
-                <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>Construtora</label>
                   <div className="relative">
                     <Building2 className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: T.textDim }} />
@@ -669,17 +718,86 @@ export default function EditarImovelPage() {
                   </div>
                 </div>
 
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>Endereço Completo</label>
-                  <input value={formData.address} onChange={e => set('address', e.target.value)}
-                    placeholder="Rua, número, complemento..." className={inp} style={inpStyle} />
+                {/* ── Endereço estruturado com ViaCEP ── */}
+                <div className="md:col-span-2 space-y-4">
+                  <label className="block text-xs font-semibold uppercase tracking-wider" style={{ color: T.textMuted }}>Endereço Completo</label>
+
+                  {/* CEP + auto-fill */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-[11px] text-muted mb-1" style={{ color: T.textDim }}>CEP</label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2" size={14} style={{ color: T.textDim }} />
+                        <input
+                          value={formData.cep || ''}
+                          onChange={async (e) => {
+                            const raw = e.target.value.replace(/\D/g, '').slice(0, 8)
+                            const masked = raw.length > 5 ? `${raw.slice(0,5)}-${raw.slice(5)}` : raw
+                            set('cep', masked)
+                            if (raw.length === 8) {
+                              try {
+                                const r = await fetch(`https://viacep.com.br/ws/${raw}/json/`)
+                                const d = await r.json()
+                                if (!d.erro) {
+                                  set('street', d.logradouro || '')
+                                  set('neighborhood', d.bairro || '')
+                                  set('city', d.localidade || '')
+                                  set('stateUf', d.uf || '')
+                                  toast.success('Endereço preenchido automaticamente')
+                                }
+                              } catch { /* silent */ }
+                            }
+                          }}
+                          placeholder="00000-000"
+                          className={inp}
+                          style={inpStyle}
+                        />
+                      </div>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-[11px] mb-1" style={{ color: T.textDim }}>Logradouro</label>
+                      <input value={formData.street || ''} onChange={e => set('street', e.target.value)}
+                        placeholder="Rua, Avenida, Alameda..." className={inp} style={inpStyle} />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-[11px] mb-1" style={{ color: T.textDim }}>Número</label>
+                      <input value={formData.streetNumber || ''} onChange={e => set('streetNumber', e.target.value)}
+                        placeholder="Ex: 123" className={inp} style={inpStyle} />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-[11px] mb-1" style={{ color: T.textDim }}>Complemento</label>
+                      <input value={formData.complement || ''} onChange={e => set('complement', e.target.value)}
+                        placeholder="Apto, sala, bloco..." className={inp} style={inpStyle} />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] mb-1" style={{ color: T.textDim }}>UF</label>
+                      <input value={formData.stateUf || ''} onChange={e => set('stateUf', e.target.value)}
+                        placeholder="PE" maxLength={2} className={inp} style={{ ...inpStyle, textTransform: 'uppercase' }} />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] mb-1" style={{ color: T.textDim }}>Bairro</label>
+                      <input value={formData.neighborhood || formData.location || ''} onChange={e => { set('neighborhood', e.target.value); set('location', e.target.value) }}
+                        placeholder="Boa Viagem, Pina..." className={inp} style={inpStyle} />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] mb-1" style={{ color: T.textDim }}>Cidade</label>
+                      <input value={formData.city || ''} onChange={e => set('city', e.target.value)}
+                        placeholder="Recife" className={inp} style={inpStyle} />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="md:col-span-2">
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-xs font-semibold uppercase tracking-wider" style={{ color: T.textMuted }}>Descrição</label>
                     <button onClick={generateDescription} disabled={aiGenerating}
-                      className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-semibold transition-all disabled:opacity-60"
+                      className="flex items-center gap-1.5 h-7 px-3 rounded text-xs font-semibold transition-all disabled:opacity-60"
                       style={{ background: `${T.accent}15`, color: T.accent, border: `1px solid ${T.accent}30` }}>
                       {aiGenerating ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
                       {aiGenerating ? 'Gerando...' : 'Gerar com IA'}
@@ -714,19 +832,29 @@ export default function EditarImovelPage() {
             <div className="space-y-8">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
                 {[
-                  { field: 'area', label: 'Área Privativa (m²)', icon: Ruler },
-                  { field: 'bedrooms', label: 'Quartos', icon: BedDouble },
-                  { field: 'bathrooms', label: 'Banheiros', icon: Bath },
-                  { field: 'parking', label: 'Vagas', icon: Car },
-                  { field: 'floor', label: 'Andar / Total Andares', icon: Building2 },
+                  { field: 'area',      label: 'Área Privativa (m²)',   icon: Ruler },
+                  { field: 'bedrooms',  label: 'Quartos',               icon: BedDouble },
+                  { field: 'bathrooms', label: 'Banheiros',             icon: Bath },
+                  { field: 'parking',   label: 'Vagas',                 icon: Car },
+                  { field: 'floor',     label: 'Andar / Total Andares', icon: Building2 },
                 ].map(({ field, label, icon: Icon }) => (
                   <div key={field}>
                     <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{label}</label>
                     <div className="relative">
-                      <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: T.textDim }} />
-                      <input type="number" min="0" value={(formData as any)[field]} onChange={e => set(field as keyof FormData, e.target.value)}
-                        className={inp} style={{ ...inpStyle, paddingLeft: '2.25rem' }} />
+                      <Icon className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: validationErrors[field] ? 'var(--bo-error,#f87171)' : T.textDim }} />
+                      <input
+                        type="number" min="0"
+                        value={(formData as any)[field]}
+                        onChange={e => set(field as keyof FormData, e.target.value)}
+                        className={inp}
+                        style={{
+                          ...inpStyle,
+                          paddingLeft: '2.25rem',
+                          borderColor: validationErrors[field] ? 'rgba(248,113,113,0.6)' : undefined,
+                        }}
+                      />
                     </div>
+                    <ErrMsg msg={validationErrors[field]} />
                   </div>
                 ))}
               </div>
@@ -761,20 +889,30 @@ export default function EditarImovelPage() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {[
-                  { field: 'priceMin', label: 'Preço Mínimo (R$)', placeholder: '500000' },
-                  { field: 'priceMax', label: 'Preço Máximo (R$)', placeholder: '2000000' },
-                  { field: 'pricePerSqm', label: 'Preço por m² (R$)', placeholder: '12000' },
-                  { field: 'totalUnits', label: 'Total de Unidades', placeholder: '120' },
-                  { field: 'availableUnits', label: 'Unidades Disponíveis', placeholder: '80' },
-                ].map(({ field, label, placeholder }) => (
+                  { field: 'priceMin',       label: 'Preço Mínimo (R$)',      placeholder: '500000',  icon: DollarSign },
+                  { field: 'priceMax',       label: 'Preço Máximo (R$)',       placeholder: '2000000', icon: DollarSign },
+                  { field: 'pricePerSqm',    label: 'Preço por m² (R$)',       placeholder: '12000',   icon: DollarSign },
+                  { field: 'totalUnits',     label: 'Total de Unidades',       placeholder: '120',     icon: Home },
+                  { field: 'availableUnits', label: 'Unidades Disponíveis',    placeholder: '80',      icon: Home },
+                ].map(({ field, label, placeholder, icon: FieldIcon }) => (
                   <div key={field}>
                     <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>{label}</label>
                     <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: T.textDim }} />
-                      <input type="number" min="0" placeholder={placeholder} value={(formData as any)[field]}
+                      <FieldIcon className="absolute left-3 top-1/2 -translate-y-1/2" size={15} style={{ color: validationErrors[field] ? 'var(--bo-error,#f87171)' : T.textDim }} />
+                      <input
+                        type="number" min="0"
+                        placeholder={placeholder}
+                        value={(formData as any)[field]}
                         onChange={e => set(field as keyof FormData, e.target.value)}
-                        className={inp} style={{ ...inpStyle, paddingLeft: '2.25rem' }} />
+                        className={inp}
+                        style={{
+                          ...inpStyle,
+                          paddingLeft: '2.25rem',
+                          borderColor: validationErrors[field] ? 'rgba(248,113,113,0.6)' : undefined,
+                        }}
+                      />
                     </div>
+                    <ErrMsg msg={validationErrors[field]} />
                   </div>
                 ))}
 
@@ -789,16 +927,32 @@ export default function EditarImovelPage() {
               </div>
 
               {/* Price preview */}
-              {(formData.priceMin || formData.priceMax) && (
-                <div className="rounded-2xl p-5" style={{ background: `${T.accent}10`, border: `1px solid ${T.accent}30` }}>
-                  <p className="text-xs uppercase tracking-wider mb-1" style={{ color: T.accent }}>Preview de Preço</p>
-                  <p className="text-2xl font-bold" style={{ color: T.text }}>
-                    {formData.priceMin && !formData.priceMax && `R$ ${Number(formData.priceMin).toLocaleString('pt-BR')}`}
-                    {formData.priceMin && formData.priceMax && `R$ ${Number(formData.priceMin).toLocaleString('pt-BR')} – R$ ${Number(formData.priceMax).toLocaleString('pt-BR')}`}
-                    {!formData.priceMin && formData.priceMax && `Até R$ ${Number(formData.priceMax).toLocaleString('pt-BR')}`}
-                  </p>
-                </div>
-              )}
+              {(formData.priceMin || formData.priceMax) && (() => {
+                const pMin = Number(formData.priceMin)
+                const pMax = Number(formData.priceMax)
+                const isInverted = formData.priceMin && formData.priceMax && pMax < pMin
+                return (
+                  <div className="rounded-lg p-5" style={{
+                    background: isInverted ? 'rgba(248,113,113,0.08)' : `${T.accent}10`,
+                    border: `1px solid ${isInverted ? 'rgba(248,113,113,0.35)' : T.accent + '30'}`,
+                  }}>
+                    <p className="text-xs uppercase tracking-wider mb-1" style={{ color: isInverted ? 'var(--bo-error,#f87171)' : T.accent }}>
+                      {isInverted ? '⚠ Faixa de preço inválida' : 'Preview de Preço'}
+                    </p>
+                    {isInverted ? (
+                      <p className="text-sm font-medium" style={{ color: 'var(--bo-error,#f87171)' }}>
+                        Preço mínimo (R$ {pMin.toLocaleString('pt-BR')}) é maior que o máximo (R$ {pMax.toLocaleString('pt-BR')}). Corrija antes de salvar.
+                      </p>
+                    ) : (
+                      <p className="text-2xl font-bold" style={{ color: T.text }}>
+                        {formData.priceMin && !formData.priceMax && `R$ ${pMin.toLocaleString('pt-BR')}`}
+                        {formData.priceMin && formData.priceMax && `R$ ${pMin.toLocaleString('pt-BR')} – R$ ${pMax.toLocaleString('pt-BR')}`}
+                        {!formData.priceMin && formData.priceMax && `Até R$ ${pMax.toLocaleString('pt-BR')}`}
+                      </p>
+                    )}
+                  </div>
+                )
+              })()}
             </div>
           )}
 
@@ -816,7 +970,7 @@ export default function EditarImovelPage() {
           <ArrowLeft size={14} /> Cancelar
         </button>
         <button onClick={handleSubmit} disabled={isSubmitting}
-          className="h-11 px-8 rounded-xl text-sm font-bold text-white flex items-center gap-2 disabled:opacity-60 transition-all"
+          className="h-11 px-8 rounded text-sm font-bold text-white flex items-center gap-2 disabled:opacity-60 transition-all"
           style={{ background: isSubmitting ? T.textDim : T.accent }}>
           {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {isSubmitting ? 'Salvando...' : 'Salvar alterações'}

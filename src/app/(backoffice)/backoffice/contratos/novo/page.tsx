@@ -223,7 +223,7 @@ function NovoContratoInner() {
                             <input placeholder="🔍 Buscar modelo..." value={busca} onChange={e => setBusca(e.target.value)} className="w-full h-10 px-4 rounded-xl text-sm outline-none" style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} onFocus={onF} onBlur={onB} />
                             <div className="flex gap-2 overflow-x-auto pb-0.5">
                                 {['todos', ...Object.keys(CATEGORIAS_LABEL)].map(cat => (
-                                    <button key={cat} onClick={() => setCatF(cat)} className="px-3 h-8 rounded-xl text-xs font-semibold flex-shrink-0 transition-all"
+                                    <button key={cat} onClick={() => setCatF(cat)} className="px-3 h-8 rounded text-xs font-semibold flex-shrink-0 transition-all"
                                         style={{ background: catF === cat ? 'var(--bo-accent)' : T.elevated, color: catF === cat ? 'white' : T.textDim, border: `1px solid ${catF === cat ? T.borderGold : T.border}` }}>
                                         {cat === 'todos' ? 'Todos' : `${ICONES_CAT[cat] || ''} ${(CATEGORIAS_LABEL as any)[cat]}`}
                                     </button>
@@ -285,7 +285,7 @@ function NovoContratoInner() {
                                     <p className="text-xs font-semibold mb-2" style={{ color: T.textMuted }}>Idioma principal:</p>
                                     <div className="flex gap-2 flex-wrap">
                                         {idiomasSel.map(l => (
-                                            <button key={l} onClick={() => setIdiomaPrim(l)} className="flex items-center gap-1.5 px-3 h-8 rounded-xl text-xs font-semibold transition-all"
+                                            <button key={l} onClick={() => setIdiomaPrim(l)} className="flex items-center gap-1.5 px-3 h-8 rounded text-xs font-semibold transition-all"
                                                 style={{ background: idiomaPrim === l ? 'var(--bo-accent)' : T.elevated, color: idiomaPrim === l ? 'white' : T.textDim, border: `1px solid ${idiomaPrim === l ? T.borderGold : T.border}` }}>
                                                 {(IDIOMAS_LABEL as any)[l]?.flag} {(IDIOMAS_LABEL as any)[l]?.label}
                                             </button>
@@ -301,7 +301,7 @@ function NovoContratoInner() {
                                 {PLATAFORMAS.map(p => {
                                     const sel = plat === p.id
                                     return (
-                                        <button key={p.id} onClick={() => setPlat(p.id)} className="w-full flex items-center gap-3 p-4 rounded-xl text-left transition-all"
+                                        <button key={p.id} onClick={() => setPlat(p.id)} className="w-full flex items-center gap-3 p-4 rounded text-left transition-all"
                                             style={{ background: sel ? `${p.cor}12` : T.elevated, border: `1px solid ${sel ? p.cor + '40' : T.border}` }}>
                                             <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${p.cor}18` }}>
                                                 <p.icon size={16} style={{ color: p.cor }} />
@@ -415,7 +415,7 @@ function NovoContratoInner() {
                                 { label: 'Visualizar', icon: Eye, action: () => setPreview(true) },
                                 { label: 'Novo', icon: Plus, action: () => { setGerado(false); setResultado(null); setStep(0); setModelo(null) } },
                             ].map(a => (
-                                <button key={a.label} onClick={a.action} className="flex flex-col items-center gap-2 p-4 rounded-2xl transition-all"
+                                <button key={a.label} onClick={a.action} className="flex flex-col items-center gap-2 p-4 rounded transition-all"
                                     style={{ background: T.surface, border: `1px solid ${T.border}` }}
                                     >
                                     <a.icon size={18} style={{ color: T.accent }} />
@@ -427,7 +427,7 @@ function NovoContratoInner() {
                             <h3 className="text-sm font-bold" style={{ color: T.text }}>Enviar para {contratante.nome?.split(' ')[0] || 'o contratante'}</h3>
                             <div className="flex gap-2">
                                 {(['email', 'whatsapp', 'ambos'] as const).map(c => (
-                                    <button key={c} onClick={() => setCanal(c)} className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-semibold transition-all"
+                                    <button key={c} onClick={() => setCanal(c)} className="flex-1 flex items-center justify-center gap-2 h-10 rounded text-xs font-semibold transition-all"
                                         style={{ background: canal === c ? 'var(--bo-accent)' : T.elevated, color: canal === c ? 'white' : T.textDim, border: `1px solid ${canal === c ? T.borderGold : T.border}` }}>
                                         {c === 'email' ? <><Mail size={12} />Email</> : c === 'whatsapp' ? <><MessageSquare size={12} />WhatsApp</> : '📤 Ambos'}
                                     </button>
@@ -435,7 +435,7 @@ function NovoContratoInner() {
                             </div>
                             {envioOk
                                 ? <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: 'var(--bo-success)' }} /><p className="text-xs font-semibold" style={{ color: 'var(--bo-success)' }}>Enviado com sucesso!</p></div>
-                                : <button onClick={enviar} disabled={enviando} className="w-full rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2" style={{ height: '44px', background: 'var(--bo-accent)', boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}>
+                                : <button onClick={enviar} disabled={enviando} className="w-full rounded text-sm font-bold text-white flex items-center justify-center gap-2" style={{ height: '44px', background: 'var(--bo-accent)', boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}>
                                     {enviando ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                                     {enviando ? 'Enviando...' : `Enviar via ${canal}`}
                                 </button>
@@ -445,7 +445,7 @@ function NovoContratoInner() {
                             <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.borderGold}` }}>
                                 <div className="flex items-center gap-2 mb-2"><FileSignature size={16} style={{ color: T.accent }} /><h3 className="text-sm font-bold" style={{ color: T.text }}>{PLATAFORMAS.find(p => p.id === plat)?.label}</h3></div>
                                 <p className="text-xs mb-3" style={{ color: T.textDim }}>Envie para assinatura digital juridicamente válida. Configure a variável de ambiente antes de ativar.</p>
-                                <button className="w-full h-11 rounded-xl text-sm font-semibold flex items-center justify-center gap-2" style={{ background: 'var(--bo-active-bg)', border: `1px solid ${T.borderGold}`, color: T.accent }}>
+                                <button className="w-full h-11 rounded text-sm font-semibold flex items-center justify-center gap-2" style={{ background: 'var(--bo-active-bg)', border: `1px solid ${T.borderGold}`, color: T.accent }}>
                                     <Shield size={15} /> Enviar para Assinatura Digital
                                 </button>
                                 <p className="text-[9px] text-center mt-2 font-mono" style={{ color: T.textDim }}>{PLATAFORMAS.find(p => p.id === plat)?.env}</p>
@@ -472,12 +472,12 @@ function NovoContratoInner() {
 
             {!gerado && (
                 <div className="flex justify-between pt-2">
-                    <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0} className="flex items-center gap-2 px-5 rounded-2xl text-sm font-semibold transition-all"
+                    <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0} className="flex items-center gap-2 px-5 rounded text-sm font-semibold transition-all"
                         style={{ height: '44px', background: step === 0 ? 'transparent' : T.surface, color: step === 0 ? T.textDim : T.textMuted, border: `1px solid ${step === 0 ? 'transparent' : T.border}` }}>
                         <ChevronLeft size={16} /> Voltar
                     </button>
                     {step < STEPS.length - 1 && (
-                        <button onClick={() => setStep(s => s + 1)} disabled={!ok()} className="flex items-center gap-2 px-6 rounded-2xl text-sm font-bold text-white transition-all"
+                        <button onClick={() => setStep(s => s + 1)} disabled={!ok()} className="flex items-center gap-2 px-6 rounded text-sm font-bold text-white transition-all"
                             style={{ height: '44px', background: ok() ? 'var(--bo-accent)' : 'var(--bo-hover)', opacity: ok() ? 1 : 0.5, boxShadow: ok() ? '0 4px 14px rgba(37,99,235,0.22)' : 'none', border: 'none' }}>
                             Avançar <ChevronRight size={16} />
                         </button>

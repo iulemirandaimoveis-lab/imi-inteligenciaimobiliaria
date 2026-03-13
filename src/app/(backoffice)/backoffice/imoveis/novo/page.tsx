@@ -52,10 +52,13 @@ interface FormData {
     type: string
     condition: 'lancamento' | 'em_construcao' | 'pronto' | 'seminovo' | 'usado'
     country: string
+    cep: string
     state: string
     city: string
     neighborhood: string
     address: string
+    streetNumber: string
+    complement: string
     developer_id: string
     developer: string
 
@@ -211,6 +214,16 @@ function Select({
     )
 }
 
+/* ───────── ErrMsg helper ───────── */
+function ErrMsg({ msg }: { msg?: string }) {
+    if (!msg) return null
+    return (
+        <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error, #f87171)' }}>
+            <AlertCircle size={11} />{msg}
+        </p>
+    )
+}
+
 /* ───────── Main Page ───────── */
 export default function NovoImovelPage() {
     const router = useRouter()
@@ -223,8 +236,8 @@ export default function NovoImovelPage() {
     const [formData, setFormData] = useState<FormData>({
         name: '', type: '',
         condition: 'lancamento',
-        country: 'Brasil', state: '', city: '', neighborhood: '',
-        address: '', developer_id: '', developer: '',
+        country: 'Brasil', cep: '', state: '', city: '', neighborhood: '',
+        address: '', streetNumber: '', complement: '', developer_id: '', developer: '',
         area: '', bedrooms: '', bathrooms: '', parking: '', floor: '',
         features: [],
         priceMin: '', priceMax: '', pricePerSqm: '',
@@ -476,11 +489,26 @@ export default function NovoImovelPage() {
         }
         if (step === 2) {
             if (!formData.area) e.area = 'Área é obrigatória'
+            if (formData.area && parseFloat(formData.area) < 0) e.area = 'Área não pode ser negativa'
             if (!formData.bedrooms) e.bedrooms = 'Quartos é obrigatório'
+            if (formData.bedrooms && parseInt(formData.bedrooms) < 0) e.bedrooms = 'Quartos não pode ser negativo'
+            if (formData.bathrooms && parseInt(formData.bathrooms) < 0) e.bathrooms = 'Banheiros não pode ser negativo'
+            if (formData.parking && parseInt(formData.parking) < 0) e.parking = 'Vagas não pode ser negativo'
         }
         if (step === 3) {
             if (!formData.priceMin) e.priceMin = 'Preço mínimo é obrigatório'
             if (!formData.priceMax) e.priceMax = 'Preço máximo é obrigatório'
+            const pMin = parseFloat(formData.priceMin || '0')
+            const pMax = parseFloat(formData.priceMax || '0')
+            if (formData.priceMin && formData.priceMax && pMax < pMin)
+                e.priceMax = 'Preço máximo deve ser ≥ ao mínimo'
+            if (formData.totalUnits && formData.availableUnits) {
+                const total = parseInt(formData.totalUnits)
+                const avail = parseInt(formData.availableUnits)
+                if (avail > total) e.availableUnits = 'Disponíveis não pode exceder o total'
+            }
+            if (formData.priceMin && parseFloat(formData.priceMin) < 0) e.priceMin = 'Preço não pode ser negativo'
+            if (formData.priceMax && parseFloat(formData.priceMax) < 0) e.priceMax = 'Preço não pode ser negativo'
         }
         setErrors(e)
         return Object.keys(e).length === 0
@@ -548,10 +576,15 @@ export default function NovoImovelPage() {
                 type: formData.type,
                 condition: formData.condition,
                 country: formData.country || 'Brasil',
+                cep: formData.cep || null,
+                street: formData.address || null,
+                street_number: formData.streetNumber || null,
+                complement: formData.complement || null,
                 state: formData.state,
+                state_uf: formData.state?.slice(0, 2).toUpperCase() || null,
                 city: formData.city,
                 location: formData.neighborhood,
-                address: formData.address,
+                address: [formData.address, formData.streetNumber].filter(Boolean).join(', ') || formData.address,
                 developer: formData.developer || null,
                 developer_id: formData.developer_id || null,
                 area: formData.area,
@@ -906,13 +939,55 @@ export default function NovoImovelPage() {
                                     />
                                 </div>
 
+                                {/* CEP (Brasil only) */}
+                                {(!formData.country || formData.country === 'Brasil') && (
+                                    <div>
+                                        <Label>CEP</Label>
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            maxLength={9}
+                                            value={formData.cep}
+                                            placeholder="00000-000"
+                                            onChange={async (e) => {
+                                                const raw = e.target.value.replace(/\D/g, '').slice(0, 8)
+                                                const masked = raw.length > 5 ? `${raw.slice(0, 5)}-${raw.slice(5)}` : raw
+                                                handleChange('cep', masked)
+                                                if (raw.length === 8) {
+                                                    try {
+                                                        const r = await fetch(`https://viacep.com.br/ws/${raw}/json/`)
+                                                        const d = await r.json()
+                                                        if (!d.erro) {
+                                                            handleChange('address', d.logradouro || '')
+                                                            handleChange('neighborhood', d.bairro || '')
+                                                            handleChange('city', d.localidade || '')
+                                                            handleChange('state', d.uf || '')
+                                                            toast.success('Endereço preenchido automaticamente')
+                                                        }
+                                                    } catch { /* silently ignore */ }
+                                                }
+                                            }}
+                                            style={{
+                                                width: '100%',
+                                                padding: '8px 12px',
+                                                background: 'var(--bo-surface)',
+                                                border: '1px solid var(--bo-border)',
+                                                borderRadius: '4px',
+                                                color: 'var(--bo-text)',
+                                                fontSize: '14px',
+                                                outline: 'none',
+                                            }}
+                                        />
+                                    </div>
+                                )}
+
                                 {/* Estado */}
                                 <div>
-                                    <Label>Estado / Província</Label>
+                                    <Label>Estado / UF</Label>
                                     <Input
                                         value={formData.state}
                                         onChange={v => handleChange('state', v)}
-                                        placeholder="PE, FL, Dubai..."
+                                        placeholder="PE, SP, RJ..."
                                     />
                                 </div>
 
@@ -939,16 +1014,34 @@ export default function NovoImovelPage() {
                                 </div>
                             </div>
 
-                            {/* Endereço */}
-                            <div className="mt-4">
-                                <Label required>Endereço Completo</Label>
-                                <Input
-                                    icon={MapPin}
-                                    value={formData.address}
-                                    onChange={v => handleChange('address', v)}
-                                    placeholder="Av. Boa Viagem, 3500"
-                                    error={errors.address}
-                                />
+                            {/* Logradouro + Número + Complemento */}
+                            <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="sm:col-span-2">
+                                    <Label required>Logradouro</Label>
+                                    <Input
+                                        icon={MapPin}
+                                        value={formData.address}
+                                        onChange={v => handleChange('address', v)}
+                                        placeholder="Av. Boa Viagem"
+                                        error={errors.address}
+                                    />
+                                </div>
+                                <div>
+                                    <Label>Número</Label>
+                                    <Input
+                                        value={formData.streetNumber}
+                                        onChange={v => handleChange('streetNumber', v)}
+                                        placeholder="3500"
+                                    />
+                                </div>
+                                <div className="sm:col-span-3">
+                                    <Label>Complemento</Label>
+                                    <Input
+                                        value={formData.complement}
+                                        onChange={v => handleChange('complement', v)}
+                                        placeholder="Apto 12, Torre A (opcional)"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1102,20 +1195,25 @@ export default function NovoImovelPage() {
                             <div>
                                 <Label>Total de Unidades</Label>
                                 <Input
+                                    icon={Building2}
                                     type="number"
                                     value={formData.totalUnits}
                                     onChange={v => handleChange('totalUnits', v)}
                                     placeholder="120"
+                                    error={errors.totalUnits}
                                 />
                             </div>
                             <div>
                                 <Label>Unidades Disponíveis</Label>
                                 <Input
+                                    icon={Building2}
                                     type="number"
                                     value={formData.availableUnits}
                                     onChange={v => handleChange('availableUnits', v)}
                                     placeholder="45"
+                                    error={errors.availableUnits}
                                 />
+                                <ErrMsg msg={errors.availableUnits} />
                             </div>
                             <div>
                                 <Label>Visibilidade</Label>
@@ -1134,9 +1232,28 @@ export default function NovoImovelPage() {
                             </div>
                         </div>
 
+                        {/* Price range live preview */}
+                        {formData.priceMin && formData.priceMax && (() => {
+                            const pMin = parseFloat(formData.priceMin)
+                            const pMax = parseFloat(formData.priceMax)
+                            const inverted = pMax < pMin
+                            return (
+                                <div className="rounded p-3" style={{
+                                    background: inverted ? 'rgba(248,113,113,0.07)' : 'rgba(52,211,153,0.07)',
+                                    border: `1px solid ${inverted ? 'rgba(248,113,113,0.25)' : 'rgba(52,211,153,0.20)'}`,
+                                }}>
+                                    <p className="text-[11px] font-medium" style={{ color: inverted ? 'var(--bo-error, #f87171)' : 'var(--bo-success, #34d399)' }}>
+                                        {inverted
+                                            ? '⚠ Faixa inválida — Preço máximo está abaixo do mínimo'
+                                            : `✓ Faixa: ${formatCurrency(formData.priceMin)} – ${formatCurrency(formData.priceMax)}`}
+                                    </p>
+                                </div>
+                            )
+                        })()}
+
                         {/* Price hint */}
                         {formData.neighborhood && (
-                            <div className="rounded-xl p-3" style={{ background: 'rgba(96,165,250,0.07)', border: '1px solid rgba(96,165,250,0.15)' }}>
+                            <div className="rounded p-3" style={{ background: 'rgba(96,165,250,0.07)', border: '1px solid rgba(96,165,250,0.15)' }}>
                                 <p className="text-[11px]" style={{ color: T.textMuted }}>
                                     💡 Imóveis similares em <strong style={{ color: T.text }}>{formData.neighborhood}</strong>: consulte o mercado para precificação ideal.
                                 </p>

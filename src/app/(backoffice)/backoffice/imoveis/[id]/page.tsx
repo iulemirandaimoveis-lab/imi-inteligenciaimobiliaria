@@ -251,11 +251,14 @@ export default function ImovelDetalhesPage() {
     ...(data.virtual_tour_url ? [{ key: 'tour' as TabKey, label: 'Tour Virtual' }] : []),
   ]
 
-  const priceDisplay = (data.price_min || data.price_max)
-    ? (data.price_min && data.price_max
-      ? `${formatPrice(data.price_min)} – ${formatPrice(data.price_max)}`
-      : formatPrice(data.price_min || data.price_max))
-    : null
+  const priceInverted = data.price_min && data.price_max && data.price_max < data.price_min
+  const priceDisplay = priceInverted
+    ? '⚠ Faixa inválida — edite o imóvel'
+    : (data.price_min || data.price_max)
+      ? (data.price_min && data.price_max
+        ? `${formatPrice(data.price_min)} – ${formatPrice(data.price_max)}`
+        : formatPrice(data.price_min || data.price_max))
+      : null
 
   const pricePerSqm = data.price_per_sqm
     ? `${formatPrice(data.price_per_sqm)}/m²`
@@ -351,12 +354,15 @@ export default function ImovelDetalhesPage() {
             {priceDisplay && (
               <div className="mt-3">
                 <span
-                  className="text-4xl font-bold"
-                  style={{ color: T.accent, textShadow: '0 0 24px rgba(59,130,246,0.4)' }}
+                  className={priceInverted ? 'text-lg font-semibold' : 'text-4xl font-bold'}
+                  style={{
+                    color: priceInverted ? 'var(--bo-error,#f87171)' : T.accent,
+                    textShadow: priceInverted ? 'none' : '0 0 24px rgba(59,130,246,0.4)',
+                  }}
                 >
                   {priceDisplay}
                 </span>
-                {pricePerSqm && (
+                {!priceInverted && pricePerSqm && (
                   <span className="ml-3 text-sm font-medium text-white/50">{pricePerSqm}</span>
                 )}
               </div>
