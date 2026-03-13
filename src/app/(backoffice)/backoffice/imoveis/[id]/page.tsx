@@ -406,24 +406,21 @@ export default function ImovelDetalhesPage() {
         {/* Analytics sub-nav */}
         <button
           onClick={() => router.push(`/backoffice/imoveis/${params.id}/analytics`)}
-          className="h-10 px-4 rounded-xl flex items-center gap-2 text-sm font-medium transition-colors"
-          style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.textMuted }}
+          className="bo-btn bo-btn-secondary bo-btn-sm"
         >
-          <BarChart2 size={15} /> Analytics
+          <BarChart2 size={13} /> Analytics
         </button>
         <button
           onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades`)}
-          className="h-10 px-4 rounded-xl flex items-center gap-2 text-sm font-medium transition-colors"
-          style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.textMuted }}
+          className="bo-btn bo-btn-secondary bo-btn-sm"
         >
-          <Layers size={15} /> Unidades
+          <Layers size={13} /> Unidades
         </button>
         <button
           onClick={() => router.push(`/backoffice/imoveis/${params.id}/timeline`)}
-          className="h-10 px-4 rounded-xl flex items-center gap-2 text-sm font-medium transition-colors"
-          style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.textMuted }}
+          className="bo-btn bo-btn-secondary bo-btn-sm"
         >
-          <Clock size={15} /> Timeline
+          <Clock size={13} /> Timeline
         </button>
 
         <div className="flex-1" />
@@ -431,21 +428,21 @@ export default function ImovelDetalhesPage() {
         {/* ── Smart Actions ── */}
         <button
           onClick={() => setShowContentPanel(true)}
-          className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
-          style={{ border: '1px solid rgba(139,92,246,0.30)', background: 'rgba(139,92,246,0.10)', color: '#A78BFA' }}
+          className="bo-btn bo-btn-sm"
+          style={{ background: 'rgba(139,92,246,0.12)', color: '#A78BFA', borderColor: 'rgba(139,92,246,0.25)' }}
           title="Gerar Conteúdo IA"
         >
-          <Sparkles size={15} />
+          <Sparkles size={13} />
           <span className="hidden sm:inline">Conteúdo IA</span>
         </button>
 
         <button
           onClick={openLeadPanel}
-          className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
-          style={{ border: '1px solid rgba(74,222,128,0.25)', background: 'rgba(74,222,128,0.08)', color: '#4ADE80' }}
+          className="bo-btn bo-btn-sm"
+          style={{ background: 'rgba(52,211,153,0.10)', color: 'var(--bo-success)', borderColor: 'rgba(52,211,153,0.25)' }}
           title="Enviar para Lead"
         >
-          <Send size={15} />
+          <Send size={13} />
           <span className="hidden sm:inline">Enviar Lead</span>
         </button>
 
@@ -455,11 +452,10 @@ export default function ImovelDetalhesPage() {
             const name = encodeURIComponent(data.name || 'Imóvel')
             router.push(`/backoffice/tracking/qr?propertyId=${params.id}&propertyName=${name}&propertyUrl=${encodeURIComponent(propertyUrl)}`)
           }}
-          className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
-          style={{ border: `1px solid ${T.border}`, background: T.surface, color: T.text }}
+          className="bo-btn bo-btn-secondary bo-btn-sm"
           title="QR Tracking"
         >
-          <QrCode size={15} />
+          <QrCode size={13} />
           <span className="hidden sm:inline">QR</span>
           {scanCount !== null && scanCount > 0 && (
             <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(96,165,250,0.15)', color: '#60A5FA', padding: '1px 5px', borderRadius: 4 }}>
@@ -471,20 +467,20 @@ export default function ImovelDetalhesPage() {
         {data.status !== 'vendido' && (
           <button
             onClick={() => handleStatusChange('vendido')}
-            className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
-            style={{ border: '1px solid rgba(96,165,250,0.3)', color: '#60A5FA', background: 'rgba(96,165,250,0.08)' }}
+            className="bo-btn bo-btn-sm"
+            style={{ background: 'rgba(96,165,250,0.10)', color: 'var(--bo-info)', borderColor: 'rgba(96,165,250,0.25)' }}
           >
-            <ShoppingCart size={16} />
+            <ShoppingCart size={13} />
             <span className="hidden sm:inline">Vendido</span>
           </button>
         )}
         {data.status === 'arquivado' && (
           <button
             onClick={() => handleStatusChange('disponivel')}
-            className="h-10 px-4 rounded-xl transition-colors flex items-center gap-2 text-sm font-medium"
-            style={{ border: '1px solid rgba(107,184,123,0.3)', color: '#6BB87B', background: 'rgba(107,184,123,0.08)' }}
+            className="bo-btn bo-btn-sm"
+            style={{ background: 'rgba(52,211,153,0.10)', color: 'var(--bo-success)', borderColor: 'rgba(52,211,153,0.25)' }}
           >
-            <RotateCcw size={16} />
+            <RotateCcw size={13} />
             <span className="hidden sm:inline">Restaurar</span>
           </button>
         )}
@@ -496,7 +492,7 @@ export default function ImovelDetalhesPage() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
         className="flex gap-2 mb-6 p-1 rounded-2xl w-fit"
-        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+        style={{ background: T.surface, border: `1px solid ${T.border}` }}
       >
         {TABS.map(tab => (
           <button
@@ -504,10 +500,9 @@ export default function ImovelDetalhesPage() {
             onClick={() => setActiveTab(tab.key)}
             className="h-9 px-5 rounded-xl text-sm font-semibold transition-all"
             style={{
-              background: activeTab === tab.key ? T.surface : 'transparent',
-              border: activeTab === tab.key ? `1px solid ${T.border}` : '1px solid transparent',
+              background: activeTab === tab.key ? T.elevated : 'transparent',
+              border: activeTab === tab.key ? `1px solid ${T.borderStrong}` : '1px solid transparent',
               color: activeTab === tab.key ? T.text : T.textMuted,
-              boxShadow: activeTab === tab.key ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
             }}
           >
             {tab.label}

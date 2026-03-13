@@ -3,13 +3,12 @@
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import {
     LayoutDashboard, Building2, Users, X,
     FileText, Briefcase, BookOpen, Settings,
     MessageSquare, Banknote, FolderOpen,
-    Scale, CreditCard, FileStack, Layers, Target, Zap, FileSignature, LogOut,
+    Scale, CreditCard, FileStack, Layers, Target, Zap, FileSignature,
     Megaphone, BarChart2, Plug, TrendingUp, TrendingDown, CalendarDays,
     QrCode, Sparkles, Building, Brain, LineChart, Wand2, BarChart3, Shield,
     UserPlus, CalendarPlus, ClipboardList,
@@ -178,7 +177,7 @@ function NetflixRow({ children }: { children: React.ReactNode }) {
     return (
         <div className="relative">
             <div
-                className="flex gap-3 overflow-x-auto px-4 pb-2"
+                className="flex gap-2 overflow-x-auto px-4 pb-2"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
             >
                 {children}
@@ -188,54 +187,6 @@ function NetflixRow({ children }: { children: React.ReactNode }) {
                 className="absolute right-0 top-0 bottom-0 w-6 pointer-events-none"
                 style={{ background: 'linear-gradient(to left, var(--bo-drawer-bg, #0f1318) 20%, transparent)' }}
             />
-        </div>
-    )
-}
-
-// ── User strip (loads from Supabase auth) ──────────────────────────
-function UserStrip({ onClose, router }: { onClose: () => void; router: ReturnType<typeof useRouter> }) {
-    const [userInfo, setUserInfo] = useState({ name: '—', email: '—', initials: '—' })
-
-    useEffect(() => {
-        const supabase = createClient()
-        supabase.auth.getUser().then(({ data: { user } }) => {
-            if (user) {
-                const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Admin'
-                const initials = name.split(' ').slice(0, 2).map((n: string) => n[0]).join('').toUpperCase()
-                setUserInfo({ name, email: user.email || '', initials })
-            }
-        })
-    }, [])
-
-    return (
-        <div
-            className="flex items-center gap-3 px-4 py-2.5 flex-shrink-0"
-            style={{ borderBottom: '1px solid var(--bo-border)' }}
-        >
-            <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-                style={{ background: 'var(--bo-accent)' }}
-            >
-                {userInfo.initials}
-            </div>
-            <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold truncate" style={{ color: 'var(--bo-text)' }}>{userInfo.name}</p>
-                <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>{userInfo.email}</p>
-            </div>
-            <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={async () => {
-                    onClose()
-                    const supabase = createClient()
-                    await supabase.auth.signOut()
-                    router.push('/login')
-                }}
-                className="flex items-center gap-1.5 px-3 h-7 rounded-xl text-[11px] font-semibold flex-shrink-0"
-                style={{ background: 'var(--s-cancel-bg)', color: 'var(--s-cancel)' }}
-            >
-                <LogOut size={11} />
-                Sair
-            </motion.button>
         </div>
     )
 }
@@ -284,28 +235,15 @@ export function MobileBottomNav() {
                                 <Link key={item.href} href={item.href} className="flex-1">
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="relative flex flex-col items-center justify-center py-2 w-full"
+                                        className="flex flex-col items-center justify-center py-2 w-full"
                                     >
-                                        <AnimatePresence>
-                                            {active && (
-                                                <motion.div
-                                                    layoutId={`nav-pill-${item.href.replace(/\//g, '-')}`}
-                                                    initial={{ opacity: 0, scale: 0.7 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 0.7 }}
-                                                    transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-                                                    className="absolute inset-0 mx-1 rounded-xl"
-                                                    style={{ background: item.bg }}
-                                                />
-                                            )}
-                                        </AnimatePresence>
                                         <item.icon
                                             size={18}
-                                            className="relative transition-colors duration-150"
+                                            className="transition-colors duration-150"
                                             style={{ color: active ? item.color : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="relative text-[10px] font-semibold mt-0.5 transition-colors duration-150"
+                                            className="text-[10px] font-semibold mt-0.5 transition-colors duration-150"
                                             style={{ color: active ? item.color : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
@@ -372,28 +310,15 @@ export function MobileBottomNav() {
                                 <Link key={item.href} href={item.href} className="flex-1">
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="relative flex flex-col items-center justify-center py-2 w-full"
+                                        className="flex flex-col items-center justify-center py-2 w-full"
                                     >
-                                        <AnimatePresence>
-                                            {active && (
-                                                <motion.div
-                                                    layoutId={`nav-pill-${item.href.replace(/\//g, '-')}`}
-                                                    initial={{ opacity: 0, scale: 0.7 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 0.7 }}
-                                                    transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-                                                    className="absolute inset-0 mx-1 rounded-xl"
-                                                    style={{ background: item.bg }}
-                                                />
-                                            )}
-                                        </AnimatePresence>
                                         <item.icon
                                             size={18}
-                                            className="relative transition-colors duration-150"
+                                            className="transition-colors duration-150"
                                             style={{ color: active ? item.color : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="relative text-[10px] font-semibold mt-0.5 transition-colors duration-150"
+                                            className="text-[10px] font-semibold mt-0.5 transition-colors duration-150"
                                             style={{ color: active ? item.color : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
@@ -486,9 +411,6 @@ export function MobileBottomNav() {
                                 </motion.button>
                             </div>
 
-                            {/* User strip */}
-                            <UserStrip onClose={() => setOpen(false)} router={router} />
-
                             {/* ── Netflix scrollable rows ── */}
                             <div
                                 className="overflow-y-auto flex-1"
@@ -513,26 +435,21 @@ export function MobileBottomNav() {
                                                 <Link href={item.href} onClick={() => setOpen(false)}>
                                                     <motion.div
                                                         whileTap={{ scale: 0.94 }}
-                                                        className="flex-shrink-0 w-[120px] rounded-2xl p-3 flex flex-col gap-2"
+                                                        className="flex-shrink-0 w-[78px] rounded-xl p-2 flex flex-col gap-1.5"
                                                         style={{
                                                             background: item.bg,
                                                             border: `1px solid ${item.color}28`,
                                                         }}
                                                     >
                                                         <div
-                                                            className="w-8 h-8 rounded-xl flex items-center justify-center"
+                                                            className="w-7 h-7 rounded-lg flex items-center justify-center"
                                                             style={{ background: `${item.color}25` }}
                                                         >
-                                                            <item.icon size={15} style={{ color: item.color }} />
+                                                            <item.icon size={13} style={{ color: item.color }} />
                                                         </div>
-                                                        <div>
-                                                            <p className="text-[11px] font-bold leading-tight" style={{ color: 'var(--bo-text)' }}>
-                                                                {item.label}
-                                                            </p>
-                                                            <p className="text-[9px] mt-0.5 leading-tight" style={{ color: 'var(--bo-text-muted)' }}>
-                                                                {item.desc}
-                                                            </p>
-                                                        </div>
+                                                        <p className="text-[10px] font-bold leading-tight" style={{ color: 'var(--bo-text)' }}>
+                                                            {item.label}
+                                                        </p>
                                                     </motion.div>
                                                 </Link>
                                             </motion.div>
