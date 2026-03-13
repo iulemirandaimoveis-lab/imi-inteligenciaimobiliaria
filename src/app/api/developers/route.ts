@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { parseBody, developerSchema, developerUpdateSchema } from '@/lib/schemas'
 
 export async function GET(request: NextRequest) {
     const supabase = await createClient()
@@ -34,7 +35,10 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-    const body = await request.json()
+
+    const parsed = await parseBody(request, developerSchema)
+    if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+    const body = parsed.data
 
     // Generate slug from name
     const nameForSlug = body.nomeFantasia || body.name || ''
@@ -80,8 +84,10 @@ export async function PUT(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-    const body = await request.json()
-    const { id, ...updates } = body
+
+    const parsed = await parseBody(request, developerUpdateSchema)
+    if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+    const { id, ...updates } = parsed.data
     if (!id) return NextResponse.json({ error: 'ID obrigatório' }, { status: 400 })
 
     // Add updated_at timestamp

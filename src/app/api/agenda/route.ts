@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { parseBody, calendarEventSchema, calendarEventUpdateSchema } from '@/lib/schemas'
 
 export async function GET(req: NextRequest) {
     try {
@@ -39,9 +40,10 @@ export async function POST(req: NextRequest) {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        const body = await req.json()
-        const { title, description, event_type, start_time, end_time, all_day, location, color, related_type, related_id } = body
-        if (!title || !start_time) return NextResponse.json({ error: 'title e start_time são obrigatórios' }, { status: 400 })
+
+        const parsed = await parseBody(req, calendarEventSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const { title, description, event_type, start_time, end_time, all_day, location, color, related_type, related_id } = parsed.data
 
         const { data, error } = await supabase.from('calendar_events').insert({
             title, description: description || null, event_type: event_type || 'reuniao',
@@ -62,10 +64,13 @@ export async function PUT(req: NextRequest) {
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-        const body = await req.json()
-        const { id, ...updates } = body
+
+        const parsed = await parseBody(req, calendarEventUpdateSchema)
+        if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        const { id, ...updates } = parsed.data
         if (!id) return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
-        updates.updated_at = new Date().toISOString()
+        ;(updates as any).updated_at = new Date().toISOString()
+
         const { data, error } = await supabase.from('calendar_events').update(updates).eq('id', id).select().single()
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data)

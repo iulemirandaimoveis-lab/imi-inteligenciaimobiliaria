@@ -214,6 +214,88 @@ export const projetoSchema = z.object({
     data_entrega_prev: z.string().optional().nullable(),
 })
 
+// ─── DEVELOPERS (Construtoras) ──────────────────────────────────────────────
+
+export const developerSchema = z.object({
+    name: z.string().min(2, 'Nome obrigatório').optional(),
+    nomeFantasia: z.string().min(2, 'Nome fantasia obrigatório').optional(),
+    razaoSocial: z.string().optional(),
+    legal_name: z.string().optional(),
+    cnpj: z.string().optional(),
+    email: z.string().email('Email inválido').optional().or(z.literal('')),
+    telefone: z.string().optional(),
+    celular: z.string().optional(),
+    phone: z.string().optional(),
+    website: z.string().url().optional().or(z.literal('')),
+    // Address fields (structured or flat)
+    logradouro: z.string().optional(),
+    numero: z.string().optional(),
+    complemento: z.string().optional(),
+    bairro: z.string().optional(),
+    cidade: z.string().optional(),
+    city: z.string().optional(),
+    estado: z.string().optional(),
+    state: z.string().optional(),
+    cep: z.string().optional(),
+    address: z.string().optional(),
+    description: z.string().optional(),
+    observacoes: z.string().optional(),
+    notes: z.string().optional(),
+    logo_url: z.string().url().optional().or(z.literal('')),
+    instagram: z.string().optional(),
+    linkedin: z.string().optional(),
+}).refine(data => data.name || data.nomeFantasia, {
+    message: 'name ou nomeFantasia é obrigatório',
+    path: ['name'],
+})
+
+export const developerUpdateSchema = z.object({
+    id: z.string().uuid('ID inválido'),
+}).catchall(z.any())
+
+// ─── AGENDA (Calendar Events) ───────────────────────────────────────────────
+
+export const calendarEventSchema = z.object({
+    title: z.string().min(1, 'Título obrigatório'),
+    description: z.string().optional().nullable(),
+    event_type: z.string().optional().default('reuniao'),
+    start_time: z.string().min(1, 'Horário de início obrigatório'),
+    end_time: z.string().optional().nullable(),
+    all_day: z.boolean().optional().default(false),
+    location: z.string().optional().nullable(),
+    color: z.string().optional().default('#486581'),
+    related_type: z.string().optional().nullable(),
+    related_id: z.string().uuid().optional().nullable(),
+})
+
+export const calendarEventUpdateSchema = calendarEventSchema.partial().extend({
+    id: z.string().uuid('ID inválido'),
+})
+
+// ─── BROKERS ────────────────────────────────────────────────────────────────
+
+export const brokerCreateSchema = z.object({
+    name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+    email: z.string().email('Email inválido'),
+    creci: z.string().min(1, 'CRECI obrigatório'),
+    password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
+    phone: z.string().optional().nullable(),
+    status: z.enum(['active', 'inactive']).optional().default('active'),
+    permissions: z.array(z.string()).optional().default([]),
+})
+
+// ─── EQUIPE ─────────────────────────────────────────────────────────────────
+
+export const equipeSchema = z.object({
+    name: z.string().min(2, 'Nome obrigatório'),
+    email: z.string().email('Email inválido').optional().or(z.literal('')),
+    phone: z.string().optional(),
+    role: z.string().optional().default('corretor'),
+    status: z.enum(['active', 'inactive']).optional().default('active'),
+    avatar_url: z.string().url().optional().or(z.literal('')),
+    notes: z.string().optional(),
+})
+
 // ─── QR GENERATE ─────────────────────────────────────────────────────────────
 
 export const qrGenerateSchema = z.object({
