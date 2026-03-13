@@ -2,10 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Bell, LogOut, Settings, ChevronDown } from 'lucide-react'
+import { Search, Bell, LogOut, Settings, ChevronDown, GraduationCap } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from './ThemeToggle'
+import { useOnboardingContext } from './OnboardingWrapper'
 
 const supabase = createClient()
 
@@ -294,6 +295,7 @@ function UserMenu({ onSignOut }: { onSignOut: () => void }) {
 export default function DesktopHeader() {
     const router = useRouter()
     const handleSignOut = async () => { await supabase.auth.signOut(); router.push('/login') }
+    const { startTutorial } = useOnboardingContext()
 
     return (
         <header
@@ -308,6 +310,19 @@ export default function DesktopHeader() {
             <div className="w-full h-full px-6 flex items-center justify-between gap-4">
                 <SearchBar />
                 <div className="flex items-center gap-1.5">
+                    <button
+                        onClick={startTutorial}
+                        className="flex items-center gap-1.5 h-9 px-3 rounded-xl text-xs font-semibold transition-all hover:brightness-110"
+                        style={{
+                            background: 'var(--bo-elevated)',
+                            border: '1px solid var(--bo-border)',
+                            color: 'var(--bo-text-muted)',
+                        }}
+                        title="Tour Guiado"
+                    >
+                        <GraduationCap size={14} />
+                        <span className="hidden xl:inline">Tour</span>
+                    </button>
                     <ThemeToggle />
                     <div className="w-px h-5 mx-0.5" style={{ background: 'var(--bo-border)' }} />
                     <NotificationBell />

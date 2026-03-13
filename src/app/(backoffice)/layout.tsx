@@ -8,6 +8,7 @@ import { CommandPalette } from '@/components/backoffice/CommandPalette'
 import { Toaster } from 'sonner'
 import { BackofficeRealtimeProvider } from './components/BackofficeRealtimeProvider'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import OnboardingWrapper from './components/OnboardingWrapper'
 
 export default async function BackofficeLayout({
     children,
@@ -26,23 +27,25 @@ export default async function BackofficeLayout({
                 color: 'var(--bo-text)',
             }}
         >
-            <DesktopSidebar />
-            <DesktopHeader />
-            <MobileHeader />
+            <OnboardingWrapper>
+                <DesktopSidebar />
+                <DesktopHeader />
+                <MobileHeader />
 
-            {/* Main Content — pt-14 on mobile for MobileHeader, lg:pt-16 for DesktopHeader */}
-            <main className="pt-14 lg:pt-16 lg:pl-60 min-h-screen overflow-x-hidden" style={{ maxWidth: '100vw' }}>
-                <div className="p-4 pb-28 lg:p-6 lg:pb-6">
-                    <ErrorBoundary>
-                        <BackofficeRealtimeProvider>
-                            {children}
-                        </BackofficeRealtimeProvider>
-                    </ErrorBoundary>
-                </div>
-            </main>
+                {/* Main Content — pt-14 on mobile for MobileHeader, lg:pt-16 for DesktopHeader */}
+                <main className="pt-14 lg:pt-16 lg:pl-60 min-h-screen overflow-x-hidden" style={{ maxWidth: '100vw' }}>
+                    <div className="p-4 pb-28 lg:p-6 lg:pb-6">
+                        <ErrorBoundary>
+                            <BackofficeRealtimeProvider>
+                                {children}
+                            </BackofficeRealtimeProvider>
+                        </ErrorBoundary>
+                    </div>
+                </main>
 
-            <MobileBottomNav />
-            <CommandPalette />
+                <MobileBottomNav />
+                <CommandPalette />
+            </OnboardingWrapper>
             <Toaster
                 position="top-right"
                 richColors
