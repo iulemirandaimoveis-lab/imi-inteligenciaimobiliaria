@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
 import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 
 interface Workflow {
     id: string
@@ -274,10 +275,10 @@ export default function AutomacoesPage() {
                                         </div>
                                         <span
                                             className="px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5"
-                                            style={wf.is_active
-                                                ? { background: 'rgba(52,211,153,0.12)', color: T.success, border: '1px solid rgba(52,211,153,0.25)' }
-                                                : { background: 'rgba(251,191,36,0.12)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.25)' }
-                                            }
+                                            style={(() => {
+                                                const sc = getStatusConfig(wf.is_active ? 'ativo' : 'morno')
+                                                return { background: `${sc.dot}1f`, color: sc.dot, border: `1px solid ${sc.dot}40` }
+                                            })()}
                                         >
                                             {wf.is_active ? <Play size={12} /> : <Pause size={12} />}
                                             {wf.is_active ? 'Ativa' : 'Pausada'}
@@ -297,7 +298,7 @@ export default function AutomacoesPage() {
                                     {wf.config && typeof wf.config === 'object' && Object.keys(wf.config).length > 0 && (
                                         <div className="mb-4 flex flex-wrap gap-2">
                                             {(wf.config.actions || []).map((a: string, i: number) => (
-                                                <span key={i} className="px-2 py-1 text-xs font-semibold rounded-lg" style={{ background: 'rgba(59,130,246,0.12)', color: '#60a5fa', border: '1px solid rgba(59,130,246,0.2)' }}>
+                                                <span key={i} className="px-2 py-1 text-xs font-semibold rounded-lg" style={{ background: T.infoBg, color: T.info, border: `1px solid ${T.info}33` }}>
                                                     {a}
                                                 </span>
                                             ))}
@@ -327,7 +328,7 @@ export default function AutomacoesPage() {
                                             title={wf.is_active ? 'Pausar' : 'Ativar'}
                                         >
                                             {wf.is_active
-                                                ? <Pause size={16} style={{ color: '#fbbf24' }} />
+                                                ? <Pause size={16} style={{ color: T.warning }} />
                                                 : <Play size={16} style={{ color: T.success }} />}
                                         </button>
                                         <button

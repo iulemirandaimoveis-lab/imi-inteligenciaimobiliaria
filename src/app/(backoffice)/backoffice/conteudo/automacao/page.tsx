@@ -8,6 +8,7 @@ import {
     Sparkles, ChevronRight, Pause, Loader2,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -33,8 +34,9 @@ const CANAL_ICONS: Record<string, any> = {
 }
 
 function getStatusInfo(workflow: Workflow) {
-    if (workflow.is_active) return { label: 'ativo', color: '#4ade80', bg: 'rgba(34,197,94,0.12)' }
-    return { label: 'pausado', color: '#fbbf24', bg: 'rgba(245,158,11,0.12)' }
+    const key = workflow.is_active ? 'ativo' : 'morno'
+    const cfg = getStatusConfig(key)
+    return { label: workflow.is_active ? 'ativo' : 'pausado', color: cfg.dot, bg: `${cfg.dot}1f` }
 }
 
 function fmtLastRun(ts: string | null): string {
