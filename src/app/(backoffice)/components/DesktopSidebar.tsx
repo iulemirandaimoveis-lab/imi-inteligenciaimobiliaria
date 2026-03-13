@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
     LayoutDashboard, Building2, FileText, Users, Scale,
-    Settings, ChevronDown, LogOut,
+    Settings, ChevronDown, LogOut, Sun,
     BookOpen, BarChart2, Target, TrendingUp, TrendingDown,
     Zap, CreditCard, Briefcase, CalendarDays, QrCode, Sparkles,
     FileStack, FolderOpen, Banknote, Building,
@@ -36,6 +36,7 @@ const SECTIONS: NavSection[] = [
         label: 'Operações Diárias',
         alwaysOpen: true,
         items: [
+            { label: 'Hoje',      href: '/backoffice/hoje',      icon: Sun             },
             { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
             { label: 'Leads',     href: '/backoffice/leads',     icon: Users           },
             { label: 'Agenda',    href: '/backoffice/agenda',    icon: CalendarDays    },

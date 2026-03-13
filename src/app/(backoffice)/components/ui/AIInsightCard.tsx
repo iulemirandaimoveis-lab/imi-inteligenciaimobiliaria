@@ -22,18 +22,27 @@ const VARIANT_STYLES = {
     bg: 'rgba(234,179,8,0.06)',
     iconColor: 'var(--imi-ai-gold)',
     labelColor: 'var(--imi-ai-gold)',
+    btnBg: 'var(--imi-ai-gold)',
+    btnShadow: '0 2px 10px rgba(212,169,41,0.35)',
+    btnColor: '#1a1200',
   },
   blue: {
     border: 'var(--imi-blue-border)',
     bg: 'var(--imi-blue-dim)',
     iconColor: 'var(--imi-blue-bright)',
     labelColor: 'var(--imi-blue-bright)',
+    btnBg: 'var(--imi-blue-bright)',
+    btnShadow: '0 2px 10px rgba(72,101,129,0.35)',
+    btnColor: '#fff',
   },
   green: {
     border: 'rgba(74,222,128,0.25)',
     bg: 'rgba(74,222,128,0.07)',
     iconColor: 'var(--imi-ai-green)',
     labelColor: 'var(--imi-ai-green)',
+    btnBg: 'var(--imi-ai-green)',
+    btnShadow: '0 2px 10px rgba(74,222,128,0.30)',
+    btnColor: '#001a0a',
   },
 }
 
@@ -133,23 +142,30 @@ export function AIInsightCard({
 
       {/* Action button */}
       {action && (
-        <button
-          onClick={action.onClick}
-          className="w-full mt-3"
-          style={{
-            padding: '9px 16px',
-            borderRadius: '10px',
-            fontSize: '12px',
-            fontWeight: 700,
-            color: '#fff',
-            background: 'var(--bo-accent)',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'opacity 0.15s',
-          }}
-        >
-          {action.label}
-        </button>
+        <div className="mt-3 flex justify-center">
+          <button
+            onClick={action.onClick}
+            style={{
+              padding: '7px 20px',
+              borderRadius: '8px',
+              fontSize: '11px',
+              fontWeight: 700,
+              color: v.btnColor,
+              background: v.btnBg,
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'filter 0.15s, transform 0.1s',
+              boxShadow: v.btnShadow,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.1)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1)' }}
+          >
+            {action.label}
+          </button>
+        </div>
       )}
     </div>
   )

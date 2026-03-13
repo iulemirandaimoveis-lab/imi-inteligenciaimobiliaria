@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import {
-    LayoutDashboard, Building2, Users, X,
+    LayoutDashboard, Building2, Users, X, Sun,
     FileText, Briefcase, BookOpen, Settings,
     MessageSquare, Banknote, FolderOpen,
     Scale, CreditCard, FileStack, Layers, Target, Zap, FileSignature,
@@ -15,12 +15,12 @@ import {
     BookMarked, Inbox, MoreHorizontal,
 } from 'lucide-react'
 
-// ── 5 fixed bottom nav items ─────────────────────────────────────────
+// ── 4 fixed bottom nav items ─────────────────────────────────────────
 const BOTTOM_ITEMS = [
-    { name: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard, color: '#6B9EC4', bg: 'rgba(107,158,196,0.14)' },
-    { name: 'Imóveis',   href: '/backoffice/imoveis',   icon: Building2,       color: '#D4A929', bg: 'rgba(212,169,41,0.13)'  },
-    { name: 'Leads',     href: '/backoffice/leads',     icon: Users,           color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-    { name: 'Agenda',    href: '/backoffice/agenda',    icon: CalendarDays,    color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)'  },
+    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,          color: '#F59E0B', bg: 'rgba(245,158,11,0.13)'  },
+    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,    color: '#D4A929', bg: 'rgba(212,169,41,0.13)'  },
+    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,        color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
+    { name: 'Agenda',  href: '/backoffice/agenda',    icon: CalendarDays, color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)'  },
 ]
 
 // Quick-create actions (shown in mega-menu)
@@ -377,38 +377,12 @@ export function MobileBottomNav() {
                                 overflow: 'hidden',
                             }}
                         >
-                            {/* Drag Handle */}
+                            {/* Drag Handle — arrastar pra baixo fecha */}
                             <div
-                                className="flex justify-center pt-3 pb-2 flex-shrink-0 touch-none cursor-grab active:cursor-grabbing"
+                                className="flex justify-center pt-3 pb-1 flex-shrink-0 touch-none cursor-grab active:cursor-grabbing"
                                 onPointerDown={e => dragControls.start(e)}
                             >
                                 <div className="w-10 h-1 rounded-full" style={{ background: 'var(--bo-border)' }} />
-                            </div>
-
-                            {/* Header */}
-                            <div
-                                className="flex items-center justify-between px-4 py-2.5 flex-shrink-0"
-                                style={{ borderBottom: '1px solid var(--bo-border)' }}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <div
-                                        className="w-5 h-5 rounded-md flex items-center justify-center"
-                                        style={{ background: 'var(--bo-accent)' }}
-                                    >
-                                        <span className="text-[10px] font-black text-white">I</span>
-                                    </div>
-                                    <span className="text-sm font-bold tracking-tight" style={{ color: 'var(--bo-text)' }}>
-                                        IMI Backoffice
-                                    </span>
-                                </div>
-                                <motion.button
-                                    whileTap={{ scale: 0.9 }}
-                                    onClick={() => setOpen(false)}
-                                    className="w-8 h-8 rounded-xl flex items-center justify-center"
-                                    style={{ background: 'var(--bo-icon-bg)' }}
-                                >
-                                    <X size={15} style={{ color: 'var(--bo-text-muted)' }} />
-                                </motion.button>
                             </div>
 
                             {/* ── Netflix scrollable rows ── */}
