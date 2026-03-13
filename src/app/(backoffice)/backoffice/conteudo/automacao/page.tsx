@@ -224,10 +224,10 @@ export default function AutomacaoConteudoPage() {
                                             <button
                                                 onClick={() => toggleWorkflow(wf)}
                                                 className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
-                                                style={wf.is_active
-                                                    ? { background: 'rgba(245,158,11,0.12)', color: '#fbbf24' }
-                                                    : { background: 'rgba(34,197,94,0.12)', color: '#4ade80' }
-                                                }
+                                                style={(() => {
+                                                    const sc = getStatusConfig(wf.is_active ? 'morno' : 'ativo')
+                                                    return { background: `${sc.dot}1f`, color: sc.dot }
+                                                })()}
                                                 title={wf.is_active ? 'Pausar' : 'Ativar'}
                                             >
                                                 {wf.is_active ? <Pause size={18} /> : <Play size={18} />}

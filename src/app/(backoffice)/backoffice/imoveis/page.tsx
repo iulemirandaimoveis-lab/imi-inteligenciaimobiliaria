@@ -110,10 +110,10 @@ function AnimatedNumber({ value, prefix = '', suffix = '' }: { value: number; pr
 
 /* ─── IMI SCORE BAR ──────────────────────────────────────────────── */
 function IMIScoreBar({ score, liquidez }: { score: number; liquidez: number }) {
-    const color = score >= 80 ? '#C8A46A' : score >= 65 ? T.success : score >= 50 ? '#fbbf24' : T.error
+    const color = score >= 80 ? '#C8A46A' : score >= 65 ? T.success : score >= 50 ? T.warning : T.error
     const label = score >= 80 ? 'Excelente' : score >= 65 ? 'Bom' : score >= 50 ? 'Regular' : 'Baixo'
     const dots = Math.min(5, Math.round(score / 20))
-    const liqColor = liquidez >= 75 ? T.success : liquidez >= 55 ? '#a3e635' : liquidez >= 40 ? '#fbbf24' : T.error
+    const liqColor = liquidez >= 75 ? T.success : liquidez >= 55 ? '#a3e635' : liquidez >= 40 ? T.warning : T.error
     return (
         <div className="space-y-1.5">
             {/* IMI Score dots + value */}
@@ -190,7 +190,7 @@ function CardActionsMenu({ imovel, onAction }: { imovel: Imovel; onAction: (id: 
     const actions = [
         { key: 'view',      label: 'Ver Detalhes',    icon: Eye,          color: 'rgba(255,255,255,0.7)' },
         { key: 'edit',      label: 'Editar',           icon: Edit,         color: 'rgba(255,255,255,0.7)' },
-        ...(imovel.status !== 'vendido'   ? [{ key: 'vendido',    label: 'Marcar Vendido', icon: ShoppingCart, color: '#fbbf24' }] : []),
+        ...(imovel.status !== 'vendido'   ? [{ key: 'vendido',    label: 'Marcar Vendido', icon: ShoppingCart, color: T.warning }] : []),
         ...(imovel.status !== 'arquivado' ? [{ key: 'arquivado',  label: 'Arquivar',        icon: Archive,      color: '#f59e0b' }] : []),
         ...(imovel.status === 'arquivado' ? [{ key: 'disponivel', label: 'Restaurar',       icon: CheckCircle,  color: T.success }] : []),
         { key: 'delete',    label: 'Excluir',          icon: Trash2,       color: T.error },
@@ -1227,7 +1227,7 @@ export default function ImoveisPage() {
                                             {/* IMI Score */}
                                             <div>
                                                 {(() => {
-                                                    const c = im.imiScore >= 80 ? '#C8A46A' : im.imiScore >= 65 ? T.success : im.imiScore >= 50 ? '#fbbf24' : T.error
+                                                    const c = im.imiScore >= 80 ? '#C8A46A' : im.imiScore >= 65 ? T.success : im.imiScore >= 50 ? T.warning : T.error
                                                     const dots = Math.min(5, Math.round(im.imiScore / 20))
                                                     return (
                                                         <div className="flex items-center gap-1.5">
@@ -1249,11 +1249,11 @@ export default function ImoveisPage() {
                                                             className="h-full rounded-full transition-all duration-700"
                                                             style={{
                                                                 width: `${im.liquidez}%`,
-                                                                background: im.liquidez >= 75 ? T.success : im.liquidez >= 55 ? '#a3e635' : im.liquidez >= 40 ? '#fbbf24' : T.error,
+                                                                background: im.liquidez >= 75 ? T.success : im.liquidez >= 55 ? '#a3e635' : im.liquidez >= 40 ? T.warning : T.error,
                                                             }}
                                                         />
                                                     </div>
-                                                    <span className="text-[10px] font-bold tabular-nums flex-shrink-0" style={{ color: im.liquidez >= 75 ? T.success : im.liquidez >= 40 ? '#fbbf24' : T.error }}>
+                                                    <span className="text-[10px] font-bold tabular-nums flex-shrink-0" style={{ color: im.liquidez >= 75 ? T.success : im.liquidez >= 40 ? T.warning : T.error }}>
                                                         {im.liquidez}%
                                                     </span>
                                                 </div>
