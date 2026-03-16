@@ -13,29 +13,35 @@ const mockTenantUpdate = jest.fn()
 const mockTenantEq = jest.fn()
 const mockFinancialInsert = jest.fn()
 
-jest.mock('@/lib/supabase/admin', () => ({
-    supabaseAdmin: {
-        auth: {
-            admin: {
-                listUsers: mockListUsers,
-                updateUserById: mockUpdateUserById,
-            },
+jest.mock('@/lib/supabase/admin', () => {
+    // References to outer `const` are resolved lazily via getter
+    // because jest.mock factory is hoisted above const declarations
+    return {
+        get supabaseAdmin() {
+            return {
+                auth: {
+                    admin: {
+                        listUsers: mockListUsers,
+                        updateUserById: mockUpdateUserById,
+                    },
+                },
+                from: jest.fn((table: string) => {
+                    if (table === 'tenants') {
+                        return {
+                            update: mockTenantUpdate,
+                        }
+                    }
+                    if (table === 'financial_transactions') {
+                        return {
+                            insert: mockFinancialInsert,
+                        }
+                    }
+                    return {}
+                }),
+            }
         },
-        from: jest.fn((table: string) => {
-            if (table === 'tenants') {
-                return {
-                    update: mockTenantUpdate,
-                }
-            }
-            if (table === 'financial_transactions') {
-                return {
-                    insert: mockFinancialInsert,
-                }
-            }
-            return {}
-        }),
-    },
-}))
+    }
+})
 
 import { POST } from '@/app/api/abacate-pay/webhook/route'
 import { NextRequest } from 'next/server'
@@ -57,14 +63,12 @@ function makeWebhookRequest(body: object, secret?: string) {
     })
 }
 
-const WEBHOOK_SECRET = 'test-webhook-secret'
-
 describe('POST /api/abacate-pay/webhook', () => {
     const originalEnv = process.env
 
     beforeEach(() => {
         jest.clearAllMocks()
-        process.env = { ...originalEnv, ABACATEPAY_WEBHOOK_SECRET: WEBHOOK_SECRET }
+        process.env = { ...originalEnv, ABACATEPAY_WEBHOOK_SECRET: 'test-secret-key' }
 
         mockTenantEq.mockResolvedValue({ data: null, error: null })
         mockTenantUpdate.mockReturnValue({ eq: mockTenantEq })
@@ -72,15 +76,17 @@ describe('POST /api/abacate-pay/webhook', () => {
         mockUpdateUserById.mockResolvedValue({ data: null, error: null })
     })
 
-    afterAll(() => {
+    afterEach(() => {
         process.env = originalEnv
     })
 
     it('returns 401 when signature is invalid', async () => {
         const body = { event: 'billing.paid', data: {} }
+        const bodyStr = JSON.stringify(body)
+
         const req = new NextRequest('http://localhost:3000/api/abacate-pay/webhook', {
             method: 'POST',
-            body: JSON.stringify(body),
+            body: bodyStr,
             headers: {
                 'Content-Type': 'application/json',
                 'x-webhook-signature': 'invalid-signature',
@@ -96,8 +102,7 @@ describe('POST /api/abacate-pay/webhook', () => {
 
     it('returns processed:false for non-subscription events', async () => {
         const body = { event: 'customer.created', data: {} }
-        const req = makeWebhookRequest(body, WEBHOOK_SECRET)
-
+        const req = makeWebhookRequest(body, 'test-secret-key')
         const res = await POST(req)
         const json = await res.json()
 
@@ -106,18 +111,17 @@ describe('POST /api/abacate-pay/webhook', () => {
         expect(json.processed).toBe(false)
     })
 
-    it('returns processed:false when transactionId does not match subscription pattern', async () => {
+    it('returns processed:false when transactionId is not a subscription payment', async () => {
         const body = {
             event: 'billing.paid',
             data: {
                 billing: {
-                    transactionId: 'pix_regular_12345',
+                    transactionId: 'regular_payment_123',
                     customer: { email: 'user@test.com' },
                 },
             },
         }
-        const req = makeWebhookRequest(body, WEBHOOK_SECRET)
-
+        const req = makeWebhookRequest(body, 'test-secret-key')
         const res = await POST(req)
         const json = await res.json()
 
@@ -131,12 +135,11 @@ describe('POST /api/abacate-pay/webhook', () => {
             event: 'billing.paid',
             data: {
                 billing: {
-                    transactionId: 'sub_professional_12345',
+                    transactionId: 'sub_professional_1234567890',
                 },
             },
         }
-        const req = makeWebhookRequest(body, WEBHOOK_SECRET)
-
+        const req = makeWebhookRequest(body, 'test-secret-key')
         const res = await POST(req)
         const json = await res.json()
 
@@ -147,21 +150,20 @@ describe('POST /api/abacate-pay/webhook', () => {
 
     it('returns processed:false when user is not found by email', async () => {
         mockListUsers.mockResolvedValue({
-            data: { users: [{ id: 'u-1', email: 'other@test.com' }] },
+            data: { users: [{ id: 'other-user', email: 'other@test.com', user_metadata: {} }] },
         })
 
         const body = {
             event: 'billing.paid',
             data: {
                 billing: {
-                    transactionId: 'sub_professional_12345',
-                    customer: { email: 'notfound@test.com' },
+                    transactionId: 'sub_professional_1234567890',
                     amount: 9900,
+                    customer: { email: 'notfound@test.com' },
                 },
             },
         }
-        const req = makeWebhookRequest(body, WEBHOOK_SECRET)
-
+        const req = makeWebhookRequest(body, 'test-secret-key')
         const res = await POST(req)
         const json = await res.json()
 
@@ -170,10 +172,10 @@ describe('POST /api/abacate-pay/webhook', () => {
         expect(json.reason).toBe('User not found')
     })
 
-    it('processes a valid professional subscription payment', async () => {
+    it('processes valid professional subscription payment', async () => {
         const mockUser = {
             id: 'user-123',
-            email: 'customer@test.com',
+            email: 'buyer@test.com',
             user_metadata: { subscription_tier: 'starter', trial_ends_at: '2024-01-01' },
         }
         mockListUsers.mockResolvedValue({
@@ -184,14 +186,13 @@ describe('POST /api/abacate-pay/webhook', () => {
             event: 'billing.paid',
             data: {
                 billing: {
-                    transactionId: 'sub_professional_1700000000',
-                    customer: { email: 'customer@test.com' },
+                    transactionId: 'sub_professional_1234567890',
                     amount: 9900,
+                    customer: { email: 'buyer@test.com' },
                 },
             },
         }
-        const req = makeWebhookRequest(body, WEBHOOK_SECRET)
-
+        const req = makeWebhookRequest(body, 'test-secret-key')
         const res = await POST(req)
         const json = await res.json()
 
@@ -216,6 +217,7 @@ describe('POST /api/abacate-pay/webhook', () => {
                 trial_ends_at: null,
             })
         )
+        expect(mockTenantEq).toHaveBeenCalledWith('created_by', 'user-123')
 
         // Verify financial transaction was recorded
         expect(mockFinancialInsert).toHaveBeenCalledWith(
@@ -229,7 +231,7 @@ describe('POST /api/abacate-pay/webhook', () => {
         )
     })
 
-    it('processes an enterprise subscription via pix.paid event', async () => {
+    it('processes valid enterprise subscription payment via pix.paid event', async () => {
         const mockUser = {
             id: 'user-456',
             email: 'enterprise@test.com',
@@ -243,14 +245,13 @@ describe('POST /api/abacate-pay/webhook', () => {
             event: 'pix.paid',
             data: {
                 billing: {
-                    transactionId: 'sub_enterprise_1700000000',
-                    customer: { email: 'enterprise@test.com' },
+                    transactionId: 'sub_enterprise_9999999',
                     amount: 29900,
+                    customer: { email: 'enterprise@test.com' },
                 },
             },
         }
-        const req = makeWebhookRequest(body, WEBHOOK_SECRET)
-
+        const req = makeWebhookRequest(body, 'test-secret-key')
         const res = await POST(req)
         const json = await res.json()
 
