@@ -61,5 +61,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function LandingPage({ params }: Props) {
     const dev = await getDevelopment(params.code)
     if (!dev) notFound()
-    return <LandingPageClient development={dev} code={params.code} />
+    // Normalize developer from array (Supabase join) to single object
+    const normalized = {
+        ...dev,
+        developer: Array.isArray(dev.developer) ? dev.developer[0] || {} : dev.developer || {},
+    }
+    return <LandingPageClient development={normalized as any} code={params.code} />
 }
