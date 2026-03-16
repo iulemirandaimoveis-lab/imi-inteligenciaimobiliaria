@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Header from '@/components/website/Header'
 import Footer from '@/components/website/Footer'
 import AnalyticsProvider from '@/components/website/AnalyticsProvider'
-import { generateOrganizationSchema } from '@/lib/seo'
+import { generateOrganizationSchema, generateWebSiteSchema, generateLocalBusinessSchema } from '@/lib/seo'
 import { getGlobalSettings } from '@/lib/settings'
 
 export const metadata: Metadata = {
@@ -20,13 +20,15 @@ export default async function WebsiteLayout({
 }) {
     const isRTL = lang === 'ar'
     const organizationSchema = generateOrganizationSchema()
+    const webSiteSchema = generateWebSiteSchema()
+    const localBusinessSchema = generateLocalBusinessSchema()
     const settings = await getGlobalSettings()
 
     return (
         <div className="flex flex-col min-h-screen overflow-x-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+                dangerouslySetInnerHTML={{ __html: JSON.stringify([organizationSchema, webSiteSchema, localBusinessSchema]) }}
             />
             <Suspense fallback={null}>
                 <AnalyticsProvider

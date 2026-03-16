@@ -16,6 +16,31 @@ export default function robots(): MetadataRoute.Robots {
           '/_next/',
         ],
       },
+      {
+        userAgent: 'GPTBot',
+        allow: ['/llms.txt', '/llms-full.txt'],
+        disallow: ['/backoffice/', '/api/'],
+      },
+      {
+        userAgent: 'ChatGPT-User',
+        allow: ['/llms.txt', '/llms-full.txt'],
+        disallow: ['/backoffice/', '/api/'],
+      },
+      {
+        userAgent: 'Claude-Web',
+        allow: ['/llms.txt', '/llms-full.txt'],
+        disallow: ['/backoffice/', '/api/'],
+      },
+      {
+        userAgent: 'PerplexityBot',
+        allow: ['/llms.txt', '/llms-full.txt'],
+        disallow: ['/backoffice/', '/api/'],
+      },
+      {
+        userAgent: 'Amazonbot',
+        allow: '/',
+        disallow: ['/backoffice/', '/api/'],
+      },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,
   }

@@ -7,10 +7,10 @@ import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
 
 const channels = [
-    { name: 'WhatsApp', icon: MessageSquare, status: 'Ativo', color: '#25D366', href: '/backoffice/whatsapp' },
-    { name: 'E-mail', icon: Mail, status: 'Ativo', color: '#4A90D9', href: null },
-    { name: 'Telefone', icon: Phone, status: 'Em breve', color: '#8B93A7', href: null },
-    { name: 'Instagram', icon: Instagram, status: 'Em breve', color: '#E1306C', href: null },
+    { name: 'WhatsApp', icon: MessageSquare, status: 'Ativo', color: '#25D366', href: '/backoffice/whatsapp', desc: 'API de WhatsApp Business conectada' },
+    { name: 'E-mail', icon: Mail, status: 'Ativo', color: '#4A90D9', href: '/backoffice/omnichannel/inbox', desc: 'Gmail OAuth integrado' },
+    { name: 'Telefone', icon: Phone, status: 'Configurar', color: '#8B93A7', href: '/backoffice/integracoes', desc: 'Configure via Integrações → VoIP / Twilio' },
+    { name: 'Instagram', icon: Instagram, status: 'Configurar', color: '#E1306C', href: '/backoffice/integracoes', desc: 'Configure via Integrações → Meta Business' },
 ]
 
 // Chatwoot config — update with your instance URL when deployed
@@ -27,11 +27,11 @@ export default function OmniChannelPage() {
     useEffect(() => {
         fetch('/api/leads')
             .then(r => r.json())
-            .then((json: any) => {
-                const data = json?.data || (Array.isArray(json) ? json : [])
+            .then((json: { data?: { created_at?: string; status?: string }[] } | { created_at?: string; status?: string }[]) => {
+                const data = (json && 'data' in json && json.data) ? json.data : (Array.isArray(json) ? json : [])
                 const today = new Date().toDateString()
-                const hoje = data.filter((l: any) => new Date(l.created_at || '').toDateString() === today).length
-                const pendentes = data.filter((l: any) => l.status === 'new' || l.status === 'warm' || !l.status).length
+                const hoje = data.filter((l) => new Date(l.created_at || '').toDateString() === today).length
+                const pendentes = data.filter((l) => l.status === 'new' || l.status === 'warm' || !l.status).length
                 setRealStats({ hoje, pendentes: Math.min(pendentes, 99) })
             })
             .catch(() => { toast.error('Erro ao carregar dados') })
@@ -139,15 +139,15 @@ export default function OmniChannelPage() {
                                         {ch.name}
                                     </p>
                                     <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>
-                                        Canal de comunicação
+                                        {ch.desc}
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                     <span
                                         className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
                                         style={{
-                                            background: ch.status === 'Ativo' ? 'var(--s-done-bg)' : T.hover,
-                                            color: ch.status === 'Ativo' ? 'var(--s-done)' : T.textMuted,
+                                            background: ch.status === 'Ativo' ? 'var(--s-done-bg)' : ch.status === 'Configurar' ? 'rgba(251,191,36,0.10)' : T.hover,
+                                            color: ch.status === 'Ativo' ? 'var(--s-done)' : ch.status === 'Configurar' ? 'var(--warning)' : T.textMuted,
                                         }}
                                     >
                                         {ch.status}

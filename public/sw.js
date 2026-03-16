@@ -10,6 +10,7 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll([
         '/favicon.svg',
+        '/offline.html',
       ]).catch(() => {})
     })
   )
@@ -100,4 +101,23 @@ self.addEventListener('fetch', (event) => {
   if (!url.origin.includes(self.location.origin)) return
   if (url.pathname.startsWith('/api/')) return
   if (url.pathname.startsWith('/_next/')) return
+
+  // Navigation requests: network first, fallback to offline page
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(() => caches.match('/offline.html'))
+    )
+    return
+  }
+
+  // Static assets: cache first
+  if (url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|webp|woff2?)$/)) {
+    event.respondWith(
+      caches.match(request).then(cached => cached || fetch(request).then(response => {
+        const clone = response.clone()
+        caches.open(CACHE_NAME).then(cache => cache.put(request, clone))
+        return response
+      }))
+    )
+  }
 })

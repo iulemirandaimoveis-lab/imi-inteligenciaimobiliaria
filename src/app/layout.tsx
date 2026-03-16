@@ -65,6 +65,7 @@ export const metadata: Metadata = {
 
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import CookieConsent from '@/components/CookieConsent';
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 
 export default function RootLayout({
     children,
@@ -82,6 +83,7 @@ export default function RootLayout({
                 >
                     {children}
                     <CookieConsent />
+                    <ServiceWorkerRegistration />
                 </ThemeProvider>
             </body>
         </html>

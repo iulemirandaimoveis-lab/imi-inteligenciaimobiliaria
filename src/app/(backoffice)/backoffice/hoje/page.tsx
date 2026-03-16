@@ -52,12 +52,12 @@ const QUICK_ACTIONS = [
   { label: 'Pipeline',    href: '/backoffice/leads',             color: 'var(--imi-gold-500)', icon: TrendingUp },
 ]
 
-// ── Agent activity data (static for now, can be wired to real API) ──
-const AGENT_ACTIVITY = [
-  { name: 'Qualificador', tasksToday: 47, color: '#3B82F6', raw: '59,130,246', status: 'active' },
-  { name: 'Conteúdo',     tasksToday: 23, color: '#8B5CF6', raw: '139,92,246', status: 'active' },
-  { name: 'Matchmaker',   tasksToday: 31, color: '#F59E0B', raw: '245,158,11', status: 'active' },
-  { name: 'Follow-up',    tasksToday: 12, color: 'var(--error)', raw: '239,68,68',  status: 'idle'   },
+// ── Agent activity default (zeroed — real data fetched from API) ──
+const AGENT_ACTIVITY_DEFAULT = [
+  { name: 'Qualificador', tasksToday: 0, color: '#3B82F6', raw: '59,130,246', status: 'active' },
+  { name: 'Conteúdo',     tasksToday: 0, color: '#8B5CF6', raw: '139,92,246', status: 'active' },
+  { name: 'Matchmaker',   tasksToday: 0, color: '#F59E0B', raw: '245,158,11', status: 'active' },
+  { name: 'Follow-up',    tasksToday: 0, color: 'var(--error)', raw: '239,68,68',  status: 'idle'   },
 ]
 
 // ── Loading Skeleton ─────────────────────────────────────────────────
@@ -81,6 +81,7 @@ export default function HojePage() {
   const router = useRouter()
   const [leads, setLeads] = useState<any[]>([])
   const [events, setEvents] = useState<any[]>([])
+  const [agentActivity, setAgentActivity] = useState(AGENT_ACTIVITY_DEFAULT)
   const [loading, setLoading] = useState(true)
 
   // ── Avatar / profile ──────────────────────────────────────────────
@@ -141,10 +142,18 @@ export default function HojePage() {
     Promise.all([
       fetch('/api/leads').then(r => r.json()).catch(() => { toast.error('Erro ao carregar leads'); return [] }),
       fetch(`/api/agenda?month=${currentMonth}`).then(r => r.json()).catch(() => { toast.error('Erro ao carregar agenda'); return [] }),
-    ]).then(([leadsData, eventsData]) => {
+      fetch('/api/ai/agents/stats').then(r => r.json()).catch(() => null),
+    ]).then(([leadsData, eventsData, agentData]) => {
       // /api/leads returns { data: [...], pagination: {} } — extract .data
       setLeads(leadsData?.data || (Array.isArray(leadsData) ? leadsData : []))
       setEvents(Array.isArray(eventsData) ? eventsData : [])
+      // Merge agent stats from API if available
+      if (agentData?.agents && typeof agentData.agents === 'object') {
+        setAgentActivity(prev => prev.map(agent => {
+          const apiData = agentData.agents[agent.name] || agentData.agents[agent.name.toLowerCase()]
+          return apiData ? { ...agent, tasksToday: apiData.tasksToday } : agent
+        }))
+      }
       setLoading(false)
     })
   }, [currentMonth])
@@ -531,19 +540,19 @@ export default function HojePage() {
           >
             <Bot size={12} style={{ color: '#A78BFA' }} />
             <span style={{ fontSize: '10px', fontWeight: 700, color: '#A78BFA', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              {AGENT_ACTIVITY.filter(a => a.status === 'active').length} ativos agora
+              {agentActivity.filter(a => a.status === 'active').length} ativos agora
             </span>
             <span style={{ marginLeft: 'auto', fontSize: '9px', color: 'var(--text-secondary)' }}>
-              {AGENT_ACTIVITY.reduce((s, a) => s + a.tasksToday, 0)} tarefas hoje
+              {agentActivity.reduce((s, a) => s + a.tasksToday, 0)} tarefas hoje
             </span>
           </div>
 
           {/* Agent rows */}
-          {AGENT_ACTIVITY.map((agent, i) => (
+          {agentActivity.map((agent, i) => (
             <div
               key={agent.name}
               className="flex items-center gap-3 px-4 py-3"
-              style={{ borderBottom: i < AGENT_ACTIVITY.length - 1 ? '1px solid var(--border-default)' : 'none' }}
+              style={{ borderBottom: i < agentActivity.length - 1 ? '1px solid var(--border-default)' : 'none' }}
             >
               {/* Icon */}
               <div style={{

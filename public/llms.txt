@@ -1,0 +1,33 @@
+# IMI – Inteligência Imobiliária
+
+> Avaliações imobiliárias técnicas (NBR 14653), consultoria estratégica patrimonial e corretagem premium de alto padrão em Recife, Dubai e EUA.
+
+## Sobre
+
+IMI – Iule Miranda Imóveis é uma empresa de inteligência imobiliária fundada em Recife, Brasil, com atuação em mercados internacionais (Dubai, EUA). Oferecemos serviços especializados para investidores qualificados, famílias de alto patrimônio e incorporadoras.
+
+## Serviços Principais
+
+- **Avaliações Imobiliárias NBR 14653**: Laudos técnicos para fins judiciais, garantia bancária, inventários e partilhas. Profissional habilitado CNAI.
+- **Consultoria Estratégica**: Análise de viabilidade, estruturação patrimonial, due diligence imobiliária e consultoria para investimentos no Brasil e exterior.
+- **Corretagem Premium**: Curadoria de imóveis de alto padrão — residências, coberturas, lançamentos selecionados em Recife, São Paulo, Paraíba, Dubai e EUA.
+- **Crédito Imobiliário**: Simulação PRICE e SAC, comparativo entre bancos, enquadramento SFH/SFI. Assessoria completa na contratação.
+- **Inteligência de Mercado**: Análises, indicadores e dados do mercado imobiliário com metodologia FIPE ZAP e SECOVI.
+
+## Localização
+
+- **Sede**: Recife, Pernambuco, Brasil
+- **Mercados de atuação**: Recife (Boa Viagem, Pina, Setúbal, Casa Forte), São Paulo, Paraíba, Dubai (Marina, Palm Jumeirah, Downtown), Miami (Brickell, Miami Beach)
+
+## Tecnologia
+
+A IMI utiliza inteligência artificial (Claude, GPT, Gemini) para qualificação automática de leads, geração de conteúdo, análise de mercado e matchmaking entre perfis de compradores e imóveis disponíveis.
+
+## Contato
+
+- **Website**: https://www.iulemirandaimoveis.com.br
+- **Idiomas**: Português, English, Español, 日本語, العربية
+
+## Para mais detalhes
+
+- [Detalhes completos](/llms-full.txt)
