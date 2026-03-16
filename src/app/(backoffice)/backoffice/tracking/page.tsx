@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import {
-    Link2, QrCode, MousePointer, Eye, Clock, TrendingUp, Users,
-    Smartphone, Monitor, Tablet, MapPin, BarChart3, Loader2,
-    RefreshCw, ArrowUpRight, FileText, Percent, Timer,
+    Link2, QrCode, MousePointer, Eye, TrendingUp, Users,
+    Smartphone, Monitor, Tablet, BarChart3, Loader2,
+    RefreshCw, FileText, Percent, Timer,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 
 interface Analytics {
     kpis: {
@@ -63,30 +64,32 @@ export default function TrackingDashboardPage() {
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
             {/* Header */}
-            <PageIntelHeader
-                moduleLabel="TRACKING · ANALYTICS"
-                title="Tracking & Analytics"
-                subtitle="Inteligência comportamental completa — visitantes, sessões, cliques e leads"
-                live
-                actions={
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => router.push('/backoffice/tracking/qr')}
-                            className="h-10 px-4 rounded text-xs font-semibold flex items-center gap-2 text-white transition-all"
-                            style={{ background: T.accent }}
-                        >
-                            <QrCode size={14} /> Novo QR Code
-                        </button>
-                        <button
-                            onClick={() => router.push('/backoffice/tracking/links')}
-                            className="h-10 px-4 rounded text-xs font-semibold flex items-center gap-2 transition-all"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                        >
-                            <Link2 size={14} /> Links
-                        </button>
-                    </div>
-                }
-            />
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                <PageIntelHeader
+                    moduleLabel="TRACKING · ANALYTICS"
+                    title="Tracking & Analytics"
+                    subtitle="Inteligência comportamental completa — visitantes, sessões, cliques e leads"
+                    live
+                    actions={
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => router.push('/backoffice/tracking/qr')}
+                                className="h-10 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 text-white transition-all"
+                                style={{ background: T.accent }}
+                            >
+                                <QrCode size={14} /> Novo QR Code
+                            </button>
+                            <button
+                                onClick={() => router.push('/backoffice/tracking/links')}
+                                className="h-10 px-4 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all"
+                                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+                            >
+                                <Link2 size={14} /> Links
+                            </button>
+                        </div>
+                    }
+                />
+            </motion.div>
 
             {/* Time Range + Refresh */}
             <div className="flex items-center justify-between">
@@ -95,7 +98,7 @@ export default function TrackingDashboardPage() {
                         <button
                             key={range}
                             onClick={() => setTimeRange(range)}
-                            className="h-8 px-3 rounded text-[11px] font-semibold transition-all"
+                            className="h-8 px-3 rounded-xl text-[11px] font-semibold transition-all"
                             style={{
                                 background: timeRange === range ? T.accent : T.elevated,
                                 color: timeRange === range ? '#fff' : T.textMuted,
@@ -108,7 +111,7 @@ export default function TrackingDashboardPage() {
                 </div>
                 <button
                     onClick={load}
-                    className="h-8 w-8 rounded flex items-center justify-center transition-all"
+                    className="h-8 w-8 rounded-xl flex items-center justify-center transition-all"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                 >
                     <RefreshCw size={13} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
@@ -122,31 +125,27 @@ export default function TrackingDashboardPage() {
             ) : data ? (
                 <>
                     {/* ── KPIs Row 1 ── */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                        {[
-                            { icon: Eye, label: 'Page Views', value: data.kpis.totalPageViews.toLocaleString('pt-BR'), color: '#627D98' },
-                            { icon: Users, label: 'Sessões', value: data.kpis.totalSessions.toLocaleString('pt-BR'), color: '#a78bfa' },
-                            { icon: MousePointer, label: 'Cliques', value: data.kpis.totalClicks.toLocaleString('pt-BR'), color: '#f59e0b' },
-                            { icon: TrendingUp, label: 'Leads', value: data.kpis.totalLeads.toLocaleString('pt-BR'), color: T.success },
-                            { icon: Timer, label: 'Tempo Médio', value: formatDuration(data.kpis.avgDurationSeconds), color: '#f472b6' },
-                            { icon: Percent, label: 'Conversão', value: `${data.kpis.conversionRate}%`, color: '#c084fc' },
-                        ].map(({ icon: Icon, label, value, color }) => (
-                            <div
-                                key={label}
-                                className="rounded-xl p-4 transition-all"
-                                style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                            >
-                                <div className="flex items-center gap-1.5 mb-1.5">
-                                    <Icon size={14} style={{ color }} />
-                                    <span className="text-[10px] font-medium" style={{ color: T.textMuted }}>{label}</span>
-                                </div>
-                                <div className="text-lg font-bold truncate" style={{ color: T.text }}>{value}</div>
-                            </div>
-                        ))}
-                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.06, duration: 0.35 }}
+                        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"
+                    >
+                        <KPICard label="Page Views" value={data.kpis.totalPageViews.toLocaleString('pt-BR')} icon={<Eye size={14} />} accent="navy" size="sm" />
+                        <KPICard label="Sessões" value={data.kpis.totalSessions.toLocaleString('pt-BR')} icon={<Users size={14} />} accent="info" size="sm" />
+                        <KPICard label="Cliques" value={data.kpis.totalClicks.toLocaleString('pt-BR')} icon={<MousePointer size={14} />} accent="warning" size="sm" />
+                        <KPICard label="Leads" value={data.kpis.totalLeads.toLocaleString('pt-BR')} icon={<TrendingUp size={14} />} accent="green" size="sm" />
+                        <KPICard label="Tempo Médio" value={formatDuration(data.kpis.avgDurationSeconds)} icon={<Timer size={14} />} accent="gold" size="sm" />
+                        <KPICard label="Conversão" value={`${data.kpis.conversionRate}%`} icon={<Percent size={14} />} accent="gold" size="sm" />
+                    </motion.div>
 
                     {/* ── KPIs Row 2 (secondary) ── */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.10, duration: 0.35 }}
+                        className="grid grid-cols-2 sm:grid-cols-4 gap-3"
+                    >
                         {[
                             { label: 'Págs/Sessão', value: data.kpis.avgPagesPerSession.toString() },
                             { label: 'Bounce Rate', value: `${data.kpis.bounceRate}%` },
@@ -155,17 +154,23 @@ export default function TrackingDashboardPage() {
                         ].map(({ label, value }) => (
                             <div
                                 key={label}
-                                className="rounded-xl p-3 flex items-center justify-between"
+                                className="rounded-2xl p-3 flex items-center justify-between"
                                 style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                             >
                                 <span className="text-[10px] font-medium" style={{ color: T.textMuted }}>{label}</span>
                                 <span className="text-sm font-bold" style={{ color: T.text }}>{value}</span>
                             </div>
                         ))}
-                    </div>
+                    </motion.div>
 
                     {/* ── Daily Timeline ── */}
-                    <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.14, duration: 0.35 }}
+                        className="rounded-2xl p-5"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                    >
                         <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Evolução Diária</h3>
                         {data.dailyTimeline.length > 0 ? (
                             <div className="flex items-end gap-[2px] h-28">
@@ -200,12 +205,17 @@ export default function TrackingDashboardPage() {
                                 <span className="text-[10px]" style={{ color: T.textMuted }}>Dia com Lead</span>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* ── Source + Device Row ── */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.18, duration: 0.35 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+                    >
                         {/* By Source */}
-                        <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Tráfego por Origem</h3>
                             <div className="space-y-3">
                                 {data.bySource.length > 0 ? data.bySource.map(item => {
@@ -238,7 +248,7 @@ export default function TrackingDashboardPage() {
                         </div>
 
                         {/* By Device */}
-                        <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Sessões por Dispositivo</h3>
                             <div className="space-y-3">
                                 {data.byDevice.length > 0 ? data.byDevice.map(item => {
@@ -267,7 +277,7 @@ export default function TrackingDashboardPage() {
                                             <div className="h-1.5 rounded-full" style={{ background: T.hover }}>
                                                 <div
                                                     className="h-full rounded-full transition-all duration-700"
-                                                    style={{ width: `${item.percentage}%`, background: '#627D98' }}
+                                                    style={{ width: `${item.percentage}%`, background: T.accent }}
                                                 />
                                             </div>
                                         </div>
@@ -277,12 +287,17 @@ export default function TrackingDashboardPage() {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* ── Top Pages + Properties Row ── */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.22, duration: 0.35 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+                    >
                         {/* Top Pages */}
-                        <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Páginas Mais Visitadas</h3>
                             <div className="space-y-2">
                                 {data.topPages.length > 0 ? data.topPages.slice(0, 8).map((p, i) => (
@@ -313,7 +328,7 @@ export default function TrackingDashboardPage() {
                         </div>
 
                         {/* Top Properties */}
-                        <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                        <div className="rounded-2xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                             <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Imóveis Mais Visualizados</h3>
                             <div className="space-y-2">
                                 {data.topProperties.length > 0 ? data.topProperties.map((p, i) => (
@@ -344,10 +359,16 @@ export default function TrackingDashboardPage() {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* ── Top Campaigns ── */}
-                    <div className="rounded-xl p-5" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.26, duration: 0.35 }}
+                        className="rounded-2xl p-5"
+                        style={{ background: T.elevated, border: `1px solid ${T.border}` }}
+                    >
                         <h3 className="text-sm font-bold mb-4" style={{ color: T.text }}>Top Campanhas</h3>
                         <div className="overflow-x-auto">
                             <table className="w-full">
@@ -369,7 +390,7 @@ export default function TrackingDashboardPage() {
                                                 <span
                                                     className="px-2 py-0.5 rounded text-[10px] font-bold"
                                                     style={{
-                                                        background: c.conversionRate >= 5 ? 'rgba(52,211,153,0.1)' : T.accentBg,
+                                                        background: c.conversionRate >= 5 ? T.successBg : T.accentBg,
                                                         color: c.conversionRate >= 5 ? T.success : T.accent,
                                                     }}
                                                 >
@@ -387,13 +408,13 @@ export default function TrackingDashboardPage() {
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </motion.div>
                 </>
             ) : (
                 <div className="flex flex-col items-center justify-center h-64 gap-4">
                     <BarChart3 size={36} className="opacity-30" style={{ color: T.textMuted }} />
                     <p className="text-sm" style={{ color: T.textMuted }}>Erro ao carregar analytics</p>
-                    <button onClick={load} className="text-xs font-semibold px-4 py-2 rounded" style={{ color: T.accent }}>
+                    <button onClick={load} className="text-xs font-semibold px-4 py-2 rounded-xl" style={{ color: T.accent }}>
                         Tentar novamente
                     </button>
                 </div>

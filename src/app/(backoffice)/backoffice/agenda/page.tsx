@@ -405,7 +405,7 @@ export default function AgendaPage() {
                 </div>
                 <button
                   onClick={() => setShowModal(true)}
-                  style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}
+                  style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}
                 >
                   <Plus size={15} color="var(--bo-text-muted)" />
                 </button>
@@ -478,19 +478,19 @@ export default function AgendaPage() {
                         {/* Actions */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                           {isOnline ? (
-                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: '#fff', background: '#3B82F6', border: 'none', cursor: 'pointer', boxShadow: '0 0 12px rgba(59,130,246,0.3)' }}>
+                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 700, color: '#fff', background: '#3B82F6', border: 'none', cursor: 'pointer', boxShadow: '0 0 12px rgba(59,130,246,0.3)' }}>
                               <Video size={13} />
                               Entrar
                             </button>
                           ) : (
-                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}>
+                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}>
                               <Navigation size={13} />
                               Rota
                             </button>
                           )}
                           <button
                             onClick={() => handleDelete(ev.id, ev.title)}
-                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', background: 'transparent', border: 'none', cursor: 'pointer' }}
                           >
                             <X size={14} color="var(--bo-text-muted)" />
                           </button>
@@ -554,7 +554,7 @@ export default function AgendaPage() {
                           </button>
                           <button
                             onClick={() => dismissSuggestion(sug.id)}
-                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', background: 'transparent', border: 'none', cursor: 'pointer' }}
                           >
                             <X size={14} color="var(--bo-text-muted)" />
                           </button>
@@ -598,7 +598,7 @@ export default function AgendaPage() {
                           {dayEvts.slice(0, 3).map(ev => {
                             const cfg = getTypeCfg(ev.event_type)
                             return (
-                              <div key={ev.id} style={{ borderRadius: '4px', padding: '2px 5px', fontSize: '9px', fontWeight: 600, color: cfg.color, background: cfg.bg, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              <div key={ev.id} style={{ borderRadius: '10px', padding: '2px 5px', fontSize: '9px', fontWeight: 600, color: cfg.color, background: cfg.bg, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {ev.title}
                               </div>
                             )
@@ -685,13 +685,13 @@ export default function AgendaPage() {
               </div>
 
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={() => setShowModal(false)} style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
+                <button onClick={() => setShowModal(false)} style={{ flex: 1, height: '44px', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
                   Cancelar
                 </button>
                 <button
                   onClick={handleCreate}
                   disabled={saving || !form.title || !form.start_time}
-                  style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 600, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1, boxShadow: '0 0 16px rgba(59,130,246,0.22)' }}
+                  style={{ flex: 1, height: '44px', borderRadius: '10px', fontSize: '13px', fontWeight: 600, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1, boxShadow: '0 0 16px rgba(59,130,246,0.22)' }}
                 >
                   <Plus size={16} />
                   {saving ? 'Salvando...' : 'Criar Evento'}

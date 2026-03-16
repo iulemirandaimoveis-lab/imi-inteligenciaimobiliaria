@@ -28,29 +28,20 @@ export interface BrokerFormData {
     permissions: string[]
 }
 
-// Hook para listar corretores
+// Hook para listar corretores — uses API route to bypass RLS
 export function useBrokers(filters?: {
     search?: string
     status?: string
 }) {
-    const supabase = createClient()
     const { data, error, mutate } = useSWR(['brokers', filters], async () => {
-        let query = supabase
-            .from('brokers')
-            .select('*', { count: 'exact' })
-            .order('created_at', { ascending: false })
+        const params = new URLSearchParams()
+        if (filters?.search) params.set('search', filters.search)
+        if (filters?.status && filters.status !== 'all') params.set('status', filters.status)
 
-        if (filters?.search) {
-            query = query.or(`name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`)
-        }
-
-        if (filters?.status && filters.status !== 'all') {
-            query = query.eq('status', filters.status)
-        }
-
-        const { data, error, count } = await query
-        if (error) throw error
-        return { data: data as Broker[], count }
+        const res = await fetch(`/api/brokers?${params.toString()}`)
+        if (!res.ok) throw new Error('Failed to fetch brokers')
+        const json = await res.json()
+        return { data: json.data as Broker[], count: json.count as number }
     })
 
     return {

@@ -12,6 +12,7 @@ import DevelopmentCTA from '../components/DevelopmentCTA'
 import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SimilarProperties from '../components/SimilarProperties'
+import RealtorCard from '../components/RealtorCard'
 
 // ISR: revalidate every 60s for near-real-time updates while enabling CDN caching
 export const revalidate = 60
@@ -104,6 +105,14 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 website,
                 phone,
                 email
+            ),
+            broker:brokers (
+                id,
+                name,
+                email,
+                phone,
+                creci,
+                avatar_url
             )
         `)
         .eq('slug', params.slug)
@@ -114,6 +123,9 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     }
 
     const development = mapDbPropertyToDevelopment(data)
+
+    // Extract broker info if available
+    const brokerData = Array.isArray(data.broker) ? data.broker[0] : data.broker
 
     // Fetch similar properties (same city, different slug, max 4)
     const { data: similarRaw } = await supabase
@@ -202,8 +214,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     </div>
 
                     {/* Sidebar — desktop only */}
-                    <aside className="hidden lg:block lg:col-span-4">
+                    <aside className="hidden lg:block lg:col-span-4 space-y-6">
                         <DevelopmentCTA development={development} />
+                        {brokerData?.name && (
+                            <div className="lg:sticky lg:top-[calc(28rem+1.5rem)]">
+                                <RealtorCard broker={brokerData} propertyName={development.name} />
+                            </div>
+                        )}
                     </aside>
                 </div>
             </div>
