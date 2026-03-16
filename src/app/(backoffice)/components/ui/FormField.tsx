@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import { T } from '@/app/(backoffice)/lib/theme'
 
 interface FormFieldProps {
   label: string
@@ -26,7 +25,7 @@ export function FormField({
     <div
       className={className}
       style={{
-        borderLeft: error ? `3px solid ${T.error}` : undefined,
+        borderLeft: error ? '3px solid var(--error)' : undefined,
         paddingLeft: error ? 12 : undefined,
       }}
     >
@@ -34,28 +33,29 @@ export function FormField({
         htmlFor={htmlFor}
         style={{
           display: 'block',
-          fontSize: 12,
-          fontWeight: 600,
-          color: T.text,
+          fontSize: 13,
+          fontWeight: 500,
+          color: 'var(--text-primary)',
+          fontFamily: 'var(--font-sans)',
           marginBottom: 6,
         }}
       >
         {label}
         {required && (
-          <span style={{ color: T.error, marginLeft: 2 }}>*</span>
+          <span style={{ color: 'var(--error)', marginLeft: 2 }}>*</span>
         )}
       </label>
 
       {children}
 
       {error && (
-        <p style={{ fontSize: 11, color: T.error, marginTop: 4, margin: 0, marginBlockStart: 4 }}>
+        <p style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--error)', margin: 0, marginBlockStart: 4 }}>
           {error}
         </p>
       )}
 
       {!error && hint && (
-        <p style={{ fontSize: 11, color: T.textMuted, marginTop: 4, margin: 0, marginBlockStart: 4 }}>
+        <p style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--text-tertiary)', margin: 0, marginBlockStart: 4 }}>
           {hint}
         </p>
       )}

@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
+// Force dynamic — never cache redirect responses at the edge.
+// Without this, Vercel CDN may serve a cached 307 and skip the serverless function,
+// causing tracking writes to be missed.
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 function parseUserAgent(ua: string) {
     // Device type
     let deviceType = 'desktop'
@@ -80,28 +86,59 @@ export async function GET(
     if (reqMedium) utms.medium = reqMedium
     if (reqCampaign) utms.campaign = reqCampaign
 
-    // 6. Log tracking event (non-blocking — don't await to avoid delaying redirect)
-    void supabaseAdmin
-        .from('link_events')
-        .insert({
-            tracked_link_id: link.id,
-            event_type: 'click',
-            device_type: deviceType,
-            browser,
-            os,
-            ip_address: ip,
-            referrer: referer,
-            utm_params: utms,
-            metadata: {
-                user_agent: userAgent.substring(0, 500),
-                short_code: shortCode,
-            },
-            created_at: new Date().toISOString()
-        })
+    // 6 & 7. Track event + increment counter — await both in parallel BEFORE redirecting.
+    // Serverless functions (Vercel) terminate immediately after returning a response;
+    // fire-and-forget void calls never complete. Promise.allSettled ensures both run
+    // even if one fails, without blocking longer than necessary.
+    const [eventResult, rpcResult] = await Promise.allSettled([
+        supabaseAdmin
+            .from('link_events')
+            .insert({
+                tracked_link_id: link.id,
+                event_type: 'click',
+                device_type: deviceType,
+                browser,
+                os,
+                ip_address: ip,
+                referrer: referer,
+                utm_params: utms,
+                metadata: {
+                    user_agent: userAgent.substring(0, 500),
+                    short_code: shortCode,
+                },
+                created_at: new Date().toISOString()
+            }),
+        supabaseAdmin
+            .rpc('increment_link_clicks', { link_id: link.id } as any),
+    ])
 
-    // 7. Increment click count (non-blocking)
-    void supabaseAdmin
-        .rpc('increment_link_clicks', { link_id: link.id } as any)
+    // Log failures for debugging (visible in Vercel function logs)
+    if (eventResult.status === 'rejected') {
+        console.error('[TRACKING] link_events INSERT rejected:', shortCode, eventResult.reason)
+    } else if (eventResult.value?.error) {
+        console.error('[TRACKING] link_events INSERT error:', shortCode, eventResult.value.error)
+    }
+    if (rpcResult.status === 'rejected') {
+        console.error('[TRACKING] increment_link_clicks rejected:', shortCode, rpcResult.reason)
+    } else if (rpcResult.value?.error) {
+        console.error('[TRACKING] increment_link_clicks error:', shortCode, rpcResult.value.error)
+    }
+
+    // Persist tracking errors to system_error_logs for dashboard visibility
+    const errors: string[] = []
+    if (eventResult.status === 'rejected') errors.push(`event_insert: ${eventResult.reason}`)
+    else if (eventResult.value?.error) errors.push(`event_insert: ${JSON.stringify(eventResult.value.error)}`)
+    if (rpcResult.status === 'rejected') errors.push(`rpc: ${rpcResult.reason}`)
+    else if (rpcResult.value?.error) errors.push(`rpc: ${JSON.stringify(rpcResult.value.error)}`)
+
+    if (errors.length > 0) {
+        void supabaseAdmin.from('system_error_logs').insert({
+            component_name: 'tracking_redirect',
+            error_message: errors.join(' | '),
+            page_url: `/l/${shortCode}`,
+            metadata: { short_code: shortCode, link_id: link.id },
+        }).then(() => {}, () => {}) // swallow — best-effort logging
+    }
 
     // 8. Build final redirect URL with UTM passthrough
     let finalUrl = targetUrl

@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Briefcase, Save, User, DollarSign, Loader2 } from 'lucide-react'
+import { Briefcase, Save, User, DollarSign, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const BTN_PRIMARY = {
   background: 'var(--bo-accent)',
@@ -66,18 +67,15 @@ export default function NovaConsultoriaPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <Link href="/backoffice/consultorias"
-          className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors hover-card"
-          style={{ border: `1px solid ${T.border}`, color: T.text }}>
-          <ArrowLeft size={16} />
-        </Link>
-        <div>
-          <h1 className="text-xl font-bold" style={{ color: T.text }}>Nova Consultoria</h1>
-          <p className="text-xs" style={{ color: T.sub }}>Registro de projeto e escopo</p>
-        </div>
-      </div>
+      <PageIntelHeader
+        moduleLabel="CONSULTORIAS"
+        title="Nova Consultoria"
+        subtitle="Registro de projeto e escopo"
+        breadcrumbs={[
+          { label: 'Consultorias', href: '/backoffice/consultorias' },
+          { label: 'Nova' },
+        ]}
+      />
 
       {/* Step indicator */}
       <div className="flex items-center gap-0">

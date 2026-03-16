@@ -113,7 +113,7 @@ Seja específico, prescritivo e focado em ações práticas. Use dados reais dos
     const startTime = Date.now();
 
     const message = await anthropic.messages.create({
-        model: 'claude-3-5-sonnet-20241022',
+        model: 'claude-sonnet-4-6',
         max_tokens: 2000,
         temperature: 0.3,
         messages: [
@@ -160,7 +160,7 @@ Seja específico, prescritivo e focado em ações práticas. Use dados reais dos
         .insert({
             tenant_id,
             provider: 'anthropic',
-            model: 'claude-3-5-sonnet-20241022',
+            model: 'claude-sonnet-4-6',
             prompt,
             response: responseText,
             raw_response: message,

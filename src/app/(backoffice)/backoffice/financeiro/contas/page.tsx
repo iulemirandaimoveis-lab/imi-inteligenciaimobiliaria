@@ -18,7 +18,7 @@ import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs, ActionMenu, StatusBadge } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 interface BankAccount {
     id: string
@@ -46,6 +46,7 @@ export default function ContasBancariasPage() {
 
     useEffect(() => {
         async function fetchContas() {
+            const supabase = createClient()
             const { data, error } = await supabase
                 .from('bank_accounts')
                 .select('*')
@@ -153,9 +154,9 @@ export default function ContasBancariasPage() {
                 <FilterTabs
                     tabs={[
                         { id: 'all',          label: 'Todas',       count: contas.length },
-                        { id: 'Corrente',     label: 'Corrente',    dotColor: '#60A5FA' },
-                        { id: 'Poupança',     label: 'Poupança',    dotColor: '#4ADE80' },
-                        { id: 'Investimento', label: 'Investimento',dotColor: '#FBBF24' },
+                        { id: 'Corrente',     label: 'Corrente',    dotColor: 'var(--s-cold)' },
+                        { id: 'Poupança',     label: 'Poupança',    dotColor: 'var(--bo-success)' },
+                        { id: 'Investimento', label: 'Investimento',dotColor: 'var(--bo-warning)' },
                     ] as FilterTab[]}
                     active={tipoFilter}
                     onChange={setTipoFilter}
@@ -214,7 +215,7 @@ export default function ContasBancariasPage() {
                                         </p>
                                         {conta.saldo_anterior != null && conta.saldo_anterior > 0 && (
                                             <div className="flex items-center gap-1 text-sm font-medium"
-                                                style={{ color: variacaoPositiva ? '#6BB87B' : '#E57373' }}>
+                                                style={{ color: variacaoPositiva ? 'var(--bo-success)' : 'var(--bo-error)' }}>
                                                 {variacaoPositiva ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                                                 {Math.abs(variacao).toFixed(1)}%
                                             </div>

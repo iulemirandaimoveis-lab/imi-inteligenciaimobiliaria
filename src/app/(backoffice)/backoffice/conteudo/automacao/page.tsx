@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react'
 import {
     Zap, Bot, RefreshCw, Plus, Play, Settings,
     Calendar, Instagram, Linkedin, Mail, FileText,
-    BarChart3, Search, MoreVertical, ArrowRight,
-    Sparkles, ChevronRight, Pause, Loader2,
+    BarChart3, Search, Pause, Loader2,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -32,8 +33,9 @@ const CANAL_ICONS: Record<string, any> = {
 }
 
 function getStatusInfo(workflow: Workflow) {
-    if (workflow.is_active) return { label: 'ativo', color: '#4ade80', bg: 'rgba(34,197,94,0.12)' }
-    return { label: 'pausado', color: '#fbbf24', bg: 'rgba(245,158,11,0.12)' }
+    const key = workflow.is_active ? 'ativo' : 'morno'
+    const cfg = getStatusConfig(key)
+    return { label: workflow.is_active ? 'ativo' : 'pausado', color: cfg.dot, bg: `${cfg.dot}1f` }
 }
 
 function fmtLastRun(ts: string | null): string {
@@ -98,71 +100,30 @@ export default function AutomacaoConteudoPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white" style={{ background: T.elevated }}>
-                        <Bot size={24} style={{ color: T.accent }} />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold" style={{ color: T.text }}>Automação de Conteúdo</h1>
-                        <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>
-                            Configure agentes de IA para criar e agendar posts automaticamente
-                        </p>
-                    </div>
-                </div>
-                <button
-                    className="flex items-center gap-2 h-11 px-6 text-white rounded-xl font-medium hover:brightness-110 transition-all"
-                    style={{ background: T.accent }}
-                >
-                    <Plus size={18} />
-                    Novo Pipeline
-                </button>
-            </div>
+            <PageIntelHeader
+                moduleLabel="CONTEÚDO"
+                title="Automação de Conteúdo"
+                subtitle="Configure agentes de IA para criar e agendar posts automaticamente"
+                breadcrumbs={[
+                    { label: 'Conteúdo', href: '/backoffice/conteudo' },
+                    { label: 'Automação' },
+                ]}
+                actions={
+                    <button
+                        className="flex items-center gap-2 h-10 px-5 text-white rounded-xl font-semibold text-sm hover:brightness-110 transition-all flex-shrink-0"
+                        style={{ background: T.accent }}
+                    >
+                        <Plus size={16} />
+                        Novo Pipeline
+                    </button>
+                }
+            />
 
             {/* Stats */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Pipelines Ativos</p>
-                        <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold" style={{ color: T.text }}>{loading ? '—' : ativos}</p>
-                            <Zap size={20} style={{ color: T.accent }} className="mb-1" />
-                        </div>
-                        <p className="text-[10px] font-medium mt-2" style={{ color: T.accent }}>
-                            de {loading ? '—' : workflows.length} configurados
-                        </p>
-                    </div>
-                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Execuções Totais</p>
-                        <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold" style={{ color: T.text }}>{loading ? '—' : totalRuns.toLocaleString('pt-BR')}</p>
-                            <BarChart3 size={24} className="text-blue-500 mb-1" />
-                        </div>
-                        <p className="text-[10px] font-medium mt-2" style={{ color: T.textMuted }}>Total acumulado</p>
-                    </div>
-                    <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: T.textMuted }}>Total de Pipelines</p>
-                        <div className="flex items-end justify-between">
-                            <p className="text-3xl font-bold" style={{ color: T.text }}>{loading ? '—' : workflows.length}</p>
-                            <Settings size={20} style={{ color: T.textMuted }} className="mb-1" />
-                        </div>
-                        <p className="text-[10px] font-medium mt-2" style={{ color: T.textMuted }}>Configurados</p>
-                    </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-indigo-900 to-indigo-950 rounded-2xl p-6 text-white relative overflow-hidden">
-                    <Sparkles className="absolute -top-4 -right-4 w-24 h-24 text-white/5" />
-                    <h3 className="text-sm font-bold flex items-center gap-2 mb-3">
-                        <Zap size={16} className="text-yellow-400" />
-                        Dica de Automação
-                    </h3>
-                    <p className="text-xs text-indigo-100 leading-relaxed font-medium">
-                        Configure pipelines com gatilhos baseados em eventos — novo lead, novo imóvel ou data programada — para máxima cobertura automática.
-                    </p>
-                    <button className="mt-4 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-white/10 hover:bg-white/20 py-2 px-4 rounded-xl transition-all">
-                        Criar Pipeline <ChevronRight size={14} />
-                    </button>
-                </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                <KPICard label="Pipelines Ativos"  value={loading ? '—' : String(ativos)}                           icon={<Zap size={14} />} accent="green" size="sm" />
+                <KPICard label="Execuções Totais"   value={loading ? '—' : totalRuns.toLocaleString('pt-BR')}        icon={<BarChart3 size={14} />} accent="blue" size="sm" />
+                <KPICard label="Total de Pipelines" value={loading ? '—' : String(workflows.length)}                 icon={<Settings size={14} />} size="sm" />
             </div>
 
             {/* Lista de Pipelines */}
@@ -262,19 +223,21 @@ export default function AutomacaoConteudoPage() {
                                             <button
                                                 onClick={() => toggleWorkflow(wf)}
                                                 className="w-10 h-10 flex items-center justify-center rounded-xl transition-all"
-                                                style={wf.is_active
-                                                    ? { background: 'rgba(245,158,11,0.12)', color: '#fbbf24' }
-                                                    : { background: 'rgba(34,197,94,0.12)', color: '#4ade80' }
-                                                }
+                                                style={(() => {
+                                                    const sc = getStatusConfig(wf.is_active ? 'morno' : 'ativo')
+                                                    return { background: `${sc.dot}1f`, color: sc.dot }
+                                                })()}
                                                 title={wf.is_active ? 'Pausar' : 'Ativar'}
                                             >
                                                 {wf.is_active ? <Pause size={18} /> : <Play size={18} />}
                                             </button>
-                                            <button className="w-10 h-10 flex items-center justify-center rounded-xl transition-all" style={{ background: T.elevated, color: T.textMuted }}>
+                                            <button
+                                                onClick={() => toast.info(`Configurações de "${wf.name}" — em breve`)}
+                                                className="w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:brightness-110"
+                                                style={{ background: T.elevated, color: T.textMuted }}
+                                                title="Configurações"
+                                            >
                                                 <Settings size={18} />
-                                            </button>
-                                            <button className="w-10 h-10 flex items-center justify-center rounded-xl opacity-0 group-hover:opacity-100 transition-all" style={{ color: T.textMuted }}>
-                                                <MoreVertical size={18} />
                                             </button>
                                         </div>
                                     </div>
@@ -284,11 +247,13 @@ export default function AutomacaoConteudoPage() {
                     </div>
                 )}
 
-                <div className="p-4 text-center" style={{ background: T.elevated, borderTop: `1px solid ${T.border}` }}>
-                    <button className="text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 mx-auto hover:opacity-80" style={{ color: T.textMuted }}>
-                        Ver Logs de Automação Completos <ArrowRight size={14} />
-                    </button>
-                </div>
+                {workflows.length > 0 && (
+                    <div className="p-4 text-center" style={{ background: T.elevated, borderTop: `1px solid ${T.border}` }}>
+                        <p className="text-xs font-medium" style={{ color: T.textMuted }}>
+                            {workflows.length} pipeline{workflows.length !== 1 ? 's' : ''} configurado{workflows.length !== 1 ? 's' : ''} · {ativos} ativo{ativos !== 1 ? 's' : ''}
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     )

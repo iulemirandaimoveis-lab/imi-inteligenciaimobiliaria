@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import {
-    ArrowLeft, Target, TrendingUp, TrendingDown, Users,
+    Target, TrendingUp, TrendingDown, Users,
     DollarSign, Eye, Edit, Play, Pause, BarChart3,
     Instagram, Facebook, Globe, Mail, MessageSquare,
     Loader2, ChevronRight, Link as LinkIcon, Sparkles, Brain,
@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const TYPE_MAP: Record<string, { label: string; icon: any }> = {
     google_ads: { label: 'Google Ads', icon: Globe },
@@ -118,51 +119,35 @@ export default function CampanhaDetalhesPage() {
         { label: 'Leads', value: fmtN(campanha.leads), color: T.accent },
         { label: 'Conversões', value: fmtN(campanha.conversions), color: '#4CAF7D' },
         { label: 'CPL', value: fmtBRL(campanha.cost_per_lead), color: '#E8A87C' },
-        { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: '#6BB87B' },
+        { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: 'var(--bo-success)' },
         { label: 'Orçamento', value: fmtBRL(campanha.budget), color: T.text },
     ]
 
     return (
         <div className="space-y-6 max-w-5xl mx-auto">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Link href="/backoffice/campanhas" className="text-xs font-medium hover:underline" style={{ color: T.textMuted }}>
-                            Campanhas
-                        </Link>
-                        <ChevronRight size={12} style={{ color: T.textMuted }} />
-                        <span className="text-xs font-medium" style={{ color: T.text }}>{campanha.name}</span>
+            <PageIntelHeader
+                moduleLabel="CAMPANHAS"
+                title={campanha.name}
+                subtitle={[type.label, campanha.objective].filter(Boolean).join(' · ')}
+                breadcrumbs={[
+                    { label: 'Campanhas', href: '/backoffice/campanhas' },
+                    { label: campanha.name },
+                ]}
+                actions={
+                    <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-semibold px-2.5 py-1 rounded-lg flex-shrink-0"
+                            style={{ color: status.color, background: status.bg }}>
+                            {status.label}
+                        </span>
+                        <button
+                            onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
+                            className="bo-btn bo-btn-primary"
+                            style={{ background: T.accent }}>
+                            <Edit size={14} /> Editar
+                        </button>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                            style={{ background: 'rgba(72,101,129,0.12)' }}>
-                            <TypeIcon size={16} style={{ color: T.accent }} />
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-bold leading-tight" style={{ color: T.text }}>{campanha.name}</h1>
-                            <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>
-                                {type.label}
-                                {campanha.objective && <> · {campanha.objective}</>}
-                                {campanha.start_date && <> · {new Date(campanha.start_date).toLocaleDateString('pt-BR')}</>}
-                                {campanha.end_date && <> – {new Date(campanha.end_date).toLocaleDateString('pt-BR')}</>}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-lg"
-                        style={{ color: status.color, background: status.bg }}>
-                        {status.label}
-                    </span>
-                    <button
-                        onClick={() => router.push(`/backoffice/campanhas/${id}/editar`)}
-                        className="flex items-center gap-1.5 h-9 px-4 rounded-xl text-sm font-semibold text-white"
-                        style={{ background: T.accent }}>
-                        <Edit size={14} /> Editar
-                    </button>
-                </div>
-            </div>
+                }
+            />
 
             {/* KPI grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
@@ -219,7 +204,7 @@ export default function CampanhaDetalhesPage() {
                                 <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                     <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Performance</p>
                                     <p className="text-sm font-bold" style={{
-                                        color: aiAnalysis.status === 'excelente' ? '#10B981' : aiAnalysis.status === 'bom' ? '#3B82F6' : aiAnalysis.status === 'regular' ? '#F59E0B' : '#EF4444'
+                                        color: aiAnalysis.status === 'excelente' ? '#10B981' : aiAnalysis.status === 'bom' ? '#3B82F6' : aiAnalysis.status === 'regular' ? '#F59E0B' : 'var(--bo-error)'
                                     }}>{aiAnalysis.status}</p>
                                 </div>
                             )}

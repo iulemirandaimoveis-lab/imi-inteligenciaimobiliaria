@@ -6,9 +6,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { RealtimeChannel } from '@supabase/supabase-js'
 
-const supabase = createClient()
-
-export interface RealtimeEvent<T = any> {
+export interface RealtimeEvent<T = Record<string, unknown>> {
     eventType: 'INSERT' | 'UPDATE' | 'DELETE'
     new: T
     old: T
@@ -28,9 +26,10 @@ export interface UseRealtimeOptions<T> {
 /**
  * Hook para sincronização real-time de uma tabela
  */
-export function useRealtimeTable<T = any>(
+export function useRealtimeTable<T = Record<string, unknown>>(
     options: UseRealtimeOptions<T>
 ) {
+    const supabase = createClient()
     const [channel, setChannel] = useState<RealtimeChannel | null>(null)
     const [connected, setConnected] = useState(false)
     const [error, setError] = useState<Error | null>(null)
@@ -116,7 +115,7 @@ export function useRealtimeTable<T = any>(
  * Hook específico para developments (empreendimentos)
  */
 export function useRealtimeDevelopments(
-    onUpdate?: (development: any) => void
+    onUpdate?: (development: Record<string, unknown>) => void
 ) {
     return useRealtimeTable({
         table: 'developments',
@@ -136,7 +135,7 @@ export function useRealtimeDevelopments(
  * Hook específico para leads
  */
 export function useRealtimeLeads(
-    onUpdate?: (lead: any) => void
+    onUpdate?: (lead: Record<string, unknown>) => void
 ) {
     return useRealtimeTable({
         table: 'leads',
@@ -163,7 +162,8 @@ export function useRealtimeLeads(
  * Hook para notificações real-time
  */
 export function useRealtimeNotifications(userId?: string) {
-    const [notifications, setNotifications] = useState<any[]>([])
+    const supabase = createClient()
+    const [notifications, setNotifications] = useState<Record<string, unknown>[]>([])
     const [unreadCount, setUnreadCount] = useState(0)
 
     // Fetch inicial (seria bom ter, mas o hook foca no realtime. Deixando para componente pai ou expandindo)
@@ -248,7 +248,8 @@ function playNotificationSound() {
  * Hook para presença online (quem está online no backoffice)
  */
 export function useOnlinePresence(roomName: string = 'online-users') {
-    const [onlineUsers, setOnlineUsers] = useState<any[]>([])
+    const supabase = createClient()
+    const [onlineUsers, setOnlineUsers] = useState<Record<string, unknown>[]>([])
     const [channel, setChannel] = useState<RealtimeChannel | null>(null)
 
     useEffect(() => {

@@ -40,22 +40,22 @@ import {
   Hash,
   AlignLeft,
   Zap,
-  ArrowLeft,
   Info,
   Facebook,
   Clock,
   X,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
 const TIPOS_CONTEUDO = [
   { id: 'blog',      label: 'Artigo Blog',       icon: FileText,  desc: 'SEO-friendly, 800-2000 palavras',     color: '#3B82F6', bg: 'rgba(59,130,246,0.12)'  },
-  { id: 'email',     label: 'E-mail Marketing',  icon: Mail,      desc: 'Newsletter, follow-up, prospecção',   color: '#4ADE80', bg: 'rgba(74,222,128,0.12)'  },
+  { id: 'email',     label: 'E-mail Marketing',  icon: Mail,      desc: 'Newsletter, follow-up, prospecção',   color: 'var(--bo-success)', bg: 'rgba(74,222,128,0.12)'  },
   { id: 'instagram', label: 'Post Instagram',    icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars',  color: '#F472B6', bg: 'rgba(244,114,182,0.12)' },
   { id: 'linkedin',  label: 'Post LinkedIn',     icon: Linkedin,  desc: 'Artigo ou post profissional',         color: '#60A5FA', bg: 'rgba(96,165,250,0.12)'  },
   { id: 'facebook',  label: 'Post Facebook',     icon: Facebook,  desc: 'Post com engajamento',                color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
-  { id: 'landing',   label: 'Landing Page Copy', icon: Globe,     desc: 'Hero, benefícios, CTA',              color: '#FBBF24', bg: 'rgba(251,191,36,0.12)'  },
+  { id: 'landing',   label: 'Landing Page Copy', icon: Globe,     desc: 'Hero, benefícios, CTA',              color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.12)'  },
 ]
 
 // ⚠️ NÃO MODIFICAR - Templates por tipo
@@ -294,43 +294,36 @@ export default function NovoConteudoPage() {
 
   return (
     <div className="space-y-6" style={{ color: T.text }}>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 flex items-center justify-center rounded-xl transition-colors"
-            style={{ background: T.elevated }}
-          >
-            <ArrowLeft size={20} style={{ color: T.textMuted }} />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold" style={{ color: T.text }}>Novo Conteúdo</h1>
-            <p className="text-sm font-medium" style={{ color: T.textMuted }}>
-              Editor inteligente com assistência de IA
-            </p>
+      <PageIntelHeader
+        moduleLabel="CONTEÚDO"
+        title="Novo Conteúdo"
+        subtitle="Editor inteligente com assistência de IA"
+        breadcrumbs={[
+          { label: 'Conteúdo', href: '/backoffice/conteudo' },
+          { label: 'Novo' },
+        ]}
+        actions={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPreview(!preview)}
+              className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-bold transition-colors flex-shrink-0"
+              style={{ background: T.elevated, color: T.text }}
+            >
+              <Eye size={16} />
+              {preview ? 'Editor' : 'Preview'}
+            </button>
+            <button
+              onClick={salvarConteudo}
+              disabled={!titulo || !corpo || salvo}
+              className="flex items-center gap-2 h-10 px-5 text-white rounded-xl text-sm font-bold hover:brightness-110 disabled:opacity-50 transition-all flex-shrink-0"
+              style={{ background: T.accent }}
+            >
+              {salvo ? <Check size={16} /> : <Save size={16} />}
+              {salvo ? 'Salvo!' : 'Salvar'}
+            </button>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setPreview(!preview)}
-            className="flex items-center gap-2 h-11 px-4 rounded-xl text-sm font-bold transition-colors"
-            style={{ background: T.elevated, color: T.text }}
-          >
-            <Eye size={18} />
-            {preview ? 'Voltar ao Editor' : 'Visualizar'}
-          </button>
-          <button
-            onClick={salvarConteudo}
-            disabled={!titulo || !corpo || salvo}
-            className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-bold hover:brightness-110 disabled:opacity-50 transition-all shadow-lg"
-            style={{ background: T.accent }}
-          >
-            {salvo ? <Check size={18} /> : <Save size={18} />}
-            {salvo ? 'Salvo com Sucesso!' : 'Salvar no Sistema'}
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ── Painel esquerdo: configuração ──────────────────────────────── */}

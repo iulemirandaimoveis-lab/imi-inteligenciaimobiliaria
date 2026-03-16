@@ -16,7 +16,7 @@ import QRCode from 'qrcode'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 const SOURCES = [
     {
@@ -115,6 +115,7 @@ export default function QRGeneratorPage() {
     }, [])
 
     useEffect(() => {
+        const supabase = createClient()
         // Load developments (all — the QR tool is internal, no status filter needed)
         supabase.from('developments').select('id, name, slug').order('name')
             .then(({ data }) => {
@@ -217,12 +218,12 @@ export default function QRGeneratorPage() {
                 actions={
                     <div className="flex items-center gap-2">
                         <a href="/backoffice/tracking"
-                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            className="w-10 h-10 rounded flex items-center justify-center transition-all hover:opacity-80"
                             style={{ background: T.card, border: `1px solid ${T.border}`, textDecoration: 'none' }}>
                             <ArrowLeft size={18} style={{ color: T.text }} />
                         </a>
                         <a href="/backoffice/tracking/links"
-                            className="h-10 px-4 rounded-xl flex items-center gap-1.5 text-xs font-semibold hover:opacity-80 transition-opacity"
+                            className="h-10 px-4 rounded flex items-center gap-1.5 text-xs font-semibold hover:opacity-80 transition-opacity"
                             style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.accent, textDecoration: 'none' }}>
                             Todos os links <ChevronRight size={13} />
                         </a>
@@ -232,10 +233,10 @@ export default function QRGeneratorPage() {
 
             {/* Stats — only when there are links */}
             {links.length > 0 && (
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                         { label: 'Links Ativos', value: activeLinks, icon: <QrCode size={13} />, color: '#60A5FA' },
-                        { label: 'Total Cliques', value: totalClicks, icon: <MousePointer size={13} />, color: '#4ADE80' },
+                        { label: 'Total Cliques', value: totalClicks, icon: <MousePointer size={13} />, color: 'var(--bo-success)' },
                         { label: 'Melhor Canal', value: topSourceLink ? (srcInfo(topSourceLink.utm_source).label || '—') : '—', icon: <TrendingUp size={13} />, color: '#F59E0B' },
                     ].map(s => (
                         <div key={s.label} className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
@@ -307,7 +308,7 @@ export default function QRGeneratorPage() {
                 {/* Channel picker */}
                 <div className="p-5 pb-4" style={{ borderBottom: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: T.textMuted }}>Canal de Marketing</p>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {SOURCES.map(src => {
                             const active = selectedSource.value === src.value
                             return (
@@ -346,7 +347,7 @@ export default function QRGeneratorPage() {
                 {/* Corretor + Equipe */}
                 <div className="p-5 pb-4" style={{ borderBottom: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: T.textMuted }}>Atribuição</p>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {/* Broker selector */}
                         <div className="relative">
                             <p className="text-[10px] font-semibold mb-1.5" style={{ color: T.textMuted }}>Corretor</p>
@@ -479,13 +480,13 @@ export default function QRGeneratorPage() {
                                     {shortUrl.replace('https://www.iulemirandaimoveis.com.br', 'imi.com.br')}
                                 </span>
                                 <button onClick={() => copyUrl(shortUrl)}
-                                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all"
+                                    className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0 transition-all"
                                     style={{ background: copied ? 'rgba(34,197,94,0.15)' : 'rgba(59,130,246,0.15)', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'rgba(59,130,246,0.3)'}` }}
                                 >
                                     {copied ? <Check size={13} style={{ color: '#4ade80' }} /> : <Copy size={13} style={{ color: '#60A5FA' }} />}
                                 </button>
                                 <button onClick={handleDownload} disabled={!qrDataUrl}
-                                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-30"
+                                    className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-30"
                                     style={{ background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)' }}
                                 >
                                     <Download size={13} style={{ color: '#4ade80' }} />
@@ -604,15 +605,15 @@ export default function QRGeneratorPage() {
                                             <div className="flex items-center gap-1.5 flex-shrink-0">
                                                 <div className="text-center mr-1">
                                                     <div className="flex items-center gap-1">
-                                                        <BarChart2 size={10} style={{ color: (link.clicks || 0) > 0 ? '#4ADE80' : T.textMuted }} />
-                                                        <p className="text-sm font-bold" style={{ color: (link.clicks || 0) > 0 ? '#4ADE80' : T.text }}>{link.clicks ?? 0}</p>
+                                                        <BarChart2 size={10} style={{ color: (link.clicks || 0) > 0 ? 'var(--bo-success)' : T.textMuted }} />
+                                                        <p className="text-sm font-bold" style={{ color: (link.clicks || 0) > 0 ? 'var(--bo-success)' : T.text }}>{link.clicks ?? 0}</p>
                                                     </div>
                                                     <p className="text-[9px]" style={{ color: T.textMuted }}>cliques</p>
                                                 </div>
 
                                                 {linkShortUrl && (
                                                     <button onClick={() => copyUrl(linkShortUrl, link.id)}
-                                                        className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                                        className="w-7 h-7 rounded flex items-center justify-center transition-all"
                                                         style={{ background: copiedId === link.id ? 'rgba(34,197,94,0.12)' : T.elevated, border: 'none' }}
                                                     >
                                                         {copiedId === link.id
@@ -623,7 +624,7 @@ export default function QRGeneratorPage() {
 
                                                 {linkShortUrl && (
                                                     <a href={linkShortUrl} target="_blank" rel="noopener noreferrer"
-                                                        className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                                        className="w-7 h-7 rounded flex items-center justify-center transition-all"
                                                         style={{ background: T.elevated, textDecoration: 'none' }}
                                                     >
                                                         <ExternalLink size={11} style={{ color: T.textMuted }} />
@@ -632,7 +633,7 @@ export default function QRGeneratorPage() {
 
                                                 <button
                                                     onClick={() => setExpandedLink(isExpanded ? null : link.id)}
-                                                    className="w-7 h-7 rounded-lg flex items-center justify-center transition-all"
+                                                    className="w-7 h-7 rounded flex items-center justify-center transition-all"
                                                     style={{ background: isExpanded ? 'rgba(96,165,250,0.12)' : T.elevated }}
                                                     title="Ver analytics"
                                                 >
@@ -640,7 +641,7 @@ export default function QRGeneratorPage() {
                                                 </button>
 
                                                 <button onClick={() => handleDelete(link.id)}
-                                                    className="w-7 h-7 rounded-lg flex items-center justify-center opacity-30 hover:opacity-70 transition-opacity"
+                                                    className="w-7 h-7 rounded flex items-center justify-center opacity-30 hover:opacity-70 transition-opacity"
                                                     style={{ background: 'transparent' }}
                                                 >
                                                     <Trash2 size={11} style={{ color: T.text }} />
@@ -661,7 +662,7 @@ export default function QRGeneratorPage() {
                                                     <div className="px-4 pb-4 pt-1" style={{ borderTop: `1px solid ${T.border}` }}>
                                                         <div className="grid grid-cols-3 gap-2 mt-3">
                                                             {[
-                                                                { label: 'Total cliques', value: link.clicks ?? 0, color: '#4ADE80' },
+                                                                { label: 'Total cliques', value: link.clicks ?? 0, color: 'var(--bo-success)' },
                                                                 { label: 'Cliques únicos', value: link.unique_clicks ?? 0, color: '#60A5FA' },
                                                                 { label: 'Criado', value: link.created_at ? new Date(link.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : '—', color: T.textMuted as string },
                                                             ].map(s => (

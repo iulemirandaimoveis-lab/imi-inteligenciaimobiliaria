@@ -1,946 +1,1582 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
-    motion, AnimatePresence, useMotionValue, useTransform,
-    useSpring, LayoutGroup,
-} from 'framer-motion'
-import {
-    Plus, Search, Grid3X3, List, Building2, MapPin, Bed, Bath, Ruler,
-    DollarSign, Star, MoreHorizontal, Eye, Edit, CheckCircle, Clock,
-    AlertCircle, Tag, Archive, Trash2, ShoppingCart, X,
+  Plus, Search, Grid3X3, List, SortAsc, SortDesc,
+  Building2, TrendingUp, BarChart2, Sparkles,
+  ChevronDown, RefreshCw, Loader2, X, SlidersHorizontal,
+  Scale, LineChart, BarChart, Bed, Bath, Car, Ruler, MapPin, Star,
+  CheckSquare, Keyboard,
 } from 'lucide-react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { toast } from 'sonner'
-import { PageIntelHeader, KPICard } from '../../components/ui'
-import { T } from '../../lib/theme'
-import { getStatusConfig } from '../../lib/constants'
-import { calcPricePerSqm } from '@/lib/utils'
+import { createClient } from '@/lib/supabase/client'
+import { PropertyCard, PropertyListRow } from '@/features/properties/components/PropertyCard'
+import { AdvancedFilterPanel } from '@/features/properties/components/AdvancedFilterPanel'
+import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
+import type { IMIProperty, PropertyFilters } from '@/features/properties/types'
+import { DEFAULT_FILTERS } from '@/features/properties/types'
+import { useIsMobile } from '@/hooks/use-is-mobile'
+import {
+  MobileGlobalStyles, MobileAppBar, MobileAppBarAction,
+  MobileSearchBar, MobileFilterChips, MobileFiltersButton,
+  MobilePropertyCard, MobilePropertyCardSkeleton,
+  MobileBottomSheet, MobileEmptyState, MobileBottomNav, MobileSortChips,
+} from './mobile-ui'
 
-/* ─── STATUS CONFIG (from centralized constants) ─────────────────── */
-const STATUS_ICONS: Record<string, any> = {
-    disponivel: CheckCircle, em_negociacao: Clock, reservado: AlertCircle,
-    vendido: ShoppingCart, lancamento: Tag, em_construcao: Clock, arquivado: Archive,
+export const dynamic = 'force-dynamic'
+
+type ViewMode = 'grid' | 'list'
+type SortField = 'price' | 'imi_score' | 'area' | 'created_at' | 'yield_est'
+type SortDir = 'asc' | 'desc'
+
+// ─── Shared helpers ────────────────────────────────────────────────────────────
+
+function fmt(n?: number | null): string {
+  if (!n) return '—'
+  if (n >= 1_000_000) return `R$ ${(n / 1_000_000).toFixed(2).replace('.', ',')}M`
+  if (n >= 1_000) return `R$ ${(n / 1_000).toFixed(0)}K`
+  return `R$ ${n.toLocaleString('pt-BR')}`
 }
-const STATUS_MAP = Object.fromEntries(
-    Object.entries(STATUS_ICONS).map(([key, icon]) => {
-        const cfg = getStatusConfig(key)
-        return [key, { label: cfg.label, text: cfg.dot, bg: `${cfg.dot}26`, dot: cfg.dot, icon }]
+
+const DB_STATUS_MAP: Record<string, string> = {
+  launch: 'lancamento', available: 'disponivel', under_construction: 'em_construcao',
+  ready: 'disponivel', sold: 'vendido', reserved: 'reservado',
+  negotiating: 'em_negociacao', published: 'disponivel', draft: 'rascunho',
+  campaign: 'lancamento', private: 'privado',
+}
+
+function normalizeStatus(s: string): string {
+  return DB_STATUS_MAP[s?.toLowerCase()] ?? s?.toLowerCase() ?? 'disponivel'
+}
+
+const STATUS_CONFIGS: Record<string, { label: string; color: string }> = {
+  disponivel:     { label: 'Disponível',     color: 'var(--success)' },
+  lancamento:     { label: 'Lançamento',     color: 'var(--info)' },
+  em_construcao:  { label: 'Em Construção',  color: 'var(--warning)' },
+  reservado:      { label: 'Reservado',      color: 'var(--imi-gold-500)' },
+  em_negociacao:  { label: 'Negociação',     color: 'var(--text-secondary)' },
+  vendido:        { label: 'Vendido',        color: 'var(--error)' },
+  arquivado:      { label: 'Arquivado',      color: 'var(--text-tertiary)' },
+  rascunho:       { label: 'Rascunho',       color: 'var(--text-tertiary)' },
+}
+
+// ─── Shared props interface ─────────────────────────────────────────────────────
+
+interface SharedProps {
+  properties: IMIProperty[]
+  filtered: IMIProperty[]
+  loading: boolean
+  searchInput: string
+  setSearchInput: (v: string) => void
+  filters: PropertyFilters
+  setFilters: (f: PropertyFilters) => void
+  sortField: SortField
+  setSortField: (f: SortField) => void
+  sortDir: SortDir
+  setSortDir: (d: SortDir) => void
+  compareIds: Set<string>
+  favorites: Set<string>
+  toggleCompare: (id: string) => void
+  toggleFavorite: (id: string) => void
+  fetchProperties: () => void
+  activeFiltersCount: number
+  market: 'BR' | 'US' | 'AE'
+  setMarket: (m: 'BR' | 'US' | 'AE') => void
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DESKTOP SUB-COMPONENTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function KPIStrip({ properties }: { properties: IMIProperty[] }) {
+  const total = properties.length
+  const avgScore = total > 0 ? Math.round(properties.reduce((a, p) => a + (p.imi_score ?? 0), 0) / total) : 0
+  const avgYield = total > 0
+    ? (properties.reduce((a, p) => a + (p.yield_est ?? 0), 0) / total).toFixed(1)
+    : '0'
+  const totalVGV = properties.reduce((a, p) => a + (p.price ?? 0), 0)
+  const disponivel = properties.filter(p => p.status === 'disponivel').length
+
+  const kpis = [
+    { label: 'Total', value: total.toString(), icon: Building2, color: 'var(--text-secondary)' },
+    { label: 'Score', value: avgScore.toString(), icon: Sparkles, color: 'var(--imi-gold-500)' },
+    { label: 'Yield', value: `${avgYield}%`, icon: TrendingUp, color: 'var(--success)' },
+    { label: 'VGV', value: fmt(totalVGV), icon: BarChart2, color: 'var(--info)' },
+    { label: 'Disponíveis', value: disponivel.toString(), icon: Building2, color: 'var(--success)' },
+  ]
+
+  return (
+    <div className="imi-kpi-strip">
+      {kpis.map(kpi => (
+        <div key={kpi.label} className="imi-kpi-item">
+          <div className="imi-kpi-label-row">
+            <kpi.icon size={10} style={{ color: kpi.color, flexShrink: 0 }} />
+            <span className="imi-kpi-label">{kpi.label}</span>
+          </div>
+          <span className="imi-kpi-value" style={{ color: kpi.color }}>
+            {kpi.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SortDropdown({ field, dir, onChange }: {
+  field: SortField; dir: SortDir
+  onChange: (f: SortField, d: SortDir) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const options: { field: SortField; label: string }[] = [
+    { field: 'imi_score', label: 'IMI Score' },
+    { field: 'price', label: 'Preço' },
+    { field: 'yield_est', label: 'Yield' },
+    { field: 'area', label: 'Área' },
+    { field: 'created_at', label: 'Data' },
+  ]
+  const current = options.find(o => o.field === field)?.label ?? 'Ordenar'
+  return (
+    <div style={{ position: 'relative' }}>
+      <button onClick={() => setOpen(o => !o)} className="imi-sort-btn">
+        {dir === 'asc' ? <SortAsc size={13} /> : <SortDesc size={13} />}
+        <span className="imi-sort-label">{current}</span>
+        <ChevronDown size={10} />
+      </button>
+      {open && (
+        <div className="imi-dropdown">
+          {options.map(o => (
+            <button
+              key={o.field}
+              onClick={() => {
+                const newDir = field === o.field ? (dir === 'asc' ? 'desc' : 'asc') : 'desc'
+                onChange(o.field, newDir)
+                setOpen(false)
+              }}
+              className={`imi-dropdown-item ${field === o.field ? 'active' : ''}`}
+            >
+              {o.label}
+              {field === o.field && (dir === 'asc' ? ' ↑' : ' ↓')}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PropertyCardSkeleton() {
+  return (
+    <div className="imi-skeleton-card">
+      <div className="imi-skeleton-image" />
+      <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {[24, 14, 10].map((h, i) => (
+          <div key={i} className="imi-skeleton-line" style={{ height: h, width: i === 1 ? '65%' : '85%' }} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Desktop list component ────────────────────────────────────────────────────
+
+function DesktopImoveisList(props: SharedProps) {
+  const {
+    properties, filtered, loading, searchInput, setSearchInput,
+    filters, setFilters, sortField, setSortField, sortDir, setSortDir,
+    compareIds, favorites, toggleCompare, toggleFavorite,
+    fetchProperties, activeFiltersCount, market, setMarket,
+  } = props
+
+  const router = useRouter()
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false)
+  const [bulkMode, setBulkMode] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [shortcutPanelOpen, setShortcutPanelOpen] = useState(false)
+  const shortcutBtnRef = useRef<HTMLButtonElement>(null)
+
+  // ── Bulk selection helpers ───────────────────────────────
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) { next.delete(id) } else { next.add(id) }
+      return next
     })
-) as Record<string, { label: string; text: string; bg: string; dot: string; icon: any }>
+  }, [])
 
-/**
- * Map raw DB `status` column values → STATUS_MAP display keys.
- * The DB can store English values (legacy), Portuguese values, or mixed.
- */
-const DB_STATUS_TO_DISPLAY: Record<string, string> = {
-    // English API values
-    launch:            'lancamento',
-    available:         'disponivel',
-    under_construction:'em_construcao',
-    ready:             'disponivel',
-    sold:              'vendido',
-    reserved:          'reservado',
-    negotiating:       'em_negociacao',
-    published:         'disponivel',
-    draft:             'arquivado',
-    campaign:          'lancamento',
-    private:           'arquivado',
-    // Portuguese values already valid — pass-through
-    disponivel:        'disponivel',
-    em_negociacao:     'em_negociacao',
-    reservado:         'reservado',
-    vendido:           'vendido',
-    lancamento:        'lancamento',
-    em_construcao:     'em_construcao',
-    arquivado:         'arquivado',
-}
+  const clearSelection = useCallback(() => {
+    setSelectedIds(new Set())
+  }, [])
 
-/* ─── TYPES ──────────────────────────────────────────────────────── */
-interface Imovel {
-    id: any
-    codigo: string
-    status: string
-    destaque: boolean
-    tipo: string
-    titulo: string
-    bairro: string
-    area: number
-    quartos: number
-    banheiros: number
-    vagas: number
-    preco: number
-    construtora: string | null
-    construtora_logo: string | null
-    visitas: number
-    image: string | null
-    liquidez: number
-}
-
-/* ─── ANIMATED COUNTER ───────────────────────────────────────────── */
-function AnimatedNumber({ value, prefix = '', suffix = '' }: { value: number; prefix?: string; suffix?: string }) {
-    const [display, setDisplay] = useState(0)
-    useEffect(() => {
-        const start = Date.now()
-        const duration = 900
-        const from = 0
-        let raf: number
-        const tick = () => {
-            const elapsed = Date.now() - start
-            const progress = Math.min(elapsed / duration, 1)
-            const ease = 1 - Math.pow(1 - progress, 3)
-            setDisplay(Math.round(from + (value - from) * ease))
-            if (progress < 1) raf = requestAnimationFrame(tick)
-        }
-        raf = requestAnimationFrame(tick)
-        return () => cancelAnimationFrame(raf)
-    }, [value])
-    return <>{prefix}{display.toLocaleString('pt-BR')}{suffix}</>
-}
-
-/* ─── LIQUIDEZ BAR ───────────────────────────────────────────────── */
-function LiquidezBar({ score }: { score: number }) {
-    const color = score >= 75 ? '#34d399' : score >= 55 ? '#a3e635' : score >= 40 ? '#fbbf24' : '#f87171'
-    const label = score >= 75 ? 'Alta' : score >= 55 ? 'Média' : score >= 40 ? 'Moderada' : 'Baixa'
-    return (
-        <div className="flex items-center gap-2">
-            <div className="flex-1 h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
-                <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${score}%` }}
-                    transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-                    className="h-full rounded-full"
-                    style={{ background: `linear-gradient(90deg, ${color}55, ${color})` }}
-                />
-            </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
-                <span className="text-[10px] font-bold tabular-nums" style={{ color }}>{score}%</span>
-                <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.22)' }}>·</span>
-                <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.32)' }}>{label}</span>
-            </div>
-        </div>
+  // ── CSV export ───────────────────────────────────────────
+  const exportCSV = useCallback(() => {
+    const selected = filtered.filter(p => selectedIds.has(p.id))
+    const header = 'id,titulo,bairro,status,preco,area,quartos'
+    const rows = selected.map(p =>
+      [p.id, `"${(p.name ?? '').replace(/"/g, '""')}"`, p.neighborhood ?? '', p.status ?? '',
+       p.price ?? '', p.area ?? '', p.bedrooms ?? ''].join(',')
     )
-}
+    const csv = [header, ...rows].join('\n')
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }))
+    const a = document.createElement('a')
+    a.href = url; a.download = 'imoveis.csv'; a.click()
+    URL.revokeObjectURL(url)
+  }, [filtered, selectedIds])
 
-/* ─── FORMAT ─────────────────────────────────────────────────────── */
-const fmtPreco = (v: number, tipo: string) => {
-    if (!v || v === 0) return 'Consultar'
-    if (tipo === 'Studio' && v < 10000) return `R$ ${v.toLocaleString('pt-BR')}/mês`
-    if (v >= 1_000_000) return `R$ ${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
-    if (v >= 1000) return `R$ ${Math.floor(v / 1000)}k`
-    return `R$ ${v.toLocaleString('pt-BR')}`
-}
+  // ── Keyboard shortcuts ───────────────────────────────────
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+      switch (e.key.toLowerCase()) {
+        case 'n': router.push('/backoffice/imoveis/novo'); break
+        case 'f': setFilterSheetOpen(o => !o); break
+        case 'b': setBulkMode(o => !o); break
+        case 'escape':
+          if (selectedIds.size > 0) clearSelection()
+          else if (bulkMode) setBulkMode(false)
+          break
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [router, bulkMode, selectedIds, clearSelection])
 
-/* ─── CARD ACTIONS DROPDOWN ──────────────────────────────────────── */
-function CardActionsMenu({ imovel, onAction }: { imovel: Imovel; onAction: (id: string, action: string) => void }) {
-    const [open, setOpen] = useState(false)
-    const actions = [
-        { key: 'view',      label: 'Ver Detalhes',    icon: Eye,          color: 'rgba(255,255,255,0.7)' },
-        { key: 'edit',      label: 'Editar',           icon: Edit,         color: 'rgba(255,255,255,0.7)' },
-        ...(imovel.status !== 'vendido'   ? [{ key: 'vendido',    label: 'Marcar Vendido', icon: ShoppingCart, color: '#fbbf24' }] : []),
-        ...(imovel.status !== 'arquivado' ? [{ key: 'arquivado',  label: 'Arquivar',        icon: Archive,      color: '#f59e0b' }] : []),
-        ...(imovel.status === 'arquivado' ? [{ key: 'disponivel', label: 'Restaurar',       icon: CheckCircle,  color: '#34d399' }] : []),
-        { key: 'delete',    label: 'Excluir',          icon: Trash2,       color: '#f87171' },
-    ]
-    return (
-        <div className="relative" onClick={e => e.preventDefault()}>
-            <motion.button
-                whileTap={{ scale: 0.82 }}
-                onClick={(e) => { e.stopPropagation(); setOpen(!open) }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center"
-                style={{
-                    background: open ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.52)',
-                    border: '1px solid rgba(255,255,255,0.14)',
-                    backdropFilter: 'blur(10px)',
-                }}
-            >
-                <MoreHorizontal size={13} color="white" />
-            </motion.button>
-            <AnimatePresence>
-                {open && (
-                    <>
-                        <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.88, y: -8, transformOrigin: 'top right' }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.88, y: -8 }}
-                            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                            className="absolute right-0 top-9 z-50 w-44 rounded-xl overflow-hidden shadow-2xl"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                        >
-                            {actions.map((a, idx) => {
-                                const Icon = a.icon
-                                return (
-                                    <motion.button
-                                        key={a.key}
-                                        initial={{ opacity: 0, x: -6 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.03 }}
-                                        onClick={(e) => { e.stopPropagation(); setOpen(false); onAction(imovel.id, a.key) }}
-                                        className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium text-left hover:bg-[var(--bo-hover)] transition-colors"
-                                        style={{
-                                            color: a.color,
-                                            borderTop: idx > 0 && a.key === 'delete' ? `1px solid ${T.border}` : undefined,
-                                        }}
-                                    >
-                                        <Icon size={12} /> {a.label}
-                                    </motion.button>
-                                )
-                            })}
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
-        </div>
-    )
-}
+  return (
+    <div className="imi-page">
 
-/* ─── IMOVEL CARD (with 3D tilt + hover actions) ─────────────────── */
-function ImovelCard({ imovel, index, onAction }: { imovel: Imovel; index: number; onAction: (id: string, action: string) => void }) {
-    const s = STATUS_MAP[imovel.status] || STATUS_MAP.disponivel
-    const cardRef = useRef<HTMLDivElement>(null)
+      {/* ── HEADER ─────────────────────────────────── */}
+      <header className="imi-header">
+        <div className="imi-header-bg-grid" />
+        <div className="imi-header-glow" />
+        <div className="imi-header-content">
+          {/* Breadcrumb — desktop only */}
+          <div className="imi-breadcrumb">
+            <Link href="/backoffice/hoje" style={{ textDecoration: 'none' }}>
+              <span className="imi-breadcrumb-root" style={{ cursor: 'pointer' }}>IMI</span>
+            </Link>
+            <span className="imi-breadcrumb-sep">›</span>
+            <Link href="/backoffice/hoje" style={{ textDecoration: 'none' }}>
+              <span className="imi-breadcrumb-page" style={{ cursor: 'pointer' }}>Menu Principal</span>
+            </Link>
+            <span className="imi-breadcrumb-sep">›</span>
+            <span className="imi-breadcrumb-page" style={{ color: 'var(--imi-gold-500)', opacity: 0.9 }}>Imóveis</span>
+          </div>
 
-    const rawX = useMotionValue(0)
-    const rawY = useMotionValue(0)
-    const springX = useSpring(rawX, { stiffness: 160, damping: 24 })
-    const springY = useSpring(rawY, { stiffness: 160, damping: 24 })
-    const rotateX = useTransform(springY, [-70, 70], [5, -5])
-    const rotateY = useTransform(springX, [-70, 70], [-5, 5])
+          <div className="imi-header-row">
+            <div>
+              <h1 className="imi-page-title">
+                Módulo de <em>Imóveis</em>
+              </h1>
+              <p className="imi-page-subtitle">
+                Inteligência de mercado · Avaliação · Análise de investimento
+              </p>
+            </div>
 
-    const handleMouseMove = useCallback((e: React.MouseEvent) => {
-        const rect = cardRef.current?.getBoundingClientRect()
-        if (!rect) return
-        rawX.set(e.clientX - rect.left - rect.width / 2)
-        rawY.set(e.clientY - rect.top - rect.height / 2)
-    }, [rawX, rawY])
-
-    const handleMouseLeave = useCallback(() => {
-        rawX.set(0)
-        rawY.set(0)
-    }, [rawX, rawY])
-
-    const quickActions = [
-        { key: 'view', label: 'Ver', icon: Eye },
-        { key: 'edit', label: 'Editar', icon: Edit },
-        ...(imovel.status !== 'vendido' ? [{ key: 'vendido', label: 'Vendido', icon: ShoppingCart }] : []),
-    ]
-
-    return (
-        <Link href={`/backoffice/imoveis/${imovel.id}`} style={{ display: 'block' }}>
-            <motion.div
-                ref={cardRef}
-                initial={{ opacity: 0, y: 22, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: index * 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                style={{ rotateX, rotateY, transformPerspective: 900 }}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                className="group cursor-pointer"
-            >
-                <motion.div
-                    whileHover={{ boxShadow: '0 16px 48px rgba(0,0,0,0.5)', borderColor: 'rgba(255,255,255,0.1)' }}
-                    transition={{ duration: 0.2 }}
-                    className="rounded-2xl overflow-hidden"
-                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
+            {/* Desktop action buttons */}
+            <div className="imi-header-actions">
+              <Link href="/backoffice/imoveis/explorer">
+                <button className="imi-btn-ghost">
+                  <BarChart2 size={12} />
+                  Explorer
+                </button>
+              </Link>
+              <Link href="/backoffice/imoveis/comparar">
+                <button className="imi-btn-ghost">
+                  <Scale size={12} />
+                  Comparar
+                </button>
+              </Link>
+              <Link href="/backoffice/imoveis/portfolio">
+                <button className="imi-btn-ghost">
+                  <LineChart size={12} />
+                  Portfolio
+                </button>
+              </Link>
+              {/* Keyboard shortcut help */}
+              <div style={{ position: 'relative' }}>
+                <button
+                  ref={shortcutBtnRef}
+                  onClick={() => setShortcutPanelOpen(o => !o)}
+                  className="imi-kbd-help-btn"
+                  title="Atalhos de teclado"
                 >
-                    {/* ── Image ── */}
-                    <div className="relative aspect-[4/3] overflow-hidden" style={{ background: 'var(--bo-elevated)' }}>
-                        {imovel.image ? (
-                            <Image
-                                src={imovel.image}
-                                alt={imovel.titulo}
-                                fill
-                                className="object-cover transition-transform duration-700 ease-out group-hover:scale-108"
-                                style={{ transition: 'transform 700ms cubic-bezier(0.22,1,0.36,1)' }}
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            />
-                        ) : (
-                            <>
-                                <div className="absolute inset-0 opacity-[0.035]" style={{
-                                    backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)',
-                                    backgroundSize: '13px 13px',
-                                }} />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <motion.div
-                                        animate={{ scale: [1, 1.06, 1], opacity: [0.12, 0.18, 0.12] }}
-                                        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-                                    >
-                                        <Building2 size={48} style={{ color: T.accent }} />
-                                    </motion.div>
-                                </div>
-                            </>
-                        )}
-
-                        {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent pointer-events-none" />
-
-                        {/* Top-left: destaque */}
-                        {imovel.destaque && (
-                            <motion.div
-                                initial={{ scale: 0, rotate: -20 }}
-                                animate={{ scale: 1, rotate: 0 }}
-                                transition={{ type: 'spring', delay: index * 0.05 + 0.3, stiffness: 260 }}
-                                className="absolute top-2.5 left-2.5 w-6 h-6 rounded-lg flex items-center justify-center z-10"
-                                style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)' }}
-                            >
-                                <Star size={11} fill={T.accent} style={{ color: T.accent }} />
-                            </motion.div>
-                        )}
-
-                        {/* Top-right: 3-dot menu */}
-                        <div className="absolute top-2.5 right-2.5 z-10" onClick={e => e.preventDefault()}>
-                            <CardActionsMenu imovel={imovel} onAction={onAction} />
-                        </div>
-
-                        {/* Bottom: status + views (always visible) */}
-                        <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 flex items-end justify-between pointer-events-none">
-                            <motion.span
-                                layout
-                                className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-[3px] rounded-full"
-                                style={{
-                                    color: s.text,
-                                    background: 'rgba(0,0,0,0.58)',
-                                    border: `1px solid ${s.text}30`,
-                                    backdropFilter: 'blur(8px)',
-                                }}
-                            >
-                                <motion.span
-                                    animate={{ scale: [1, 1.4, 1] }}
-                                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
-                                    className="w-[5px] h-[5px] rounded-full flex-shrink-0"
-                                    style={{ background: s.dot }}
-                                />
-                                {s.label}
-                            </motion.span>
-                            <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.42)' }}>
-                                {imovel.visitas > 0 ? `${imovel.visitas} views` : ''}
-                            </span>
-                        </div>
-
-                        {/* Hover quick-actions row */}
-                        <AnimatePresence>
-                            <motion.div
-                                initial={{ opacity: 0, y: 14 }}
-                                whileHover={{ opacity: 1, y: 0 }}
-                                className="absolute inset-0 flex items-center justify-center gap-2 z-20 pointer-events-none group-hover:pointer-events-auto"
-                                style={{ background: 'transparent' }}
-                            >
-                                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                                    {quickActions.map((a, i) => {
-                                        const Icon = a.icon
-                                        return (
-                                            <motion.button
-                                                key={a.key}
-                                                initial={{ opacity: 0, scale: 0.7, y: 10 }}
-                                                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                                                whileHover={{ scale: 1.08, y: -2 }}
-                                                whileTap={{ scale: 0.9 }}
-                                                transition={{ delay: i * 0.04 + 0.02, type: 'spring', stiffness: 300 }}
-                                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAction(imovel.id, a.key) }}
-                                                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-semibold"
-                                                style={{
-                                                    background: 'rgba(0,0,0,0.68)',
-                                                    backdropFilter: 'blur(12px)',
-                                                    border: '1px solid rgba(255,255,255,0.18)',
-                                                    color: 'rgba(255,255,255,0.88)',
-                                                }}
-                                            >
-                                                <Icon size={11} />
-                                                {a.label}
-                                            </motion.button>
-                                        )
-                                    })}
-                                </div>
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-
-                    {/* ── Content ── */}
-                    <div className="p-4">
-                        {/* Code + construtora */}
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="text-[9px] font-mono tracking-[0.12em] uppercase" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                                {imovel.codigo}
-                            </span>
-                            {imovel.construtora && (
-                                <span className="flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded-md truncate max-w-[96px]" style={{
-                                    color: T.textDim, background: 'var(--bo-elevated)', border: `1px solid ${T.border}`,
-                                }}>
-                                    {imovel.construtora_logo && (
-                                        <Image
-                                            src={imovel.construtora_logo}
-                                            alt=""
-                                            width={12}
-                                            height={12}
-                                            className="rounded-sm object-contain flex-shrink-0"
-                                            style={{ filter: 'brightness(0) invert(1)', opacity: 0.7 }}
-                                        />
-                                    )}
-                                    {imovel.construtora}
-                                </span>
-                            )}
-                        </div>
-
-                        {/* Title */}
-                        <p className="text-[13px] font-semibold leading-snug line-clamp-2 mb-1.5" style={{ color: T.text }}>
-                            {imovel.titulo}
-                        </p>
-
-                        {/* Location */}
-                        <p className="text-[11px] flex items-center gap-1 mb-3" style={{ color: T.textDim }}>
-                            <MapPin size={9} className="flex-shrink-0 opacity-60" />
-                            {imovel.bairro}
-                        </p>
-
-                        {/* Specs pills */}
-                        {imovel.quartos > 0 && (
-                            <div className="flex items-center gap-1.5 flex-wrap mb-3">
-                                {[
-                                    { Icon: Bed,   val: `${imovel.quartos} qts` },
-                                    { Icon: Bath,  val: `${imovel.banheiros} bhs` },
-                                    { Icon: Ruler, val: `${imovel.area.toLocaleString('pt-BR')}m²` },
-                                ].map(({ Icon, val }) => (
-                                    <span key={val}
-                                        className="inline-flex items-center gap-1 text-[10px] px-2 py-[3px] rounded-lg"
-                                        style={{ color: T.textMuted, background: 'var(--bo-elevated)', border: `1px solid ${T.border}` }}
-                                    >
-                                        <Icon size={9} /> {val}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Price */}
-                        <div className="flex items-end gap-3 mb-3">
-                            <div>
-                                <p className="text-[19px] font-bold leading-none tracking-tight" style={{ color: T.accent }}>
-                                    {fmtPreco(imovel.preco, imovel.tipo)}
-                                </p>
-                                {imovel.area > 0 && imovel.preco > 0 && (
-                                    <p className="text-[10px] mt-1" style={{ color: T.textDim }}>
-                                        {calcPricePerSqm(imovel.preco, imovel.area)}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Liquidez */}
-                        <div className="pt-2.5" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                            <p className="text-[9px] font-semibold uppercase tracking-[0.1em] mb-1.5" style={{ color: 'rgba(255,255,255,0.2)' }}>
-                                Índice Liquidez IMI
-                            </p>
-                            <LiquidezBar score={imovel.liquidez} />
-                        </div>
-                    </div>
-                </motion.div>
-            </motion.div>
-        </Link>
-    )
-}
-
-/* ─── MAIN PAGE ──────────────────────────────────────────────────── */
-export default function ImoveisPage() {
-    const router = useRouter()
-    const [search, setSearch] = useState('')
-    const [view, setView] = useState<'grid' | 'list'>('grid')
-    const [filter, setFilter] = useState('all')
-    const [filterConstrutora, setFilterConstrutora] = useState('all')
-    const [filterTipo, setFilterTipo] = useState('all')
-    const [imoveis, setImoveis] = useState<Imovel[]>([])
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [propsRes, leadsRes] = await Promise.all([
-                    fetch('/api/developments'),
-                    fetch('/api/leads?limit=200'),
-                ])
-                type LeadStats = { hot: number; warm: number; total: number; won: number }
-                const leadsMap: Record<string, LeadStats> = {}
-                if (leadsRes.ok) {
-                    const ld = await leadsRes.json()
-                    const leads: any[] = ld.data || ld || []
-                    leads.forEach((l: any) => {
-                        const devId = l.development_id
-                        if (!devId) return
-                        if (!leadsMap[devId]) leadsMap[devId] = { hot: 0, warm: 0, total: 0, won: 0 }
-                        leadsMap[devId].total++
-                        if (l.status === 'negotiating') leadsMap[devId].hot++
-                        if (l.status === 'qualified') leadsMap[devId].warm++
-                        if (l.status === 'won') leadsMap[devId].won++
-                    })
-                }
-                if (propsRes.ok) {
-                    const data = await propsRes.json()
-                    if (Array.isArray(data) && data.length > 0) {
-                        setImoveis(data.map((d: any) => {
-                            const s = leadsMap[d.id] || { hot: 0, warm: 0, total: 0, won: 0 }
-                            return {
-                                id: d.id,
-                                codigo: d.slug ? `IMI-${d.slug.substring(0, 8).toUpperCase()}` : `IMI-${String(d.id).substring(0, 8)}`,
-                                status: DB_STATUS_TO_DISPLAY[d.status] || DB_STATUS_TO_DISPLAY[d.status_commercial] || 'disponivel',
-                                destaque: !!d.is_highlighted,
-                                tipo: d.type || d.tipo || d.property_type || 'Imóvel',
-                                titulo: d.name || 'Empreendimento',
-                                bairro: d.neighborhood || d.region || 'Localização',
-                                area: d.private_area || d.area_from || 0,
-                                quartos: d.bedrooms || 0,
-                                banheiros: d.bathrooms || 0,
-                                vagas: d.parking_spaces || 0,
-                                preco: d.price_min || d.price_from || 0,
-                                construtora: d.developer || d.developers?.name || null,
-                                construtora_logo: d.developers?.logo_url || null,
-                                visitas: d.views || 0,
-                                image: d.image || (Array.isArray(d.gallery_images) && d.gallery_images[0]) || null,
-                                liquidez: Math.min(97, 22 + s.hot * 13 + s.warm * 8 + s.total * 3 + s.won * 16),
-                            }
-                        }))
-                        setLoading(false)
-                        return
-                    }
-                }
-            } catch (err) { console.error(err) }
-            setImoveis([])
-            setLoading(false)
-        }
-        fetchData()
-    }, [])
-
-    const handleAction = async (id: string, action: string) => {
-        if (action === 'view') { router.push(`/backoffice/imoveis/${id}`); return }
-        if (action === 'edit') { router.push(`/backoffice/imoveis/${id}/editar`); return }
-        if (['vendido', 'arquivado', 'disponivel'].includes(action)) {
-            const labelMap: Record<string, string> = { vendido: 'Vendido', arquivado: 'Arquivado', disponivel: 'Disponível' }
-            try {
-                const res = await fetch('/api/developments', {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, status: action }),
-                })
-                if (!res.ok) { toast.error((await res.json()).error || 'Erro ao atualizar status'); return }
-                setImoveis(prev => prev.map(im => im.id === id ? { ...im, status: action } : im))
-                toast.success(`Imóvel marcado como ${labelMap[action]}`)
-            } catch { toast.error('Erro de conexão') }
-            return
-        }
-        if (action === 'delete') {
-            if (!confirm('Tem certeza que deseja excluir este imóvel? Ele será arquivado.')) return
-            try {
-                const res = await fetch(`/api/developments?id=${id}`, { method: 'DELETE' })
-                if (!res.ok) { toast.error((await res.json()).error || 'Erro ao excluir'); return }
-                setImoveis(prev => prev.map(im => im.id === id ? { ...im, status: 'arquivado' } : im))
-                toast.success('Imóvel excluído (arquivado)')
-            } catch { toast.error('Erro de conexão') }
-        }
-    }
-
-    const total = imoveis.length
-    const destaquesCount = imoveis.filter(i => i.destaque).length
-    const lancamentosCount = imoveis.filter(i => i.status === 'lancamento').length
-    const disponiveis = imoveis.filter(i => i.status === 'disponivel').length
-    const vgvEstimado = imoveis.reduce((sum, i) => sum + (i.preco || 0), 0)
-
-    const fmtVGV = (v: number) => {
-        if (v >= 1_000_000_000) return `${(v / 1_000_000_000).toFixed(1).replace('.', ',')}B`
-        if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1).replace('.', ',')}M`
-        if (v >= 1000) return `${Math.round(v / 1000)}k`
-        return v > 0 ? v.toLocaleString('pt-BR') : '0'
-    }
-
-    const filtered = imoveis.filter(im => {
-        const q = search.toLowerCase()
-        const matchSearch = im.titulo.toLowerCase().includes(q) || im.bairro.toLowerCase().includes(q) || im.codigo.toLowerCase().includes(q)
-        const matchFilter = filter === 'all' || im.status === filter
-        const matchConstrutora = filterConstrutora === 'all' || (im.construtora ?? '') === filterConstrutora
-        const matchTipo = filterTipo === 'all' || im.tipo.toLowerCase() === filterTipo.toLowerCase()
-        return matchSearch && matchFilter && matchConstrutora && matchTipo
-    })
-
-    // Derived option lists (only entries that appear in current data)
-    const construtoras = Array.from(new Set(imoveis.map(i => i.construtora).filter(Boolean) as string[])).sort()
-    const tiposRaw     = Array.from(new Set(imoveis.map(i => i.tipo).filter(Boolean))).sort()
-    const TIPO_LABEL: Record<string, string> = {
-        apartamento: 'Apartamento', casa: 'Casa', flat: 'Flat', lote: 'Lote',
-        comercial: 'Comercial', resort: 'Resort', studio: 'Studio',
-        apartment: 'Apartamento', house: 'Casa', land: 'Lote', commercial: 'Comercial',
-    }
-    const activeFiltersCount = (filterConstrutora !== 'all' ? 1 : 0) + (filterTipo !== 'all' ? 1 : 0)
-
-    /* ── Loading skeleton ── */
-    if (loading) return (
-        <div className="space-y-5">
-            <div className="flex items-start justify-between gap-4">
-                <div><div className="skeleton h-6 w-56 mb-2" /><div className="skeleton h-4 w-72" /></div>
-                <div className="skeleton h-10 w-44 rounded-xl" />
+                  <Keyboard size={14} />
+                </button>
+                {shortcutPanelOpen && (
+                  <div className="imi-kbd-panel">
+                    <div className="imi-kbd-panel-title">Atalhos</div>
+                    {[
+                      { key: 'N', desc: 'Novo imóvel' },
+                      { key: 'F', desc: 'Filtros' },
+                      { key: 'M', desc: 'Mapa' },
+                      { key: 'B', desc: 'Modo seleção' },
+                      { key: 'Esc', desc: 'Limpar' },
+                    ].map(({ key, desc }) => (
+                      <div key={key} className="imi-kbd-row">
+                        <kbd className="imi-kbd">{key}</kbd>
+                        <span className="imi-kbd-desc">{desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <Link href="/backoffice/imoveis/novo">
+                <button className="imi-btn-primary">
+                  <Plus size={13} />
+                  Novo Imóvel
+                </button>
+              </Link>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[...Array(4)].map((_, i) => (
-                    <div key={i} className="skeleton-card p-4" style={{ animationDelay: `${i * 100}ms` }}>
-                        <div className="skeleton w-9 h-9 rounded-xl mb-3" />
-                        <div className="skeleton lg h-5 w-16 mb-2" /><div className="skeleton h-3 w-24" />
-                    </div>
-                ))}
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[...Array(6)].map((_, i) => (
-                    <div key={i} className="skeleton-card overflow-hidden rounded-2xl" style={{ animationDelay: `${i * 60}ms` }}>
-                        <div className="skeleton w-full rounded-none" style={{ aspectRatio: '4/3' }} />
-                        <div className="p-4 space-y-2.5">
-                            <div className="skeleton h-3 w-20" /><div className="skeleton h-4 w-40" />
-                            <div className="skeleton h-3 w-28" /><div className="skeleton lg h-6 w-24 mt-1" />
-                        </div>
-                    </div>
-                ))}
-            </div>
+          </div>
+
+          {/* Mobile quick nav chips */}
+          <div className="imi-mobile-chips">
+            <Link href="/backoffice/imoveis/explorer">
+              <button className="imi-chip"><BarChart size={11} />Explorer</button>
+            </Link>
+            <Link href="/backoffice/imoveis/comparar">
+              <button className="imi-chip"><Scale size={11} />Comparar</button>
+            </Link>
+            <Link href="/backoffice/imoveis/portfolio">
+              <button className="imi-chip"><LineChart size={11} />Portfolio</button>
+            </Link>
+          </div>
         </div>
-    )
+      </header>
 
-    /* ── Page ── */
-    return (
-        <div className="space-y-5">
+      {/* ── KPI STRIP ────────────────────────────────── */}
+      <KPIStrip properties={properties} />
 
-            {/* Header */}
-            <PageIntelHeader
-                moduleLabel="IMOVEIS"
-                title="Portfólio / Empreendimentos"
-                subtitle={`Gestão Global IMI · ${total} ativos comerciais`}
-                actions={
-                    <motion.button
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => router.push('/backoffice/imoveis/novo')}
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
-                        style={{ background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)', boxShadow: '0 4px 14px rgba(37,99,235,0.28)' }}
-                    >
-                        <Plus size={16} />
-                        <span className="hidden sm:inline">Novo Empreendimento</span>
-                    </motion.button>
-                }
+      {/* ── MARKET SELECTOR ──────────────────────────── */}
+      {/* TODO: filter by market when DB supports country field */}
+      <div style={{ display: 'flex', gap: 6, padding: '12px 28px 4px' }}>
+        {[
+          { id: 'BR', flag: '🇧🇷', label: 'Brasil' },
+          { id: 'US', flag: '🇺🇸', label: 'EUA' },
+          { id: 'AE', flag: '🇦🇪', label: 'UAE' },
+        ].map(m => (
+          <button
+            key={m.id}
+            onClick={() => setMarket(m.id as 'BR' | 'US' | 'AE')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              height: 32, padding: '0 12px',
+              borderRadius: 'var(--r-full)',
+              border: market === m.id ? '1.5px solid var(--imi-gold-500)' : '1.5px solid var(--border-subtle)',
+              background: market === m.id ? 'rgba(184,148,58,0.10)' : 'transparent',
+              color: market === m.id ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+              fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: market === m.id ? 600 : 400,
+              cursor: 'pointer', transition: 'all 180ms ease',
+            }}
+          >
+            <span style={{ fontSize: 16 }}>{m.flag}</span>
+            {m.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ── TOOLBAR ──────────────────────────────────── */}
+      <div className="imi-toolbar">
+        {/* Search row */}
+        <div className="imi-toolbar-search-row">
+          <div className="imi-search-wrap">
+            <Search size={13} className="imi-search-icon" />
+            <input
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              placeholder="Buscar por nome, bairro…"
+              className="imi-search-input"
             />
-
-            {/* KPIs with animated numbers */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-                {[
-                    { label: 'VGV Global (Est.)', rawVal: vgvEstimado, display: `R$ ${fmtVGV(vgvEstimado)}`, icon: DollarSign },
-                    { label: 'Lançamentos',       rawVal: lancamentosCount, display: null, icon: Tag },
-                    { label: 'Em Destaque',        rawVal: destaquesCount,   display: null, icon: Star },
-                    { label: 'Disponíveis',        rawVal: disponiveis,      display: null, icon: CheckCircle },
-                ].map((s, i) => (
-                    <motion.div
-                        key={s.label}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.08, duration: 0.35, ease: 'easeOut' }}
-                    >
-                        <KPICard
-                            label={s.label}
-                            value={s.display ?? String(s.rawVal)}
-                            icon={<s.icon size={16} />}
-                            accent="blue"
-                            size="sm"
-                        />
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Toolbar */}
-            <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.3 }}
-                className="rounded-2xl p-3.5"
-                style={{ background: T.surface, border: `1px solid ${T.border}` }}
-            >
-                <div className="flex flex-col sm:flex-row gap-2.5">
-                    <div className="relative flex-1">
-                        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
-                        <input
-                            type="text"
-                            placeholder="Buscar construtora, ativo, bairro..."
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            className="w-full h-9 pl-8 pr-8 rounded-xl text-xs outline-none transition-all"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, caretColor: T.accent }}
-                            onFocus={e => { e.currentTarget.style.border = `1px solid ${T.borderGold}` }}
-                            onBlur={e => { e.currentTarget.style.border = `1px solid ${T.border}` }}
-                        />
-                        <AnimatePresence>
-                            {search && (
-                                <motion.button
-                                    initial={{ opacity: 0, scale: 0.7 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.7 }}
-                                    onClick={() => setSearch('')}
-                                    className="absolute right-2.5 top-1/2 -translate-y-1/2"
-                                    style={{ color: T.textDim }}
-                                >
-                                    <X size={12} />
-                                </motion.button>
-                            )}
-                        </AnimatePresence>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                        {/* Mobile select */}
-                        <select
-                            value={filter}
-                            onChange={e => setFilter(e.target.value)}
-                            className="sm:hidden h-9 px-3 rounded-xl text-xs font-semibold outline-none flex-1"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                        >
-                            <option value="all">Todos</option>
-                            {Object.entries(STATUS_MAP).map(([k, v]) => (
-                                <option key={k} value={k}>{v.label}</option>
-                            ))}
-                        </select>
-
-                        {/* Desktop filter chips with layoutId indicator */}
-                        <LayoutGroup>
-                            {['all', ...Object.keys(STATUS_MAP)].map(s => (
-                                <motion.button
-                                    key={s}
-                                    layout
-                                    onClick={() => setFilter(s)}
-                                    className="relative px-2.5 h-9 rounded-xl text-xs font-semibold transition-colors hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap"
-                                    style={{
-                                        background: filter === s ? T.accent : T.elevated,
-                                        color: filter === s ? 'white' : T.textDim,
-                                        border: `1px solid ${filter === s ? T.borderGold : T.border}`,
-                                    }}
-                                    whileTap={{ scale: 0.94 }}
-                                >
-                                    {s !== 'all' && (
-                                        <span
-                                            className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                                            style={{ background: filter === s ? 'rgba(255,255,255,0.7)' : STATUS_MAP[s]?.dot }}
-                                        />
-                                    )}
-                                    {s === 'all' ? 'Todos' : STATUS_MAP[s]?.label}
-                                </motion.button>
-                            ))}
-                        </LayoutGroup>
-
-                        {/* View toggle */}
-                        <div className="flex items-center rounded-xl overflow-hidden ml-0.5" style={{ border: `1px solid ${T.border}` }}>
-                            {(['grid', 'list'] as const).map(v => (
-                                <motion.button
-                                    key={v}
-                                    onClick={() => setView(v)}
-                                    whileTap={{ scale: 0.88 }}
-                                    className="w-9 h-9 flex items-center justify-center transition-colors"
-                                    style={{ background: view === v ? T.accent : T.elevated }}
-                                >
-                                    {v === 'grid'
-                                        ? <Grid3X3 size={13} style={{ color: view === v ? 'white' : T.textDim }} />
-                                        : <List size={13} style={{ color: view === v ? 'white' : T.textDim }} />
-                                    }
-                                </motion.button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Second row: Construtora + Tipo chips */}
-                {(construtoras.length > 0 || tiposRaw.length > 1) && (
-                    <div className="flex flex-wrap gap-1.5 mt-2.5 pt-2.5" style={{ borderTop: `1px solid ${T.border}` }}>
-                        {/* Construtora chips */}
-                        {construtoras.length > 0 && (
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="text-[9px] font-bold uppercase tracking-[0.08em] mr-0.5" style={{ color: T.textDim }}>Construtora:</span>
-                                {construtoras.map(c => (
-                                    <button
-                                        key={c}
-                                        onClick={() => setFilterConstrutora(filterConstrutora === c ? 'all' : c)}
-                                        className="px-2 h-6 rounded-lg text-[10px] font-semibold transition-all"
-                                        style={{
-                                            background: filterConstrutora === c ? T.accent : T.elevated,
-                                            color: filterConstrutora === c ? 'white' : T.textDim,
-                                            border: `1px solid ${filterConstrutora === c ? T.borderGold : T.border}`,
-                                        }}
-                                    >
-                                        {c}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Tipo chips */}
-                        {tiposRaw.length > 1 && (
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="text-[9px] font-bold uppercase tracking-[0.08em] mr-0.5" style={{ color: T.textDim }}>Tipo:</span>
-                                {tiposRaw.map(t => (
-                                    <button
-                                        key={t}
-                                        onClick={() => setFilterTipo(filterTipo.toLowerCase() === t.toLowerCase() ? 'all' : t)}
-                                        className="px-2 h-6 rounded-lg text-[10px] font-semibold transition-all"
-                                        style={{
-                                            background: filterTipo.toLowerCase() === t.toLowerCase() ? T.accent : T.elevated,
-                                            color: filterTipo.toLowerCase() === t.toLowerCase() ? 'white' : T.textDim,
-                                            border: `1px solid ${filterTipo.toLowerCase() === t.toLowerCase() ? T.borderGold : T.border}`,
-                                        }}
-                                    >
-                                        {TIPO_LABEL[t.toLowerCase()] ?? t}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Clear secondary filters */}
-                        {activeFiltersCount > 0 && (
-                            <button
-                                onClick={() => { setFilterConstrutora('all'); setFilterTipo('all') }}
-                                className="px-2 h-6 rounded-lg text-[10px] font-semibold ml-auto"
-                                style={{ color: '#f87171', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)' }}
-                            >
-                                ✕ Limpar
-                            </button>
-                        )}
-                    </div>
-                )}
-            </motion.div>
-
-            {/* Count */}
-            <AnimatePresence mode="wait">
-                <motion.p
-                    key={filtered.length}
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-[11px]"
-                    style={{ color: T.textDim }}
-                >
-                    {filtered.length} imóvel{filtered.length !== 1 ? 's' : ''} encontrado{filtered.length !== 1 ? 's' : ''}
-                </motion.p>
-            </AnimatePresence>
-
-            {/* Empty state */}
-            <AnimatePresence>
-                {filtered.length === 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.96, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.96, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex flex-col items-center justify-center py-20 rounded-2xl"
-                        style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                    >
-                        <motion.div
-                            animate={{ y: [0, -6, 0] }}
-                            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-                            className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
-                            style={{ background: 'var(--bo-elevated)' }}
-                        >
-                            <Building2 size={28} style={{ color: T.textMuted, opacity: 0.3 }} />
-                        </motion.div>
-                        <p className="text-base font-bold mb-1" style={{ color: T.text }}>
-                            {search ? 'Nenhum resultado' : filter !== 'all' ? `Nenhum imóvel ${STATUS_MAP[filter]?.label || filter}` : 'Portfólio vazio'}
-                        </p>
-                        <p className="text-sm mb-6 text-center max-w-xs" style={{ color: T.textMuted }}>
-                            {search ? `Sem resultados para "${search}".` : filter !== 'all' ? 'Nenhum imóvel com este status.' : 'Cadastre o primeiro empreendimento.'}
-                        </p>
-                        {!search && filter === 'all' && (
-                            <motion.button
-                                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                                onClick={() => router.push('/backoffice/imoveis/novo')}
-                                className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white"
-                                style={{ background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)', boxShadow: '0 4px 14px rgba(37,99,235,0.28)' }}
-                            >
-                                <Plus size={16} /> Cadastrar Imóvel
-                            </motion.button>
-                        )}
-                        {(search || filter !== 'all') && (
-                            <motion.button
-                                whileTap={{ scale: 0.96 }}
-                                onClick={() => { setSearch(''); setFilter('all') }}
-                                className="text-sm font-semibold hover:opacity-70 transition-opacity"
-                                style={{ color: T.accent }}
-                            >
-                                Limpar filtros
-                            </motion.button>
-                        )}
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Grid */}
-            <AnimatePresence>
-                {filtered.length > 0 && view === 'grid' && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-                    >
-                        {filtered.map((im, i) => (
-                            <ImovelCard key={im.id} imovel={im} index={i} onAction={handleAction} />
-                        ))}
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* List */}
-            <AnimatePresence>
-                {filtered.length > 0 && view === 'list' && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="space-y-1.5"
-                    >
-                        {filtered.map((im, i) => {
-                            const s = STATUS_MAP[im.status] || STATUS_MAP.disponivel
-                            return (
-                                <motion.div
-                                    key={im.id}
-                                    initial={{ opacity: 0, x: -12 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.025, duration: 0.3, ease: 'easeOut' }}
-                                    whileHover={{ x: 3, borderColor: 'rgba(255,255,255,0.09)' }}
-                                    className="group flex items-center gap-3 p-3 rounded-xl transition-colors"
-                                    style={{ background: T.surface, border: `1px solid ${T.border}` }}
-                                >
-                                    <Link href={`/backoffice/imoveis/${im.id}`} className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer">
-                                        <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0" style={{ background: 'var(--bo-elevated)' }}>
-                                            {im.image ? (
-                                                <Image src={im.image} alt={im.titulo} fill className="object-cover group-hover:scale-110 transition-transform duration-500" sizes="48px" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center">
-                                                    <Building2 size={20} style={{ color: T.accent, opacity: 0.3 }} />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-1.5 mb-0.5">
-                                                <p className="text-[13px] font-semibold truncate" style={{ color: T.text }}>{im.titulo}</p>
-                                                {im.destaque && <Star size={11} fill={T.accent} style={{ color: T.accent, flexShrink: 0 }} />}
-                                            </div>
-                                            <p className="text-[11px] truncate" style={{ color: T.textDim }}>
-                                                {im.codigo} · {im.bairro}{im.area > 0 ? ` · ${im.area.toLocaleString('pt-BR')}m²` : ''}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-3 flex-shrink-0">
-                                            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-[3px] rounded-full" style={{ color: s.text, background: s.bg }}>
-                                                <span className="w-[5px] h-[5px] rounded-full" style={{ background: s.dot }} />
-                                                {s.label}
-                                            </span>
-                                            <p className="text-sm font-bold hidden sm:block" style={{ color: T.accent }}>
-                                                {fmtPreco(im.preco, im.tipo)}
-                                            </p>
-                                        </div>
-                                    </Link>
-                                    <div className="flex-shrink-0">
-                                        <CardActionsMenu imovel={im} onAction={handleAction} />
-                                    </div>
-                                </motion.div>
-                            )
-                        })}
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {searchInput && (
+              <button onClick={() => setSearchInput('')} className="imi-search-clear">
+                <X size={11} />
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Controls row */}
+        <div className="imi-toolbar-controls">
+          {/* Mobile filter button */}
+          <button
+            onClick={() => setFilterSheetOpen(true)}
+            className="imi-filter-btn"
+          >
+            <SlidersHorizontal size={14} />
+            <span>Filtros</span>
+            {activeFiltersCount > 0 && (
+              <span className="imi-filter-badge">{activeFiltersCount}</span>
+            )}
+          </button>
+
+          <span className="imi-results-count">
+            {filtered.length} imóvel{filtered.length !== 1 ? 's' : ''}
+          </span>
+
+          <div style={{ flex: 1 }} />
+
+          <SortDropdown
+            field={sortField}
+            dir={sortDir}
+            onChange={(f, d) => { setSortField(f); setSortDir(d) }}
+          />
+
+          <div className="imi-view-toggle">
+            {([
+              { mode: 'grid' as ViewMode, Icon: Grid3X3 },
+              { mode: 'list' as ViewMode, Icon: List },
+            ]).map(({ mode, Icon }) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`imi-view-btn ${viewMode === mode ? 'active' : ''}`}
+              >
+                <Icon size={14} />
+              </button>
+            ))}
+          </div>
+
+          {/* Bulk mode toggle */}
+          <button
+            onClick={() => { setBulkMode(o => !o); if (bulkMode) clearSelection() }}
+            className="imi-refresh-btn"
+            title="Modo seleção (B)"
+            style={{
+              border: bulkMode ? '1px solid rgba(184,148,58,0.6)' : undefined,
+              color: bulkMode ? 'var(--imi-gold-500)' : undefined,
+            }}
+          >
+            <CheckSquare size={13} />
+          </button>
+
+          <button onClick={fetchProperties} disabled={loading} className="imi-refresh-btn">
+            <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+          </button>
+        </div>
+      </div>
+
+      {/* ── BODY: sidebar filter + content ─────────── */}
+      <div className="imi-body">
+
+        {/* Desktop sidebar filter */}
+        <div className="imi-filter-sidebar">
+          <AdvancedFilterPanel
+            filters={filters}
+            onChange={setFilters}
+            totalCount={properties.length}
+            filteredCount={filtered.length}
+          />
+        </div>
+
+        {/* Mobile filter bottom sheet */}
+        {filterSheetOpen && (
+          <div className="imi-sheet-overlay" onClick={() => setFilterSheetOpen(false)}>
+            <div className="imi-sheet" onClick={e => e.stopPropagation()}>
+              <div className="imi-sheet-header">
+                <span className="imi-sheet-title">Filtros</span>
+                <button className="imi-sheet-close" onClick={() => setFilterSheetOpen(false)}>
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="imi-sheet-body">
+                <AdvancedFilterPanel
+                  filters={filters}
+                  onChange={setFilters}
+                  totalCount={properties.length}
+                  filteredCount={filtered.length}
+                />
+              </div>
+              <div className="imi-sheet-footer">
+                <button
+                  onClick={() => setFilters(DEFAULT_FILTERS)}
+                  className="imi-sheet-clear-btn"
+                >
+                  Limpar filtros
+                </button>
+                <button
+                  onClick={() => setFilterSheetOpen(false)}
+                  className="imi-sheet-apply-btn"
+                >
+                  Ver {filtered.length} imóvel{filtered.length !== 1 ? 's' : ''}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Content */}
+        <div className="imi-content">
+          {loading ? (
+            <div className="imi-grid">
+              {Array.from({ length: 6 }).map((_, i) => <PropertyCardSkeleton key={i} />)}
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="imi-empty">
+              <div className="imi-empty-icon">
+                <Building2 size={28} style={{ color: 'rgba(184,148,58,0.4)' }} />
+              </div>
+              <p className="imi-empty-title">Nenhum imóvel encontrado</p>
+              <p className="imi-empty-subtitle">Ajuste os filtros ou cadastre um novo imóvel.</p>
+              <Link href="/backoffice/imoveis/novo">
+                <button className="imi-btn-primary">
+                  <Plus size={12} /> Cadastrar Imóvel
+                </button>
+              </Link>
+            </div>
+          ) : viewMode === 'grid' ? (
+            <div className="imi-grid">
+              {filtered.map(p => (
+                <PropertyCard
+                  key={p.id}
+                  property={p}
+                  onCompare={bulkMode ? undefined : toggleCompare}
+                  isComparing={compareIds.has(p.id)}
+                  onFavorite={bulkMode ? undefined : toggleFavorite}
+                  isFavorited={favorites.has(p.id)}
+                  bulkMode={bulkMode}
+                  isSelected={selectedIds.has(p.id)}
+                  onSelect={toggleSelect}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="imi-list-wrap">
+              <div className="imi-list-header">
+                {['Imóvel', 'Preço', 'R$/m²', 'Yield', 'Status', 'Área', 'Score'].map(h => (
+                  <span key={h} className="imi-list-th">{h}</span>
+                ))}
+              </div>
+              {filtered.map(p => (
+                <PropertyListRow
+                  key={p.id}
+                  property={p}
+                  onCompare={toggleCompare}
+                  isComparing={compareIds.has(p.id)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── MOBILE FAB ────────────────────────────────── */}
+      <Link href="/backoffice/imoveis/novo" className="imi-fab">
+        <Plus size={22} />
+      </Link>
+
+      {/* ── BULK ACTION BAR ───────────────────────────── */}
+      {selectedIds.size > 0 && (
+        <div style={{
+          position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)',
+          zIndex: 110,
+          background: 'rgba(11,25,40,0.97)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(184,148,58,0.35)',
+          borderRadius: 14,
+          padding: '12px 20px',
+          display: 'flex', alignItems: 'center', gap: 16,
+          boxShadow: '0 8px 48px rgba(0,0,0,0.6)',
+          whiteSpace: 'nowrap',
+        }}>
+          {/* Left: count */}
+          <span style={{
+            fontFamily: 'var(--font-dm-mono, monospace)',
+            fontSize: 12, color: 'var(--imi-gold-500)', fontWeight: 400,
+          }}>
+            {selectedIds.size} imóvel{selectedIds.size !== 1 ? 's' : ''} selecionado{selectedIds.size !== 1 ? 's' : ''}
+          </span>
+
+          <div style={{ width: 1, height: 20, background: 'rgba(184,148,58,0.2)' }} />
+
+          {/* Center: action buttons */}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="imi-bulk-btn imi-bulk-btn-publish">Publicar</button>
+            <button className="imi-bulk-btn imi-bulk-btn-archive">Arquivar</button>
+            <button className="imi-bulk-btn imi-bulk-btn-export" onClick={exportCSV}>Exportar CSV</button>
+          </div>
+
+          <div style={{ width: 1, height: 20, background: 'rgba(184,148,58,0.2)' }} />
+
+          {/* Right: close */}
+          <button
+            onClick={() => { clearSelection(); setBulkMode(false) }}
+            style={{
+              width: 28, height: 28, borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'rgba(255,255,255,0.06)', border: 'none', cursor: 'pointer',
+              color: 'var(--text-secondary)',
+            }}
+          >
+            <X size={13} />
+          </button>
+        </div>
+      )}
+
+      {/* ── COMPARE BAR ───────────────────────────────── */}
+      {compareIds.size > 0 && (
+        <div className="imi-compare-bar">
+          <span className="imi-compare-label">
+            Comparando {compareIds.size}/5
+          </span>
+          <Link href={`/backoffice/imoveis/comparar?ids=${Array.from(compareIds).join(',')}`}>
+            <button className="imi-compare-btn">Comparar agora</button>
+          </Link>
+          <button onClick={() => {}} className="imi-compare-clear">
+            <X size={13} />
+          </button>
+        </div>
+      )}
+
+      <style suppressHydrationWarning>{`
+        /* ═══ PAGE BASE ═══ */
+        .imi-page {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+          background: var(--bo-bg, #0B1120);
+        }
+
+        /* ═══ HEADER ═══ */
+        .imi-header {
+          padding: 24px 28px 0;
+          border-bottom: 1px solid rgba(184,148,58,0.12);
+          background: var(--navy-mid, #101830);
+          position: relative;
+          overflow: hidden;
+        }
+        .imi-header-bg-grid {
+          position: absolute; inset: 0; pointer-events: none;
+          background-image:
+            linear-gradient(rgba(184,148,58,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(184,148,58,0.025) 1px, transparent 1px);
+          background-size: 48px 48px;
+        }
+        .imi-header-glow {
+          position: absolute; top: -60px; right: 40px;
+          width: 300px; height: 300px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(184,148,58,0.05) 0%, transparent 70%);
+          pointer-events: none;
+        }
+        .imi-header-content { position: relative; z-index: 1; }
+        .imi-breadcrumb {
+          display: flex; align-items: center; gap: 6px; margin-bottom: 14px;
+        }
+        .imi-breadcrumb-root {
+          font-size: 8px; font-weight: 700; letter-spacing: 3px;
+          text-transform: uppercase; color: var(--imi-gold-500);
+          font-family: var(--font-montserrat, sans-serif);
+        }
+        .imi-breadcrumb-sep { color: rgba(184,148,58,0.3); font-size: 10px; }
+        .imi-breadcrumb-page {
+          font-size: 8px; font-weight: 500; letter-spacing: 2px;
+          text-transform: uppercase; color: var(--bo-text-dim, #5C6B7D);
+          font-family: var(--font-montserrat, sans-serif);
+        }
+        .imi-header-row {
+          display: flex; align-items: flex-end; justify-content: space-between;
+          padding-bottom: 20px; gap: 16px;
+        }
+        .imi-page-title {
+          font-family: var(--font-playfair, 'Libre Baskerville', Georgia, serif);
+          font-size: 28px; font-weight: 600;
+          color: var(--bo-text, #EBE7E0);
+          line-height: 1.1; margin-bottom: 6px;
+        }
+        .imi-page-title em { font-style: italic; color: var(--imi-gold-500); }
+        .imi-page-subtitle {
+          font-size: 11px; color: var(--bo-text-dim, #5C6B7D);
+          font-family: var(--font-montserrat, sans-serif); font-weight: 300;
+        }
+        .imi-header-actions {
+          display: flex; gap: 8px; align-items: center; flex-shrink: 0;
+        }
+        .imi-mobile-chips { display: none; }
+
+        /* ═══ BUTTONS ═══ */
+        .imi-btn-ghost {
+          display: flex; align-items: center; gap: 6px;
+          padding: 9px 14px; border-radius: 4px;
+          background: transparent;
+          border: 1px solid rgba(184,148,58,0.25);
+          color: var(--imi-gold-500);
+          font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+          text-transform: uppercase;
+          font-family: var(--font-montserrat, sans-serif);
+          cursor: pointer;
+          white-space: nowrap;
+          transition: background 0.2s, border-color 0.2s;
+          min-height: 36px;
+        }
+        .imi-btn-ghost:hover { background: rgba(184,148,58,0.08); border-color: rgba(184,148,58,0.4); }
+        .imi-btn-primary {
+          display: flex; align-items: center; gap: 7px;
+          padding: 9px 18px; border-radius: 4px;
+          background: var(--imi-gold-500); border: none;
+          color: var(--bg-base);
+          font-size: 10px; font-weight: 700; letter-spacing: 1.8px;
+          text-transform: uppercase;
+          font-family: var(--font-montserrat, sans-serif);
+          cursor: pointer;
+          box-shadow: 0 2px 12px rgba(184,148,58,0.25);
+          white-space: nowrap;
+          min-height: 36px;
+        }
+        .imi-btn-primary:hover { background: #D4B86A; }
+
+        /* ═══ KPI STRIP ═══ */
+        .imi-kpi-strip {
+          display: flex; gap: 1px;
+          border-bottom: 1px solid rgba(184,148,58,0.12);
+          background: var(--bo-surface, rgba(255,255,255,0.02));
+        }
+        .imi-kpi-item {
+          flex: 1; padding: 14px 20px;
+          border-right: 1px solid rgba(184,148,58,0.08);
+          display: flex; flex-direction: column; gap: 4px;
+        }
+        .imi-kpi-label-row {
+          display: flex; align-items: center; gap: 5px;
+        }
+        .imi-kpi-label {
+          font-size: 8px; font-weight: 700; letter-spacing: 2px;
+          text-transform: uppercase; color: var(--bo-text-dim, #5C6B7D);
+          font-family: var(--font-montserrat, sans-serif);
+        }
+        .imi-kpi-value {
+          font-family: var(--font-dm-mono, monospace);
+          font-size: 20px; font-weight: 400;
+          letter-spacing: -0.5px; line-height: 1;
+        }
+
+        /* ═══ TOOLBAR ═══ */
+        .imi-toolbar {
+          display: flex; flex-direction: column; gap: 0;
+          border-bottom: 1px solid rgba(184,148,58,0.08);
+          background: var(--bo-surface, rgba(255,255,255,0.02));
+          flex-shrink: 0;
+        }
+        .imi-toolbar-search-row {
+          padding: 10px 16px 0;
+        }
+        .imi-toolbar-controls {
+          display: flex; align-items: center; gap: 8px;
+          padding: 8px 16px 10px;
+        }
+        .imi-search-wrap {
+          position: relative; width: 100%;
+        }
+        .imi-search-icon {
+          position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+          color: var(--bo-text-dim, #5C6B7D); pointer-events: none;
+        }
+        .imi-search-input {
+          width: 100%; padding: 0 32px 0 32px;
+          height: 40px; border-radius: 4px;
+          background: var(--bo-surface, rgba(255,255,255,0.04));
+          border: 1px solid rgba(184,148,58,0.15);
+          color: var(--bo-text, #EBE7E0);
+          font-size: 13px; font-family: var(--font-montserrat, sans-serif);
+          outline: none;
+        }
+        .imi-search-input:focus { border-color: rgba(184,148,58,0.35); }
+        .imi-search-clear {
+          position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+          background: none; border: none; cursor: pointer; padding: 4px;
+          color: var(--bo-text-dim, #5C6B7D);
+          display: flex; align-items: center;
+          min-width: 24px; min-height: 24px;
+        }
+        .imi-results-count {
+          font-size: 11px; color: var(--bo-text-dim, #5C6B7D);
+          font-family: var(--font-montserrat, sans-serif);
+          white-space: nowrap; flex-shrink: 0;
+        }
+        .imi-filter-btn {
+          display: none; /* hidden on desktop */
+          align-items: center; gap: 6px;
+          padding: 0 12px; height: 36px; border-radius: 4px;
+          background: var(--bo-surface, rgba(255,255,255,0.04));
+          border: 1px solid rgba(184,148,58,0.20);
+          color: var(--bo-text-muted, #9FAAB8);
+          font-size: 12px; font-family: var(--font-montserrat, sans-serif);
+          cursor: pointer; white-space: nowrap; flex-shrink: 0;
+          min-height: 44px;
+        }
+        .imi-filter-badge {
+          background: var(--imi-gold-500); color: var(--bg-base);
+          font-size: 9px; font-weight: 700; border-radius: 999px;
+          padding: 1px 5px; min-width: 16px; text-align: center;
+        }
+        .imi-sort-btn {
+          display: flex; align-items: center; gap: 6px;
+          padding: 0 12px; height: 36px; border-radius: 4px;
+          background: var(--bo-surface, rgba(255,255,255,0.04));
+          border: 1px solid rgba(184,148,58,0.18);
+          color: var(--bo-text-muted, #9FAAB8);
+          font-size: 11px; font-family: var(--font-montserrat, sans-serif);
+          cursor: pointer; white-space: nowrap;
+          min-height: 36px;
+        }
+        .imi-sort-label { /* hide on very small screens */ }
+        .imi-dropdown {
+          position: absolute; top: calc(100% + 4px); right: 0; z-index: 50;
+          background: var(--navy-float, #1F3B5C);
+          border: 1px solid rgba(184,148,58,0.22);
+          border-radius: 6px; padding: 4px; min-width: 160px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .imi-dropdown-item {
+          width: 100%; text-align: left;
+          padding: 10px 12px; border-radius: 4px;
+          background: transparent; border: none;
+          color: var(--bo-text-muted, #9FAAB8);
+          font-size: 12px; font-family: var(--font-montserrat, sans-serif);
+          cursor: pointer; display: block; min-height: 40px;
+        }
+        .imi-dropdown-item.active { background: rgba(184,148,58,0.08); color: var(--imi-gold-500); }
+        .imi-view-toggle {
+          display: flex; border-radius: 4px; overflow: hidden;
+          border: 1px solid rgba(184,148,58,0.15); flex-shrink: 0;
+        }
+        .imi-view-btn {
+          width: 36px; height: 36px;
+          display: flex; align-items: center; justify-content: center;
+          background: transparent; border: none;
+          border-right: 1px solid rgba(184,148,58,0.15);
+          cursor: pointer;
+          color: var(--bo-text-dim, #5C6B7D);
+          min-height: 36px;
+        }
+        .imi-view-btn:last-child { border-right: none; }
+        .imi-view-btn.active { background: rgba(184,148,58,0.12); color: var(--imi-gold-500); }
+        .imi-refresh-btn {
+          width: 36px; height: 36px;
+          display: flex; align-items: center; justify-content: center;
+          background: transparent;
+          border: 1px solid rgba(184,148,58,0.15);
+          border-radius: 4px; cursor: pointer;
+          color: var(--bo-text-dim, #5C6B7D);
+          flex-shrink: 0;
+        }
+
+        /* ═══ BODY ═══ */
+        .imi-body {
+          display: flex; flex: 1; min-height: 0;
+        }
+        .imi-filter-sidebar {
+          width: 248px; flex-shrink: 0;
+          border-right: 1px solid rgba(184,148,58,0.10);
+          overflow-y: auto;
+          position: sticky; top: 0; max-height: calc(100vh - 200px);
+        }
+        .imi-content {
+          flex: 1; padding: 20px; overflow-y: auto; min-width: 0;
+        }
+
+        /* ═══ GRID / LIST ═══ */
+        .imi-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 16px;
+        }
+        .imi-list-wrap {
+          background: var(--bo-card, #162040);
+          border: 1px solid rgba(184,148,58,0.12);
+          border-radius: 10px; overflow: hidden;
+        }
+        .imi-list-header {
+          display: grid;
+          grid-template-columns: 1fr 100px 90px 90px 80px 80px 48px;
+          padding: 10px 16px;
+          background: rgba(184,148,58,0.04);
+          border-bottom: 1px solid rgba(184,148,58,0.12);
+        }
+        .imi-list-th {
+          font-size: 8px; font-weight: 700; letter-spacing: 2px;
+          text-transform: uppercase; color: var(--bo-text-dim, #5C6B7D);
+          font-family: var(--font-montserrat, sans-serif);
+        }
+
+        /* ═══ EMPTY STATE ═══ */
+        .imi-empty {
+          display: flex; flex-direction: column; align-items: center;
+          justify-content: center; padding: 80px 24px; gap: 16px; text-align: center;
+        }
+        .imi-empty-icon {
+          width: 64px; height: 64px; border-radius: 16px;
+          background: rgba(184,148,58,0.06);
+          border: 1px solid rgba(184,148,58,0.18);
+          display: flex; align-items: center; justify-content: center;
+        }
+        .imi-empty-title {
+          font-family: var(--font-playfair, serif);
+          font-size: 18px; color: var(--bo-text, #EBE7E0);
+        }
+        .imi-empty-subtitle {
+          font-size: 12px; color: var(--bo-text-dim, #5C6B7D);
+          font-family: var(--font-montserrat, sans-serif);
+          margin-top: -8px;
+        }
+
+        /* ═══ SKELETON ═══ */
+        .imi-skeleton-card {
+          background: var(--bo-card, #162040);
+          border: 1px solid rgba(184,148,58,0.10);
+          border-radius: 12px; overflow: hidden;
+        }
+        .imi-skeleton-image {
+          aspect-ratio: 16/9;
+          background: linear-gradient(90deg, var(--navy-card,#162040) 25%, var(--navy-raised,#1A3250) 50%, var(--navy-card,#162040) 75%);
+          background-size: 200% 100%;
+          animation: skeletonPulse 1.5s ease-in-out infinite;
+        }
+        .imi-skeleton-line {
+          border-radius: 3px;
+          background: linear-gradient(90deg, var(--navy-card,#162040) 25%, var(--navy-raised,#1A3250) 50%, var(--navy-card,#162040) 75%);
+          background-size: 200% 100%;
+          animation: skeletonPulse 1.5s ease-in-out infinite;
+        }
+
+        /* ═══ MOBILE FAB ═══ */
+        .imi-fab {
+          display: none;
+          position: fixed; bottom: 84px; right: 20px;
+          width: 52px; height: 52px; border-radius: 50%;
+          background: var(--imi-gold-500); color: var(--bg-base);
+          align-items: center; justify-content: center;
+          box-shadow: 0 4px 20px rgba(184,148,58,0.4);
+          z-index: 90; text-decoration: none;
+        }
+
+        /* ═══ FILTER BOTTOM SHEET ═══ */
+        .imi-sheet-overlay {
+          display: none;
+          position: fixed; inset: 0; z-index: 200;
+          background: rgba(0,0,0,0.6);
+          backdrop-filter: blur(2px);
+          align-items: flex-end;
+        }
+        .imi-sheet {
+          width: 100%; max-height: 85vh;
+          background: var(--bo-card, #162040);
+          border-radius: 20px 20px 0 0;
+          border-top: 1px solid rgba(184,148,58,0.25);
+          display: flex; flex-direction: column;
+          box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+        }
+        .imi-sheet-header {
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 16px 20px;
+          border-bottom: 1px solid rgba(184,148,58,0.10);
+          flex-shrink: 0;
+        }
+        .imi-sheet-title {
+          font-size: 14px; font-weight: 600; color: var(--bo-text, #EBE7E0);
+          font-family: var(--font-montserrat, sans-serif); letter-spacing: 0.5px;
+        }
+        .imi-sheet-close {
+          width: 36px; height: 36px; border-radius: 50%;
+          background: rgba(255,255,255,0.06); border: none; cursor: pointer;
+          display: flex; align-items: center; justify-content: center;
+          color: var(--bo-text-muted, #9FAAB8);
+        }
+        .imi-sheet-body {
+          flex: 1; overflow-y: auto; padding: 0 4px;
+        }
+        .imi-sheet-footer {
+          display: flex; gap: 10px; padding: 14px 20px;
+          border-top: 1px solid rgba(184,148,58,0.10);
+          flex-shrink: 0; padding-bottom: max(14px, env(safe-area-inset-bottom));
+        }
+        .imi-sheet-clear-btn {
+          flex: 1; height: 48px; border-radius: 6px;
+          background: transparent;
+          border: 1px solid rgba(184,148,58,0.25);
+          color: var(--imi-gold-500);
+          font-size: 12px; font-weight: 600; letter-spacing: 1px;
+          text-transform: uppercase; cursor: pointer;
+          font-family: var(--font-montserrat, sans-serif);
+        }
+        .imi-sheet-apply-btn {
+          flex: 2; height: 48px; border-radius: 6px;
+          background: var(--imi-gold-500); border: none;
+          color: var(--bg-base);
+          font-size: 12px; font-weight: 700; letter-spacing: 1px;
+          text-transform: uppercase; cursor: pointer;
+          font-family: var(--font-montserrat, sans-serif);
+        }
+
+        /* ═══ KEYBOARD HELP BUTTON ═══ */
+        .imi-kbd-help-btn {
+          width: 36px; height: 36px;
+          display: flex; align-items: center; justify-content: center;
+          background: transparent;
+          border: 1px solid rgba(184,148,58,0.25);
+          border-radius: 4px; cursor: pointer;
+          color: rgba(184,148,58,0.6);
+          flex-shrink: 0;
+          transition: all 0.2s;
+        }
+        .imi-kbd-help-btn:hover { background: rgba(184,148,58,0.08); color: var(--imi-gold-500); }
+        .imi-kbd-panel {
+          position: absolute; top: calc(100% + 8px); right: 0; z-index: 60;
+          background: var(--navy-float, #1F3B5C);
+          border: 1px solid rgba(184,148,58,0.25);
+          border-radius: 10px; padding: 12px 14px;
+          min-width: 180px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .imi-kbd-panel-title {
+          font-size: 8px; font-weight: 700; letter-spacing: 2px;
+          text-transform: uppercase; color: var(--imi-gold-500);
+          font-family: var(--font-montserrat, sans-serif);
+          margin-bottom: 10px;
+        }
+        .imi-kbd-row {
+          display: flex; align-items: center; gap: 8px;
+          padding: 4px 0;
+        }
+        .imi-kbd {
+          display: inline-flex; align-items: center; justify-content: center;
+          min-width: 28px; height: 22px; padding: 0 6px;
+          background: rgba(184,148,58,0.10);
+          border: 1px solid rgba(184,148,58,0.30);
+          border-radius: 4px;
+          font-family: var(--font-dm-mono, monospace);
+          font-size: 10px; color: var(--imi-gold-500);
+          flex-shrink: 0;
+        }
+        .imi-kbd-desc {
+          font-family: var(--font-montserrat, sans-serif);
+          font-size: 11px; color: var(--bo-text-muted, #9FAAB8);
+        }
+
+        /* ═══ BULK ACTION BAR BUTTONS ═══ */
+        .imi-bulk-btn {
+          padding: 7px 14px; border-radius: 6px; cursor: pointer;
+          font-family: var(--font-montserrat, sans-serif);
+          font-size: 10px; font-weight: 600; letter-spacing: 1px;
+          text-transform: uppercase;
+          border: none;
+          min-height: 32px;
+          transition: all 0.15s;
+        }
+        .imi-bulk-btn-publish {
+          background: rgba(93,184,135,0.15);
+          border: 1px solid rgba(93,184,135,0.35);
+          color: var(--success);
+        }
+        .imi-bulk-btn-publish:hover { background: rgba(93,184,135,0.25); }
+        .imi-bulk-btn-archive {
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.10);
+          color: var(--text-secondary);
+        }
+        .imi-bulk-btn-archive:hover { background: rgba(255,255,255,0.10); }
+        .imi-bulk-btn-export {
+          background: transparent;
+          border: 1px solid rgba(184,148,58,0.45);
+          color: var(--imi-gold-500);
+        }
+        .imi-bulk-btn-export:hover { background: rgba(184,148,58,0.10); }
+
+        /* ═══ COMPARE BAR ═══ */
+        .imi-compare-bar {
+          position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+          z-index: 100;
+          display: flex; align-items: center; gap: 12px;
+          padding: 12px 20px; border-radius: 12px;
+          background: rgba(20,40,64,0.95);
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(184,148,58,0.30);
+          box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+          white-space: nowrap;
+        }
+        .imi-compare-label {
+          font-size: 11px; color: var(--imi-gold-500);
+          font-family: var(--font-montserrat, sans-serif);
+          font-weight: 600;
+        }
+        .imi-compare-btn {
+          padding: 7px 16px; border-radius: 4px;
+          background: var(--imi-gold-500); border: none;
+          color: var(--bg-base);
+          font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+          text-transform: uppercase; cursor: pointer;
+          font-family: var(--font-montserrat, sans-serif);
+          min-height: 36px;
+        }
+        .imi-compare-clear {
+          width: 28px; height: 28px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(255,255,255,0.06); border: none; cursor: pointer;
+          color: var(--text-secondary);
+        }
+
+        /* ═══ CHIP ═══ */
+        .imi-chip {
+          display: flex; align-items: center; gap: 5px;
+          padding: 6px 12px; border-radius: 999px;
+          background: rgba(184,148,58,0.08);
+          border: 1px solid rgba(184,148,58,0.22);
+          color: var(--imi-gold-500);
+          font-size: 11px; font-weight: 500;
+          font-family: var(--font-montserrat, sans-serif);
+          cursor: pointer; white-space: nowrap;
+          min-height: 32px;
+        }
+
+        /* ═══ ANIMATIONS ═══ */
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes skeletonPulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        /* ═══ LIGHT THEME ═══ */
+        .light .imi-page, [data-theme="light"] .imi-page {
+          background: var(--bo-bg, #F6F3ED);
+        }
+        .light .imi-search-input, [data-theme="light"] .imi-search-input {
+          background: rgba(0,0,0,0.04);
+          border-color: rgba(168,132,42,0.20);
+          color: #1A2433;
+        }
+
+        /* ═══════════════════════════════════════════
+           MOBILE — ≤ 767px
+        ═══════════════════════════════════════════ */
+        @media (max-width: 767px) {
+          /* Header mobile */
+          .imi-header {
+            padding: 16px 16px 0;
+          }
+          .imi-breadcrumb { display: none; }
+          .imi-header-row { align-items: center; padding-bottom: 12px; }
+          .imi-page-title { font-size: 20px; margin-bottom: 2px; }
+          .imi-page-subtitle { font-size: 10px; }
+          .imi-header-actions { display: none; }
+          .imi-mobile-chips {
+            display: flex; gap: 8px; padding-bottom: 12px;
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
+          .imi-mobile-chips::-webkit-scrollbar { display: none; }
+
+          /* KPI strip mobile — horizontal scroll */
+          .imi-kpi-strip {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            flex-wrap: nowrap;
+            gap: 0;
+          }
+          .imi-kpi-strip::-webkit-scrollbar { display: none; }
+          .imi-kpi-item {
+            min-width: 110px; flex-shrink: 0;
+            padding: 12px 14px;
+          }
+          .imi-kpi-value { font-size: 16px; }
+          .imi-kpi-label { font-size: 7px; }
+
+          /* Toolbar mobile */
+          .imi-toolbar-search-row { padding: 10px 14px 0; }
+          .imi-toolbar-controls { padding: 8px 14px 10px; gap: 8px; }
+          .imi-filter-btn { display: flex; }
+          .imi-sort-label { display: none; }
+
+          /* Body mobile — no sidebar */
+          .imi-filter-sidebar { display: none; }
+          .imi-sheet-overlay { display: flex; }
+          .imi-sheet { animation: slideUp 0.3s cubic-bezier(0.16,1,0.3,1); }
+          .imi-content { padding: 12px 14px; }
+
+          /* Grid mobile — single column */
+          .imi-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+
+          /* List view — scroll horizontally on mobile */
+          .imi-list-wrap { overflow-x: auto; }
+          .imi-list-header {
+            min-width: 560px;
+            grid-template-columns: 1.5fr 90px 80px 70px 70px 70px 44px;
+          }
+
+          /* FAB mobile */
+          .imi-fab { display: flex; }
+
+          /* Compare bar mobile */
+          .imi-compare-bar {
+            bottom: 70px;
+            left: 14px; right: 14px; transform: none;
+            border-radius: 10px;
+          }
+        }
+
+        /* ═══════════════════════════════════════════
+           TABLET — 768px–1023px
+        ═══════════════════════════════════════════ */
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .imi-filter-sidebar { width: 220px; }
+          .imi-grid {
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+          }
+          .imi-header-actions {
+            flex-wrap: wrap; justify-content: flex-end; max-width: 240px;
+          }
+          .imi-page-title { font-size: 24px; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MOBILE TREE (native proptech app)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const STATUS_FILTER_CHIPS = [
+  { value: '', label: 'Todos' },
+  { value: 'disponivel', label: 'Disponível' },
+  { value: 'lancamento', label: 'Lançamento' },
+  { value: 'em_construcao', label: 'Em Construção' },
+  { value: 'reservado', label: 'Reservado' },
+  { value: 'vendido', label: 'Vendido' },
+]
+
+const SORT_CHIPS = [
+  { field: 'imi_score', dir: 'desc' as const, label: 'Maior Score' },
+  { field: 'created_at', dir: 'desc' as const, label: 'Mais Novo' },
+  { field: 'price', dir: 'asc' as const, label: 'Menor Preço' },
+  { field: 'price', dir: 'desc' as const, label: 'Maior Preço' },
+  { field: 'yield_est', dir: 'desc' as const, label: 'Maior Yield' },
+]
+
+function MobileImoveisList(props: SharedProps) {
+  const {
+    filtered, loading, searchInput, setSearchInput,
+    filters, setFilters, favorites,
+    toggleFavorite, activeFiltersCount, sortField, setSortField, sortDir, setSortDir,
+    properties, market, setMarket,
+  } = props
+
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false)
+  const [statusFilter, setStatusFilter] = useState('')
+
+  useEffect(() => {
+    setFilters({ ...filters, status: statusFilter ? [statusFilter] : [] })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusFilter])
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 56, paddingBottom: 120 }}>
+      <MobileGlobalStyles />
+
+      {/* ── APP BAR ── */}
+      <MobileAppBar
+        title="Imóveis"
+        subtitle={`${properties.length} no portfólio`}
+        backHref="/backoffice/hoje"
+        actions={
+          <>
+            <MobileAppBarAction icon={<BarChart2 size={20} />} href="/backoffice/imoveis/explorer" />
+            <MobileAppBarAction icon={<Plus size={20} />} href="/backoffice/imoveis/novo" variant="primary" />
+          </>
+        }
+      />
+
+      {/* ── STICKY SEARCH + FILTERS ── */}
+      <div style={{
+        position: 'sticky', top: 56, zIndex: 90,
+        background: 'var(--bg-base)',
+        paddingTop: 10,
+        borderBottom: '1px solid rgba(184,148,58,0.06)',
+        paddingBottom: 10,
+      }}>
+        {/* Search row */}
+        <div style={{ padding: '0 16px', marginBottom: 10 }}>
+          <MobileSearchBar
+            value={searchInput}
+            onChange={setSearchInput}
+            placeholder="Buscar imóveis, bairros..."
+          />
+        </div>
+
+        {/* Mobile Market Selector */}
+        {/* TODO: filter by market when DB supports country field */}
+        <div style={{ display: 'flex', gap: 6, padding: '4px 16px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+          {[
+            { id: 'BR', flag: '🇧🇷', label: 'Brasil' },
+            { id: 'US', flag: '🇺🇸', label: 'EUA' },
+            { id: 'AE', flag: '🇦🇪', label: 'UAE' },
+          ].map(m => (
+            <button
+              key={m.id}
+              onClick={() => setMarket(m.id as 'BR' | 'US' | 'AE')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0,
+                height: 30, padding: '0 10px',
+                borderRadius: 'var(--r-full)',
+                border: market === m.id ? '1.5px solid var(--imi-gold-500)' : '1.5px solid rgba(184,148,58,0.20)',
+                background: market === m.id ? 'rgba(184,148,58,0.10)' : 'var(--bg-muted)',
+                color: market === m.id ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+                fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: market === m.id ? 600 : 400,
+                cursor: 'pointer',
+              }}
+            >
+              <span style={{ fontSize: 14 }}>{m.flag}</span>
+              {m.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Status chips */}
+        <MobileFilterChips
+          chips={STATUS_FILTER_CHIPS}
+          active={statusFilter}
+          onChange={setStatusFilter}
+        />
+      </div>
+
+      {/* ── RESULTS ROW + SORT ── */}
+      <div style={{ padding: '10px 16px 6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: 12, color: 'var(--text-tertiary)',
+          fontVariantNumeric: 'tabular-nums',
+        }}>
+          {filtered.length} imóvel{filtered.length !== 1 ? 's' : ''}
+        </span>
+        <MobileFiltersButton count={activeFiltersCount} onClick={() => setFilterSheetOpen(true)} />
+      </div>
+
+      {/* Sort chips */}
+      <div style={{ paddingBottom: 8 }}>
+        <MobileSortChips
+          options={SORT_CHIPS}
+          activeField={sortField}
+          activeDir={sortDir}
+          onChange={(f, d) => { setSortField(f as any); setSortDir(d) }}
+        />
+      </div>
+
+      {/* ── PROPERTY LIST ── */}
+      <div style={{ padding: '4px 16px 16px' }}>
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => <MobilePropertyCardSkeleton key={i} />)
+        ) : filtered.length === 0 ? (
+          <MobileEmptyState
+            title="Nenhum imóvel encontrado"
+            subtitle="Ajuste os filtros ou cadastre um novo imóvel para começar."
+            action={{ label: 'Cadastrar Imóvel', href: '/backoffice/imoveis/novo' }}
+          />
+        ) : (
+          filtered.map((p, i) => (
+            <MobilePropertyCard
+              key={p.id}
+              property={p}
+              isFavorite={favorites.has(p.id)}
+              onFavorite={() => toggleFavorite(p.id)}
+              animationDelay={Math.min(i * 60, 300)}
+            />
+          ))
+        )}
+      </div>
+
+      {/* ── FILTER BOTTOM SHEET ── */}
+      <MobileBottomSheet
+        isOpen={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        title="Filtros"
+        footer={
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              onClick={() => { setFilters(DEFAULT_FILTERS); setStatusFilter('') }}
+              className="mob-btn-tap"
+              style={{
+                flex: 1, height: 48, borderRadius: 10,
+                background: 'transparent',
+                border: '1px solid rgba(184,148,58,0.25)',
+                color: 'var(--imi-gold-500)',
+                fontFamily: 'var(--font-sans)',
+                fontSize: 12, fontWeight: 600, cursor: 'pointer',
+              }}
+            >
+              Limpar
+            </button>
+            <button
+              onClick={() => setFilterSheetOpen(false)}
+              className="mob-btn-tap"
+              style={{
+                flex: 2, height: 48, borderRadius: 10,
+                background: 'var(--imi-gold-500)', border: 'none',
+                color: 'var(--bg-base)',
+                fontFamily: 'var(--font-sans)',
+                fontSize: 12, fontWeight: 700, cursor: 'pointer',
+              }}
+            >
+              Ver {filtered.length} imóvel{filtered.length !== 1 ? 's' : ''}
+            </button>
+          </div>
+        }
+      >
+        <AdvancedFilterPanel
+          filters={filters}
+          onChange={setFilters}
+          totalCount={properties.length}
+          filteredCount={filtered.length}
+        />
+      </MobileBottomSheet>
+
+      {/* ── BOTTOM NAVIGATION ── */}
+      <MobileBottomNav />
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MAIN PAGE EXPORT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export default function ImoveisPage() {
+  const isMobile = useIsMobile()
+
+  const [properties, setProperties] = useState<IMIProperty[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filters, setFilters] = useState<PropertyFilters>(DEFAULT_FILTERS)
+  const [sortField, setSortField] = useState<SortField>('imi_score')
+  const [sortDir, setSortDir] = useState<SortDir>('desc')
+  const [compareIds, setCompareIds] = useState<Set<string>>(new Set())
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
+  const [searchInput, setSearchInput] = useState('')
+  const [market, setMarket] = useState<'BR' | 'US' | 'AE'>('BR')
+
+  const fetchProperties = useCallback(async () => {
+    setLoading(true)
+    try {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('developments')
+        .select(`
+          id, name, type, status, status_commercial, condition,
+          price_from, area_min, area_max, bedrooms_from, bathrooms_from,
+          parking_from, neighborhood, city, state, address, street_number,
+          image_urls, cover_image_url, slug, created_at,
+          developer:developers(id, name, logo_url)
+        `)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      const normalized: IMIProperty[] = (data ?? []).map(d => ({
+        id: d.id, name: d.name, type: d.type, condition: d.condition,
+        status: normalizeStatus(d.status_commercial ?? d.status ?? 'disponivel'),
+        price: d.price_from, area: d.area_min ?? d.area_max,
+        bedrooms: d.bedrooms_from, bathrooms: d.bathrooms_from, parking: d.parking_from,
+        neighborhood: d.neighborhood, city: d.city, state: d.state, address: d.address,
+        image_urls: d.image_urls, cover_image_url: d.cover_image_url, slug: d.slug,
+        created_at: d.created_at,
+        developer: Array.isArray(d.developer) ? d.developer[0] : d.developer,
+      }))
+      setProperties(normalized.map(enrichProperty))
+    } catch (err) {
+      console.error('Erro ao carregar imóveis:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => { fetchProperties() }, [fetchProperties])
+
+  const filtered = useMemo(() => {
+    let list = [...properties]
+    const q = (filters.search || searchInput).toLowerCase()
+    if (q) list = list.filter(p =>
+      p.name?.toLowerCase().includes(q) ||
+      p.neighborhood?.toLowerCase().includes(q) ||
+      p.city?.toLowerCase().includes(q) ||
+      p.address?.toLowerCase().includes(q)
     )
+    if (filters.status.length > 0) list = list.filter(p => filters.status.includes(p.status ?? ''))
+    if (filters.type.length > 0) list = list.filter(p => filters.type.some(t => p.type?.toLowerCase().includes(t)))
+    if (filters.city) list = list.filter(p => p.city?.toLowerCase().includes(filters.city.toLowerCase()))
+    if (filters.neighborhood) list = list.filter(p => p.neighborhood?.toLowerCase().includes(filters.neighborhood.toLowerCase()))
+    if (filters.minPrice) list = list.filter(p => (p.price ?? 0) >= filters.minPrice!)
+    if (filters.maxPrice) list = list.filter(p => (p.price ?? Infinity) <= filters.maxPrice!)
+    if (filters.minArea) list = list.filter(p => (p.area ?? 0) >= filters.minArea!)
+    if (filters.maxArea) list = list.filter(p => (p.area ?? Infinity) <= filters.maxArea!)
+    if (filters.minBedrooms) list = list.filter(p => (p.bedrooms ?? 0) >= filters.minBedrooms!)
+    if (filters.minScore) list = list.filter(p => (p.imi_score ?? 0) >= filters.minScore!)
+    if (filters.minYield) list = list.filter(p => (p.yield_est ?? 0) >= filters.minYield!)
+    if (filters.belowMarket) list = list.filter(p => (p.market_delta_pct ?? 0) > 0)
+    list.sort((a, b) => {
+      if (sortField === 'created_at') {
+        return sortDir === 'desc'
+          ? new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+          : new Date(a.created_at ?? 0).getTime() - new Date(b.created_at ?? 0).getTime()
+      }
+      const av = (a[sortField] as number) ?? 0
+      const bv = (b[sortField] as number) ?? 0
+      return sortDir === 'desc' ? bv - av : av - bv
+    })
+    return list
+  }, [properties, filters, searchInput, sortField, sortDir])
+
+  const activeFiltersCount = useMemo(() => {
+    let c = 0
+    if (filters.status.length > 0) c++
+    if (filters.type.length > 0) c++
+    if (filters.city) c++
+    if (filters.neighborhood) c++
+    if (filters.minPrice || filters.maxPrice) c++
+    if (filters.minArea || filters.maxArea) c++
+    if (filters.minBedrooms) c++
+    if (filters.minScore) c++
+    if (filters.minYield) c++
+    if (filters.belowMarket) c++
+    return c
+  }, [filters])
+
+  const toggleCompare = useCallback((id: string) => {
+    setCompareIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) { next.delete(id) } else if (next.size < 5) { next.add(id) }
+      return next
+    })
+  }, [])
+
+  const toggleFavorite = useCallback((id: string) => {
+    setFavorites(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) { next.delete(id) } else { next.add(id) }
+      return next
+    })
+  }, [])
+
+  const sharedProps: SharedProps = {
+    properties,
+    filtered,
+    loading,
+    searchInput,
+    setSearchInput,
+    filters,
+    setFilters,
+    sortField,
+    setSortField,
+    sortDir,
+    setSortDir,
+    compareIds,
+    favorites,
+    toggleCompare,
+    toggleFavorite,
+    fetchProperties,
+    activeFiltersCount,
+    market,
+    setMarket,
+  }
+
+  if (isMobile) return <MobileImoveisList {...sharedProps} />
+  return <DesktopImoveisList {...sharedProps} />
 }

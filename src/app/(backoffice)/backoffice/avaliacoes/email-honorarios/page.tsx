@@ -217,14 +217,14 @@ export default function EmailHonorariosPage() {
   const ENTITY_BADGE: Record<string, { bg: string; color: string }> = {
     tribunal: { bg: 'rgba(139,92,246,0.12)', color: '#A78BFA' },
     banco: { bg: 'rgba(72,101,129,0.12)', color: 'var(--bo-accent)' },
-    particular: { bg: 'rgba(107,184,123,0.12)', color: '#6BB87B' },
+    particular: { bg: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' },
     escritorio: { bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' },
     outro: { bg: 'rgba(255,255,255,0.05)', color: T.textMuted },
   }
   const URGENCIA_BADGE: Record<string, { bg: string; color: string }> = {
-    baixa: { bg: 'rgba(107,184,123,0.12)', color: '#6BB87B' },
+    baixa: { bg: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' },
     media: { bg: 'rgba(245,158,11,0.12)', color: '#F59E0B' },
-    alta: { bg: 'rgba(229,115,115,0.12)', color: '#E57373' },
+    alta: { bg: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)' },
   }
 
   return (
@@ -269,7 +269,7 @@ export default function EmailHonorariosPage() {
           style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }} />
 
         {error && (
-          <p className="text-sm rounded-xl px-3 py-2" style={{ background: 'rgba(229,115,115,0.12)', color: '#E57373' }}>{error}</p>
+          <p className="text-sm rounded-xl px-3 py-2" style={{ background: 'rgba(229,115,115,0.12)', color: 'var(--bo-error)' }}>{error}</p>
         )}
 
         <button onClick={analisar} disabled={!emailText.trim() || loading}

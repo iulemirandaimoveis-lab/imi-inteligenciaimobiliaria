@@ -14,12 +14,41 @@ const config: Config = {
             // CORES - COM PRIMARY DEFINIDO (FIX CRÍTICO)
             // ============================================
             colors: {
-                // PRIMARY (RESOLVE 111 REFERÊNCIAS)
-                primary: 'var(--accent-500)',
-                'primary-dark': 'var(--accent-700)',
-                'primary-light': 'var(--accent-300)',
+                // ── Brand primary (maps to CSS var for theme-aware) ──
+                primary: 'var(--bo-accent)',
+                'primary-dark': 'var(--gold-deep, #A8842A)',
+                'primary-light': 'var(--gold-bright, #D4B86A)',
 
-                // ACCENT (mantém)
+                // ── Gold scale ──
+                gold: {
+                    DEFAULT: 'var(--imi-gold-500, #B8943A)',
+                    50:      'var(--imi-gold-50, #FAF4E4)',
+                    100:     'var(--imi-gold-100, #F4EACC)',
+                    200:     'var(--imi-gold-200, #E8D4A8)',
+                    300:     'var(--imi-gold-300, #D8BC84)',
+                    400:     'var(--imi-gold-400, #C9A660)',
+                    500:     'var(--imi-gold-500, #B8943A)',
+                    600:     'var(--imi-gold-600, #A07830)',
+                    700:     'var(--imi-gold-700, #8A6820)',
+                },
+
+                // ── Navy scale ──
+                navy: {
+                    DEFAULT: 'var(--imi-navy-900, #0B1120)',
+                    50:      'var(--imi-navy-50, #E4E8F2)',
+                    100:     'var(--imi-navy-100, #B8C0DC)',
+                    200:     'var(--imi-navy-200, #8C9CC8)',
+                    300:     'var(--imi-navy-300, #6070A8)',
+                    400:     'var(--imi-navy-400, #3D518A)',
+                    500:     'var(--imi-navy-500, #253565)',
+                    600:     'var(--imi-navy-600, #1D2B52)',
+                    700:     'var(--imi-navy-700, #162040)',
+                    800:     'var(--imi-navy-800, #101830)',
+                    900:     'var(--imi-navy-900, #0B1120)',
+                    950:     'var(--imi-navy-950, #05080F)',
+                },
+
+                // ── ACCENT (legacy compat) ──
                 accent: {
                     50: 'var(--accent-50)',
                     100: 'var(--accent-100)',
@@ -33,7 +62,7 @@ const config: Config = {
                     900: 'var(--accent-900)',
                 },
 
-                // IMI (mantém)
+                // ── IMI Neutros (updated to warm palette) ──
                 imi: {
                     50: 'var(--imi-50)',
                     100: 'var(--imi-100)',
@@ -47,23 +76,36 @@ const config: Config = {
                     900: 'var(--imi-900)',
                 },
 
+                // ── Backoffice semantic tokens ──
+                'bo-bg':      'var(--bo-bg)',
+                'bo-surface': 'var(--bo-surface)',
+                'bo-elevated':'var(--bo-elevated)',
+                'bo-card':    'var(--bo-card)',
+                'bo-accent':  'var(--bo-accent)',
+                'bo-text':    'var(--bo-text)',
+                'bo-muted':   'var(--bo-text-muted)',
+                'bo-border':  'var(--bo-border)',
+
                 // BACKGROUNDS (mantém)
-                'background-light': '#F8F9FA',
-                'background-dark': '#0F1E28',
+                'background-light': 'var(--imi-cream, #F8F6EE)',
+                'background-dark': '#0B1120',
             },
 
             // ============================================
             // BORDER RADIUS - COM 3XL ADICIONADO (FIX)
             // ============================================
             borderRadius: {
-                none: '0',
-                sm: '8px',
-                md: '12px',
-                lg: '16px',
-                xl: '20px',
-                '2xl': '24px',
-                '3xl': '32px', // NOVO - resolve rounded-[32px]
-                full: '9999px',
+                none:  '0',
+                xs:    'var(--r-xs, 3px)',
+                sm:    'var(--r-sm, 6px)',
+                DEFAULT: 'var(--r-sm, 6px)',
+                md:    'var(--r-md, 8px)',
+                lg:    'var(--r-lg, 12px)',
+                xl:    'var(--r-xl, 16px)',
+                '2xl': 'var(--r-2xl, 24px)',
+                '3xl': '24px',
+                full:  '9999px',
+                pill:  '9999px',
             },
 
             // ============================================
@@ -88,8 +130,11 @@ const config: Config = {
             // TIPOGRAFIA (mantém estrutura institucional)
             // ============================================
             fontFamily: {
-                display: ['var(--font-playfair)', 'serif'],
-                sans: ['var(--font-inter)', 'sans-serif'],
+                display:  ['var(--font-libre-baskerville)', 'Georgia', 'serif'],
+                sans:     ['var(--font-figtree)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+                serif:    ['var(--font-libre-baskerville)', 'Georgia', 'serif'],
+                mono:     ['var(--font-jetbrains-mono)', 'SF Mono', 'monospace'],
+                ui:       ['var(--font-figtree)', 'system-ui', 'sans-serif'],
             },
             fontSize: {
                 xs: ['12px', { lineHeight: '16px', letterSpacing: '0' }],

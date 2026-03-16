@@ -273,9 +273,18 @@ export default function PropertyMap({
             validDevelopments.forEach((d) =>
                 bounds.extend([d.location.coordinates.lng, d.location.coordinates.lat])
             )
+            const sw = bounds.getSouthWest()
+            const ne = bounds.getNorthEast()
+            // If spread spans >60° longitude (multiple continents), center on Brazil
+            const lngSpread = Math.abs(ne.lng - sw.lng)
+            if (lngSpread > 60) {
+                map.current.flyTo({ center: [-38.5, -8.5], zoom: 5, duration: 600 })
+                return
+            }
             map.current.fitBounds(bounds, {
                 padding: { top: 80, bottom: 80, left: 60, right: 60 },
                 maxZoom: 13,
+                minZoom: 4,
                 duration: 800,
             })
         }

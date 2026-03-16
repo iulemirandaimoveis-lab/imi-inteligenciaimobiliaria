@@ -29,7 +29,7 @@ export default function ThemeToggle({ size = 'md' }: { size?: 'sm' | 'md' }) {
             style={{
                 background: 'transparent',
                 border: '1px solid transparent',
-                color: 'var(--bo-text-muted)',
+                color: 'var(--text-tertiary)',
             }}
             title={isDark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
             aria-label={isDark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}

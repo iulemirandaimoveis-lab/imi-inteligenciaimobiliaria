@@ -113,7 +113,7 @@ export default function ProjetosPage() {
             <div className="space-y-6">
 
                 {/* KPIs */}
-                <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
                     <KPICard
                         label="VGV Total Portfólio"
                         value={fmtCurrency(totalVGV)}
@@ -178,9 +178,9 @@ export default function ProjetosPage() {
                         </button>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4" data-tour="projetos-list">
                         {projetos.map(p => {
-                            const stt = STATUS_CFG[p.status] || { l: p.status, color: '#6B7280' }
+                            const stt = STATUS_CFG[p.status] || { l: p.status, color: 'var(--text-tertiary)' }
                             const pct = p.unidades > 0 ? Math.round((p.unidades_vendidas / p.unidades) * 100) : 0
                             return (
                                 <div key={p.id} className="overflow-hidden rounded-2xl transition-all"
@@ -282,7 +282,7 @@ export default function ProjetosPage() {
                                     placeholder="Nome do projeto" />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Tipo</label>
                                     <input value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })}
@@ -302,7 +302,7 @@ export default function ProjetosPage() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Cidade</label>
                                     <input value={form.cidade} onChange={e => setForm({ ...form, cidade: e.target.value })}
@@ -319,7 +319,7 @@ export default function ProjetosPage() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-xs font-medium mb-1.5 block" style={{ color: T.textMuted }}>Unidades</label>
                                     <input type="number" value={form.unidades}

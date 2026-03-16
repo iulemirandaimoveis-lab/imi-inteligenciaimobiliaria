@@ -170,7 +170,7 @@ export default function PlaybooksPage() {
                                                     }}>
                                                     <button onClick={() => toggleStep(pb.id, step.id)} className="mt-0.5 flex-shrink-0">
                                                         {isConcluida
-                                                            ? <CheckCircle2 size={18} style={{ color: '#6BB87B' }} />
+                                                            ? <CheckCircle2 size={18} style={{ color: 'var(--bo-success)' }} />
                                                             : <Circle size={18} style={{ color: T.textMuted }} />
                                                         }
                                                     </button>

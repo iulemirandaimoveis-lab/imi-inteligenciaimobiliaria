@@ -176,7 +176,7 @@ export default function ContactPage() {
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                             required
                                             disabled={isSubmitting}
-                                            className="w-full h-12 px-4 rounded-xl bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
+                                            className="w-full h-12 px-4 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
                                         />
                                     </div>
                                     <div>
@@ -188,7 +188,7 @@ export default function ContactPage() {
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             required
                                             disabled={isSubmitting}
-                                            className="w-full h-12 px-4 rounded-xl bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
+                                            className="w-full h-12 px-4 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
                                         />
                                     </div>
                                 </div>
@@ -203,7 +203,7 @@ export default function ContactPage() {
                                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                             required
                                             disabled={isSubmitting}
-                                            className="w-full h-12 px-4 rounded-xl bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
+                                            className="w-full h-12 px-4 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
                                         />
                                     </div>
                                     <div>
@@ -215,7 +215,7 @@ export default function ContactPage() {
                                             onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                                             required
                                             disabled={isSubmitting}
-                                            className="w-full h-12 px-4 rounded-xl bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
+                                            className="w-full h-12 px-4 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all disabled:opacity-50"
                                         />
                                     </div>
                                 </div>
@@ -229,14 +229,14 @@ export default function ContactPage() {
                                         required
                                         disabled={isSubmitting}
                                         rows={5}
-                                        className="w-full px-4 py-3 rounded-xl bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all resize-none disabled:opacity-50"
+                                        className="w-full px-4 py-3 rounded-[4px] bg-[#0D0F14] border border-white/10 text-white text-sm placeholder:text-[#4B5563] focus:border-[#334E68]/50 focus:ring-1 focus:ring-[#334E68]/30 outline-none transition-all resize-none disabled:opacity-50"
                                     />
                                 </div>
 
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full h-14 rounded-xl bg-[#102A43] text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#1A2F44] transition-all disabled:opacity-50 shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
+                                    className="w-full h-14 rounded-[4px] bg-[#102A43] text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#1A2F44] transition-all disabled:opacity-50 shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
                                 >
                                     {isSubmitting ? (
                                         <>

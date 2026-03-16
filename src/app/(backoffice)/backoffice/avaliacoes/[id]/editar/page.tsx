@@ -324,7 +324,7 @@ export default function EditarAvaliacaoPage() {
                     className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
                     style={
                       isCompleted
-                        ? { background: 'rgba(52,211,153,0.15)', color: '#34d399', border: '1.5px solid rgba(52,211,153,0.35)' }
+                        ? { background: 'rgba(52,211,153,0.15)', color: T.success, border: '1.5px solid rgba(52,211,153,0.35)' }
                         : isActive
                         ? { background: T.accentBg, color: T.accent, border: `1.5px solid ${T.accent}` }
                         : { background: T.elevated, color: T.textMuted, border: `1.5px solid ${T.border}` }
@@ -335,7 +335,7 @@ export default function EditarAvaliacaoPage() {
                   <p
                     className="text-sm font-semibold mt-2"
                     style={{
-                      color: isCompleted ? '#34d399' : isActive ? T.accent : T.textMuted,
+                      color: isCompleted ? T.success : isActive ? T.accent : T.textMuted,
                     }}
                   >
                     {step.label}
@@ -344,7 +344,7 @@ export default function EditarAvaliacaoPage() {
                 {index < steps.length - 1 && (
                   <div
                     className="h-0.5 flex-1 mx-4 rounded-full transition-all"
-                    style={{ background: currentStep > step.number ? '#34d399' : T.border }}
+                    style={{ background: currentStep > step.number ? T.success : T.border }}
                   />
                 )}
               </div>

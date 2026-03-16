@@ -1,15 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   Sun, Moon, Users, CalendarDays,
   MessageCircle, Building2,
-  TrendingUp, Scale, Clock, Zap, Bot, Sparkles, CheckCircle2,
+  TrendingUp, Scale, Clock, Zap, Bot, Sparkles, CheckCircle2, LayoutDashboard,
+  Camera, Loader2, Video, X, Plug, Megaphone, FileSignature, Banknote,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { createClient } from '@/lib/supabase/client'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { MarketTicker } from '@/app/(backoffice)/components/ui/MarketTicker'
 import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
 import { MobileLeadCard } from '@/app/(backoffice)/components/ui/MobileLeadCard'
@@ -38,35 +41,37 @@ function formatTime(iso: string) {
 
 // ── Quick action config ──────────────────────────────────────────────
 const QUICK_ACTIONS = [
-  { label: 'Novo Lead',   href: '/backoffice/leads/novo',        color: 'var(--s-hot)',       icon: Users },
-  { label: 'Agendamento', href: '/backoffice/agenda',            color: 'var(--s-pend)',      icon: CalendarDays },
-  { label: 'WhatsApp',    href: '/backoffice/whatsapp',          color: '#25D366',            icon: MessageCircle },
-  { label: 'Agentes IA',  href: '/backoffice/ia/agentes',        color: '#A78BFA',            icon: Bot,           isNew: true },
-  { label: 'Avaliação',   href: '/backoffice/avaliacoes/nova',   color: 'var(--imi-ai-gold)', icon: Scale },
-  { label: 'Imóveis',     href: '/backoffice/imoveis',           color: 'var(--s-cold)',      icon: Building2 },
-  { label: 'Pipeline',    href: '/backoffice/leads',             color: 'var(--imi-blue-bright)', icon: TrendingUp },
+  { label: 'Dashboard',   href: '/backoffice/dashboard',         color: 'var(--imi-gold-500)', icon: LayoutDashboard },
+  { label: 'Novo Lead',   href: '/backoffice/leads/novo',        color: 'var(--error)',        icon: Users },
+  { label: 'Agendamento', href: '/backoffice/agenda',            color: 'var(--warning)',      icon: CalendarDays },
+  { label: 'WhatsApp',    href: '/backoffice/whatsapp',          color: '#25D366',             icon: MessageCircle },
+  { label: 'Agentes IA',  href: '/backoffice/ia/agentes',        color: '#A78BFA',             icon: Bot,           isNew: true },
+  { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',    color: '#F472B6',             icon: Video,         isNew: true },
+  { label: 'Avaliação',   href: '/backoffice/avaliacoes/nova',   color: 'var(--imi-gold-500)', icon: Scale },
+  { label: 'Imóveis',     href: '/backoffice/imoveis',           color: 'var(--info)',         icon: Building2 },
+  { label: 'Pipeline',    href: '/backoffice/leads',             color: 'var(--imi-gold-500)', icon: TrendingUp },
 ]
 
-// ── Agent activity data (static for now, can be wired to real API) ──
-const AGENT_ACTIVITY = [
-  { name: 'Qualificador', tasksToday: 47, color: '#3B82F6', raw: '59,130,246', status: 'active' },
-  { name: 'Conteúdo',     tasksToday: 23, color: '#8B5CF6', raw: '139,92,246', status: 'active' },
-  { name: 'Matchmaker',   tasksToday: 31, color: '#F59E0B', raw: '245,158,11', status: 'active' },
-  { name: 'Follow-up',    tasksToday: 12, color: '#EF4444', raw: '239,68,68',  status: 'idle'   },
+// ── Agent activity default (zeroed — real data fetched from API) ──
+const AGENT_ACTIVITY_DEFAULT = [
+  { name: 'Qualificador', tasksToday: 0, color: '#3B82F6', raw: '59,130,246', status: 'active' },
+  { name: 'Conteúdo',     tasksToday: 0, color: '#8B5CF6', raw: '139,92,246', status: 'active' },
+  { name: 'Matchmaker',   tasksToday: 0, color: '#F59E0B', raw: '245,158,11', status: 'active' },
+  { name: 'Follow-up',    tasksToday: 0, color: 'var(--error)', raw: '239,68,68',  status: 'idle'   },
 ]
 
 // ── Loading Skeleton ─────────────────────────────────────────────────
 function HojeSkeleton() {
   return (
     <div className="space-y-5 max-w-2xl mx-auto">
-      <div style={{ height: 60, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.5 }} />
-      <div className="grid grid-cols-3 gap-2">
+      <div style={{ height: 60, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.5 }} />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {[0,1,2].map(i => (
-          <div key={i} style={{ height: 72, background: 'var(--bo-card)', borderRadius: 14, opacity: 0.4 }} />
+          <div key={i} style={{ height: 72, background: 'var(--bg-surface)', borderRadius: 14, opacity: 0.4 }} />
         ))}
       </div>
-      <div style={{ height: 100, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.4 }} />
-      <div style={{ height: 200, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.35 }} />
+      <div style={{ height: 100, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.4 }} />
+      <div style={{ height: 200, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.35 }} />
     </div>
   )
 }
@@ -76,7 +81,57 @@ export default function HojePage() {
   const router = useRouter()
   const [leads, setLeads] = useState<any[]>([])
   const [events, setEvents] = useState<any[]>([])
+  const [agentActivity, setAgentActivity] = useState(AGENT_ACTIVITY_DEFAULT)
   const [loading, setLoading] = useState(true)
+
+  // ── Avatar / profile ──────────────────────────────────────────────
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [userName, setUserName] = useState<string>('Iule')
+  const [userRole, setUserRole] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const avatarInputRef = useRef<HTMLInputElement>(null)
+  const [integBannerDismissed, setIntegBannerDismissed] = useState(() => {
+    try { return localStorage.getItem('imi-integ-banner-dismissed') === '1' } catch { return false }
+  })
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Corretor'
+      setUserName(name.split(' ')[0])
+      if (user.user_metadata?.avatar_url) setAvatarUrl(user.user_metadata.avatar_url)
+      // Load role
+      supabase.from('users').select('role').eq('email', user.email).single()
+        .then(({ data }) => { if (data?.role) setUserRole(data.role as string) })
+    })
+  }, [])
+
+  const handleAvatarUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    setUploading(true)
+    try {
+      const ext = file.name.split('.').pop() ?? 'jpg'
+      const path = `avatars/${user.id}.${ext}`
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+      if (upErr) throw upErr
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
+      await supabase.auth.updateUser({ data: { avatar_url: publicUrl } })
+      // Also save to profiles table
+      await supabase.from('profiles').upsert({ id: user.id, avatar_url: publicUrl }, { onConflict: 'id' })
+      setAvatarUrl(publicUrl)
+      toast.success('Foto atualizada!')
+    } catch {
+      toast.error('Erro ao atualizar foto')
+    } finally {
+      setUploading(false)
+      if (avatarInputRef.current) avatarInputRef.current.value = ''
+    }
+  }, [])
 
   const { text: greetText, Icon: GreetIcon, period } = getGreeting()
   const { weekday, rest } = todayLabel()
@@ -87,10 +142,18 @@ export default function HojePage() {
     Promise.all([
       fetch('/api/leads').then(r => r.json()).catch(() => { toast.error('Erro ao carregar leads'); return [] }),
       fetch(`/api/agenda?month=${currentMonth}`).then(r => r.json()).catch(() => { toast.error('Erro ao carregar agenda'); return [] }),
-    ]).then(([leadsData, eventsData]) => {
+      fetch('/api/ai/agents/stats').then(r => r.json()).catch(() => null),
+    ]).then(([leadsData, eventsData, agentData]) => {
       // /api/leads returns { data: [...], pagination: {} } — extract .data
       setLeads(leadsData?.data || (Array.isArray(leadsData) ? leadsData : []))
       setEvents(Array.isArray(eventsData) ? eventsData : [])
+      // Merge agent stats from API if available
+      if (agentData?.agents && typeof agentData.agents === 'object') {
+        setAgentActivity(prev => prev.map(agent => {
+          const apiData = agentData.agents[agent.name] || agentData.agents[agent.name.toLowerCase()]
+          return apiData ? { ...agent, tasksToday: apiData.tasksToday } : agent
+        }))
+      }
       setLoading(false)
     })
   }, [currentMonth])
@@ -113,10 +176,10 @@ export default function HojePage() {
       : 'Pipeline aguardando novos leads. Ative suas campanhas para maximizar captação.'
 
   const greetIconColor = period === 'morning'
-    ? 'var(--imi-ai-gold)'
+    ? 'var(--imi-gold-500)'
     : period === 'afternoon'
-      ? 'var(--s-warm)'
-      : 'var(--s-cold)'
+      ? 'var(--warning)'
+      : 'var(--info)'
 
   return (
     <div className="space-y-5 max-w-2xl mx-auto">
@@ -128,8 +191,8 @@ export default function HojePage() {
         transition={{ duration: 0.28, ease: [0, 0, 0.2, 1] }}
         className="rounded-2xl"
         style={{
-          background: 'linear-gradient(135deg, var(--bo-card) 0%, var(--bo-surface) 100%)',
-          border: '1px solid var(--bo-border)',
+          background: 'linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface) 100%)',
+          border: '1px solid var(--border-default)',
           padding: '16px',
           position: 'relative',
           overflow: 'hidden',
@@ -144,7 +207,7 @@ export default function HojePage() {
 
         {/* IMI Intelligence tag */}
         <div className="flex items-center gap-2 mb-3">
-          <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-blue-bright)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
             INTELLIGENCE OS
           </span>
           <span className="flex items-center gap-1">
@@ -155,41 +218,102 @@ export default function HojePage() {
           </span>
         </div>
 
-        <div className="flex items-end justify-between" style={{ position: 'relative' }}>
-          <div>
-            <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', fontWeight: 500, marginBottom: '2px' }}>
-              {greetText}, Iule ✦
+        <div className="flex items-start justify-between" style={{ position: 'relative', gap: 12 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginBottom: '2px' }}>
+              {greetText}, {userName} ✦
             </p>
-            <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--bo-text)', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+            <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
               {weekday}
             </h1>
-            <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', marginTop: '1px' }}>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '1px' }}>
               {rest}
             </p>
+            {userRole && (
+              <span style={{
+                display: 'inline-block', marginTop: 6,
+                fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
+                padding: '2px 8px', borderRadius: 6,
+                background: 'var(--bo-active-bg)', color: 'var(--imi-gold-500)',
+                border: '1px solid var(--border-default)',
+              }}>
+                {userRole}
+              </span>
+            )}
           </div>
 
-          <div style={{
-            width: '48px', height: '48px', borderRadius: '14px',
-            background: `${greetIconColor}15`, border: `1px solid ${greetIconColor}25`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            <GreetIcon size={22} style={{ color: greetIconColor }} />
+          {/* Avatar with upload */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleAvatarUpload}
+            />
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={uploading}
+              style={{
+                width: 56, height: 56, borderRadius: '50%',
+                overflow: 'hidden', position: 'relative',
+                border: `2px solid rgba(184,148,58,0.4)`,
+                background: 'var(--bo-elevated)',
+                cursor: 'pointer', padding: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}
+              title="Alterar foto"
+            >
+              {uploading ? (
+                <Loader2 size={20} style={{ color: 'var(--imi-gold-500)', animation: 'spin 1s linear infinite' }} />
+              ) : avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarUrl} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--imi-gold-500)', fontFamily: "'Libre Baskerville', serif" }}>
+                  {userName.charAt(0).toUpperCase()}
+                </span>
+              )}
+              {/* Camera hover overlay */}
+              {!uploading && (
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'rgba(0,0,0,0.45)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  opacity: 0, transition: 'opacity 0.15s',
+                  borderRadius: '50%',
+                }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.opacity = '1' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.opacity = '0' }}
+                >
+                  <Camera size={14} style={{ color: 'white' }} />
+                </div>
+              )}
+            </button>
+            {/* "Foto" label */}
+            <span style={{
+              position: 'absolute', bottom: -14, left: '50%', transform: 'translateX(-50%)',
+              fontSize: 8, fontWeight: 700, color: 'var(--text-secondary)',
+              letterSpacing: '0.05em', whiteSpace: 'nowrap',
+            }}>
+              Alterar foto
+            </span>
           </div>
         </div>
 
         {/* Today's mini stat strip */}
-        <div className="flex items-center gap-3 mt-4 pt-3" style={{ borderTop: '1px solid var(--bo-border)' }}>
-          <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
-            Hoje: <span style={{ color: 'var(--s-hot)', fontWeight: 700 }}>{hotCount} quentes</span>
+        <div className="flex items-center gap-3 mt-4 pt-3" style={{ borderTop: '1px solid var(--border-default)' }}>
+          <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
+            Hoje: <span style={{ color: 'var(--error)', fontWeight: 700 }}>{hotCount} quentes</span>
           </span>
-          <span style={{ color: 'var(--bo-border)', fontSize: '12px' }}>·</span>
-          <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
-            <span style={{ color: 'var(--s-pend)', fontWeight: 700 }}>{todayEvents.length} eventos</span>
+          <span style={{ color: 'var(--border-default)', fontSize: '12px' }}>·</span>
+          <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
+            <span style={{ color: 'var(--warning)', fontWeight: 700 }}>{todayEvents.length} eventos</span>
           </span>
-          <span style={{ color: 'var(--bo-border)', fontSize: '12px' }}>·</span>
-          <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
-            <span style={{ color: 'var(--bo-text)', fontWeight: 700 }}>{totalLeads}</span> leads total
+          <span style={{ color: 'var(--border-default)', fontSize: '12px' }}>·</span>
+          <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
+            <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{totalLeads}</span> leads total
           </span>
         </div>
       </motion.div>
@@ -219,8 +343,8 @@ export default function HojePage() {
               {/* Icon circle */}
               <div style={{
                 width: '40px', height: '40px', borderRadius: '12px',
-                background: 'var(--bo-card)',
-                border: `1px solid ${(a as any).isNew ? 'rgba(167,139,250,0.30)' : 'var(--bo-border)'}`,
+                background: 'var(--bg-surface)',
+                border: `1px solid ${(a as any).isNew ? 'rgba(167,139,250,0.30)' : 'var(--border-default)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0, position: 'relative',
               }}>
@@ -230,12 +354,12 @@ export default function HojePage() {
                     position: 'absolute', top: -5, right: -5,
                     fontSize: '7px', fontWeight: 800, padding: '1px 4px',
                     borderRadius: 4, background: 'rgba(74,222,128,0.20)',
-                    color: '#4ADE80', border: '1px solid rgba(74,222,128,0.35)',
+                    color: 'var(--success)', border: '1px solid rgba(74,222,128,0.35)',
                     letterSpacing: '0.03em',
                   }}>NEW</span>
                 )}
               </div>
-              <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--bo-text-muted)', textAlign: 'center', lineHeight: 1.2, maxWidth: '44px' }}>
+              <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.2, maxWidth: '44px' }}>
                 {a.label}
               </span>
             </motion.button>
@@ -243,12 +367,44 @@ export default function HojePage() {
         </div>
       </motion.div>
 
+      {/* Market Ticker */}
+      <MarketTicker
+        paused
+        items={[
+          // Brasil — Mercado Imobiliário
+          { label: '🇧🇷 Ipanema • RJ', value: 'R$ 24.800/m²', change: 2.3, type: 'price' },
+          { label: '🇧🇷 Leblon • RJ', value: 'R$ 28.400/m²', change: -0.8, type: 'price' },
+          { label: '🇧🇷 Jardins • SP', value: 'R$ 22.100/m²', change: 1.4, type: 'price' },
+          { label: '🇧🇷 Itaim Bibi • SP', value: 'R$ 19.600/m²', change: 0.9, type: 'price' },
+          { label: '🇧🇷 Boa Viagem • PE', value: 'R$ 11.200/m²', change: 3.2, type: 'price' },
+          { label: '🇧🇷 Barra da Tijuca • RJ', value: 'R$ 12.600/m²', change: 1.5, type: 'price' },
+          { label: '🇧🇷 Yield Médio BR', value: '5.8% a.a.', change: 0.2, type: 'yield' },
+          { label: '🇧🇷 CDI', value: '10.5% a.a.', change: 0.0, type: 'index' },
+          { label: '🇧🇷 IGPM 12m', value: '4.83%', change: 0.3, type: 'index' },
+          { label: '🇧🇷 FII HGLG11', value: 'R$ 156,20', change: -1.2, type: 'index' },
+          // EUA — Real Estate
+          { label: '🇺🇸 Miami Beach', value: '$ 1.850/sqft', change: 3.8, type: 'price' },
+          { label: '🇺🇸 Manhattan • NY', value: '$ 2.450/sqft', change: -0.5, type: 'price' },
+          { label: '🇺🇸 Beverly Hills • LA', value: '$ 2.100/sqft', change: 1.2, type: 'price' },
+          { label: '🇺🇸 Brickell • Miami', value: '$ 980/sqft', change: 4.6, type: 'price' },
+          { label: '🇺🇸 US Prime Rate', value: '5.50% a.a.', change: 0.0, type: 'index' },
+          { label: '🇺🇸 DJIA', value: '39.142', change: 0.4, type: 'index' },
+          // Emirados Árabes
+          { label: '🇦🇪 Dubai Marina', value: 'AED 3.200/sqft', change: 8.4, type: 'price' },
+          { label: '🇦🇪 Palm Jumeirah', value: 'AED 5.800/sqft', change: 12.1, type: 'price' },
+          { label: '🇦🇪 Downtown Dubai', value: 'AED 4.100/sqft', change: 6.7, type: 'price' },
+          { label: '🇦🇪 Abu Dhabi • Al Reem', value: 'AED 1.850/sqft', change: 5.3, type: 'price' },
+          { label: '🇦🇪 Yield Dubai', value: '6.8% a.a.', change: 0.4, type: 'yield' },
+          { label: '🇦🇪 DFM Index', value: '4.238', change: 1.1, type: 'index' },
+        ]}
+      />
+
       {/* ── KPI Strip ─────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-3 gap-2"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-2"
       >
         <KPICard
           label="Quentes"
@@ -273,6 +429,67 @@ export default function HojePage() {
         />
       </motion.div>
 
+      {/* ── Integration Setup Banner ────────────────── */}
+      {!integBannerDismissed && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+          className="rounded-2xl"
+          style={{
+            background: 'linear-gradient(135deg, rgba(184,148,58,0.08) 0%, rgba(184,148,58,0.04) 100%)',
+            border: '1px solid rgba(184,148,58,0.25)',
+            padding: '14px 16px',
+            position: 'relative',
+          }}
+        >
+          <button
+            onClick={() => {
+              setIntegBannerDismissed(true)
+              try { localStorage.setItem('imi-integ-banner-dismissed', '1') } catch {}
+            }}
+            style={{
+              position: 'absolute', top: 10, right: 10,
+              width: 24, height: 24, borderRadius: 6,
+              background: 'transparent', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--text-tertiary)',
+            }}
+          >
+            <X size={14} />
+          </button>
+          <div className="flex items-start gap-3">
+            <div style={{
+              width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+              background: 'rgba(184,148,58,0.12)',
+              border: '1px solid rgba(184,148,58,0.25)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Plug size={16} style={{ color: 'var(--imi-gold-500)' }} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>
+                Configure suas integrações
+              </p>
+              <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: 8 }}>
+                Conecte WhatsApp, e-mail, assinatura digital e redes sociais para ativar todos os recursos do backoffice.
+              </p>
+              <button
+                onClick={() => router.push('/backoffice/integracoes')}
+                style={{
+                  height: 30, padding: '0 14px', borderRadius: 8,
+                  background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
+                  fontSize: '11px', fontWeight: 700, color: '#0B1120',
+                  letterSpacing: '0.03em',
+                }}
+              >
+                Configurar agora →
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* ── AI Daily Briefing ─────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
@@ -288,11 +505,11 @@ export default function HojePage() {
             onClick: () => router.push('/backoffice/leads'),
           }}
         >
-          <span style={{ color: 'var(--bo-text)', fontSize: '12px', lineHeight: 1.65 }}>
+          <span style={{ color: 'var(--text-primary)', fontSize: '12px', lineHeight: 1.65 }}>
             {aiBriefing}
             {hotCount > 0 && (
               <>
-                {' '}Recomendação: ligar nas <span style={{ color: 'var(--imi-ai-gold)', fontWeight: 600 }}>próximas 2 horas</span> para maximizar conversão.
+                {' '}Recomendação: ligar nas <span style={{ color: 'var(--imi-gold-500)', fontWeight: 600 }}>próximas 2 horas</span> para maximizar conversão.
               </>
             )}
           </span>
@@ -311,31 +528,31 @@ export default function HojePage() {
         />
         <div
           className="rounded-2xl overflow-hidden"
-          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
         >
           {/* Header */}
           <div
             className="px-4 py-2.5 flex items-center gap-2"
             style={{
               background: 'linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(59,130,246,0.05) 100%)',
-              borderBottom: '1px solid var(--bo-border)',
+              borderBottom: '1px solid var(--border-default)',
             }}
           >
             <Bot size={12} style={{ color: '#A78BFA' }} />
             <span style={{ fontSize: '10px', fontWeight: 700, color: '#A78BFA', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              {AGENT_ACTIVITY.filter(a => a.status === 'active').length} ativos agora
+              {agentActivity.filter(a => a.status === 'active').length} ativos agora
             </span>
-            <span style={{ marginLeft: 'auto', fontSize: '9px', color: 'var(--bo-text-muted)' }}>
-              {AGENT_ACTIVITY.reduce((s, a) => s + a.tasksToday, 0)} tarefas hoje
+            <span style={{ marginLeft: 'auto', fontSize: '9px', color: 'var(--text-secondary)' }}>
+              {agentActivity.reduce((s, a) => s + a.tasksToday, 0)} tarefas hoje
             </span>
           </div>
 
           {/* Agent rows */}
-          {AGENT_ACTIVITY.map((agent, i) => (
+          {agentActivity.map((agent, i) => (
             <div
               key={agent.name}
               className="flex items-center gap-3 px-4 py-3"
-              style={{ borderBottom: i < AGENT_ACTIVITY.length - 1 ? '1px solid var(--bo-border)' : 'none' }}
+              style={{ borderBottom: i < agentActivity.length - 1 ? '1px solid var(--border-default)' : 'none' }}
             >
               {/* Icon */}
               <div style={{
@@ -349,7 +566,7 @@ export default function HojePage() {
 
               {/* Name + status */}
               <div style={{ flex: 1 }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--bo-text)' }}>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
                   {agent.name}
                 </span>
               </div>
@@ -358,7 +575,7 @@ export default function HojePage() {
               <span style={{
                 fontSize: '9px', fontWeight: 700, padding: '2px 7px', borderRadius: 5,
                 background: agent.status === 'active' ? 'rgba(74,222,128,0.12)' : 'rgba(251,191,36,0.10)',
-                color: agent.status === 'active' ? '#4ADE80' : '#FBBF24',
+                color: agent.status === 'active' ? 'var(--success)' : 'var(--warning)',
                 border: `1px solid ${agent.status === 'active' ? 'rgba(74,222,128,0.25)' : 'rgba(251,191,36,0.20)'}`,
               }}>
                 {agent.status === 'active' ? '● Ativo' : '○ Espera'}
@@ -378,7 +595,7 @@ export default function HojePage() {
             style={{
               fontSize: '11px', fontWeight: 600, color: '#A78BFA',
               background: 'transparent', border: 'none', cursor: 'pointer',
-              borderTop: '1px solid var(--bo-border)',
+              borderTop: '1px solid var(--border-default)',
             }}
           >
             <Sparkles size={11} />
@@ -401,21 +618,21 @@ export default function HojePage() {
 
         <div
           className="rounded-2xl overflow-hidden"
-          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
         >
           {todayEvents.length === 0 ? (
             <div style={{ padding: '28px 16px', textAlign: 'center' }}>
-              <CalendarDays size={24} style={{ color: 'var(--bo-text-muted)', opacity: 0.25, margin: '0 auto 10px' }} />
-              <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)', marginBottom: '12px' }}>
+              <CalendarDays size={24} style={{ color: 'var(--text-secondary)', opacity: 0.25, margin: '0 auto 10px' }} />
+              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
                 Sem eventos hoje
               </p>
               <button
                 onClick={() => router.push('/backoffice/agenda')}
                 style={{
                   fontSize: '11px', fontWeight: 600,
-                  color: 'var(--imi-blue-bright)',
-                  background: 'var(--imi-blue-dim)',
-                  border: '1px solid var(--imi-blue-border)',
+                  color: 'var(--imi-gold-500)',
+                  background: 'rgba(184,148,58,0.10)',
+                  border: '1px solid rgba(184,148,58,0.25)',
                   padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
                 }}
               >
@@ -427,18 +644,18 @@ export default function HojePage() {
               <div
                 key={ev.id}
                 className="flex items-center gap-3 px-4 py-3"
-                style={{ borderBottom: i < todayEvents.length - 1 ? '1px solid var(--bo-border)' : 'none' }}
+                style={{ borderBottom: i < todayEvents.length - 1 ? '1px solid var(--border-default)' : 'none' }}
               >
                 {/* Accent line */}
                 <div style={{
                   width: '3px', height: '36px', borderRadius: '2px', flexShrink: 0,
-                  background: ev.color || 'var(--imi-blue-bright)',
+                  background: ev.color || 'var(--imi-gold-500)',
                 }} />
                 <div className="flex-1 min-w-0">
-                  <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {ev.title}
                   </p>
-                  <p className="flex items-center gap-1" style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginTop: '2px' }}>
+                  <p className="flex items-center gap-1" style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
                     <Clock size={10} />
                     {formatTime(ev.start_time)}
                     {ev.location && ` · ${ev.location}`}
@@ -466,17 +683,17 @@ export default function HojePage() {
         {hotLeads.length === 0 ? (
           <div
             className="rounded-2xl text-center"
-            style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', padding: '28px 16px' }}
+            style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '28px 16px' }}
           >
-            <Users size={24} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 10px' }} />
-            <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)', marginBottom: '12px' }}>
+            <Users size={24} style={{ color: 'var(--text-secondary)', opacity: 0.2, margin: '0 auto 10px' }} />
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
               Nenhum lead quente no momento
             </p>
             <button
               onClick={() => router.push('/backoffice/leads/novo')}
               style={{
                 fontSize: '11px', fontWeight: 600,
-                color: 'var(--s-hot)',
+                color: 'var(--error)',
                 background: 'var(--s-hot-bg)',
                 border: '1px solid rgba(248,113,113,0.25)',
                 padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
@@ -527,19 +744,19 @@ export default function HojePage() {
           whileTap={{ scale: 0.95 }}
           onClick={() => router.push('/backoffice/leads')}
           className="rounded-2xl text-left"
-          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', padding: '14px' }}
+          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '14px' }}
         >
           <div style={{
             width: '36px', height: '36px', borderRadius: '10px',
-            background: 'var(--imi-blue-dim)', border: '1px solid var(--imi-blue-border)',
+            background: 'rgba(184,148,58,0.10)', border: '1px solid rgba(184,148,58,0.25)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px',
           }}>
-            <TrendingUp size={16} style={{ color: 'var(--imi-blue-bright)' }} />
+            <TrendingUp size={16} style={{ color: 'var(--imi-gold-500)' }} />
           </div>
-          <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '2px' }}>
+          <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>
             Pipeline
           </p>
-          <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
+          <p style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
             {totalLeads} leads · {hotCount} quentes
           </p>
         </motion.button>
@@ -549,19 +766,19 @@ export default function HojePage() {
           whileTap={{ scale: 0.95 }}
           onClick={() => router.push('/backoffice/imoveis')}
           className="rounded-2xl text-left"
-          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', padding: '14px' }}
+          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '14px' }}
         >
           <div style={{
             width: '36px', height: '36px', borderRadius: '10px',
             background: 'rgba(167,139,250,0.10)', border: '1px solid rgba(167,139,250,0.20)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px',
           }}>
-            <Building2 size={16} style={{ color: 'var(--s-pend)' }} />
+            <Building2 size={16} style={{ color: 'var(--warning)' }} />
           </div>
-          <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '2px' }}>
+          <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>
             Portfólio
           </p>
-          <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
+          <p style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
             Ver empreendimentos
           </p>
         </motion.button>
@@ -577,46 +794,46 @@ export default function HojePage() {
         <div className="grid grid-cols-3 gap-2">
           <div
             className="rounded-2xl p-3 text-center"
-            style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+            style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
           >
-            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--s-hot)', lineHeight: 1 }}>{hotCount}</div>
-            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Quentes</div>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--error)', lineHeight: 1 }}>{hotCount}</div>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Quentes</div>
           </div>
           <div
             className="rounded-2xl p-3 text-center"
-            style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+            style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
           >
-            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--s-warm)', lineHeight: 1 }}>{warmCount}</div>
-            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Mornos</div>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--warning)', lineHeight: 1 }}>{warmCount}</div>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Mornos</div>
           </div>
           <div
             className="rounded-2xl p-3 text-center"
-            style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+            style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
           >
-            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--s-cold)', lineHeight: 1 }}>{coldCount}</div>
-            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Frios</div>
+            <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--info)', lineHeight: 1 }}>{coldCount}</div>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Frios</div>
           </div>
         </div>
 
         {/* Conversion funnel bar */}
         <div
           className="mt-2 rounded-2xl p-4"
-          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)' }}
+          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
         >
-          <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+          <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
             Funil de Conversão
           </div>
           {totalLeads > 0 ? (
             <div className="space-y-2">
               {[
-                { label: 'Total Leads', value: totalLeads, max: totalLeads, color: 'var(--imi-blue-bright)' },
-                { label: 'Quentes', value: hotCount, max: totalLeads, color: 'var(--s-hot)' },
-                { label: 'Mornos', value: warmCount, max: totalLeads, color: 'var(--s-warm)' },
+                { label: 'Total Leads', value: totalLeads, max: totalLeads, color: 'var(--imi-gold-500)' },
+                { label: 'Quentes', value: hotCount, max: totalLeads, color: 'var(--error)' },
+                { label: 'Mornos', value: warmCount, max: totalLeads, color: 'var(--warning)' },
               ].map(item => (
                 <div key={item.label}>
                   <div className="flex items-center justify-between mb-1">
-                    <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>{item.label}</span>
-                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text)' }}>{item.value}</span>
+                    <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{item.label}</span>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-primary)' }}>{item.value}</span>
                   </div>
                   <div style={{ height: 4, borderRadius: 2, background: 'var(--bo-hover)' }}>
                     <div style={{
@@ -630,8 +847,59 @@ export default function HojePage() {
               ))}
             </div>
           ) : (
-            <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', textAlign: 'center' }}>Sem dados de leads</p>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>Sem dados de leads</p>
           )}
+        </div>
+      </motion.div>
+
+      {/* ── Atalhos Módulos ─────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.32 }}
+      >
+        <SectionHeader title="Módulos Ativos" action={{ label: 'Ver tudo', href: '/backoffice/dashboard' }} />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {[
+            { label: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale, color: 'var(--imi-gold-500)', badge: 'IA' },
+            { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone, color: '#F472B6', badge: null },
+            { label: 'Contratos', href: '/backoffice/contratos', icon: FileSignature, color: '#60A5FA', badge: null },
+            { label: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote, color: 'var(--success)', badge: null },
+          ].map((mod) => (
+            <motion.button
+              key={mod.label}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => router.push(mod.href)}
+              className="rounded-2xl text-left"
+              style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-default)',
+                padding: '12px',
+                position: 'relative',
+              }}
+            >
+              {mod.badge && (
+                <span style={{
+                  position: 'absolute', top: 8, right: 8,
+                  fontSize: '7px', fontWeight: 800, padding: '1px 4px',
+                  borderRadius: 4,
+                  background: 'rgba(184,148,58,0.12)',
+                  color: 'var(--imi-gold-500)',
+                  border: '1px solid rgba(184,148,58,0.25)',
+                }}>{mod.badge}</span>
+              )}
+              <div style={{
+                width: 32, height: 32, borderRadius: 8,
+                background: `${mod.color}15`,
+                border: `1px solid ${mod.color}25`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: 8,
+              }}>
+                <mod.icon size={14} style={{ color: mod.color }} />
+              </div>
+              <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>{mod.label}</p>
+            </motion.button>
+          ))}
         </div>
       </motion.div>
 

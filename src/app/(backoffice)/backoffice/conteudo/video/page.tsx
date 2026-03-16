@@ -41,7 +41,7 @@ const TEMPLATES: Array<{ id: Template; label: string; desc: string; icon: any; c
         label: 'Relatório de Mercado',
         desc: 'Dados do mercado imobiliário com gráficos animados',
         icon: TrendingUp,
-        color: '#34d399',
+        color: T.success,
     },
 ]
 
@@ -61,9 +61,9 @@ type RenderStatus = 'idle' | 'rendering' | 'done' | 'error'
 function RenderStatusBadge({ status }: { status: RenderStatus }) {
     const cfg = {
         idle:      { label: 'Pronto',        color: T.textDim, icon: null },
-        rendering: { label: 'Renderizando…', color: '#fbbf24', icon: Loader2 },
-        done:      { label: 'Concluído!',    color: '#34d399', icon: CheckCircle2 },
-        error:     { label: 'Erro',          color: '#f87171', icon: RefreshCw },
+        rendering: { label: 'Renderizando…', color: 'var(--bo-warning)', icon: Loader2 },
+        done:      { label: 'Concluído!',    color: T.success, icon: CheckCircle2 },
+        error:     { label: 'Erro',          color: T.error, icon: RefreshCw },
     }
     const c = cfg[status]
     const Icon = c.icon
@@ -169,8 +169,8 @@ export default function VideoCreatorPage() {
                         whileTap={{ scale: 0.95 }}
                         onClick={handleRender}
                         disabled={!showPlayer || renderStatus === 'rendering'}
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 disabled:opacity-50"
-                        style={{ background: '#34d399', boxShadow: '0 0 20px rgba(52,211,153,0.3)' }}
+                        className="bo-btn bo-btn-primary"
+                        style={{ background: T.success, boxShadow: '0 0 20px rgba(52,211,153,0.3)' }}
                     >
                         {renderStatus === 'rendering'
                             ? <Loader2 size={15} className="animate-spin" />
@@ -443,7 +443,7 @@ export default function VideoCreatorPage() {
                                 <motion.button
                                     onClick={() => setTab('editor')}
                                     whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white"
+                                    className="bo-btn bo-btn-primary"
                                     style={{ background: T.accent }}
                                 >
                                     <Sparkles size={14} /> Criar Vídeo

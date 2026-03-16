@@ -129,13 +129,13 @@ describe('avaliacaoSchema', () => {
 })
 
 describe('consultoriaSchema', () => {
-    it('rejects missing titulo', () => {
+    it('rejects missing cliente_nome', () => {
         const result = consultoriaSchema.safeParse({ tipo: 'Patrimonial' })
         expect(result.success).toBe(false)
     })
 
-    it('accepts minimal consultoria', () => {
-        const result = consultoriaSchema.safeParse({ titulo: 'Consultoria Patrimonial' })
+    it('accepts minimal consultoria with cliente_nome', () => {
+        const result = consultoriaSchema.safeParse({ cliente_nome: 'João Silva' })
         expect(result.success).toBe(true)
     })
 })

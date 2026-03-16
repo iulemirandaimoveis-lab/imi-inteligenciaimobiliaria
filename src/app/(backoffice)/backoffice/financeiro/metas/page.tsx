@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
     Target, TrendingUp, DollarSign, Scale, Plus,
-    ChevronRight, Loader2, CheckCircle, Pencil, Save, X,
+    Loader2, CheckCircle, Pencil, Save, X,
 } from 'lucide-react'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 
 const fmt = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
@@ -132,28 +132,34 @@ export default function MetasPage() {
     const avalPct    = avalTarget > 0 ? Math.round((actuals.avaliacoes / avalTarget) * 100) : 0
 
     return (
-        <div className="space-y-6 max-w-5xl mx-auto">
+        <div className="space-y-5 max-w-5xl mx-auto">
             {/* Header */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <Link href="/backoffice/financeiro" className="text-xs font-medium hover:underline" style={{ color: T.textMuted }}>
-                            Financeiro
-                        </Link>
-                        <ChevronRight size={12} style={{ color: T.textMuted }} />
-                        <span className="text-xs font-medium" style={{ color: T.text }}>Metas</span>
-                    </div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>Metas & Performance</h1>
-                    <p className="text-sm mt-0.5" style={{ color: T.textMuted }}>{monthLabel(currentMonth)}</p>
-                </div>
-                <button
-                    onClick={() => setEditing(!editing)}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0 transition-all"
-                    style={{ background: editing ? 'rgba(229,115,115,0.2)' : T.accent, color: editing ? '#E57373' : 'white' }}
-                >
-                    {editing ? <><X size={15} /> Cancelar</> : <><Pencil size={15} /> Editar Metas</>}
-                </button>
-            </motion.div>
+            <PageIntelHeader
+                moduleLabel="FINANCEIRO"
+                title="Metas & Performance"
+                subtitle={monthLabel(currentMonth)}
+                breadcrumbs={[
+                    { label: 'Financeiro', href: '/backoffice/financeiro' },
+                    { label: 'Metas' },
+                ]}
+                actions={
+                    <button
+                        onClick={() => setEditing(!editing)}
+                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold flex-shrink-0 transition-all"
+                        style={{ background: editing ? 'rgba(229,115,115,0.12)' : T.accent, color: editing ? 'var(--bo-error)' : 'white', border: editing ? '1px solid rgba(229,115,115,0.3)' : 'none' }}
+                    >
+                        {editing ? <><X size={15} /> Cancelar</> : <><Pencil size={15} /> Editar Metas</>}
+                    </button>
+                }
+            />
+
+            {/* KPI strip */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <KPICard label="Receita Atual"    value={loading ? '—' : fmt(actuals.revenue)}        icon={<DollarSign size={14} />} accent="green" size="sm" />
+                <KPICard label="Meta Receita"     value={loading ? '—' : (revTarget > 0 ? fmt(revTarget) : 'N/D')} icon={<Target size={14} />} size="sm" />
+                <KPICard label="% Receita"        value={loading ? '—' : (revTarget > 0 ? `${revPct}%` : '—')} icon={<TrendingUp size={14} />} accent={revPct >= 100 ? 'green' : 'blue'} size="sm" />
+                <KPICard label="Avaliações/Hon."  value={loading ? '—' : String(actuals.avaliacoes)}  icon={<Scale size={14} />} size="sm" />
+            </div>
 
             {loading ? (
                 <div className="flex items-center justify-center py-20">
@@ -162,14 +168,14 @@ export default function MetasPage() {
             ) : (
                 <>
                     {/* Current Month Progress */}
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div data-tour="goals" className="grid md:grid-cols-2 gap-4">
                         {/* Receita */}
                         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                             className="rounded-2xl p-6" style={{ background: T.elevated, border: `1px solid ${T.borderGold}` }}>
                             <div className="flex items-start justify-between mb-4">
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <DollarSign size={15} style={{ color: '#6BB87B' }} />
+                                        <DollarSign size={15} style={{ color: 'var(--bo-success)' }} />
                                         <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>Receita do Mês</span>
                                     </div>
                                     <p className="text-2xl font-bold" style={{ color: T.text }}>{fmt(actuals.revenue)}</p>
@@ -177,7 +183,7 @@ export default function MetasPage() {
                                 {revPct >= 100 && (
                                     <div className="w-8 h-8 rounded-full flex items-center justify-center"
                                         style={{ background: 'rgba(107,184,123,0.15)' }}>
-                                        <CheckCircle size={16} style={{ color: '#6BB87B' }} />
+                                        <CheckCircle size={16} style={{ color: 'var(--bo-success)' }} />
                                     </div>
                                 )}
                             </div>
@@ -195,12 +201,12 @@ export default function MetasPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <ProgressBar pct={revPct} color={revPct >= 100 ? '#6BB87B' : revPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
+                                    <ProgressBar pct={revPct} color={revPct >= 100 ? 'var(--bo-success)' : revPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs" style={{ color: T.textMuted }}>
                                             Meta: {revTarget > 0 ? fmt(revTarget) : 'não definida'}
                                         </span>
-                                        <span className="text-xs font-bold" style={{ color: revPct >= 100 ? '#6BB87B' : T.textMuted }}>
+                                        <span className="text-xs font-bold" style={{ color: revPct >= 100 ? 'var(--bo-success)' : T.textMuted }}>
                                             {revTarget > 0 ? `${revPct}%` : '—'}
                                         </span>
                                     </div>
@@ -222,7 +228,7 @@ export default function MetasPage() {
                                 {avalPct >= 100 && (
                                     <div className="w-8 h-8 rounded-full flex items-center justify-center"
                                         style={{ background: 'rgba(107,184,123,0.15)' }}>
-                                        <CheckCircle size={16} style={{ color: '#6BB87B' }} />
+                                        <CheckCircle size={16} style={{ color: 'var(--bo-success)' }} />
                                     </div>
                                 )}
                             </div>
@@ -240,12 +246,12 @@ export default function MetasPage() {
                                 </div>
                             ) : (
                                 <>
-                                    <ProgressBar pct={avalPct} color={avalPct >= 100 ? '#6BB87B' : avalPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
+                                    <ProgressBar pct={avalPct} color={avalPct >= 100 ? 'var(--bo-success)' : avalPct >= 60 ? 'var(--bo-accent)' : '#E8A87C'} />
                                     <div className="flex items-center justify-between mt-2">
                                         <span className="text-xs" style={{ color: T.textMuted }}>
                                             Meta: {avalTarget > 0 ? `${avalTarget} lançamentos` : 'não definida'}
                                         </span>
-                                        <span className="text-xs font-bold" style={{ color: avalPct >= 100 ? '#6BB87B' : T.textMuted }}>
+                                        <span className="text-xs font-bold" style={{ color: avalPct >= 100 ? 'var(--bo-success)' : T.textMuted }}>
                                             {avalTarget > 0 ? `${avalPct}%` : '—'}
                                         </span>
                                     </div>
@@ -258,8 +264,8 @@ export default function MetasPage() {
                     {editing && (
                         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                             <button onClick={saveGoal} disabled={saving}
-                                className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white transition-all"
-                                style={{ background: '#6BB87B', opacity: saving ? 0.7 : 1 }}>
+                                className="bo-btn bo-btn-primary"
+                                style={{ background: 'var(--bo-success)', opacity: saving ? 0.7 : 1 }}>
                                 {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
                                 {saving ? 'Salvando...' : 'Salvar Metas'}
                             </button>
@@ -303,7 +309,7 @@ export default function MetasPage() {
                             <p className="text-sm font-semibold mb-1" style={{ color: T.textMuted }}>Metas não definidas para {monthLabel(currentMonth)}</p>
                             <p className="text-xs mb-4" style={{ color: T.textMuted }}>Defina sua meta de receita e avaliações para acompanhar o progresso</p>
                             <button onClick={() => setEditing(true)}
-                                className="inline-flex items-center gap-2 h-9 px-5 rounded-xl text-xs font-semibold text-white"
+                                className="bo-btn bo-btn-primary"
                                 style={{ background: T.accent }}>
                                 <Plus size={13} /> Definir Metas
                             </button>

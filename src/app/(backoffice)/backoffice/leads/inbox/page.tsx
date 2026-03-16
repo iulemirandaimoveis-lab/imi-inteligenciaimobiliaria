@@ -190,7 +190,7 @@ export default function LeadsInboxPage() {
             </AnimatePresence>
 
             {/* Filter tabs */}
-            <div className="flex gap-2 mb-5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+            <div data-tour="filters" className="flex gap-2 mb-5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
                 {TABS.map(tab => {
                     const isActive = filter === tab.key
                     return (
@@ -233,7 +233,7 @@ export default function LeadsInboxPage() {
                     </Link>
                 </div>
             ) : (
-                <div className="space-y-3">
+                <div data-tour="lead-list" className="space-y-3">
                     {filtered.map((lead, idx) => {
                         const temp = getTemp(lead.status, lead.score || 0)
                         const tc = TEMP[temp]
@@ -310,7 +310,7 @@ export default function LeadsInboxPage() {
                                         className="flex items-start gap-2 pt-2"
                                         style={{ borderTop: `1px solid ${T.border}` }}
                                     >
-                                        <Zap size={11} className="flex-shrink-0 mt-0.5" style={{ color: '#4ADE80' }} />
+                                        <Zap size={11} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--bo-success)' }} />
                                         <p className="text-[11px] leading-[1.55]" style={{ color: T.textMuted }}>
                                             {reasoning}
                                         </p>
@@ -325,7 +325,7 @@ export default function LeadsInboxPage() {
                                                         className="h-full rounded-full transition-all"
                                                         style={{
                                                             width: `${Math.min(lead.score, 100)}%`,
-                                                            background: lead.score >= 75 ? tc.text : lead.score >= 45 ? '#FBBF24' : '#94A3B8',
+                                                            background: lead.score >= 75 ? tc.text : lead.score >= 45 ? 'var(--bo-warning)' : '#94A3B8',
                                                         }}
                                                     />
                                                 </div>

@@ -1,17 +1,22 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { parseBody, brokerCreateSchema } from '@/lib/schemas'
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json()
-        const { name, email, phone, creci, password, status, permissions } = body
-
-        if (!name || !email || !creci || !password) {
-            return NextResponse.json(
-                { error: 'name, email, creci e password são obrigatórios' },
-                { status: 400 }
-            )
+        // Auth check — only authenticated users can create brokers
+        const supabase = await createClient()
+        const { data: { user }, error: sessionErr } = await supabase.auth.getUser()
+        if (sessionErr || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         }
+
+        const parsed = await parseBody(request, brokerCreateSchema)
+        if (!parsed.success) {
+            return NextResponse.json({ error: 'Dados inválidos', details: parsed.error }, { status: 400 })
+        }
+        const { name, email, phone, creci, password, status, permissions } = parsed.data
 
         // 0. Check if broker with this email already exists in our table
         const { data: existingBroker } = await supabaseAdmin

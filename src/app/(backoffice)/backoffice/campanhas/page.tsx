@@ -19,7 +19,7 @@ import { MetricBar } from '@/app/(backoffice)/components/ui/MetricBar'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { T } from '@/app/(backoffice)/lib/theme'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 export interface Campaign {
   id: string
@@ -54,6 +54,7 @@ function useMetaStatus() {
 
 function useCampanhas(filters: { search?: string; status?: string; type?: string }) {
   return useSWR(['campanhas', filters], async () => {
+    const supabase = createClient()
     let query = supabase
       .from('campaigns')
       .select('*')
@@ -74,7 +75,7 @@ const CHANNEL_MAP: Record<string, { label: string; icon: React.ElementType; colo
   facebook: { label: 'Facebook', icon: Facebook, color: '#6366F1' },
   instagram: { label: 'Instagram', icon: Instagram, color: '#F472B6' },
   email: { label: 'Email', icon: Mail, color: '#22D3EE' },
-  whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: '#4ADE80' },
+  whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: 'var(--bo-success)' },
   site: { label: 'Site', icon: Globe, color: '#34D399' },
   // Legacy keys for backward compat
   google_ads: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },
@@ -125,7 +126,7 @@ function CampaignCard({ c, index, onClick }: { c: Campaign; index: number; onCli
   const budgetPct = c.budget ? Math.min(100, Math.round((c.spent / c.budget) * 100)) : 0
   const convPct = c.leads ? Math.min(100, Math.round((c.conversions / c.leads) * 100)) : 0
   const statusCfg = STATUS_MAP[c.status] ?? STATUS_MAP.draft
-  const budgetColor = budgetPct >= 90 ? 'var(--s-hot)' : budgetPct >= 70 ? 'var(--s-warm)' : 'var(--imi-blue-bright)'
+  const budgetColor = budgetPct >= 90 ? 'var(--s-hot)' : budgetPct >= 70 ? 'var(--s-warm)' : 'var(--imi-gold-500)'
 
   return (
     <motion.div
@@ -247,7 +248,7 @@ export default function CampanhasPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <motion.div data-tour="actions" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <PageIntelHeader
           moduleLabel="ADS INTELLIGENCE"
           title="Campanhas"
@@ -299,7 +300,7 @@ export default function CampanhasPage() {
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '38px', padding: '0 18px', borderRadius: '12px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
-                  background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+                  background: 'var(--bo-accent)',
                   boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                   border: 'none', cursor: 'pointer',
                   flexShrink: 0,
@@ -342,6 +343,7 @@ export default function CampanhasPage() {
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
 
       <motion.div
+        data-tour="kpis"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.08, duration: 0.35 }}
@@ -411,7 +413,7 @@ export default function CampanhasPage() {
               marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
               height: '38px', padding: '0 18px', borderRadius: '12px',
               fontSize: '13px', fontWeight: 700, color: '#fff',
-              background: 'linear-gradient(135deg, var(--bo-accent) 0%, #1D4ED8 100%)',
+              background: 'var(--bo-accent)',
               boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
               border: 'none', cursor: 'pointer',
             }}

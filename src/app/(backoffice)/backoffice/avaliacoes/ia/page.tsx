@@ -207,20 +207,20 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                                         className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
                                         style={{
                                             background: isDone ? 'rgba(107,184,123,0.15)' : isActive ? 'rgba(139,92,246,0.15)' : 'rgba(255,255,255,0.04)',
-                                            border: `2px solid ${isDone ? '#6BB87B' : isActive ? '#8B5CF6' : T.border}`,
-                                            color: isDone ? '#6BB87B' : isActive ? '#8B5CF6' : T.sub,
+                                            border: `2px solid ${isDone ? 'var(--bo-success)' : isActive ? '#8B5CF6' : T.border}`,
+                                            color: isDone ? 'var(--bo-success)' : isActive ? '#8B5CF6' : T.sub,
                                         }}
                                     >
                                         {isDone ? <CheckCircle size={20} /> : <StepIcon size={20} />}
                                     </div>
-                                    <p className="text-xs font-medium mt-2" style={{ color: isActive ? '#8B5CF6' : isDone ? '#6BB87B' : T.sub }}>
+                                    <p className="text-xs font-medium mt-2" style={{ color: isActive ? '#8B5CF6' : isDone ? 'var(--bo-success)' : T.sub }}>
                                         {step.label}
                                     </p>
                                 </div>
                                 {index < STEPS.length - 1 && (
                                     <div
                                         className="h-0.5 flex-1 mx-2 rounded-full transition-all"
-                                        style={{ background: currentStep > step.number ? '#6BB87B' : T.border }}
+                                        style={{ background: currentStep > step.number ? 'var(--bo-success)' : T.border }}
                                     />
                                 )}
                             </div>
@@ -331,7 +331,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                                             <p className="text-xs font-medium truncate" style={{ color: T.text }}>{file.name}</p>
                                             <p className="text-[11px]" style={{ color: T.sub }}>{formatFileSize(file.size)}</p>
                                         </div>
-                                        <button onClick={() => removeFile(file.id)} className="text-xs font-medium" style={{ color: '#E57373' }}>
+                                        <button onClick={() => removeFile(file.id)} className="text-xs font-medium" style={{ color: 'var(--bo-error)' }}>
                                             Remover
                                         </button>
                                     </div>
@@ -394,7 +394,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                             ].map((item, i) => (
                                 <div key={i} className="flex items-center gap-3">
                                     {i < 2
-                                        ? <CheckCircle size={18} style={{ color: '#6BB87B', flexShrink: 0 }} />
+                                        ? <CheckCircle size={18} style={{ color: 'var(--bo-success)', flexShrink: 0 }} />
                                         : i === 2
                                             ? <Loader2 size={18} className="animate-spin flex-shrink-0" style={{ color: '#8B5CF6' }} />
                                             : <div className="w-[18px] h-[18px] rounded-full border-2 flex-shrink-0" style={{ borderColor: T.border }} />
@@ -508,7 +508,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                         className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                         style={{ background: 'rgba(107,184,123,0.12)' }}
                     >
-                        <CheckCircle size={36} style={{ color: '#6BB87B' }} />
+                        <CheckCircle size={36} style={{ color: 'var(--bo-success)' }} />
                     </div>
                     <h2 className="text-xl font-bold mb-2" style={{ color: T.text }}>Laudo Pronto!</h2>
                     <p className="text-sm mb-8" style={{ color: T.sub }}>O laudo foi gerado com sucesso e está pronto para download.</p>

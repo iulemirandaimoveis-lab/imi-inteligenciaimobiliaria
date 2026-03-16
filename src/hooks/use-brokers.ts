@@ -1,8 +1,6 @@
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 
-const supabase = createClient()
-
 export interface Broker {
     id: string
     user_id: string
@@ -35,6 +33,7 @@ export function useBrokers(filters?: {
     search?: string
     status?: string
 }) {
+    const supabase = createClient()
     const { data, error, mutate } = useSWR(['brokers', filters], async () => {
         let query = supabase
             .from('brokers')
@@ -65,6 +64,7 @@ export function useBrokers(filters?: {
 
 // Hook para buscar um corretor específico
 export function useBroker(id: string) {
+    const supabase = createClient()
     const { data, error, mutate } = useSWR(
         id ? ['broker', id] : null,
         async () => {
@@ -119,6 +119,7 @@ export async function createBroker(formData: BrokerFormData) {
 
 // Atualizar corretor
 export async function updateBroker(id: string, updates: Partial<BrokerFormData>) {
+    const supabase = createClient()
     const { data, error } = await supabase
         .from('brokers')
         .update({
@@ -139,6 +140,7 @@ export async function updateBroker(id: string, updates: Partial<BrokerFormData>)
 
 // Deletar corretor
 export async function deleteBroker(id: string) {
+    const supabase = createClient()
     // Primeiro buscar o user_id
     const { data: broker, error: fetchError } = await supabase
         .from('brokers')
@@ -160,6 +162,7 @@ export async function deleteBroker(id: string) {
 
 // Atualizar status do corretor
 export async function updateBrokerStatus(id: string, status: 'active' | 'inactive') {
+    const supabase = createClient()
     const { data, error } = await supabase
         .from('brokers')
         .update({ status, updated_at: new Date().toISOString() })
@@ -173,6 +176,7 @@ export async function updateBrokerStatus(id: string, status: 'active' | 'inactiv
 
 // Verificar se usuário tem permissão
 export async function checkBrokerPermission(moduleId: string): Promise<boolean> {
+    const supabase = createClient()
     try {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return false
@@ -194,6 +198,7 @@ export async function checkBrokerPermission(moduleId: string): Promise<boolean> 
 
 // Obter permissões do corretor atual
 export function useCurrentBrokerPermissions() {
+    const supabase = createClient()
     const { data, error } = useSWR('current-broker-permissions', async () => {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return null

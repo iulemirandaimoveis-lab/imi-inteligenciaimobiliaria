@@ -238,7 +238,7 @@ export default function SimuladorCreditoPage() {
                             {
                                 label: 'LTV (Loan-to-Value)', value: `${ltv.toFixed(1)}%`,
                                 icon: Percent,
-                                color: ltv <= 70 ? '#4ADE80' : ltv <= 80 ? '#FCD34D' : '#F87171',
+                                color: ltv <= 70 ? 'var(--bo-success)' : ltv <= 80 ? '#FCD34D' : 'var(--bo-error)',
                                 bg: ltv <= 70 ? 'rgba(74,222,128,0.1)' : ltv <= 80 ? 'rgba(252,211,77,0.1)' : 'rgba(248,113,113,0.1)',
                                 note: ltv <= 70 ? '✓ Excelente — Aprovação facilitada' : ltv <= 80 ? '⚠ Bom — Dentro do limite' : '✗ Alto — Pode exigir garantias',
                             },
@@ -296,8 +296,8 @@ export default function SimuladorCreditoPage() {
                                             <tr key={row.month} style={{ borderTop: `1px solid ${T.border}` }} className="transition-colors hover:opacity-80">
                                                 <td className="px-5 py-3 text-sm font-medium" style={{ color: T.text, fontVariantNumeric: 'tabular-nums' }}>{row.month}</td>
                                                 <td className="px-5 py-3 text-sm text-right font-semibold" style={{ color: T.text, fontVariantNumeric: 'tabular-nums' }}>{fmt(row.payment)}</td>
-                                                <td className="px-5 py-3 text-sm text-right" style={{ color: '#4ADE80', fontVariantNumeric: 'tabular-nums' }}>{fmt(row.principal)}</td>
-                                                <td className="px-5 py-3 text-sm text-right" style={{ color: '#F87171', fontVariantNumeric: 'tabular-nums' }}>{fmt(row.interest)}</td>
+                                                <td className="px-5 py-3 text-sm text-right" style={{ color: 'var(--bo-success)', fontVariantNumeric: 'tabular-nums' }}>{fmt(row.principal)}</td>
+                                                <td className="px-5 py-3 text-sm text-right" style={{ color: 'var(--bo-error)', fontVariantNumeric: 'tabular-nums' }}>{fmt(row.interest)}</td>
                                                 <td className="px-5 py-3 text-sm text-right" style={{ color: T.textMuted, fontVariantNumeric: 'tabular-nums' }}>{fmt(row.balance)}</td>
                                             </tr>
                                         )

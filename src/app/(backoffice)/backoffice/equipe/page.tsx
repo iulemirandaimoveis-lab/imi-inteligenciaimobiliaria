@@ -18,10 +18,12 @@ import { PageIntelHeader, KPICard, FilterTabs, type FilterTab } from '../../comp
 import { T } from '../../lib/theme'
 import { getStatusConfig } from '../../lib/constants'
 
+export const dynamic = 'force-dynamic'
+
 /* ─── ROLE CONFIG ──────────────────────────────────────────────── */
 const ROLE_CFG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
     broker:         { label: 'Corretor',  icon: User,   color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
-    broker_manager: { label: 'Gerente',   icon: Crown,  color: '#FBBF24', bg: 'rgba(251,191,36,0.12)' },
+    broker_manager: { label: 'Gerente',   icon: Crown,  color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.12)' },
     admin:          { label: 'Admin',     icon: Shield, color: '#A78BFA', bg: 'rgba(167,139,250,0.12)' },
 }
 
@@ -155,7 +157,7 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                     >
                                         <Link
-                                            href={`/backoffice/settings/corretores`}
+                                            href={`/backoffice/settings/corretores/${broker.id}/editar`}
                                             onClick={() => setMenuOpen(false)}
                                             className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium hover:bg-[var(--bo-hover)] transition-colors"
                                             style={{ color: T.text }}
@@ -239,7 +241,7 @@ function EmptyEquipe({ onAddFirst }: { onAddFirst: () => void }) {
             </p>
             <button
                 onClick={onAddFirst}
-                className="inline-flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-110"
+                className="bo-btn bo-btn-primary"
                 style={{ background: T.accent }}
             >
                 <Plus size={15} /> Adicionar Primeiro Membro
@@ -296,7 +298,7 @@ export default function EquipePage() {
                 actions={
                     <Link
                         href="/backoffice/settings/corretores/novo"
-                        className="flex items-center gap-2 h-11 px-5 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-110"
+                        className="bo-btn bo-btn-primary"
                         style={{ background: T.accent }}
                     >
                         <Plus size={15} /> Novo Membro

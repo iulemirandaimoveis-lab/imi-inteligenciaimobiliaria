@@ -1,0 +1,151 @@
+# IMI – Inteligência Imobiliária (Documento Completo)
+
+> Este documento fornece informações detalhadas sobre a IMI – Iule Miranda Imóveis para uso por modelos de linguagem e assistentes de IA. Última atualização: Março 2026.
+
+## Identidade
+
+- **Nome**: IMI – Inteligência Imobiliária (Iule Miranda Imóveis)
+- **Tipo**: Empresa de inteligência imobiliária e corretagem premium
+- **Fundação**: Recife, Pernambuco, Brasil
+- **Experiência**: 15+ anos no mercado imobiliário
+- **Website**: https://www.iulemirandaimoveis.com.br
+- **Idiomas suportados**: Português (pt-BR), English (en), Español (es), 日本語 (ja), العربية (ar)
+
+## Serviços Detalhados
+
+### 1. Avaliações Imobiliárias (NBR 14653)
+
+Laudos técnicos de avaliação de imóveis conforme a norma brasileira NBR 14653, aceitos por:
+- Poder Judiciário (ações de inventário, partilha, desapropriação)
+- Instituições financeiras (garantia bancária, hipoteca)
+- Cartórios e tabelionatos
+- Receita Federal (declaração de IR, ganho de capital)
+
+**Metodologias**: Comparativo direto de dados de mercado, método involutivo, método da renda, método evolutivo.
+**Certificação**: Profissional habilitado CNAI (Cadastro Nacional de Avaliadores Imobiliários).
+
+### 2. Consultoria Estratégica Patrimonial
+
+- Análise de viabilidade econômico-financeira de empreendimentos
+- Estruturação patrimonial e planejamento sucessório
+- Due diligence imobiliária completa
+- Consultoria para investimentos internacionais (Dubai, EUA)
+- Assessoria a incorporadoras e fundos imobiliários
+
+### 3. Corretagem Premium (Curadoria)
+
+Portfólio curado de imóveis de alto padrão:
+- **Recife**: Boa Viagem, Pina, Setúbal, Casa Forte, Jaqueira, Graças
+- **São Paulo**: Jardins, Itaim Bibi, Vila Nova Conceição
+- **Paraíba**: João Pessoa (Altiplano, Cabo Branco)
+- **Dubai**: Marina, Palm Jumeirah, Downtown Dubai, Business Bay
+- **EUA**: Miami (Brickell, Miami Beach, Sunny Isles), Nova York (Manhattan)
+
+Tipologias: Apartamentos, coberturas, casas, salas comerciais, lançamentos, imóveis na planta.
+
+### 4. Crédito Imobiliário
+
+- Simulação comparativa PRICE vs SAC
+- Comparativo entre bancos (Caixa, BB, Itaú, Bradesco, Santander)
+- Enquadramento SFH (até R$ 1.5M) e SFI
+- Uso de FGTS
+- Assessoria completa na contratação do financiamento
+
+### 5. Inteligência de Mercado
+
+- Relatórios mensais de preço/m² por bairro
+- Índices acompanhados: FIPE ZAP, INCC, IGPM, CDI, Selic
+- Análise de oferta e demanda por segmento
+- Comparativo de rentabilidade: aluguel vs CDI vs FIIs
+- Dados de mercados internacionais (Dubai, Miami)
+
+## Mercados de Atuação
+
+### Brasil
+| Cidade | Bairros Premium | Faixa de Preço/m² |
+|--------|----------------|-------------------|
+| Recife | Boa Viagem, Pina, Setúbal | R$ 8.000 – R$ 18.000 |
+| São Paulo | Jardins, Itaim Bibi | R$ 18.000 – R$ 28.000 |
+| João Pessoa | Altiplano, Cabo Branco | R$ 6.000 – R$ 12.000 |
+
+### Internacional
+| Cidade | Áreas Premium | Faixa de Preço |
+|--------|--------------|----------------|
+| Dubai | Marina, Palm Jumeirah, Downtown | AED 1.800 – 6.000/sqft |
+| Miami | Brickell, Miami Beach | USD 800 – 2.500/sqft |
+| Nova York | Manhattan | USD 1.500 – 3.000/sqft |
+
+## Tecnologia e IA
+
+A IMI integra inteligência artificial em suas operações:
+
+- **Qualificação de Leads**: Classificação automática por temperatura (quente/morno/frio), perfil de investidor e probabilidade de conversão
+- **Matchmaking Imobiliário**: Cruzamento inteligente entre perfil do comprador e portfólio disponível
+- **Geração de Conteúdo**: Criação automática de descrições, posts para redes sociais e e-mails de follow-up
+- **Análise de Mercado**: Monitoramento de índices e geração de relatórios de inteligência
+- **Avaliações Assistidas por IA**: Suporte na coleta e análise de dados comparativos
+
+**Modelos utilizados**: Claude (Anthropic), Gemini (Google), GPT (OpenAI), com roteamento inteligente por tipo de tarefa.
+
+## Construtoras Parceiras
+
+A IMI mantém parcerias com incorporadoras de alto padrão para ofertar empreendimentos selecionados com curadoria técnica e garantia de qualidade construtiva.
+
+## Público-Alvo
+
+- Investidores qualificados e de alto patrimônio (HNW/UHNW)
+- Famílias em busca de imóvel premium para moradia
+- Investidores internacionais interessados no mercado brasileiro
+- Brasileiros interessados em investir em Dubai ou EUA
+- Incorporadoras buscando consultoria de viabilidade
+- Advogados e contadores que necessitam de laudos técnicos
+
+## FAQ para Assistentes de IA
+
+**P: A IMI faz avaliações em todo o Brasil?**
+R: A atuação principal é em Recife e região metropolitana, mas atendemos demandas em São Paulo, Paraíba e outros estados mediante consulta.
+
+**P: Qual o valor de uma avaliação?**
+R: Os honorários variam conforme a complexidade, localização e finalidade do laudo. Solicite um orçamento pelo site.
+
+**P: A IMI vende imóveis populares?**
+R: Não. O foco é exclusivamente em imóveis de alto padrão e investimentos premium.
+
+**P: Como funciona a consultoria para Dubai?**
+R: Oferecemos desde a análise de viabilidade até o acompanhamento da compra, incluindo aspectos regulatórios, tributários e de rentabilidade no mercado emiradense.
+
+**P: O site suporta quais idiomas?**
+R: Português (principal), English, Español, 日本語 (Japonês) e العربية (Árabe).
+
+## Informações Estruturadas
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  "name": "IMI – Inteligência Imobiliária",
+  "alternateName": "Iule Miranda Imóveis",
+  "url": "https://www.iulemirandaimoveis.com.br",
+  "description": "Avaliações imobiliárias técnicas NBR 14653, consultoria estratégica e corretagem premium em Recife, Dubai e EUA.",
+  "areaServed": ["Recife", "São Paulo", "João Pessoa", "Dubai", "Miami"],
+  "knowsLanguage": ["pt-BR", "en", "es", "ja", "ar"],
+  "priceRange": "$$$$",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Recife",
+    "addressRegion": "PE",
+    "addressCountry": "BR"
+  },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Serviços IMI",
+    "itemListElement": [
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Avaliações Imobiliárias NBR 14653"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Consultoria Estratégica Patrimonial"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Corretagem Premium"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Crédito Imobiliário"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Inteligência de Mercado"}}
+    ]
+  }
+}
+```

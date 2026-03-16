@@ -43,7 +43,7 @@ export function ButtonPrimary({
     full, size = 'md', className = '', disabled, type = 'button', target, rel,
 }: BtnProps) {
     const cls = [
-        'group inline-flex items-center justify-center gap-2.5 rounded-[14px]',
+        'group inline-flex items-center justify-center gap-2.5 rounded-[4px]',
         'font-bold uppercase whitespace-nowrap',
         'bg-[#102A43] text-white hover:bg-[#0a1c2e]',
         'transition-all duration-200 active:scale-[0.97]',
@@ -87,7 +87,7 @@ export function ButtonGhost({
     full, size = 'md', dark = false, strong = false, className = '', disabled, type = 'button', target, rel,
 }: GhostBtnProps) {
     const cls = [
-        'group inline-flex items-center justify-center gap-2.5 rounded-[14px]',
+        'group inline-flex items-center justify-center gap-2.5 rounded-[4px]',
         'font-bold uppercase whitespace-nowrap',
         dark && strong
             ? 'border border-white/50 text-white hover:bg-white/[0.08] hover:border-white/70'

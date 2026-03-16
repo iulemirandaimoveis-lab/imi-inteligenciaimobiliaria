@@ -29,8 +29,8 @@ interface CalendarEvent {
 const EVENT_TYPES: Record<string, { label: string; color: string; bg: string; icon: React.ElementType }> = {
   vistoria: { label: 'Vistoria',  color: '#3B82F6', bg: 'rgba(59,130,246,0.14)',  icon: Home     },
   reuniao:  { label: 'Reunião',   color: '#A78BFA', bg: 'rgba(167,139,250,0.14)', icon: Users    },
-  visita:   { label: 'Visita',    color: '#4ADE80', bg: 'rgba(74,222,128,0.12)',  icon: MapPin   },
-  entrega:  { label: 'Entrega',   color: '#FBBF24', bg: 'rgba(251,191,36,0.14)',  icon: FileText },
+  visita:   { label: 'Visita',    color: 'var(--bo-success)', bg: 'rgba(74,222,128,0.12)',  icon: MapPin   },
+  entrega:  { label: 'Entrega',   color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.14)',  icon: FileText },
   evento:   { label: 'Evento',    color: '#F472B6', bg: 'rgba(244,114,182,0.14)', icon: Calendar },
   outro:    { label: 'Outro',     color: '#8B949E', bg: 'rgba(139,148,158,0.12)', icon: Calendar },
 }
@@ -318,6 +318,7 @@ export default function AgendaPage() {
 
       {/* ── Week Strip ──────────────────────────────────────────────────── */}
       <motion.div
+        data-tour="calendar"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
@@ -333,7 +334,7 @@ export default function AgendaPage() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
             <button
               onClick={() => navigateWeek(-1)}
-              style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <ChevronLeft size={16} color="var(--bo-text-muted)" />
             </button>
@@ -342,14 +343,14 @@ export default function AgendaPage() {
             </span>
             <button
               onClick={() => navigateWeek(1)}
-              style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <ChevronRight size={16} color="var(--bo-text-muted)" />
             </button>
           </div>
 
           {/* Day buttons */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '4px' }}>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-1">
             {weekDays.map(dayStr => {
               const isSelected = dayStr === selectedDay
               const todayBool = isToday(dayStr)
@@ -404,7 +405,7 @@ export default function AgendaPage() {
                 </div>
                 <button
                   onClick={() => setShowModal(true)}
-                  style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}
+                  style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}
                 >
                   <Plus size={15} color="var(--bo-text-muted)" />
                 </button>
@@ -459,7 +460,7 @@ export default function AgendaPage() {
                         {/* Info */}
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                            <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '220px' }}>
+                            <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
                               {ev.title}
                             </h3>
                             <span style={{ fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '6px', background: cfg.bg, color: cfg.color, flexShrink: 0 }}>
@@ -477,19 +478,19 @@ export default function AgendaPage() {
                         {/* Actions */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                           {isOnline ? (
-                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 700, color: '#fff', background: '#3B82F6', border: 'none', cursor: 'pointer', boxShadow: '0 0 12px rgba(59,130,246,0.3)' }}>
+                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: '#fff', background: '#3B82F6', border: 'none', cursor: 'pointer', boxShadow: '0 0 12px rgba(59,130,246,0.3)' }}>
                               <Video size={13} />
                               Entrar
                             </button>
                           ) : (
-                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}>
+                            <button style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}>
                               <Navigation size={13} />
                               Rota
                             </button>
                           )}
                           <button
                             onClick={() => handleDelete(ev.id, ev.title)}
-                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', background: 'transparent', border: 'none', cursor: 'pointer' }}
                           >
                             <X size={14} color="var(--bo-text-muted)" />
                           </button>
@@ -553,7 +554,7 @@ export default function AgendaPage() {
                           </button>
                           <button
                             onClick={() => dismissSuggestion(sug.id)}
-                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '10px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                            style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', background: 'transparent', border: 'none', cursor: 'pointer' }}
                           >
                             <X size={14} color="var(--bo-text-muted)" />
                           </button>
@@ -684,13 +685,13 @@ export default function AgendaPage() {
               </div>
 
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={() => setShowModal(false)} style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
+                <button onClick={() => setShowModal(false)} style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
                   Cancelar
                 </button>
                 <button
                   onClick={handleCreate}
                   disabled={saving || !form.title || !form.start_time}
-                  style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1, boxShadow: '0 0 16px rgba(59,130,246,0.22)' }}
+                  style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 600, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1, boxShadow: '0 0 16px rgba(59,130,246,0.22)' }}
                 >
                   <Plus size={16} />
                   {saving ? 'Salvando...' : 'Criar Evento'}

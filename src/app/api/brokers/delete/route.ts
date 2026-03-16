@@ -1,13 +1,26 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 export async function DELETE(request: Request) {
     try {
+        // Auth check — only authenticated users can delete brokers
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
         const { searchParams } = new URL(request.url)
         const userId = searchParams.get('userId')
 
         if (!userId) {
             return NextResponse.json({ error: 'userId é obrigatório' }, { status: 400 })
+        }
+
+        // Prevent self-deletion
+        if (userId === user.id) {
+            return NextResponse.json({ error: 'Não é possível excluir o próprio usuário' }, { status: 400 })
         }
 
         // 1. Delete broker record first (FK constraint)
@@ -22,10 +35,10 @@ export async function DELETE(request: Request) {
         }
 
         // 2. Delete auth user via admin API
-        const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId)
+        const { error: deleteAuthError } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
-        if (authError) {
-            return NextResponse.json({ error: authError.message }, { status: 500 })
+        if (deleteAuthError) {
+            return NextResponse.json({ error: deleteAuthError.message }, { status: 500 })
         }
 
         return NextResponse.json({ success: true })

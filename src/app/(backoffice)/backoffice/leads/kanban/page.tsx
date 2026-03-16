@@ -1,15 +1,15 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp, BarChart3 } from 'lucide-react'
+import { Search, Filter, Plus, Clock, ChevronRight, Zap, TrendingUp, BarChart3, Users } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard } from '@/app/(backoffice)/components/ui'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 // ── Pipeline stage config (derived from centralized constants) ─────
 const STAGES = [
@@ -60,9 +60,9 @@ function timeAgo(iso: string | null): string {
 function urgencyBadge(lead: any): { label: string; color: string; bg: string } | null {
     const score = lead.score || 0
     const status = (lead.status || '').toLowerCase()
-    if (score >= 85 || status === 'hot') return { label: 'URGENTE', color: '#EF4444', bg: 'rgba(239,68,68,0.12)' }
-    if (score >= 60 || status === 'warm') return { label: 'QUENTE', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' }
-    return { label: 'NORMAL', color: '#6B7280', bg: 'rgba(107,114,128,0.12)' }
+    if (score >= 85 || status === 'hot') return { label: 'URGENTE', color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' }
+    if (score >= 60 || status === 'warm') return { label: 'QUENTE', color: 'var(--warning)', bg: 'rgba(245,158,11,0.12)' }
+    return { label: 'NORMAL', color: 'var(--text-secondary)', bg: 'var(--bg-elevated)' }
 }
 
 // ── Card component ────────────────────────────────────────────────
@@ -115,7 +115,7 @@ function LeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
 
                 {/* Budget */}
                 {budget && (
-                    <p style={{ fontSize: 15, fontWeight: 800, color: '#D4A929', marginBottom: 10, letterSpacing: '-0.3px' }}>
+                    <p style={{ fontSize: 15, fontWeight: 800, color: 'var(--imi-gold-500)', marginBottom: 10, letterSpacing: '-0.3px' }}>
                         {budget}
                     </p>
                 )}
@@ -132,7 +132,7 @@ function LeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
                         width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
                         background: 'var(--bo-accent)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 9, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em',
+                        fontSize: 9, fontWeight: 800, color: 'var(--text-inverse)', letterSpacing: '-0.02em',
                     }}>
                         {initials}
                     </div>
@@ -150,6 +150,7 @@ export default function PipelineKanbanPage() {
     const scrollRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
+        const supabase = createClient()
         supabase
             .from('leads')
             .select('*, development:developments(name)')
@@ -206,7 +207,7 @@ export default function PipelineKanbanPage() {
                                 display: 'flex', alignItems: 'center', gap: 6,
                                 height: 36, padding: '0 16px', borderRadius: 10,
                                 background: 'var(--bo-accent)',
-                                color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                                color: 'var(--text-inverse)', fontSize: 12, fontWeight: 700, textDecoration: 'none',
                             }}>
                                 <Plus size={14} /> Novo Lead
                             </Link>
@@ -215,25 +216,10 @@ export default function PipelineKanbanPage() {
                 />
 
                 {/* KPI strip */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
-                    {[
-                        { label: 'TOTAL EM NEGOCIAÇÃO', value: loading ? '—' : formatTotal(totalBudget), accent: T.accent },
-                        { label: 'TICKETS ATIVOS', value: loading ? '—' : `${totalLeads}`, accent: '#7BA3C2' },
-                        { label: 'FECHAMENTOS', value: loading ? '—' : String(ganhoCount).padStart(2, '0'), accent: '#22C55E' },
-                    ].map(kpi => (
-                        <div key={kpi.label} style={{
-                            padding: '12px 14px', borderRadius: 12,
-                            background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
-                            borderLeft: `3px solid ${kpi.accent}`,
-                        }}>
-                            <p style={{ fontSize: 8, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
-                                {kpi.label}
-                            </p>
-                            <p style={{ fontSize: 18, fontWeight: 800, color: kpi.accent, letterSpacing: '-0.3px', fontFamily: 'monospace' }}>
-                                {kpi.value}
-                            </p>
-                        </div>
-                    ))}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                    <KPICard label="Negociações" value={loading ? '—' : formatTotal(totalBudget)} icon={<TrendingUp size={13} />} accent="blue" size="sm" />
+                    <KPICard label="Total Leads" value={loading ? '—' : String(totalLeads)} icon={<Users size={13} />} size="sm" />
+                    <KPICard label="Fechamentos" value={loading ? '—' : String(ganhoCount).padStart(2, '0')} icon={<Zap size={13} />} accent="green" size="sm" />
                 </div>
 
                 {/* Search */}
@@ -257,6 +243,7 @@ export default function PipelineKanbanPage() {
 
             {/* ── Kanban Board (horizontal scroll) ── */}
             <div
+                data-tour="kanban"
                 ref={scrollRef}
                 style={{
                     display: 'flex', gap: 14, overflowX: 'auto', overflowY: 'hidden',
@@ -274,7 +261,7 @@ export default function PipelineKanbanPage() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: si * 0.06 }}
                             style={{
-                                width: 280, minWidth: 280, flexShrink: 0,
+                                width: 280, minWidth: 260, flexShrink: 0,
                                 display: 'flex', flexDirection: 'column', gap: 0,
                             }}
                         >
@@ -337,7 +324,7 @@ export default function PipelineKanbanPage() {
                             {stageLeads.length > 0 && (
                                 <div style={{ padding: '6px 4px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</span>
-                                    <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A929' }}>
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--imi-gold-500)' }}>
                                         {formatTotal(stageLeads.reduce((s, l) => s + (l.capital || l.budget || 0), 0))}
                                     </span>
                                 </div>
@@ -354,12 +341,12 @@ export default function PipelineKanbanPage() {
                 transition={{ delay: 0.4 }}
                 style={{
                     display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
-                    background: 'linear-gradient(135deg, rgba(72,101,129,0.15), rgba(51,78,104,0.08))',
-                    borderRadius: 14, border: '1px solid rgba(72,101,129,0.2)',
+                    background: 'var(--bg-elevated)',
+                    borderRadius: 14, border: '1px solid var(--border-default)',
                     marginTop: 8, flexShrink: 0,
                 }}
             >
-                <Zap size={16} style={{ color: '#486581', flexShrink: 0 }} />
+                <Zap size={16} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
                 <p style={{ fontSize: 12, color: 'var(--bo-text-muted)', flex: 1, lineHeight: 1.4 }}>
                     <span style={{ color: 'var(--bo-text)', fontWeight: 600 }}>IA Pipeline:</span> {
                         !loading && leads.length > 0
@@ -367,7 +354,7 @@ export default function PipelineKanbanPage() {
                             : 'Carregando análise do pipeline...'
                     }
                 </p>
-                <Link href="/backoffice/leads" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: '#486581', textDecoration: 'none', flexShrink: 0 }}>
+                <Link href="/backoffice/leads" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: 'var(--imi-gold-500)', textDecoration: 'none', flexShrink: 0 }}>
                     Ver todos <ChevronRight size={12} />
                 </Link>
             </motion.div>

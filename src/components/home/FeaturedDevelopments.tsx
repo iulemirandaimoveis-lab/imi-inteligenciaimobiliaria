@@ -97,13 +97,13 @@ function FeaturedCard({
 
                 {/* Bottom content */}
                 <div>
-                    <p className="flex items-center gap-1 text-[9px] uppercase tracking-[0.2em] font-semibold text-[#627D98] mb-1.5">
+                    <p className="flex items-center gap-1 text-[9px] uppercase tracking-[0.2em] font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'var(--font-sans)' }}>
                         <MapPin size={8} />
                         {dev.location.neighborhood}, {dev.location.city}
                     </p>
                     <h3
                         className={`font-bold text-white leading-tight mb-3 ${large ? 'text-2xl sm:text-[28px]' : 'text-base sm:text-lg'}`}
-                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        style={{ fontFamily: 'var(--font-display)', textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
                     >
                         {dev.name}
                     </h3>
@@ -111,13 +111,13 @@ function FeaturedCard({
                         <div>
                             {price && (
                                 <>
-                                    <p className="text-[9px] text-white/35 uppercase tracking-wider mb-0.5">A partir de</p>
-                                    <p className={`font-bold text-white ${large ? 'text-lg' : 'text-sm'}`}>{price}</p>
+                                    <p className="text-[9px] text-white/60 uppercase tracking-wider mb-0.5">A partir de</p>
+                                    <p className={`font-bold text-white ${large ? 'text-lg' : 'text-sm'}`} style={{ textShadow: '0 1px 3px rgba(0,0,0,0.4)' }}>{price}</p>
                                 </>
                             )}
                         </div>
                         <div className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full border backdrop-blur-sm transition-all duration-300 group-hover:scale-110"
-                            style={{ background: 'rgba(200,166,90,0.15)', borderColor: 'rgba(200,166,90,0.3)' }}>
+                            style={{ background: 'rgba(184,148,58,0.15)', borderColor: 'rgba(184,148,58,0.3)' }}>
                             <ArrowRight size={13} className="text-white transition-transform duration-300 group-hover:translate-x-0.5" />
                         </div>
                     </div>
@@ -147,28 +147,29 @@ export default async function FeaturedDevelopments({ lang = 'pt' }: { lang?: str
         const extra = developments.slice(3, 6)
 
         return (
-            <section className="py-16 lg:py-24" style={{ background: '#F8F9FA' }}>
+            <section className="py-16 lg:py-24" style={{ background: 'var(--bg-base)' }}>
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
 
                     {/* Section header */}
                     <div className="flex items-end justify-between mb-8 sm:mb-10">
                         <div>
                             <div className="flex items-center gap-3 mb-3">
-                                <div className="w-8 h-px" style={{ background: '#C8A65A' }} />
-                                <span className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: '#C8A65A' }}>Portfólio em Destaque</span>
+                                <div className="w-8 h-px" style={{ background: 'var(--imi-gold-500)' }} />
+                                <span className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--imi-gold-500)', fontFamily: 'var(--font-sans)' }}>Portfólio em Destaque</span>
                             </div>
                             <h2
-                                className="text-[26px] sm:text-[32px] font-bold text-[#1A1A1A] leading-tight"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                className="text-[26px] sm:text-[32px] font-bold leading-tight"
+                                style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}
                             >
                                 Empreendimentos{' '}
-                                <span className="text-[#334E68]">Selecionados</span>
+                                <span style={{ color: 'var(--imi-navy-600)' }}>Selecionados</span>
                             </h2>
-                            <p className="text-sm text-gray-500 mt-2">Recife · João Pessoa · Dubai · EUA</p>
+                            <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-sans)' }}>Brasil · Estados Unidos · Emirados Árabes</p>
                         </div>
                         <Link
                             href={`/${lang}/imoveis`}
-                            className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-[#486581] hover:text-[#334E68] transition-colors group"
+                            className="hidden sm:flex items-center gap-1.5 text-xs font-semibold transition-colors group"
+                        style={{ color: 'var(--imi-navy-500)', fontFamily: 'var(--font-sans)' }}
                         >
                             Ver portfólio completo
                             <ArrowRight size={12} className="transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -225,9 +226,8 @@ export default async function FeaturedDevelopments({ lang = 'pt' }: { lang?: str
                     <div className="sm:hidden mt-6 text-center">
                         <Link
                             href={`/${lang}/imoveis`}
-                            className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-full text-white"
-                            style={{ background: '#102A43' }}
-                        >
+                            className="inline-flex items-center gap-2 text-sm font-semibold px-5 py-2.5 text-white" style={{ borderRadius: 4, background: 'var(--imi-navy-700)', fontFamily: 'var(--font-sans)' }}
+                            >
                             Ver portfólio completo <ArrowRight size={14} />
                         </Link>
                     </div>

@@ -34,7 +34,7 @@ export interface Developer {
     address: string | null;
     is_active: boolean;
     logo_url?: string | null;
-    // Stats mockadas momentaneamente por não ter na tabela raw
+    // Dados agregados das relações do banco
     empreendimentosAtivos?: number;
     unidadesVendidas?: number;
     receitaTotal?: number;

@@ -1,16 +1,19 @@
 'use client'
 
+/**
+ * AIInsightCard — IMI Design System v3
+ * DS3 pattern: elevated insight card with variant accent, glow blob, action button
+ */
+
 import React from 'react'
 
 interface AIInsightCardProps {
   title?: string
   children: React.ReactNode
-  /** Optional action button */
   action?: {
     label: string
     onClick: () => void
   }
-  /** Next suggested step */
   nextStep?: string
   variant?: 'gold' | 'blue' | 'green'
   className?: string
@@ -18,22 +21,31 @@ interface AIInsightCardProps {
 
 const VARIANT_STYLES = {
   gold: {
-    border: 'rgba(234,179,8,0.30)',
-    bg: 'rgba(234,179,8,0.06)',
-    iconColor: 'var(--imi-ai-gold)',
-    labelColor: 'var(--imi-ai-gold)',
+    border: 'rgba(184,148,58,0.30)',
+    bg: 'rgba(184,148,58,0.06)',
+    iconColor: 'var(--imi-gold-500)',
+    labelColor: 'var(--imi-gold-500)',
+    btnBg: 'var(--imi-gold-500)',
+    btnShadow: '0 2px 10px rgba(184,148,58,0.35)',
+    btnColor: '#FFFFFF',
   },
   blue: {
-    border: 'var(--imi-blue-border)',
-    bg: 'var(--imi-blue-dim)',
-    iconColor: 'var(--imi-blue-bright)',
-    labelColor: 'var(--imi-blue-bright)',
+    border: 'rgba(61,81,138,0.30)',
+    bg: 'rgba(61,81,138,0.08)',
+    iconColor: 'var(--imi-navy-300)',
+    labelColor: 'var(--imi-navy-300)',
+    btnBg: 'var(--imi-navy-400)',
+    btnShadow: '0 2px 10px rgba(61,81,138,0.35)',
+    btnColor: '#FFFFFF',
   },
   green: {
     border: 'rgba(74,222,128,0.25)',
     bg: 'rgba(74,222,128,0.07)',
-    iconColor: 'var(--imi-ai-green)',
-    labelColor: 'var(--imi-ai-green)',
+    iconColor: 'var(--success)',
+    labelColor: 'var(--success)',
+    btnBg: 'var(--success)',
+    btnShadow: '0 2px 10px rgba(74,222,128,0.30)',
+    btnColor: '#001a0a',
   },
 }
 
@@ -49,10 +61,11 @@ export function AIInsightCard({
 
   return (
     <div
-      className={`rounded-2xl ${className}`}
+      className={className}
       style={{
-        background: 'var(--bo-card)',
+        background: 'var(--bg-surface)',
         border: `1px solid ${v.border}`,
+        borderRadius: 'var(--r-xl, 16px)',
         padding: '14px 16px',
         position: 'relative',
         overflow: 'hidden',
@@ -78,6 +91,7 @@ export function AIInsightCard({
         <span style={{ color: v.iconColor, fontSize: '14px' }}>✦</span>
         <span
           style={{
+            fontFamily: 'var(--font-sans)',
             fontSize: '12px',
             fontWeight: 700,
             color: v.labelColor,
@@ -91,8 +105,9 @@ export function AIInsightCard({
       {/* Content */}
       <div
         style={{
+          fontFamily: 'var(--font-sans)',
           fontSize: '12px',
-          color: 'var(--bo-text-muted)',
+          color: 'var(--text-secondary)',
           lineHeight: 1.6,
           position: 'relative',
         }}
@@ -105,15 +120,16 @@ export function AIInsightCard({
         <div
           className="flex items-center justify-between mt-3"
           style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '10px',
+            background: 'var(--bg-muted)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--r-lg, 12px)',
             padding: '8px 12px',
           }}
         >
-          <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)', fontWeight: 500 }}>
+          <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>
             <span
               style={{
+                fontFamily: 'var(--font-mono)',
                 fontSize: '9px',
                 fontWeight: 700,
                 color: v.labelColor,
@@ -127,29 +143,37 @@ export function AIInsightCard({
             </span>
             {nextStep}
           </span>
-          <span style={{ color: 'var(--bo-text-muted)', fontSize: '16px', marginLeft: '8px' }}>›</span>
+          <span style={{ color: 'var(--text-tertiary)', fontSize: '16px', marginLeft: '8px' }}>›</span>
         </div>
       )}
 
       {/* Action button */}
       {action && (
-        <button
-          onClick={action.onClick}
-          className="w-full mt-3"
-          style={{
-            padding: '9px 16px',
-            borderRadius: '10px',
-            fontSize: '12px',
-            fontWeight: 700,
-            color: '#fff',
-            background: 'var(--bo-accent)',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'opacity 0.15s',
-          }}
-        >
-          {action.label}
-        </button>
+        <div className="mt-3 flex justify-center">
+          <button
+            onClick={action.onClick}
+            style={{
+              fontFamily: 'var(--font-sans)',
+              padding: '7px 20px',
+              borderRadius: 'var(--r-md, 8px)',
+              fontSize: '11px',
+              fontWeight: 700,
+              color: v.btnColor,
+              background: v.btnBg,
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all var(--dur-2, 200ms) var(--ease)',
+              boxShadow: v.btnShadow,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.1)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1)' }}
+          >
+            {action.label}
+          </button>
+        </div>
       )}
     </div>
   )

@@ -6,8 +6,6 @@ import { useState, useCallback, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import useSWR, { mutate } from 'swr'
 
-const supabase = createClient()
-
 export interface Development {
     id: string
     slug: string
@@ -26,7 +24,7 @@ export interface Development {
     description: string
     short_description: string
     features: string[]
-    specs: any
+    specs: Record<string, string | number | boolean | null>
     price_from: number | null
     price_to: number | null
     property_type: string
@@ -75,6 +73,7 @@ export interface DevelopmentFilters {
  * Hook para listar developments com filtros avançados
  */
 export function useDevelopments(filters: DevelopmentFilters = {}) {
+    const supabase = createClient()
     const { data, error, mutate: revalidate } = useSWR(
         ['developments', JSON.stringify(filters)],
         async () => {
@@ -141,6 +140,7 @@ export function useDevelopments(filters: DevelopmentFilters = {}) {
  * Hook para buscar um development específico
  */
 export function useDevelopment(id: string | null) {
+    const supabase = createClient()
     const { data, error, mutate: revalidate } = useSWR(
         id ? ['development', id] : null,
         async () => {
@@ -167,6 +167,7 @@ export function useDevelopment(id: string | null) {
  * Hook para operações CRUD de developments
  */
 export function useDevelopmentActions() {
+    const supabase = createClient()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<Error | null>(null)
 
@@ -188,7 +189,7 @@ export function useDevelopmentActions() {
             if (error) throw error
 
             // Revalidar cache
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
 
             return result as Development
         } catch (err) {
@@ -219,7 +220,7 @@ export function useDevelopmentActions() {
 
             // Revalidar cache
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
 
             return result as Development
         } catch (err) {
@@ -244,7 +245,7 @@ export function useDevelopmentActions() {
             if (error) throw error
 
             // Revalidar cache
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
         } catch (err) {
             const error = err as Error
             setError(error)
@@ -292,7 +293,7 @@ export function useDevelopmentActions() {
             if (error) throw error
 
             // Revalidar cache
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
 
             return result as Development
         } catch (err) {
@@ -315,7 +316,7 @@ export function useDevelopmentActions() {
                 .select().single()
             if (error) throw error
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
             return data
         } catch (e) { throw e } finally { setLoading(false) }
     }, [])
@@ -330,7 +331,7 @@ export function useDevelopmentActions() {
                 .select().single()
             if (error) throw error
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
             return data
         } catch (e) { throw e } finally { setLoading(false) }
     }, [])
@@ -345,7 +346,7 @@ export function useDevelopmentActions() {
                 .select().single()
             if (error) throw error
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
             return data
         } catch (e) { throw e } finally { setLoading(false) }
     }, [])
@@ -360,7 +361,7 @@ export function useDevelopmentActions() {
                 .select().single()
             if (error) throw error
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
             return data
         } catch (e) { throw e } finally { setLoading(false) }
     }, [])
@@ -383,6 +384,7 @@ export function useDevelopmentActions() {
  * Hook para estatísticas de developments
  */
 export function useDevelopmentStats() {
+    const supabase = createClient()
     const { data, error } = useSWR('development-stats', async () => {
         const { data, error } = await supabase
             .from('developments')
@@ -420,6 +422,7 @@ export function useDevelopmentStats() {
  * Hook para bulk operations
  */
 export function useBulkDevelopmentActions() {
+    const supabase = createClient()
     const [loading, setLoading] = useState(false)
 
     const bulkUpdateStatus = useCallback(async (ids: string[], status: string) => {
@@ -433,7 +436,7 @@ export function useBulkDevelopmentActions() {
 
             if (error) throw error
 
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
         } finally {
             setLoading(false)
         }
@@ -450,7 +453,7 @@ export function useBulkDevelopmentActions() {
 
             if (error) throw error
 
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
         } finally {
             setLoading(false)
         }
@@ -467,7 +470,7 @@ export function useBulkDevelopmentActions() {
 
             if (error) throw error
 
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
         } finally {
             setLoading(false)
         }
@@ -486,6 +489,7 @@ export function useBulkDevelopmentActions() {
  * (Útil para sugestão no backoffice ou "veja também" simulado)
  */
 export function useSimilarDevelopments(developmentId: string, limit: number = 4) {
+    const supabase = createClient()
     const { data, error } = useSWR(
         ['similar-developments', developmentId],
         async () => {
@@ -529,6 +533,7 @@ export function useAutoSaveDevelopment(
     data: Partial<Development>,
     delay: number = 3000
 ) {
+    const supabase = createClient()
     const [lastSaved, setLastSaved] = useState<Date | null>(null)
     const [saving, setSaving] = useState(false)
 

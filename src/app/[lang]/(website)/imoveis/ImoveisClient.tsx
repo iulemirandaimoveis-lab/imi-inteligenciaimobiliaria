@@ -1,17 +1,21 @@
 'use client';
 
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { staggerContainer, slideUp } from '@/lib/animations';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Development } from './types/development';
-import DevelopmentCard from './components/DevelopmentCard';
-import AdvancedFilter, { FilterState } from './components/AdvancedFilter';
-import { MessageCircle, Search, Grid3X3, Map, ChevronDown, MapPin, Bed, Maximize2, SlidersHorizontal } from 'lucide-react';
+import { FilterState } from './components/AdvancedFilter';
 import LeadCaptureModal from './components/LeadCaptureModal';
+import {
+    Search, MapPin, Heart, Share2, Bed, Bath, Car, Maximize2,
+    ChevronDown, ChevronRight, SlidersHorizontal, MessageCircle, X,
+    Map, Grid3X3,
+} from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-is-mobile';
 import dynamic from 'next/dynamic';
 
+// ── Constants ─────────────────────────────────────────────────────────────────
+
 const ITEMS_PER_PAGE = 12;
-const SPLIT_MAP_HEIGHT = 'clamp(500px, calc(100vh - 180px), 860px)';
 
 const DEFAULT_FILTERS: FilterState = {
     search: '',
@@ -25,91 +29,228 @@ const DEFAULT_FILTERS: FilterState = {
     sort: 'relevant',
 };
 
-const MAP_HEIGHT = 'clamp(400px, calc(100vh - 200px), 700px)';
+const GOLD = '#C8A44A';
+const SURFACE = '#0F2035';
+const BG = '#0B1928';
+const TEXT = '#EBE7E0';
+const TEXT_MUTED = '#8A9BB0';
+const BORDER = 'rgba(200,164,74,0.12)';
+const GOLD_BG = 'rgba(200,164,74,0.15)';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+const formatCurrency = (v: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
+
+const formatPrice = (min: number) => {
+    if (min <= 0) return 'Consultar';
+    if (min >= 1_000_000) return `R$ ${(min / 1_000_000).toFixed(1).replace('.0', '')}M`;
+    return `R$ ${(min / 1_000).toFixed(0)}k`;
+};
+
+const BADGE_STYLES: Record<string, { bg: string; color: string }> = {
+    launch:            { bg: GOLD,      color: '#0B1928' },
+    ready:             { bg: '#6BB87B', color: '#0B1928' },
+    under_construction:{ bg: '#F59E0B', color: '#0B1928' },
+};
+const BADGE_LABELS: Record<string, string> = {
+    launch: 'Lançamento', ready: 'Pronta Entrega', under_construction: 'Em Obra',
+};
 
 const PropertyMap = dynamic(() => import('@/components/maps/PropertyMap'), {
     ssr: false,
     loading: () => (
-        <div style={{ height: '100%', minHeight: 400, background: '#141420', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ color: '#9CA3AF', fontSize: 14 }}>Carregando mapa...</div>
+        <div style={{ height: '100%', minHeight: 400, background: SURFACE, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: TEXT_MUTED, fontSize: 14 }}>Carregando mapa...</span>
         </div>
     ),
 });
 
-// ── Status helpers ────────────────────────────────────────────────────────────
-const STATUS_LABELS: Record<string, string> = {
-    launch: 'Lançamento', ready: 'Pronta Entrega', under_construction: 'Em Obra',
-}
-const STATUS_COLORS: Record<string, string> = {
-    launch: '#3B82F6', ready: '#10B981', under_construction: '#F59E0B',
-}
-const formatCurrency = (v: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
+// ── Property Card ─────────────────────────────────────────────────────────────
 
-// ── Compact card used in the map sidebar list ─────────────────────────────────
-function MapListCard({
-    dev, lang, selected, onClick,
-}: { dev: Development; lang: string; selected: boolean; onClick: () => void }) {
-    const statusColor = STATUS_COLORS[dev.status] || '#3B82F6'
-    const statusLabel = STATUS_LABELS[dev.status] || dev.status
+function PropertyCard({ dev, lang }: { dev: Development; lang: string }) {
+    const badge = BADGE_STYLES[dev.status] || BADGE_STYLES.launch;
+    const label = BADGE_LABELS[dev.status] || dev.status;
+    const price = formatPrice(dev.priceRange.min);
+    const typeLabel = dev.tags.includes('casas') ? 'Casa' : 'Apartamento';
+    const area = dev.specs.areaRange !== '—' ? dev.specs.areaRange : null;
 
     return (
-        <motion.a
-            href={`/${lang}/imoveis/${dev.slug}`}
-            initial={{ opacity: 0, x: 12 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.25 }}
-            onClick={(e) => { e.preventDefault(); onClick() }}
-            className="flex gap-3 p-3 border-b border-white/[0.06] cursor-pointer transition-all"
+        <motion.article
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.4 }}
             style={{
-                background: selected ? 'rgba(44,123,229,0.12)' : 'transparent',
-                borderLeft: selected ? `3px solid #2C7BE5` : '3px solid transparent',
+                background: SURFACE,
+                border: `1px solid ${BORDER}`,
+                borderRadius: 20,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
             }}
-            whileHover={{ background: selected ? 'rgba(44,123,229,0.14)' : 'rgba(255,255,255,0.03)' }}
         >
-            {/* Thumbnail */}
-            <div className="flex-shrink-0 w-[72px] h-[60px] rounded-lg overflow-hidden bg-white/5">
+            {/* Image */}
+            <a href={`/${lang}/imoveis/${dev.slug}`} style={{ display: 'block', position: 'relative', aspectRatio: '16/9', background: '#071422', flexShrink: 0 }}>
                 {dev.images.main ? (
-                    <img src={dev.images.main} alt={dev.name} className="w-full h-full object-cover" />
+                    <img src={dev.images.main} alt={dev.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xl opacity-30">🏢</div>
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, opacity: 0.15 }}>🏢</div>
                 )}
-            </div>
+                {/* Gradient overlay */}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%, rgba(11,25,40,0.65) 100%)' }} />
 
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-1 mb-1">
-                    <p className="text-white text-[12px] font-bold leading-tight line-clamp-1">{dev.name}</p>
-                    <span
-                        className="flex-shrink-0 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full"
-                        style={{ background: `${statusColor}22`, color: statusColor, border: `1px solid ${statusColor}44` }}
-                    >
-                        {statusLabel}
-                    </span>
+                {/* Badge top-left */}
+                <span style={{
+                    position: 'absolute', top: 12, left: 12,
+                    background: badge.bg, color: badge.color,
+                    fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+                    padding: '3px 10px', borderRadius: 4, textTransform: 'uppercase',
+                }}>
+                    {label}
+                </span>
+
+                {/* Heart + Share top-right */}
+                <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', gap: 6 }}>
+                    {[Heart, Share2].map((Icon, i) => (
+                        <button key={i} style={{
+                            width: 32, height: 32, borderRadius: '50%',
+                            background: 'rgba(11,25,40,0.6)', backdropFilter: 'blur(8px)',
+                            border: '1px solid rgba(255,255,255,0.12)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: 'pointer', color: '#fff',
+                        }}>
+                            <Icon size={14} />
+                        </button>
+                    ))}
                 </div>
-                <div className="flex items-center gap-1 text-[#6B7280] text-[10px] mb-1.5">
-                    <MapPin size={9} />
-                    <span className="truncate">{dev.location.neighborhood || dev.location.city}</span>
+
+                {/* Price bottom-left */}
+                <div style={{
+                    position: 'absolute', bottom: 12, left: 12,
+                    background: 'rgba(11,25,40,0.75)', backdropFilter: 'blur(8px)',
+                    borderRadius: 4, padding: '4px 12px',
+                    border: `1px solid rgba(200,164,74,0.3)`,
+                }}>
+                    <span style={{ color: GOLD, fontSize: 15, fontWeight: 700 }}>{price}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <span className="text-[#2C7BE5] text-[11px] font-bold">
-                        {dev.priceRange.min > 0 ? formatCurrency(dev.priceRange.min) : 'Consultar'}
-                    </span>
+            </a>
+
+            {/* Body */}
+            <div style={{ padding: '14px 16px 16px', display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+                {/* Name + location */}
+                <div>
+                    <a href={`/${lang}/imoveis/${dev.slug}`} style={{ display: 'block', color: TEXT, fontSize: 15, fontWeight: 700, lineHeight: 1.3, textDecoration: 'none', fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        {dev.name}
+                    </a>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4, color: TEXT_MUTED, fontSize: 12 }}>
+                        <MapPin size={11} style={{ flexShrink: 0 }} />
+                        <span>{dev.location.neighborhood ? `${dev.location.neighborhood}, ` : ''}{dev.location.city}</span>
+                        {area && <span style={{ marginLeft: 4, color: TEXT_MUTED }}>· {area}</span>}
+                    </div>
+                </div>
+
+                {/* Specs row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: TEXT_MUTED, fontSize: 12 }}>
                     {dev.specs.bedroomsRange && dev.specs.bedroomsRange !== '—' && (
-                        <span className="flex items-center gap-0.5 text-[10px] text-[#6B7280]">
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <Bed size={12} style={{ color: GOLD, flexShrink: 0 }} />
+                            {dev.specs.bedroomsRange} qtos
+                        </span>
+                    )}
+                    {dev.specs.bathroomsRange && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <Bath size={12} style={{ color: GOLD, flexShrink: 0 }} />
+                            {dev.specs.bathroomsRange} ban
+                        </span>
+                    )}
+                    {dev.specs.parkingRange && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <Car size={12} style={{ color: GOLD, flexShrink: 0 }} />
+                            {dev.specs.parkingRange} vagas
+                        </span>
+                    )}
+                </div>
+
+                {/* CTA */}
+                <a
+                    href={`/${lang}/imoveis/${dev.slug}`}
+                    style={{
+                        marginTop: 4,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        height: 38, borderRadius: 4,
+                        border: `1.5px solid ${GOLD}`,
+                        color: GOLD, fontSize: 12, fontWeight: 700, letterSpacing: '0.06em',
+                        textDecoration: 'none', transition: 'all 0.2s',
+                        background: 'transparent',
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = GOLD_BG; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
+                >
+                    Ver Imóvel
+                </a>
+            </div>
+        </motion.article>
+    );
+}
+
+// ── Compact card for desktop map sidebar ──────────────────────────────────────
+
+function MapSidebarCard({ dev, lang, selected, onClick }: { dev: Development; lang: string; selected: boolean; onClick: () => void }) {
+    const badge = BADGE_STYLES[dev.status] || BADGE_STYLES.launch;
+    const label = BADGE_LABELS[dev.status] || dev.status;
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            data-dev-id={dev.id}
+            onClick={onClick}
+            style={{
+                display: 'flex', gap: 12, padding: '12px 14px',
+                borderBottom: `1px solid rgba(255,255,255,0.05)`,
+                borderLeft: selected ? `3px solid ${GOLD}` : '3px solid transparent',
+                background: selected ? 'rgba(200,164,74,0.07)' : 'transparent',
+                cursor: 'pointer', transition: 'all 0.15s',
+            }}
+        >
+            <div style={{ flexShrink: 0, width: 72, height: 60, borderRadius: 10, overflow: 'hidden', background: '#071422' }}>
+                {dev.images.main
+                    ? <img src={dev.images.main} alt={dev.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.2 }}>🏢</div>
+                }
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 3 }}>
+                    <p style={{ color: TEXT, fontSize: 12, fontWeight: 700, lineHeight: 1.3, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' }}>
+                        {dev.name}
+                    </p>
+                    <span style={{ flexShrink: 0, fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 4, background: badge.bg, color: badge.color, textTransform: 'uppercase' }}>
+                        {label}
+                    </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: TEXT_MUTED, fontSize: 10, marginBottom: 5 }}>
+                    <MapPin size={9} /><span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{dev.location.neighborhood || dev.location.city}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ color: GOLD, fontSize: 12, fontWeight: 700 }}>{formatPrice(dev.priceRange.min)}</span>
+                    {dev.specs.bedroomsRange && dev.specs.bedroomsRange !== '—' && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 3, color: TEXT_MUTED, fontSize: 10 }}>
                             <Bed size={9} />{dev.specs.bedroomsRange}
                         </span>
                     )}
                     {dev.specs.areaRange && dev.specs.areaRange !== '—' && (
-                        <span className="flex items-center gap-0.5 text-[10px] text-[#6B7280]">
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 3, color: TEXT_MUTED, fontSize: 10 }}>
                             <Maximize2 size={9} />{dev.specs.areaRange}
                         </span>
                     )}
                 </div>
             </div>
-        </motion.a>
-    )
+        </motion.div>
+    );
 }
+
+// ── Main Component ─────────────────────────────────────────────────────────────
 
 interface ImoveisClientProps {
     initialDevelopments: Development[];
@@ -117,6 +258,7 @@ interface ImoveisClientProps {
 }
 
 export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClientProps) {
+    const isMobile = useIsMobile();
 
     const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -124,21 +266,21 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
     const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
     const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [showMobileFilters, setShowMobileFilters] = useState(false);
+
     const listRef = useRef<HTMLDivElement>(null);
     const sentinelRef = useRef<HTMLDivElement>(null);
 
-    // Scroll selected card into view in sidebar
+    // Scroll selected sidebar card into view
     useEffect(() => {
         if (!selectedId || !listRef.current) return;
         const el = listRef.current.querySelector(`[data-dev-id="${selectedId}"]`) as HTMLElement | null;
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, [selectedId]);
 
-    const handleMarkerClick = useCallback((id: string) => {
-        setSelectedId(id);
-    }, []);
+    const handleMarkerClick = useCallback((id: string) => setSelectedId(id), []);
 
-    // ── Read URL query params on mount ────────────────────────────────────────
+    // Read URL params on mount
     useEffect(() => {
         if (typeof window === 'undefined') return;
         const params = new URLSearchParams(window.location.search);
@@ -162,7 +304,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // ── Persist active filters to URL ─────────────────────────────────────────
+    // Persist filters to URL
     useEffect(() => {
         if (typeof window === 'undefined') return;
         const params = new URLSearchParams();
@@ -176,22 +318,18 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         if (filters.location) params.set('location', filters.location);
         if (filters.status.length > 0) params.set('status', filters.status.join(','));
         const search = params.toString();
-        const newUrl = search ? `${window.location.pathname}?${search}` : window.location.pathname;
-        window.history.replaceState(null, '', newUrl);
+        window.history.replaceState(null, '', search ? `${window.location.pathname}?${search}` : window.location.pathname);
     }, [filters]);
 
-    // ── Reset pagination when filters or view mode change ────────────────────
-    useEffect(() => {
-        setVisibleCount(ITEMS_PER_PAGE);
-    }, [filters, viewMode]);
+    // Reset pagination when filters/view change
+    useEffect(() => { setVisibleCount(ITEMS_PER_PAGE); }, [filters, viewMode]);
 
     const handleCTAClick = (target: 'off-market' | 'general') => {
         setCtaTarget(target);
         setIsModalOpen(true);
     };
-
     const handleSuccess = () => {
-        window.open("https://wa.me/5581997230455", "_blank");
+        window.open('https://wa.me/5581997230455', '_blank');
         setIsModalOpen(false);
     };
 
@@ -200,11 +338,7 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         const locs = new Set<string>();
         initialDevelopments.forEach(dev => {
             const isInternational = ['dubai', 'usa'].includes(dev.region?.toLowerCase());
-            if (isInternational) {
-                locs.add(dev.location.country || dev.location.city);
-            } else {
-                locs.add(dev.location.city);
-            }
+            locs.add(isInternational ? (dev.location.country || dev.location.city) : dev.location.city);
         });
         return Array.from(locs).filter(Boolean).sort();
     }, [initialDevelopments]);
@@ -214,48 +348,33 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         const devs = filters.location
             ? initialDevelopments.filter(d => d.location.city === filters.location || d.location.country === filters.location)
             : initialDevelopments;
-        devs.forEach(dev => {
-            if (dev.location.neighborhood) hoods.add(dev.location.neighborhood);
-        });
+        devs.forEach(dev => { if (dev.location.neighborhood) hoods.add(dev.location.neighborhood); });
         return Array.from(hoods).filter(Boolean).sort();
     }, [initialDevelopments, filters.location]);
 
     const filteredDevelopments = useMemo(() => {
-        return initialDevelopments.filter((dev) => {
-            // Text search — match name, neighborhood, city, developer, description
+        return initialDevelopments.filter(dev => {
             if (filters.search) {
                 const q = filters.search.toLowerCase().trim();
-                const haystack = [
-                    dev.name, dev.developer, dev.location.neighborhood,
-                    dev.location.city, dev.location.state, dev.shortDescription,
-                ].filter(Boolean).join(' ').toLowerCase();
-                if (!haystack.includes(q)) return false;
+                const hay = [dev.name, dev.developer, dev.location.neighborhood, dev.location.city, dev.location.state, dev.shortDescription]
+                    .filter(Boolean).join(' ').toLowerCase();
+                if (!hay.includes(q)) return false;
             }
-            // Location
             if (filters.location) {
                 const matchCity = dev.location.city === filters.location;
                 const matchCountry = dev.location.country === filters.location;
                 const matchRegion = dev.region === filters.location.toLowerCase().replace(' ', '-');
                 if (!matchCity && !matchCountry && !matchRegion) return false;
             }
-            // Neighborhood
-            if (filters.neighborhood) {
-                if (dev.location.neighborhood !== filters.neighborhood) return false;
-            }
-            // Status
-            if (filters.status.length > 0) {
-                if (!filters.status.includes(dev.status)) return false;
-            }
-            // Price — only filter if development has a price
+            if (filters.neighborhood && dev.location.neighborhood !== filters.neighborhood) return false;
+            if (filters.status.length > 0 && !filters.status.includes(dev.status)) return false;
             if (dev.priceRange.min > 0 && dev.priceRange.min > filters.priceRange[1]) return false;
             if (filters.priceRange[0] > 0 && dev.priceRange.max > 0 && dev.priceRange.max < filters.priceRange[0]) return false;
-            // Bedrooms
             if (filters.bedrooms) {
                 const parts = dev.specs.bedroomsRange.split('-').map(p => parseInt(p));
                 const maxBeds = parts.length > 1 ? parts[1] : parts[0];
                 if (isNaN(maxBeds) || maxBeds < filters.bedrooms) return false;
             }
-            // Type
             if (filters.type.length > 0) {
                 const typeMatches = filters.type.some(t => {
                     const type = t.toLowerCase();
@@ -268,15 +387,13 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
                 });
                 if (!typeMatches) return false;
             }
-            // Area — parse areaRange string (e.g., "29-251m²") and check overlap
             if (filters.areaRange[0] > 0 || filters.areaRange[1] < 500) {
                 const areaStr = dev.specs.areaRange;
                 if (areaStr && areaStr !== '—') {
                     const nums = areaStr.replace(/[^\d\-–]/g, '').split(/[-–]/).map(Number).filter(n => !isNaN(n));
-                    const devAreaMin = nums[0] || 0;
-                    const devAreaMax = nums.length > 1 ? nums[1] : devAreaMin;
-                    // Check overlap: dev range must overlap filter range
-                    if (devAreaMax < filters.areaRange[0] || devAreaMin > filters.areaRange[1]) return false;
+                    const devMin = nums[0] || 0;
+                    const devMax = nums.length > 1 ? nums[1] : devMin;
+                    if (devMax < filters.areaRange[0] || devMin > filters.areaRange[1]) return false;
                 }
             }
             return true;
@@ -288,392 +405,561 @@ export default function ImoveisClient({ initialDevelopments, lang }: ImoveisClie
         });
     }, [filters, initialDevelopments]);
 
-    // ── Active filter count ───────────────────────────────────────────────────
     const activeFilterCount = useMemo(() => {
-        let count = 0;
-        if (filters.search) count++;
-        if (filters.type.length > 0) count++;
-        if (filters.bedrooms) count++;
-        if (filters.status.length > 0) count++;
-        if (filters.location) count++;
-        if (filters.neighborhood) count++;
-        if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000) count++;
-        if (filters.areaRange[0] > 0 || filters.areaRange[1] < 500) count++;
-        return count;
+        let c = 0;
+        if (filters.search) c++;
+        if (filters.type.length > 0) c++;
+        if (filters.bedrooms) c++;
+        if (filters.status.length > 0) c++;
+        if (filters.location) c++;
+        if (filters.neighborhood) c++;
+        if (filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000) c++;
+        if (filters.areaRange[0] > 0 || filters.areaRange[1] < 500) c++;
+        return c;
     }, [filters]);
 
-    // Special "Pronta Entrega" section — only when no active filters
-    const showReadySection = !filters.search && !filters.location && !filters.neighborhood
-        && !filters.bedrooms && filters.type.length === 0 && filters.status.length === 0
-        && filters.areaRange[0] === 0 && filters.areaRange[1] === 500;
-    const readyDevelopments = showReadySection
-        ? initialDevelopments.filter(dev => dev.status === 'ready' && dev.region === 'paraiba')
-        : [];
-    const mainGridDevelopments = showReadySection
-        ? filteredDevelopments.filter(dev => !readyDevelopments.find(r => r.id === dev.id))
-        : filteredDevelopments;
-
-    // Paginated slice
-    const visibleDevelopments = mainGridDevelopments.slice(0, visibleCount);
-    const hasMore = visibleCount < mainGridDevelopments.length;
+    const visibleDevelopments = filteredDevelopments.slice(0, visibleCount);
+    const hasMore = visibleCount < filteredDevelopments.length;
 
     // Intersection observer for auto-load-more
     useEffect(() => {
         if (!sentinelRef.current || !hasMore || viewMode !== 'grid') return;
         const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting) {
-                    setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, mainGridDevelopments.length));
-                }
-            },
+            entries => { if (entries[0].isIntersecting) setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, filteredDevelopments.length)); },
             { rootMargin: '200px', threshold: 0 }
         );
         observer.observe(sentinelRef.current);
         return () => observer.disconnect();
-    }, [hasMore, viewMode, mainGridDevelopments.length]);
+    }, [hasMore, viewMode, filteredDevelopments.length]);
 
-    // ── Empty portfolio state ─────────────────────────────────────────────────
+    // ── Empty portfolio ───────────────────────────────────────────────────────
     if (!initialDevelopments || initialDevelopments.length === 0) {
         return (
-            <main className="bg-[#0D0F14] min-h-screen pt-32 pb-20">
-                <div className="container-custom text-center max-w-3xl mx-auto py-20">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#141420] rounded-3xl p-12 border border-white/[0.05] shadow-2xl"
+            <main style={{ background: BG, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                    style={{ background: SURFACE, borderRadius: 24, padding: 48, border: `1px solid ${BORDER}`, maxWidth: 480, textAlign: 'center' }}>
+                    <div style={{ fontSize: 48, marginBottom: 20 }}>🏗️</div>
+                    <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, fontWeight: 700, color: TEXT, marginBottom: 12 }}>
+                        Portfólio em <em style={{ color: GOLD }}>Curadoria</em>
+                    </h1>
+                    <p style={{ color: TEXT_MUTED, fontSize: 15, lineHeight: 1.7, marginBottom: 28 }}>
+                        Estamos selecionando os melhores ativos do mercado para este catálogo exclusivo.
+                    </p>
+                    <button
+                        onClick={() => handleCTAClick('off-market')}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 44, padding: '0 24px', borderRadius: 4, background: GOLD_BG, border: `1.5px solid ${GOLD}`, color: GOLD, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
                     >
-                        <div className="w-24 h-24 bg-white/[0.03] rounded-full flex items-center justify-center mx-auto mb-8 border border-white/[0.05]">
-                            <span className="text-4xl">🏗️</span>
-                        </div>
-                        <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">
-                            Portfólio em <span className="text-[#486581] italic">Curadoria</span>
-                        </h1>
-                        <p className="text-[#9CA3AF] text-lg md:text-xl leading-relaxed mb-10 max-w-xl mx-auto">
-                            Estamos selecionando tecnicamente os melhores ativos do mercado para compor este catálogo exclusivo.
-                            <br /><br />
-                            Aguarde novidades em breve ou fale conosco para oportunidades off-market.
-                        </p>
-                        <button
-                            className="inline-flex items-center gap-3 h-14 px-8 text-[13px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white hover:bg-[#21263A] border border-[#21263A] border-l-4 border-l-[#334E68] rounded-xl transition-all duration-300 hover:-translate-y-1 mx-auto"
-                            onClick={() => handleCTAClick('off-market')}
-                        >
-                            <MessageCircle className="w-5 h-5 flex-shrink-0" />
-                            Consultar Off-Market
-                        </button>
-                    </motion.div>
-                </div>
+                        <MessageCircle size={16} /> Consultar Off-Market
+                    </button>
+                </motion.div>
+                {isModalOpen && (
+                    <LeadCaptureModal
+                        title="Acesso Off-Market" description="Preencha seus dados para receber nossa curadoria exclusiva."
+                        customInterest="Interesse em Imóveis Off-Market"
+                        onClose={() => setIsModalOpen(false)} onSuccess={handleSuccess}
+                    />
+                )}
             </main>
         );
     }
 
-    return (
-        <main className="bg-[#0D0F14] min-h-screen">
+    // ── Shared filter chip row (used in both mobile and desktop) ──────────────
+    const filterChipsMobile = (
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '0 16px 2px', scrollbarWidth: 'none' }}>
+            {[
+                { label: 'Tipo', key: 'type' as const, active: filters.type.length > 0 },
+                { label: 'Preço', key: 'priceRange' as const, active: filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000 },
+                { label: filters.bedrooms ? `${filters.bedrooms} Quartos` : 'Quartos', key: 'bedrooms' as const, active: !!filters.bedrooms },
+                { label: 'Área', key: 'areaRange' as const, active: filters.areaRange[0] > 0 || filters.areaRange[1] < 500 },
+                { label: 'Status', key: 'status' as const, active: filters.status.length > 0 },
+            ].map(chip => (
+                <button
+                    key={chip.key}
+                    onClick={() => setShowMobileFilters(true)}
+                    style={{
+                        flexShrink: 0, height: 34, padding: '0 14px', borderRadius: 4,
+                        background: chip.active ? GOLD : 'transparent',
+                        border: `1.5px solid ${chip.active ? GOLD : 'rgba(200,164,74,0.3)'}`,
+                        color: chip.active ? '#0B1928' : TEXT_MUTED,
+                        fontSize: 13, fontWeight: chip.active ? 700 : 500, cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    {chip.label}
+                </button>
+            ))}
+        </div>
+    );
 
-            {/* ── Premium Hero ──────────────────────────────────────────── */}
-            <section className="relative bg-[#141420] pt-20 pb-14 md:pt-32 md:pb-28 overflow-hidden border-b border-white/[0.05]">
-                <div
-                    className="absolute top-1/4 right-1/4 w-[200px] h-[200px] sm:w-[500px] sm:h-[500px] rounded-full pointer-events-none"
-                    style={{ background: 'radial-gradient(circle, rgba(26,26,46,0.08) 0%, transparent 70%)', filter: 'blur(60px)' }}
-                />
-                <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+    // ── MOBILE LAYOUT ─────────────────────────────────────────────────────────
+    const mobileView = (
+        <main style={{ background: BG, minHeight: '100vh', paddingTop: 64, paddingBottom: 32 }}>
 
-                <div className="container-custom relative z-10">
-                    <motion.div initial="hidden" animate="visible" variants={staggerContainer} className="max-w-4xl">
-                        <motion.div variants={slideUp} className="flex items-center gap-3 mb-6">
-                            <div className="w-8 h-px" style={{ background: '#C8A65A' }} />
-                            <span className="font-bold uppercase tracking-[0.25em] text-[11px]" style={{ color: '#C8A65A' }}>Portfólio 2026</span>
-                        </motion.div>
-                        <motion.h1 variants={slideUp} className="text-[32px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                            Curadoria de <br /><span className="italic" style={{ color: '#627D98' }}>Empreendimentos</span>
-                        </motion.h1>
-                        <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl font-light leading-relaxed max-w-2xl">
-                            Seleção técnica dos melhores ativos imobiliários. Do luxo absoluto à alta rentabilidade em compactos, nos principais hubs de valorização.
-                        </motion.p>
-                    </motion.div>
+            {/* Search bar */}
+            <div style={{ padding: '16px 16px 12px' }}>
+                <div style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    background: SURFACE, border: `1.5px solid ${BORDER}`,
+                    borderRadius: 16, padding: '0 14px', height: 48,
+                }}>
+                    <Search size={16} style={{ color: TEXT_MUTED, flexShrink: 0 }} />
+                    <input
+                        type="text"
+                        placeholder={availableLocations[0] ? `${availableLocations[0]}…` : 'Buscar imóveis…'}
+                        value={filters.search}
+                        onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+                        style={{
+                            flex: 1, background: 'transparent', border: 'none', outline: 'none',
+                            color: TEXT, fontSize: 14,
+                        }}
+                    />
+                    <button
+                        onClick={() => setShowMobileFilters(true)}
+                        style={{ display: 'flex', alignItems: 'center', gap: 4, color: GOLD, fontSize: 13, fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0 }}
+                    >
+                        Filtros <ChevronRight size={14} />
+                    </button>
                 </div>
-            </section>
+            </div>
 
-            {/* ── Advanced Filters ───────────────────────────────────────── */}
-            <AdvancedFilter
-                filters={filters}
-                onFilterChange={setFilters}
-                locations={availableLocations}
-                neighborhoods={availableNeighborhoods}
-            />
+            {/* Chip row */}
+            {filterChipsMobile}
 
-            {/* ── Pronta Entrega special section ─────────────────────────── */}
-            {readyDevelopments.length > 0 && (
-                <section className="py-16 bg-[#1A1E2A] overflow-hidden border-b border-white/[0.05]">
-                    <div className="container-custom">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            className="flex items-center gap-4 mb-10"
-                        >
-                            <span className="bg-[#102A43]/20 text-[#486581] px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px] border border-[#334E68]/30">
-                                Pronta Entrega
-                            </span>
-                            <h2 className="font-display text-2xl md:text-3xl text-white font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                                Oportunidades Imediatas
-                            </h2>
-                        </motion.div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {readyDevelopments.map((dev, idx) => (
-                                <DevelopmentCard key={dev.id} development={dev} index={idx} lang={lang} />
-                            ))}
-                        </div>
+            {/* Results toolbar */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 8px' }}>
+                <button
+                    onClick={() => setViewMode(v => v === 'map' ? 'grid' : 'map')}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        height: 34, padding: '0 14px', borderRadius: 4,
+                        background: viewMode === 'map' ? GOLD_BG : 'transparent',
+                        border: `1.5px solid ${viewMode === 'map' ? GOLD : 'rgba(200,164,74,0.25)'}`,
+                        color: viewMode === 'map' ? GOLD : TEXT_MUTED, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                    }}
+                >
+                    <MapPin size={13} /> Mapa
+                </button>
+                <button
+                    onClick={() => setFilters(f => ({ ...f, sort: f.sort === 'newest' ? 'relevant' : 'newest' }))}
+                    style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', color: TEXT_MUTED, fontSize: 12, cursor: 'pointer' }}
+                >
+                    Ordenar: {filters.sort === 'newest' ? 'Mais Recentes' : 'Relevantes'}
+                    <ChevronDown size={13} />
+                </button>
+            </div>
+
+            {/* Count */}
+            <div style={{ padding: '0 16px 12px' }}>
+                <span style={{ color: TEXT, fontSize: 14 }}>
+                    <strong style={{ color: TEXT }}>{filteredDevelopments.length}</strong> imóveis encontrados
+                </span>
+            </div>
+
+            {/* Map view */}
+            {viewMode === 'map' ? (
+                <div style={{ margin: '0 16px 20px', borderRadius: 16, overflow: 'hidden', border: `1px solid ${BORDER}`, height: 420 }}>
+                    <PropertyMap
+                        developments={filteredDevelopments}
+                        height="420px"
+                        lang={lang}
+                        darkMode
+                        selectedId={selectedId ?? undefined}
+                        onMarkerClick={handleMarkerClick}
+                    />
+                </div>
+            ) : null}
+
+            {/* Card list */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '0 16px' }}>
+                {visibleDevelopments.length > 0 ? visibleDevelopments.map(dev => (
+                    <PropertyCard key={dev.id} dev={dev} lang={lang} />
+                )) : (
+                    <div style={{ textAlign: 'center', padding: '48px 0', color: TEXT_MUTED }}>
+                        <div style={{ fontSize: 36, marginBottom: 12, opacity: 0.3 }}>🔍</div>
+                        <p style={{ marginBottom: 16 }}>Nenhum imóvel encontrado</p>
+                        <button onClick={() => setFilters(DEFAULT_FILTERS)}
+                            style={{ padding: '8px 20px', borderRadius: 4, border: `1.5px solid ${GOLD}`, background: 'transparent', color: GOLD, fontSize: 13, cursor: 'pointer' }}>
+                            Limpar filtros
+                        </button>
                     </div>
-                </section>
-            )}
+                )}
+            </div>
 
-            {/* ── Main Grid / Map ────────────────────────────────────────── */}
-            <section className="py-16 md:py-24 bg-[#0D0F14]">
-                <div className="container-custom">
+            {/* Load more sentinel */}
+            {hasMore && <div ref={sentinelRef} style={{ height: 20 }} />}
 
-                    {/* Toolbar */}
+            {/* Mobile filters drawer */}
+            <AnimatePresence>
+                {showMobileFilters && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="mb-8 flex flex-wrap items-center justify-between gap-3"
+                        exit={{ opacity: 0 }}
+                        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 200 }}
+                        onClick={() => setShowMobileFilters(false)}
                     >
-                        {/* Left: result count + filter badge */}
-                        <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-2 h-2 flex-shrink-0 rounded-full" style={{ background: '#C8A65A' }} />
-                            <span className="font-bold uppercase tracking-widest text-xs truncate" style={{ color: '#9CA3AF' }}>
-                                {filteredDevelopments.length} {filteredDevelopments.length === 1 ? 'resultado' : 'resultados'}
-                            </span>
-                            <AnimatePresence>
-                                {activeFilterCount > 0 && (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.7 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.7 }}
-                                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
-                                        style={{ background: 'rgba(200,166,90,0.15)', color: '#C8A65A', border: '1px solid rgba(200,166,90,0.3)' }}
-                                    >
-                                        <SlidersHorizontal size={10} />
-                                        {activeFilterCount} filtro{activeFilterCount !== 1 ? 's' : ''}
-                                        <button
-                                            onClick={() => setFilters(DEFAULT_FILTERS)}
-                                            className="ml-0.5 opacity-60 hover:opacity-100 transition-opacity"
-                                            aria-label="Limpar filtros"
-                                        >
-                                            ×
-                                        </button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-
-                        {/* View toggle */}
-                        <div className="flex items-center gap-1 p-1 rounded-xl flex-shrink-0" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                            <button
-                                onClick={() => setViewMode('grid')}
-                                className="flex items-center gap-2 h-9 px-3 sm:px-4 rounded-lg text-xs font-semibold transition-all"
-                                style={viewMode === 'grid'
-                                    ? { background: 'rgba(200,166,90,0.2)', color: '#C8A65A', border: '1px solid rgba(200,166,90,0.3)' }
-                                    : { color: '#6B7280' }
-                                }
-                            >
-                                <Grid3X3 size={14} />
-                                <span>Grade</span>
-                            </button>
-                            <button
-                                onClick={() => { setViewMode('map'); setSelectedId(null); }}
-                                className="flex items-center gap-2 h-9 px-3 sm:px-4 rounded-lg text-xs font-semibold transition-all"
-                                style={viewMode === 'map'
-                                    ? { background: 'rgba(200,166,90,0.2)', color: '#C8A65A', border: '1px solid rgba(200,166,90,0.3)' }
-                                    : { color: '#6B7280' }
-                                }
-                            >
-                                <Map size={14} />
-                                <span>Mapa</span>
-                            </button>
-                        </div>
-                    </motion.div>
-
-                    {/* ── MAP VIEW — split-view ─────────────────────────────── */}
-                    {viewMode === 'map' && (
-                        <AnimatePresence mode="wait">
-                            {filteredDevelopments.length === 0 ? (
-                                <motion.div
-                                    key="map-empty"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 text-center gap-4 mb-10"
-                                    style={{ height: MAP_HEIGHT, background: '#141420' }}
-                                >
-                                    <span style={{ fontSize: 44, opacity: 0.25 }}>🗺️</span>
-                                    <p style={{ color: '#9CA3AF', fontSize: 14, fontWeight: 500, margin: 0 }}>
-                                        Nenhum empreendimento com esses filtros
-                                    </p>
-                                    <button
-                                        onClick={() => setFilters(DEFAULT_FILTERS)}
-                                        className="px-5 py-2.5 rounded-xl border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors"
-                                    >
-                                        Limpar filtros
-                                    </button>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    key="map-split"
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                    className="mb-10 rounded-2xl overflow-hidden border border-white/[0.08]"
-                                    style={{ height: SPLIT_MAP_HEIGHT }}
-                                >
-                                    {/* Mobile stacked / Desktop side-by-side */}
-                                    <div className="flex flex-col lg:flex-row h-full">
-
-                                        {/* ── Map pane ── */}
-                                        <div className="flex-none h-[350px] lg:h-full lg:flex-1 relative">
-                                            <PropertyMap
-                                                developments={filteredDevelopments}
-                                                height="100%"
-                                                lang={lang}
-                                                darkMode={true}
-                                                className="w-full h-full"
-                                                selectedId={selectedId ?? undefined}
-                                                onMarkerClick={handleMarkerClick}
-                                            />
-                                        </div>
-
-                                        {/* ── Sidebar list ── */}
-                                        <div
-                                            ref={listRef}
-                                            className="flex-none lg:w-[360px] xl:w-[400px] overflow-y-auto border-t lg:border-t-0 lg:border-l border-white/[0.08]"
-                                            style={{ background: '#0F121A' }}
-                                        >
-                                            {/* Header */}
-                                            <div className="sticky top-0 z-10 px-4 py-3 border-b border-white/[0.06]"
-                                                style={{ background: 'rgba(15,18,26,0.95)', backdropFilter: 'blur(8px)' }}>
-                                                <p className="text-xs font-bold uppercase tracking-widest text-[#6B7280]">
-                                                    {filteredDevelopments.length} empreendimento{filteredDevelopments.length !== 1 ? 's' : ''}
-                                                </p>
-                                                {selectedId && (
-                                                    <motion.a
-                                                        initial={{ opacity: 0, y: -4 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        href={`/${lang}/imoveis/${filteredDevelopments.find(d => d.id === selectedId)?.slug}`}
-                                                        className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-[#2C7BE5] hover:text-[#60A5FA] transition-colors"
-                                                    >
-                                                        Ver detalhes →
-                                                    </motion.a>
-                                                )}
-                                            </div>
-
-                                            {/* Cards */}
-                                            {filteredDevelopments.map((dev) => (
-                                                <div key={dev.id} data-dev-id={dev.id}>
-                                                    <MapListCard
-                                                        dev={dev}
-                                                        lang={lang}
-                                                        selected={selectedId === dev.id}
-                                                        onClick={() => setSelectedId(prev => prev === dev.id ? null : dev.id)}
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    )}
-
-                    {/* ── GRID VIEW ────────────────────────────────────────── */}
-                    {viewMode === 'grid' && mainGridDevelopments.length > 0 ? (
-                        <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-                                {visibleDevelopments.map((dev, index) => (
-                                    <DevelopmentCard key={dev.id} development={dev} index={index} lang={lang} />
-                                ))}
+                        <motion.div
+                            initial={{ y: '100%' }}
+                            animate={{ y: 0 }}
+                            exit={{ y: '100%' }}
+                            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                            onClick={e => e.stopPropagation()}
+                            style={{
+                                position: 'absolute', bottom: 0, left: 0, right: 0,
+                                background: SURFACE, borderRadius: '8px 8px 0 0',
+                                padding: '20px 20px 36px',
+                                maxHeight: '80vh', overflowY: 'auto',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                                <h3 style={{ color: TEXT, fontSize: 17, fontWeight: 700, margin: 0 }}>
+                                    <SlidersHorizontal size={16} style={{ display: 'inline', marginRight: 8, color: GOLD }} />
+                                    Filtros
+                                </h3>
+                                <button onClick={() => setShowMobileFilters(false)}
+                                    style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', border: 'none', color: TEXT_MUTED, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <X size={16} />
+                                </button>
                             </div>
 
-                            {/* Sentinel + "Carregar mais" button */}
-                            {hasMore && (
-                                <div ref={sentinelRef} className="flex flex-col items-center gap-3 mt-12">
-                                    <button
-                                        onClick={() => setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, mainGridDevelopments.length))}
-                                        className="flex items-center gap-2 px-8 py-3.5 rounded-xl border border-white/20 text-[#9CA3AF] text-sm font-semibold hover:bg-white/5 hover:text-white transition-all"
-                                    >
-                                        <ChevronDown size={15} />
-                                        Carregar mais
-                                        <span className="text-xs text-[#6B7280]">
-                                            ({visibleCount} de {mainGridDevelopments.length})
-                                        </span>
+                            {/* Busca */}
+                            <FilterSection label="Busca">
+                                <input
+                                    type="text"
+                                    placeholder="Nome, bairro, cidade…"
+                                    value={filters.search}
+                                    onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+                                    style={{ width: '100%', background: BG, border: `1.5px solid ${BORDER}`, borderRadius: 4, padding: '10px 14px', color: TEXT, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+                                />
+                            </FilterSection>
+
+                            {/* Quartos */}
+                            <FilterSection label="Quartos">
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                    {[null, 1, 2, 3, 4].map(n => (
+                                        <button key={n ?? 'all'} onClick={() => setFilters(f => ({ ...f, bedrooms: n }))}
+                                            style={{
+                                                flex: 1, height: 36, borderRadius: 4,
+                                                background: filters.bedrooms === n ? GOLD : BG,
+                                                border: `1.5px solid ${filters.bedrooms === n ? GOLD : BORDER}`,
+                                                color: filters.bedrooms === n ? '#0B1928' : TEXT_MUTED,
+                                                fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                            }}>
+                                            {n === null ? 'Todos' : `${n}+`}
+                                        </button>
+                                    ))}
+                                </div>
+                            </FilterSection>
+
+                            {/* Tipo */}
+                            <FilterSection label="Tipo">
+                                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                                    {['Apto', 'Casa', 'Flat', 'Cobertura', 'Garden'].map(t => {
+                                        const val = t.toLowerCase();
+                                        const active = filters.type.includes(val);
+                                        return (
+                                            <button key={t} onClick={() => setFilters(f => ({ ...f, type: active ? f.type.filter(x => x !== val) : [...f.type, val] }))}
+                                                style={{
+                                                    height: 34, padding: '0 14px', borderRadius: 4,
+                                                    background: active ? GOLD_BG : BG,
+                                                    border: `1.5px solid ${active ? GOLD : BORDER}`,
+                                                    color: active ? GOLD : TEXT_MUTED,
+                                                    fontSize: 13, fontWeight: active ? 700 : 500, cursor: 'pointer',
+                                                }}>
+                                                {t}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </FilterSection>
+
+                            {/* Localização */}
+                            <FilterSection label="Localização">
+                                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                                    <button onClick={() => setFilters(f => ({ ...f, location: null, neighborhood: null }))}
+                                        style={{ height: 34, padding: '0 14px', borderRadius: 4, background: !filters.location ? GOLD_BG : BG, border: `1.5px solid ${!filters.location ? GOLD : BORDER}`, color: !filters.location ? GOLD : TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
+                                        Todas
+                                    </button>
+                                    {availableLocations.map(loc => {
+                                        const active = filters.location === loc;
+                                        return (
+                                            <button key={loc} onClick={() => setFilters(f => ({ ...f, location: active ? null : loc, neighborhood: null }))}
+                                                style={{ height: 34, padding: '0 14px', borderRadius: 4, background: active ? GOLD_BG : BG, border: `1.5px solid ${active ? GOLD : BORDER}`, color: active ? GOLD : TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
+                                                {loc}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </FilterSection>
+
+                            {/* Actions */}
+                            <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+                                <button onClick={() => { setFilters(DEFAULT_FILTERS); setShowMobileFilters(false); }}
+                                    style={{ flex: 1, height: 44, borderRadius: 4, border: `1.5px solid ${BORDER}`, background: BG, color: TEXT_MUTED, fontSize: 14, cursor: 'pointer' }}>
+                                    Limpar
+                                </button>
+                                <button onClick={() => setShowMobileFilters(false)}
+                                    style={{ flex: 2, height: 44, borderRadius: 4, border: 'none', background: GOLD, color: '#0B1928', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                                    Ver {filteredDevelopments.length} imóveis
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Lead capture modal */}
+            <AnimatePresence>
+                {isModalOpen && (
+                    <LeadCaptureModal
+                        title={ctaTarget === 'off-market' ? 'Acesso Off-Market' : 'Consultoria IMI'}
+                        description={ctaTarget === 'off-market'
+                            ? 'Receba nossa curadoria exclusiva de imóveis que não estão no catálogo aberto.'
+                            : 'Fale com nossos especialistas para um atendimento baseado em dados.'}
+                        customInterest={ctaTarget === 'off-market' ? 'Interesse em Imóveis Off-Market' : 'Consultoria Geral - Listagem de Imóveis'}
+                        onClose={() => setIsModalOpen(false)}
+                        onSuccess={handleSuccess}
+                    />
+                )}
+            </AnimatePresence>
+        </main>
+    );
+
+    // ── DESKTOP LAYOUT ────────────────────────────────────────────────────────
+    const desktopView = (
+        <main style={{ background: BG, minHeight: '100vh', paddingTop: 80, paddingBottom: 60 }}>
+            <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px' }}>
+
+                {/* Top search bar */}
+                <div style={{ marginBottom: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 16, padding: '0 16px', height: 52, maxWidth: 720 }}>
+                        <Search size={18} style={{ color: TEXT_MUTED, flexShrink: 0 }} />
+                        <input
+                            type="text"
+                            placeholder="Buscar por nome, bairro, cidade ou tipo…"
+                            value={filters.search}
+                            onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+                            style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: TEXT, fontSize: 14 }}
+                        />
+                        {filters.search && (
+                            <button onClick={() => setFilters(f => ({ ...f, search: '' }))}
+                                style={{ background: 'none', border: 'none', color: TEXT_MUTED, cursor: 'pointer', display: 'flex', padding: 4 }}>
+                                <X size={15} />
+                            </button>
+                        )}
+                        <button
+                            onClick={() => {/* already filtering live */ }}
+                            style={{ height: 36, padding: '0 18px', borderRadius: 4, background: GOLD, border: 'none', color: '#0B1928', fontSize: 13, fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}>
+                            Buscar
+                        </button>
+                    </div>
+                </div>
+
+                {/* Filter chip row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+                    {[
+                        { label: 'Tipo', active: filters.type.length > 0 },
+                        { label: 'Preço', active: filters.priceRange[0] > 0 || filters.priceRange[1] < 10000000 },
+                        { label: filters.bedrooms ? `${filters.bedrooms}+ Quartos` : 'Quartos', active: !!filters.bedrooms },
+                        { label: 'Banheiros', active: false },
+                        { label: 'Vagas', active: false },
+                        { label: 'Área', active: filters.areaRange[0] > 0 || filters.areaRange[1] < 500 },
+                    ].map(chip => (
+                        <button key={chip.label}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 6,
+                                height: 36, padding: '0 14px', borderRadius: 4,
+                                background: chip.active ? GOLD_BG : 'transparent',
+                                border: `1.5px solid ${chip.active ? GOLD : 'rgba(200,164,74,0.3)'}`,
+                                color: chip.active ? GOLD : TEXT_MUTED,
+                                fontSize: 13, fontWeight: chip.active ? 700 : 500, cursor: 'pointer',
+                            }}>
+                            {chip.label} <ChevronDown size={13} />
+                        </button>
+                    ))}
+                    {activeFilterCount > 0 && (
+                        <button onClick={() => setFilters(DEFAULT_FILTERS)}
+                            style={{ height: 36, padding: '0 14px', borderRadius: 4, border: 'none', background: 'none', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}>
+                            Limpar filtros
+                        </button>
+                    )}
+                </div>
+
+                {/* Results toolbar */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <span style={{ color: TEXT, fontSize: 15 }}>
+                            <strong>{filteredDevelopments.length}</strong> imóveis encontrados
+                        </span>
+                        {activeFilterCount > 0 && (
+                            <span style={{ fontSize: 12, color: GOLD, background: GOLD_BG, border: `1px solid rgba(200,164,74,0.3)`, borderRadius: 4, padding: '2px 10px' }}>
+                                {activeFilterCount} filtro{activeFilterCount !== 1 ? 's' : ''} ativo{activeFilterCount !== 1 ? 's' : ''}
+                            </span>
+                        )}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        {/* Sort */}
+                        <select
+                            value={filters.sort}
+                            onChange={e => setFilters(f => ({ ...f, sort: e.target.value as FilterState['sort'] }))}
+                            style={{ background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 4, padding: '6px 12px', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer', outline: 'none' }}>
+                            <option value="relevant">Ordenar por: Relevância</option>
+                            <option value="newest">Mais Recentes</option>
+                            <option value="price-asc">Menor Preço</option>
+                            <option value="price-desc">Maior Preço</option>
+                        </select>
+                        {/* View toggle */}
+                        <div style={{ display: 'flex', gap: 4, background: SURFACE, border: `1.5px solid ${BORDER}`, borderRadius: 4, padding: 4 }}>
+                            {([['grid', Grid3X3], ['map', Map]] as const).map(([mode, Icon]) => (
+                                <button key={mode}
+                                    onClick={() => { setViewMode(mode); if (mode === 'map') setSelectedId(null); }}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: 6,
+                                        height: 32, padding: '0 12px', borderRadius: 8,
+                                        background: viewMode === mode ? GOLD_BG : 'transparent',
+                                        border: viewMode === mode ? `1.5px solid ${GOLD}` : '1.5px solid transparent',
+                                        color: viewMode === mode ? GOLD : TEXT_MUTED,
+                                        fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                                    }}>
+                                    <Icon size={14} />
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* MAP split view */}
+                {viewMode === 'map' && (
+                    <div style={{ display: 'flex', gap: 0, height: 'clamp(500px, calc(100vh - 220px), 860px)', borderRadius: 20, overflow: 'hidden', border: `1px solid ${BORDER}` }}>
+                        {/* Map pane */}
+                        <div style={{ flex: 1, minWidth: 0, position: 'relative' }}>
+                            {filteredDevelopments.length > 0 ? (
+                                <PropertyMap
+                                    developments={filteredDevelopments}
+                                    height="100%"
+                                    lang={lang}
+                                    darkMode
+                                    selectedId={selectedId ?? undefined}
+                                    onMarkerClick={handleMarkerClick}
+                                />
+                            ) : (
+                                <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, color: TEXT_MUTED }}>
+                                    <span style={{ fontSize: 40, opacity: 0.2 }}>🗺️</span>
+                                    <p style={{ margin: 0, fontSize: 14 }}>Nenhum resultado com esses filtros</p>
+                                    <button onClick={() => setFilters(DEFAULT_FILTERS)}
+                                        style={{ padding: '8px 20px', borderRadius: 4, border: `1.5px solid ${BORDER}`, background: 'transparent', color: TEXT_MUTED, fontSize: 13, cursor: 'pointer' }}>
+                                        Limpar filtros
                                     </button>
                                 </div>
                             )}
-                        </>
-                    ) : viewMode === 'grid' && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-center py-24 bg-[#141420] rounded-3xl border border-dashed border-white/[0.1]"
-                        >
-                            <div className="w-20 h-20 bg-white/[0.05] rounded-full flex items-center justify-center mx-auto mb-6">
-                                <Search className="w-8 h-8 text-[#486581]" strokeWidth={1.5} />
+                        </div>
+                        {/* Sidebar */}
+                        <div ref={listRef} style={{ width: 380, flexShrink: 0, overflowY: 'auto', borderLeft: `1px solid ${BORDER}`, background: SURFACE }}>
+                            <div style={{ position: 'sticky', top: 0, background: 'rgba(15,32,53,0.96)', backdropFilter: 'blur(8px)', padding: '12px 14px', borderBottom: `1px solid ${BORDER}`, zIndex: 5 }}>
+                                <p style={{ margin: 0, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: TEXT_MUTED }}>
+                                    {filteredDevelopments.length} empreendimento{filteredDevelopments.length !== 1 ? 's' : ''}
+                                </p>
+                                {selectedId && (
+                                    <a href={`/${lang}/imoveis/${filteredDevelopments.find(d => d.id === selectedId)?.slug}`}
+                                        style={{ display: 'block', marginTop: 4, fontSize: 11, color: GOLD, textDecoration: 'none', fontWeight: 600 }}>
+                                        Ver detalhes →
+                                    </a>
+                                )}
                             </div>
-                            <h3 className="font-display text-2xl font-bold text-white mb-2">Nenhum ativo encontrado</h3>
-                            <p className="text-[#9CA3AF] max-w-xs mx-auto mb-8">
-                                Não encontramos imóveis com esses filtros exatos. Tente remover alguns filtros.
-                            </p>
-                            <button
-                                onClick={() => setFilters(DEFAULT_FILTERS)}
-                                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/20 text-white font-medium hover:bg-white/5 transition-colors"
-                            >
-                                Limpar filtros
-                            </button>
-                        </motion.div>
-                    )}
-                </div>
-            </section>
+                            {filteredDevelopments.map(dev => (
+                                <MapSidebarCard key={dev.id} dev={dev} lang={lang}
+                                    selected={selectedId === dev.id}
+                                    onClick={() => setSelectedId(prev => prev === dev.id ? null : dev.id)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
 
-            {/* ── CTA Final ─────────────────────────────────────────────── */}
-            <section className="bg-[#141420] text-white py-20 md:py-32 text-center relative overflow-hidden border-t border-white/[0.05]">
-                <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
-                <div className="container-custom relative z-10">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        variants={staggerContainer}
-                    >
-                        <motion.h3 variants={slideUp} className="text-3xl md:text-5xl font-black mb-6 tracking-tight text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-                            Não encontrou o <span className="text-[#486581] italic">imóvel ideal?</span>
-                        </motion.h3>
-                        <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-                            Nossa curadoria vai além do catálogo. Fale com nossos especialistas para uma prospecção off-market personalizada.
-                        </motion.p>
-                        <motion.div variants={slideUp}>
-                            <button
-                                className="inline-flex items-center gap-3 h-14 px-9 text-sm font-bold tracking-wide bg-[#102A43] text-white hover:bg-[#1A2F44] border border-[#1A2F44] hover:border-[#334E68]/50 rounded-xl transition-all duration-300 hover:-translate-y-0.5 shadow-[0_4px_20px_rgba(10,25,41,0.3)]"
-                                onClick={() => handleCTAClick('general')}
-                            >
-                                <MessageCircle className="w-4 h-4 flex-shrink-0 text-white/80" />
-                                Iniciar Consultoria
-                            </button>
-                        </motion.div>
-                    </motion.div>
+                {/* GRID view */}
+                {viewMode === 'grid' && (
+                    <>
+                        {filteredDevelopments.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '80px 0', background: SURFACE, borderRadius: 20, border: `1px dashed rgba(200,164,74,0.2)` }}>
+                                <div style={{ fontSize: 40, opacity: 0.2, marginBottom: 12 }}>🔍</div>
+                                <h3 style={{ color: TEXT, fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Nenhum ativo encontrado</h3>
+                                <p style={{ color: TEXT_MUTED, marginBottom: 20 }}>Tente remover alguns filtros.</p>
+                                <button onClick={() => setFilters(DEFAULT_FILTERS)}
+                                    style={{ padding: '10px 24px', borderRadius: 4, border: `1.5px solid ${GOLD}`, background: 'transparent', color: GOLD, fontSize: 14, cursor: 'pointer' }}>
+                                    Limpar filtros
+                                </button>
+                            </div>
+                        ) : (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+                                {visibleDevelopments.map(dev => (
+                                    <PropertyCard key={dev.id} dev={dev} lang={lang} />
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Load more sentinel + button */}
+                        {hasMore && (
+                            <div ref={sentinelRef} style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
+                                <button
+                                    onClick={() => setVisibleCount(prev => Math.min(prev + ITEMS_PER_PAGE, filteredDevelopments.length))}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: 8,
+                                        height: 44, padding: '0 28px', borderRadius: 4,
+                                        border: `1.5px solid ${BORDER}`, background: 'transparent',
+                                        color: TEXT_MUTED, fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                                    }}>
+                                    <ChevronDown size={16} />
+                                    Carregar mais
+                                    <span style={{ fontSize: 12, opacity: 0.6 }}>({visibleCount} de {filteredDevelopments.length})</span>
+                                </button>
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {/* Bottom CTA */}
+                <div style={{ marginTop: 64, background: SURFACE, borderRadius: 20, border: `1px solid ${BORDER}`, padding: '40px 40px', textAlign: 'center' }}>
+                    <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, fontWeight: 700, color: TEXT, marginBottom: 10 }}>
+                        Não encontrou o <em style={{ color: GOLD }}>imóvel ideal?</em>
+                    </h3>
+                    <p style={{ color: TEXT_MUTED, fontSize: 15, lineHeight: 1.7, maxWidth: 520, margin: '0 auto 24px' }}>
+                        Nossa curadoria vai além do catálogo. Fale com nossos especialistas para uma prospecção off-market personalizada.
+                    </p>
+                    <button
+                        onClick={() => handleCTAClick('general')}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, height: 46, padding: '0 28px', borderRadius: 4, background: GOLD_BG, border: `1.5px solid ${GOLD}`, color: GOLD, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                        <MessageCircle size={16} /> Iniciar Consultoria
+                    </button>
                 </div>
-                <AnimatePresence>
-                    {isModalOpen && (
-                        <LeadCaptureModal
-                            title={ctaTarget === 'off-market' ? "Acesso Off-Market" : "Consultoria IMI"}
-                            description={ctaTarget === 'off-market'
-                                ? "Preencha seus dados para receber nossa curadoria exclusiva de imóveis que não estão no catálogo aberto."
-                                : "Fale com nossos especialistas e receba um atendimento baseado em dados e segurança para seu próximo investimento."}
-                            customInterest={ctaTarget === 'off-market' ? "Interesse em Imóveis Off-Market" : "Consultoria Geral - Listagem de Imóveis"}
-                            onClose={() => setIsModalOpen(false)}
-                            onSuccess={handleSuccess}
-                        />
-                    )}
-                </AnimatePresence>
-            </section>
+            </div>
+
+            {/* Lead modal */}
+            <AnimatePresence>
+                {isModalOpen && (
+                    <LeadCaptureModal
+                        title={ctaTarget === 'off-market' ? 'Acesso Off-Market' : 'Consultoria IMI'}
+                        description={ctaTarget === 'off-market'
+                            ? 'Receba nossa curadoria exclusiva de imóveis que não estão no catálogo aberto.'
+                            : 'Fale com nossos especialistas para um atendimento baseado em dados.'}
+                        customInterest={ctaTarget === 'off-market' ? 'Interesse em Imóveis Off-Market' : 'Consultoria Geral - Listagem de Imóveis'}
+                        onClose={() => setIsModalOpen(false)}
+                        onSuccess={handleSuccess}
+                    />
+                )}
+            </AnimatePresence>
         </main>
+    );
+
+    return isMobile ? mobileView : desktopView;
+}
+
+// ── Small helper component ────────────────────────────────────────────────────
+
+function FilterSection({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+        <div style={{ marginBottom: 20 }}>
+            <p style={{ color: TEXT_MUTED, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10, margin: '0 0 10px' }}>{label}</p>
+            {children}
+        </div>
     );
 }

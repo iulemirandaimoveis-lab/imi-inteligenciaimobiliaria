@@ -4,12 +4,20 @@ import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
 
 // Use direct supabase-js client for public data fetching
 // This avoids issues with cookies and server context in Next.js 14
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-const supabase = createClient(supabaseUrl, supabaseKey)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _supabase: ReturnType<typeof createClient<any>> | null = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getSupabase(): ReturnType<typeof createClient<any>> {
+    if (!_supabase) {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
+        _supabase = createClient(supabaseUrl, supabaseKey)
+    }
+    return _supabase!
+}
 
 export async function getDevelopments(): Promise<Development[]> {
-    const { data: devs, error } = await supabase
+    const { data: devs, error } = await getSupabase()
         .from('developments')
         .select('*')
         .order('display_order', { ascending: true })
@@ -19,11 +27,11 @@ export async function getDevelopments(): Promise<Development[]> {
         return []
     }
 
-    return devs.map((dev: any) => mapDatabaseToDevelopment(dev))
+    return devs.map((dev: Record<string, unknown>) => mapDatabaseToDevelopment(dev))
 }
 
 export async function getDevelopmentBySlug(slug: string): Promise<Development | null> {
-    const { data: dev, error } = await supabase
+    const { data: dev, error } = await getSupabase()
         .from('developments')
         .select('*')
         .eq('slug', slug)
@@ -36,21 +44,54 @@ export async function getDevelopmentBySlug(slug: string): Promise<Development | 
     return mapDatabaseToDevelopment(dev)
 }
 
-function mapDatabaseToDevelopment(dbDev: any): Development {
+// Database row type for developments table
+interface DbDevelopment {
+    id: string
+    slug: string
+    name: string
+    developer: string
+    developer_logo?: string
+    status: string
+    region: string
+    neighborhood?: string
+    city?: string
+    state?: string
+    address?: string
+    lat?: number
+    lng?: number
+    delivery_date?: string
+    registration_number?: string
+    description?: string
+    short_description?: string
+    features?: string[]
+    specs?: { bedroomsRange?: string; areaRange?: string }
+    price_min?: number
+    price_max?: number
+    images?: { main?: string; gallery?: string[]; videos?: string[]; floorPlans?: string[] }
+    units?: Development['units']
+    tags?: string[]
+    display_order?: number
+    is_highlighted?: boolean
+    created_at?: string
+    updated_at?: string
+}
+
+function mapDatabaseToDevelopment(raw: Record<string, unknown>): Development {
+    const dbDev = raw as unknown as DbDevelopment
     return {
         id: dbDev.id,
         slug: dbDev.slug,
         name: dbDev.name,
         developer: dbDev.developer,
         developerLogo: dbDev.developer_logo,
-        status: dbDev.status,
-        region: dbDev.region,
+        status: dbDev.status as Development['status'],
+        region: dbDev.region as Development['region'],
         location: {
-            neighborhood: dbDev.neighborhood,
-            city: dbDev.city,
-            state: dbDev.state,
-            country: dbDev.region === 'internacional' ? (dbDev.state || dbDev.city) : 'Brasil',
-            region: dbDev.region,
+            neighborhood: dbDev.neighborhood || '',
+            city: dbDev.city || '',
+            state: dbDev.state || '',
+            country: dbDev.region === 'internacional' ? (dbDev.state || dbDev.city || '') : 'Brasil',
+            region: dbDev.region as Development['region'],
             address: dbDev.address,
             coordinates: {
                 lat: dbDev.lat || 0,
@@ -59,8 +100,8 @@ function mapDatabaseToDevelopment(dbDev: any): Development {
         },
         deliveryDate: dbDev.delivery_date,
         registrationNumber: dbDev.registration_number,
-        description: dbDev.description,
-        shortDescription: dbDev.short_description,
+        description: dbDev.description || '',
+        shortDescription: dbDev.short_description || '',
         features: dbDev.features || [],
         specs: {
             bedroomsRange: dbDev.specs?.bedroomsRange || 'N/A',
@@ -80,8 +121,8 @@ function mapDatabaseToDevelopment(dbDev: any): Development {
         tags: dbDev.tags || [],
         order: dbDev.display_order || 99,
         isHighlighted: dbDev.is_highlighted || false,
-        createdAt: dbDev.created_at,
-        updatedAt: dbDev.updated_at
+        createdAt: dbDev.created_at || '',
+        updatedAt: dbDev.updated_at || ''
     }
 }
 
@@ -99,7 +140,7 @@ export interface BlogPost {
 }
 
 export async function getLatestPosts(limit = 6): Promise<BlogPost[]> {
-    const { data: posts, error } = await supabase
+    const { data: posts, error } = await getSupabase()
         .from('content_publications')
         .select(`
             id,
@@ -120,7 +161,8 @@ export async function getLatestPosts(limit = 6): Promise<BlogPost[]> {
         return []
     }
 
-    return posts.map((p: any) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase join returns dynamic shape
+    return posts.map((p: Record<string, any>) => ({
         id: p.id,
         title: p.content_item?.title || 'Sem título',
         slug: p.id,
@@ -135,7 +177,7 @@ export async function getLatestPosts(limit = 6): Promise<BlogPost[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-    const { data: post, error } = await supabase
+    const { data: post, error } = await getSupabase()
         .from('content_publications')
         .select(`
             id,

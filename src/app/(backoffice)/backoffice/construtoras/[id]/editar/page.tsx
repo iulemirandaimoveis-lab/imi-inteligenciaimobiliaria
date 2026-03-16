@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
-  ArrowLeft,
   Building2,
   Save,
   Loader2,
@@ -21,6 +20,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // Design tokens
 export default function EditarConstrutoraPage() {
@@ -211,21 +211,16 @@ export default function EditarConstrutoraPage() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <button
-          onClick={() => router.back()}
-          className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors hover:opacity-80"
-          style={{ border: `1px solid ${T.border}`, color: T.text }}
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold" style={{ color: T.text }}>Editar Construtora</h1>
-          <p className="text-sm mt-1" style={{ color: T.textMuted }}>{formData.name}</p>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <PageIntelHeader
+        moduleLabel="CAPTAÇÃO"
+        title="Editar Construtora"
+        subtitle={formData.name || 'Carregando...'}
+        breadcrumbs={[
+          { label: 'Construtoras', href: '/backoffice/construtoras' },
+          { label: 'Editar' },
+        ]}
+      />
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo Upload */}

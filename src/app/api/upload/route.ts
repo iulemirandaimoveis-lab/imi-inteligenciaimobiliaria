@@ -57,7 +57,12 @@ export async function POST(request: NextRequest) {
 
         // Gera nome único
         const ext = file.name.split('.').pop()
-        const fileName = `${folder}/${nanoid(16)}.${ext}`
+        const timestamp = Date.now()
+        // When folder is used as bucket name (e.g. 'developers'), store file at root of bucket
+        // For the default 'properties' folder, store inside 'media' bucket under folder path
+        const isDedicatedBucket = ['developers', 'avatars', 'media'].includes(folder)
+        const bucket = isDedicatedBucket ? folder : 'media'
+        const filePath = isDedicatedBucket ? `${timestamp}-${nanoid(8)}.${ext}` : `${folder}/${nanoid(16)}.${ext}`
 
         // Converte File para ArrayBuffer
         const arrayBuffer = await file.arrayBuffer()
@@ -68,8 +73,8 @@ export async function POST(request: NextRequest) {
 
         // Upload para Supabase
         const { data, error } = await storageClient.storage
-            .from('media')
-            .upload(fileName, buffer, {
+            .from(bucket)
+            .upload(filePath, buffer, {
                 contentType: file.type,
                 cacheControl: '3600',
                 upsert: false
@@ -85,8 +90,8 @@ export async function POST(request: NextRequest) {
 
         // Gera URL pública
         const { data: publicData } = storageClient.storage
-            .from('media')
-            .getPublicUrl(fileName)
+            .from(bucket)
+            .getPublicUrl(filePath)
 
         return NextResponse.json({
             success: true,
@@ -94,7 +99,7 @@ export async function POST(request: NextRequest) {
                 fileName: data.path,
                 url: publicData.publicUrl,
                 size: file.size,
-                type: file.type
+                type: file.type,
             }
         })
     } catch (error) {

@@ -587,12 +587,12 @@ export default function EbookPage() {
                         {error && <p className="text-xs mt-3 px-3 py-2 rounded-xl bg-red-500/10 text-red-400">{error}</p>}
 
                         <div className="flex justify-between mt-6">
-                            <button onClick={() => setStep(0)} className="flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                            <button onClick={() => setStep(0)} className="flex items-center gap-1 px-4 py-2.5 rounded text-sm font-semibold transition-all"
                                 style={{ background: T.hover, color: T.textMuted, border: `1px solid ${T.border}` }}>
                                 <ChevronLeft size={14} /> Voltar
                             </button>
                             <button disabled={!conteudo || writing} onClick={() => setStep(2)}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all"
+                                className="flex items-center gap-2 px-6 py-2.5 rounded text-sm font-bold transition-all"
                                 style={conteudo && !writing
                                     ? { background: T.accent, color: '#fff' }
                                     : { background: T.hover, color: T.textMuted, cursor: 'not-allowed' }
@@ -708,11 +708,11 @@ export default function EbookPage() {
                         </div>
 
                         <div className="flex justify-between mt-8">
-                            <button onClick={() => setStep(1)} className="flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-semibold"
+                            <button onClick={() => setStep(1)} className="flex items-center gap-1 px-4 py-2.5 rounded text-sm font-semibold"
                                 style={{ background: T.hover, color: T.textMuted, border: `1px solid ${T.border}` }}>
                                 <ChevronLeft size={14} /> Voltar
                             </button>
-                            <button onClick={() => setStep(3)} className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold"
+                            <button onClick={() => setStep(3)} className="flex items-center gap-2 px-6 py-2.5 rounded text-sm font-bold"
                                 style={{ background: T.accent, color: '#fff' }}>
                                 Publicar <ChevronRight size={15} />
                             </button>
@@ -813,7 +813,7 @@ export default function EbookPage() {
                         </div>
 
                         <div className="flex justify-start mt-6">
-                            <button onClick={() => setStep(2)} className="flex items-center gap-1 px-4 py-2.5 rounded-xl text-sm font-semibold"
+                            <button onClick={() => setStep(2)} className="flex items-center gap-1 px-4 py-2.5 rounded text-sm font-semibold"
                                 style={{ background: T.hover, color: T.textMuted, border: `1px solid ${T.border}` }}>
                                 <ChevronLeft size={14} /> Voltar
                             </button>

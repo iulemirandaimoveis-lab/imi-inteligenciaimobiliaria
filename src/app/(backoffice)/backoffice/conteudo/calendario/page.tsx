@@ -28,7 +28,7 @@ const TIPO_CONFIG: Record<string, { icon: any; label: string; color: string; bg:
     facebook:  { icon: Facebook,  label: 'Facebook',  color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
     email:     { icon: Mail,      label: 'E-mail',    color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
     blog:      { icon: Globe,     label: 'Blog',      color: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)' },
-    youtube:   { icon: Youtube,   label: 'YouTube',   color: '#EF4444', bg: 'rgba(239,68,68,0.12)' },
+    youtube:   { icon: Youtube,   label: 'YouTube',   color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' },
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
@@ -170,7 +170,7 @@ export default function CalendarioPage() {
                         </div>
                         <button
                             onClick={() => router.push('/backoffice/conteudo/novo')}
-                            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold text-white"
+                            className="bo-btn bo-btn-primary"
                             style={{ background: T.accent, boxShadow: '0 0 16px rgba(59,130,246,0.28)' }}
                         >
                             <Plus size={16} />

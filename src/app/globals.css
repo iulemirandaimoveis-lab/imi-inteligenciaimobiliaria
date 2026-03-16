@@ -8,181 +8,343 @@
 
 /* ============================================================ */
 /*  IMI — DESIGN SYSTEM v3.0                                    */
-/*  Institutional Premium · Navy Accent · Bespoke Elegance      */
+/*  Brand Navy × Gold · Libre Baskerville + Figtree + JetBrains */
 /* ============================================================ */
 
-/* ── CSS VARIABLES ─────────────────────────────────────────── */
 :root {
-  /* Accent — Institutional Navy (alfaiataria / bespoke suit) */
-  --accent-50: #F0F4F8;
+  /* ── Brand Navy Scale ── */
+  --imi-navy-950: #05080F;
+  --imi-navy-900: #0B1120;
+  --imi-navy-800: #101830;
+  --imi-navy-700: #162040;
+  --imi-navy-600: #1D2B52;
+  --imi-navy-500: #253565;
+  --imi-navy-400: #3D518A;
+  --imi-navy-300: #6070A8;
+  --imi-navy-200: #8C9CC8;
+  --imi-navy-100: #B8C0DC;
+  --imi-navy-50:  #E4E8F2;
+
+  /* ── Brand Gold Scale ── */
+  --imi-gold-700: #8A6820;
+  --imi-gold-600: #A07830;
+  --imi-gold-500: #B8943A;
+  --imi-gold-400: #C9A660;
+  --imi-gold-300: #D8BC84;
+  --imi-gold-200: #E8D4A8;
+  --imi-gold-100: #F4EACC;
+  --imi-gold-50:  #FAF4E4;
+
+  /* ── Neutral / Stone Scale ── */
+  --imi-stone-950: #0C0B08;
+  --imi-stone-900: #1A1914;
+  --imi-stone-800: #2C2A24;
+  --imi-stone-700: #3E3C34;
+  --imi-stone-600: #545248;
+  --imi-stone-500: #6E6C60;
+  --imi-stone-400: #908E80;
+  --imi-stone-300: #B0AEA0;
+  --imi-stone-200: #CCCAB8;
+  --imi-stone-100: #E2E0D0;
+  --imi-stone-50:  #F2F0E4;
+  --imi-cream:     #F8F6EE;
+
+  /* ── Typography ── */
+  --font-serif: var(--font-libre-baskerville), Georgia, serif;
+  --font-sans:  var(--font-figtree), system-ui, sans-serif;
+  --font-mono:  var(--font-jetbrains-mono), 'SF Mono', monospace;
+
+  /* Legacy aliases */
+  --font-display: var(--font-serif);
+  --font-ui:      var(--font-sans);
+  --font-data:    var(--font-mono);
+
+  /* ── Type Scale ── */
+  --t-10: 10px; --t-11: 11px; --t-12: 12px; --t-13: 13px;
+  --t-14: 14px; --t-15: 15px; --t-16: 16px; --t-18: 18px;
+  --t-20: 20px; --t-24: 24px; --t-28: 28px; --t-32: 32px;
+  --t-40: 40px; --t-48: 48px; --t-56: 56px;
+
+  /* ── Spacing (8pt grid) ── */
+  --s1: 2px; --s2: 4px; --s3: 8px; --s4: 12px; --s5: 16px;
+  --s6: 20px; --s7: 24px; --s8: 32px; --s9: 40px; --s10: 48px;
+  --s11: 56px; --s12: 64px; --s14: 80px; --s16: 96px;
+
+  /* ── Radius ── */
+  --r-xs: 3px; --r-sm: 6px; --r-md: 8px; --r-lg: 12px;
+  --r-xl: 16px; --r-2xl: 24px; --r-full: 9999px;
+
+  /* ── Motion ── */
+  --ease:        cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-1: 100ms; --dur-2: 180ms; --dur-3: 280ms; --dur-4: 420ms;
+  --t-fast: 150ms; --t-base: 300ms; --t-slow: 500ms;
+
+  /* ── Blur ── */
+  --blur-sm: blur(8px); --blur-md: blur(16px); --blur-lg: blur(32px);
+
+  /* ══ LIGHT THEME (default) ══ */
+  --bg-base:      var(--imi-cream);
+  --bg-surface:   #FFFFFF;
+  --bg-elevated:  #FEFEFE;
+  --bg-subtle:    #F4F2EA;
+  --bg-muted:     #ECEAE0;
+  --bg-overlay:   rgba(11,17,32,0.04);
+  --bg-hover:     rgba(11,17,32,0.07);
+  --bg-active:    rgba(11,17,32,0.10);
+
+  --border-subtle:  rgba(11,17,32,0.08);
+  --border-default: rgba(11,17,32,0.14);
+  --border-strong:  rgba(11,17,32,0.24);
+  --border-focus:   var(--imi-navy-600);
+
+  --text-primary:   var(--imi-navy-900);
+  --text-secondary: var(--imi-stone-600);
+  --text-tertiary:  var(--imi-stone-400);
+  --text-disabled:  var(--imi-stone-300);
+  --text-inverse:   #FFFFFF;
+  --text-gold:      var(--imi-gold-600);
+
+  --shadow-xs: 0 1px 2px rgba(11,17,32,0.06);
+  --shadow-sm: 0 2px 6px rgba(11,17,32,0.08), 0 1px 2px rgba(11,17,32,0.04);
+  --shadow-md: 0 4px 16px rgba(11,17,32,0.10), 0 1px 4px rgba(11,17,32,0.06);
+  --shadow-lg: 0 12px 32px rgba(11,17,32,0.12), 0 4px 8px rgba(11,17,32,0.06);
+  --shadow-xl: 0 24px 48px rgba(11,17,32,0.14), 0 8px 16px rgba(11,17,32,0.08);
+  --shadow-gold: 0 4px 20px rgba(184,148,58,0.2);
+  --shadow-glow: 0 0 16px rgba(184,148,58,0.12);
+
+  --success:    #1A7A4A;
+  --success-bg: #EBF7F1;
+  --warning:    #8A6000;
+  --warning-bg: #FEF6E4;
+  --error:      #C0282C;
+  --error-bg:   #FDEDEF;
+  --info:       #1A4E8A;
+  --info-bg:    #E8F0FA;
+
+  /* ── Legacy backoffice aliases (map to DS3) ── */
+  --bo-bg:             var(--bg-base);
+  --bo-surface:        var(--bg-base);
+  --bo-surface-alt:    var(--bg-subtle);
+  --bo-elevated:       var(--bg-surface);
+  --bo-border:         var(--border-default);
+  --bo-border-light:   var(--border-subtle);
+  --bo-border-gold:    rgba(184,148,58,0.25);
+  --bo-text:           var(--text-primary);
+  --bo-text-muted:     var(--text-secondary);
+  --bo-text-tertiary:  var(--text-tertiary);
+  --bo-text-dim:       var(--text-tertiary);
+  --bo-text-accent:    var(--imi-gold-600);
+  --bo-text-accent-dim:var(--imi-gold-500);
+  --bo-hover:          var(--bg-hover);
+  --bo-active-bg:      var(--bg-active);
+  --bo-icon-bg:        rgba(184,148,58,0.08);
+  --bo-shadow:         var(--shadow-sm);
+  --bo-card-shadow:    var(--shadow-md);
+  --bo-shadow-elevated:var(--shadow-xl);
+  --bo-surface-highlight: inset 0 1px 0 rgba(255,255,255,0.9);
+  --bo-drawer-bg:      #FFFFFF;
+  --header-bg:         rgba(248,246,238,0.95);
+  --backdrop-bg:       rgba(11,17,32,0.35);
+  --bo-accent:         var(--imi-gold-600);
+  --bo-accent-dim:     var(--imi-gold-500);
+  --bo-card:           #FFFFFF;
+  --bo-card-hover:     var(--bg-subtle);
+  --bo-border-subtle:  var(--border-subtle);
+  --bo-border-strong:  rgba(184,148,58,0.30);
+  --nav-bg:            rgba(248,246,238,0.97);
+  --nav-border:        rgba(184,148,58,0.15);
+  --nav-active:        var(--imi-gold-600);
+  --nav-inactive:      var(--imi-stone-500);
+  --bo-success:        var(--success);
+  --bo-success-bg:     var(--success-bg);
+  --bo-warning:        var(--warning);
+  --bo-warning-bg:     var(--warning-bg);
+  --bo-error:          var(--error);
+  --bo-error-bg:       var(--error-bg);
+  --bo-info:           var(--info);
+  --bo-info-bg:        var(--info-bg);
+  --bo-transition:        150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --bo-transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Legacy brand token aliases */
+  --navy:          var(--imi-navy-900);
+  --navy-mid:      var(--imi-navy-800);
+  --navy-card:     var(--imi-navy-700);
+  --navy-raised:   var(--imi-navy-600);
+  --navy-float:    var(--imi-navy-500);
+  --gold:          var(--imi-gold-500);
+  --gold-bright:   var(--imi-gold-400);
+  --gold-deep:     var(--imi-gold-700);
+  --gold-pale:     rgba(184,148,58,0.10);
+  --gold-border:   rgba(184,148,58,0.20);
+  --gold-glow:     rgba(184,148,58,0.06);
+
+  /* Legacy accent scale */
+  --accent-50:  #F0F4F8;
   --accent-100: #D9E2EC;
   --accent-200: #BCCCDC;
   --accent-300: #9FB3C8;
-  --accent-400: #627D98;
-  --accent-500: #334E68;
-  --accent-600: #243B53;
+  --accent-400: var(--imi-gold-500);
+  --accent-500: var(--imi-gold-700);
+  --accent-600: #8B6914;
   --accent-700: #1A2F44;
   --accent-800: #102A43;
-  --accent-900: #0A1929;
+  --accent-900: var(--imi-navy-900);
 
-  /* IMI — Neutros Institucionais */
-  --imi-50: #F8F9FA;
-  --imi-100: #E9ECEF;
-  --imi-200: #DEE2E6;
-  --imi-300: #CED4DA;
-  --imi-400: #ADB5BD;
-  --imi-500: #6C757D;
-  --imi-600: #495057;
-  --imi-700: #343A40;
-  --imi-800: #212529;
-  --imi-900: #1A1A1A;
+  /* Legacy neutral IMI scale */
+  --imi-50:  var(--imi-stone-50);
+  --imi-100: var(--imi-stone-100);
+  --imi-200: var(--imi-stone-200);
+  --imi-300: var(--imi-stone-300);
+  --imi-400: var(--imi-stone-400);
+  --imi-500: var(--imi-stone-500);
+  --imi-600: var(--imi-stone-600);
+  --imi-700: var(--imi-stone-700);
+  --imi-800: var(--imi-stone-800);
+  --imi-900: var(--imi-stone-900);
 
-  /* Sidebar dark */
-  --sidebar-bg: #0A1929;
-  --sidebar-border: rgba(255, 255, 255, 0.06);
-  --sidebar-hover: rgba(255, 255, 255, 0.05);
-  --sidebar-active: rgba(51, 78, 104, 0.18);
-  --sidebar-text: #829AB1;
-  --sidebar-text-active: #D9E2EC;
+  /* Sidebar */
+  --sidebar-bg:          var(--imi-navy-800);
+  --sidebar-border:      rgba(184,148,58,0.18);
+  --sidebar-hover:       rgba(184,148,58,0.07);
+  --sidebar-active:      rgba(184,148,58,0.14);
+  --sidebar-text:        var(--imi-navy-300);
+  --sidebar-text-active: #F0F2F8;
 
-  /* Surfaces */
+  /* Legacy surface tokens */
   --surface-0: #FFFFFF;
-  --surface-1: #F8F9FA;
-  --surface-2: #F1F3F5;
+  --surface-1: var(--imi-stone-50);
+  --surface-2: var(--imi-stone-100);
 
-  /* Shadows — layered depth */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04);
-  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.10), 0 8px 16px rgba(0, 0, 0, 0.06);
-  --shadow-gold: 0 0 0 1px rgba(51, 78, 104, 0.15), 0 4px 12px rgba(10, 25, 41, 0.08);
-  --shadow-glow: 0 0 16px rgba(51, 78, 104, 0.12);
-
-  /* Blur */
-  --blur-sm: blur(8px);
-  --blur-md: blur(16px);
-  --blur-lg: blur(32px);
-
-  /* Easing */
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-  /* Backoffice Theme Variables - Light Mode */
-  --bo-bg: #f0f2f5;
-  --bo-surface: #f4f7fc;
-  --bo-surface-alt: #eef1f6;
-  --bo-elevated: #ffffff;
-  --bo-border: rgba(0, 0, 0, 0.08);
-  --bo-border-light: rgba(0, 0, 0, 0.04);
-  --bo-border-gold: rgba(51, 78, 104, 0.25);
-  --bo-text: #111827;
-  --bo-text-muted: #6b7280;
-  --bo-text-tertiary: #9ca3af;
-  --bo-text-dim: #9ca3af;
-  --bo-text-accent: #334E68;
-  --bo-text-accent-dim: #486581;
-  --bo-hover: rgba(0, 0, 0, 0.04);
-  --bo-active-bg: rgba(51, 78, 104, 0.08);
-  --bo-icon-bg: rgba(0, 0, 0, 0.05);
-  --bo-shadow: 0 1px 3px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
-  --bo-card-shadow: 0 4px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
-  --bo-shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.1);
-  --bo-surface-highlight: inset 0 1px 0 rgba(255,255,255,0.8);
-  --bo-drawer-bg: #ffffff;
-  --header-bg: rgba(244,247,252,0.92);
-  --backdrop-bg: rgba(0,0,0,0.3);
-  /* Responsive accent — navy in light, bright blue in dark */
-  --bo-accent: #334E68;
-  --bo-accent-dim: #1A2F44;
-  /* Card surface */
-  --bo-card: #ffffff;
-  --bo-card-hover: #f0f4f8;
-  /* Extended borders */
-  --bo-border-subtle: rgba(0,0,0,0.04);
-  --bo-border-strong: rgba(0,0,0,0.12);
-  /* Navigation tokens — light mode */
-  --nav-bg: rgba(244,247,252,0.96);
-  --nav-border: rgba(0,0,0,0.06);
-  --nav-active: #334E68;
-  --nav-inactive: #6b7280;
-  /* Semantic status colors — light mode */
-  --bo-success: #34d399;
-  --bo-success-bg: rgba(52,211,153,0.10);
-  --bo-warning: #fbbf24;
-  --bo-warning-bg: rgba(251,191,36,0.10);
-  --bo-error: #f87171;
-  --bo-error-bg: rgba(248,113,113,0.08);
-  --bo-info: #60a5fa;
-  --bo-info-bg: rgba(96,165,250,0.10);
-  /* Transition — precision micro-interaction */
-  --bo-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --bo-transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Chart tokens */
+  --chart-grid:  rgba(11,17,32,0.06);
+  --chart-label: var(--imi-stone-400);
 }
 
 .dark {
-  /* ── IMI INTELLIGENCE DARK THEME v5.0 — Bloomberg Terminal Precision ── */
-  --bo-bg: #0D0F14;
-  --bo-surface: #0C1017;
-  --bo-surface-alt: #0F1520;
-  --bo-elevated: #111822;
-  --bo-border: rgba(255, 255, 255, 0.07);
-  --bo-border-light: rgba(255, 255, 255, 0.04);
-  --bo-border-gold: rgba(37, 99, 235, 0.22);
-  --bo-text: #E8EDF2;
-  --bo-text-muted: #8B949E;
-  --bo-text-tertiary: #475569;
-  --bo-text-dim: #5b6879;
-  --bo-text-accent: #60A5FA;
-  --bo-text-accent-dim: #2563EB;
-  --bo-hover: rgba(255, 255, 255, 0.045);
-  --bo-active-bg: rgba(37, 99, 235, 0.12);
-  --bo-icon-bg: rgba(255, 255, 255, 0.06);
-  /* Premium layered shadows — depth without blur wash */
-  --bo-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
-  --bo-card-shadow: 0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
-  --bo-shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.60), 0 0 0 1px rgba(255,255,255,0.04);
-  /* Subtle top-edge light for "floating" cards */
-  --bo-surface-highlight: inset 0 1px 0 rgba(255,255,255,0.06);
-  --bo-drawer-bg: #0C1017;
-  --header-bg: rgba(10,13,19,0.92);
-  --backdrop-bg: rgba(5,7,11,0.80);
-  /* Responsive accent — electric blue #3B82F6 (Revolut / N26 precision) */
-  --bo-accent: #3B82F6;
-  --bo-accent-dim: #1D4ED8;
-  /* Card surface */
-  --bo-card: #141C2B;
-  --bo-card-hover: #19243A;
-  /* Extended borders */
-  --bo-border-subtle: rgba(255,255,255,0.05);
-  --bo-border-strong: rgba(255,255,255,0.16);
-  /* Navigation tokens — dark mode */
-  --nav-bg: rgba(12,16,23,0.96);
-  --nav-border: rgba(37,99,235,0.12);
-  --nav-active: #60A5FA;
-  --nav-inactive: #475569;
-  /* Semantic status colors — dark mode (same values, scoped) */
-  --bo-success: #34d399;
-  --bo-success-bg: rgba(52,211,153,0.12);
-  --bo-warning: #fbbf24;
-  --bo-warning-bg: rgba(251,191,36,0.12);
-  --bo-error: #f87171;
-  --bo-error-bg: rgba(248,113,113,0.10);
-  --bo-info: #60a5fa;
-  --bo-info-bg: rgba(96,165,250,0.12);
-  /* Transition — precision micro-interaction */
-  --bo-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* ══ DARK THEME — Navy × Gold DS3 ══ */
+  --bg-base:      var(--imi-navy-900);
+  --bg-surface:   var(--imi-navy-800);
+  --bg-elevated:  var(--imi-navy-700);
+  --bg-subtle:    rgba(255,255,255,0.04);
+  --bg-muted:     rgba(255,255,255,0.02);
+  --bg-overlay:   rgba(255,255,255,0.06);
+  --bg-hover:     rgba(255,255,255,0.08);
+  --bg-active:    rgba(255,255,255,0.12);
+
+  --border-subtle:  rgba(255,255,255,0.06);
+  --border-default: rgba(255,255,255,0.10);
+  --border-strong:  rgba(255,255,255,0.18);
+  --border-focus:   var(--imi-gold-400);
+
+  --text-primary:   #F0F2F8;
+  --text-secondary: var(--imi-navy-200);
+  --text-tertiary:  var(--imi-navy-300);
+  --text-disabled:  var(--imi-navy-400);
+  --text-inverse:   var(--imi-navy-900);
+  --text-gold:      var(--imi-gold-400);
+
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.6);
+  --shadow-xl: 0 32px 64px rgba(0,0,0,0.7);
+  --shadow-gold: 0 4px 20px rgba(201,166,96,0.2);
+  --shadow-glow: 0 0 16px rgba(201,166,96,0.15);
+
+  --success:    #34C475;
+  --success-bg: rgba(52,196,117,0.12);
+  --warning:    #F0B840;
+  --warning-bg: rgba(240,184,64,0.12);
+  --error:      #F05858;
+  --error-bg:   rgba(240,88,88,0.12);
+  --info:       #60A8F8;
+  --info-bg:    rgba(96,168,248,0.12);
+
+  /* ── Legacy backoffice aliases ── */
+  --bo-bg:             var(--bg-base);
+  --bo-surface:        var(--bg-base);
+  --bo-surface-alt:    var(--imi-navy-800);
+  --bo-elevated:       var(--imi-navy-700);
+  --bo-border:         var(--border-default);
+  --bo-border-light:   var(--border-subtle);
+  --bo-border-gold:    rgba(184,148,58,0.22);
+  --bo-text:           var(--text-primary);
+  --bo-text-muted:     var(--text-secondary);
+  --bo-text-tertiary:  var(--text-tertiary);
+  --bo-text-dim:       var(--imi-navy-400);
+  --bo-text-accent:    var(--imi-gold-400);
+  --bo-text-accent-dim:var(--imi-gold-500);
+  --bo-hover:          var(--bg-hover);
+  --bo-active-bg:      var(--bg-active);
+  --bo-icon-bg:        rgba(184,148,58,0.08);
+  --bo-shadow:         var(--shadow-sm);
+  --bo-card-shadow:    var(--shadow-md);
+  --bo-shadow-elevated:var(--shadow-xl);
+  --bo-surface-highlight: inset 0 1px 0 rgba(184,148,58,0.07);
+  --bo-drawer-bg:      var(--imi-navy-900);
+  --header-bg:         rgba(11,17,32,0.97);
+  --backdrop-bg:       rgba(5,8,15,0.85);
+  --bo-accent:         var(--imi-gold-500);
+  --bo-accent-dim:     var(--imi-gold-700);
+  --bo-card:           var(--imi-navy-700);
+  --bo-card-hover:     var(--imi-navy-600);
+  --bo-border-subtle:  var(--border-subtle);
+  --bo-border-strong:  rgba(184,148,58,0.30);
+  --nav-bg:            rgba(11,17,32,0.98);
+  --nav-border:        rgba(184,148,58,0.15);
+  --nav-active:        var(--imi-gold-500);
+  --nav-inactive:      var(--imi-navy-400);
+  --bo-success:        var(--success);
+  --bo-success-bg:     var(--success-bg);
+  --bo-warning:        var(--warning);
+  --bo-warning-bg:     var(--warning-bg);
+  --bo-error:          var(--error);
+  --bo-error-bg:       var(--error-bg);
+  --bo-info:           var(--info);
+  --bo-info-bg:        var(--info-bg);
+  --bo-transition:        150ms cubic-bezier(0.4, 0, 0.2, 1);
   --bo-transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --sidebar-bg:          var(--imi-navy-800);
+  --sidebar-border:      rgba(184,148,58,0.18);
+  --sidebar-hover:       rgba(184,148,58,0.07);
+  --sidebar-active:      rgba(184,148,58,0.14);
+  --sidebar-text:        var(--imi-navy-300);
+  --sidebar-text-active: #F0F2F8;
+
+  --chart-grid:  rgba(255,255,255,0.06);
+  --chart-label: var(--imi-navy-300);
 }
 
 /* ── BASE RESETS ────────────────────────────────────────────── */
 @layer base {
-  html, body {
-    /* Android / Samsung overflow fix — prevents horizontal scroll at root */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
     overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%; /* Prevent font size inflation on mobile */
+    text-size-adjust: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+    width: 100%;
     max-width: 100vw;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+    /* Safe area for notch/hole-punch phones (Samsung S25 Ultra, iPhones) */
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
   }
 
   html {
@@ -198,15 +360,15 @@
 
   /* Focus ring global — accessible + beautiful */
   *:focus-visible {
-    outline: 2px solid var(--accent-500);
+    outline: 2px solid var(--imi-gold-500, #B8943A);
     outline-offset: 2px;
-    border-radius: 6px;
+    border-radius: var(--r-sm, 4px);
   }
 
   /* Selection color */
   ::selection {
-    background: rgba(51, 78, 104, 0.25);
-    color: var(--imi-900);
+    background: rgba(184,148,58,0.25);
+    color: var(--imi-navy-900, #0B1120);
   }
 
   /* Scrollbar customizada — webkit */
@@ -220,18 +382,18 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--imi-300);
+    background: var(--imi-gold-700, #8A6820);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--imi-400);
+    background: var(--imi-gold-500, #B8943A);
   }
 
   /* Firefox */
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--imi-300) transparent;
+    scrollbar-color: var(--imi-gold-700, #8A6820) transparent;
   }
 }
 
@@ -312,15 +474,8 @@
 }
 
 @keyframes pulse-gold {
-
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(51, 78, 104, 0);
-  }
-
-  50% {
-    box-shadow: 0 0 0 4px rgba(51, 78, 104, 0.1);
-  }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184,148,58,0); }
+  50%       { box-shadow: 0 0 0 4px rgba(184,148,58,0.18); }
 }
 
 @keyframes shimmer {
@@ -571,20 +726,20 @@
     background-clip: text;
   }
 
-  /* Cinematic glow — premium accent border glow */
+  /* Cinematic glow — gold accent border glow */
   .cinematic-glow {
     box-shadow:
-      0 0 0 1px rgba(51, 78, 104, 0.1),
+      0 0 0 1px rgba(184,148,58,0.12),
       0 4px 24px rgba(0, 0, 0, 0.08),
-      0 0 0 0 rgba(51, 78, 104, 0);
+      0 0 0 0 rgba(184,148,58,0);
     transition: box-shadow 0.3s ease;
   }
 
   .cinematic-glow:hover {
     box-shadow:
-      0 0 0 1px rgba(51, 78, 104, 0.25),
+      0 0 0 1px rgba(184,148,58,0.28),
       0 8px 32px rgba(0, 0, 0, 0.12),
-      0 0 20px -5px rgba(51, 78, 104, 0.18);
+      0 0 20px -5px rgba(184,148,58,0.18);
   }
 
   /* Shimmer loading */
@@ -1681,3 +1836,309 @@
     opacity: 1 !important;
   }
 }
+
+/* ── STANDARDIZED CHIP / FILTER SCROLL ROWS ────────────────── */
+/* Use .chip-scroll-row for any horizontal-scrollable chip row */
+.chip-scroll-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE/Edge */
+}
+.chip-scroll-row::-webkit-scrollbar {
+  display: none;                /* Chrome/Safari */
+}
+
+/* Standard chip button — h-7, rounded-xl, 11px, no-wrap */
+.chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  border: 1px solid var(--bo-border);
+  background: var(--bo-elevated);
+  color: var(--bo-text-muted);
+}
+.chip-btn:active { opacity: 0.82; transform: scale(0.96); }
+.chip-btn.active {
+  background: var(--bo-active-bg);
+  border-color: var(--bo-border-gold);
+  color: var(--bo-accent);
+  font-weight: 700;
+}
+.chip-btn.active-solid {
+  background: var(--bo-accent);
+  border-color: var(--bo-accent);
+  color: var(--navy, #0B1120);
+  font-weight: 700;
+}
+
+/* Standard toolbar input */
+.toolbar-input {
+  height: 36px;
+  padding: 0 8px 0 32px;
+  border-radius: 12px;
+  font-size: 12px;
+  border: 1px solid var(--bo-border);
+  background: var(--bo-elevated);
+  color: var(--bo-text);
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+.toolbar-input:focus {
+  border-color: var(--bo-border-gold);
+}
+.toolbar-input::placeholder {
+  color: var(--bo-text-dim);
+}
+
+/* Standard icon-only square button (sort, view toggle) */
+.toolbar-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 12px;
+  border: 1px solid var(--bo-border);
+  background: var(--bo-elevated);
+  color: var(--bo-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.toolbar-icon-btn:active { opacity: 0.8; }
+.toolbar-icon-btn.active {
+  background: var(--bo-accent);
+  border-color: var(--bo-accent);
+  color: var(--navy, #0B1120);
+}
+
+/* Contratos / any 2-tab row that might overflow */
+.tab-scroll-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tab-scroll-row::-webkit-scrollbar { display: none; }
+
+/* ============================================================ */
+/*  IMI BUTTON SYSTEM — DS3 v3.0                                */
+/*  Figtree · DS3 tokens · Gold × Navy                          */
+/* ============================================================ */
+
+/* ── Base ───────────────────────────────────────────────────── */
+.bo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: var(--r-md, 8px);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all var(--dur-2, 200ms) var(--ease);
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.bo-btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+.bo-btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+.bo-btn svg { flex-shrink: 0; }
+
+/* ── Sizes — DS3 spec ────────────────────────────────────────  */
+.bo-btn-xs  { height: 28px; padding: 0 10px; font-size: 12px; border-radius: var(--r-sm, 6px); gap: 4px; }
+.bo-btn-sm  { height: 34px; padding: 0 14px; font-size: 13px; border-radius: var(--r-md, 8px); gap: 6px; }
+.bo-btn-lg  { height: 48px; padding: 0 24px; font-size: 15px; border-radius: var(--r-md, 8px); gap: 10px; }
+.bo-btn-icon { width: 40px; padding: 0; }
+.bo-btn-icon.bo-btn-sm { width: 34px; }
+.bo-btn-icon.bo-btn-xs { width: 28px; }
+.bo-btn-icon.bo-btn-lg { width: 48px; }
+.bo-btn-full { width: 100%; }
+
+/* ── Variants — DS3 ─────────────────────────────────────────  */
+
+/* Primary — gold sólido, white text */
+.bo-btn-primary {
+  background: var(--imi-gold-500);
+  color: #FFFFFF;
+  border-color: transparent;
+}
+[data-theme="dark"] .bo-btn-primary,
+.dark .bo-btn-primary {
+  background: var(--imi-gold-500);
+  color: #FFFFFF;
+}
+.bo-btn-primary:not(:disabled):hover {
+  background: var(--imi-gold-600);
+  transform: translateY(-1px);
+}
+.bo-btn-primary:not(:disabled):active { transform: scale(0.97); }
+
+/* Secondary — surface bg + border + text */
+.bo-btn-secondary {
+  background: var(--bg-muted);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+.bo-btn-secondary:not(:disabled):hover { background: var(--bg-hover); }
+.bo-btn-secondary:not(:disabled):active { transform: scale(0.97); }
+
+/* Ghost — invisible until hover */
+.bo-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+.bo-btn-ghost:not(:disabled):hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Danger — red tint */
+.bo-btn-danger {
+  background: var(--error-bg);
+  color: var(--error);
+  border-color: transparent;
+}
+.bo-btn-danger:not(:disabled):hover {
+  background: var(--error);
+  color: #FFFFFF;
+}
+
+/* Outline — border + transparent bg */
+.bo-btn-outline {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+.bo-btn-outline:not(:disabled):hover { background: var(--bg-hover); }
+
+/* ── MOBILE OVERFLOW UTILITIES ──────────────────────────────── */
+.no-overflow {
+  overflow: hidden;
+  max-width: 100%;
+}
+
+/* Samsung Galaxy / S25 Ultra specific fixes */
+@supports (-webkit-overflow-scrolling: touch) {
+  .overflow-x-hidden { overflow-x: hidden; }
+}
+
+/* Prevent any element from breaking outside viewport */
+img, video, iframe, canvas, svg {
+  max-width: 100%;
+}
+
+/* Fix for framer-motion elements that may escape bounds */
+[data-framer-appear-id],
+[style*="transform"] {
+  will-change: transform;
+}
+
+/* ============================================================ */
+/*  LIGHT THEME — CONTRAST & VISIBILITY IMPROVEMENTS DS3        */
+/*  Ensures panels, cards, and nav are clearly visible          */
+/* ============================================================ */
+
+/* ── Mobile bottom nav: stronger presence in light mode ── */
+:root .backoffice-root .chip-btn {
+  background: #FFFFFF;
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+}
+:root .backoffice-root .chip-btn.active {
+  background: rgba(184,148,58,0.10);
+  border-color: rgba(184,148,58,0.40);
+  color: var(--imi-gold-700);
+}
+
+/* ── Toolbar inputs: white bg for legibility on cream base ── */
+:root .toolbar-input {
+  background: #FFFFFF;
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+:root .toolbar-icon-btn {
+  background: #FFFFFF;
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+}
+
+/* ── Light theme: bo-btn-secondary gets white bg ── */
+:root .bo-btn-secondary {
+  background: #FFFFFF;
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+:root .bo-btn-secondary:not(:disabled):hover {
+  background: var(--bg-hover);
+}
+
+/* ── Light theme: bo-btn-outline ── */
+:root .bo-btn-outline {
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+/* ── Light theme shimmer ── */
+:root .shimmer {
+  background: var(--bg-muted);
+}
+:root .shimmer::after {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9) 50%, transparent);
+}
+
+/* ── DS3 round button override: action buttons MUST NOT be fully circular ── */
+/* Only avatars (.rounded-full.overflow-hidden with img/span inside) keep full circle */
+.bo-btn.rounded-full:not([style*="border-radius: 50%"]):not(.avatar) {
+  border-radius: var(--r-md) !important;
+}
+
+/* ── Light-theme text visibility assurance ── */
+/* Make sure mono/code labels are dark enough on light bg */
+:root [style*="var(--text-tertiary)"] {
+  /* --imi-stone-400 = #908E80 — WCAG AA on cream bg (contrast ≈ 4.5:1) */
+}
+
+/* ── MarketTicker / scrolling tickers in light ── */
+:root .backoffice-root [style*="var(--bg-base)"] {
+  background: var(--bg-base);
+}
+
+/* ── Card surfaces in light: give them a proper shadow ── */
+:root .backoffice-root .card,
+:root .backoffice-root [style*="var(--bg-surface)"].rounded-xl,
+:root .backoffice-root [style*="var(--bg-surface)"].rounded-2xl {
+  box-shadow: var(--shadow-sm), 0 0 0 1px var(--border-subtle);
+}
+
+/* ── Account/notification dropdowns: clear elevation in light ── */
+:root .backoffice-root [class*="fixed"][style*="var(--bg-elevated)"] {
+  box-shadow: 0 8px 32px rgba(11,17,32,0.14), 0 2px 8px rgba(11,17,32,0.08) !important;
+}
+

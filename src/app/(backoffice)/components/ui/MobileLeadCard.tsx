@@ -1,5 +1,10 @@
 'use client'
 
+/**
+ * MobileLeadCard — IMI Design System v3
+ * DS3 pattern: surface card with avatar, status badge, AI state chip, summary
+ */
+
 import React from 'react'
 import Link from 'next/link'
 import { StatusBadge } from './StatusBadge'
@@ -7,55 +12,55 @@ import { AIScore } from './AIScore'
 import { Clock, MapPin, Globe, MessageCircle } from 'lucide-react'
 
 interface LeadMeta {
-  origin?: string          // Ex: "Meta Ads", "Google", "WhatsApp"
-  location?: string        // Ex: "Jardins, SP"
-  lastActivity?: string    // Ex: "há 2 min", "Hoje 14:32"
-  sessionDuration?: string // Ex: "5:42 min"
-  product?: string         // Ex: "Apartamento Jardins"
+  origin?: string
+  location?: string
+  lastActivity?: string
+  sessionDuration?: string
+  product?: string
 }
 
 interface MobileLeadCardProps {
   id?: string
   name: string
   status: 'hot' | 'warm' | 'cold' | string
-  score?: number           // 0-100 AI score
+  score?: number
   aiState?: 'qualifying' | 'scheduled' | 'waiting' | 'done' | null
-  aiSummary?: string       // short AI insight text
+  aiSummary?: string
   meta?: LeadMeta
   isNew?: boolean
-  href?: string            // Link destination (preferred over onClick)
+  href?: string
   onClick?: () => void
   className?: string
-  animDelay?: number       // for staggered entrance
+  animDelay?: number
 }
 
 const AI_STATE_CONFIG = {
   qualifying: {
     label: 'Qualificando',
     icon: '🧠',
-    color: 'var(--imi-ai-green)',
-    bg: 'var(--imi-ai-green-bg)',
+    color: 'var(--success)',
+    bg: 'var(--success-bg)',
     border: 'rgba(74,222,128,0.20)',
   },
   scheduled: {
     label: 'Agendado',
     icon: '📅',
-    color: 'var(--s-pend)',
-    bg: 'var(--s-pend-bg)',
+    color: 'var(--warning)',
+    bg: 'var(--warning-bg)',
     border: 'rgba(167,139,250,0.20)',
   },
   waiting: {
     label: 'Aguardando Humano',
     icon: '👤',
-    color: 'var(--bo-text)',
-    bg: 'rgba(255,255,255,0.06)',
-    border: 'rgba(255,255,255,0.12)',
+    color: 'var(--text-primary)',
+    bg: 'var(--bg-muted)',
+    border: 'var(--border-subtle)',
   },
   done: {
     label: 'Concluído',
     icon: '✓',
-    color: 'var(--s-done)',
-    bg: 'var(--s-done-bg)',
+    color: 'var(--success)',
+    bg: 'var(--success-bg)',
     border: 'rgba(74,222,128,0.20)',
   },
 }
@@ -78,7 +83,6 @@ function getInitials(name: string) {
 }
 
 export function MobileLeadCard({
-  id,
   name,
   status,
   score,
@@ -92,7 +96,6 @@ export function MobileLeadCard({
   animDelay,
 }: MobileLeadCardProps) {
   const aiCfg = aiState ? AI_STATE_CONFIG[aiState] : null
-
   const initials = getInitials(name)
 
   const avatarColors: Record<string, string> = {
@@ -100,16 +103,27 @@ export function MobileLeadCard({
     warm: 'linear-gradient(135deg, #78350f 0%, #92400e 100%)',
     cold: 'linear-gradient(135deg, #0c4a6e 0%, #075985 100%)',
   }
-  const avatarBg = avatarColors[status.toLowerCase()] ?? 'linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%)'
+  const avatarBg = avatarColors[status.toLowerCase()] ?? 'linear-gradient(135deg, var(--imi-navy-700) 0%, var(--imi-navy-500) 100%)'
+
+  const cardStyle: React.CSSProperties = {
+    padding: '14px 16px',
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--border-subtle)',
+    borderRadius: 'var(--r-xl, 16px)',
+    position: 'relative',
+    overflow: 'hidden',
+    transition: 'all var(--dur-2, 200ms) var(--ease)',
+    animationDelay: animDelay !== undefined ? `${animDelay}ms` : undefined,
+  }
 
   const Wrapper = href ? Link : 'div'
   const wrapperProps = href
-    ? { href, className: `intel-card animate-fade-in-up ${className} cursor-pointer no-underline block`, style: { padding: '14px 16px', animationDelay: animDelay !== undefined ? `${animDelay}ms` : undefined, position: 'relative' as const, overflow: 'hidden' as const } }
-    : { className: `intel-card animate-fade-in-up ${className} ${onClick ? 'cursor-pointer' : ''}`, style: { padding: '14px 16px', animationDelay: animDelay !== undefined ? `${animDelay}ms` : undefined, position: 'relative' as const, overflow: 'hidden' as const }, onClick }
+    ? { href, className: `animate-fade-in-up ${className} cursor-pointer no-underline block`, style: cardStyle }
+    : { className: `animate-fade-in-up ${className} ${onClick ? 'cursor-pointer' : ''}`, style: cardStyle, onClick }
 
   return (
     <Wrapper {...(wrapperProps as any)}>
-      {/* NEW badge — top right accent line */}
+      {/* NEW badge — top accent line */}
       {isNew && (
         <div
           style={{
@@ -118,23 +132,23 @@ export function MobileLeadCard({
             left: 0,
             right: 0,
             height: '2px',
-            background: `linear-gradient(90deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)`,
+            background: 'linear-gradient(90deg, var(--imi-gold-500), transparent)',
           }}
         />
       )}
 
       {/* Row 1: Avatar + Name + Status + Time */}
       <div className="flex items-center gap-3 mb-3">
-        {/* Avatar */}
         <div
           style={{
             width: '40px',
             height: '40px',
-            borderRadius: '12px',
+            borderRadius: 'var(--r-lg, 12px)',
             background: avatarBg,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            fontFamily: 'var(--font-sans)',
             fontSize: '14px',
             fontWeight: 700,
             color: 'rgba(255,255,255,0.9)',
@@ -145,14 +159,14 @@ export function MobileLeadCard({
           {initials}
         </div>
 
-        {/* Name + Status */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span
               style={{
+                fontFamily: 'var(--font-sans)',
                 fontSize: '14px',
                 fontWeight: 700,
-                color: 'var(--bo-text)',
+                color: 'var(--text-primary)',
                 letterSpacing: '-0.01em',
                 lineHeight: 1.2,
               }}
@@ -162,17 +176,16 @@ export function MobileLeadCard({
             <StatusBadge status={status} size="xs" glow dot />
           </div>
 
-          {/* Meta: origin / location */}
           {(meta?.origin || meta?.location) && (
             <div className="flex items-center gap-2 mt-1" style={{ flexWrap: 'wrap' }}>
-              {meta.origin && (
-                <span className="flex items-center gap-1" style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
+              {meta?.origin && (
+                <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-tertiary)' }}>
                   {ORIGIN_ICON[meta.origin.toLowerCase()] ?? <Globe size={9} />}
                   {meta.origin}
                 </span>
               )}
-              {meta.location && (
-                <span className="flex items-center gap-1" style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
+              {meta?.location && (
+                <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-tertiary)' }}>
                   <MapPin size={9} />
                   {meta.location}
                 </span>
@@ -181,11 +194,10 @@ export function MobileLeadCard({
           )}
         </div>
 
-        {/* Right side: AI score + time */}
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
           {score !== undefined && <AIScore score={score} size="xs" />}
           {meta?.lastActivity && (
-            <span className="flex items-center gap-1" style={{ fontSize: '9px', color: 'var(--bo-text-muted)' }}>
+            <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--text-tertiary)' }}>
               <Clock size={8} />
               {meta.lastActivity}
             </span>
@@ -200,13 +212,14 @@ export function MobileLeadCard({
             <span
               className="flex items-center gap-1"
               style={{
+                fontFamily: 'var(--font-mono)',
                 fontSize: '9px',
                 fontWeight: 700,
                 color: aiCfg.color,
                 background: aiCfg.bg,
                 border: `1px solid ${aiCfg.border}`,
                 padding: '3px 8px',
-                borderRadius: '8px',
+                borderRadius: 'var(--r-md, 8px)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 whiteSpace: 'nowrap',
@@ -218,11 +231,12 @@ export function MobileLeadCard({
           )}
           {meta?.product && (
             <>
-              <span style={{ color: 'var(--bo-border)', fontSize: '10px' }}>•</span>
+              <span style={{ color: 'var(--border-default)', fontSize: '10px' }}>•</span>
               <span
                 style={{
+                  fontFamily: 'var(--font-sans)',
                   fontSize: '11px',
-                  color: 'var(--bo-text-muted)',
+                  color: 'var(--text-secondary)',
                   fontWeight: 500,
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -241,20 +255,21 @@ export function MobileLeadCard({
       {aiSummary && (
         <div
           style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid var(--bo-border)',
-            borderRadius: '10px',
+            background: 'var(--bg-muted)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--r-lg, 12px)',
             padding: '8px 10px',
           }}
         >
           <div className="flex items-start gap-2">
-            <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginTop: '1px', flexShrink: 0 }}>
+            <span style={{ fontSize: '11px', color: 'var(--imi-gold-500)', marginTop: '1px', flexShrink: 0 }}>
               ✦
             </span>
             <p
               style={{
+                fontFamily: 'var(--font-sans)',
                 fontSize: '11px',
-                color: 'var(--bo-text-muted)',
+                color: 'var(--text-secondary)',
                 lineHeight: 1.55,
                 margin: 0,
               }}
@@ -270,13 +285,14 @@ export function MobileLeadCard({
         <div className="flex justify-end mt-2">
           <span
             style={{
+              fontFamily: 'var(--font-mono)',
               fontSize: '9px',
               fontWeight: 600,
-              color: 'var(--imi-blue-bright)',
-              background: 'var(--imi-blue-dim)',
-              border: '1px solid var(--imi-blue-border)',
+              color: 'var(--imi-gold-500)',
+              background: 'rgba(184,148,58,0.10)',
+              border: '1px solid rgba(184,148,58,0.20)',
               padding: '2px 7px',
-              borderRadius: '6px',
+              borderRadius: 'var(--r-sm, 6px)',
             }}
           >
             ▶ {meta.sessionDuration}

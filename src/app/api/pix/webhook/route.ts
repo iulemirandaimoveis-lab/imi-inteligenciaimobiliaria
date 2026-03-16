@@ -5,7 +5,10 @@ import { supabaseAdmin } from '@/lib/supabase/admin'
 // ─── AbacatePay HMAC-SHA256 signature validation ─────────────────────────────
 async function validateAbacateSignature(req: Request, rawBody: string): Promise<boolean> {
     const secret = process.env.ABACATEPAY_WEBHOOK_SECRET
-    if (!secret) return true // skip validation if not configured (dev mode)
+    if (!secret) {
+        console.warn('ABACATEPAY_WEBHOOK_SECRET not set — rejecting webhook for security')
+        return false
+    }
 
     const signature = req.headers.get('x-webhook-signature')
     if (!signature) return false

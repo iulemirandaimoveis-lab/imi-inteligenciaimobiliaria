@@ -36,14 +36,14 @@ export default function Method({ dict }: MethodProps) {
     const lang = (params?.lang as string) || 'pt'
 
     return (
-        <section className="relative bg-[#141420] py-20 lg:py-28 overflow-hidden">
+        <section className="relative py-20 lg:py-28 overflow-hidden" style={{ background: 'var(--imi-navy-800)' }}>
             {/* Dot grid texture */}
             <div
                 className="absolute inset-0 opacity-[0.025]"
                 style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }}
             />
             {/* Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#102A43]/[0.05] blur-[80px] rounded-full" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full" style={{ background: 'var(--imi-navy-700)', opacity: 0.05, filter: 'blur(80px)' }} />
 
             <div className="relative z-10 max-w-[1280px] mx-auto px-6 lg:px-8">
                 {/* Eyebrow */}
@@ -54,9 +54,9 @@ export default function Method({ dict }: MethodProps) {
                     transition={{ duration: 0.5 }}
                     className="flex items-center justify-center gap-3 mb-8"
                 >
-                    <div className="w-8 h-px bg-[#102A43]" />
-                    <span className="text-[#486581] text-[11px] font-bold uppercase tracking-[0.25em]">{dict.method_pre}</span>
-                    <div className="w-8 h-px bg-[#102A43]" />
+                    <div className="w-8 h-px" style={{ background: 'var(--imi-navy-600)' }} />
+                    <span className="text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--imi-navy-300)', fontFamily: 'var(--font-sans)' }}>{dict.method_pre}</span>
+                    <div className="w-8 h-px" style={{ background: 'var(--imi-navy-600)' }} />
                 </motion.div>
 
                 {/* Headline */}
@@ -66,7 +66,7 @@ export default function Method({ dict }: MethodProps) {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.1 }}
                     className="text-center text-[28px] sm:text-[36px] lg:text-[44px] font-black text-white leading-[1.15] mb-14"
-                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                    style={{ fontFamily: 'var(--font-display)' }}
                 >
                     {dict.method_title}
                 </motion.h2>
@@ -93,15 +93,15 @@ export default function Method({ dict }: MethodProps) {
                                     className="text-[52px] font-black leading-none mb-4 select-none"
                                     style={{
                                         color: 'transparent',
-                                        WebkitTextStroke: '1px rgba(72,101,129,0.35)',
-                                        fontFamily: "'Playfair Display', Georgia, serif",
+                                        WebkitTextStroke: '1px rgba(61,81,138,0.35)',
+                                        fontFamily: 'var(--font-display)',
                                     }}
                                 >
                                     {step.num}
                                 </div>
 
                                 {/* Accent line */}
-                                <div className="w-8 h-px bg-[#334E68] mb-4" />
+                                <div className="w-8 h-px mb-4" style={{ background: 'var(--imi-navy-400)' }} />
 
                                 <h3 className="text-[15px] font-bold text-white mb-2">{step.title}</h3>
                                 <p className="text-[13px] text-white/45 leading-relaxed">{step.desc}</p>
@@ -120,7 +120,8 @@ export default function Method({ dict }: MethodProps) {
                 >
                     <Link
                         href={`/${lang}/sobre`}
-                        className="inline-flex items-center gap-2.5 text-white border border-white/15 hover:border-[#334E68] hover:text-[#9FB3C8] font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[13px]"
+                        className="inline-flex items-center gap-2.5 text-white border border-white/15 font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[13px]"
+                        style={{ fontFamily: 'var(--font-sans)' }}
                     >
                         {dict.method_cta}
                         <ArrowRight size={14} />

@@ -5,8 +5,12 @@ export function createClient() {
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
     if (!url || !key) {
-        console.error('Supabase Client Error: Missing environment variables', { url: !!url, key: !!key })
-        throw new Error('Supabase URL or Key is missing. Check .env.local')
+        // Graceful fallback for build time — will fail at runtime if keys not provided
+        console.warn('Supabase Client: Missing environment variables — using build placeholder')
+        return createBrowserClient(
+            'https://placeholder.supabase.co',
+            'build-placeholder-key'
+        )
     }
 
     return createBrowserClient(url, key)

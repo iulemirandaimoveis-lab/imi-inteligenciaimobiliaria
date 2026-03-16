@@ -96,7 +96,7 @@ export default function CreditPage() {
                             <div className="w-8 h-px bg-[#102A43]" />
                             <span className="text-[#486581] text-[11px] font-bold uppercase tracking-[0.25em]">Crédito Imobiliário</span>
                         </div>
-                        <h1 className="text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                        <h1 className="font-display text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white">
                             Financie com <span className="text-[#486581]">Inteligência</span>
                         </h1>
                         <p className="text-[17px] lg:text-[19px] leading-relaxed font-light text-[#9CA3AF] max-w-2xl">
@@ -105,14 +105,14 @@ export default function CreditPage() {
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-12 flex flex-wrap gap-x-10 gap-y-6">
                             {[{ v: 'CAIXA', l: 'Consórcio oficial' }, { v: '35', l: 'Anos de prazo máx.' }, { v: 'Selic', l: 'Taxas atualizadas' }].map((s, i) => (
                                 <div key={i}>
-                                    <div className="text-[30px] font-black text-[#486581] leading-none mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.v}</div>
+                                    <div className="font-display text-[30px] font-black text-[#486581] leading-none mb-1">{s.v}</div>
                                     <div className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#6C757D]">{s.l}</div>
                                 </div>
                             ))}
                         </motion.div>
                     </motion.div>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#0D0F14] to-transparent" />
             </section>
 
             {/* MODALIDADES */}
@@ -285,7 +285,7 @@ export default function CreditPage() {
                                                 <button
                                                     key={percent}
                                                     onClick={() => setLoanAmount((propertyValue * percent) / 100)}
-                                                    className={`py-3 sm:py-2 text-sm sm:text-xs font-bold rounded-xl border transition-all min-h-[44px] ${Math.round((loanAmount / propertyValue) * 100) === percent
+                                                    className={`py-3 sm:py-2 text-sm sm:text-xs font-bold rounded-[4px] border transition-all min-h-[44px] ${Math.round((loanAmount / propertyValue) * 100) === percent
                                                         ? 'bg-[#1A1E2A] text-white border-[#21263A] border-l-2 border-[#334E68]'
                                                         : 'border-white/10 text-[#9CA3AF] hover:bg-white/5 hover:border-white/20'
                                                         }`}
@@ -316,7 +316,7 @@ export default function CreditPage() {
                                                 <button
                                                     key={y}
                                                     onClick={() => setYears(y)}
-                                                    className={`py-3 sm:py-2 text-sm sm:text-xs font-bold rounded-xl border transition-all min-h-[44px] ${years === y
+                                                    className={`py-3 sm:py-2 text-sm sm:text-xs font-bold rounded-[4px] border transition-all min-h-[44px] ${years === y
                                                         ? 'bg-[#1A1E2A] text-white border-[#21263A] border-l-2 border-[#334E68]'
                                                         : 'border-white/10 text-[#9CA3AF] hover:bg-white/5 hover:border-white/20'
                                                         }`}
@@ -425,9 +425,9 @@ export default function CreditPage() {
                                     >
                                         <span className="font-bold text-white font-display">{faq.question}</span>
                                         {openFaq === index ? (
-                                            <div className="w-8 h-8 bg-white/10 text-white rounded-full flex items-center justify-center"><ChevronUp size={18} /></div>
+                                            <div className="w-8 h-8 bg-white/10 text-white rounded-[4px] flex items-center justify-center"><ChevronUp size={18} /></div>
                                         ) : (
-                                            <div className="w-8 h-8 bg-[#1A1E2A] text-white rounded-full flex items-center justify-center"><ChevronDown size={18} /></div>
+                                            <div className="w-8 h-8 bg-[#1A1E2A] text-white rounded-[4px] flex items-center justify-center"><ChevronDown size={18} /></div>
                                         )}
                                     </button>
                                     <AnimatePresence>

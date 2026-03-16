@@ -4,12 +4,13 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
     LayoutDashboard, Building2, FileText, Users, Scale,
-    Settings, ChevronDown, ChevronRight, LogOut,
+    Settings, ChevronDown, LogOut, Sun,
     BookOpen, BarChart2, Target, TrendingUp, TrendingDown,
     Zap, CreditCard, Briefcase, CalendarDays, QrCode, Sparkles,
     FileStack, FolderOpen, Banknote, Building,
     FileSignature, Layers, MessageSquare, Megaphone, Plug,
-    Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked, Bot
+    Brain, BarChart3, LineChart, Wand2, List, Shield, Video, BookMarked, Bot,
+    Map as MapIcon,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -26,17 +27,21 @@ interface NavItem {
 
 interface NavSection {
     label: string
+    alwaysOpen?: boolean
     items: NavItem[]
 }
 
+// ── 8 groups: Operações Diárias always open, rest collapsed by default ──
 const SECTIONS: NavSection[] = [
     {
-        label: 'Visão Executiva',
+        label: 'Operações Diárias',
+        alwaysOpen: true,
         items: [
-            { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard },
-            { label: 'Metas & Performance', href: '/backoffice/financeiro/metas', icon: Target },
-            { label: 'Relatórios', href: '/backoffice/relatorios', icon: FileStack },
-            { label: 'Global Intelligence', href: '/backoffice/relatorios/executivo', icon: Brain },
+            { label: 'Hoje',      href: '/backoffice/hoje',      icon: Sun             },
+            { label: 'Dashboard', href: '/backoffice/dashboard', icon: LayoutDashboard, badge: 'NEW' },
+            { label: 'Leads',     href: '/backoffice/leads',     icon: Users,           badge: 'NEW' },
+            { label: 'Agenda',    href: '/backoffice/agenda',    icon: CalendarDays    },
+            { label: 'Imóveis',   href: '/backoffice/imoveis',   icon: Building2,       badge: 'NEW' },
         ]
     },
     {
@@ -45,31 +50,31 @@ const SECTIONS: NavSection[] = [
             {
                 label: 'Leads', icon: Users,
                 children: [
-                    { label: 'Todos os Leads', href: '/backoffice/leads', icon: Users },
-                    { label: 'Inbox IA', href: '/backoffice/leads/inbox', icon: Sparkles },
-                    { label: 'Comportamento', href: '/backoffice/leads/behavior', icon: BarChart3 },
-                    { label: 'Novo Lead', href: '/backoffice/leads/novo', icon: Users },
+                    { label: 'Todos os Leads',  href: '/backoffice/leads',          icon: Users    },
+                    { label: 'Inbox IA',        href: '/backoffice/leads/inbox',    icon: Sparkles, badge: 'NEW' },
+                    { label: 'Comportamento',   href: '/backoffice/leads/behavior', icon: BarChart3 },
+                    { label: 'Novo Lead',       href: '/backoffice/leads/novo',     icon: Users    },
                 ]
             },
             {
-                label: 'Campanhas', icon: Megaphone,
+                label: 'Campanhas', icon: Megaphone, badge: 'NEW',
                 children: [
-                    { label: 'Todas', href: '/backoffice/campanhas', icon: Megaphone },
+                    { label: 'Todas',           href: '/backoffice/campanhas',     icon: Megaphone },
                     { label: 'Ads Performance', href: '/backoffice/campanhas/ads', icon: BarChart2 },
-                    { label: 'Nova', href: '/backoffice/campanhas/nova', icon: Megaphone },
+                    { label: 'Nova',            href: '/backoffice/campanhas/nova',icon: Megaphone },
                 ]
             },
-            { label: 'QR Tracking', href: '/backoffice/tracking/qr', icon: QrCode },
-            { label: 'Social Inbox', href: '/backoffice/omnichannel/inbox', icon: Layers },
-            { label: 'WhatsApp', href: '/backoffice/whatsapp', icon: MessageSquare },
+            { label: 'QR Tracking',  href: '/backoffice/tracking/qr',     icon: QrCode,        badge: 'NEW'   },
+            { label: 'Social Inbox', href: '/backoffice/omnichannel/inbox',icon: Layers,        badge: 'BREVE' },
+            { label: 'WhatsApp',     href: '/backoffice/whatsapp',         icon: MessageSquare, badge: 'BREVE' },
         ]
     },
     {
         label: 'Conversão',
         items: [
-            { label: 'Pipeline', href: '/backoffice/leads/pipeline', icon: TrendingUp },
-            { label: 'Simulações', href: '/backoffice/credito/simulador', icon: CreditCard },
-            { label: 'Agenda', href: '/backoffice/agenda', icon: CalendarDays },
+            { label: 'Pipeline',    href: '/backoffice/leads/pipeline',    icon: TrendingUp },
+            { label: 'Simulações',  href: '/backoffice/credito/simulador', icon: CreditCard },
+            { label: 'Agenda',      href: '/backoffice/agenda',            icon: CalendarDays },
         ]
     },
     {
@@ -78,65 +83,67 @@ const SECTIONS: NavSection[] = [
             {
                 label: 'Imóveis', icon: Building2,
                 children: [
-                    { label: 'Portfólio', href: '/backoffice/imoveis', icon: Building2 },
-                    { label: 'Inventário', href: '/backoffice/imoveis/inventario', icon: List },
-                    { label: 'Novo Imóvel', href: '/backoffice/imoveis/novo', icon: Building2 },
+                    { label: 'Listagem',       href: '/backoffice/imoveis',                icon: Building2 },
+                    { label: 'Explorer',       href: '/backoffice/imoveis/explorer',       icon: BarChart2, badge: 'NEW' },
+                    { label: 'Portfolio',      href: '/backoffice/imoveis/portfolio',      icon: LineChart },
+                    { label: 'Comparar',       href: '/backoffice/imoveis/comparar',       icon: Scale },
+                    { label: 'Inventário',     href: '/backoffice/imoveis/inventario',     icon: List  },
+                    { label: 'Novo Imóvel',    href: '/backoffice/imoveis/novo',           icon: Building2 },
                 ]
             },
-            { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building },
-            { label: 'Projetos', href: '/backoffice/projetos', icon: FolderOpen },
+            { label: 'Construtoras', href: '/backoffice/construtoras', icon: Building,   badge: 'NEW' },
+            { label: 'Projetos',     href: '/backoffice/projetos',     icon: FolderOpen, badge: 'NEW' },
             {
                 label: 'Conteúdo', icon: FileText,
                 children: [
-                    { label: 'Publicações', href: '/backoffice/conteudos', icon: FileText },
-                    { label: 'Criador IA', href: '/backoffice/conteudo/criador', icon: Wand2 },
-                    { label: 'eBook IA', href: '/backoffice/conteudo/ebook', icon: BookMarked },
-                    { label: 'Vídeo IA', href: '/backoffice/conteudo/video', icon: Video },
-                    { label: 'Automação', href: '/backoffice/conteudo/automacao', icon: Zap },
+                    { label: 'Publicações', href: '/backoffice/conteudos',          icon: FileText,   badge: 'BREVE' },
+                    { label: 'Criador IA',  href: '/backoffice/conteudo/criador',   icon: Wand2,      badge: 'NEW'   },
+                    { label: 'eBook IA',    href: '/backoffice/conteudo/ebook',     icon: BookMarked, badge: 'NEW'   },
+                    { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',     icon: Video,      badge: 'NEW'   },
+                    { label: 'Automação',   href: '/backoffice/conteudo/automacao', icon: Zap       },
                 ]
             },
-        ]
-    },
-    {
-        label: 'Inteligência',
-        items: [
-            { label: 'Ebooks', href: '/backoffice/inteligencia/ebooks', icon: BookOpen },
-            { label: 'Relatórios', href: '/backoffice/inteligencia/relatorios', icon: FileStack },
-            { label: 'Indicadores', href: '/backoffice/inteligencia/indicadores', icon: LineChart },
-            { label: 'Índices IMI', href: '/backoffice/inteligencia/indices', icon: Brain },
         ]
     },
     {
         label: 'Operação',
         items: [
             {
-                label: 'Avaliações', icon: Scale,
+                label: 'Avaliações', icon: Scale, badge: 'NEW',
                 children: [
-                    { label: 'Todas', href: '/backoffice/avaliacoes', icon: Scale },
-                    { label: 'Nova', href: '/backoffice/avaliacoes/nova', icon: Scale },
-                    { label: 'Email + Honorários', href: '/backoffice/avaliacoes/email-honorarios', icon: Scale },
-                    { label: 'Exercícios NBR', href: '/backoffice/avaliacoes/exercicios', icon: BookOpen },
+                    { label: 'Todas',               href: '/backoffice/avaliacoes',                  icon: Scale    },
+                    { label: 'Nova',                href: '/backoffice/avaliacoes/nova',             icon: Scale    },
+                    { label: 'Motor de Avaliações', href: '/backoffice/avaliacoes/motor',            icon: Brain, badge: 'IA' },
+                    { label: 'Email + Honorários',  href: '/backoffice/avaliacoes/email-honorarios', icon: Scale    },
+                    { label: 'Exercícios NBR',      href: '/backoffice/avaliacoes/exercicios',       icon: BookOpen },
+                ]
+            },
+            {
+                label: 'Propostas', icon: FileText,
+                children: [
+                    { label: 'Todas',    href: '/backoffice/propostas',     icon: FileText },
+                    { label: 'Nova',     href: '/backoffice/propostas/nova',icon: FileText },
                 ]
             },
             {
                 label: 'Contratos', icon: FileSignature,
                 children: [
-                    { label: 'Gerenciador', href: '/backoffice/contratos', icon: FileSignature },
-                    { label: 'Novo', href: '/backoffice/contratos/novo', icon: FileSignature },
+                    { label: 'Gerenciador', href: '/backoffice/contratos',     icon: FileSignature },
+                    { label: 'Novo',        href: '/backoffice/contratos/novo',icon: FileSignature },
                 ]
             },
             {
                 label: 'Consultoria', icon: Briefcase,
                 children: [
-                    { label: 'Consultorias', href: '/backoffice/consultorias', icon: Briefcase },
-                    { label: 'Nova', href: '/backoffice/consultorias/nova', icon: Briefcase },
+                    { label: 'Consultorias', href: '/backoffice/consultorias',     icon: Briefcase },
+                    { label: 'Nova',         href: '/backoffice/consultorias/nova',icon: Briefcase },
                 ]
             },
             {
                 label: 'Crédito', icon: CreditCard,
                 children: [
-                    { label: 'Operações', href: '/backoffice/credito', icon: CreditCard },
-                    { label: 'Simulador', href: '/backoffice/credito/simulador', icon: CreditCard },
+                    { label: 'Operações',  href: '/backoffice/credito',            icon: CreditCard },
+                    { label: 'Simulador',  href: '/backoffice/credito/simulador',  icon: CreditCard },
                 ]
             },
         ]
@@ -144,43 +151,76 @@ const SECTIONS: NavSection[] = [
     {
         label: 'Financeiro',
         items: [
-            { label: 'Visão Geral', href: '/backoffice/financeiro', icon: Banknote },
-            { label: 'A Receber', href: '/backoffice/financeiro/receber', icon: TrendingUp },
-            { label: 'A Pagar', href: '/backoffice/financeiro/pagar', icon: TrendingDown },
-            { label: 'Metas', href: '/backoffice/financeiro/metas', icon: Target },
+            { label: 'Visão Geral', href: '/backoffice/financeiro',         icon: Banknote,    badge: 'NEW' },
+            { label: 'A Receber',   href: '/backoffice/financeiro/receber', icon: TrendingUp  },
+            { label: 'A Pagar',     href: '/backoffice/financeiro/pagar',   icon: TrendingDown },
+            { label: 'Metas',       href: '/backoffice/financeiro/metas',   icon: Target      },
         ]
     },
     {
-        label: 'Crescimento',
+        label: 'Inteligência',
         items: [
-            { label: 'Automações', href: '/backoffice/automacoes', icon: Zap },
-            { label: 'Playbooks', href: '/backoffice/playbooks', icon: BookOpen },
-            { label: 'Analytics', href: '/backoffice/tracking', icon: BarChart2 },
-            { label: 'Central de IA', href: '/backoffice/ia', icon: Sparkles },
-            { label: 'Agentes IA', href: '/backoffice/ia/agentes', icon: Bot, badge: 'NEW' },
-            { label: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles },
+            { label: 'Ebooks',       href: '/backoffice/inteligencia/ebooks',      icon: BookOpen  },
+            { label: 'Relatórios',   href: '/backoffice/inteligencia/relatorios',  icon: FileStack, badge: 'NEW' },
+            { label: 'Indicadores',  href: '/backoffice/inteligencia/indicadores', icon: LineChart },
+            { label: 'Índices IMI',  href: '/backoffice/inteligencia/indices',     icon: Brain,     badge: 'NEW' },
+            { label: 'Widgets',      href: '/backoffice/inteligencia/widgets',     icon: Layers, badge: 'NEW' },
+            { label: 'Central de IA',href: '/backoffice/ia',                        icon: Sparkles  },
+            { label: 'Agentes IA',   href: '/backoffice/ia/agentes',               icon: Bot, badge: 'NEW' },
+            { label: 'Automações',   href: '/backoffice/automacoes',               icon: Zap,       badge: 'BREVE' },
+            { label: 'Analytics',    href: '/backoffice/tracking',                  icon: BarChart2 },
         ]
     },
     {
         label: 'Configurações',
         items: [
-            { label: 'Organização', href: '/backoffice/organizacao', icon: Building },
-            { label: 'Equipe', href: '/backoffice/equipe', icon: Users },
-            { label: 'Integrações', href: '/backoffice/integracoes', icon: Plug },
+            { label: 'Organização',  href: '/backoffice/organizacao',         icon: Building,  badge: 'BREVE' },
+            { label: 'Equipe',       href: '/backoffice/equipe',              icon: Users,     badge: 'NEW'   },
+            { label: 'Usuários',     href: '/backoffice/settings/usuarios',   icon: Users,     badge: 'NEW'   },
+            { label: 'Integrações',  href: '/backoffice/integracoes',         icon: Plug      },
             {
                 label: 'Configurações', icon: Settings,
                 children: [
-                    { label: 'Geral', href: '/backoffice/settings', icon: Settings },
-                    { label: 'Corretores', href: '/backoffice/settings/corretores', icon: Users },
-                    { label: 'Permissões', href: '/backoffice/settings/permissoes', icon: Shield },
-                    { label: 'Logs do Sistema', href: '/backoffice/settings/logs', icon: FileText },
-                    { label: 'Configurações IA', href: '/backoffice/settings/ia', icon: Brain },
+                    { label: 'Geral',          href: '/backoffice/settings',            icon: Settings  },
+                    { label: 'Corretores',     href: '/backoffice/settings/corretores', icon: Users     },
+                    { label: 'Permissões',     href: '/backoffice/settings/permissoes', icon: Shield    },
+                    { label: 'Logs do Sistema',href: '/backoffice/settings/logs',       icon: FileText  },
+                    { label: 'Configurações IA',href: '/backoffice/settings/ia',        icon: Brain     },
                 ]
             },
         ]
     },
 ]
 
+// ── Badge styling helper ──────────────────────────────────────────
+function badgeStyle(badge: string | number) {
+    const base = {
+        fontSize: 9,
+        fontFamily: 'var(--font-mono)',
+        fontWeight: 700 as const,
+        padding: '1px 5px',
+        borderRadius: 999,
+        letterSpacing: '0.06em',
+    }
+    if (badge === 'NEW') {
+        return { ...base, background: 'rgba(45,143,92,0.15)', color: '#2D8F5C', border: '1px solid rgba(45,143,92,0.2)' }
+    }
+    if (badge === 'IA') {
+        return { ...base, background: 'rgba(184,148,58,0.10)', color: 'var(--imi-gold-500)', border: '1px solid rgba(184,148,58,0.20)' }
+    }
+    if (badge === 'BREVE') {
+        return { ...base, background: 'var(--bg-muted)', color: 'var(--text-tertiary)', border: '1px solid var(--border-subtle)', letterSpacing: '0.05em', fontWeight: 600 as const }
+    }
+    return { ...base, background: 'var(--bg-elevated)', color: '#fff', border: '1px solid transparent' }
+}
+
+// ── Badge display text helper ─────────────────────────────────────
+function badgeText(badge: string | number): string {
+    if (badge === 'BREVE') return 'EM BREVE'
+    return String(badge)
+}
+
+// ── Leaf nav item (no children) ────────────────────────────────────
 function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }) {
     const pathname = usePathname()
     const [open, setOpen] = useState(() => {
@@ -199,30 +239,20 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
             <div>
                 <button
                     onClick={() => setOpen(!open)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded text-sm transition-all"
                     style={{
-                        color: isParentActive || open ? 'var(--accent-500)' : 'var(--sidebar-text)',
-                        background: isParentActive || open ? 'var(--bo-active-bg)' : 'transparent',
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: 14,
+                        color: isParentActive || open ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+                        background: isParentActive || open ? 'rgba(184,148,58,0.10)' : 'transparent',
                         fontWeight: isParentActive ? 600 : 500,
                     }}
                 >
                     <item.icon size={16} className="flex-shrink-0" />
                     <span className="flex-1 text-left">{item.label}</span>
                     {item.badge && (
-                        <span
-                            style={{
-                                fontSize: '9px',
-                                fontWeight: 800,
-                                padding: '2px 5px',
-                                borderRadius: 5,
-                                letterSpacing: '0.04em',
-                                ...(item.badge === 'NEW'
-                                    ? { background: 'rgba(74,222,128,0.18)', color: '#4ADE80', border: '1px solid rgba(74,222,128,0.30)' }
-                                    : { background: 'var(--bo-card)', color: '#fff', border: '1px solid transparent' }
-                                ),
-                            }}
-                        >
-                            {item.badge}
+                        <span style={badgeStyle(item.badge)}>
+                            {badgeText(item.badge)}
                         </span>
                     )}
                     <motion.span
@@ -242,7 +272,7 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                             className="ml-5 mt-0.5 space-y-0.5 pl-3 overflow-hidden"
-                            style={{ borderLeft: '1px solid var(--bo-border-subtle)' }}
+                            style={{ borderLeft: '1px solid var(--border-subtle)' }}
                         >
                             {item.children!.map((child, i) => (
                                 <motion.div
@@ -264,44 +294,105 @@ function NavItemComponent({ item, depth = 0 }: { item: NavItem; depth?: number }
     return (
         <Link
             href={item.href!}
-            className="hover-card relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all"
+            className="relative flex items-center gap-3 px-3 py-2 rounded text-sm transition-all"
             style={{
-                color: isActive ? 'var(--nav-active)' : 'var(--sidebar-text)',
-                background: 'transparent',
+                fontFamily: 'var(--font-sans)',
+                fontSize: 14,
+                color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+                background: isActive ? 'rgba(184,148,58,0.08)' : 'transparent',
                 fontWeight: isActive ? 600 : 400,
+            }}
+            onMouseEnter={(e) => {
+                if (!isActive) e.currentTarget.style.background = 'rgba(184,148,58,0.05)'
+            }}
+            onMouseLeave={(e) => {
+                if (!isActive) e.currentTarget.style.background = 'transparent'
             }}
         >
             {/* Active indicator bar */}
             {isActive && (
                 <motion.div
                     layoutId="sidebar-active"
-                    className="absolute -left-[11px] top-1/2 w-[3px] h-4 rounded-full"
-                    style={{ background: 'var(--bo-accent)', transform: 'translateY(-50%)' }}
+                    className="absolute -left-[11px] top-1/2 w-[4px] h-5 rounded-full"
+                    style={{ background: 'var(--imi-gold-500)', transform: 'translateY(-50%)' }}
                     transition={{ type: 'spring', stiffness: 350, damping: 30 }}
                 />
             )}
-            <item.icon size={15} className="flex-shrink-0" style={{ color: isActive ? 'var(--nav-active)' : undefined }} />
+            <item.icon size={16} className="flex-shrink-0" style={{ color: isActive ? 'var(--imi-gold-400)' : undefined }} />
             <span className="flex-1">{item.label}</span>
             {item.badge && (
-                <span
-                    style={{
-                        fontSize: '9px',
-                        fontWeight: 800,
-                        padding: '2px 5px',
-                        borderRadius: 5,
-                        letterSpacing: '0.04em',
-                        ...(item.badge === 'NEW'
-                            ? { background: 'rgba(74,222,128,0.18)', color: '#4ADE80', border: '1px solid rgba(74,222,128,0.30)' }
-                            : item.badge === 'BREVE'
-                            ? { background: 'var(--bo-hover)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }
-                            : { background: 'var(--bo-card)', color: '#fff', border: '1px solid transparent' }
-                        ),
-                    }}
-                >
-                    {item.badge}
+                <span style={badgeStyle(item.badge)}>
+                    {badgeText(item.badge)}
                 </span>
             )}
         </Link>
+    )
+}
+
+// ── Collapsible section ────────────────────────────────────────────
+function SectionComponent({ section }: { section: NavSection }) {
+    const pathname = usePathname()
+    const isAlwaysOpen = !!section.alwaysOpen
+
+    const [open, setOpen] = useState(() => {
+        if (isAlwaysOpen) return true
+        // Auto-open if current route is within this section
+        return section.items.some(item => {
+            if (item.href && pathname.startsWith(item.href)) return true
+            if (item.children) return item.children.some(c => c.href && pathname.startsWith(c.href))
+            return false
+        })
+    })
+
+    return (
+        <div className="mb-1">
+            {/* Section header */}
+            <button
+                onClick={() => { if (!isAlwaysOpen) setOpen(v => !v) }}
+                className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all group"
+                style={{ cursor: isAlwaysOpen ? 'default' : 'pointer' }}
+                disabled={isAlwaysOpen}
+            >
+                <p
+                    className="flex-1 text-left uppercase"
+                    style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 10,
+                        fontWeight: 600,
+                        letterSpacing: '0.12em',
+                        color: 'var(--text-tertiary)',
+                    }}
+                >
+                    {section.label}
+                </p>
+                {!isAlwaysOpen && (
+                    <motion.span
+                        animate={{ rotate: open ? 180 : 0 }}
+                        transition={{ duration: 0.2 }}
+                        style={{ opacity: 0.4, display: 'flex', flexShrink: 0 }}
+                    >
+                        <ChevronDown size={11} style={{ color: 'var(--text-tertiary)' }} />
+                    </motion.span>
+                )}
+            </button>
+
+            {/* Section items */}
+            <AnimatePresence initial={false}>
+                {open && (
+                    <motion.div
+                        initial={isAlwaysOpen ? false : { height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                        className="space-y-0.5 overflow-hidden"
+                    >
+                        {section.items.map(item => (
+                            <NavItemComponent key={item.href || item.label} item={item} />
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
     )
 }
 
@@ -315,86 +406,55 @@ export function DesktopSidebar() {
 
     return (
         <aside
-            className="hidden lg:flex flex-col w-60 h-screen fixed left-0 top-0 z-40"
+            className="hidden lg:flex flex-col h-screen fixed left-0 top-0 z-40"
             style={{
-                background: 'var(--sidebar-bg)',
-                borderRight: '1px solid var(--sidebar-border)',
+                width: 248,
+                background: 'var(--imi-navy-900)',
+                borderRight: '1px solid var(--border-subtle)',
             }}
         >
-            {/* Decorative gradient accent */}
-            <div
-                className="absolute top-0 right-0 w-32 h-48 pointer-events-none"
-                style={{
-                    background: 'radial-gradient(ellipse at top right, var(--bo-hover) 0%, transparent 70%)',
-                }}
-            />
-            {/* Logo */}
+            {/* Logo — IMI Brand DS3 */}
             <div
                 className="flex items-center gap-3 px-5 h-16 flex-shrink-0"
-                style={{ borderBottom: '1px solid var(--sidebar-border)' }}
+                style={{ borderBottom: '1px solid var(--border-subtle)' }}
             >
                 <span
-                    className="text-2xl font-bold tracking-tight transition-colors text-white"
-                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                    className="text-white leading-none select-none"
+                    style={{
+                        fontFamily: 'var(--font-serif)',
+                        fontSize: 26,
+                        fontWeight: 700,
+                        letterSpacing: '0.08em',
+                    }}
                 >
                     IMI
                 </span>
-                <div className="h-6 w-px" style={{ background: 'var(--sidebar-border)' }}></div>
-                <span className="text-[9px] font-medium uppercase tracking-[0.15em] leading-[1.1]" style={{ color: 'var(--sidebar-text)' }}>
+                <div
+                    className="flex-shrink-0"
+                    style={{ width: 1, height: 38, background: 'var(--imi-gold-500)' }}
+                />
+                <span
+                    className="leading-[1.35] select-none"
+                    style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: 8,
+                        fontWeight: 500,
+                        letterSpacing: '0.22em',
+                        textTransform: 'uppercase',
+                        color: 'var(--imi-gold-500)',
+                    }}
+                >
                     Inteligência<br />Imobiliária
                 </span>
             </div>
 
             {/* Nav — min-h-0 is critical for flex overflow-y-auto to scroll */}
             <nav className="flex-1 overflow-y-auto min-h-0 py-3 px-2.5">
-                {SECTIONS.map((section, idx) => (
-                    <div key={section.label} className={idx > 0 ? 'mt-4' : ''}>
-                        <p
-                            className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em]"
-                            style={{ color: 'var(--bo-text-muted)', opacity: 0.7 }}
-                        >
-                            {section.label}
-                        </p>
-                        <div className="space-y-0.5">
-                            {section.items.map(item => (
-                                <NavItemComponent key={item.href || item.label} item={item} />
-                            ))}
-                        </div>
-                    </div>
+                {SECTIONS.map(section => (
+                    <SectionComponent key={section.label} section={section} />
                 ))}
             </nav>
 
-            {/* Footer / User */}
-            <div
-                className="px-2.5 py-3 flex-shrink-0"
-                style={{ borderTop: '1px solid var(--sidebar-border)' }}
-            >
-                <div className="flex items-center gap-2">
-                    <div
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl flex-1 min-w-0"
-                        style={{ background: 'var(--bo-icon-bg)' }}
-                    >
-                        <div
-                            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-white"
-                            style={{ background: 'var(--accent-500)' }}
-                        >
-                            IM
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold truncate" style={{ color: 'var(--bo-text)' }}>Iule Miranda</p>
-                            <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>CTO · CRECI 17933</p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={handleSignOut}
-                        title="Sair"
-                        className="hover-card w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
-                        style={{ background: 'var(--bo-icon-bg)', color: 'var(--bo-text-muted)' }}
-                    >
-                        <LogOut size={14} />
-                    </button>
-                </div>
-            </div>
         </aside>
     )
 }

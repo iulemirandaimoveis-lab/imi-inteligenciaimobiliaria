@@ -6,8 +6,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-
-const supabase = createClient()
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 
 export interface WhatsappConversation {
@@ -41,6 +39,7 @@ export interface WhatsappMessage {
 }
 
 export function useWhatsapp(tenantId: string) {
+    const supabase = createClient()
     const [conversations, setConversations] = useState<WhatsappConversation[]>([])
     const [activeConversation, setActiveConversation] = useState<WhatsappConversation | null>(null)
     const [messages, setMessages] = useState<WhatsappMessage[]>([])

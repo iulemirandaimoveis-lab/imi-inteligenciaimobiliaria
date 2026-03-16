@@ -14,6 +14,7 @@ import {
     Users,
     Activity,
     Edit3,
+    Building2,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -21,53 +22,320 @@ import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { useIsMobile } from '@/hooks/use-is-mobile'
+import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-ui'
 
 const supabase = createClient()
 
 const EVENT_CONFIG: Record<string, { color: string; bg: string; icon: any }> = {
     creation:       { color: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: Plus },
-    price_change:   { color: '#6BB87B', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
+    price_change:   { color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
     campaign_start: { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', icon: Activity },
     sold:           { color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', icon: CheckCircle2 },
     visit:          { color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Users },
     lead_gen:       { color: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
 }
 
-export default function PropertyTimelinePage() {
-    const { id } = useParams()
-    const router = useRouter()
+// ─── Mobile Loading ────────────────────────────────────────────────────────────
 
-    const { data: property, isLoading: propLoading } = useSWR(`property_${id}`, async () => {
-        const { data, error } = await supabase
-            .from('developments')
-            .select('*')
-            .eq('id', id)
-            .single()
-        if (error) throw error
-        return data
-    })
-
-    const { data: events = [], isLoading: eventsLoading } = useSWR(`property_events_${id}`, async () => {
-        const { data, error } = await supabase
-            .from('property_events')
-            .select('*')
-            .eq('property_id', id)
-            .order('event_date', { ascending: false })
-        if (error) throw error
-        return data
-    })
-
-    if (propLoading) {
-        return (
-            <div className="max-w-4xl mx-auto pb-20 space-y-4 animate-pulse">
-                <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 10, width: '40%', opacity: 0.5 }} />
-                <div style={{ height: 80, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.4 }} />
+function MobileTimelineLoading() {
+    return (
+        <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingTop: 72, paddingBottom: 80 }}>
+            <MobileGlobalStyles />
+            <div style={{ padding: '0 14px' }}>
                 {[1, 2, 3].map(i => (
-                    <div key={i} style={{ height: 120, background: 'var(--bo-card)', borderRadius: 20, opacity: 0.3 }} />
+                    <div
+                        key={i}
+                        style={{
+                            display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 16,
+                        }}
+                    >
+                        <div style={{
+                            width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                            background: 'linear-gradient(90deg, #162040 25%, #1A3250 50%, #162040 75%)',
+                            backgroundSize: '200% 100%',
+                            animation: 'shimmer 1.5s ease-in-out infinite',
+                        }} />
+                        <div style={{ flex: 1, borderRadius: 12, height: 88,
+                            background: 'linear-gradient(90deg, #162040 25%, #1A3250 50%, #162040 75%)',
+                            backgroundSize: '200% 100%',
+                            animation: 'shimmer 1.5s ease-in-out infinite',
+                        }} />
+                    </div>
                 ))}
             </div>
-        )
-    }
+        </div>
+    )
+}
+
+// ─── Desktop Loading ───────────────────────────────────────────────────────────
+
+function DesktopTimelineLoading() {
+    return (
+        <div className="max-w-4xl mx-auto pb-20 space-y-4 animate-pulse">
+            <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 10, width: '40%', opacity: 0.5 }} />
+            <div style={{ height: 80, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.4 }} />
+            {[1, 2, 3].map(i => (
+                <div key={i} style={{ height: 120, background: 'var(--bo-card)', borderRadius: 20, opacity: 0.3 }} />
+            ))}
+        </div>
+    )
+}
+
+// ─── Mobile Timeline ───────────────────────────────────────────────────────────
+
+interface MobileTimelineProps {
+    property: any
+    events: any[]
+    eventsLoading: boolean
+    id: string
+}
+
+function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineProps) {
+    const router = useRouter()
+
+    return (
+        <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
+            <MobileGlobalStyles />
+
+            {/* AppBar */}
+            <MobileAppBar
+                title="Timeline"
+                subtitle={property?.name ?? undefined}
+                onBack={() => router.push(`/backoffice/imoveis/${id}`)}
+            />
+
+            {/* Content */}
+            <div style={{
+                minHeight: '100vh',
+                background: 'var(--bg-base)',
+                paddingTop: 72,
+                paddingBottom: 80,
+                padding: '72px 14px 80px',
+            }}>
+
+                {/* Event count badge */}
+                {!eventsLoading && events.length > 0 && (
+                    <div style={{ marginBottom: 16 }}>
+                        <span style={{
+                            display: 'inline-block',
+                            padding: '5px 14px',
+                            borderRadius: 999,
+                            background: 'rgba(184,148,58,0.10)',
+                            border: '1px solid rgba(184,148,58,0.28)',
+                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: 'var(--imi-gold-500)',
+                            letterSpacing: '0.3px',
+                        }}>
+                            {events.length} evento{events.length !== 1 ? 's' : ''} registrado{events.length !== 1 ? 's' : ''}
+                        </span>
+                    </div>
+                )}
+
+                {/* Dot Timeline */}
+                {events.length > 0 ? (
+                    <div style={{ position: 'relative' }}>
+                        {/* Vertical connector line */}
+                        <div style={{
+                            position: 'absolute',
+                            left: 19,
+                            top: 20,
+                            bottom: 20,
+                            width: 1,
+                            background: 'rgba(184,148,58,0.12)',
+                            zIndex: 0,
+                        }} />
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            {(events as any[]).map((event: any, i: number) => {
+                                const cfg = EVENT_CONFIG[event.event_type as keyof typeof EVENT_CONFIG] || EVENT_CONFIG.creation
+                                const Icon = cfg.icon
+
+                                return (
+                                    <div
+                                        key={event.id}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'flex-start',
+                                            gap: 12,
+                                            animation: 'fadeSlideUp 350ms cubic-bezier(0.16,1,0.3,1) both',
+                                            animationDelay: `${i * 60}ms`,
+                                        }}
+                                    >
+                                        {/* Icon dot */}
+                                        <div style={{
+                                            width: 40,
+                                            height: 40,
+                                            borderRadius: 12,
+                                            background: cfg.bg,
+                                            border: `1px solid ${cfg.color}40`,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexShrink: 0,
+                                            zIndex: 1,
+                                            position: 'relative',
+                                        }}>
+                                            <Icon size={16} style={{ color: cfg.color }} />
+                                        </div>
+
+                                        {/* Event card */}
+                                        <div style={{
+                                            flex: 1,
+                                            background: 'var(--bg-elevated)',
+                                            borderRadius: 12,
+                                            padding: 14,
+                                            border: '1px solid rgba(184,148,58,0.12)',
+                                        }}>
+                                            {/* Event type badge */}
+                                            <span style={{
+                                                display: 'inline-block',
+                                                padding: '2px 8px',
+                                                borderRadius: 999,
+                                                background: cfg.bg,
+                                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                fontSize: 9,
+                                                fontWeight: 700,
+                                                letterSpacing: '0.8px',
+                                                textTransform: 'uppercase' as const,
+                                                color: cfg.color,
+                                                marginBottom: 8,
+                                            }}>
+                                                {event.event_type || 'Geral'}
+                                            </span>
+
+                                            {/* Title */}
+                                            <div style={{
+                                                fontFamily: 'var(--font-playfair, serif)',
+                                                fontSize: 14,
+                                                fontWeight: 600,
+                                                color: '#EBE7E0',
+                                                marginBottom: 4,
+                                                lineHeight: 1.3,
+                                            }}>
+                                                {event.title}
+                                            </div>
+
+                                            {/* Date */}
+                                            <div style={{
+                                                fontFamily: 'var(--font-dm-mono, monospace)',
+                                                fontSize: 10,
+                                                color: '#5C6B7D',
+                                                marginBottom: 6,
+                                            }}>
+                                                {format(new Date(event.event_date), "dd MMM 'yy", { locale: ptBR })}
+                                            </div>
+
+                                            {/* Description */}
+                                            {event.description && (
+                                                <div style={{
+                                                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                    fontSize: 12,
+                                                    color: '#9FAAB8',
+                                                    lineHeight: 1.5,
+                                                }}>
+                                                    {event.description}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                ) : !eventsLoading ? (
+                    /* Empty state */
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '60px 24px',
+                        textAlign: 'center',
+                        animation: 'scaleIn 300ms cubic-bezier(0.16,1,0.3,1) both',
+                    }}>
+                        <div style={{
+                            width: 64,
+                            height: 64,
+                            borderRadius: 18,
+                            background: 'rgba(184,148,58,0.06)',
+                            border: '1px solid rgba(184,148,58,0.15)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginBottom: 16,
+                        }}>
+                            <Building2 size={28} style={{ color: 'rgba(184,148,58,0.35)' }} />
+                        </div>
+                        <div style={{
+                            fontFamily: 'var(--font-playfair, serif)',
+                            fontSize: 18,
+                            fontWeight: 600,
+                            color: '#EBE7E0',
+                            marginBottom: 8,
+                        }}>
+                            Sem histórico registrado
+                        </div>
+                        <div style={{
+                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontSize: 13,
+                            color: '#9FAAB8',
+                            lineHeight: 1.6,
+                            maxWidth: 260,
+                        }}>
+                            Esta timeline será preenchida automaticamente conforme o ativo performar ou quando você registrar eventos manuais.
+                        </div>
+                    </div>
+                ) : null}
+            </div>
+
+            {/* Add Event FAB */}
+            <button
+                className="mob-btn-tap"
+                style={{
+                    position: 'fixed',
+                    bottom: 72,
+                    right: 16,
+                    height: 52,
+                    padding: '0 20px',
+                    background: 'var(--imi-gold-500)',
+                    color: '#0B1120',
+                    borderRadius: 26,
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    letterSpacing: '0.3px',
+                    boxShadow: '0 4px 20px rgba(184,148,58,0.35)',
+                    zIndex: 50,
+                }}
+            >
+                <Plus size={18} />
+                + Evento
+            </button>
+
+            <MobileBottomNav />
+        </div>
+    )
+}
+
+// ─── Desktop Timeline ──────────────────────────────────────────────────────────
+
+interface DesktopTimelineProps {
+    property: any
+    events: any[]
+    eventsLoading: boolean
+    id: string | string[]
+}
+
+function DesktopTimeline({ property, events, eventsLoading, id }: DesktopTimelineProps) {
+    const router = useRouter()
 
     return (
         <div className="max-w-4xl mx-auto space-y-6 pb-20">
@@ -94,7 +362,7 @@ export default function PropertyTimelinePage() {
                 actions={
                     <button
                         className="h-10 px-5 rounded-xl font-semibold text-sm flex items-center gap-2 text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        style={{ background: T.accent, boxShadow: '0 4px 16px rgba(59,130,246,0.3)' }}
+                        style={{ background: T.accent }}
                     >
                         <Plus size={16} />
                         Registrar Evento
@@ -227,4 +495,39 @@ export default function PropertyTimelinePage() {
             </div>
         </div>
     )
+}
+
+// ─── Page ──────────────────────────────────────────────────────────────────────
+
+export default function PropertyTimelinePage() {
+    const { id } = useParams()
+    const isMobile = useIsMobile()
+
+    const { data: property, isLoading: propLoading } = useSWR(`property_${id}`, async () => {
+        const { data, error } = await supabase
+            .from('developments')
+            .select('*')
+            .eq('id', id)
+            .single()
+        if (error) throw error
+        return data
+    })
+
+    const { data: events = [], isLoading: eventsLoading } = useSWR(`property_events_${id}`, async () => {
+        const { data, error } = await supabase
+            .from('property_events')
+            .select('*')
+            .eq('property_id', id)
+            .order('event_date', { ascending: false })
+        if (error) throw error
+        return data
+    })
+
+    if (propLoading) {
+        return isMobile ? <MobileTimelineLoading /> : <DesktopTimelineLoading />
+    }
+
+    return isMobile
+        ? <MobileTimeline property={property} events={events as any[]} eventsLoading={eventsLoading} id={String(id)} />
+        : <DesktopTimeline property={property} events={events as any[]} eventsLoading={eventsLoading} id={id!} />
 }

@@ -164,7 +164,7 @@ export default function NovaConstrutora() {
                   <button type="button"
                     onClick={() => { setLogoFile(null); setLogoPreview(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
                     className="absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center text-white"
-                    style={{ background: '#ef4444' }}>
+                    style={{ background: 'var(--bo-error)' }}>
                     <X size={11} />
                   </button>
                 </>
@@ -308,7 +308,7 @@ export default function NovaConstrutora() {
             Cancelar
           </button>
           <button type="submit" disabled={loading}
-            className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50 hover:opacity-90"
+            className="bo-btn bo-btn-primary"
             style={{ background: 'var(--bo-accent)' }}>
             {loading ? <><Loader2 size={15} className="animate-spin" /> Salvando...</> : <><Save size={15} /> Salvar Construtora</>}
           </button>

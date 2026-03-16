@@ -362,8 +362,8 @@ export default function ExerciciosPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
             {[
-              { label: 'Aproveitamento', value: `${pct}%`, color: pct >= 70 ? '#6BB87B' : '#E57373' },
-              { label: 'Corretas', value: score.corretas, color: '#6BB87B' },
+              { label: 'Aproveitamento', value: `${pct}%`, color: pct >= 70 ? 'var(--bo-success)' : 'var(--bo-error)' },
+              { label: 'Corretas', value: score.corretas, color: 'var(--bo-success)' },
               { label: 'Sequência max.', value: score.maxStreak, color: '#F59E0B' },
             ].map(item => (
               <div key={item.label} className="rounded-xl p-3" style={{ background: T.elevated }}>
@@ -443,7 +443,7 @@ export default function ExerciciosPage() {
             {current.opcoes.map((opt, idx) => {
               let inlineStyle: React.CSSProperties = { border: `1px solid ${T.border}`, color: T.text }
               if (revealed) {
-                if (idx === current.correta) { inlineStyle = { border: '1px solid rgba(107,184,123,0.5)', background: 'rgba(107,184,123,0.12)', color: '#6BB87B' } }
+                if (idx === current.correta) { inlineStyle = { border: '1px solid rgba(107,184,123,0.5)', background: 'rgba(107,184,123,0.12)', color: 'var(--bo-success)' } }
                 else if (idx === selected && idx !== current.correta) { inlineStyle = { border: '1px solid rgba(227,87,87,0.5)', background: 'rgba(227,87,87,0.12)', color: '#E35757' } }
                 else { inlineStyle = { border: `1px solid ${T.border}`, color: T.textMuted } }
               }
@@ -454,16 +454,16 @@ export default function ExerciciosPage() {
                   <div
                     className="w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold flex-shrink-0"
                     style={
-                      revealed && idx === current.correta ? { background: '#6BB87B', borderColor: '#6BB87B', color: 'white' }
-                      : revealed && idx === selected ? { background: '#E57373', borderColor: '#E57373', color: 'white' }
+                      revealed && idx === current.correta ? { background: 'var(--bo-success)', borderColor: 'var(--bo-success)', color: 'white' }
+                      : revealed && idx === selected ? { background: 'var(--bo-error)', borderColor: 'var(--bo-error)', color: 'white' }
                       : { borderColor: T.border, color: T.textMuted }
                     }
                   >
                     {String.fromCharCode(65 + idx)}
                   </div>
                   {opt}
-                  {revealed && idx === current.correta && <CheckCircle size={16} className="ml-auto" style={{ color: '#6BB87B' }} />}
-                  {revealed && idx === selected && idx !== current.correta && <XCircle size={16} className="ml-auto" style={{ color: '#E57373' }} />}
+                  {revealed && idx === current.correta && <CheckCircle size={16} className="ml-auto" style={{ color: 'var(--bo-success)' }} />}
+                  {revealed && idx === selected && idx !== current.correta && <XCircle size={16} className="ml-auto" style={{ color: 'var(--bo-error)' }} />}
                 </button>
               )
             })}
@@ -595,7 +595,7 @@ export default function ExerciciosPage() {
                         <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ background: T.border, color: T.text }}>
                           {String.fromCharCode(65 + i)}
                         </span>
-                        <span style={{ fontWeight: i === parsed.correta ? 700 : undefined, color: i === parsed.correta ? '#6BB87B' : T.textMuted }}>{opt}</span>
+                        <span style={{ fontWeight: i === parsed.correta ? 700 : undefined, color: i === parsed.correta ? 'var(--bo-success)' : T.textMuted }}>{opt}</span>
                         {i === parsed.correta && <CheckCircle size={12} className="text-emerald-500" />}
                       </div>
                     ))}

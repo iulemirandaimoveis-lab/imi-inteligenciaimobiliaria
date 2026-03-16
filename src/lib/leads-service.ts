@@ -1,9 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Cliente Supabase Service Role para operações privilegiadas (bypass RLS se necessário)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder';
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _supabase: SupabaseClient<any> | null = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getSupabase(): SupabaseClient<any> {
+    if (!_supabase) {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder';
+        _supabase = createClient(supabaseUrl, supabaseServiceKey);
+    }
+    return _supabase!
+}
 
 export interface CreateLeadData {
     name: string;
@@ -23,7 +31,7 @@ export async function createLead(data: CreateLeadData) {
 
         // 1. Obter Tenant ID (IMI)
         // Cachear isso seria ideal, mas por enquanto vamos buscar
-        const { data: tenant } = await supabase
+        const { data: tenant } = await getSupabase()
             .from('tenants')
             .select('id')
             .limit(1)
@@ -39,7 +47,7 @@ export async function createLead(data: CreateLeadData) {
         let leadId: string;
 
         // Tenta buscar por email
-        const { data: existingLead } = await supabase
+        const { data: existingLead } = await getSupabase()
             .from('leads')
             .select('id')
             .eq('tenant_id', tenantId)
@@ -50,14 +58,14 @@ export async function createLead(data: CreateLeadData) {
             leadId = existingLead.id;
 
             // Atualizar dados de contato se necessário
-            await supabase.from('leads').update({
+            await getSupabase().from('leads').update({
                 name: data.name,
                 phone: data.phone,
                 last_contact_at: new Date().toISOString()
             }).eq('id', leadId);
         } else {
             // Criar novo Lead
-            const { data: newLead, error: createError } = await supabase
+            const { data: newLead, error: createError } = await getSupabase()
                 .from('leads')
                 .insert({
                     tenant_id: tenantId,
@@ -78,7 +86,7 @@ export async function createLead(data: CreateLeadData) {
 
         // 3. Registrar Consulta (Consultation)
         if (data.consultationType) {
-            await supabase.from('consultations').insert({
+            await getSupabase().from('consultations').insert({
                 tenant_id: tenantId,
                 name: data.name, // Redundante mas exigido pela tabela legada
                 email: data.email,
@@ -94,7 +102,7 @@ export async function createLead(data: CreateLeadData) {
         }
 
         // 4. Registrar Interação no CRM (Lead Interactions)
-        await supabase.from('lead_interactions').insert({
+        await getSupabase().from('lead_interactions').insert({
             lead_id: leadId,
             interaction_type: 'site_visit', // ou 'form_submission' se tiver no enum
             direction: 'inbound',

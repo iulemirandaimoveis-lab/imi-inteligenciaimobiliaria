@@ -15,12 +15,12 @@ interface BadgeConfig {
 }
 
 const BADGE_COLORS: Record<string, { color: string; bg: string; border: string }> = {
-  success: { color: 'var(--bo-success)', bg: 'var(--bo-success-bg)', border: 'rgba(52,211,153,0.20)' },
-  warning: { color: 'var(--bo-warning)', bg: 'var(--bo-warning-bg)', border: 'rgba(251,191,36,0.20)' },
-  error:   { color: 'var(--bo-error)',   bg: 'var(--bo-error-bg)',   border: 'rgba(248,113,113,0.20)' },
-  info:    { color: 'var(--bo-info)',    bg: 'var(--bo-info-bg)',    border: 'rgba(96,165,250,0.20)' },
-  accent:  { color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)',  border: 'var(--bo-border-gold)' },
-  muted:   { color: 'var(--bo-text-muted)', bg: 'var(--bo-hover)',  border: 'var(--bo-border)' },
+  success: { color: 'var(--success)', bg: 'var(--success-bg)', border: 'color-mix(in srgb, var(--success) 20%, transparent)' },
+  warning: { color: 'var(--warning)', bg: 'var(--warning-bg)', border: 'color-mix(in srgb, var(--warning) 20%, transparent)' },
+  error:   { color: 'var(--error)',   bg: 'var(--error-bg)',   border: 'color-mix(in srgb, var(--error) 20%, transparent)' },
+  info:    { color: 'var(--info)',    bg: 'var(--info-bg)',    border: 'color-mix(in srgb, var(--info) 20%, transparent)' },
+  accent:  { color: 'var(--imi-gold-500)', bg: 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)', border: 'color-mix(in srgb, var(--imi-gold-500) 25%, transparent)' },
+  muted:   { color: 'var(--text-secondary)', bg: 'var(--bg-hover)', border: 'var(--border-default)' },
 }
 
 interface PageIntelHeaderProps {
@@ -68,30 +68,39 @@ export function PageIntelHeader({
               style={{
                 width: 20,
                 height: 20,
-                transition: 'background 120ms ease',
+                transition: `background var(--dur-1, 120ms) var(--ease)`,
               }}
             >
-              <Home size={11} style={{ color: 'var(--bo-text-muted)' }} />
+              <Home size={11} style={{ color: 'var(--text-tertiary)' }} />
             </span>
           </Link>
           {breadcrumbs.map((crumb, i) => (
             <span key={i} className="flex items-center gap-1">
-              <ChevronRight size={12} style={{ color: 'var(--bo-text-tertiary, var(--bo-text-muted))' }} />
+              <ChevronRight size={12} style={{ color: 'var(--text-tertiary)' }} />
               {crumb.href ? (
                 <Link href={crumb.href}>
                   <span
+                    className="breadcrumb-link"
                     style={{
                       fontSize: '12px',
                       fontWeight: 500,
-                      color: 'var(--bo-text-muted)',
-                      transition: 'color 120ms ease',
+                      fontFamily: 'var(--font-sans)',
+                      color: 'var(--text-secondary)',
+                      transition: `color var(--dur-1, 120ms) var(--ease)`,
                     }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-gold)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)' }}
                   >
                     {crumb.label}
                   </span>
                 </Link>
               ) : (
-                <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--bo-text)' }}>
+                <span style={{
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  fontFamily: 'var(--font-sans)',
+                  color: 'var(--text-primary)',
+                }}>
                   {crumb.label}
                 </span>
               )}
@@ -109,17 +118,18 @@ export function PageIntelHeader({
               width: 4,
               height: 4,
               borderRadius: '50%',
-              background: 'var(--imi-blue-bright)',
+              background: 'var(--imi-gold-500)',
               flexShrink: 0,
-              boxShadow: '0 0 6px var(--imi-blue-bright)',
+              boxShadow: '0 0 6px var(--imi-gold-500)',
               display: 'inline-block',
             }} />
 
             <span
               style={{
-                fontSize: '9px',
+                fontSize: '10px',
+                fontFamily: 'var(--font-mono)',
                 fontWeight: 700,
-                color: 'var(--imi-blue-bright)',
+                color: 'var(--text-gold)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.12em',
               }}
@@ -130,16 +140,17 @@ export function PageIntelHeader({
             {live && (
               <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full"
                 style={{
-                  background: 'rgba(74,222,128,0.10)',
-                  border: '1px solid rgba(74,222,128,0.20)',
+                  background: 'var(--success-bg)',
+                  border: `1px solid color-mix(in srgb, var(--success) 20%, transparent)`,
                 }}
               >
                 <span className="live-dot" />
                 <span
                   style={{
                     fontSize: '8px',
+                    fontFamily: 'var(--font-mono)',
                     fontWeight: 700,
-                    color: 'var(--imi-ai-green)',
+                    color: 'var(--success)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                   }}
@@ -150,15 +161,16 @@ export function PageIntelHeader({
             )}
           </div>
 
-          {/* Title row — gradient text + optional badge */}
+          {/* Title row + optional badge */}
           <div className="flex items-center gap-3 flex-wrap">
             <h1
-              className="gradient-text"
               style={{
-                fontSize: '22px',
-                fontWeight: 800,
+                fontSize: '24px',
+                fontFamily: 'var(--font-serif)',
+                fontWeight: 700,
                 lineHeight: 1.2,
                 letterSpacing: '-0.02em',
+                color: 'var(--text-primary)',
                 margin: 0,
               }}
             >
@@ -172,6 +184,7 @@ export function PageIntelHeader({
                   className="inline-flex items-center rounded-full"
                   style={{
                     fontSize: '10px',
+                    fontFamily: 'var(--font-sans)',
                     fontWeight: 700,
                     padding: '3px 10px',
                     color: c.color,
@@ -191,8 +204,9 @@ export function PageIntelHeader({
           {subtitle && (
             <p
               style={{
-                fontSize: '12px',
-                color: 'var(--bo-text-muted)',
+                fontSize: '13px',
+                fontFamily: 'var(--font-sans)',
+                color: 'var(--text-tertiary)',
                 lineHeight: 1.4,
                 marginTop: '2px',
               }}
@@ -209,6 +223,16 @@ export function PageIntelHeader({
           </div>
         )}
       </div>
+
+      {/* Bottom accent line */}
+      <div
+        style={{
+          height: '2px',
+          marginTop: '16px',
+          background: 'linear-gradient(90deg, var(--imi-gold-500), transparent)',
+          borderRadius: 'var(--r-full, 9999px)',
+        }}
+      />
     </div>
   )
 }

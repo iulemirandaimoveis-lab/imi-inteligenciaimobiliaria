@@ -1,1471 +1,1760 @@
 'use client'
+export const dynamic = 'force-dynamic'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
-    ArrowLeft, ArrowRight, Building2, MapPin, Ruler, Home,
-    DollarSign, Image as ImageIcon, Upload, Check, Calendar,
-    Briefcase, X, Save, Loader2, AlertCircle, Sparkles,
-    BedDouble, Bath, Car, Maximize, Globe, Flag, Star, FileText,
-    Play, Link as LinkIcon, Cloud, CloudOff, Zap,
+  ArrowLeft, ArrowRight, Building2, Home, Star, Maximize,
+  Globe, Flag, Briefcase, Loader2, Upload, X, Check,
+  MapPin, Waves, Dumbbell, UtensilsCrossed, Flame, Trees,
+  Trophy, Thermometer, ChefHat, Shield, Camera, Zap, Dog,
+  MonitorPlay, Sunset, Sparkles, Plane, Link, FileVideo,
+  CalendarDays, DollarSign, Image as ImageIcon,
 } from 'lucide-react'
-
-/* ── YouTube helpers ── */
-function getYoutubeId(url: string): string | null {
-    const regexps = [
-        /youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
-        /youtu\.be\/([a-zA-Z0-9_-]+)/,
-        /youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/,
-        /youtube\.com\/embed\/([a-zA-Z0-9_-]+)/,
-    ]
-    for (const r of regexps) {
-        const m = url.match(r)
-        if (m) return m[1]
-    }
-    return null
-}
-
-function getYoutubeEmbedUrl(url: string): string | null {
-    const id = getYoutubeId(url)
-    return id ? `https://www.youtube.com/embed/${id}` : null
-}
 import { createClient } from '@/lib/supabase/client'
-import { T } from '@/app/(backoffice)/lib/theme'
+import { uploadMultipleImages, uploadFile, type ImageUploadFileStatus } from '@/lib/supabase-storage'
+import { useIsMobile } from '@/hooks/use-is-mobile'
+import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../mobile-ui'
+import UploadProgressPanel from '@/app/(backoffice)/components/ui/UploadProgressPanel'
 
-const supabase = createClient()
+/* ─── Design Tokens ────────────────────────────────────────────────────────── */
+const T = {
+  navy:     '#0B1120',
+  surface:  '#101830',
+  elevated: '#162040',
+  raised:   '#1A3250',
+  gold:     'var(--imi-gold-500)',
+  goldBg:   'rgba(184,148,58,0.08)',
+  goldBgHi: 'rgba(184,148,58,0.14)',
+  border:   'rgba(184,148,58,0.15)',
+  borderHi: 'rgba(184,148,58,0.4)',
+  text:     '#EBE7E0',
+  textSub:  '#9FAAB8',
+  textDim:  '#5C6B7D',
+  success:  '#2D8F5C',
+  error:    '#EF4444',
+  errorBg:  'rgba(239,68,68,0.08)',
+} as const
 
-/* ───────── Dark Theme Tokens ───────── */
-type Step = 1 | 2 | 3 | 4
+/* ─── Constants ────────────────────────────────────────────────────────────── */
+const TYPES = [
+  { value: 'Apartamento', icon: Building2, desc: 'Condomínio residencial' },
+  { value: 'Casa',        icon: Home,      desc: 'Unifamiliar, terreno'   },
+  { value: 'Cobertura',   icon: Star,      desc: 'Último andar, rooftop'  },
+  { value: 'Studio',      icon: Maximize,  desc: 'Compacto, investimento' },
+  { value: 'Loft',        icon: Globe,     desc: 'Pé direito duplo'       },
+  { value: 'Terreno',     icon: Flag,      desc: 'Loteamento, gleba'      },
+  { value: 'Comercial',   icon: Briefcase, desc: 'Sala, loja, andar'      },
+  { value: 'Villa',       icon: Star,      desc: 'Premium, resort'        },
+]
 
-interface Developer {
-    id: string
-    name: string
-    logo_url?: string | null
-}
+const CONDITIONS = [
+  { value: 'lancamento',    label: 'Lançamento'      },
+  { value: 'em_construcao', label: 'Em Construção'   },
+  { value: 'pronto',        label: 'Pronto p/ Morar' },
+  { value: 'seminovo',      label: 'Seminovo'        },
+  { value: 'usado',         label: 'Usado/Revenda'   },
+]
+
+const STATUSES = [
+  { value: 'draft',     label: 'Rascunho'  },
+  { value: 'published', label: 'Publicado' },
+  { value: 'campaign',  label: 'Campanha'  },
+  { value: 'private',   label: 'Privado'   },
+]
+
+const FEATURES: { label: string; icon: React.ElementType }[] = [
+  { label: 'Piscina',           icon: Waves       },
+  { label: 'Academia',          icon: Dumbbell    },
+  { label: 'Salão de festas',   icon: UtensilsCrossed },
+  { label: 'Churrasqueira',     icon: Flame       },
+  { label: 'Playground',        icon: Trees       },
+  { label: 'Quadra esportiva',  icon: Trophy      },
+  { label: 'Sauna',             icon: Thermometer },
+  { label: 'Espaço gourmet',    icon: ChefHat     },
+  { label: 'Portaria 24h',      icon: Shield      },
+  { label: 'Câmeras segurança', icon: Camera      },
+  { label: 'Gerador',           icon: Zap         },
+  { label: 'Pet friendly',      icon: Dog         },
+  { label: 'Coworking',         icon: MonitorPlay },
+  { label: 'Rooftop',           icon: Sunset      },
+  { label: 'Spa',               icon: Sparkles    },
+  { label: 'Cinema',            icon: MonitorPlay },
+  { label: 'Heliponto',         icon: Plane       },
+]
+
+const DRAFT_KEY = 'imi-draft-imovel'
+
+const STEP_META = [
+  { title: 'Identificação',   subtitle: 'Nome, tipo e condição do empreendimento'   },
+  { title: 'Localização',     subtitle: 'Endereço completo e CEP para auto-preenchimento' },
+  { title: 'Características', subtitle: 'Especificações, valores e detalhes do imóvel' },
+  { title: 'Mídia',           subtitle: 'Fotos, plantas, brochure e links de vídeo' },
+]
+
+/* ─── Types ─────────────────────────────────────────────────────────────────── */
+interface Developer { id: string; name: string; logo_url?: string | null }
 
 interface FormData {
-    // Step 1: Básico + localização
-    name: string
-    type: string
-    condition: 'lancamento' | 'em_construcao' | 'pronto' | 'seminovo' | 'usado'
-    country: string
-    state: string
-    city: string
-    neighborhood: string
-    address: string
-    developer_id: string
-    developer: string
-
-    // Step 2: Características
-    area: string
-    bedrooms: string
-    bathrooms: string
-    parking: string
-    floor: string
-    features: string[]
-
-    // Step 3: Valores
-    priceMin: string
-    priceMax: string
-    pricePerSqm: string
-    totalUnits: string
-    availableUnits: string
-    deliveryDate: string
-    description: string
-
-    // Step 3: Status
-    status_commercial: string
-    is_highlighted: boolean
-
-    // Step 4: Mídia
-    images: File[]
-    logo: File | null
-    floorPlans: File[]
-    brochure: File | null
-    videoUrl: string
-    videoShort: string
+  name: string; type: string; condition: string
+  country: string; cep: string; state: string; city: string
+  neighborhood: string; address: string; streetNumber: string; complement: string
+  developer_id: string; developer: string
+  area: string; bedrooms: string; bathrooms: string; parking: string; floor: string
+  features: string[]
+  priceMin: string; priceMax: string; pricePerSqm: string
+  totalUnits: string; availableUnits: string; deliveryDate: string
+  description: string; status_commercial: string; is_highlighted: boolean
+  images: File[]; floorPlans: File[]; brochure: File | null
+  videoUrl: string; videoShort: string
 }
 
-/* ── Property type visual cards ── */
-const PROPERTY_TYPES = [
-    { value: 'Apartamento', label: 'Apartamento', icon: Building2, desc: 'Condomínio, residencial' },
-    { value: 'Casa', label: 'Casa', icon: Home, desc: 'Unifamiliar, terreno' },
-    { value: 'Cobertura', label: 'Cobertura', icon: Star, desc: 'Último andar, rooftop' },
-    { value: 'Studio', label: 'Studio/Flat', icon: Maximize, desc: 'Compacto, investimento' },
-    { value: 'Loft', label: 'Loft', icon: Globe, desc: 'Pé direito duplo' },
-    { value: 'Terreno', label: 'Terreno/Lote', icon: Flag, desc: 'Loteamento, gleba' },
-    { value: 'Comercial', label: 'Comercial', icon: Briefcase, desc: 'Sala, loja, andar' },
-    { value: 'Villa', label: 'Villa/Resort', icon: Star, desc: 'Premium, resort' },
-]
+const DEFAULT_FORM: FormData = {
+  name: '', type: '', condition: 'lancamento',
+  country: 'Brasil', cep: '', state: '', city: '',
+  neighborhood: '', address: '', streetNumber: '', complement: '',
+  developer_id: '', developer: '',
+  area: '', bedrooms: '', bathrooms: '', parking: '', floor: '',
+  features: [],
+  priceMin: '', priceMax: '', pricePerSqm: '',
+  totalUnits: '', availableUnits: '', deliveryDate: '',
+  description: '', status_commercial: 'draft', is_highlighted: false,
+  images: [], floorPlans: [], brochure: null,
+  videoUrl: '', videoShort: '',
+}
 
-/* ── Condition options ── */
-const CONDITION_OPTIONS = [
-    { value: 'lancamento', label: '🚀 Lançamento', color: '#A78BFA' },
-    { value: 'em_construcao', label: '🏗️ Em Construção', color: '#FBBF24' },
-    { value: 'pronto', label: '✅ Pronto p/ Morar', color: '#4ADE80' },
-    { value: 'seminovo', label: '⭐ Seminovo', color: '#F59E0B' },
-    { value: 'usado', label: '🏠 Usado/Revenda', color: '#94A3B8' },
-]
+/* ─── Shared Styles ──────────────────────────────────────────────────────────── */
+const inputStyle: React.CSSProperties = {
+  background: T.elevated,
+  border: `1px solid ${T.border}`,
+  color: T.text,
+  borderRadius: 8,
+  padding: '11px 14px',
+  fontSize: 14,
+  width: '100%',
+  boxSizing: 'border-box',
+  fontFamily: 'Figtree, sans-serif',
+  transition: 'border-color 150ms ease, box-shadow 150ms ease',
+}
 
-const featuresOptions = [
-    'Piscina', 'Academia', 'Salão de festas', 'Churrasqueira',
-    'Playground', 'Quadra esportiva', 'Sauna', 'Espaço gourmet',
-    'Coworking', 'Pet place', 'Brinquedoteca', 'Salão de jogos',
-    'Cinema', 'Spa', 'Jardim', 'Portaria 24h', 'Segurança',
-    'Elevador', 'Rooftop', 'Beach Service', 'Concierge',
-]
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: 11,
+  fontWeight: 700,
+  color: T.textSub,
+  marginBottom: 6,
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  fontFamily: 'Figtree, sans-serif',
+}
 
-/* ───────── Styled Components ───────── */
-function Input({
-    icon: Icon, value, onChange, placeholder, error, type = 'text', className = '',
-}: {
-    icon?: any; value: string; onChange: (v: string) => void;
-    placeholder?: string; error?: string; type?: string; className?: string
+/* ─── Field Wrapper ──────────────────────────────────────────────────────────── */
+function Field({ label, error, children, style, hint }: {
+  label: string; error?: string; hint?: string
+  children: React.ReactNode; style?: React.CSSProperties
 }) {
-    return (
-        <div className={className}>
-            <div className="relative">
-                {Icon && (
-                    <Icon
-                        className="absolute left-3 top-1/2 -translate-y-1/2"
-                        size={18}
-                        style={{ color: T.textMuted }}
-                    />
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 0, ...style }}>
+      <label style={labelStyle}>{label}</label>
+      {children}
+      {hint && !error && <span style={{ fontSize: 11, color: T.textDim, marginTop: 4 }}>{hint}</span>}
+      {error && (
+        <span style={{
+          fontSize: 11, color: T.error, marginTop: 4,
+          display: 'flex', alignItems: 'center', gap: 4,
+        }}>
+          <span style={{ fontSize: 13 }}>!</span> {error}
+        </span>
+      )}
+    </div>
+  )
+}
+
+/* ─── Price Input Helper ─────────────────────────────────────────────────────── */
+function formatBRL(val: string): string {
+  const digits = val.replace(/\D/g, '')
+  if (!digits) return ''
+  const num = parseInt(digits, 10)
+  return num.toLocaleString('pt-BR')
+}
+
+function PriceInput({ value, onChange, placeholder, error }: {
+  value: string; onChange: (v: string) => void
+  placeholder?: string; error?: string
+}) {
+  return (
+    <div style={{ position: 'relative' }}>
+      <span style={{
+        position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
+        fontSize: 12, fontWeight: 600, color: T.gold, fontFamily: 'JetBrains Mono, monospace',
+        pointerEvents: 'none',
+      }}>R$</span>
+      <input
+        className="ni"
+        style={{
+          ...inputStyle,
+          paddingLeft: 36,
+          borderColor: error ? T.error : T.border,
+        }}
+        value={value ? formatBRL(value) : ''}
+        onChange={e => onChange(e.target.value.replace(/\D/g, ''))}
+        placeholder={placeholder}
+      />
+    </div>
+  )
+}
+
+/* ─── Shared Props Interface ─────────────────────────────────────────────────── */
+interface StepProps {
+  step: 1|2|3|4; form: FormData; errors: Record<string, string>
+  developers: Developer[]; saving: boolean; cepLoading: boolean
+  draftSaved: boolean
+  set: (k: keyof FormData, v: unknown) => void
+  next: () => void; prev: () => void; handleSave: () => void
+  handleCepChange: (v: string) => void
+  toggleFeature: (f: string) => void
+  handleDrop: (e: React.DragEvent) => void
+  handleImageInput: (e: React.ChangeEvent<HTMLInputElement>) => void
+  removeImage: (i: number) => void
+  uploadFiles: ImageUploadFileStatus[]
+  uploadVisible: boolean
+}
+
+interface DesktopStepProps extends StepProps {
+  setStep: (s: 1|2|3|4) => void
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   STEP COMPONENTS
+════════════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Step 1: Identificação ──────────────────────────────────────────────────── */
+function StepIdentificacao({ form, errors, developers, set, isMobile }: {
+  form: FormData; errors: Record<string, string>; developers: Developer[]
+  set: (k: keyof FormData, v: unknown) => void; isMobile?: boolean
+}) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Name */}
+      <Field label="Nome do empreendimento" error={errors.name}
+        hint="Use o nome comercial oficial do empreendimento">
+        <input
+          className="ni"
+          style={{ ...inputStyle, borderColor: errors.name ? T.error : T.border, fontSize: 15 }}
+          value={form.name}
+          onChange={e => set('name', e.target.value)}
+          placeholder="Ex: Residencial Parque das Flores"
+          autoFocus
+        />
+      </Field>
+
+      {/* Type grid */}
+      <div>
+        <label style={labelStyle}>Tipo de imóvel</label>
+        {errors.type && (
+          <span style={{ fontSize: 11, color: T.error, display: 'block', marginBottom: 8 }}>
+            ! {errors.type}
+          </span>
+        )}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+          gap: 10,
+        }}>
+          {TYPES.map(({ value, icon: Icon, desc }) => {
+            const sel = form.type === value
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => set('type', value)}
+                style={{
+                  background: sel ? T.goldBgHi : T.elevated,
+                  border: `1.5px solid ${sel ? T.gold : T.border}`,
+                  borderRadius: 10,
+                  padding: isMobile ? '12px 8px' : '16px 10px',
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', gap: 7,
+                  transition: 'all 150ms ease',
+                  boxShadow: sel ? `0 0 0 1px ${T.gold}22, 0 4px 16px rgba(184,148,58,0.08)` : 'none',
+                }}
+              >
+                <div style={{
+                  width: 36, height: 36, borderRadius: 10,
+                  background: sel ? `rgba(184,148,58,0.15)` : 'rgba(255,255,255,0.04)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Icon size={18} color={sel ? T.gold : T.textSub} />
+                </div>
+                <span style={{
+                  fontSize: 12, fontWeight: 700, color: sel ? T.gold : T.text,
+                  fontFamily: 'Figtree, sans-serif',
+                }}>{value}</span>
+                <span style={{
+                  fontSize: 10, color: T.textDim,
+                  fontFamily: 'Figtree, sans-serif',
+                  lineHeight: 1.3,
+                }}>{desc}</span>
+                {sel && (
+                  <div style={{
+                    position: 'absolute', top: 6, right: 6,
+                    width: 16, height: 16, borderRadius: '50%',
+                    background: T.gold,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Check size={9} color={T.navy} />
+                  </div>
                 )}
-                <input
-                    type={type}
-                    value={value}
-                    onChange={e => onChange(e.target.value)}
-                    placeholder={placeholder}
-                    className="w-full h-11 rounded-xl text-sm outline-none transition-all"
-                    style={{
-                        paddingLeft: Icon ? 40 : 14,
-                        paddingRight: 14,
-                        background: T.surface,
-                        border: `1px solid ${error ? T.error : T.border}`,
-                        color: T.text,
-                    }}
-                />
-            </div>
-            {error && (
-                <p className="mt-1.5 text-xs flex items-center gap-1" style={{ color: T.error }}>
-                    <AlertCircle size={12} /> {error}
-                </p>
-            )}
+              </button>
+            )
+          })}
         </div>
-    )
-}
+      </div>
 
-function Label({ children, required }: { children: React.ReactNode; required?: boolean }) {
-    return (
-        <label className="block text-xs font-semibold mb-2" style={{ color: T.textMuted }}>
-            {children} {required && <span style={{ color: T.accent }}>*</span>}
-        </label>
-    )
-}
+      {/* Condition + Status + Developer */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
+        gap: 14,
+      }}>
+        <Field label="Condição">
+          <select className="ni" style={inputStyle} value={form.condition}
+            onChange={e => set('condition', e.target.value)}>
+            {CONDITIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+          </select>
+        </Field>
 
-function Select({
-    value, onChange, options, placeholder, icon: Icon, error,
-}: {
-    value: string; onChange: (v: string) => void;
-    options: { value: string; label: string }[];
-    placeholder?: string; icon?: any; error?: string
-}) {
-    return (
+        <Field label="Status comercial">
+          <select className="ni" style={inputStyle} value={form.status_commercial}
+            onChange={e => set('status_commercial', e.target.value)}>
+            {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+          </select>
+        </Field>
+
+        <Field label="Incorporadora">
+          <select className="ni" style={inputStyle} value={form.developer_id}
+            onChange={e => {
+              const dev = developers.find(d => d.id === e.target.value)
+              set('developer_id', e.target.value)
+              set('developer', dev?.name || '')
+            }}>
+            <option value="">Selecionar incorporadora</option>
+            {developers.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+          </select>
+        </Field>
+      </div>
+
+      {/* Highlight toggle */}
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 12,
+        padding: '14px 16px',
+        background: form.is_highlighted ? T.goldBg : T.elevated,
+        border: `1px solid ${form.is_highlighted ? T.border : 'rgba(255,255,255,0.06)'}`,
+        borderRadius: 10,
+        cursor: 'pointer',
+        transition: 'all 150ms ease',
+      }}
+        onClick={() => set('is_highlighted', !form.is_highlighted)}
+      >
+        <div style={{
+          width: 40, height: 22, borderRadius: 11,
+          background: form.is_highlighted ? T.gold : T.raised,
+          border: `1px solid ${form.is_highlighted ? T.gold : T.border}`,
+          position: 'relative', transition: 'all 200ms ease', flexShrink: 0,
+        }}>
+          <span style={{
+            position: 'absolute', top: 3,
+            left: form.is_highlighted ? 20 : 3,
+            width: 14, height: 14, borderRadius: '50%',
+            background: form.is_highlighted ? T.navy : T.textSub,
+            transition: 'left 200ms ease',
+          }} />
+        </div>
         <div>
-            <div className="relative">
-                {Icon && (
-                    <Icon
-                        className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                        size={18}
-                        style={{ color: T.textMuted }}
-                    />
-                )}
-                <select
-                    value={value}
-                    onChange={e => onChange(e.target.value)}
-                    className="w-full h-11 rounded-xl text-sm outline-none appearance-none transition-all cursor-pointer"
-                    style={{
-                        paddingLeft: Icon ? 40 : 14,
-                        paddingRight: 14,
-                        background: T.surface,
-                        border: `1px solid ${error ? T.error : T.border}`,
-                        color: value ? T.text : T.textMuted,
-                    }}
-                >
-                    <option value="">{placeholder || 'Selecione...'}</option>
-                    {options.map(o => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                    ))}
-                </select>
-            </div>
-            {error && (
-                <p className="mt-1.5 text-xs flex items-center gap-1" style={{ color: T.error }}>
-                    <AlertCircle size={12} /> {error}
-                </p>
-            )}
+          <div style={{ fontSize: 13, fontWeight: 600, color: T.text, fontFamily: 'Figtree, sans-serif' }}>
+            Destacar empreendimento
+          </div>
+          <div style={{ fontSize: 11, color: T.textDim, fontFamily: 'Figtree, sans-serif' }}>
+            Aparece em destaque na vitrine e buscas
+          </div>
         </div>
-    )
+        {form.is_highlighted && <Star size={16} color={T.gold} style={{ marginLeft: 'auto', fill: T.gold }} />}
+      </div>
+    </div>
+  )
 }
 
-/* ───────── Main Page ───────── */
-export default function NovoImovelPage() {
-    const router = useRouter()
-    const [currentStep, setCurrentStep] = useState<Step>(1)
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [errors, setErrors] = useState<Record<string, string>>({})
-    const [developers, setDevelopers] = useState<Developer[]>([])
-    const [isParsingPdf, setIsParsingPdf] = useState(false)
+/* ─── Step 2: Localização ────────────────────────────────────────────────────── */
+function StepLocalizacao({ form, errors, cepLoading, set, handleCepChange, isMobile }: {
+  form: FormData; errors: Record<string, string>
+  cepLoading: boolean; set: (k: keyof FormData, v: unknown) => void
+  handleCepChange: (v: string) => void; isMobile?: boolean
+}) {
+  const cepFormatted = form.cep.length >= 5
+    ? `${form.cep.slice(0, 5)}-${form.cep.slice(5)}`
+    : form.cep
 
-    const [formData, setFormData] = useState<FormData>({
-        name: '', type: '',
-        condition: 'lancamento',
-        country: 'Brasil', state: '', city: '', neighborhood: '',
-        address: '', developer_id: '', developer: '',
-        area: '', bedrooms: '', bathrooms: '', parking: '', floor: '',
-        features: [],
-        priceMin: '', priceMax: '', pricePerSqm: '',
-        totalUnits: '', availableUnits: '', deliveryDate: '',
-        description: '',
-        status_commercial: 'published',
-        is_highlighted: false,
-        images: [], logo: null,
-        floorPlans: [], brochure: null,
-        videoUrl: '', videoShort: '',
-    })
-    const [draftSaved, setDraftSaved] = useState(false)
-    const [hasDraft, setHasDraft] = useState(false)
-    const [aiGenerating, setAiGenerating] = useState(false)
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* Country */}
+      <Field label="País">
+        <input className="ni" style={inputStyle} value={form.country}
+          onChange={e => set('country', e.target.value)} placeholder="Brasil" />
+      </Field>
 
-    /* Load developers from Supabase */
-    useEffect(() => {
-        supabase
-            .from('developers')
-            .select('id, name, logo_url')
-            .order('name')
-            .then(({ data }) => {
-                if (data) setDevelopers(data)
-            })
-    }, [])
-
-    /* ─── Handlers ─── */
-    const handleChange = (field: keyof FormData, value: any) => {
-        setFormData(prev => ({ ...prev, [field]: value }))
-        if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }))
-    }
-
-    const handleDeveloperChange = (devId: string) => {
-        const dev = developers.find(d => d.id === devId)
-        setFormData(prev => ({
-            ...prev,
-            developer_id: devId,
-            developer: dev?.name || '',
-        }))
-        if (errors.developer_id) setErrors(prev => ({ ...prev, developer_id: '' }))
-    }
-
-    const toggleFeature = (feature: string) => {
-        setFormData(prev => ({
-            ...prev,
-            features: prev.features.includes(feature)
-                ? prev.features.filter(f => f !== feature)
-                : [...prev.features, feature],
-        }))
-    }
-
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || [])
-        setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }))
-    }
-
-    const removeImage = (index: number) => {
-        setFormData(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }))
-    }
-
-    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) setFormData(prev => ({ ...prev, logo: file }))
-    }
-
-    const handleFloorPlanUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(e.target.files || [])
-        setFormData(prev => ({ ...prev, floorPlans: [...prev.floorPlans, ...files] }))
-    }
-
-    const removeFloorPlan = (index: number) => {
-        setFormData(prev => ({ ...prev, floorPlans: prev.floorPlans.filter((_, i) => i !== index) }))
-    }
-
-    const handleBrochureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) setFormData(prev => ({ ...prev, brochure: file }))
-    }
-
-    const generateDescription = async () => {
-        if (!formData.name && !formData.type) {
-            toast.error('Preencha nome e tipo antes de gerar')
-            return
-        }
-        setAiGenerating(true)
-        try {
-            const res = await fetch('/api/ai/generate-description', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: formData.name,
-                    type: formData.type,
-                    neighborhood: formData.neighborhood,
-                    city: formData.city,
-                    state: formData.state,
-                    area: formData.area,
-                    bedrooms: formData.bedrooms,
-                    bathrooms: formData.bathrooms,
-                    parking: formData.parking,
-                    features: formData.features,
-                    priceMin: formData.priceMin,
-                    deliveryDate: formData.deliveryDate,
-                }),
-            })
-            const data = await res.json()
-            if (data.description) {
-                handleChange('description', data.description)
-                toast.success('Descrição gerada com IA!')
-            } else {
-                toast.error(data.error || 'Erro ao gerar descrição')
+      {/* CEP — prominent, with inline spinner */}
+      <Field label="CEP" hint="Digite o CEP para auto-preencher o endereço">
+        <div style={{ position: 'relative' }}>
+          <input
+            className="ni"
+            style={{
+              ...inputStyle,
+              paddingRight: 44,
+              letterSpacing: '0.1em',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: 15,
+            }}
+            value={cepFormatted}
+            onChange={e => handleCepChange(e.target.value)}
+            placeholder="00000-000"
+            maxLength={9}
+          />
+          <div style={{
+            position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+            display: 'flex', alignItems: 'center',
+          }}>
+            {cepLoading
+              ? <Loader2 size={16} color={T.gold} style={{ animation: 'spin 1s linear infinite' }} />
+              : form.cep.length === 8
+                ? <Check size={16} color={T.success} />
+                : <MapPin size={16} color={T.textDim} />
             }
-        } catch {
-            toast.error('Erro de conexão')
-        } finally {
-            setAiGenerating(false)
-        }
-    }
-
-    const setMainImage = (index: number) => {
-        setFormData(prev => {
-            const imgs = [...prev.images]
-            const [main] = imgs.splice(index, 1)
-            return { ...prev, images: [main, ...imgs] }
-        })
-    }
-
-    /* ─── Auto-save draft (text fields only) ─── */
-    useEffect(() => {
-        const existing = localStorage.getItem('imi-draft-imovel')
-        if (existing) setHasDraft(true)
-    }, [])
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            const draft = {
-                name: formData.name, type: formData.type,
-                condition: formData.condition,
-                country: formData.country, state: formData.state,
-                city: formData.city, neighborhood: formData.neighborhood,
-                address: formData.address,
-                developer_id: formData.developer_id, developer: formData.developer,
-                area: formData.area, bedrooms: formData.bedrooms,
-                bathrooms: formData.bathrooms, parking: formData.parking, floor: formData.floor,
-                features: formData.features,
-                priceMin: formData.priceMin, priceMax: formData.priceMax,
-                pricePerSqm: formData.pricePerSqm, totalUnits: formData.totalUnits,
-                availableUnits: formData.availableUnits, deliveryDate: formData.deliveryDate,
-                description: formData.description,
-                status_commercial: formData.status_commercial,
-                is_highlighted: formData.is_highlighted,
-                videoUrl: formData.videoUrl, videoShort: formData.videoShort,
-            }
-            if (Object.values(draft).some(v => v && v !== 'Brasil' && v !== 'lancamento' && (typeof v === 'boolean' ? v : typeof v === 'string' ? v.trim() : Array.isArray(v) ? v.length > 0 : false))) {
-                localStorage.setItem('imi-draft-imovel', JSON.stringify(draft))
-                setDraftSaved(true)
-                setTimeout(() => setDraftSaved(false), 2000)
-            }
-        }, 3000)
-        return () => clearTimeout(timer)
-    }, [formData])
-
-    /* ─── PDF Auto-fill ─── */
-    const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (!file) return
-        setIsParsingPdf(true)
-        try {
-            const fd = new FormData()
-            fd.append('file', file)
-            const res = await fetch('/api/imoveis/pdf-parse', { method: 'POST', body: fd })
-            if (!res.ok) throw new Error('Falha ao processar PDF')
-            const { data } = await res.json()
-            setFormData(prev => ({
-                ...prev,
-                name: data.name || prev.name,
-                type: data.type || prev.type,
-                neighborhood: data.location || data.neighborhood || prev.neighborhood,
-                address: data.address || prev.address,
-                developer: data.developer || prev.developer,
-                area: data.area?.toString() || prev.area,
-                bedrooms: data.bedrooms?.toString() || prev.bedrooms,
-                bathrooms: data.bathrooms?.toString() || prev.bathrooms,
-                parking: data.parking?.toString() || prev.parking,
-                features: Array.isArray(data.features)
-                    ? Array.from(new Set([...prev.features, ...data.features]))
-                    : prev.features,
-            }))
-            toast.success('PDF processado! Campos preenchidos automaticamente.')
-        } catch (err: any) {
-            toast.error('Erro ao ler PDF: ' + err.message)
-        } finally {
-            setIsParsingPdf(false)
-        }
-    }
-
-    /* ─── Draft restore ─── */
-    const restoreDraft = () => {
-        const raw = localStorage.getItem('imi-draft-imovel')
-        if (!raw) return
-        try {
-            const draft = JSON.parse(raw)
-            setFormData(prev => ({ ...prev, ...draft }))
-            setHasDraft(false)
-            toast.success('Rascunho restaurado!')
-        } catch { }
-    }
-
-    const discardDraft = () => {
-        localStorage.removeItem('imi-draft-imovel')
-        setHasDraft(false)
-    }
-
-    /* ─── Quick mode — jump to step 3 ─── */
-    const handleModoRapido = () => {
-        // Save whatever is in the draft so far
-        const draft = {
-            name: formData.name, type: formData.type,
-            condition: formData.condition,
-            country: formData.country, state: formData.state,
-            city: formData.city, neighborhood: formData.neighborhood,
-            address: formData.address,
-            developer_id: formData.developer_id, developer: formData.developer,
-            area: formData.area, bedrooms: formData.bedrooms,
-            bathrooms: formData.bathrooms, parking: formData.parking, floor: formData.floor,
-            features: formData.features,
-            priceMin: formData.priceMin, priceMax: formData.priceMax,
-            pricePerSqm: formData.pricePerSqm, totalUnits: formData.totalUnits,
-            availableUnits: formData.availableUnits, deliveryDate: formData.deliveryDate,
-            description: formData.description,
-            status_commercial: formData.status_commercial,
-            is_highlighted: formData.is_highlighted,
-            videoUrl: formData.videoUrl, videoShort: formData.videoShort,
-        }
-        localStorage.setItem('imi-draft-imovel', JSON.stringify(draft))
-        setCurrentStep(3)
-        toast.success('Modo Rápido ativado — direto aos Valores!')
-    }
-
-    /* ─── Validation ─── */
-    const validateStep = (step: Step): boolean => {
-        const e: Record<string, string> = {}
-        if (step === 1) {
-            if (!formData.name.trim()) e.name = 'Nome é obrigatório'
-            if (!formData.type) e.type = 'Tipo é obrigatório'
-            if (!formData.city.trim()) e.city = 'Cidade é obrigatória'
-            if (!formData.address.trim()) e.address = 'Endereço é obrigatório'
-        }
-        if (step === 2) {
-            if (!formData.area) e.area = 'Área é obrigatória'
-            if (!formData.bedrooms) e.bedrooms = 'Quartos é obrigatório'
-        }
-        if (step === 3) {
-            if (!formData.priceMin) e.priceMin = 'Preço mínimo é obrigatório'
-            if (!formData.priceMax) e.priceMax = 'Preço máximo é obrigatório'
-        }
-        setErrors(e)
-        return Object.keys(e).length === 0
-    }
-
-    const handleNext = () => {
-        if (validateStep(currentStep)) {
-            setCurrentStep(prev => Math.min(4, prev + 1) as Step)
-        }
-    }
-    const handlePrev = () => setCurrentStep(prev => Math.max(1, prev - 1) as Step)
-
-    /* ─── Submit ─── */
-    const handleSubmit = async () => {
-        if (!validateStep(currentStep)) return
-        setIsSubmitting(true)
-        try {
-            const { uploadMultipleFiles, uploadFile } = await import('@/lib/supabase-storage')
-
-            let imageUrls: string[] = []
-            if (formData.images.length > 0) {
-                toast.info(`Enviando ${formData.images.length} foto(s)...`)
-                const results = await uploadMultipleFiles(formData.images, 'media', 'developments/gallery')
-                imageUrls = results.filter(r => !r.error).map(r => r.url)
-                const fails = results.filter(r => r.error).length
-                if (fails > 0) toast.warning(`${fails} foto(s) falharam`)
-            }
-
-            let floorPlanUrls: string[] = []
-            if (formData.floorPlans.length > 0) {
-                toast.info(`Enviando ${formData.floorPlans.length} planta(s)...`)
-                const results = await uploadMultipleFiles(formData.floorPlans, 'media', 'developments/plantas')
-                floorPlanUrls = results.filter(r => !r.error).map(r => r.url)
-            }
-
-            let brochureUrl: string | null = null
-            if (formData.brochure) {
-                toast.info('Enviando brochure...')
-                const result = await uploadFile(formData.brochure, 'media', 'developments/brochures')
-                if (!result.error) brochureUrl = result.url
-            }
-
-            const payload = {
-                name: formData.name,
-                type: formData.type,
-                condition: formData.condition,
-                country: formData.country || 'Brasil',
-                state: formData.state,
-                city: formData.city,
-                location: formData.neighborhood,
-                address: formData.address,
-                developer: formData.developer || null,
-                developer_id: formData.developer_id || null,
-                area: formData.area,
-                bedrooms: formData.bedrooms,
-                bathrooms: formData.bathrooms,
-                parking: formData.parking,
-                floor: formData.floor,
-                features: formData.features,
-                priceMin: formData.priceMin,
-                priceMax: formData.priceMax,
-                pricePerSqm: formData.pricePerSqm,
-                totalUnits: formData.totalUnits,
-                availableUnits: formData.availableUnits,
-                deliveryDate: formData.deliveryDate,
-                description: formData.description,
-                status_commercial: formData.status_commercial,
-                is_highlighted: formData.is_highlighted,
-                gallery_images: imageUrls,
-                image: imageUrls[0] || null,
-                floor_plans: floorPlanUrls,
-                brochure_url: brochureUrl,
-                video_url: formData.videoUrl || null,
-                video_short_url: formData.videoShort || null,
-            }
-
-            const res = await fetch('/api/developments', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            })
-
-            if (!res.ok) {
-                const errData = await res.json()
-                throw new Error(errData.error || 'Erro ao salvar')
-            }
-
-            localStorage.removeItem('imi-draft-imovel')
-            toast.success('Empreendimento cadastrado com sucesso!')
-            router.push('/backoffice/imoveis')
-        } catch (err: any) {
-            toast.error('Erro ao salvar: ' + err.message)
-        } finally {
-            setIsSubmitting(false)
-        }
-    }
-
-    const getCurrencyConfig = () => {
-        const c = formData.country.toLowerCase()
-        if (c.includes('usa') || c.includes('united states') || c.includes('estados unidos') || c.includes('eua')) return { code: 'USD', locale: 'en-US', symbol: 'US$' }
-        if (c.includes('saudi') || c.includes('arabia') || c.includes('saudita') || c.includes('ksa')) return { code: 'SAR', locale: 'ar-SA', symbol: 'SAR' }
-        return { code: 'BRL', locale: 'pt-BR', symbol: 'R$' }
-    }
-
-    const formatCurrency = (value: string) => {
-        const nums = value.replace(/\D/g, '')
-        const { code, locale } = getCurrencyConfig()
-        return new Intl.NumberFormat(locale, {
-            style: 'currency', currency: code, minimumFractionDigits: 0,
-        }).format(Number(nums))
-    }
-
-    /* ─── Step Config ─── */
-    const steps = [
-        { number: 1, label: 'Tipo', icon: Building2 },
-        { number: 2, label: 'Dados', icon: Home },
-        { number: 3, label: 'Valores', icon: DollarSign },
-        { number: 4, label: 'Fotos', icon: ImageIcon },
-    ]
-    const progress = (currentStep / 4) * 100
-
-    return (
-        <div className="space-y-6 max-w-5xl mx-auto">
-            {/* ── Draft restore banner ── */}
-            {hasDraft && (
-                <div
-                    className="flex items-center justify-between px-5 py-3 rounded-2xl"
-                    style={{ background: T.accentBg, border: `1px solid ${T.accent}40` }}
-                >
-                    <div className="flex items-center gap-2">
-                        <Cloud size={16} style={{ color: T.accent }} />
-                        <span className="text-sm font-medium" style={{ color: T.text }}>
-                            Você tem um rascunho não enviado.
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={restoreDraft}
-                            className="text-xs font-bold px-3 py-1.5 rounded-lg"
-                            style={{ background: T.accent, color: 'white' }}
-                        >
-                            Restaurar
-                        </button>
-                        <button
-                            onClick={discardDraft}
-                            className="text-xs font-medium"
-                            style={{ color: T.textMuted }}
-                        >
-                            Descartar
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* ── Header ── */}
-            <div className="flex items-center gap-4">
-                <button
-                    onClick={() => router.back()}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                >
-                    <ArrowLeft size={18} style={{ color: T.text }} />
-                </button>
-                <div>
-                    <h1 className="text-xl font-bold" style={{ color: T.text }}>
-                        Novo Empreendimento
-                    </h1>
-                    <p className="text-xs mt-0.5" style={{ color: T.textMuted }}>
-                        Passo {currentStep} de 4
-                    </p>
-                </div>
-            </div>
-
-            {/* ── Step Progress ── */}
-            <div
-                className="rounded-2xl p-5"
-                style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-            >
-                <div className="flex items-center justify-between mb-4">
-                    {steps.map((step, index) => {
-                        const StepIcon = step.icon
-                        const isActive = currentStep === step.number
-                        const isDone = currentStep > step.number
-                        return (
-                            <div key={step.number} className="flex items-center flex-1">
-                                <div className="flex flex-col items-center flex-1">
-                                    <div
-                                        className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
-                                        style={{
-                                            background: isDone ? T.successBg : isActive ? T.accentBg : T.surface,
-                                            border: `1.5px solid ${isDone ? T.success : isActive ? T.accent : T.border}`,
-                                        }}
-                                    >
-                                        {isDone ? (
-                                            <Check size={20} style={{ color: T.success }} />
-                                        ) : (
-                                            <StepIcon size={20} style={{ color: isActive ? T.accent : T.textMuted }} />
-                                        )}
-                                    </div>
-                                    <p
-                                        className="text-[11px] font-semibold mt-1.5"
-                                        style={{ color: isActive ? T.accent : isDone ? T.success : T.textMuted }}
-                                    >
-                                        {step.number} {step.label}
-                                    </p>
-                                </div>
-                                {index < steps.length - 1 && (
-                                    <div
-                                        className="h-[2px] flex-1 mx-3 rounded-full transition-all"
-                                        style={{ background: currentStep > step.number ? T.success : T.border }}
-                                    />
-                                )}
-                            </div>
-                        )
-                    })}
-                </div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.surface }}>
-                    <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{ width: `${progress}%`, background: T.accent }}
-                    />
-                </div>
-            </div>
-
-            {/* ── Form Card ── */}
-            <div
-                className="rounded-2xl p-6 sm:p-8"
-                style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-            >
-                {/* ── STEP 1: Tipo + Condição + Localização ── */}
-                {currentStep === 1 && (
-                    <div className="space-y-6">
-                        {/* Modo Rápido alert */}
-                        <div
-                            className="flex items-center justify-between px-4 py-3 rounded-xl"
-                            style={{ background: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.2)' }}
-                        >
-                            <p className="text-xs" style={{ color: T.textMuted }}>
-                                Tem pressa? Pule direto para os valores e publique em segundos.
-                            </p>
-                            <button
-                                type="button"
-                                onClick={handleModoRapido}
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap ml-3 flex-shrink-0 transition-all hover:opacity-80"
-                                style={{ background: '#A78BFA22', color: '#A78BFA', border: '1px solid #A78BFA44' }}
-                            >
-                                <Zap size={12} /> Modo Rápido
-                            </button>
-                        </div>
-
-                        {/* PDF Auto-fill card */}
-                        <div
-                            className="relative overflow-hidden rounded-2xl p-5"
-                            style={{ background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.18)' }}
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-bold" style={{ color: T.text }}>
-                                        Preencha automaticamente com PDF do empreendimento ⚡
-                                    </p>
-                                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                                        Faça upload do material e a IA extrai nome, tipo, localização e características
-                                    </p>
-                                </div>
-                                <div className="relative flex-shrink-0 ml-4">
-                                    <input
-                                        type="file"
-                                        accept=".pdf"
-                                        onChange={handlePdfUpload}
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                        disabled={isParsingPdf}
-                                    />
-                                    <button
-                                        type="button"
-                                        disabled={isParsingPdf}
-                                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all"
-                                        style={{
-                                            background: 'rgba(96,165,250,0.15)',
-                                            color: '#60A5FA',
-                                            border: '1px solid rgba(96,165,250,0.3)',
-                                        }}
-                                    >
-                                        {isParsingPdf ? (
-                                            <><Loader2 size={14} className="animate-spin" /> Extraindo...</>
-                                        ) : (
-                                            <><Sparkles size={14} /> Enviar PDF</>
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Type visual card grid */}
-                        <div>
-                            <Label required>Tipo de Imóvel</Label>
-                            {errors.type && (
-                                <p className="mb-2 text-xs flex items-center gap-1" style={{ color: T.error }}>
-                                    <AlertCircle size={12} /> {errors.type}
-                                </p>
-                            )}
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                                {PROPERTY_TYPES.map(pt => {
-                                    const Icon = pt.icon
-                                    const isSelected = formData.type === pt.value
-                                    return (
-                                        <button
-                                            key={pt.value}
-                                            type="button"
-                                            onClick={() => handleChange('type', pt.value)}
-                                            className="flex flex-col items-start gap-1.5 p-4 rounded-xl text-left transition-all hover:opacity-90"
-                                            style={{
-                                                background: isSelected ? 'rgba(96,165,250,0.12)' : T.surface,
-                                                border: `1.5px solid ${isSelected ? '#60A5FA' : T.border}`,
-                                            }}
-                                        >
-                                            <Icon
-                                                size={22}
-                                                style={{ color: isSelected ? '#60A5FA' : T.textMuted }}
-                                            />
-                                            <span
-                                                className="text-sm font-semibold leading-tight"
-                                                style={{ color: isSelected ? '#60A5FA' : T.text }}
-                                            >
-                                                {pt.label}
-                                            </span>
-                                            <span
-                                                className="text-[11px] leading-tight"
-                                                style={{ color: T.textMuted }}
-                                            >
-                                                {pt.desc}
-                                            </span>
-                                        </button>
-                                    )
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Condition toggle row */}
-                        <div>
-                            <Label>Estado do Imóvel</Label>
-                            <div className="flex flex-wrap gap-2">
-                                {CONDITION_OPTIONS.map(opt => {
-                                    const isSelected = formData.condition === opt.value
-                                    return (
-                                        <button
-                                            key={opt.value}
-                                            type="button"
-                                            onClick={() => handleChange('condition', opt.value)}
-                                            className="px-4 py-2 rounded-full text-xs font-semibold transition-all"
-                                            style={{
-                                                background: isSelected ? opt.color + '22' : T.surface,
-                                                color: isSelected ? opt.color : T.textMuted,
-                                                border: `1.5px solid ${isSelected ? opt.color : T.border}`,
-                                            }}
-                                        >
-                                            {opt.label}
-                                        </button>
-                                    )
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Name + Developer */}
-                        <div className="pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                {/* Nome */}
-                                <div className="md:col-span-2">
-                                    <Label required>Nome do Empreendimento</Label>
-                                    <Input
-                                        icon={Building2}
-                                        value={formData.name}
-                                        onChange={v => handleChange('name', v)}
-                                        placeholder="Ex: Reserva Imperial"
-                                        error={errors.name}
-                                    />
-                                </div>
-
-                                {/* Construtora (dynamic from Supabase) */}
-                                <div className="md:col-span-2">
-                                    <Label>Construtora / Incorporadora</Label>
-                                    <Select
-                                        icon={Briefcase}
-                                        value={formData.developer_id}
-                                        onChange={handleDeveloperChange}
-                                        options={developers.map(d => ({ value: d.id, label: d.name }))}
-                                        placeholder={developers.length === 0 ? 'Carregando...' : 'Selecione...'}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* ── Localização Internacional ── */}
-                        <div className="pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
-                            <div className="flex items-center gap-2 mb-4">
-                                <Globe size={16} style={{ color: T.accent }} />
-                                <h3 className="text-sm font-bold" style={{ color: T.text }}>
-                                    Localização
-                                </h3>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                {/* País */}
-                                <div>
-                                    <Label>País</Label>
-                                    <Input
-                                        icon={Flag}
-                                        value={formData.country}
-                                        onChange={v => handleChange('country', v)}
-                                        placeholder="Brasil"
-                                    />
-                                </div>
-
-                                {/* Estado */}
-                                <div>
-                                    <Label>Estado / Província</Label>
-                                    <Input
-                                        value={formData.state}
-                                        onChange={v => handleChange('state', v)}
-                                        placeholder="PE, FL, Dubai..."
-                                    />
-                                </div>
-
-                                {/* Cidade */}
-                                <div>
-                                    <Label required>Cidade</Label>
-                                    <Input
-                                        value={formData.city}
-                                        onChange={v => handleChange('city', v)}
-                                        placeholder="Recife, Miami, Lisboa..."
-                                        error={errors.city}
-                                    />
-                                </div>
-
-                                {/* Bairro */}
-                                <div>
-                                    <Label>Bairro / Região</Label>
-                                    <Input
-                                        icon={MapPin}
-                                        value={formData.neighborhood}
-                                        onChange={v => handleChange('neighborhood', v)}
-                                        placeholder="Boa Viagem, Brickell..."
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Endereço */}
-                            <div className="mt-4">
-                                <Label required>Endereço Completo</Label>
-                                <Input
-                                    icon={MapPin}
-                                    value={formData.address}
-                                    onChange={v => handleChange('address', v)}
-                                    placeholder="Av. Boa Viagem, 3500"
-                                    error={errors.address}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* ── STEP 2: Características ── */}
-                {currentStep === 2 && (
-                    <div className="space-y-6">
-                        <h2 className="text-base font-bold mb-2" style={{ color: T.text }}>
-                            Características do Imóvel
-                        </h2>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                            <div>
-                                <Label required>Área Privativa (m²)</Label>
-                                <Input
-                                    icon={Ruler} type="number"
-                                    value={formData.area}
-                                    onChange={v => handleChange('area', v)}
-                                    placeholder="95" error={errors.area}
-                                />
-                            </div>
-                            <div>
-                                <Label required>Quartos</Label>
-                                <Input
-                                    icon={BedDouble} type="number"
-                                    value={formData.bedrooms}
-                                    onChange={v => handleChange('bedrooms', v)}
-                                    placeholder="3" error={errors.bedrooms}
-                                />
-                            </div>
-                            <div>
-                                <Label>Banheiros</Label>
-                                <Input
-                                    icon={Bath} type="number"
-                                    value={formData.bathrooms}
-                                    onChange={v => handleChange('bathrooms', v)}
-                                    placeholder="2"
-                                />
-                            </div>
-                            <div>
-                                <Label>Vagas de Garagem</Label>
-                                <Input
-                                    icon={Car} type="number"
-                                    value={formData.parking}
-                                    onChange={v => handleChange('parking', v)}
-                                    placeholder="2"
-                                />
-                            </div>
-                            <div>
-                                <Label>Andar</Label>
-                                <Input
-                                    icon={Maximize}
-                                    value={formData.floor}
-                                    onChange={v => handleChange('floor', v)}
-                                    placeholder="8º ao 24º"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Features Grid */}
-                        <div className="pt-5" style={{ borderTop: `1px solid ${T.border}` }}>
-                            <Label>Características do Condomínio</Label>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 mt-3">
-                                {featuresOptions.map(feature => {
-                                    const selected = formData.features.includes(feature)
-                                    return (
-                                        <button
-                                            key={feature}
-                                            type="button"
-                                            onClick={() => toggleFeature(feature)}
-                                            className="h-9 px-3 rounded-lg text-xs font-medium transition-all"
-                                            style={{
-                                                background: selected ? T.accentBg : T.surface,
-                                                color: selected ? T.accent : T.textMuted,
-                                                border: `1px solid ${selected ? T.accent : T.border}`,
-                                            }}
-                                        >
-                                            {feature}
-                                        </button>
-                                    )
-                                })}
-                            </div>
-                            <p className="text-[11px] mt-2" style={{ color: T.textMuted }}>
-                                {formData.features.length} selecionada(s)
-                            </p>
-                        </div>
-                    </div>
-                )}
-
-                {/* ── STEP 3: Valores ── */}
-                {currentStep === 3 && (
-                    <div className="space-y-6">
-                        <h2 className="text-base font-bold mb-2" style={{ color: T.text }}>
-                            Valores e Disponibilidade
-                        </h2>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <div>
-                                <Label required>Preço Mínimo ({getCurrencyConfig().symbol})</Label>
-                                <Input
-                                    icon={DollarSign} type="number"
-                                    value={formData.priceMin}
-                                    onChange={v => handleChange('priceMin', v)}
-                                    placeholder={getCurrencyConfig().code === 'BRL' ? '450000' : getCurrencyConfig().code === 'USD' ? '250000' : '937500'}
-                                    error={errors.priceMin}
-                                />
-                                {formData.priceMin && (
-                                    <p className="text-[11px] mt-1" style={{ color: T.textMuted }}>
-                                        {formatCurrency(formData.priceMin)}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <Label required>Preço Máximo ({getCurrencyConfig().symbol})</Label>
-                                <Input
-                                    icon={DollarSign} type="number"
-                                    value={formData.priceMax}
-                                    onChange={v => handleChange('priceMax', v)}
-                                    placeholder={getCurrencyConfig().code === 'BRL' ? '680000' : getCurrencyConfig().code === 'USD' ? '450000' : '1687500'}
-                                    error={errors.priceMax}
-                                />
-                                {formData.priceMax && (
-                                    <p className="text-[11px] mt-1" style={{ color: T.textMuted }}>
-                                        {formatCurrency(formData.priceMax)}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <Label>Preço por m² ({getCurrencyConfig().symbol})</Label>
-                                <Input
-                                    type="number"
-                                    value={formData.pricePerSqm}
-                                    onChange={v => handleChange('pricePerSqm', v)}
-                                    placeholder="7200"
-                                />
-                                {formData.pricePerSqm && (
-                                    <p className="text-[11px] mt-1" style={{ color: T.textMuted }}>
-                                        {formatCurrency(formData.pricePerSqm)}/m²
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <Label>Previsão de Entrega</Label>
-                                <Input
-                                    icon={Calendar} type="month"
-                                    value={formData.deliveryDate}
-                                    onChange={v => handleChange('deliveryDate', v)}
-                                />
-                            </div>
-                            <div>
-                                <Label>Total de Unidades</Label>
-                                <Input
-                                    type="number"
-                                    value={formData.totalUnits}
-                                    onChange={v => handleChange('totalUnits', v)}
-                                    placeholder="120"
-                                />
-                            </div>
-                            <div>
-                                <Label>Unidades Disponíveis</Label>
-                                <Input
-                                    type="number"
-                                    value={formData.availableUnits}
-                                    onChange={v => handleChange('availableUnits', v)}
-                                    placeholder="45"
-                                />
-                            </div>
-                            <div>
-                                <Label>Visibilidade</Label>
-                                <Select
-                                    value={formData.status_commercial}
-                                    onChange={v => handleChange('status_commercial', v)}
-                                    options={[
-                                        { value: 'published', label: 'Publicado (visível no site)' },
-                                        { value: 'draft', label: 'Rascunho (oculto)' },
-                                        { value: 'campaign', label: 'Campanha' },
-                                        { value: 'private', label: 'Privado' },
-                                        { value: 'sold', label: 'Vendido' },
-                                    ]}
-                                    placeholder="Status de publicação"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Price hint */}
-                        {formData.neighborhood && (
-                            <div className="rounded-xl p-3" style={{ background: 'rgba(96,165,250,0.07)', border: '1px solid rgba(96,165,250,0.15)' }}>
-                                <p className="text-[11px]" style={{ color: T.textMuted }}>
-                                    💡 Imóveis similares em <strong style={{ color: T.text }}>{formData.neighborhood}</strong>: consulte o mercado para precificação ideal.
-                                </p>
-                            </div>
-                        )}
-
-                        {/* Destaque na Home */}
-                        <div className="rounded-xl p-4 flex items-center justify-between" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: formData.is_highlighted ? 'rgba(245,158,11,0.15)' : T.elevated }}>
-                                    <Star size={16} style={{ color: formData.is_highlighted ? '#f59e0b' : T.textMuted }} />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold" style={{ color: T.text }}>Destaque na Página Inicial</p>
-                                    <p className="text-xs" style={{ color: T.textMuted }}>Aparece na seção "Empreendimentos em Destaque" do site público</p>
-                                </div>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => handleChange('is_highlighted', !formData.is_highlighted)}
-                                className="relative w-11 h-6 rounded-full transition-all flex-shrink-0"
-                                style={{ background: formData.is_highlighted ? '#f59e0b' : T.border }}
-                            >
-                                <div
-                                    className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-200"
-                                    style={{ left: formData.is_highlighted ? '22px' : '2px' }}
-                                />
-                            </button>
-                        </div>
-
-                        {/* Description */}
-                        <div className="pt-4" style={{ borderTop: `1px solid ${T.border}` }}>
-                            <div className="flex items-center justify-between mb-2">
-                                <Label>Descrição do Empreendimento</Label>
-                                <button
-                                    type="button"
-                                    onClick={generateDescription}
-                                    disabled={aiGenerating}
-                                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold transition-all disabled:opacity-60"
-                                    style={{ background: T.accentBg, color: T.accent, border: `1px solid ${T.accent}40` }}
-                                >
-                                    {aiGenerating
-                                        ? <Loader2 size={12} className="animate-spin" />
-                                        : <Sparkles size={12} />}
-                                    {aiGenerating ? 'Gerando...' : 'Gerar com IA'}
-                                </button>
-                            </div>
-                            <textarea
-                                value={formData.description}
-                                onChange={e => handleChange('description', e.target.value)}
-                                placeholder="Descreva o empreendimento, ou clique em 'Gerar com IA' para criar automaticamente..."
-                                rows={5}
-                                className="w-full rounded-xl text-sm outline-none resize-none p-4"
-                                style={{
-                                    background: T.surface,
-                                    border: `1px solid ${T.border}`,
-                                    color: T.text,
-                                }}
-                            />
-                        </div>
-                    </div>
-                )}
-
-                {/* ── STEP 4: Mídia ── */}
-                {currentStep === 4 && (
-                    <div className="space-y-8">
-                        <div className="flex items-center justify-between mb-2">
-                            <h2 className="text-base font-bold" style={{ color: T.text }}>
-                                Mídia do Empreendimento
-                            </h2>
-                            {/* Auto-save indicator */}
-                            <div className="flex items-center gap-1.5 text-[11px]" style={{ color: draftSaved ? T.success : T.textMuted }}>
-                                {draftSaved ? <><Cloud size={13} /> Salvo</> : <><CloudOff size={13} /> Rascunho automático</>}
-                            </div>
-                        </div>
-
-                        {/* ── Fotos ── */}
-                        <div>
-                            <div className="flex items-center justify-between mb-2">
-                                <Label>Fotos do Empreendimento</Label>
-                                {formData.images.length > 0 && (
-                                    <span className="text-[11px]" style={{ color: T.textMuted }}>
-                                        ★ = imagem de capa
-                                    </span>
-                                )}
-                            </div>
-                            <label className="block cursor-pointer">
-                                <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                <div
-                                    className="rounded-2xl p-7 text-center transition-all hover:opacity-80"
-                                    style={{ border: `2px dashed ${T.border}`, background: T.surface }}
-                                >
-                                    <Upload size={32} className="mx-auto mb-2" style={{ color: T.textMuted }} />
-                                    <p className="text-sm font-semibold" style={{ color: T.text }}>
-                                        Clique para adicionar fotos
-                                    </p>
-                                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                                        PNG, JPG, WebP — mínimo 5 fotos recomendado
-                                    </p>
-                                </div>
-                            </label>
-
-                            {formData.images.length > 0 && (
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                                    {formData.images.map((file, i) => (
-                                        <div key={i} className="relative group rounded-xl overflow-hidden">
-                                            <img
-                                                src={URL.createObjectURL(file)}
-                                                alt={`Foto ${i + 1}`}
-                                                className="w-full h-28 object-cover"
-                                            />
-                                            {/* Star = main image */}
-                                            <button
-                                                type="button"
-                                                onClick={() => setMainImage(i)}
-                                                className="absolute top-2 left-2 w-6 h-6 rounded-full flex items-center justify-center transition-all"
-                                                style={{ background: i === 0 ? '#f59e0b' : 'rgba(0,0,0,0.5)' }}
-                                                title={i === 0 ? 'Capa atual' : 'Definir como capa'}
-                                            >
-                                                <Star size={11} fill={i === 0 ? 'white' : 'none'} className="text-white" />
-                                            </button>
-                                            {/* Delete */}
-                                            <button
-                                                type="button"
-                                                onClick={() => removeImage(i)}
-                                                className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity"
-                                                style={{ background: T.error }}
-                                            >
-                                                <X size={11} className="text-white" />
-                                            </button>
-                                            {i === 0 && (
-                                                <div className="absolute bottom-0 inset-x-0 text-[10px] font-bold text-center py-0.5"
-                                                    style={{ background: 'rgba(245,158,11,0.85)', color: 'white' }}>
-                                                    CAPA
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* ── Vídeo YouTube ── */}
-                        <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
-                            <Label>Vídeo Principal (YouTube)</Label>
-                            <Input
-                                icon={Play}
-                                value={formData.videoUrl}
-                                onChange={v => handleChange('videoUrl', v)}
-                                placeholder="https://youtube.com/watch?v=... ou youtu.be/..."
-                            />
-                            {formData.videoUrl && getYoutubeEmbedUrl(formData.videoUrl) && (
-                                <div className="mt-3 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
-                                    <iframe
-                                        src={getYoutubeEmbedUrl(formData.videoUrl)!}
-                                        className="w-full h-full"
-                                        allowFullScreen
-                                        title="Preview vídeo"
-                                    />
-                                </div>
-                            )}
-                            {formData.videoUrl && !getYoutubeEmbedUrl(formData.videoUrl) && (
-                                <p className="mt-1.5 text-xs flex items-center gap-1" style={{ color: T.error }}>
-                                    <AlertCircle size={12} /> URL do YouTube inválida
-                                </p>
-                            )}
-                        </div>
-
-                        {/* ── Short / Reels ── */}
-                        <div>
-                            <Label>Short / Reels (YouTube Shorts)</Label>
-                            <Input
-                                icon={LinkIcon}
-                                value={formData.videoShort}
-                                onChange={v => handleChange('videoShort', v)}
-                                placeholder="https://youtube.com/shorts/..."
-                            />
-                        </div>
-
-                        {/* ── Plantas ── */}
-                        <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
-                            <Label>Plantas do Imóvel</Label>
-                            <label className="block cursor-pointer">
-                                <input type="file" multiple accept="image/*" onChange={handleFloorPlanUpload} className="hidden" />
-                                <div
-                                    className="rounded-xl p-6 text-center transition-all hover:opacity-80"
-                                    style={{ border: `2px dashed ${T.border}`, background: T.surface }}
-                                >
-                                    <ImageIcon size={28} className="mx-auto mb-2" style={{ color: T.textMuted }} />
-                                    <p className="text-sm font-semibold" style={{ color: T.text }}>
-                                        Adicionar plantas
-                                    </p>
-                                    <p className="text-xs mt-1" style={{ color: T.textMuted }}>
-                                        PNG, JPG — planta tipo, cobertura, subsolo
-                                    </p>
-                                </div>
-                            </label>
-                            {formData.floorPlans.length > 0 && (
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
-                                    {formData.floorPlans.map((file, i) => (
-                                        <div key={i} className="relative group rounded-xl overflow-hidden">
-                                            <img
-                                                src={URL.createObjectURL(file)}
-                                                alt={`Planta ${i + 1}`}
-                                                className="w-full h-28 object-cover"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => removeFloorPlan(i)}
-                                                className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center touch-always-visible opacity-0 group-hover:opacity-100 transition-opacity"
-                                                style={{ background: T.error }}
-                                            >
-                                                <X size={11} className="text-white" />
-                                            </button>
-                                            <div className="absolute bottom-0 inset-x-0 text-[10px] font-bold text-center py-0.5 truncate px-2"
-                                                style={{ background: 'rgba(0,0,0,0.6)', color: 'white' }}>
-                                                {file.name}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* ── Brochure PDF ── */}
-                        <div>
-                            <Label>Brochure / Material Digital (PDF)</Label>
-                            <label className="block cursor-pointer">
-                                <input type="file" accept=".pdf,image/*" onChange={handleBrochureUpload} className="hidden" />
-                                <div
-                                    className="rounded-xl p-5 transition-all hover:opacity-80"
-                                    style={{ border: `2px dashed ${T.border}`, background: T.surface }}
-                                >
-                                    {formData.brochure ? (
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                                                style={{ background: T.accentBg }}>
-                                                <FileText size={20} style={{ color: T.accent }} />
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-semibold truncate" style={{ color: T.text }}>
-                                                    {formData.brochure.name}
-                                                </p>
-                                                <p className="text-xs" style={{ color: T.textMuted }}>
-                                                    {(formData.brochure.size / 1024 / 1024).toFixed(1)} MB
-                                                </p>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={e => { e.preventDefault(); handleChange('brochure', null) }}
-                                                className="text-xs font-semibold flex-shrink-0"
-                                                style={{ color: T.error }}
-                                            >
-                                                Remover
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-3">
-                                            <FileText size={24} style={{ color: T.textMuted }} />
-                                            <div>
-                                                <p className="text-sm font-semibold" style={{ color: T.text }}>
-                                                    Clique para adicionar brochure
-                                                </p>
-                                                <p className="text-xs" style={{ color: T.textMuted }}>
-                                                    PDF, PNG — será disponibilizado no site
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </label>
-                        </div>
-
-                        {/* ── Logo da Construtora ── */}
-                        <div className="pt-6" style={{ borderTop: `1px solid ${T.border}` }}>
-                            <Label>Logo da Construtora (sobreposto ao imóvel)</Label>
-                            <label className="block cursor-pointer">
-                                <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
-                                <div
-                                    className="rounded-xl p-5 text-center transition-all hover:opacity-80"
-                                    style={{ border: `2px dashed ${T.border}`, background: T.surface }}
-                                >
-                                    {formData.logo ? (
-                                        <div className="flex items-center justify-center gap-4">
-                                            <img src={URL.createObjectURL(formData.logo)} alt="Logo" className="h-14 object-contain" />
-                                            <button
-                                                type="button"
-                                                onClick={e => { e.preventDefault(); handleChange('logo', null) }}
-                                                className="text-xs font-semibold"
-                                                style={{ color: T.error }}
-                                            >
-                                                Remover
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <ImageIcon size={24} className="mx-auto mb-1.5" style={{ color: T.textMuted }} />
-                                            <p className="text-xs" style={{ color: T.textMuted }}>
-                                                Upload do logo da construtora
-                                            </p>
-                                        </>
-                                    )}
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* ── Navigation Buttons ── */}
-            <div className="flex items-center justify-between pb-32 lg:pb-8">
-                <button
-                    type="button"
-                    onClick={handlePrev}
-                    disabled={currentStep === 1}
-                    className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold transition-all disabled:opacity-30"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                >
-                    <ArrowLeft size={16} /> Anterior
-                </button>
-
-                {currentStep < 4 ? (
-                    <button
-                        type="button"
-                        onClick={handleNext}
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white transition-all"
-                        style={{ background: T.accent }}
-                    >
-                        Próximo <ArrowRight size={16} />
-                    </button>
-                ) : (
-                    <button
-                        type="button"
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                        className="flex items-center gap-2 h-10 px-6 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50"
-                        style={{ background: T.success }}
-                    >
-                        {isSubmitting ? (
-                            <><Loader2 size={16} className="animate-spin" /> Publicando...</>
-                        ) : (
-                            <><Save size={16} /> Publicar Empreendimento</>
-                        )}
-                    </button>
-                )}
-            </div>
+          </div>
         </div>
-    )
+        {cepLoading && (
+          <span style={{
+            fontSize: 11, color: T.gold, marginTop: 4,
+            fontFamily: 'Figtree, sans-serif',
+            animation: 'fadeIn 150ms ease',
+          }}>
+            Buscando endereço...
+          </span>
+        )}
+      </Field>
+
+      {/* Address row */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 100px',
+        gap: 14,
+        opacity: form.cep.length > 0 ? 1 : 0.55,
+        transition: 'opacity 300ms ease',
+      }}>
+        <Field label="Logradouro">
+          <input className="ni" style={inputStyle} value={form.address}
+            onChange={e => set('address', e.target.value)} placeholder="Rua, Av., Alameda..." />
+        </Field>
+        <Field label="Número">
+          <input className="ni" style={inputStyle} value={form.streetNumber}
+            onChange={e => set('streetNumber', e.target.value)} placeholder="123" />
+        </Field>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: 14,
+        opacity: form.cep.length > 0 ? 1 : 0.55,
+        transition: 'opacity 300ms ease',
+      }}>
+        <Field label="Bairro">
+          <input className="ni" style={inputStyle} value={form.neighborhood}
+            onChange={e => set('neighborhood', e.target.value)} placeholder="Nome do bairro" />
+        </Field>
+        <Field label="Cidade">
+          <input className="ni" style={inputStyle} value={form.city}
+            onChange={e => set('city', e.target.value)} placeholder="Cidade" />
+        </Field>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr 1fr' : '80px 1fr',
+        gap: 14,
+        opacity: form.cep.length > 0 ? 1 : 0.55,
+        transition: 'opacity 300ms ease',
+      }}>
+        <Field label="UF">
+          <input className="ni" style={{ ...inputStyle, textTransform: 'uppercase' }}
+            value={form.state} onChange={e => set('state', e.target.value.toUpperCase())}
+            placeholder="SP" maxLength={2} />
+        </Field>
+        <Field label="Complemento">
+          <input className="ni" style={inputStyle} value={form.complement}
+            onChange={e => set('complement', e.target.value)} placeholder="Apto, bloco, andar..." />
+        </Field>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Step 3: Características ────────────────────────────────────────────────── */
+function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
+  form: FormData; errors: Record<string, string>
+  set: (k: keyof FormData, v: unknown) => void
+  toggleFeature: (f: string) => void; isMobile?: boolean
+}) {
+  const priceMin = parseInt(form.priceMin || '0', 10)
+  const area = parseInt(form.area || '0', 10)
+  const autoSqm = priceMin > 0 && area > 0
+    ? Math.round(priceMin / area).toLocaleString('pt-BR')
+    : null
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Specs grid */}
+      <div>
+        <label style={{ ...labelStyle, marginBottom: 12 }}>Especificações</label>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)',
+          gap: 12,
+        }}>
+          {[
+            { k: 'area',      label: 'Área (m²)', placeholder: '80',  icon: '⊞' },
+            { k: 'bedrooms',  label: 'Quartos',   placeholder: '3',   icon: '🛏' },
+            { k: 'bathrooms', label: 'Banheiros', placeholder: '2',   icon: '🚿' },
+            { k: 'parking',   label: 'Vagas',     placeholder: '2',   icon: '🚗' },
+            { k: 'floor',     label: 'Andares',   placeholder: '12',  icon: '🏢' },
+          ].map(({ k, label, placeholder }) => (
+            <div key={k} style={{
+              background: T.elevated,
+              border: `1px solid ${T.border}`,
+              borderRadius: 10, padding: '12px',
+              display: 'flex', flexDirection: 'column', gap: 6,
+            }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: T.textDim,
+                textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'Figtree, sans-serif' }}>
+                {label}
+              </span>
+              <input
+                className="ni"
+                style={{
+                  background: 'transparent', border: 'none', outline: 'none',
+                  color: T.text, fontSize: 20, fontWeight: 600,
+                  fontFamily: 'JetBrains Mono, monospace', padding: 0, width: '100%',
+                }}
+                type="number"
+                min={0}
+                value={form[k as keyof FormData] as string}
+                onChange={e => set(k as keyof FormData, e.target.value)}
+                placeholder={placeholder}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Features / Amenities */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+          <label style={labelStyle}>Diferenciais & Amenidades</label>
+          {form.features.length > 0 && (
+            <span style={{
+              fontSize: 10, fontWeight: 700, color: T.gold,
+              background: T.goldBg, border: `1px solid ${T.border}`,
+              borderRadius: 99, padding: '2px 8px',
+              fontFamily: 'Figtree, sans-serif',
+            }}>{form.features.length} selecionado{form.features.length > 1 ? 's' : ''}</span>
+          )}
+        </div>
+        <div style={{
+          display: 'flex', flexWrap: 'wrap', gap: 8,
+        }}>
+          {FEATURES.map(({ label: f, icon: Icon }) => {
+            const sel = form.features.includes(f)
+            return (
+              <button
+                key={f}
+                type="button"
+                onClick={() => toggleFeature(f)}
+                style={{
+                  background: sel ? T.goldBgHi : T.elevated,
+                  border: `1.5px solid ${sel ? T.gold : T.border}`,
+                  borderRadius: 99,
+                  padding: '7px 13px',
+                  fontSize: 12,
+                  color: sel ? T.gold : T.textSub,
+                  cursor: 'pointer',
+                  fontWeight: sel ? 700 : 400,
+                  transition: 'all 150ms ease',
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  minHeight: 34,
+                  fontFamily: 'Figtree, sans-serif',
+                }}
+              >
+                <Icon size={12} />
+                {f}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Prices */}
+      <div>
+        <label style={{ ...labelStyle, marginBottom: 12 }}>Faixa de preço</label>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: 14,
+        }}>
+          <Field label="Preço mínimo" error={errors.priceMin}>
+            <PriceInput
+              value={form.priceMin}
+              onChange={v => set('priceMin', v)}
+              placeholder="500.000"
+              error={errors.priceMin}
+            />
+          </Field>
+          <Field label="Preço máximo">
+            <PriceInput
+              value={form.priceMax}
+              onChange={v => set('priceMax', v)}
+              placeholder="1.200.000"
+            />
+          </Field>
+        </div>
+        {autoSqm && (
+          <div style={{
+            marginTop: 10, padding: '8px 12px',
+            background: T.goldBg, border: `1px solid ${T.border}`,
+            borderRadius: 8, fontSize: 12, color: T.gold,
+            fontFamily: 'Figtree, sans-serif',
+            display: 'flex', alignItems: 'center', gap: 6,
+          }}>
+            <DollarSign size={13} />
+            Estimativa: R$ {autoSqm} por m² (a partir do preço mínimo e área)
+          </div>
+        )}
+        <div style={{ marginTop: 12 }}>
+          <Field label="Preço por m² (opcional)">
+            <PriceInput
+              value={form.pricePerSqm}
+              onChange={v => set('pricePerSqm', v)}
+              placeholder="8.500"
+            />
+          </Field>
+        </div>
+      </div>
+
+      {/* Units + Delivery */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr',
+        gap: 14,
+      }}>
+        <Field label="Total de unidades">
+          <input className="ni" style={inputStyle} type="number" min={0}
+            value={form.totalUnits} onChange={e => set('totalUnits', e.target.value)}
+            placeholder="120" />
+        </Field>
+        <Field label="Unidades disponíveis">
+          <input className="ni" style={inputStyle} type="number" min={0}
+            value={form.availableUnits} onChange={e => set('availableUnits', e.target.value)}
+            placeholder="45" />
+        </Field>
+        <Field label="Data de entrega">
+          <div style={{ position: 'relative' }}>
+            <input className="ni" style={{ ...inputStyle, paddingRight: 36 }}
+              type="date" value={form.deliveryDate}
+              onChange={e => set('deliveryDate', e.target.value)} />
+            <CalendarDays size={14} color={T.textDim} style={{
+              position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+              pointerEvents: 'none',
+            }} />
+          </div>
+        </Field>
+      </div>
+
+      {/* Description */}
+      <Field label="Descrição do empreendimento"
+        hint={`${form.description.length} caracteres`}>
+        <textarea
+          className="ni"
+          style={{
+            ...inputStyle, minHeight: 120, resize: 'vertical',
+            lineHeight: 1.6,
+          }}
+          value={form.description}
+          onChange={e => set('description', e.target.value)}
+          placeholder="Descreva os pontos únicos do empreendimento: localização, arquitetura, conceito..."
+        />
+      </Field>
+    </div>
+  )
+}
+
+/* ─── Step 4: Mídia ──────────────────────────────────────────────────────────── */
+function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMobile }: {
+  form: FormData; set: (k: keyof FormData, v: unknown) => void
+  handleDrop: (e: React.DragEvent) => void
+  handleImageInput: (e: React.ChangeEvent<HTMLInputElement>) => void
+  removeImage: (i: number) => void; isMobile?: boolean
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
+
+  const handleDragEnter = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true) }
+  const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false) }
+  const handleDropInner = (e: React.DragEvent) => {
+    setIsDragging(false)
+    handleDrop(e)
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {/* Cover / Gallery upload zone */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+          <label style={labelStyle}>Galeria de imagens</label>
+          {form.images.length > 0 && (
+            <span style={{
+              fontSize: 10, color: T.textSub, fontFamily: 'Figtree, sans-serif',
+            }}>
+              {form.images.length} imagem{form.images.length > 1 ? 's' : ''} · primeira = capa
+            </span>
+          )}
+        </div>
+
+        <div
+          onDrop={handleDropInner}
+          onDragOver={e => e.preventDefault()}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onClick={() => fileInputRef.current?.click()}
+          style={{
+            border: `2px dashed ${isDragging ? T.gold : T.border}`,
+            borderRadius: 12,
+            padding: isMobile ? '28px 20px' : '40px 32px',
+            textAlign: 'center',
+            cursor: 'pointer',
+            background: isDragging ? T.goldBg : T.elevated,
+            transition: 'all 200ms ease',
+            boxShadow: isDragging ? `0 0 0 4px rgba(184,148,58,0.08)` : 'none',
+          }}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: 'none' }}
+            onChange={handleImageInput}
+          />
+          <div style={{
+            width: 56, height: 56, borderRadius: 14,
+            background: isDragging ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.04)',
+            border: `1px solid ${isDragging ? T.gold : T.border}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 14px',
+            transition: 'all 200ms ease',
+          }}>
+            <Upload size={24} color={isDragging ? T.gold : T.textDim} />
+          </div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: isDragging ? T.gold : T.textSub,
+            fontFamily: 'Figtree, sans-serif', marginBottom: 4 }}>
+            {isDragging ? 'Soltar para adicionar' : 'Arraste imagens ou clique para selecionar'}
+          </div>
+          <div style={{ fontSize: 11, color: T.textDim, fontFamily: 'Figtree, sans-serif' }}>
+            JPG, PNG, WEBP · Máx 50 MB por arquivo
+          </div>
+        </div>
+
+        {/* Image grid preview */}
+        {form.images.length > 0 && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+            gap: 10,
+            marginTop: 14,
+          }}>
+            {form.images.map((file, idx) => (
+              <div key={idx} style={{
+                position: 'relative', borderRadius: 10, overflow: 'hidden',
+                background: T.elevated, aspectRatio: '4/3',
+                boxShadow: idx === 0 ? `0 0 0 2px ${T.gold}` : 'none',
+              }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt=""
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                {/* Gradient overlay */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(to top, rgba(11,25,40,0.5) 0%, transparent 50%)',
+                }} />
+                {idx === 0 && (
+                  <span style={{
+                    position: 'absolute', top: 6, left: 6,
+                    background: T.gold, color: T.navy,
+                    fontSize: 8, fontWeight: 800,
+                    padding: '2px 7px', borderRadius: 4,
+                    letterSpacing: '0.5px',
+                    fontFamily: 'Figtree, sans-serif',
+                  }}>CAPA</span>
+                )}
+                <button
+                  type="button"
+                  onClick={e => { e.stopPropagation(); removeImage(idx) }}
+                  style={{
+                    position: 'absolute', top: 6, right: 6,
+                    background: 'rgba(0,0,0,0.65)',
+                    border: 'none', borderRadius: '50%',
+                    width: 24, height: 24,
+                    cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', transition: 'background 150ms ease',
+                  }}
+                >
+                  <X size={12} />
+                </button>
+                {/* File name */}
+                <span style={{
+                  position: 'absolute', bottom: 5, left: 7,
+                  fontSize: 9, color: 'rgba(255,255,255,0.7)',
+                  fontFamily: 'JetBrains Mono, monospace',
+                  maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                }}>
+                  {file.name}
+                </span>
+              </div>
+            ))}
+            {/* Add more button */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                borderRadius: 10, aspectRatio: '4/3',
+                border: `2px dashed ${T.border}`,
+                background: 'transparent',
+                cursor: 'pointer',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                gap: 6, color: T.textDim,
+              }}
+            >
+              <ImageIcon size={20} />
+              <span style={{ fontSize: 10, fontFamily: 'Figtree, sans-serif' }}>Adicionar</span>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Floor plans */}
+      <Field label="Plantas baixas"
+        hint={form.floorPlans.length > 0 ? `${form.floorPlans.length} arquivo(s) selecionado(s)` : undefined}>
+        <label style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '12px 14px',
+          background: T.elevated,
+          border: `1px solid ${T.border}`,
+          borderRadius: 8, cursor: 'pointer',
+        }}>
+          <Upload size={15} color={T.textDim} />
+          <span style={{ fontSize: 13, color: T.textSub, fontFamily: 'Figtree, sans-serif' }}>
+            {form.floorPlans.length > 0
+              ? `${form.floorPlans.length} planta(s) selecionada(s)`
+              : 'Selecionar plantas (imagem ou PDF)'}
+          </span>
+          <input
+            type="file"
+            accept="image/*,application/pdf"
+            multiple
+            style={{ display: 'none' }}
+            onChange={e => {
+              const files = Array.from(e.target.files || [])
+              if (files.length) set('floorPlans', [...form.floorPlans, ...files])
+            }}
+          />
+        </label>
+      </Field>
+
+      {/* Brochure */}
+      <Field label="Brochure / Material de vendas"
+        hint={form.brochure ? form.brochure.name : undefined}>
+        <label style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '12px 14px',
+          background: T.elevated,
+          border: `1px solid ${form.brochure ? T.gold : T.border}`,
+          borderRadius: 8, cursor: 'pointer',
+        }}>
+          <Upload size={15} color={form.brochure ? T.gold : T.textDim} />
+          <span style={{ fontSize: 13, color: form.brochure ? T.gold : T.textSub,
+            fontFamily: 'Figtree, sans-serif', flex: 1 }}>
+            {form.brochure ? form.brochure.name : 'Selecionar PDF ou imagem'}
+          </span>
+          {form.brochure && (
+            <button
+              type="button"
+              onClick={e => { e.preventDefault(); set('brochure', null) }}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: T.textDim, display: 'flex', alignItems: 'center',
+              }}
+            >
+              <X size={14} />
+            </button>
+          )}
+          <input
+            type="file"
+            accept="application/pdf,image/*"
+            style={{ display: 'none' }}
+            onChange={e => { const f = e.target.files?.[0]; if (f) set('brochure', f) }}
+          />
+        </label>
+      </Field>
+
+      {/* Video URLs */}
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
+        <Field label="URL do vídeo (YouTube / Vimeo)">
+          <div style={{ position: 'relative' }}>
+            <input className="ni" style={{ ...inputStyle, paddingLeft: 38 }}
+              value={form.videoUrl} onChange={e => set('videoUrl', e.target.value)}
+              placeholder="https://youtube.com/watch?v=..." />
+            <Link size={14} color={T.textDim} style={{
+              position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)',
+              pointerEvents: 'none',
+            }} />
+          </div>
+        </Field>
+        <Field label="Vídeo curto (Reels / Shorts)">
+          <div style={{ position: 'relative' }}>
+            <input className="ni" style={{ ...inputStyle, paddingLeft: 38 }}
+              value={form.videoShort} onChange={e => set('videoShort', e.target.value)}
+              placeholder="https://youtube.com/shorts/..." />
+            <FileVideo size={14} color={T.textDim} style={{
+              position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)',
+              pointerEvents: 'none',
+            }} />
+          </div>
+        </Field>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   PROGRESS BAR COMPONENT
+════════════════════════════════════════════════════════════════════════════════ */
+
+function StepProgressBar({ step, setStep, canJumpTo }: {
+  step: 1|2|3|4
+  setStep?: (s: 1|2|3|4) => void
+  canJumpTo: (s: number) => boolean
+}) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+      {STEP_META.map((meta, i) => {
+        const n = (i + 1) as 1|2|3|4
+        const active = step === n
+        const done = step > n
+        const canClick = canJumpTo(n) && !!setStep
+
+        return (
+          <div key={n} style={{ display: 'flex', alignItems: 'center', flex: n < 4 ? 1 : 0 }}>
+            <button
+              type="button"
+              disabled={!canClick}
+              onClick={() => canClick && setStep?.(n)}
+              style={{
+                background: 'none', border: 'none',
+                cursor: canClick ? 'pointer' : 'default',
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '0 4px',
+                color: active ? T.gold : done ? T.textSub : T.textDim,
+                transition: 'color 200ms ease',
+                flexShrink: 0,
+              }}
+            >
+              {/* Step circle */}
+              <div style={{
+                width: 28, height: 28, borderRadius: '50%',
+                background: active ? T.gold : done ? T.goldBg : T.elevated,
+                border: `2px solid ${active ? T.gold : done ? T.gold : T.border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 11, fontWeight: 800,
+                color: active ? T.navy : done ? T.gold : T.textDim,
+                transition: 'all 200ms ease',
+                fontFamily: 'JetBrains Mono, monospace',
+                flexShrink: 0,
+              }}>
+                {done ? <Check size={13} /> : n}
+              </div>
+              {/* Label — hide on mobile */}
+              <span style={{
+                fontSize: 12, fontWeight: active ? 700 : 400,
+                fontFamily: 'Figtree, sans-serif',
+                display: 'none',
+              }} className="step-label">
+                {meta.title}
+              </span>
+            </button>
+
+            {/* Connector line */}
+            {n < 4 && (
+              <div style={{
+                flex: 1, height: 2, margin: '0 6px',
+                background: done ? T.gold : T.border,
+                borderRadius: 2, transition: 'background 300ms ease',
+              }} />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MAIN PAGE COMPONENT
+════════════════════════════════════════════════════════════════════════════════ */
+
+export default function NovoImovelPage() {
+  const isMobile = useIsMobile()
+  const router = useRouter()
+  const [step, setStep] = useState<1|2|3|4>(1)
+  const [form, setForm] = useState<FormData>(DEFAULT_FORM)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [developers, setDevelopers] = useState<Developer[]>([])
+  const [saving, setSaving] = useState(false)
+  const [cepLoading, setCepLoading] = useState(false)
+  const [draftSaved, setDraftSaved] = useState(false)
+  const [uploadFiles, setUploadFiles] = useState<ImageUploadFileStatus[]>([])
+  const [uploadVisible, setUploadVisible] = useState(false)
+  const autoSaveRef = useRef<NodeJS.Timeout | null>(null)
+  const draftIndicatorRef = useRef<NodeJS.Timeout | null>(null)
+
+  /* ── Load draft ── */
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY)
+      if (raw) {
+        const saved = JSON.parse(raw)
+        setForm(prev => ({ ...prev, ...saved, images: [], floorPlans: [], brochure: null }))
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  /* ── Fetch developers ── */
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('developers').select('id, name, logo_url').order('name')
+      .then(({ data }) => { if (data) setDevelopers(data) })
+  }, [])
+
+  /* ── Auto-save draft every 30s ── */
+  useEffect(() => {
+    autoSaveRef.current = setInterval(() => {
+      const { images, floorPlans, brochure, ...serializable } = form
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(serializable))
+      setDraftSaved(true)
+      if (draftIndicatorRef.current) clearTimeout(draftIndicatorRef.current)
+      draftIndicatorRef.current = setTimeout(() => setDraftSaved(false), 3000)
+    }, 30000)
+    return () => {
+      if (autoSaveRef.current) clearInterval(autoSaveRef.current)
+      if (draftIndicatorRef.current) clearTimeout(draftIndicatorRef.current)
+    }
+  }, [form])
+
+  const set = useCallback((k: keyof FormData, v: unknown) => {
+    setForm(prev => ({ ...prev, [k]: v }))
+    setErrors(prev => { const n = { ...prev }; delete n[k]; return n })
+  }, [])
+
+  /* ── CEP auto-fill ── */
+  const handleCepChange = useCallback(async (raw: string) => {
+    const digits = raw.replace(/\D/g, '')
+    set('cep', digits)
+    if (digits.length === 8) {
+      setCepLoading(true)
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`)
+        const data = await res.json()
+        if (!data.erro) {
+          setForm(prev => ({
+            ...prev,
+            cep: digits,
+            state: data.uf || prev.state,
+            city: data.localidade || prev.city,
+            neighborhood: data.bairro || prev.neighborhood,
+            address: data.logradouro || prev.address,
+          }))
+        }
+      } catch { /* ignore */ } finally {
+        setCepLoading(false)
+      }
+    }
+  }, [set])
+
+  /* ── Step validation ── */
+  const validateStep = useCallback((s: number): boolean => {
+    const e: Record<string, string> = {}
+    if (s === 1) {
+      if (!form.name.trim()) e.name = 'Nome do empreendimento é obrigatório'
+      if (!form.type) e.type = 'Selecione o tipo do imóvel'
+    }
+    if (s === 3) {
+      if (!form.priceMin.trim()) e.priceMin = 'Preço mínimo é obrigatório'
+    }
+    setErrors(e)
+    return Object.keys(e).length === 0
+  }, [form])
+
+  const canJumpTo = useCallback((s: number) => step > s, [step])
+
+  /* ── Navigation ── */
+  const next = useCallback(() => {
+    if (!validateStep(step)) return
+    if (step < 4) setStep(prev => (prev + 1) as 1|2|3|4)
+  }, [step, validateStep])
+
+  const prev = useCallback(() => {
+    if (step > 1) setStep(prev => (prev - 1) as 1|2|3|4)
+  }, [step])
+
+  /* ── Save / Publish ── */
+  const handleSave = useCallback(async () => {
+    if (!validateStep(step)) return
+    setSaving(true)
+    try {
+      let imageUrls: string[] = []
+      let floorPlanUrls: string[] = []
+      let brochureUrl: string | null = null
+
+      if (form.images.length > 0) {
+        setUploadVisible(true)
+        const results = await uploadMultipleImages(form.images, {
+          bucket: 'media',
+          folder: 'developments',
+          onFileStatus: (status) => {
+            setUploadFiles(prev => {
+              const next = [...prev]
+              next[status.index] = status
+              return next
+            })
+          },
+        })
+        imageUrls = results.filter(r => !r.error).map(r => r.url)
+      }
+
+      if (form.floorPlans.length > 0) {
+        const results = await uploadMultipleImages(form.floorPlans, {
+          bucket: 'media',
+          folder: 'floor-plans',
+        })
+        floorPlanUrls = results.filter(r => !r.error).map(r => r.url)
+      }
+
+      if (form.brochure) {
+        const result = await uploadFile(form.brochure, 'media', 'brochures')
+        if (!result.error) brochureUrl = result.url
+      }
+
+      setUploadVisible(false)
+      setUploadFiles([])
+
+      const payload = {
+        name: form.name,
+        type: form.type,
+        condition: form.condition,
+        country: form.country,
+        cep: form.cep,
+        street: form.address,
+        street_number: form.streetNumber,
+        complement: form.complement,
+        state: form.state,
+        city: form.city,
+        location: form.neighborhood,
+        address: [form.address, form.streetNumber, form.complement].filter(Boolean).join(', '),
+        developer: form.developer,
+        developer_id: form.developer_id || null,
+        area: form.area,
+        bedrooms: form.bedrooms,
+        bathrooms: form.bathrooms,
+        parking: form.parking,
+        floor: form.floor,
+        features: form.features,
+        priceMin: form.priceMin,
+        priceMax: form.priceMax,
+        pricePerSqm: form.pricePerSqm,
+        totalUnits: form.totalUnits,
+        availableUnits: form.availableUnits,
+        deliveryDate: form.deliveryDate,
+        description: form.description,
+        status_commercial: form.status_commercial,
+        is_highlighted: form.is_highlighted,
+        gallery_images: imageUrls,
+        image: imageUrls[0] || null,
+        floor_plans: floorPlanUrls,
+        brochure_url: brochureUrl,
+        video_url: form.videoUrl,
+        video_short_url: form.videoShort,
+      }
+
+      const res = await fetch('/api/developments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.message || `Erro ${res.status}`)
+      }
+
+      localStorage.removeItem(DRAFT_KEY)
+      toast.success('Imóvel criado com sucesso!')
+      router.push('/backoffice/imoveis')
+    } catch (err: unknown) {
+      setUploadVisible(false)
+      setUploadFiles([])
+      toast.error(err instanceof Error ? err.message : 'Erro ao salvar imóvel')
+    } finally {
+      setSaving(false)
+    }
+  }, [form, step, validateStep, router])
+
+  /* ── Feature toggle ── */
+  const toggleFeature = useCallback((f: string) => {
+    setForm(prev => ({
+      ...prev,
+      features: prev.features.includes(f)
+        ? prev.features.filter(x => x !== f)
+        : [...prev.features, f],
+    }))
+  }, [])
+
+  /* ── Image drag/drop ── */
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'))
+    if (files.length) set('images', [...form.images, ...files])
+  }, [form.images, set])
+
+  const handleImageInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length) set('images', [...form.images, ...files])
+  }, [form.images, set])
+
+  const removeImage = useCallback((idx: number) => {
+    set('images', form.images.filter((_, i) => i !== idx))
+  }, [form.images, set])
+
+  /* ── Shared step content render ── */
+  const renderStep = (mob?: boolean) => {
+    switch (step) {
+      case 1: return <StepIdentificacao form={form} errors={errors} developers={developers}
+        set={set} isMobile={mob} />
+      case 2: return <StepLocalizacao form={form} errors={errors} cepLoading={cepLoading}
+        set={set} handleCepChange={handleCepChange} isMobile={mob} />
+      case 3: return <StepCaracteristicas form={form} errors={errors}
+        set={set} toggleFeature={toggleFeature} isMobile={mob} />
+      case 4: return <StepMidia form={form} set={set}
+        handleDrop={handleDrop} handleImageInput={handleImageInput}
+        removeImage={removeImage} isMobile={mob} />
+    }
+  }
+
+  const sharedProps: StepProps = {
+    step, form, errors, developers, saving, cepLoading, draftSaved,
+    set, next, prev, handleSave, handleCepChange, toggleFeature,
+    handleDrop, handleImageInput, removeImage, uploadFiles, uploadVisible,
+  }
+
+  if (isMobile) {
+    return <MobileNovo {...sharedProps} renderStep={renderStep} />
+  }
+
+  return <DesktopNovo {...sharedProps} setStep={setStep} renderStep={renderStep} canJumpTo={canJumpTo} />
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   DESKTOP LAYOUT
+════════════════════════════════════════════════════════════════════════════════ */
+
+const DESKTOP_TIPS: Record<number, { title: string; items: string[] }> = {
+  1: {
+    title: 'Dicas de Identificação',
+    items: [
+      'Use o nome comercial exato do empreendimento',
+      'O tipo influencia os filtros de busca',
+      'Empreendimentos destacados têm prioridade na vitrine',
+    ],
+  },
+  2: {
+    title: 'Dicas de Localização',
+    items: [
+      'O CEP auto-preenche cidade, bairro e logradouro',
+      'Bairro e cidade aparecem nos cartões de busca',
+      'Use complemento para torre, bloco ou gleba',
+    ],
+  },
+  3: {
+    title: 'Dicas de Características',
+    items: [
+      'Área mínima ativa o cálculo de R$/m² automático',
+      'Amenidades aparecem como filtros de busca',
+      'Descrição aparece no site público e campanhas',
+    ],
+  },
+  4: {
+    title: 'Dicas de Mídia',
+    items: [
+      'A primeira imagem é a capa no catálogo',
+      'Formatos: JPG, PNG, WEBP · máx 50 MB cada',
+      'Reels/Shorts aumentam engajamento em 3×',
+    ],
+  },
+}
+
+function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => React.ReactNode; canJumpTo: (s: number) => boolean }) {
+  const { step, setStep, saving, draftSaved, next, prev, handleSave,
+    uploadFiles, uploadVisible, canJumpTo, renderStep } = props
+
+  const tip = DESKTOP_TIPS[step]
+
+  return (
+    <div style={{ minHeight: '100vh', background: T.navy, color: T.text }}>
+      <style suppressHydrationWarning>{`
+        .ni::placeholder { color: #5C6B7D }
+        .ni:focus { outline: none; border-color: var(--imi-gold-500) !important; box-shadow: 0 0 0 3px rgba(184,148,58,0.12); }
+        .ni option { background: #162040; color: #EBE7E0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: translateY(0) } }
+        @keyframes draftPop { 0%,100%{opacity:0;transform:translateY(4px)} 15%,85%{opacity:1;transform:translateY(0)} }
+        .step-label { display: inline !important; }
+      `}</style>
+
+      {/* Sticky header with progress */}
+      <div style={{
+        background: T.surface,
+        borderBottom: `1px solid ${T.border}`,
+        padding: '0 32px',
+        position: 'sticky', top: 0, zIndex: 100,
+      }}>
+        <div style={{
+          maxWidth: 1100, margin: '0 auto',
+          display: 'flex', alignItems: 'center', gap: 24, height: 64,
+        }}>
+          <a
+            href="/backoffice/imoveis"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              fontSize: 13, color: T.textSub, textDecoration: 'none',
+              fontFamily: 'Figtree, sans-serif', fontWeight: 500,
+              flexShrink: 0,
+              transition: 'color 150ms ease',
+            }}
+          >
+            <ArrowLeft size={15} />
+            Imóveis
+          </a>
+
+          <div style={{ width: 1, height: 24, background: T.border }} />
+
+          {/* Step progress */}
+          <div style={{ flex: 1 }}>
+            <StepProgressBar step={step} setStep={setStep} canJumpTo={canJumpTo} />
+          </div>
+
+          {/* Draft saved indicator */}
+          {draftSaved && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              fontSize: 11, color: T.success,
+              fontFamily: 'Figtree, sans-serif',
+              animation: 'draftPop 3s ease forwards',
+              flexShrink: 0,
+            }}>
+              <Check size={12} />
+              Rascunho salvo
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Main content area */}
+      <div style={{
+        maxWidth: 1100, margin: '0 auto',
+        padding: '32px 32px 120px',
+        display: 'grid',
+        gridTemplateColumns: '1fr 280px',
+        gap: 28,
+        alignItems: 'start',
+      }}>
+        {/* Form card */}
+        <div>
+          {/* Step heading */}
+          <div style={{ marginBottom: 24 }}>
+            <h1 style={{
+              fontFamily: 'Libre Baskerville, Georgia, serif',
+              fontSize: 26, fontWeight: 700, color: T.text,
+              margin: '0 0 4px',
+            }}>
+              {STEP_META[step - 1].title}
+            </h1>
+            <p style={{
+              fontSize: 13, color: T.textSub, margin: 0,
+              fontFamily: 'Figtree, sans-serif',
+            }}>
+              {STEP_META[step - 1].subtitle}
+            </p>
+          </div>
+
+          <div style={{
+            background: T.surface,
+            borderRadius: 14,
+            border: `1px solid ${T.border}`,
+            padding: 28,
+            animation: 'slideDown 250ms ease both',
+          }}>
+            {renderStep(false)}
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div style={{ position: 'sticky', top: 96 }}>
+          {/* Progress summary */}
+          <div style={{
+            background: T.surface, borderRadius: 12,
+            border: `1px solid ${T.border}`, padding: 18,
+            marginBottom: 16,
+          }}>
+            <div style={{
+              fontSize: 10, fontWeight: 700, color: T.textDim,
+              textTransform: 'uppercase', letterSpacing: '0.1em',
+              fontFamily: 'Figtree, sans-serif',
+              marginBottom: 12,
+            }}>Progresso</div>
+            {STEP_META.map((meta, i) => {
+              const n = i + 1
+              const done = step > n
+              const active = step === n
+              return (
+                <div key={n} style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '7px 0',
+                  borderBottom: n < 4 ? `1px solid rgba(184,148,58,0.06)` : 'none',
+                }}>
+                  <div style={{
+                    width: 20, height: 20, borderRadius: '50%',
+                    background: done ? T.gold : active ? T.goldBg : T.elevated,
+                    border: `1.5px solid ${done || active ? T.gold : T.border}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    {done
+                      ? <Check size={11} color={T.navy} />
+                      : <span style={{ fontSize: 9, fontWeight: 700, color: active ? T.gold : T.textDim,
+                        fontFamily: 'JetBrains Mono, monospace' }}>{n}</span>
+                    }
+                  </div>
+                  <span style={{
+                    fontSize: 12, fontWeight: active ? 600 : 400,
+                    color: active ? T.text : done ? T.textSub : T.textDim,
+                    fontFamily: 'Figtree, sans-serif',
+                  }}>{meta.title}</span>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Tips */}
+          <div style={{
+            background: T.goldBg, borderRadius: 12,
+            border: `1px solid ${T.border}`, padding: 18,
+          }}>
+            <div style={{
+              fontSize: 10, fontWeight: 700, color: T.gold,
+              textTransform: 'uppercase', letterSpacing: '0.1em',
+              fontFamily: 'Figtree, sans-serif', marginBottom: 12,
+            }}>{tip.title}</div>
+            <ul style={{ margin: 0, padding: '0 0 0 14px' }}>
+              {tip.items.map((item, i) => (
+                <li key={i} style={{
+                  fontSize: 12, color: T.textSub, marginBottom: 8,
+                  fontFamily: 'Figtree, sans-serif', lineHeight: 1.5,
+                }}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Upload progress */}
+      {uploadVisible && (
+        <div style={{ position: 'fixed', bottom: 88, right: 24, width: 320, zIndex: 200 }}>
+          <UploadProgressPanel files={uploadFiles} total={uploadFiles.length} visible={uploadVisible} />
+        </div>
+      )}
+
+      {/* Sticky bottom bar */}
+      <div style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0,
+        background: T.surface,
+        borderTop: `1px solid ${T.border}`,
+        padding: '14px 32px',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        zIndex: 90,
+      }}>
+        {/* Back */}
+        <button
+          type="button"
+          onClick={prev}
+          disabled={step === 1}
+          style={{
+            background: 'transparent',
+            border: `1px solid ${step === 1 ? 'rgba(184,148,58,0.08)' : T.border}`,
+            borderRadius: 8, padding: '10px 20px',
+            fontSize: 13, fontWeight: 600,
+            color: step === 1 ? T.textDim : T.textSub,
+            cursor: step === 1 ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', gap: 8,
+            fontFamily: 'Figtree, sans-serif',
+            transition: 'all 150ms ease',
+          }}
+        >
+          <ArrowLeft size={14} />
+          Voltar
+        </button>
+
+        {/* Step indicator */}
+        <span style={{
+          fontSize: 12, color: T.textDim,
+          fontFamily: 'Figtree, sans-serif', fontVariantNumeric: 'tabular-nums',
+        }}>
+          Passo {step} / 4
+        </span>
+
+        {/* Next or Publish */}
+        {step < 4 ? (
+          <button
+            type="button"
+            onClick={next}
+            style={{
+              background: T.gold, border: 'none', borderRadius: 8,
+              padding: '10px 24px', fontSize: 13, fontWeight: 700,
+              color: T.navy, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 8,
+              fontFamily: 'Figtree, sans-serif',
+              boxShadow: '0 4px 16px rgba(184,148,58,0.2)',
+              transition: 'opacity 150ms ease',
+            }}
+          >
+            Continuar
+            <ArrowRight size={14} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            style={{
+              background: saving ? T.elevated : T.gold,
+              border: saving ? `1px solid ${T.border}` : 'none',
+              borderRadius: 8, padding: '10px 28px',
+              fontSize: 13, fontWeight: 700,
+              color: saving ? T.textSub : T.navy,
+              cursor: saving ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: 8,
+              fontFamily: 'Figtree, sans-serif',
+              boxShadow: saving ? 'none' : '0 4px 16px rgba(184,148,58,0.2)',
+              transition: 'all 200ms ease',
+              opacity: saving ? 0.8 : 1,
+            }}
+          >
+            {saving
+              ? <><Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />Publicando...</>
+              : <><Check size={14} />Publicar Imóvel</>
+            }
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MOBILE LAYOUT
+════════════════════════════════════════════════════════════════════════════════ */
+
+function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.ReactNode }) {
+  const { step, saving, draftSaved, next, prev, handleSave,
+    uploadFiles, uploadVisible, renderStep } = props
+
+  return (
+    <div style={{ minHeight: '100vh', background: T.navy, color: T.text }}>
+      <MobileGlobalStyles />
+      <style suppressHydrationWarning>{`
+        .ni::placeholder { color: #5C6B7D }
+        .ni:focus { outline: none; border-color: var(--imi-gold-500) !important; box-shadow: 0 0 0 3px rgba(184,148,58,0.12); }
+        .ni option { background: #162040; color: #EBE7E0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px) } to { opacity: 1; transform: translateY(0) } }
+      `}</style>
+
+      {/* App bar */}
+      <MobileAppBar
+        title={STEP_META[step - 1].title}
+        subtitle={`Passo ${step} de 4 · ${STEP_META[step - 1].subtitle}`}
+        backHref="/backoffice/imoveis"
+        actions={
+          draftSaved ? (
+            <span style={{
+              fontSize: 10, color: T.success,
+              fontFamily: 'Figtree, sans-serif',
+              padding: '0 8px',
+              display: 'flex', alignItems: 'center', gap: 4,
+            }}>
+              <Check size={11} /> Salvo
+            </span>
+          ) : undefined
+        }
+      />
+
+      {/* Step progress dots */}
+      <div style={{
+        position: 'fixed', top: 56, left: 0, right: 0, zIndex: 99,
+        background: T.surface,
+        borderBottom: `1px solid ${T.border}`,
+        padding: '10px 16px',
+        display: 'flex', alignItems: 'center', gap: 0,
+      }}>
+        {[1, 2, 3, 4].map(n => {
+          const done = step > n
+          const active = step === n
+          return (
+            <div key={n} style={{ display: 'flex', alignItems: 'center', flex: n < 4 ? 1 : 0 }}>
+              <div style={{
+                width: 22, height: 22, borderRadius: '50%',
+                background: active ? T.gold : done ? T.goldBg : T.elevated,
+                border: `2px solid ${active ? T.gold : done ? T.gold : T.border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 10, fontWeight: 800, color: active ? T.navy : done ? T.gold : T.textDim,
+                fontFamily: 'JetBrains Mono, monospace',
+                flexShrink: 0,
+                transition: 'all 200ms ease',
+              }}>
+                {done ? <Check size={11} /> : n}
+              </div>
+              {n < 4 && (
+                <div style={{
+                  flex: 1, height: 2, margin: '0 4px',
+                  background: done ? T.gold : T.border,
+                  borderRadius: 2, transition: 'background 300ms ease',
+                }} />
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Scrollable content */}
+      <div style={{
+        paddingTop: 104, // 56 appbar + 42 step bar
+        paddingBottom: 140, // above nav bars
+        padding: '104px 16px 140px',
+        animation: 'slideDown 220ms ease both',
+      }}>
+        {renderStep(true)}
+      </div>
+
+      {/* Upload progress */}
+      {uploadVisible && (
+        <div style={{ position: 'fixed', bottom: 130, left: 16, right: 16, zIndex: 200 }}>
+          <UploadProgressPanel files={uploadFiles} total={uploadFiles.length} visible={uploadVisible} />
+        </div>
+      )}
+
+      {/* Sticky CTA bar */}
+      <div style={{
+        position: 'fixed', bottom: 56, left: 0, right: 0,
+        background: T.surface,
+        borderTop: `1px solid ${T.border}`,
+        padding: '12px 16px',
+        display: 'flex', gap: 10,
+        zIndex: 90,
+      }}>
+        <button
+          type="button"
+          onClick={prev}
+          disabled={step === 1}
+          style={{
+            flex: '0 0 auto',
+            width: 48, height: 48, borderRadius: 10,
+            background: 'transparent',
+            border: `1px solid ${step === 1 ? 'rgba(184,148,58,0.08)' : T.border}`,
+            cursor: step === 1 ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: step === 1 ? T.textDim : T.textSub,
+          }}
+        >
+          <ArrowLeft size={18} />
+        </button>
+
+        {step < 4 ? (
+          <button
+            type="button"
+            onClick={next}
+            style={{
+              flex: 1, height: 48, borderRadius: 10,
+              background: T.gold, border: 'none',
+              fontSize: 14, fontWeight: 700, color: T.navy,
+              cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              fontFamily: 'Figtree, sans-serif',
+              boxShadow: '0 4px 16px rgba(184,148,58,0.2)',
+            }}
+          >
+            Continuar
+            <ArrowRight size={16} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            style={{
+              flex: 1, height: 48, borderRadius: 10,
+              background: saving ? T.elevated : T.gold,
+              border: saving ? `1px solid ${T.border}` : 'none',
+              fontSize: 14, fontWeight: 700,
+              color: saving ? T.textSub : T.navy,
+              cursor: saving ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              fontFamily: 'Figtree, sans-serif',
+              opacity: saving ? 0.85 : 1,
+            }}
+          >
+            {saving
+              ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />Publicando...</>
+              : <><Check size={16} />Publicar Imóvel</>
+            }
+          </button>
+        )}
+      </div>
+
+      <MobileBottomNav />
+    </div>
+  )
 }

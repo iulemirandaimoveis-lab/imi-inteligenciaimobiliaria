@@ -1,5 +1,10 @@
 'use client'
 
+/**
+ * KPICard — IMI Design System v3 stat-card
+ * DS3 pattern: top accent border, serif value, mono label, hover lift
+ */
+
 import React from 'react'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 
@@ -7,42 +12,33 @@ interface KPICardProps {
   label: string
   value: string | number
   sublabel?: string
-  delta?: number        // % change — positive = up, negative = down, undefined = stable
-  deltaLabel?: string   // e.g. "vs mês passado"
+  delta?: number
+  deltaLabel?: string
   icon?: React.ReactNode
-  accent?: 'blue' | 'hot' | 'warm' | 'cold' | 'ai' | 'green'
+  accent?: 'gold' | 'navy' | 'success' | 'warning' | 'error' | 'info' | 'blue' | 'hot' | 'warm' | 'cold' | 'ai' | 'green'
   size?: 'sm' | 'md' | 'lg'
   className?: string
   onClick?: () => void
 }
 
-// ── Accent palette — colors only, no hardcoded backgrounds ──────
-const ACCENT: Record<string, {
-  color: string
-  borderColor: string
-  iconBg: string
-  deltaUp: string
-  raw: string
-}> = {
-  blue:  { color: 'var(--imi-blue-bright)', borderColor: 'rgba(59,130,246,0.22)',  iconBg: 'rgba(59,130,246,0.12)',  deltaUp: 'var(--s-done)', raw: '59,130,246'  },
-  hot:   { color: 'var(--s-hot)',           borderColor: 'rgba(248,113,113,0.20)', iconBg: 'rgba(248,113,113,0.10)', deltaUp: 'var(--s-done)', raw: '248,113,113' },
-  warm:  { color: 'var(--s-warm)',          borderColor: 'rgba(251,191,36,0.20)',  iconBg: 'rgba(251,191,36,0.10)', deltaUp: 'var(--s-done)', raw: '251,191,36'  },
-  cold:  { color: 'var(--s-cold)',          borderColor: 'rgba(34,211,238,0.20)',  iconBg: 'rgba(34,211,238,0.10)', deltaUp: 'var(--s-done)', raw: '34,211,238'  },
-  ai:    { color: 'var(--imi-ai-gold)',     borderColor: 'rgba(234,179,8,0.20)',   iconBg: 'rgba(234,179,8,0.10)',  deltaUp: 'var(--s-done)', raw: '234,179,8'   },
-  green: { color: 'var(--s-done)',          borderColor: 'rgba(74,222,128,0.22)',  iconBg: 'rgba(74,222,128,0.10)', deltaUp: 'var(--s-done)', raw: '74,222,128'  },
+const ACCENT_CONFIG: Record<string, { border: string; iconBg: string; iconColor: string }> = {
+  gold:    { border: 'var(--imi-gold-500)',  iconBg: 'rgba(184,148,58,0.10)',  iconColor: 'var(--imi-gold-500)' },
+  navy:    { border: 'var(--imi-navy-700)',  iconBg: 'rgba(37,53,101,0.12)',   iconColor: 'var(--imi-navy-400)' },
+  success: { border: 'var(--success)',       iconBg: 'var(--success-bg)',       iconColor: 'var(--success)' },
+  warning: { border: 'var(--warning)',       iconBg: 'var(--warning-bg)',       iconColor: 'var(--warning)' },
+  error:   { border: 'var(--error)',         iconBg: 'var(--error-bg)',         iconColor: 'var(--error)' },
+  info:    { border: 'var(--info)',          iconBg: 'var(--info-bg)',          iconColor: 'var(--info)' },
+  // Legacy aliases
+  blue:    { border: 'var(--info)',          iconBg: 'var(--info-bg)',          iconColor: 'var(--info)' },
+  hot:     { border: 'var(--error)',         iconBg: 'var(--error-bg)',         iconColor: 'var(--error)' },
+  warm:    { border: 'var(--warning)',       iconBg: 'var(--warning-bg)',       iconColor: 'var(--warning)' },
+  cold:    { border: 'var(--info)',          iconBg: 'var(--info-bg)',          iconColor: 'var(--info)' },
+  ai:      { border: 'var(--imi-gold-500)',  iconBg: 'rgba(184,148,58,0.10)',  iconColor: 'var(--imi-gold-500)' },
+  green:   { border: 'var(--success)',       iconBg: 'var(--success-bg)',       iconColor: 'var(--success)' },
 }
 
-const VALUE_SIZES: Record<string, string> = {
-  sm: '26px',
-  md: '34px',
-  lg: '46px',
-}
-
-const PAD: Record<string, string> = {
-  sm: '12px 14px',
-  md: '16px 18px',
-  lg: '20px 22px',
-}
+const VALUE_SIZES: Record<string, string> = { sm: '24px', md: '36px', lg: '48px' }
+const PAD: Record<string, string> = { sm: '14px 16px', md: '20px', lg: '24px' }
 
 export function KPICard({
   label,
@@ -51,141 +47,127 @@ export function KPICard({
   delta,
   deltaLabel,
   icon,
-  accent = 'blue',
+  accent = 'gold',
   size = 'md',
   className = '',
   onClick,
 }: KPICardProps) {
-  const a = ACCENT[accent] ?? ACCENT.blue
+  const a = ACCENT_CONFIG[accent] ?? ACCENT_CONFIG.gold
 
   const isPositive = delta !== undefined && delta > 0
   const isNegative = delta !== undefined && delta < 0
-  const isStable   = delta !== undefined && delta === 0
-
-  const deltaColor = isPositive
-    ? 'rgba(74,222,128,1)'
-    : isNegative
-    ? 'rgba(248,113,113,1)'
-    : 'rgba(148,163,184,1)'
-
-  const deltaBg = isPositive
-    ? 'rgba(74,222,128,0.12)'
-    : isNegative
-    ? 'rgba(248,113,113,0.10)'
-    : 'rgba(148,163,184,0.10)'
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl transition-all duration-200 ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      className={`group ${onClick ? 'cursor-pointer' : ''} ${className}`}
       style={{
         padding: PAD[size],
-        background: 'var(--bo-elevated)',       // ← theme-aware: white in light, #111822 in dark
-        border: `1px solid ${a.borderColor}`,
-        boxShadow: 'var(--bo-card-shadow)',      // ← theme-aware shadow
+        background: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
+        borderTop: `3px solid ${a.border}`,
+        borderRadius: 'var(--r-xl, 16px)',
+        boxShadow: 'var(--shadow-xs)',
+        transition: 'all 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        position: 'relative',
+        overflow: 'hidden',
       }}
       onClick={onClick}
+      onMouseEnter={e => {
+        e.currentTarget.style.boxShadow = 'var(--shadow-md)'
+        e.currentTarget.style.transform = 'translateY(-2px)'
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.boxShadow = 'var(--shadow-xs)'
+        e.currentTarget.style.transform = 'translateY(0)'
+      }}
     >
-      {/* Very subtle accent tint — low opacity works in both themes */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `linear-gradient(160deg, rgba(${a.raw},0.06) 0%, transparent 60%)`,
-          borderRadius: 'inherit',
-        }}
-      />
-
-      {/* Top accent line */}
-      <div
-        className="absolute top-0 left-0 right-0 h-px"
-        style={{
-          background: `linear-gradient(90deg, transparent 0%, rgba(${a.raw},0.50) 50%, transparent 100%)`,
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative">
-        {/* Label + Icon row */}
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <span
-            style={{
-              fontSize: '9px',
-              fontWeight: 700,
-              color: 'var(--bo-text-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.10em',
-              lineHeight: 1.4,
-            }}
-          >
-            {label}
-          </span>
-
-          {icon && (
-            <span
-              style={{
-                color: a.color,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 28,
-                height: 28,
-                borderRadius: 10,
-                background: a.iconBg,
-                border: `1px solid rgba(${a.raw},0.18)`,
-                flexShrink: 0,
-              }}
-            >
-              {icon}
-            </span>
-          )}
-        </div>
-
-        {/* Value */}
-        <div
+      {/* Label + Icon */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 12 }}>
+        <span
           style={{
-            fontSize: VALUE_SIZES[size],
-            fontWeight: 800,
-            color: 'var(--bo-text)',
-            lineHeight: 1.05,
-            letterSpacing: '-0.03em',
-            fontVariantNumeric: 'tabular-nums',
-            marginBottom: (delta !== undefined || sublabel) ? '8px' : 0,
+            fontFamily: 'var(--font-mono)',
+            fontSize: 10,
+            fontWeight: 500,
+            color: 'var(--text-tertiary)',
+            textTransform: 'uppercase' as const,
+            letterSpacing: '0.10em',
+            lineHeight: 1.4,
           }}
         >
-          {value}
-        </div>
+          {label}
+        </span>
 
-        {/* Delta badge */}
-        {delta !== undefined && (
-          <div className="flex items-center gap-2">
-            <span
-              className="flex items-center gap-1 px-1.5 py-0.5 rounded-md"
-              style={{
-                background: deltaBg,
-                fontSize: '10px',
-                fontWeight: 700,
-                color: deltaColor,
-              }}
-            >
-              {isPositive && <TrendingUp size={9} />}
-              {isNegative && <TrendingDown size={9} />}
-              {isStable   && <Minus size={9} />}
-              {isPositive ? '+' : ''}{delta}{typeof delta === 'number' ? '%' : ''}
-            </span>
-            {deltaLabel && (
-              <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', fontWeight: 500 }}>
-                {deltaLabel}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Sublabel */}
-        {delta === undefined && sublabel && (
-          <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', fontWeight: 500 }}>
-            {sublabel}
+        {icon && (
+          <span
+            style={{
+              color: a.iconColor,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 36,
+              height: 36,
+              borderRadius: 'var(--r-lg, 12px)',
+              background: a.iconBg,
+              flexShrink: 0,
+            }}
+          >
+            {icon}
           </span>
         )}
       </div>
+
+      {/* Value — serif, large */}
+      <div
+        style={{
+          fontFamily: 'var(--font-serif)',
+          fontSize: VALUE_SIZES[size],
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          lineHeight: 1,
+          letterSpacing: '-0.03em',
+          fontVariantNumeric: 'tabular-nums',
+          marginBottom: (delta !== undefined || sublabel) ? 8 : 0,
+        }}
+      >
+        {value}
+      </div>
+
+      {/* Delta */}
+      {delta !== undefined && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 3,
+              padding: '2px 8px',
+              borderRadius: 9999,
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              fontWeight: 500,
+              background: isPositive ? 'var(--success-bg)' : isNegative ? 'var(--error-bg)' : 'var(--bg-muted)',
+              color: isPositive ? 'var(--success)' : isNegative ? 'var(--error)' : 'var(--text-tertiary)',
+            }}
+          >
+            {isPositive && <TrendingUp size={10} />}
+            {isNegative && <TrendingDown size={10} />}
+            {!isPositive && !isNegative && <Minus size={10} />}
+            {isPositive ? '+' : ''}{delta}%
+          </span>
+          {deltaLabel && (
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-disabled)' }}>
+              {deltaLabel}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Sublabel */}
+      {delta === undefined && sublabel && (
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)' }}>
+          {sublabel}
+        </span>
+      )}
     </div>
   )
 }

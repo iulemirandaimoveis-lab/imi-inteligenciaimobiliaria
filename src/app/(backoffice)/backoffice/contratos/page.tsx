@@ -5,13 +5,19 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     Plus, Search, FileText, CheckCircle, Clock, AlertCircle,
-    Globe, FileSignature, ChevronRight, Sparkles, X, Loader2
+    Globe, FileSignature, ChevronRight, Sparkles, X, Loader2,
+    Edit, Ban, Eye,
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { MODELOS_CONTRATOS, CATEGORIAS_LABEL, IDIOMAS_LABEL } from '@/lib/modelos-contratos'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
+import { PageIntelHeader, KPICard, FilterTabs, ActionMenu } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
+import { Stepper } from '@/app/(backoffice)/components/ui/Stepper'
+import type { Step } from '@/app/(backoffice)/components/ui/Stepper'
+import { Timeline } from '@/app/(backoffice)/components/ui/Timeline'
+import type { TimelineEvent } from '@/app/(backoffice)/components/ui/Timeline'
 
 // Derive STATUS_CFG from centralized constants
 const STATUS_ICONS: Record<string, any> = {
@@ -44,22 +50,42 @@ export default function ContratosPage() {
     const [contratos, setContratos] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        async function fetchContratos() {
-            try {
-                const res = await fetch('/api/contratos')
-                if (!res.ok) throw new Error('Falha ao carregar')
-                const result = await res.json()
-                setContratos(result.data || [])
-            } catch (err) {
-                console.error('Erro ao buscar contratos:', err)
-                setContratos([])
-            } finally {
-                setLoading(false)
-            }
+    const loadContratos = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch('/api/contratos')
+            if (!res.ok) throw new Error('Falha ao carregar')
+            const result = await res.json()
+            setContratos(result.data || [])
+        } catch (err) {
+            console.error('Erro ao buscar contratos:', err)
+            setContratos([])
+        } finally {
+            setLoading(false)
         }
-        fetchContratos()
-    }, [])
+    }
+
+    useEffect(() => { loadContratos() }, [])
+
+    const updateContratoStatus = async (id: string, status: string, successMsg: string) => {
+        try {
+            const res = await fetch('/api/contratos', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status }),
+            })
+            if (res.ok) { toast.success(successMsg); loadContratos() }
+            else toast.error('Erro ao atualizar')
+        } catch { toast.error('Erro de conexão') }
+    }
+
+    const cancelContrato = async (id: string) => {
+        try {
+            const res = await fetch(`/api/contratos?id=${id}`, { method: 'DELETE' })
+            if (res.ok) { toast.success('Contrato cancelado'); loadContratos() }
+            else toast.error('Erro ao cancelar')
+        } catch { toast.error('Erro de conexão') }
+    }
 
     const filtered = contratos.filter(c => {
         const q = search.toLowerCase()
@@ -77,13 +103,6 @@ export default function ContratosPage() {
         internacionais: contratos.filter(c => c.idioma && c.idioma !== 'pt').length,
     }
 
-    const KPIS = [
-        { label: 'Total', value: kpiValues.total, icon: FileText, color: '#7B9EC4' },
-        { label: 'Assinados', value: kpiValues.assinados, icon: CheckCircle, color: '#6BB87B' },
-        { label: 'Aguard. Assinatura', value: kpiValues.aguardando, icon: Clock, color: 'var(--bo-accent)' },
-        { label: 'Internacionais', value: kpiValues.internacionais, icon: Globe, color: '#E8A87C' },
-    ]
-
     return (
         <div className="space-y-5 max-w-7xl mx-auto">
             {/* Header */}
@@ -99,8 +118,8 @@ export default function ContratosPage() {
                             className="flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white flex-shrink-0"
                             style={{
                                 height: '44px',
-                                background: 'linear-gradient(135deg, var(--bo-accent) 0%, #7C3AED 100%)',
-                                boxShadow: '0 4px 14px rgba(124,58,237,0.28)',
+                                background: 'var(--imi-gold-500)',
+                                boxShadow: '0 4px 14px rgba(184,148,58,0.28)',
                                 border: 'none',
                             }}
                         >
@@ -144,21 +163,53 @@ export default function ContratosPage() {
                 />
             </div>
 
-            {/* Tabs */}
+            {/* Contract Activity Timeline */}
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.15 }}
+              style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--r-xl, 16px)',
+                padding: '16px 20px',
+              }}
+            >
+              <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  Fluxo do Contrato
+                </span>
+              </div>
+              <Stepper
+                orientation="horizontal"
+                currentStep={2}
+                steps={[
+                  { id: 'minuta', label: 'Minuta', description: 'Rascunho criado', status: 'done' },
+                  { id: 'revisao', label: 'Revisão', description: 'Análise jurídica', status: 'done' },
+                  { id: 'assinatura', label: 'Assinatura', description: 'Aguardando partes', status: 'active' },
+                  { id: 'registro', label: 'Registro', description: 'Cartório / RGI', status: 'pending' },
+                  { id: 'concluido', label: 'Concluído', description: 'Processo encerrado', status: 'pending' },
+                ]}
+              />
+            </motion.div>
+
+            {/* Tabs — equal-width on mobile, auto on desktop */}
             <div className="flex gap-2">
                 {[
-                    { key: 'lista', label: 'Meus Contratos', icon: FileText },
-                    { key: 'modelos', label: 'Modelos Disponíveis', icon: Sparkles },
+                    { key: 'lista',   label: 'Meus Contratos',     labelSm: 'Contratos',  icon: FileText },
+                    { key: 'modelos', label: 'Modelos Disponíveis', labelSm: 'Modelos',    icon: Sparkles },
                 ].map(tab => (
                     <button key={tab.key}
                         onClick={() => setActiveTab(tab.key as any)}
-                        className="flex items-center gap-2 px-4 h-10 rounded-xl text-sm font-semibold transition-all"
+                        className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl text-xs font-semibold transition-all"
                         style={{
-                            background: activeTab === tab.key ? 'var(--bo-accent)' : T.surface,
+                            background: activeTab === tab.key ? 'var(--imi-gold-500)' : T.surface,
                             color: activeTab === tab.key ? 'white' : T.textDim,
                             border: `1px solid ${activeTab === tab.key ? T.borderGold : T.border}`,
                         }}>
-                        <tab.icon size={14} /> {tab.label}
+                        <tab.icon size={12} />
+                        <span className="sm:hidden">{tab.labelSm}</span>
+                        <span className="hidden sm:inline">{tab.label}</span>
                     </button>
                 ))}
             </div>
@@ -211,7 +262,7 @@ export default function ContratosPage() {
                         )}
 
                         {!loading && (
-                            <div className="space-y-2">
+                            <div data-tour="contratos-list" className="space-y-2">
                                 {filtered.map((c, i) => {
                                     const idiomaPrimario = c.idioma || 'pt'
                                     return (
@@ -224,7 +275,7 @@ export default function ContratosPage() {
 >
                                             <div className="flex items-center gap-3 p-4">
                                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                                    style={{ background: 'var(--bo-active-bg)' }}>
+                                                    style={{ background: 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)' }}>
                                                     <FileSignature size={18} style={{ color: T.accent }} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
@@ -246,7 +297,18 @@ export default function ContratosPage() {
                                                         {c.criado_em ? new Date(c.criado_em).toLocaleDateString('pt-BR') : '—'}
                                                     </p>
                                                 </div>
-                                                <ChevronRight size={14} style={{ color: T.textDim, flexShrink: 0 }} />
+                                                <div onClick={e => e.stopPropagation()}>
+                                                    <ActionMenu items={[
+                                                        { label: 'Ver Detalhes', icon: <Eye size={14} />, onClick: () => router.push(`/backoffice/contratos/${c.id}`) },
+                                                        { label: 'Editar', icon: <Edit size={14} />, onClick: () => router.push(`/backoffice/contratos/${c.id}`) },
+                                                        ...(c.status === 'gerado' || c.status === 'aguardando_assinatura'
+                                                            ? [{ label: 'Marcar Assinado', icon: <CheckCircle size={14} />, onClick: () => updateContratoStatus(c.id, 'assinado', 'Contrato assinado!') }]
+                                                            : []),
+                                                        ...(c.status !== 'cancelado' && c.status !== 'assinado'
+                                                            ? [{ label: 'Cancelar', icon: <Ban size={14} />, onClick: () => cancelContrato(c.id), variant: 'danger' as const }]
+                                                            : []),
+                                                    ]} />
+                                                </div>
                                             </div>
                                         </motion.div>
                                     )
@@ -274,8 +336,8 @@ export default function ContratosPage() {
                                         className="inline-flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white"
                                         style={{
                                             height: '44px',
-                                            background: 'linear-gradient(135deg, var(--bo-accent) 0%, #7C3AED 100%)',
-                                            boxShadow: '0 4px 14px rgba(124,58,237,0.22)',
+                                            background: 'var(--imi-gold-500)',
+                                            boxShadow: '0 4px 14px rgba(184,148,58,0.22)',
                                             border: 'none',
                                         }}
                                     >
@@ -302,7 +364,7 @@ export default function ContratosPage() {
                                                 transition={{ delay: i * 0.03 }}
                                                 onClick={() => router.push(`/backoffice/contratos/novo?modelo=${m.id}`)}
                                                 className="rounded-2xl p-4 cursor-pointer transition-all group hover-card"
-                                                style={{ background: m.id === 'modelo-personalizado' ? 'var(--bo-hover)' : T.surface, border: `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}` }}
+                                                style={{ background: m.id === 'modelo-personalizado' ? 'var(--bg-hover)' : T.surface, border: `1px solid ${m.id === 'modelo-personalizado' ? T.borderGold : T.border}` }}
 >
                                                 <div className="flex items-start gap-3">
                                                     <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -312,7 +374,7 @@ export default function ContratosPage() {
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-1.5 mb-1">
                                                             <p className="text-xs font-semibold" style={{ color: T.text }}>{m.nome}</p>
-                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bo-hover)', color: T.accent }}>✦</span>}
+                                                            {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bg-hover)', color: T.accent }}>✦</span>}
                                                             {m.internacional && <Globe size={9} style={{ color: '#E8A87C' }} />}
                                                         </div>
                                                         <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>

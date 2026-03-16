@@ -134,7 +134,7 @@ export default function ConsultoriasPage() {
                     <motion.button
                         whileTap={{ scale: 0.96 }}
                         onClick={() => router.push('/backoffice/consultorias/nova')}
-                        className="flex items-center gap-2 h-10 px-5 rounded-xl text-sm font-semibold text-white flex-shrink-0"
+                        className="bo-btn bo-btn-primary"
                         style={{ background: T.accent }}
                     >
                         <Plus size={16} /> <span className="hidden sm:inline">Nova Consultoria</span>

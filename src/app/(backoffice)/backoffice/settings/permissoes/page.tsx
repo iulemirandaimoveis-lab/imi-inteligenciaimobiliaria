@@ -138,7 +138,7 @@ const getRoleAccentColor = (color: string) => {
 
 const getRoleTextColor = (color: string) => {
     const colors: Record<string, string> = {
-        red: '#f87171',
+        red: T.error,
         orange: '#fb923c',
         blue: '#60a5fa',
         purple: '#c084fc',
@@ -383,7 +383,7 @@ export default function PermissoesPage() {
                                                                 }}
                                                             >
                                                                 {hasPermission ? (
-                                                                    <CheckCircle size={19} style={{ color: '#34d399' }} />
+                                                                    <CheckCircle size={19} style={{ color: T.success }} />
                                                                 ) : (
                                                                     <XCircle size={19} style={{ color: T.border }} />
                                                                 )}

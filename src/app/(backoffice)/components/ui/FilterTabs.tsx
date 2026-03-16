@@ -40,18 +40,29 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
             className="flex-shrink-0 flex items-center gap-1.5"
             style={{
               padding: '6px 14px',
-              borderRadius: '20px',
-              fontSize: '11px',
-              fontWeight: isActive ? 700 : 600,
-              border: `1px solid ${isActive ? 'var(--imi-blue-border)' : 'var(--bo-border)'}`,
+              borderRadius: 'var(--r-full, 9999px)',
+              fontFamily: 'var(--font-sans)',
+              fontSize: '12px',
+              fontWeight: isActive ? 600 : 500,
+              border: `1px solid ${isActive ? 'var(--imi-gold-400)' : 'var(--border-subtle)'}`,
               background: isActive
-                ? 'var(--imi-blue-dim)'
+                ? 'rgba(184,148,58,0.10)'
                 : 'transparent',
-              color: isActive ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)',
-              transition: 'all 0.18s ease',
+              color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+              transition: 'all var(--dur-2, 200ms) var(--ease)',
               whiteSpace: 'nowrap',
               cursor: 'pointer',
               minHeight: '32px',
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive) {
+                e.currentTarget.style.background = 'var(--bg-hover)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive) {
+                e.currentTarget.style.background = 'transparent'
+              }
             }}
           >
             {tab.dotColor && (
@@ -71,10 +82,11 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
             {tab.count !== undefined && (
               <span
                 style={{
+                  fontFamily: 'var(--font-mono)',
                   fontSize: '10px',
                   fontWeight: 700,
-                  background: isActive ? 'var(--imi-blue-dim)' : 'rgba(255,255,255,0.07)',
-                  color: isActive ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)',
+                  background: isActive ? 'rgba(184,148,58,0.12)' : 'var(--bg-muted)',
+                  color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
                   padding: '0px 5px',
                   borderRadius: '8px',
                   lineHeight: '16px',

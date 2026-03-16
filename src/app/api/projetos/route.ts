@@ -19,7 +19,22 @@ export async function GET(req: NextRequest) {
                 .eq('id', id)
                 .single()
             if (error) return NextResponse.json({ error: error.message }, { status: 404 })
-            return NextResponse.json(data)
+
+            // Fetch unidades summary
+            const { data: unidadesRaw } = await supabase
+                .from('projeto_unidades')
+                .select('status')
+                .eq('projeto_id', id)
+
+            const unidadesSummary = {
+                total: unidadesRaw?.length || 0,
+                disponiveis: unidadesRaw?.filter(u => u.status === 'disponivel').length || 0,
+                reservados: unidadesRaw?.filter(u => u.status === 'reservado').length || 0,
+                vendidos: unidadesRaw?.filter(u => u.status === 'vendido').length || 0,
+                bloqueados: unidadesRaw?.filter(u => u.status === 'bloqueado').length || 0,
+            }
+
+            return NextResponse.json({ ...data, unidades_summary: unidadesSummary })
         }
 
         let query = supabase
@@ -46,7 +61,13 @@ export async function POST(req: NextRequest) {
         const { data: { user }, error: authError } = await supabase.auth.getUser()
         if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
         const body = await req.json()
-        const { nome, tipo, descricao, cidade, estado, status, fase, unidades, unidades_vendidas, area_total_m2, vgv, imagem_url, latitude, longitude, data_lancamento, data_entrega_prev } = body
+        const {
+            nome, tipo, descricao, cidade, estado, status, fase,
+            unidades, unidades_vendidas, area_total_m2, vgv,
+            imagem_url, latitude, longitude, data_lancamento, data_entrega_prev,
+            plantas, tabela_precos, endereco, bairro,
+            gallery_images, brochure_url, video_url, construtora_id,
+        } = body
 
         if (!nome) return NextResponse.json({ error: 'nome é obrigatório' }, { status: 400 })
 
@@ -69,6 +90,14 @@ export async function POST(req: NextRequest) {
                 longitude: longitude || null,
                 data_lancamento: data_lancamento || null,
                 data_entrega_prev: data_entrega_prev || null,
+                plantas: plantas || [],
+                tabela_precos: tabela_precos || [],
+                endereco: endereco || null,
+                bairro: bairro || null,
+                gallery_images: gallery_images || [],
+                brochure_url: brochure_url || null,
+                video_url: video_url || null,
+                construtora_id: construtora_id || null,
             })
             .select()
             .single()

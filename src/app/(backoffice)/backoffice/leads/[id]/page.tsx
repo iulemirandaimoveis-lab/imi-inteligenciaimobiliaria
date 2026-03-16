@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
-  ArrowLeft, Phone, Mail, MapPin, Building2, DollarSign,
+  Phone, Mail, MapPin, Building2, DollarSign,
   Calendar, Edit, MessageSquare, FileText,
   Clock, TrendingUp, Eye, MousePointerClick,
   AlertCircle, Send, Globe, MoreVertical, Sparkles, Loader2,
@@ -13,6 +13,7 @@ import { useLead } from '@/hooks/use-leads-complete'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { AIInsightCard } from '@/app/(backoffice)/components/ui/AIInsightCard'
 import { SectionHeader } from '@/app/(backoffice)/components/ui/SectionHeader'
+import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { toast } from 'sonner'
 
@@ -87,7 +88,9 @@ export default function LeadDetailPage() {
   const id = params?.id as string | undefined
 
   const { lead, isLoading, isError, revalidate } = useLead(id ?? null)
-  const [activeTab, setActiveTab] = useState<'timeline' | 'history' | 'notes'>('timeline')
+  const [activeTab, setActiveTab] = useState<'timeline' | 'history' | 'notes' | 'matches'>('timeline')
+  const [matches, setMatches] = useState<any[]>([])
+  const [matchesLoading, setMatchesLoading] = useState(false)
   const [note, setNote] = useState('')
   const [aiAnalysis, setAiAnalysis] = useState<any>(null)
   const [aiLoading, setAiLoading] = useState(false)
@@ -119,7 +122,7 @@ export default function LeadDetailPage() {
           className="flex items-center gap-2 mb-6"
           style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
         >
-          <ArrowLeft size={15} /> Leads
+          ← Leads
         </button>
         <div
           className="rounded-2xl text-center"
@@ -204,29 +207,38 @@ export default function LeadDetailPage() {
   return (
     <div className="max-w-2xl mx-auto pb-24 space-y-4">
 
-      {/* ── Top Nav ───────────────────────────────────── */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2"
-          style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
-        >
-          <ArrowLeft size={15} /> Leads
-        </button>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => router.push(`/backoffice/leads/${id}/editar`)}
-            style={{
-              width: '34px', height: '34px', borderRadius: '10px',
-              background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            <Edit size={14} style={{ color: 'var(--bo-text-muted)' }} />
-          </button>
-          {/* Quick Status Dropdown */}
-          <div className="relative">
+      <PageIntelHeader
+        moduleLabel="LEADS"
+        title={lead.name}
+        subtitle={[lead.source || 'Direto', lead.interest].filter(Boolean).join(' · ')}
+        breadcrumbs={[
+          { label: 'Leads', href: '/backoffice/leads' },
+          { label: lead.name },
+        ]}
+        actions={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push(`/backoffice/propostas/nova?lead_id=${id}`)}
+              className="bo-btn bo-btn-sm"
+              style={{ background: 'rgba(184,148,58,0.12)', color: 'var(--imi-gold-500)', borderColor: 'rgba(184,148,58,0.25)' }}
+              title="Criar Proposta"
+            >
+              <FileText size={13} />
+              <span className="hidden sm:inline">Proposta</span>
+            </button>
+            <button
+              onClick={() => router.push(`/backoffice/leads/${id}/editar`)}
+              style={{
+                width: '34px', height: '34px', borderRadius: '10px',
+                background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer',
+              }}
+            >
+              <Edit size={14} style={{ color: 'var(--bo-text-muted)' }} />
+            </button>
+            {/* Quick Status Dropdown */}
+            <div className="relative">
             <button
               onClick={() => setStatusMenuOpen(p => !p)}
               style={{
@@ -319,9 +331,10 @@ export default function LeadDetailPage() {
                 </motion.div>
               </>
             )}
+            </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* ── Hero Profile Card ─────────────────────────── */}
       <motion.div
@@ -341,11 +354,11 @@ export default function LeadDetailPage() {
         <div style={{
           position: 'absolute', top: '-30px', right: '-20px',
           width: '100px', height: '100px', borderRadius: '50%',
-          background: 'var(--imi-blue-dim)', filter: 'blur(30px)', pointerEvents: 'none',
+          background: 'rgba(184,148,58,0.10)', filter: 'blur(30px)', pointerEvents: 'none',
         }} />
 
         {/* Label */}
-        <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-blue-bright)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px', position: 'relative' }}>
+        <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px', position: 'relative' }}>
           LEAD PROFILE
         </div>
 
@@ -380,12 +393,12 @@ export default function LeadDetailPage() {
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               background: 'var(--bo-elevated)',
-              border: '1px solid var(--imi-blue-border)',
+              border: '1px solid rgba(184,148,58,0.25)',
               borderRadius: '14px', padding: '10px 12px',
               flexShrink: 0,
             }}
           >
-            <span style={{ fontSize: '8px', fontWeight: 700, color: 'var(--imi-blue-bright)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
+            <span style={{ fontSize: '8px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
               AI Intent
             </span>
             <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--bo-text)', lineHeight: 1 }}>
@@ -395,30 +408,41 @@ export default function LeadDetailPage() {
         </div>
 
         {/* Contact actions */}
-        <div className="grid grid-cols-2 gap-2 mb-5">
+        <div className="grid grid-cols-3 gap-2 mb-5">
           <a
             href={`tel:${lead.phone}`}
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              height: '46px', borderRadius: '12px', fontSize: '13px', fontWeight: 600,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              height: '46px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
               color: 'var(--bo-text)', background: 'var(--bo-elevated)',
               border: '1px solid var(--bo-border)', textDecoration: 'none',
             }}
           >
-            <Phone size={15} style={{ color: 'var(--imi-blue-bright)' }} /> Ligar
+            <Phone size={14} style={{ color: 'var(--imi-gold-500)' }} /> Ligar
           </a>
           <a
             href={`https://wa.me/55${(lead.phone ?? '').replace(/\D/g, '')}`}
             target="_blank" rel="noopener noreferrer"
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              height: '46px', borderRadius: '12px', fontSize: '13px', fontWeight: 700,
-              color: '#fff', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              height: '46px', borderRadius: '12px', fontSize: '12px', fontWeight: 700,
+              color: 'var(--text-inverse)', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
               border: 'none', textDecoration: 'none',
             }}
           >
-            <MessageSquare size={15} /> WhatsApp
+            <MessageSquare size={14} /> WhatsApp
           </a>
+          <button
+            onClick={() => router.push(`/backoffice/hoje?lead_id=${id}&action=agendar`)}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              height: '46px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
+              color: 'var(--bo-text)', background: 'var(--bo-elevated)',
+              border: '1px solid var(--bo-border)', cursor: 'pointer',
+            }}
+          >
+            <Calendar size={14} style={{ color: 'var(--imi-gold-500)' }} /> Agendar
+          </button>
         </div>
 
         {/* Contact info grid */}
@@ -524,15 +548,15 @@ export default function LeadDetailPage() {
                   {aiAnalysis.urgency && (
                     <span style={{
                       fontSize: '10px', fontWeight: 700,
-                      color: aiAnalysis.urgency === 'alta' ? '#EF4444' : aiAnalysis.urgency === 'media' ? '#F59E0B' : '#6B7280',
-                      background: aiAnalysis.urgency === 'alta' ? 'rgba(239,68,68,0.12)' : aiAnalysis.urgency === 'media' ? 'rgba(245,158,11,0.12)' : 'rgba(107,114,128,0.12)',
+                      color: aiAnalysis.urgency === 'alta' ? 'var(--bo-error)' : aiAnalysis.urgency === 'media' ? 'var(--warning)' : 'var(--text-secondary)',
+                      background: aiAnalysis.urgency === 'alta' ? 'rgba(239,68,68,0.12)' : aiAnalysis.urgency === 'media' ? 'rgba(245,158,11,0.12)' : 'var(--bg-elevated)',
                       padding: '2px 8px', borderRadius: '6px',
                     }}>
                       Urgência {aiAnalysis.urgency}
                     </span>
                   )}
                   {aiAnalysis.approach && (
-                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--imi-blue-bright)', background: 'rgba(59,130,246,0.12)', padding: '2px 8px', borderRadius: '6px' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--imi-gold-500)', background: 'rgba(59,130,246,0.12)', padding: '2px 8px', borderRadius: '6px' }}>
                       via {aiAnalysis.approach}
                     </span>
                   )}
@@ -542,7 +566,7 @@ export default function LeadDetailPage() {
                     </span>
                   )}
                   {aiAnalysis.keyRisk && (
-                    <span style={{ fontSize: '10px', color: '#E8A87C', padding: '2px 8px', background: 'rgba(232,168,124,0.08)', borderRadius: '6px' }}>
+                    <span style={{ fontSize: '10px', color: 'var(--warning)', padding: '2px 8px', background: 'rgba(245,158,11,0.08)', borderRadius: '6px' }}>
                       ⚠ {aiAnalysis.keyRisk}
                     </span>
                   )}
@@ -563,9 +587,10 @@ export default function LeadDetailPage() {
         {/* Tab header */}
         <div className="flex" style={{ borderBottom: '1px solid var(--bo-border)' }}>
           {[
-            { key: 'timeline', label: 'Behavioral Timeline' },
+            { key: 'timeline', label: 'Timeline' },
             { key: 'history',  label: 'Histórico' },
             { key: 'notes',    label: 'Notas' },
+            { key: 'matches',  label: 'Imóveis' },
           ].map((tab) => {
             const isActive = activeTab === tab.key
             return (
@@ -579,10 +604,10 @@ export default function LeadDetailPage() {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
-                  color: isActive ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)',
+                  color: isActive ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)',
                   background: 'none',
                   border: 'none',
-                  borderBottom: `2px solid ${isActive ? 'var(--imi-blue-bright)' : 'transparent'}`,
+                  borderBottom: `2px solid ${isActive ? 'var(--imi-gold-500)' : 'transparent'}`,
                   cursor: 'pointer',
                   transition: 'all 0.18s',
                 }}
@@ -619,14 +644,14 @@ export default function LeadDetailPage() {
                           position: 'relative', zIndex: 1,
                           width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
                           background: event.accent
-                            ? 'var(--imi-blue-dim)'
+                            ? 'rgba(184,148,58,0.10)'
                             : 'rgba(255,255,255,0.04)',
-                          border: `2px solid ${event.accent ? 'var(--imi-blue-border)' : 'var(--bo-border)'}`,
+                          border: `2px solid ${event.accent ? 'rgba(184,148,58,0.25)' : 'var(--bo-border)'}`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
                           <event.icon
                             size={14}
-                            style={{ color: event.accent ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)' }}
+                            style={{ color: event.accent ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)' }}
                           />
                         </div>
 
@@ -751,9 +776,103 @@ export default function LeadDetailPage() {
                     transition: 'all 0.18s',
                   }}
                 >
-                  <Send size={14} style={{ color: note.trim() ? '#fff' : 'var(--bo-text-muted)' }} />
+                  <Send size={14} style={{ color: note.trim() ? 'var(--text-inverse)' : 'var(--bo-text-muted)' }} />
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* ── Matches ── */}
+          {activeTab === 'matches' && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <SectionHeader title="Imóveis Compatíveis" badge={matches.length > 0 ? `${matches.length} resultado${matches.length !== 1 ? 's' : ''}` : undefined} />
+                {matches.length === 0 && !matchesLoading && (
+                  <button
+                    onClick={() => {
+                      if (!id) return
+                      setMatchesLoading(true)
+                      fetch(`/api/leads/${id}/matches`)
+                        .then(r => r.json())
+                        .then(res => setMatches(res.matches ?? []))
+                        .catch(() => {})
+                        .finally(() => setMatchesLoading(false))
+                    }}
+                    className="bo-btn bo-btn-sm"
+                    style={{ fontSize: '11px' }}
+                  >
+                    <Sparkles size={11} />
+                    Buscar matches
+                  </button>
+                )}
+              </div>
+
+              {matchesLoading && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--bo-text-muted)', fontSize: '13px', padding: '24px 0' }}>
+                  <Loader2 size={14} className="animate-spin" />
+                  Analisando compatibilidade...
+                </div>
+              )}
+
+              {!matchesLoading && matches.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--bo-text-muted)', fontSize: '13px' }}>
+                  <Building2 size={24} style={{ opacity: 0.3, margin: '0 auto 8px' }} />
+                  <p>Clique em "Buscar matches" para encontrar imóveis compatíveis</p>
+                </div>
+              )}
+
+              {matches.map((m, i) => (
+                <div
+                  key={m.id}
+                  style={{
+                    display: 'flex', alignItems: 'flex-start', gap: '12px',
+                    padding: '12px', borderRadius: '12px', marginBottom: '8px',
+                    background: i === 0 ? 'rgba(184,148,58,0.07)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${i === 0 ? 'rgba(184,148,58,0.2)' : 'var(--bo-border)'}`,
+                  }}
+                >
+                  <div style={{
+                    minWidth: '40px', height: '40px', borderRadius: '10px',
+                    background: i === 0 ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.05)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Building2 size={16} style={{ color: i === 0 ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>{m.name}</span>
+                      <span style={{
+                        fontSize: '10px', fontWeight: 700, padding: '2px 7px',
+                        borderRadius: '20px',
+                        background: m.match_score >= 80 ? 'rgba(34,197,94,0.15)' : m.match_score >= 60 ? 'rgba(234,179,8,0.15)' : 'rgba(255,255,255,0.06)',
+                        color: m.match_score >= 80 ? '#4ade80' : m.match_score >= 60 ? '#fbbf24' : 'var(--bo-text-muted)',
+                      }}>
+                        {m.match_score}% match
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', margin: '2px 0' }}>
+                      {[m.city, m.state].filter(Boolean).join(', ')}
+                      {m.min_price && ` · R$ ${(m.min_price / 1000).toFixed(0)}k${m.max_price ? `–${(m.max_price / 1000).toFixed(0)}k` : '+'}`}
+                    </p>
+                    {m.match_reasons?.length > 0 && (
+                      <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)', opacity: 0.7 }}>
+                        {m.match_reasons.join(' · ')}
+                      </p>
+                    )}
+                  </div>
+                  <a
+                    href={`/backoffice/empreendimentos/${m.id}`}
+                    style={{
+                      fontSize: '11px', color: 'var(--bo-text-muted)',
+                      textDecoration: 'none', whiteSpace: 'nowrap',
+                      padding: '4px 8px', borderRadius: '8px',
+                      background: 'rgba(255,255,255,0.05)',
+                    }}
+                  >
+                    Ver →
+                  </a>
+                </div>
+              ))}
             </div>
           )}
         </div>

@@ -20,8 +20,8 @@ export interface Development {
     registration_number: string | null
     description: string | null
     short_description: string | null
-    features: any[]
-    specs: Record<string, any>
+    features: string[]
+    specs: Record<string, string | number | boolean | null>
 
     // Campos de preço (REAL)
     price_from: number
@@ -35,7 +35,7 @@ export interface Development {
         floorPlans: string[]
     }
     video_url: string | null
-    external_links: Record<string, any>
+    external_links: Record<string, string>
     tags: string[]
     display_order: number
     is_highlighted: boolean
@@ -52,15 +52,15 @@ export interface Development {
     tenant_id: string | null
     gallery_images: string[]
     floor_plans: string[]
-    videos: any
+    videos: string[]
     brochure_url: string | null
     units: number
     tipo: string | null
     status_comercial: string | null
     pais: string | null
     publico_alvo: string | null
-    argumentos_venda: any[]
-    tipologias: any
+    argumentos_venda: string[]
+    tipologias: Record<string, string | number> | null
     metragem: string | null
     quartos: number | null
     suites: number | null
@@ -71,7 +71,7 @@ export interface Development {
     type: string
     status_commercial: string | null
     target_audience: string | null
-    selling_points: any[]
+    selling_points: string[]
     bedrooms: number
     bathrooms: number
     parking_spaces: number
@@ -82,7 +82,7 @@ export interface Development {
     inventory_score: number
     image: string | null
     views: number
-    media: any[]
+    media: string[]
     completion_date: string | null
     total_units: number
     available_units: number

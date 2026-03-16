@@ -26,9 +26,9 @@ const TYPE_ICONS: Record<string, any> = {
     system: Zap, development: Home, evaluation: Sparkles, comment: FileText,
 }
 const TYPE_COLORS: Record<string, string> = {
-    lead: '#7B9EC4', imovel: '#6BB87B', financeiro: 'var(--bo-accent)', contrato: '#A89EC4',
-    alerta: '#E57373', info: '#7B9EC4', sucesso: '#6BB87B',
-    system: '#8B5CF6', development: '#6BB87B', evaluation: '#F59E0B', comment: '#64748B',
+    lead: '#7B9EC4', imovel: 'var(--bo-success)', financeiro: 'var(--bo-accent)', contrato: '#A89EC4',
+    alerta: 'var(--bo-error)', info: '#7B9EC4', sucesso: 'var(--bo-success)',
+    system: '#8B5CF6', development: 'var(--bo-success)', evaluation: '#F59E0B', comment: 'var(--bo-text-muted)',
 }
 
 const timeAgo = (d: string) => {

@@ -36,7 +36,7 @@ export async function callClaude(params: ClaudeRequestParams): Promise<ClaudeRes
     const startTime = Date.now();
     const supabase = await createClient();
 
-    const model = params.model || 'claude-3-5-sonnet-20241022';
+    const model = params.model || 'claude-sonnet-4-6';
     const temperature = params.temperature ?? 0.7;
     const max_tokens = params.max_tokens || 4096;
 

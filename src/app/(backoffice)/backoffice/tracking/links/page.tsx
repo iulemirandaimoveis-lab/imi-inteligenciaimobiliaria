@@ -1,18 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
     ArrowLeft, Link2, Plus, Copy, QrCode, ExternalLink,
     Trash2, Download, Check, Loader2, Search, RefreshCw
 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import QRCode from 'qrcode'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 export default function TrackingLinksPage() {
     const router = useRouter()
@@ -20,21 +19,49 @@ export default function TrackingLinksPage() {
     const [loading, setLoading] = useState(true)
     const [copiedId, setCopiedId] = useState<string | null>(null)
     const [search, setSearch] = useState('')
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+    const [secondsAgo, setSecondsAgo] = useState(0)
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-    useEffect(() => { loadLinks() }, [])
-
-    const loadLinks = async () => {
-        setLoading(true)
+    const loadLinks = useCallback(async (silent = false) => {
+        if (!silent) setLoading(true)
         try {
             const res = await fetch('/api/qr/links')
             const data = await res.json()
-            if (res.ok) setLinks(data.links || [])
+            if (res.ok) {
+                setLinks(data.links || [])
+                setLastUpdated(new Date())
+                setSecondsAgo(0)
+            }
         } catch (err) {
             console.error('Error loading links:', err)
         } finally {
-            setLoading(false)
+            if (!silent) setLoading(false)
         }
-    }
+    }, [])
+
+    // Initial load
+    useEffect(() => { loadLinks() }, [loadLinks])
+
+    // Auto-refresh every 30s when page is visible
+    useEffect(() => {
+        const refreshInterval = setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                loadLinks(true) // silent refresh
+            }
+        }, 30_000)
+        return () => clearInterval(refreshInterval)
+    }, [loadLinks])
+
+    // Update "seconds ago" counter every second
+    useEffect(() => {
+        intervalRef.current = setInterval(() => {
+            if (lastUpdated) {
+                setSecondsAgo(Math.floor((Date.now() - lastUpdated.getTime()) / 1000))
+            }
+        }, 1000)
+        return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+    }, [lastUpdated])
 
     const handleCopy = (text: string, id: string) => {
         navigator.clipboard.writeText(text)
@@ -101,14 +128,14 @@ export default function TrackingLinksPage() {
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => router.push('/backoffice/tracking')}
-                            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all hover:opacity-80"
+                            className="w-10 h-10 rounded flex items-center justify-center transition-all hover:opacity-80"
                             style={{ background: T.card, border: `1px solid ${T.border}` }}
                         >
                             <ArrowLeft size={18} style={{ color: T.text }} />
                         </button>
                         <button
                             onClick={() => router.push('/backoffice/tracking/qr')}
-                            className="h-10 px-4 rounded-xl text-sm font-semibold flex items-center gap-2 text-white"
+                            className="h-10 px-4 rounded text-sm font-semibold flex items-center gap-2 text-white"
                             style={{ background: T.accent }}
                         >
                             <QrCode size={16} />
@@ -131,9 +158,14 @@ export default function TrackingLinksPage() {
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                 </div>
+                {lastUpdated && (
+                    <span className="text-[10px] whitespace-nowrap self-center" style={{ color: T.textMuted }}>
+                        {secondsAgo < 5 ? 'agora' : secondsAgo < 60 ? `${secondsAgo}s atrás` : `${Math.floor(secondsAgo / 60)}min atrás`}
+                    </span>
+                )}
                 <button
-                    onClick={loadLinks}
-                    className="h-10 w-10 rounded-xl flex items-center justify-center"
+                    onClick={() => loadLinks()}
+                    className="h-10 w-10 rounded flex items-center justify-center"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                 >
                     <RefreshCw size={14} style={{ color: T.textMuted }} className={loading ? 'animate-spin' : ''} />
@@ -211,7 +243,7 @@ export default function TrackingLinksPage() {
                                     <div className="flex items-center gap-1">
                                         <button
                                             onClick={() => handleCopy(link.short_url || link.url || '', link.id)}
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                            className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
                                             style={{ background: T.hover }}
                                             title="Copiar link"
                                         >
@@ -224,7 +256,7 @@ export default function TrackingLinksPage() {
                                         {link.short_url && (
                                             <button
                                                 onClick={() => handleDownloadQR(link.short_url, link.campaign_name || link.short_code)}
-                                                className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                                className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
                                                 style={{ background: T.hover }}
                                                 title="Baixar QR Code"
                                             >
@@ -232,8 +264,8 @@ export default function TrackingLinksPage() {
                                             </button>
                                         )}
                                         <button
-                                            onClick={() => window.open(link.url || link.short_url, '_blank')}
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                            onClick={() => window.open(link.short_url || link.url, '_blank')}
+                                            className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
                                             style={{ background: T.hover }}
                                             title="Abrir link"
                                         >
@@ -241,7 +273,7 @@ export default function TrackingLinksPage() {
                                         </button>
                                         <button
                                             onClick={() => handleDelete(link.id, link.campaign_name)}
-                                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-70"
+                                            className="w-8 h-8 rounded flex items-center justify-center transition-all hover:opacity-70"
                                             style={{ background: T.hover }}
                                             title="Excluir"
                                         >
