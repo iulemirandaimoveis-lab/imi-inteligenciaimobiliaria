@@ -127,7 +127,7 @@ export async function GET(
             .slice(0, 10)
 
         return NextResponse.json({ matches, lead_id: id })
-    } catch (err: any) {
+    } catch (err) {
         console.error('Lead Matches Error:', err)
         return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
     }

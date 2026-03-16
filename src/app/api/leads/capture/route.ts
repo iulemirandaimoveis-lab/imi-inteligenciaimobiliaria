@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
             lead_id: lead.id,
             message: 'Lead capturado com sucesso',
         })
-    } catch (err: any) {
+    } catch (err) {
         console.error('Lead Capture Error:', err)
         return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
     }

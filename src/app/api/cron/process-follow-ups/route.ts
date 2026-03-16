@@ -104,9 +104,9 @@ export async function GET(request: NextRequest) {
                     })
 
                 processed++
-            } catch (err: any) {
+            } catch (err) {
                 failed++
-                errors.push(`follow_up ${fu.id}: ${err.message}`)
+                errors.push(`follow_up ${fu.id}: ${err instanceof Error ? err.message : 'Unknown error'}`)
                 // Reverter para pending em caso de erro
                 await supabaseAdmin
                     .from('lead_follow_ups')
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
     } catch (error: any) {
         console.error('Error in cron/process-follow-ups:', error)
         return NextResponse.json(
-            { error: error.message || 'Internal Server Error' },
+            { error: error instanceof Error ? error.message : 'Internal Server Error' },
             { status: 500 }
         )
     }

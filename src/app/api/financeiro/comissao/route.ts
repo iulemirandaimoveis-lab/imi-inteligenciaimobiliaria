@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
             transactions_created: created.length,
             transactions: created,
         }, { status: 201 })
-    } catch (err: any) {
+    } catch (err) {
         console.error('Comissao Error:', err)
         return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
     }

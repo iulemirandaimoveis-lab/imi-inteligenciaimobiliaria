@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
 
         console.log(`[billing-webhook] Upgraded ${customerEmail} to ${newTier}`)
         return NextResponse.json({ received: true, processed: true, user_id: user.id, tier: newTier })
-    } catch (err: any) {
+    } catch (err) {
         console.error('[billing-webhook] Error:', err)
         return NextResponse.json({ error: 'Internal error' }, { status: 500 })
     }
