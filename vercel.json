@@ -23,20 +23,12 @@
     ],
     "crons": [
         {
-            "path": "/api/cron/process-publishing-queue",
+            "path": "/api/cron/daily",
             "schedule": "0 1 * * *"
         },
         {
-            "path": "/api/cron/process-email-sequences",
-            "schedule": "0 2 * * *"
-        },
-        {
-            "path": "/api/cron/generate-weekly-reports",
-            "schedule": "0 8 * * 1"
-        },
-        {
             "path": "/api/cron/process-follow-ups",
-            "schedule": "0 * * * *"
+            "schedule": "0 9 * * *"
         }
     ]
 }
