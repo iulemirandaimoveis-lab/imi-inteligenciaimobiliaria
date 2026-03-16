@@ -26,6 +26,8 @@ import {
   rectSortingStrategy, useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useIsMobile } from '@/hooks/use-is-mobile'
+import { MobileGlobalStyles, MobileBottomNav } from '../../mobile-ui'
 
 /* ── Sortable gallery image ── */
 interface SortableGalleryItemProps {
@@ -411,6 +413,7 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
 export default function EditarImovelPage() {
   const router = useRouter()
   const params = useParams()
+  const isMobile = useIsMobile()
   const [activeTab, setActiveTab] = useState<TabId>('basico')
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -605,9 +608,40 @@ export default function EditarImovelPage() {
     </div>
   )
 
+  const currentTabIndex = TABS.findIndex(t => t.id === activeTab)
+  const totalTabs = TABS.length
+
   return (
-    <div className="max-w-6xl mx-auto space-y-0">
-      <PageIntelHeader
+    <div className="max-w-6xl mx-auto space-y-0" style={{ paddingTop: isMobile ? 72 : undefined, paddingBottom: isMobile ? 96 : undefined }}>
+      {isMobile && <MobileGlobalStyles />}
+      {isMobile && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+          height: 56, background: 'var(--bg-surface)',
+          borderBottom: '1px solid rgba(184,148,58,0.12)',
+          display: 'flex', alignItems: 'center', padding: '0 4px 0 4px', gap: 8,
+        }}>
+          <button
+            onClick={() => router.back()}
+            style={{
+              width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'transparent', border: 'none', cursor: 'pointer', color: '#9FAAB8',
+              borderRadius: 8, flexShrink: 0,
+            }}
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: 15, color: '#EBE7E0', margin: 0, lineHeight: 1.2 }}>
+              Editar Imóvel
+            </p>
+            <p style={{ fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 10, color: '#9FAAB8', margin: 0 }}>
+              {currentTabIndex + 1}/{totalTabs} — {TABS[currentTabIndex]?.label}
+            </p>
+          </div>
+        </div>
+      )}
+      {!isMobile && <PageIntelHeader
         moduleLabel="IMÓVEIS"
         title="Editar Imóvel"
         subtitle={formData.name || 'Carregando...'}
@@ -615,7 +649,7 @@ export default function EditarImovelPage() {
           { label: 'Imóveis', href: '/backoffice/imoveis' },
           { label: 'Editar' },
         ]}
-      />
+      />}
 
       {/* ── Sticky Header ── */}
       <div className="sticky top-14 lg:top-0 z-20 backdrop-blur-xl rounded-b-2xl mb-6" style={{ background: `${T.bg}ee`, borderBottom: `1px solid ${T.border}` }}>
@@ -963,19 +997,58 @@ export default function EditarImovelPage() {
         </motion.div>
       </AnimatePresence>
 
-      {/* ── Bottom Save ── */}
-      <div className="flex items-center justify-between py-4 pb-32 lg:pb-4 px-2">
-        <button onClick={() => router.push(`/backoffice/imoveis/${params.id}`)}
-          className="text-sm flex items-center gap-1.5" style={{ color: T.textDim }}>
-          <ArrowLeft size={14} /> Cancelar
-        </button>
-        <button onClick={handleSubmit} disabled={isSubmitting}
-          className="h-11 px-8 rounded text-sm font-bold text-white flex items-center gap-2 disabled:opacity-60 transition-all"
-          style={{ background: isSubmitting ? T.textDim : T.accent }}>
-          {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-          {isSubmitting ? 'Salvando...' : 'Salvar alterações'}
-        </button>
-      </div>
+      {/* ── Bottom Save (desktop only) ── */}
+      {!isMobile && (
+        <div className="flex items-center justify-between py-4 pb-32 lg:pb-4 px-2">
+          <button onClick={() => router.push(`/backoffice/imoveis/${params.id}`)}
+            className="text-sm flex items-center gap-1.5" style={{ color: T.textDim }}>
+            <ArrowLeft size={14} /> Cancelar
+          </button>
+          <button onClick={handleSubmit} disabled={isSubmitting}
+            className="h-11 px-8 rounded text-sm font-bold text-white flex items-center gap-2 disabled:opacity-60 transition-all"
+            style={{ background: isSubmitting ? T.textDim : T.accent }}>
+            {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            {isSubmitting ? 'Salvando...' : 'Salvar alterações'}
+          </button>
+        </div>
+      )}
+      {isMobile && (
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
+          background: 'rgba(11,25,40,0.92)', backdropFilter: 'blur(12px)',
+          borderTop: '1px solid rgba(184,148,58,0.12)',
+          padding: '12px 16px',
+          paddingBottom: 'max(20px, env(safe-area-inset-bottom))',
+          display: 'flex', gap: 10,
+        }}>
+          {currentTabIndex > 0 && (
+            <button
+              onClick={() => setActiveTab(TABS[currentTabIndex - 1].id)}
+              style={{
+                flex: '0 0 auto', height: 52, paddingLeft: 20, paddingRight: 20,
+                borderRadius: 10, background: 'rgba(184,148,58,0.08)',
+                border: '1px solid rgba(184,148,58,0.25)', color: 'var(--imi-gold-500)',
+                fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 13, fontWeight: 700,
+                letterSpacing: '0.5px', cursor: 'pointer', touchAction: 'manipulation',
+              }}
+            >
+              ← Anterior
+            </button>
+          )}
+          <button
+            onClick={currentTabIndex < totalTabs - 1 ? () => setActiveTab(TABS[currentTabIndex + 1].id) : handleSubmit}
+            style={{
+              flex: 1, height: 52, borderRadius: 10,
+              background: currentTabIndex < totalTabs - 1 ? 'var(--imi-gold-500)' : '#10B981',
+              border: 'none', color: currentTabIndex < totalTabs - 1 ? '#0B1120' : 'white',
+              fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 13, fontWeight: 800,
+              letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', touchAction: 'manipulation',
+            }}
+          >
+            {currentTabIndex < totalTabs - 1 ? 'Próximo →' : isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

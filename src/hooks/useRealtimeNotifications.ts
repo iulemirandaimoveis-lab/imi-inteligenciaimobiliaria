@@ -11,10 +11,10 @@
 import { useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-
-const supabase = createClient()
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 export function useRealtimeNotifications() {
+    const supabase = createClient()
     const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
 
     useEffect(() => {

@@ -1,407 +1,870 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-    Plus, Search, Play, Pause, Zap,
-    Mail, MessageSquare, Calendar, Users,
-    FileText, TrendingUp, X,
+  Zap, Plus, ToggleLeft, ToggleRight,
+  Bell, Mail, Kanban, ClipboardList, AlertTriangle,
+  CheckCircle2, XCircle, Clock, Edit2, Trash2, ChevronRight,
+  User, TrendingUp, FileText, MessageSquare, Activity,
+  X, ArrowRight, Settings2, Send, UserCheck, Tag,
 } from 'lucide-react'
-import { toast } from 'sonner'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
-import { KPICard } from '@/app/(backoffice)/components/ui/KPICard'
-import { T } from '@/app/(backoffice)/lib/theme'
-import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
+import { PageIntelHeader, KPICard, Btn } from '../../components/ui'
+import { T } from '../../lib/theme'
 
-interface Workflow {
-    id: string
-    name: string
-    description: string | null
-    is_active: boolean
-    trigger_type: string
-    config: any
-    last_run_at: string | null
-    run_count: number
-    created_at: string
-    updated_at: string | null
+export const dynamic = 'force-dynamic'
+
+/* ─── TYPES ─────────────────────────────────────────────────────── */
+interface AutomationRule {
+  id: string
+  name: string
+  triggerLabel: string
+  actionLabel: string
+  status: 'active' | 'paused'
+  firedToday: number
+  firedTotal: number
+  conversionRate: number
+  category: string
+  triggerIcon: any
+  actionIcon: any
+  lastFired: string
 }
 
-// ── Loading skeleton ─────────────────────────────────────────────────
-function AutomacoesSkeleton() {
-    return (
-        <div className="space-y-5">
-            <div style={{ height: 56, background: 'var(--bo-card)', borderRadius: 14, opacity: 0.5, width: '50%' }} />
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                {[0,1,2,3].map(i => (
-                    <div key={i} style={{ height: 72, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.4 - i * 0.05 }} />
-                ))}
-            </div>
-            <div style={{ height: 44, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.35 }} />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {[0,1,2,3].map(i => (
-                    <div key={i} style={{ height: 160, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.3 - i * 0.04 }} />
-                ))}
-            </div>
+/* ─── MOCK DATA ──────────────────────────────────────────────────── */
+const MOCK_RULES: AutomationRule[] = [
+  {
+    id: '1',
+    name: 'Follow-up Automático',
+    triggerLabel: 'Sem Contato há 3 dias',
+    actionLabel: 'Notificar Corretor',
+    status: 'active',
+    firedToday: 4,
+    firedTotal: 47,
+    conversionRate: 38,
+    category: 'Leads',
+    triggerIcon: Clock,
+    actionIcon: Bell,
+    lastFired: 'há 2h',
+  },
+  {
+    id: '2',
+    name: 'Lead Quente Prioritário',
+    triggerLabel: 'Lead Quente (score > 80)',
+    actionLabel: 'Criar Tarefa + WhatsApp',
+    status: 'active',
+    firedToday: 2,
+    firedTotal: 23,
+    conversionRate: 61,
+    category: 'Leads',
+    triggerIcon: TrendingUp,
+    actionIcon: MessageSquare,
+    lastFired: 'há 5h',
+  },
+  {
+    id: '3',
+    name: 'Avaliação Vencendo',
+    triggerLabel: 'Avaliação Concluída',
+    actionLabel: 'Enviar Email',
+    status: 'active',
+    firedToday: 1,
+    firedTotal: 12,
+    conversionRate: 42,
+    category: 'Avaliações',
+    triggerIcon: AlertTriangle,
+    actionIcon: Mail,
+    lastFired: 'ontem',
+  },
+  {
+    id: '4',
+    name: 'Novo Lead WhatsApp',
+    triggerLabel: 'Novo Lead',
+    actionLabel: 'Enviar WhatsApp Template',
+    status: 'active',
+    firedToday: 5,
+    firedTotal: 89,
+    conversionRate: 29,
+    category: 'Distribuição',
+    triggerIcon: User,
+    actionIcon: MessageSquare,
+    lastFired: 'há 30 min',
+  },
+  {
+    id: '5',
+    name: 'Campanha Inativa',
+    triggerLabel: 'Sem Contato há 7 dias',
+    actionLabel: 'Notificar Equipe',
+    status: 'paused',
+    firedToday: 0,
+    firedTotal: 5,
+    conversionRate: 12,
+    category: 'Campanhas',
+    triggerIcon: Activity,
+    actionIcon: Bell,
+    lastFired: 'há 3 dias',
+  },
+  {
+    id: '6',
+    name: 'Proposta Visualizada',
+    triggerLabel: 'Proposta Aceita',
+    actionLabel: 'Criar Tarefa',
+    status: 'paused',
+    firedToday: 0,
+    firedTotal: 0,
+    conversionRate: 0,
+    category: 'Propostas',
+    triggerIcon: FileText,
+    actionIcon: ClipboardList,
+    lastFired: 'nunca',
+  },
+]
+
+/* ─── TRIGGER OPTIONS ────────────────────────────────────────────── */
+const TRIGGER_OPTIONS = [
+  { id: 'novo_lead', label: 'Novo Lead', icon: User, desc: 'Quando um lead é criado no sistema' },
+  { id: 'lead_atualizado', label: 'Lead Atualizado', icon: TrendingUp, desc: 'Quando os dados de um lead mudam' },
+  { id: 'sem_contato', label: 'Sem Contato', icon: Clock, desc: 'Lead sem resposta por X dias' },
+  { id: 'avaliacao_concluida', label: 'Avaliação Concluída', icon: CheckCircle2, desc: 'Após finalizar uma avaliação' },
+  { id: 'proposta_aceita', label: 'Proposta Aceita', icon: FileText, desc: 'Quando cliente aceita uma proposta' },
+  { id: 'lead_quente', label: 'Lead Quente', icon: AlertTriangle, desc: 'Score de lead ultrapassa 80 pontos' },
+]
+
+/* ─── ACTION OPTIONS ─────────────────────────────────────────────── */
+const ACTION_OPTIONS = [
+  { id: 'whatsapp', label: 'Enviar WhatsApp Template', icon: MessageSquare, desc: 'Mensagem automática via WhatsApp' },
+  { id: 'email', label: 'Enviar Email', icon: Mail, desc: 'Email automático para o lead ou corretor' },
+  { id: 'criar_tarefa', label: 'Criar Tarefa', icon: ClipboardList, desc: 'Adiciona tarefa ao corretor responsável' },
+  { id: 'notificar_equipe', label: 'Notificar Equipe', icon: Bell, desc: 'Push/alerta para a equipe' },
+  { id: 'mover_kanban', label: 'Mover no Kanban', icon: Kanban, desc: 'Atualiza coluna do lead no Kanban' },
+  { id: 'atribuir_corretor', label: 'Atribuir Corretor', icon: UserCheck, desc: 'Distribui lead para corretor disponível' },
+  { id: 'adicionar_tag', label: 'Adicionar Tag', icon: Tag, desc: 'Etiqueta o lead automaticamente' },
+]
+
+/* ─── RULE CARD ──────────────────────────────────────────────────── */
+function RuleCard({
+  rule,
+  index,
+  onToggle,
+  onDelete,
+}: {
+  rule: AutomationRule
+  index: number
+  onToggle: (id: string) => void
+  onDelete: (id: string) => void
+}) {
+  const TrigIcon = rule.triggerIcon
+  const ActIcon = rule.actionIcon
+  const isActive = rule.status === 'active'
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        background: T.surface,
+        border: `1px solid ${isActive ? 'color-mix(in srgb, var(--imi-gold-500) 22%, var(--border-default))' : T.border}`,
+        borderRadius: T.radius.xl,
+        padding: '16px 20px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Top accent */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: 2,
+        background: isActive ? 'linear-gradient(90deg, var(--imi-gold-500), transparent)' : 'transparent',
+        transition: 'opacity 0.3s',
+      }} />
+
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+        {/* Trigger icon */}
+        <div style={{
+          width: 40, height: 40, borderRadius: T.radius.lg, flexShrink: 0,
+          background: isActive ? 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)' : T.elevated,
+          border: `1px solid ${isActive ? 'color-mix(in srgb, var(--imi-gold-500) 20%, transparent)' : T.border}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <TrigIcon size={17} style={{ color: isActive ? 'var(--imi-gold-500)' : T.textDim }} />
         </div>
-    )
-}
 
-const TRIGGER_ICONS: Record<string, any> = {
-    new_lead: Mail,
-    follow_up: MessageSquare,
-    schedule: Calendar,
-    team: Users,
-    report: FileText,
-    pipeline: TrendingUp,
-    manual: Zap,
-}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Name row + toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+              <span style={{ fontSize: 14, fontWeight: 600, color: T.text, fontFamily: T.font.sans }}>
+                {rule.name}
+              </span>
+              <span style={{
+                fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: T.radius.full,
+                background: T.elevated, color: T.textDim, letterSpacing: '0.04em',
+              }}>
+                {rule.category}
+              </span>
+              {/* Status badge */}
+              <span style={{
+                fontSize: 10, fontWeight: 700, padding: '2px 9px', borderRadius: T.radius.full,
+                background: isActive ? 'var(--success-bg)' : T.elevated,
+                color: isActive ? 'var(--success)' : T.textDim,
+                border: `1px solid ${isActive ? 'color-mix(in srgb, var(--success) 20%, transparent)' : T.border}`,
+              }}>
+                {isActive ? 'Ativa' : 'Pausada'}
+              </span>
+            </div>
 
-const TRIGGER_COLORS: Record<string, string> = {
-    new_lead: 'var(--bo-accent)',
-    follow_up: '#8B5CF6',
-    schedule: '#F59E0B',
-    team: '#10B981',
-    report: 'var(--bo-error)',
-    pipeline: 'var(--bo-accent)',
-    manual: '#6B7280',
-}
-
-export default function AutomacoesPage() {
-    const [workflows, setWorkflows] = useState<Workflow[]>([])
-    const [loading, setLoading] = useState(true)
-    const [searchTerm, setSearchTerm] = useState('')
-    const [showModal, setShowModal] = useState(false)
-    const [saving, setSaving] = useState(false)
-    const [form, setForm] = useState({
-        name: '',
-        description: '',
-        trigger_type: 'manual',
-    })
-
-    const fetchWorkflows = useCallback(async () => {
-        setLoading(true)
-        try {
-            const res = await fetch('/api/automacoes')
-            const json = await res.json()
-            // API returns { data: [...], pagination: {} }
-            setWorkflows(json.data || (Array.isArray(json) ? json : []))
-        } catch { setWorkflows([]) }
-        setLoading(false)
-    }, [])
-
-    useEffect(() => { fetchWorkflows() }, [fetchWorkflows])
-
-    const toggleActive = async (wf: Workflow) => {
-        const next = !wf.is_active
-        await fetch('/api/automacoes', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: wf.id, is_active: next }),
-        })
-        toast.success(next ? `"${wf.name}" ativada` : `"${wf.name}" pausada`)
-        fetchWorkflows()
-    }
-
-    const handleCreate = async () => {
-        if (!form.name) return
-        setSaving(true)
-        try {
-            const res = await fetch('/api/automacoes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: form.name,
-                    description: form.description || null,
-                    trigger_type: form.trigger_type,
-                    is_active: true,
-                }),
-            })
-            if (!res.ok) throw new Error('Erro ao criar automação')
-            setShowModal(false)
-            setForm({ name: '', description: '', trigger_type: 'manual' })
-            toast.success(`Automação "${form.name}" criada!`)
-            fetchWorkflows()
-        } catch (err: any) {
-            toast.error(err.message || 'Erro ao criar automação')
-        }
-        setSaving(false)
-    }
-
-    const handleDelete = async (id: string, name: string) => {
-        toast.warning(`Excluir "${name}"?`, {
-            action: {
-                label: 'Sim, excluir',
-                onClick: async () => {
-                    await fetch(`/api/automacoes?id=${id}`, { method: 'DELETE' })
-                    toast.success('Automação excluída')
-                    fetchWorkflows()
-                },
-            },
-            duration: 6000,
-        })
-    }
-
-    const getTimeAgo = (dateStr: string | null) => {
-        if (!dateStr) return 'Nunca'
-        const now = new Date()
-        const past = new Date(dateStr)
-        const diffMin = Math.floor((now.getTime() - past.getTime()) / 60000)
-        if (diffMin < 60) return `${diffMin}min atrás`
-        if (diffMin < 1440) return `${Math.floor(diffMin / 60)}h atrás`
-        return `${Math.floor(diffMin / 1440)}d atrás`
-    }
-
-    const filtered = workflows.filter(wf =>
-        wf.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (wf.description || '').toLowerCase().includes(searchTerm.toLowerCase())
-    )
-
-    const stats = {
-        total: workflows.length,
-        ativas: workflows.filter(w => w.is_active).length,
-        pausadas: workflows.filter(w => !w.is_active).length,
-        execucoesTotal: workflows.reduce((s, w) => s + (w.run_count || 0), 0),
-    }
-
-    const getIcon = (t: string) => TRIGGER_ICONS[t] || Zap
-    const getColor = (t: string) => TRIGGER_COLORS[t] || '#6B7280'
-
-    if (loading) return <AutomacoesSkeleton />
-
-    return (
-        <div data-tour="automations" className="space-y-5">
-
-            {/* ── Header ─────────────────────────────────── */}
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
-                <PageIntelHeader
-                    moduleLabel="IA & AUTOMAÇÕES"
-                    title="Automações"
-                    subtitle="Workflows automáticos · Inteligência artificial"
-                    live
-                    actions={
-                        <button
-                            onClick={() => setShowModal(true)}
-                            style={{
-                                display: 'flex', alignItems: 'center', gap: '6px',
-                                height: '40px', padding: '0 16px', borderRadius: '12px',
-                                fontSize: '13px', fontWeight: 600, color: '#fff',
-                                background: 'var(--bo-accent)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                cursor: 'pointer', whiteSpace: 'nowrap',
-                                boxShadow: '0 0 20px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
-                                transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
-                            }}
-                        >
-                            <Plus size={14} />
-                            <span className="hidden sm:inline">Nova Automação</span>
-                            <span className="sm:hidden">Nova</span>
-                        </button>
-                    }
-                />
-            </motion.div>
-
-            {/* ── KPI Strip ──────────────────────────────── */}
-            <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.06 }}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+            {/* Toggle switch */}
+            <button
+              onClick={() => onToggle(rule.id)}
+              title={isActive ? 'Pausar automação' : 'Ativar automação'}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}
             >
-                <KPICard label="Total"          value={stats.total}          accent="blue"  size="sm" icon={<Zap size={11} />} />
-                <KPICard label="Ativas"         value={stats.ativas}         accent="green" size="sm" icon={<Play size={11} />} />
-                <KPICard label="Pausadas"       value={stats.pausadas}       accent="warm"  size="sm" icon={<Pause size={11} />} />
-                <KPICard label="Execuções"      value={stats.execucoesTotal} accent="ai"    size="sm" icon={<TrendingUp size={11} />} />
-            </motion.div>
+              {isActive
+                ? <ToggleRight size={28} style={{ color: 'var(--imi-gold-500)' }} />
+                : <ToggleLeft size={28} style={{ color: T.textDim }} />
+              }
+            </button>
+          </div>
 
-            {/* ── Search ─────────────────────────────────── */}
-            <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.10 }}
-                className="relative"
-            >
-                <Search style={{ color: 'var(--bo-text-muted)' }} className="absolute left-3 top-1/2 -translate-y-1/2" size={16} />
-                <input
-                    type="text"
-                    placeholder="Buscar automações..."
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    className="w-full h-11 pl-10 pr-4 rounded-2xl"
-                    style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)', outline: 'none' }}
-                />
-            </motion.div>
+          {/* Trigger → Action */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5,
+              fontSize: 11, padding: '4px 10px', borderRadius: T.radius.full, fontWeight: 500,
+              background: 'color-mix(in srgb, var(--info) 10%, transparent)',
+              color: 'var(--info)',
+              border: '1px solid color-mix(in srgb, var(--info) 20%, transparent)',
+            }}>
+              <TrigIcon size={10} />
+              {rule.triggerLabel}
+            </div>
+            <ArrowRight size={12} style={{ color: T.textDim, flexShrink: 0 }} />
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5,
+              fontSize: 11, padding: '4px 10px', borderRadius: T.radius.full, fontWeight: 500,
+              background: isActive
+                ? 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)'
+                : T.elevated,
+              color: isActive ? 'var(--imi-gold-500)' : T.textDim,
+              border: `1px solid ${isActive ? 'color-mix(in srgb, var(--imi-gold-500) 20%, transparent)' : T.border}`,
+            }}>
+              <ActIcon size={10} />
+              {rule.actionLabel}
+            </div>
+          </div>
 
-            {/* ── List ───────────────────────────────────── */}
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14 }}>
-            {filtered.length === 0 ? (
-                    <div className="rounded-2xl p-12 text-center" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
-                        <Zap size={48} className="mx-auto mb-4" style={{ color: 'var(--bo-text-muted)', opacity: 0.3 }} />
-                        <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--bo-text)' }}>Nenhuma automação encontrada</h3>
-                        <p className="mb-6" style={{ color: 'var(--bo-text-muted)' }}>Crie um novo workflow para automatizar processos</p>
-                        <button onClick={() => setShowModal(true)}
-                            className="inline-flex items-center gap-2 h-11 px-6 text-white rounded-xl font-semibold" style={{ background: "var(--bo-accent)" }}>
-                            <Plus size={20} /> Nova Automação
-                        </button>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        {filtered.map(wf => {
-                            const Icon = getIcon(wf.trigger_type)
-                            const color = getColor(wf.trigger_type)
+          {/* Footer stats + actions */}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            paddingTop: 10, borderTop: `1px solid ${T.border}`,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontSize: 11, color: T.textDim, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Zap size={11} style={{ color: 'var(--imi-gold-500)' }} />
+                {rule.firedToday} disparos hoje
+              </span>
+              <span style={{ fontSize: 11, color: T.textDim }}>
+                {rule.firedTotal} total
+              </span>
+              <span style={{
+                fontSize: 11, fontWeight: 600,
+                color: rule.conversionRate > 40 ? 'var(--success)' : rule.conversionRate > 20 ? 'var(--warning)' : T.textDim,
+              }}>
+                {rule.conversionRate}% convertidos
+              </span>
+              <span style={{ fontSize: 11, color: T.textDim, display: 'flex', alignItems: 'center', gap: 3 }}>
+                <Clock size={10} /> {rule.lastFired}
+              </span>
+            </div>
 
-                            return (
-                                <div
-                                    key={wf.id}
-                                    className="rounded-2xl p-6 group"
-                                    style={{
-                                        background: 'var(--bo-surface)',
-                                        border: '1px solid var(--bo-border)',
-                                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
-                                        backgroundImage: `linear-gradient(135deg, ${color}08 0%, transparent 55%)`,
-                                        transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
-                                    }}
-                                >
-                                    {/* Header */}
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="flex items-start gap-3">
-                                            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                                                style={{ background: `${color}15`, boxShadow: `inset 0 1px 0 rgba(255,255,255,0.08)` }}>
-                                                <Icon size={22} style={{ color }} />
-                                            </div>
-                                            <div>
-                                                <h3 className="font-bold mb-1" style={{ color: 'var(--bo-text)' }}>{wf.name}</h3>
-                                                {wf.description && <p className="text-sm" style={{ color: 'var(--bo-text-muted)' }}>{wf.description}</p>}
-                                            </div>
-                                        </div>
-                                        <span
-                                            className="px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5"
-                                            style={(() => {
-                                                const sc = getStatusConfig(wf.is_active ? 'ativo' : 'morno')
-                                                return { background: `${sc.dot}1f`, color: sc.dot, border: `1px solid ${sc.dot}40` }
-                                            })()}
-                                        >
-                                            {wf.is_active ? <Play size={12} /> : <Pause size={12} />}
-                                            {wf.is_active ? 'Ativa' : 'Pausada'}
-                                        </span>
-                                    </div>
+            <div style={{ display: 'flex', gap: 4 }}>
+              <button
+                style={{
+                  background: T.elevated, border: `1px solid ${T.border}`,
+                  borderRadius: T.radius.sm, width: 28, height: 28,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', color: T.textMuted,
+                }}
+                title="Editar regra"
+              >
+                <Edit2 size={12} />
+              </button>
+              <button
+                style={{
+                  background: 'var(--error-bg)', border: '1px solid transparent',
+                  borderRadius: T.radius.sm, width: 28, height: 28,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', color: 'var(--error)',
+                }}
+                title="Excluir regra"
+                onClick={() => onDelete(rule.id)}
+              >
+                <Trash2 size={12} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
 
-                                    {/* Trigger */}
-                                    <div className="mb-4 p-3 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)' }}>
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <Zap size={12} style={{ color }} />
-                                            <span className="text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: 'var(--bo-text-muted)' }}>Trigger</span>
-                                        </div>
-                                        <p className="text-sm font-semibold" style={{ color: 'var(--bo-text)' }}>{wf.trigger_type}</p>
-                                    </div>
+/* ─── NOVA AUTOMAÇÃO MODAL ───────────────────────────────────────── */
+function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: () => void }) {
+  const [step, setStep] = useState<1 | 2 | 3>(1)
+  const [selectedTrigger, setSelectedTrigger] = useState<string | null>(null)
+  const [selectedAction, setSelectedAction] = useState<string | null>(null)
+  const [name, setName] = useState('')
+  const [delay, setDelay] = useState('immediately')
+  const [notes, setNotes] = useState('')
+  const [saving, setSaving] = useState(false)
 
-                                    {/* Config preview */}
-                                    {wf.config && typeof wf.config === 'object' && Object.keys(wf.config).length > 0 && (
-                                        <div className="mb-4 flex flex-wrap gap-2">
-                                            {(wf.config.actions || []).map((a: string, i: number) => (
-                                                <span key={i} className="px-2 py-1 text-xs font-semibold rounded-lg" style={{ background: T.infoBg, color: T.info, border: `1px solid ${T.info}33` }}>
-                                                    {a}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
+  const canNext1 = !!selectedTrigger
+  const canNext2 = !!selectedAction
+  const canSave = !!name.trim()
 
-                                    {/* Stats */}
-                                    <div className="grid grid-cols-2 gap-4 pt-4" style={{ borderTop: '1px solid var(--bo-border)' }}>
-                                        <div>
-                                            <p className="text-[10px] font-bold uppercase tracking-[0.1em] mb-1" style={{ color: 'var(--bo-text-muted)' }}>Execuções</p>
-                                            <p className="text-2xl font-bold" style={{ color: 'var(--bo-text)', fontVariantNumeric: 'tabular-nums' }}>{wf.run_count || 0}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-[10px] font-bold uppercase tracking-[0.1em] mb-1" style={{ color: 'var(--bo-text-muted)' }}>Última Exec.</p>
-                                            <p className="text-xs font-semibold" style={{ color: 'var(--bo-text)' }}>{getTimeAgo(wf.last_run_at)}</p>
-                                        </div>
-                                    </div>
+  const handleSave = async () => {
+    if (!canSave) return
+    setSaving(true)
+    await new Promise(r => setTimeout(r, 700))
+    setSaving(false)
+    onSave()
+  }
 
-                                    {/* Actions */}
-                                    <div className="flex items-center justify-end gap-2 pt-3 mt-3" style={{ borderTop: '1px solid var(--bo-border)' }}>
-                                        <button
-                                            onClick={() => toggleActive(wf)}
-                                            className="p-2 rounded-xl transition-all"
-                                            style={{ background: 'transparent', border: '1px solid transparent' }}
-                                            onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-elevated)')}
-                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                                            title={wf.is_active ? 'Pausar' : 'Ativar'}
-                                        >
-                                            {wf.is_active
-                                                ? <Pause size={16} style={{ color: T.warning }} />
-                                                : <Play size={16} style={{ color: T.success }} />}
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(wf.id, wf.name)}
-                                            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-2 rounded-xl transition-all"
-                                            style={{ background: 'transparent' }}
-                                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(248,113,113,0.1)')}
-                                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                                        >
-                                            <X size={16} style={{ color: T.error }} />
-                                        </button>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                )}
-            </motion.div>
+  const inputS: React.CSSProperties = {
+    width: '100%', height: 40, padding: '0 14px',
+    background: T.elevated, border: `1.5px solid ${T.border}`,
+    borderRadius: T.radius.md, color: T.text,
+    fontFamily: T.font.sans, fontSize: 14, outline: 'none',
+    boxSizing: 'border-box',
+  }
 
-            {/* Create Modal */}
-            {showModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="rounded-2xl w-full max-w-lg p-6 space-y-5" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-lg font-bold" style={{ color: 'var(--bo-text)' }}>Nova Automação</h2>
-                            <button onClick={() => setShowModal(false)} className="p-1.5 hover:bg-[var(--bo-hover)] rounded-lg">
-                                <X size={20} style={{ color: 'var(--bo-text-muted)' }} className="" />
-                            </button>
-                        </div>
+  const selectS: React.CSSProperties = {
+    ...inputS, cursor: 'pointer',
+  }
 
-                        <div className="space-y-4">
-                            <div>
-                                <label className="text-xs font-medium mb-1.5 block" style={{ color: 'var(--bo-text-muted)' }}>Nome *</label>
-                                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                                    className="w-full h-11 px-4 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }} placeholder="Nome da automação" />
-                            </div>
+  const stepLabels = ['Gatilho', 'Ação', 'Configurar']
 
-                            <div>
-                                <label className="text-xs font-medium mb-1.5 block" style={{ color: 'var(--bo-text-muted)' }}>Tipo de Trigger</label>
-                                <select value={form.trigger_type} onChange={e => setForm({ ...form, trigger_type: e.target.value })}
-                                    className="w-full h-11 px-4 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }}>
-                                    <option value="manual">Manual</option>
-                                    <option value="new_lead">Novo Lead</option>
-                                    <option value="follow_up">Follow-up</option>
-                                    <option value="schedule">Agendamento</option>
-                                    <option value="team">Equipe</option>
-                                    <option value="report">Relatório</option>
-                                    <option value="pipeline">Pipeline</option>
-                                </select>
-                            </div>
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9000,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '16px',
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      {/* Backdrop */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'rgba(0,0,0,0.55)',
+        backdropFilter: 'blur(4px)',
+      }} />
 
-                            <div>
-                                <label className="text-xs font-medium mb-1.5 block" style={{ color: 'var(--bo-text-muted)' }}>Descrição</label>
-                                <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
-                                    rows={3} className="w-full px-4 py-3 rounded-xl" style={{ background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', color: 'var(--bo-text)' }}
-                                    placeholder="Descreva o que esta automação faz" />
-                            </div>
-                        </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 12 }}
+        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          position: 'relative', zIndex: 1,
+          width: '100%', maxWidth: 640,
+          background: T.surface,
+          border: `1px solid ${T.border}`,
+          borderRadius: T.radius.xl,
+          boxShadow: 'var(--shadow-xl)',
+          overflow: 'hidden',
+          maxHeight: '90vh',
+          display: 'flex', flexDirection: 'column',
+        }}
+      >
+        {/* Modal header */}
+        <div style={{
+          padding: '18px 24px', borderBottom: `1px solid ${T.border}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexShrink: 0,
+        }}>
+          <div>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: T.text, fontFamily: T.font.sans, margin: 0 }}>
+              Nova Automação
+            </h2>
+            <p style={{ fontSize: 12, color: T.textMuted, margin: '2px 0 0' }}>
+              Configure um fluxo automático de ações
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: T.elevated, border: `1px solid ${T.border}`,
+              borderRadius: T.radius.md, width: 32, height: 32,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: T.textDim, flexShrink: 0,
+            }}
+          >
+            <X size={15} />
+          </button>
+        </div>
 
-                        <div className="flex gap-3 pt-2">
-                            <button onClick={() => setShowModal(false)}
-                                className="flex-1 h-11 rounded-xl font-medium transition" style={{ border: '1px solid var(--bo-border)', color: 'var(--bo-text-muted)' }}>
-                                Cancelar
-                            </button>
-                            <button onClick={handleCreate} disabled={saving || !form.name}
-                                className="flex-1 h-11 text-white rounded-xl font-semibold transition disabled:opacity-40"
-                                style={{ background: 'var(--bo-accent)', boxShadow: '0 0 16px rgba(59,130,246,0.25)' }}>
-                                {saving ? 'Salvando...' : 'Criar Automação'}
-                            </button>
-                        </div>
-                    </div>
+        {/* Step indicator */}
+        <div style={{
+          padding: '16px 24px', borderBottom: `1px solid ${T.border}`,
+          display: 'flex', alignItems: 'center', gap: 0,
+          flexShrink: 0,
+        }}>
+          {stepLabels.map((label, i) => {
+            const n = (i + 1) as 1 | 2 | 3
+            const done = step > n
+            const active = step === n
+            return (
+              <div key={n} style={{ display: 'flex', alignItems: 'center', flex: i < 2 ? 1 : undefined }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{
+                    width: 28, height: 28, borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 12, fontWeight: 700, flexShrink: 0,
+                    background: active ? 'var(--imi-gold-500)' : done ? 'var(--success-bg)' : T.elevated,
+                    color: active ? '#fff' : done ? 'var(--success)' : T.textDim,
+                    border: active ? '2px solid var(--imi-gold-500)' : done ? '2px solid color-mix(in srgb, var(--success) 30%, transparent)' : `2px solid ${T.border}`,
+                  }}>
+                    {done ? <CheckCircle2 size={14} /> : n}
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: active ? 600 : 400, color: active ? T.text : T.textDim, fontFamily: T.font.sans }}>
+                    {label}
+                  </span>
                 </div>
-            )}
+                {i < 2 && (
+                  <div style={{
+                    flex: 1, height: 1, margin: '0 10px',
+                    background: done ? 'var(--success)' : T.border,
+                  }} />
+                )}
+              </div>
+            )
+          })}
         </div>
-    )
+
+        {/* Step content */}
+        <div style={{ padding: '20px 24px', overflowY: 'auto', flex: 1 }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.18 }}
+            >
+              {/* STEP 1: Trigger grid */}
+              {step === 1 && (
+                <div>
+                  <p style={{ fontSize: 13, color: T.textMuted, marginBottom: 16 }}>
+                    Quando deve esta automação ser disparada?
+                  </p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+                    {TRIGGER_OPTIONS.map(opt => {
+                      const Icon = opt.icon
+                      const sel = selectedTrigger === opt.id
+                      return (
+                        <button
+                          key={opt.id}
+                          onClick={() => setSelectedTrigger(opt.id)}
+                          style={{
+                            background: sel ? 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)' : T.elevated,
+                            border: `1.5px solid ${sel ? 'var(--imi-gold-500)' : T.border}`,
+                            borderRadius: T.radius.lg,
+                            padding: '14px',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                            <Icon size={16} style={{ color: sel ? 'var(--imi-gold-500)' : T.textMuted, flexShrink: 0 }} />
+                            <span style={{ fontSize: 13, fontWeight: 600, color: sel ? 'var(--imi-gold-500)' : T.text, fontFamily: T.font.sans }}>
+                              {opt.label}
+                            </span>
+                          </div>
+                          <p style={{ fontSize: 11, color: T.textMuted, margin: 0, lineHeight: 1.4, paddingLeft: 26 }}>
+                            {opt.desc}
+                          </p>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2: Action grid */}
+              {step === 2 && (
+                <div>
+                  <p style={{ fontSize: 13, color: T.textMuted, marginBottom: 16 }}>
+                    O que deve acontecer quando o gatilho for acionado?
+                  </p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+                    {ACTION_OPTIONS.map(opt => {
+                      const Icon = opt.icon
+                      const sel = selectedAction === opt.id
+                      return (
+                        <button
+                          key={opt.id}
+                          onClick={() => setSelectedAction(opt.id)}
+                          style={{
+                            background: sel ? 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)' : T.elevated,
+                            border: `1.5px solid ${sel ? 'var(--imi-gold-500)' : T.border}`,
+                            borderRadius: T.radius.lg,
+                            padding: '14px',
+                            textAlign: 'left',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                            <Icon size={16} style={{ color: sel ? 'var(--imi-gold-500)' : T.textMuted, flexShrink: 0 }} />
+                            <span style={{ fontSize: 13, fontWeight: 600, color: sel ? 'var(--imi-gold-500)' : T.text, fontFamily: T.font.sans }}>
+                              {opt.label}
+                            </span>
+                          </div>
+                          <p style={{ fontSize: 11, color: T.textMuted, margin: 0, lineHeight: 1.4, paddingLeft: 26 }}>
+                            {opt.desc}
+                          </p>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: Configure */}
+              {step === 3 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                  <p style={{ fontSize: 13, color: T.textMuted, margin: 0 }}>
+                    Configure os detalhes da automação.
+                  </p>
+
+                  {/* Summary */}
+                  {selectedTrigger && selectedAction && (() => {
+                    const trig = TRIGGER_OPTIONS.find(o => o.id === selectedTrigger)
+                    const act = ACTION_OPTIONS.find(o => o.id === selectedAction)
+                    const TrigI = trig?.icon ?? Zap
+                    const ActI = act?.icon ?? Send
+                    return (
+                      <div style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '12px 14px', borderRadius: T.radius.lg,
+                        background: T.elevated, border: `1px solid ${T.border}`,
+                        flexWrap: 'wrap',
+                      }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--info)', fontWeight: 500 }}>
+                          <TrigI size={12} /> {trig?.label}
+                        </span>
+                        <ArrowRight size={12} style={{ color: T.textDim }} />
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--imi-gold-500)', fontWeight: 500 }}>
+                          <ActI size={12} /> {act?.label}
+                        </span>
+                      </div>
+                    )
+                  })()}
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                      Nome da Automação *
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      placeholder="Ex: Follow-up para leads inativos"
+                      style={inputS}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                      Atraso na Execução
+                    </label>
+                    <select value={delay} onChange={e => setDelay(e.target.value)} style={selectS}>
+                      <option value="immediately">Imediatamente</option>
+                      <option value="15min">Após 15 minutos</option>
+                      <option value="1h">Após 1 hora</option>
+                      <option value="3h">Após 3 horas</option>
+                      <option value="1d">Após 1 dia útil</option>
+                      <option value="3d">Após 3 dias úteis</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                      Observações (opcional)
+                    </label>
+                    <textarea
+                      value={notes}
+                      onChange={e => setNotes(e.target.value)}
+                      rows={3}
+                      placeholder="Descreva o objetivo desta automação..."
+                      style={{
+                        ...inputS, height: 'auto', padding: '10px 14px',
+                        resize: 'vertical', lineHeight: 1.5,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Modal footer */}
+        <div style={{
+          padding: '16px 24px', borderTop: `1px solid ${T.border}`,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          flexShrink: 0,
+        }}>
+          <Btn variant="outline" onClick={onClose}>
+            Cancelar
+          </Btn>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {step > 1 && (
+              <Btn variant="outline" onClick={() => setStep((step - 1) as 1 | 2 | 3)}>
+                Voltar
+              </Btn>
+            )}
+            {step < 3 ? (
+              <Btn
+                variant="primary"
+                disabled={step === 1 ? !canNext1 : !canNext2}
+                onClick={() => setStep((step + 1) as 1 | 2 | 3)}
+                icon={<ChevronRight size={14} />}
+              >
+                Próximo
+              </Btn>
+            ) : (
+              <Btn
+                variant="primary"
+                disabled={!canSave}
+                loading={saving}
+                onClick={handleSave}
+                icon={<Zap size={14} />}
+              >
+                Salvar Automação
+              </Btn>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
+
+/* ─── MAIN PAGE ──────────────────────────────────────────────────── */
+export default function AutomacoesPage() {
+  const [rules, setRules] = useState<AutomationRule[]>(MOCK_RULES)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  const activeCount = rules.filter(r => r.status === 'active').length
+  const todayFired = rules.reduce((acc, r) => acc + r.firedToday, 0)
+  const avgConversion = rules.length > 0
+    ? Math.round(rules.reduce((acc, r) => acc + r.conversionRate, 0) / rules.length)
+    : 0
+
+  const handleToggle = (id: string) => {
+    setRules(prev => prev.map(r =>
+      r.id === id ? { ...r, status: r.status === 'active' ? 'paused' : 'active' } : r
+    ))
+  }
+
+  const handleDelete = (id: string) => {
+    setRules(prev => prev.filter(r => r.id !== id))
+  }
+
+  const handleSaveNew = () => {
+    setModalOpen(false)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }
+
+  return (
+    <div className="space-y-6">
+      <PageIntelHeader
+        moduleLabel="CRM · AUTOMAÇÕES"
+        title="Automações"
+        subtitle="Fluxos inteligentes de nutrição, follow-up e distribuição de leads"
+        live
+        breadcrumbs={[{ label: 'Automações' }]}
+        actions={
+          <Btn
+            variant="primary"
+            icon={<Plus size={14} />}
+            onClick={() => setModalOpen(true)}
+          >
+            Nova Automação
+          </Btn>
+        }
+      />
+
+      {/* KPI row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+        <KPICard
+          label="Total Ativos"
+          value={activeCount}
+          sublabel={`de ${rules.length} regras`}
+          accent="gold"
+          icon={<Zap size={18} />}
+        />
+        <KPICard
+          label="Disparos Hoje"
+          value={todayFired}
+          sublabel="execuções nas últimas 24h"
+          accent="success"
+          icon={<Activity size={18} />}
+        />
+        <KPICard
+          label="Taxa de Conversão"
+          value={`${avgConversion}%`}
+          sublabel="média de todas as regras"
+          accent="info"
+          icon={<TrendingUp size={18} />}
+        />
+        <KPICard
+          label="Pausadas"
+          value={rules.length - activeCount}
+          sublabel="aguardando reativação"
+          accent="warning"
+          icon={<Settings2 size={18} />}
+        />
+      </div>
+
+      {/* Toast-style saved feedback */}
+      <AnimatePresence>
+        {saved && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '10px 16px', borderRadius: T.radius.lg,
+              background: 'var(--success-bg)',
+              border: '1px solid color-mix(in srgb, var(--success) 20%, transparent)',
+              color: 'var(--success)', fontSize: 13, fontWeight: 600,
+              fontFamily: T.font.sans,
+            }}
+          >
+            <CheckCircle2 size={15} /> Automação criada com sucesso!
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Rules list */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: T.text, fontFamily: T.font.sans, margin: 0 }}>
+            Regras de Automação
+          </h2>
+          <span style={{ fontSize: 12, color: T.textDim }}>
+            {activeCount} ativas · {rules.length - activeCount} pausadas
+          </span>
+        </div>
+
+        {rules.length === 0 ? (
+          <div style={{
+            background: T.surface, border: `1px solid ${T.border}`,
+            borderRadius: T.radius.xl, padding: '48px 24px', textAlign: 'center',
+          }}>
+            <Zap size={32} style={{ color: T.textDim, margin: '0 auto 12px' }} />
+            <p style={{ fontSize: 14, color: T.textMuted, margin: '0 0 16px' }}>
+              Nenhuma automação criada ainda
+            </p>
+            <Btn variant="primary" icon={<Plus size={14} />} onClick={() => setModalOpen(true)}>
+              Criar primeira automação
+            </Btn>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {rules.map((rule, i) => (
+              <RuleCard
+                key={rule.id}
+                rule={rule}
+                index={i}
+                onToggle={handleToggle}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Execution history strip */}
+      <div style={{
+        background: T.surface, border: `1px solid ${T.border}`,
+        borderRadius: T.radius.xl, overflow: 'hidden',
+      }}>
+        <div style={{ padding: '14px 20px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h3 style={{ fontSize: 13, fontWeight: 600, color: T.text, fontFamily: T.font.sans, margin: 0 }}>
+              Histórico de Execuções
+            </h3>
+            <p style={{ fontSize: 11, color: T.textMuted, margin: '2px 0 0' }}>Últimas execuções registradas</p>
+          </div>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                {['Horário', 'Regra', 'Entidade', 'Resultado'].map(h => (
+                  <th key={h} style={{
+                    padding: '10px 16px', textAlign: 'left',
+                    fontSize: 10, fontWeight: 700, color: T.textDim,
+                    textTransform: 'uppercase', letterSpacing: '0.06em',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { time: '14:32', rule: 'Follow-up Automático', entity: 'Lead #1043', ok: true },
+                { time: '13:17', rule: 'Novo Lead WhatsApp', entity: 'Lead #1044', ok: true },
+                { time: '11:45', rule: 'Lead Quente Prioritário', entity: 'Lead #1040', ok: true },
+                { time: '09:22', rule: 'Avaliação Vencendo', entity: 'Aval. #203', ok: true },
+                { time: '08:50', rule: 'Follow-up Automático', entity: 'Lead #1038', ok: false },
+              ].map((entry, i, arr) => (
+                <tr key={i} style={{ borderBottom: i < arr.length - 1 ? `1px solid ${T.border}` : 'none' }}>
+                  <td style={{ padding: '11px 16px', fontSize: 12, color: T.textDim, fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
+                    {entry.time}
+                  </td>
+                  <td style={{ padding: '11px 16px', fontSize: 12, fontWeight: 600, color: T.text, whiteSpace: 'nowrap' }}>
+                    {entry.rule}
+                  </td>
+                  <td style={{ padding: '11px 16px', fontSize: 12, color: T.textDim, whiteSpace: 'nowrap' }}>
+                    {entry.entity}
+                  </td>
+                  <td style={{ padding: '11px 16px' }}>
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: T.radius.full,
+                      background: entry.ok ? 'var(--success-bg)' : 'var(--error-bg)',
+                      color: entry.ok ? 'var(--success)' : 'var(--error)',
+                    }}>
+                      {entry.ok ? <CheckCircle2 size={11} /> : <XCircle size={11} />}
+                      {entry.ok ? 'Sucesso' : 'Erro'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Modal */}
+      <AnimatePresence>
+        {modalOpen && (
+          <NovaAutomacaoModal
+            onClose={() => setModalOpen(false)}
+            onSave={handleSaveNew}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  )
 }

@@ -55,7 +55,7 @@ export default function Error({
                     onClick={() => (window.location.href = '/backoffice/dashboard')}
                     className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-medium transition-all active:scale-95"
                     style={{
-                        background: 'var(--bo-elevated)',
+                        background: 'var(--bg-elevated)',
                         border: '1px solid var(--bo-border)',
                         color: 'var(--bo-text-muted)',
                     }}

@@ -11,7 +11,7 @@ import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs, StatusBadge } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 export default function UsuariosPage() {
   const router = useRouter()
@@ -23,24 +23,40 @@ export default function UsuariosPage() {
 
   useEffect(() => {
     async function loadUsers() {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .order('createdAt', { ascending: false })
-
-      if (!error && data) {
-        const formatted = data.map(u => ({
-          id: u.id,
-          name: u.name || 'Sem nome',
-          email: u.email,
-          phone: u.phone || '',
-          role: u.role || 'ADMIN',
-          avatar: (u.name || u.email || 'U').substring(0, 2).toUpperCase(),
-          status: u.active === false ? 'inativo' : 'ativo',
-          ultimoAcesso: u.updatedAt || u.createdAt,
-          criadoEm: u.createdAt,
-        }))
-        setUsuariosData(formatted)
+      try {
+        // Use the API route which tries profiles then falls back to users
+        const res = await fetch('/api/backoffice/users')
+        if (res.ok) {
+          const json = await res.json()
+          const users = json.users || []
+          const formatted = users.map((u: any) => ({
+            id: u.id,
+            name: u.name || 'Sem nome',
+            email: u.email,
+            phone: u.phone || '',
+            role: (u.role || 'ADMIN').toUpperCase(),
+            avatar: (u.name || u.email || 'U').substring(0, 2).toUpperCase(),
+            status: u.is_active === false || u.active === false ? 'inativo' : 'ativo',
+            ultimoAcesso: u.updated_at || u.updatedAt || u.created_at || u.createdAt,
+            criadoEm: u.created_at || u.createdAt,
+          }))
+          setUsuariosData(formatted)
+        } else {
+          // Fallback: direct query
+          const supabase = createClient()
+          const { data } = await supabase.from('users').select('*').order('createdAt', { ascending: false })
+          if (data) {
+            setUsuariosData(data.map((u: any) => ({
+              id: u.id, name: u.name || 'Sem nome', email: u.email, phone: u.phone || '',
+              role: (u.role || 'ADMIN').toUpperCase(),
+              avatar: (u.name || u.email || 'U').substring(0, 2).toUpperCase(),
+              status: u.active === false ? 'inativo' : 'ativo',
+              ultimoAcesso: u.updatedAt || u.createdAt, criadoEm: u.createdAt,
+            })))
+          }
+        }
+      } catch (err) {
+        console.error('Error loading users:', err)
       }
       setLoading(false)
     }
@@ -190,8 +206,8 @@ export default function UsuariosPage() {
                       <div className="flex items-center gap-4">
                         {/* Avatar */}
                         <div
-                          className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
-                          style={{ background: 'rgba(51,78,104,0.4)', color: '#8CA4B8' }}
+                          className="rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+                          style={{ width: 44, height: 44, minWidth: 44, minHeight: 44, aspectRatio: '1/1', background: 'rgba(51,78,104,0.4)', color: '#8CA4B8' }}
                         >
                           {user.avatar}
                         </div>

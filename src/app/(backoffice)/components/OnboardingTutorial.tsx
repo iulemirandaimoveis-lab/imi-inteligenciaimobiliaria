@@ -109,8 +109,8 @@ export default function OnboardingTutorial({
                             transition={{ type: 'spring', damping: 25, stiffness: 350 }}
                             className="fixed z-[9998] right-4 top-16 w-80 max-h-[80vh] overflow-y-auto rounded-2xl"
                             style={{
-                                background: 'var(--bo-surface)',
-                                border: '1px solid var(--bo-border)',
+                                background: 'var(--bg-surface)',
+                                border: '1px solid var(--border-default)',
                                 boxShadow: '0 16px 48px rgba(0,0,0,0.35)',
                             }}
                             onClick={e => e.stopPropagation()}
@@ -118,12 +118,12 @@ export default function OnboardingTutorial({
                             {/* Header */}
                             <div className="px-4 pt-4 pb-2">
                                 <div className="flex items-center gap-2 mb-1">
-                                    <GraduationCap size={14} style={{ color: 'var(--bo-accent)' }} />
-                                    <span className="text-xs font-bold" style={{ color: 'var(--bo-text)' }}>
+                                    <GraduationCap size={14} style={{ color: 'var(--imi-gold-500)' }} />
+                                    <span className="text-xs font-bold" style={{ color: 'var(--text-primary)' }}>
                                         Tours Guiados
                                     </span>
                                 </div>
-                                <p className="text-[10px] leading-relaxed" style={{ color: 'var(--bo-text-muted)' }}>
+                                <p className="text-[10px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                                     Selecione um módulo para ver dicas contextuais
                                 </p>
                             </div>
@@ -134,7 +134,7 @@ export default function OnboardingTutorial({
                                     <button
                                         onClick={handleStartCurrentModule}
                                         className="w-full h-10 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 transition-all hover:brightness-110"
-                                        style={{ background: 'var(--bo-accent)' }}
+                                        style={{ background: 'var(--imi-gold-500)' }}
                                     >
                                         <Sparkles size={12} />
                                         Tour desta página ({ctx.totalTips} dicas)
@@ -162,34 +162,34 @@ export default function OnboardingTutorial({
                                             <div
                                                 className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                                                 style={{
-                                                    background: isDone ? 'var(--bo-success)' : 'var(--bo-elevated)',
-                                                    color: isDone ? '#fff' : 'var(--bo-text-muted)',
+                                                    background: isDone ? 'var(--success)' : 'var(--bg-elevated)',
+                                                    color: isDone ? '#fff' : 'var(--text-secondary)',
                                                 }}
                                             >
                                                 <Icon size={14} />
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <span className="text-xs font-semibold block" style={{ color: 'var(--bo-text)' }}>
+                                                <span className="text-xs font-semibold block" style={{ color: 'var(--text-primary)' }}>
                                                     {mod.label}
                                                 </span>
                                                 {isDone && (
-                                                    <span className="text-[9px]" style={{ color: 'var(--bo-success)' }}>
+                                                    <span className="text-[9px]" style={{ color: 'var(--success)' }}>
                                                         Concluído
                                                     </span>
                                                 )}
                                             </div>
-                                            <ChevronRight size={12} style={{ color: 'var(--bo-text-muted)' }} />
+                                            <ChevronRight size={12} style={{ color: 'var(--text-secondary)' }} />
                                         </button>
                                     )
                                 })}
                             </div>
 
                             {/* Footer */}
-                            <div className="px-3 pb-3 pt-1" style={{ borderTop: '1px solid var(--bo-border)' }}>
+                            <div className="px-3 pb-3 pt-1" style={{ borderTop: '1px solid var(--border-default)' }}>
                                 <button
                                     onClick={handleResetAll}
                                     className="w-full h-9 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1.5 transition-colors hover:bg-white/5"
-                                    style={{ color: 'var(--bo-text-muted)' }}
+                                    style={{ color: 'var(--text-secondary)' }}
                                 >
                                     <RotateCcw size={10} />
                                     Resetar todos os tours
@@ -210,9 +210,9 @@ export function OnboardingTrigger({ onClick }: { onClick: () => void }) {
             onClick={onClick}
             className="flex items-center gap-2 h-9 px-3 rounded-lg text-xs font-semibold transition-all hover:brightness-110"
             style={{
-                background: 'var(--bo-elevated)',
-                border: '1px solid var(--bo-border)',
-                color: 'var(--bo-text-muted)',
+                background: 'var(--bg-elevated)',
+                border: '1px solid var(--border-default)',
+                color: 'var(--text-secondary)',
             }}
             title="Tours Guiados"
         >

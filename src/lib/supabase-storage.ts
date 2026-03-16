@@ -5,7 +5,11 @@
 import { createClient } from '@/lib/supabase/client'
 import React from 'react'
 
-const supabase = createClient()
+let _supabase: ReturnType<typeof createClient> | null = null
+function getSupabase() {
+    if (!_supabase) _supabase = createClient()
+    return _supabase
+}
 
 export interface UploadResult {
     url: string
@@ -56,7 +60,7 @@ export async function uploadFile(
         const filePath = `${folder}/${fileName}`
 
         // Upload
-        const { data, error } = await supabase.storage
+        const { data, error } = await getSupabase().storage
             .from(bucket)
             .upload(filePath, file, {
                 cacheControl: '3600',
@@ -68,7 +72,7 @@ export async function uploadFile(
         }
 
         // Obter URL pública
-        const { data: urlData } = supabase.storage
+        const { data: urlData } = getSupabase().storage
             .from(bucket)
             .getPublicUrl(filePath)
 
@@ -329,7 +333,7 @@ export async function deleteFile(
     bucket: string = 'media'
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        const { error } = await supabase.storage
+        const { error } = await getSupabase().storage
             .from(bucket)
             .remove([path])
 

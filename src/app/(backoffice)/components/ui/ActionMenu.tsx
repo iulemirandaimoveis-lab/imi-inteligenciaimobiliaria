@@ -83,10 +83,10 @@ export function ActionMenu({ items, className, size = 'md' }: ActionMenuProps) {
             minWidth: 180,
             background: T.elevated,
             border: `1px solid ${T.border}`,
-            borderRadius: T.radius.md,
-            boxShadow: T.shadowLg,
+            borderRadius: T.radius.lg,
+            boxShadow: T.shadowXl,
             zIndex: 50,
-            padding: '4px 0',
+            padding: 'var(--s2, 8px) 0',
             overflow: 'hidden',
           }}
         >
@@ -106,11 +106,12 @@ export function ActionMenu({ items, className, size = 'md' }: ActionMenuProps) {
                 alignItems: 'center',
                 gap: 8,
                 width: '100%',
-                padding: '8px 12px',
+                padding: '8px var(--s3, 12px)',
                 background: 'transparent',
                 border: 'none',
+                fontFamily: T.font.sans,
                 color: item.variant === 'danger' ? T.error : T.text,
-                fontSize: 14,
+                fontSize: 13,
                 lineHeight: '20px',
                 cursor: item.disabled ? 'default' : 'pointer',
                 opacity: item.disabled ? 0.5 : 1,
@@ -128,7 +129,7 @@ export function ActionMenu({ items, className, size = 'md' }: ActionMenuProps) {
               }}
             >
               {item.icon && (
-                <span style={{ display: 'flex', flexShrink: 0, width: 16, height: 16 }}>
+                <span style={{ display: 'flex', flexShrink: 0, width: 16, height: 16, color: T.textTertiary }}>
                   {item.icon}
                 </span>
               )}

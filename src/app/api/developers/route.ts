@@ -68,6 +68,19 @@ export async function POST(request: NextRequest) {
         instagram: body.instagram,
         linkedin: body.linkedin,
         is_active: true,
+        // Structured address fields (migration 052)
+        numero: body.numero,
+        complemento: body.complemento,
+        bairro: body.bairro,
+        cep: body.cep,
+        pais: body.pais,
+        inscricao_estadual: body.inscricaoEstadual,
+        inscricao_municipal: body.inscricaoMunicipal,
+        // Responsável (migration 052)
+        responsavel_nome: body.nomeResponsavel,
+        responsavel_cargo: body.cargoResponsavel,
+        responsavel_email: body.emailResponsavel,
+        responsavel_telefone: body.telefoneResponsavel,
     }
 
     const { data, error } = await supabase

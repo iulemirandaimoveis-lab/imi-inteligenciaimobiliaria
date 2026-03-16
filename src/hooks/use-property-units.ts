@@ -4,8 +4,6 @@ import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { useCallback } from 'react'
 
-const supabase = createClient()
-
 export interface PropertyUnit {
     id: string
     property_id: string
@@ -21,6 +19,7 @@ export interface PropertyUnit {
 }
 
 export function usePropertyUnits(propertyId: string) {
+    const supabase = createClient()
     const fetcher = useCallback(async () => {
         if (!propertyId) return []
         const { data, error } = await supabase
@@ -47,6 +46,7 @@ export function usePropertyUnits(propertyId: string) {
 }
 
 export async function createUnit(data: any) {
+    const supabase = createClient()
     const { data: unit, error } = await supabase
         .from('property_units')
         .insert(data)
@@ -57,6 +57,7 @@ export async function createUnit(data: any) {
 }
 
 export async function updateUnit(id: string, data: any) {
+    const supabase = createClient()
     const { data: unit, error } = await supabase
         .from('property_units')
         .update(data)
@@ -68,6 +69,7 @@ export async function updateUnit(id: string, data: any) {
 }
 
 export async function deleteUnit(id: string) {
+    const supabase = createClient()
     const { error } = await supabase
         .from('property_units')
         .delete()

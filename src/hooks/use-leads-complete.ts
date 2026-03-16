@@ -5,8 +5,6 @@ import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import useSWR, { mutate } from 'swr'
 
-const supabase = createClient()
-
 export interface Lead {
     id: string
     name: string
@@ -104,6 +102,7 @@ function mapLead(l: any): Lead {
 }
 
 export function useLeads(filters: LeadFilters = {}) {
+    const supabase = createClient()
     const { data, error, mutate: revalidate } = useSWR(
         ['leads', JSON.stringify(filters)],
         async () => {
@@ -155,17 +154,13 @@ export function useLead(id: string | null) {
     const { data, error, mutate: revalidate } = useSWR(
         id ? ['lead', id] : null,
         async () => {
-            const { data, error } = await supabase
-                .from('leads')
-                .select(`
-                  ${LEAD_SELECT},
-                  interactions:lead_interactions(id, interaction_type, title, description, outcome, created_at)
-                `)
-                .eq('id', id!)
-                .single()
-
-            if (error) throw error
-            return mapLead(data)
+            const res = await fetch(`/api/leads/${id}`)
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({ error: 'Erro ao buscar lead' }))
+                throw new Error(err.error || `HTTP ${res.status}`)
+            }
+            const lead = await res.json()
+            return mapLead(lead)
         }
     )
 
@@ -178,6 +173,7 @@ export function useLead(id: string | null) {
 }
 
 export function useLeadActions() {
+    const supabase = createClient()
     const [loading, setLoading] = useState(false)
 
     const createLead = useCallback(async (data: Partial<Lead>) => {
@@ -220,17 +216,19 @@ export function useLeadActions() {
     const updateLead = useCallback(async (id: string, data: Partial<Lead>) => {
         setLoading(true)
         try {
-            const { data: result, error } = await supabase
-                .from('leads')
-                .update({ ...data, updated_at: new Date().toISOString() })
-                .eq('id', id)
-                .select()
-                .single()
-
-            if (error) throw error
+            const res = await fetch(`/api/leads/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            })
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({ error: 'Erro ao atualizar lead' }))
+                throw new Error(err.error || `HTTP ${res.status}`)
+            }
+            const result = await res.json()
             mutate(['lead', id])
             mutate((key) => Array.isArray(key) && key[0] === 'leads')
-            return mapLead(result)
+            return result.lead ? mapLead(result.lead) : null
         } finally {
             setLoading(false)
         }
@@ -275,6 +273,7 @@ export function useLeadActions() {
 }
 
 export function useLeadStats() {
+    const supabase = createClient()
     const { data, error } = useSWR('lead-stats', async () => {
         const { data, error } = await supabase
             .from('leads')
@@ -324,6 +323,7 @@ export function useLeadStats() {
 }
 
 export function useBulkLeadActions() {
+    const supabase = createClient()
     const [loading, setLoading] = useState(false)
 
     const bulkUpdateStatus = useCallback(async (ids: string[], status: string) => {

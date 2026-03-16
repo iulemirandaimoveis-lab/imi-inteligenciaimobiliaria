@@ -43,7 +43,7 @@ function LeadsSkeleton() {
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
       <div style={{ height: 40, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.5, width: '60%' }} />
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[0,1,2,3].map(i => (
           <div key={i} style={{ height: 60, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.4 }} />
         ))}
@@ -166,7 +166,7 @@ export default function LeadsPage() {
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '36px', padding: '0 14px', borderRadius: '10px',
-                  fontSize: '12px', fontWeight: 700, color: '#fff',
+                  fontSize: '12px', fontWeight: 700, color: 'var(--text-inverse)',
                   background: 'var(--bo-accent)',
                   boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                   border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
@@ -225,18 +225,18 @@ export default function LeadsPage() {
         <div
           style={{
             position: 'relative',
-            border: `1px solid ${searchFocused ? 'var(--imi-blue-border)' : 'var(--bo-border)'}`,
+            border: `1px solid ${searchFocused ? 'rgba(184,148,58,0.25)' : 'var(--bo-border)'}`,
             borderRadius: '12px',
             background: 'var(--bo-card)',
             transition: 'border-color 0.18s',
-            boxShadow: searchFocused ? '0 0 0 3px var(--imi-blue-dim)' : 'none',
+            boxShadow: searchFocused ? '0 0 0 3px rgba(184,148,58,0.10)' : 'none',
           }}
         >
           <Search
             size={15}
             style={{
               position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
-              color: searchFocused ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)',
+              color: searchFocused ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)',
               transition: 'color 0.18s',
             }}
           />
@@ -310,7 +310,7 @@ export default function LeadsPage() {
                 <button
                   onClick={() => router.push('/backoffice/leads/novo')}
                   style={{
-                    fontSize: '12px', fontWeight: 700, color: '#fff',
+                    fontSize: '12px', fontWeight: 700, color: 'var(--text-inverse)',
                     background: 'var(--bo-accent)',
                     border: 'none', padding: '8px 18px', borderRadius: '4px', cursor: 'pointer',
                   }}

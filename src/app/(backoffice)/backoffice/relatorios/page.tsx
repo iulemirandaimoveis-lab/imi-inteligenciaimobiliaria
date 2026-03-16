@@ -17,7 +17,7 @@ import { createClient } from '@/lib/supabase/client'
 import { PageIntelHeader, FilterTabs } from '../../components/ui'
 import { T } from '../../lib/theme'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 const FUNNEL_STAGES = [
     { key: 'new', label: 'Novos', color: 'var(--bo-accent)' },
@@ -30,6 +30,7 @@ const FUNNEL_STAGES = [
 
 function useLeadsFunnel() {
     return useSWR('leads-funnel', async () => {
+        const supabase = createClient()
         const { data, error } = await supabase.from('leads').select('status')
         if (error) throw error
         const counts: Record<string, number> = {}
@@ -40,6 +41,7 @@ function useLeadsFunnel() {
 
 function useLeadsTemporal() {
     return useSWR('leads-temporal', async () => {
+        const supabase = createClient()
         const since = new Date()
         since.setDate(since.getDate() - 77) // 11 weeks
         const { data, error } = await supabase
@@ -61,6 +63,7 @@ function useLeadsTemporal() {
 
 function useLeadsByDev() {
     return useSWR('leads-by-dev', async () => {
+        const supabase = createClient()
         const { data, error } = await (supabase as any)
             .from('leads')
             .select('development:developments(name)')

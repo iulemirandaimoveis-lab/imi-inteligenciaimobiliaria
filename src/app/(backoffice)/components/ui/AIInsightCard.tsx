@@ -1,16 +1,19 @@
 'use client'
 
+/**
+ * AIInsightCard — IMI Design System v3
+ * DS3 pattern: elevated insight card with variant accent, glow blob, action button
+ */
+
 import React from 'react'
 
 interface AIInsightCardProps {
   title?: string
   children: React.ReactNode
-  /** Optional action button */
   action?: {
     label: string
     onClick: () => void
   }
-  /** Next suggested step */
   nextStep?: string
   variant?: 'gold' | 'blue' | 'green'
   className?: string
@@ -18,29 +21,29 @@ interface AIInsightCardProps {
 
 const VARIANT_STYLES = {
   gold: {
-    border: 'rgba(234,179,8,0.30)',
-    bg: 'rgba(234,179,8,0.06)',
-    iconColor: 'var(--imi-ai-gold)',
-    labelColor: 'var(--imi-ai-gold)',
-    btnBg: 'var(--imi-ai-gold)',
-    btnShadow: '0 2px 10px rgba(212,169,41,0.35)',
-    btnColor: '#1a1200',
+    border: 'rgba(184,148,58,0.30)',
+    bg: 'rgba(184,148,58,0.06)',
+    iconColor: 'var(--imi-gold-500)',
+    labelColor: 'var(--imi-gold-500)',
+    btnBg: 'var(--imi-gold-500)',
+    btnShadow: '0 2px 10px rgba(184,148,58,0.35)',
+    btnColor: '#FFFFFF',
   },
   blue: {
-    border: 'var(--imi-blue-border)',
-    bg: 'var(--imi-blue-dim)',
-    iconColor: 'var(--imi-blue-bright)',
-    labelColor: 'var(--imi-blue-bright)',
-    btnBg: 'var(--imi-blue-bright)',
-    btnShadow: '0 2px 10px rgba(72,101,129,0.35)',
-    btnColor: '#fff',
+    border: 'rgba(61,81,138,0.30)',
+    bg: 'rgba(61,81,138,0.08)',
+    iconColor: 'var(--imi-navy-300)',
+    labelColor: 'var(--imi-navy-300)',
+    btnBg: 'var(--imi-navy-400)',
+    btnShadow: '0 2px 10px rgba(61,81,138,0.35)',
+    btnColor: '#FFFFFF',
   },
   green: {
     border: 'rgba(74,222,128,0.25)',
     bg: 'rgba(74,222,128,0.07)',
-    iconColor: 'var(--imi-ai-green)',
-    labelColor: 'var(--imi-ai-green)',
-    btnBg: 'var(--imi-ai-green)',
+    iconColor: 'var(--success)',
+    labelColor: 'var(--success)',
+    btnBg: 'var(--success)',
     btnShadow: '0 2px 10px rgba(74,222,128,0.30)',
     btnColor: '#001a0a',
   },
@@ -58,10 +61,11 @@ export function AIInsightCard({
 
   return (
     <div
-      className={`rounded-2xl ${className}`}
+      className={className}
       style={{
-        background: 'var(--bo-card)',
+        background: 'var(--bg-surface)',
         border: `1px solid ${v.border}`,
+        borderRadius: 'var(--r-xl, 16px)',
         padding: '14px 16px',
         position: 'relative',
         overflow: 'hidden',
@@ -87,6 +91,7 @@ export function AIInsightCard({
         <span style={{ color: v.iconColor, fontSize: '14px' }}>✦</span>
         <span
           style={{
+            fontFamily: 'var(--font-sans)',
             fontSize: '12px',
             fontWeight: 700,
             color: v.labelColor,
@@ -100,8 +105,9 @@ export function AIInsightCard({
       {/* Content */}
       <div
         style={{
+          fontFamily: 'var(--font-sans)',
           fontSize: '12px',
-          color: 'var(--bo-text-muted)',
+          color: 'var(--text-secondary)',
           lineHeight: 1.6,
           position: 'relative',
         }}
@@ -114,15 +120,16 @@ export function AIInsightCard({
         <div
           className="flex items-center justify-between mt-3"
           style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '10px',
+            background: 'var(--bg-muted)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--r-lg, 12px)',
             padding: '8px 12px',
           }}
         >
-          <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)', fontWeight: 500 }}>
+          <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>
             <span
               style={{
+                fontFamily: 'var(--font-mono)',
                 fontSize: '9px',
                 fontWeight: 700,
                 color: v.labelColor,
@@ -136,7 +143,7 @@ export function AIInsightCard({
             </span>
             {nextStep}
           </span>
-          <span style={{ color: 'var(--bo-text-muted)', fontSize: '16px', marginLeft: '8px' }}>›</span>
+          <span style={{ color: 'var(--text-tertiary)', fontSize: '16px', marginLeft: '8px' }}>›</span>
         </div>
       )}
 
@@ -146,15 +153,16 @@ export function AIInsightCard({
           <button
             onClick={action.onClick}
             style={{
+              fontFamily: 'var(--font-sans)',
               padding: '7px 20px',
-              borderRadius: '8px',
+              borderRadius: 'var(--r-md, 8px)',
               fontSize: '11px',
               fontWeight: 700,
               color: v.btnColor,
               background: v.btnBg,
               border: 'none',
               cursor: 'pointer',
-              transition: 'filter 0.15s, transform 0.1s',
+              transition: 'all var(--dur-2, 200ms) var(--ease)',
               boxShadow: v.btnShadow,
               display: 'inline-flex',
               alignItems: 'center',

@@ -1,5 +1,10 @@
 'use client'
 
+/**
+ * UploadProgressPanel — IMI Design System v3
+ * DS3 pattern: animated upload status list with progress bar
+ */
+
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle, XCircle, Loader2, ImageIcon, RotateCw } from 'lucide-react'
 import type { ImageUploadFileStatus } from '@/lib/supabase-storage'
@@ -11,12 +16,12 @@ interface UploadProgressPanelProps {
 }
 
 const statusConfig = {
-    pending:     { icon: ImageIcon,    color: 'var(--bo-text-muted)', label: 'Aguardando' },
-    compressing: { icon: Loader2,      color: 'var(--bo-info)',       label: 'Comprimindo' },
-    uploading:   { icon: Loader2,      color: 'var(--bo-accent)',     label: 'Enviando' },
-    done:        { icon: CheckCircle,  color: 'var(--bo-success)',    label: 'Concluído' },
-    error:       { icon: XCircle,      color: 'var(--bo-error)',      label: 'Erro' },
-    retrying:    { icon: RotateCw,     color: 'var(--bo-warning)',    label: 'Tentando novamente' },
+    pending:     { icon: ImageIcon,    color: 'var(--text-tertiary)',  label: 'Aguardando' },
+    compressing: { icon: Loader2,      color: 'var(--info)',           label: 'Comprimindo' },
+    uploading:   { icon: Loader2,      color: 'var(--imi-gold-500)',   label: 'Enviando' },
+    done:        { icon: CheckCircle,  color: 'var(--success)',        label: 'Concluído' },
+    error:       { icon: XCircle,      color: 'var(--error)',          label: 'Erro' },
+    retrying:    { icon: RotateCw,     color: 'var(--warning)',        label: 'Tentando novamente' },
 }
 
 export default function UploadProgressPanel({ files, total, visible }: UploadProgressPanelProps) {
@@ -33,22 +38,23 @@ export default function UploadProgressPanel({ files, total, visible }: UploadPro
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="rounded-2xl overflow-hidden"
                     style={{
-                        background: 'var(--bo-surface)',
-                        border: '1px solid var(--bo-border)',
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border-default)',
+                        borderRadius: 'var(--r-xl, 16px)',
+                        overflow: 'hidden',
                     }}
                 >
                     {/* Header with overall progress */}
                     <div className="px-4 py-3 flex items-center justify-between"
-                        style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                        style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                         <div className="flex items-center gap-2">
                             <Loader2
                                 size={14}
                                 className={done < total ? 'animate-spin' : ''}
-                                style={{ color: done < total ? 'var(--bo-accent)' : 'var(--bo-success)' }}
+                                style={{ color: done < total ? 'var(--imi-gold-500)' : 'var(--success)' }}
                             />
-                            <span className="text-xs font-bold" style={{ color: 'var(--bo-text)' }}>
+                            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
                                 {done < total
                                     ? `Enviando ${done} de ${total} fotos...`
                                     : errors > 0
@@ -57,28 +63,28 @@ export default function UploadProgressPanel({ files, total, visible }: UploadPro
                                 }
                             </span>
                         </div>
-                        <span className="text-[10px] font-bold" style={{ color: 'var(--bo-text-muted)' }}>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)' }}>
                             {overallPercent}%
                         </span>
                     </div>
 
                     {/* Overall progress bar */}
-                    <div className="h-1 w-full" style={{ background: 'var(--bo-elevated)' }}>
+                    <div className="h-1 w-full" style={{ background: 'var(--bg-muted)' }}>
                         <motion.div
                             className="h-full"
                             style={{
                                 background: errors > 0 && done === total
-                                    ? 'var(--bo-warning)'
+                                    ? 'var(--warning)'
                                     : done === total
-                                        ? 'var(--bo-success)'
-                                        : 'var(--bo-accent)',
+                                        ? 'var(--success)'
+                                        : 'var(--imi-gold-500)',
                             }}
                             animate={{ width: `${overallPercent}%` }}
                             transition={{ duration: 0.3 }}
                         />
                     </div>
 
-                    {/* File list (max height scrollable) */}
+                    {/* File list */}
                     <div className="max-h-48 overflow-y-auto px-3 py-2 space-y-1">
                         {files.map((file, i) => {
                             const cfg = statusConfig[file.status]
@@ -99,14 +105,27 @@ export default function UploadProgressPanel({ files, total, visible }: UploadPro
                                         style={{ color: cfg.color, flexShrink: 0 }}
                                     />
                                     <span
-                                        className="text-[10px] truncate flex-1 min-w-0"
-                                        style={{ color: file.status === 'error' ? 'var(--bo-error)' : 'var(--bo-text-muted)' }}
+                                        style={{
+                                            fontFamily: 'var(--font-sans)',
+                                            fontSize: 10,
+                                            color: file.status === 'error' ? 'var(--error)' : 'var(--text-secondary)',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
+                                            flex: 1,
+                                            minWidth: 0,
+                                        }}
                                     >
                                         {file.fileName}
                                     </span>
                                     <span
-                                        className="text-[9px] font-medium flex-shrink-0"
-                                        style={{ color: cfg.color }}
+                                        style={{
+                                            fontFamily: 'var(--font-mono)',
+                                            fontSize: 9,
+                                            fontWeight: 500,
+                                            color: cfg.color,
+                                            flexShrink: 0,
+                                        }}
                                     >
                                         {cfg.label}
                                     </span>

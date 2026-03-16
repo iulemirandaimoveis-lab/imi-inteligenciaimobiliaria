@@ -4,12 +4,20 @@ import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
 
 // Use direct supabase-js client for public data fetching
 // This avoids issues with cookies and server context in Next.js 14
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
-const supabase = createClient(supabaseUrl, supabaseKey)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _supabase: ReturnType<typeof createClient<any>> | null = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getSupabase(): ReturnType<typeof createClient<any>> {
+    if (!_supabase) {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'build-placeholder'
+        _supabase = createClient(supabaseUrl, supabaseKey)
+    }
+    return _supabase!
+}
 
 export async function getDevelopments(): Promise<Development[]> {
-    const { data: devs, error } = await supabase
+    const { data: devs, error } = await getSupabase()
         .from('developments')
         .select('*')
         .order('display_order', { ascending: true })
@@ -23,7 +31,7 @@ export async function getDevelopments(): Promise<Development[]> {
 }
 
 export async function getDevelopmentBySlug(slug: string): Promise<Development | null> {
-    const { data: dev, error } = await supabase
+    const { data: dev, error } = await getSupabase()
         .from('developments')
         .select('*')
         .eq('slug', slug)
@@ -99,7 +107,7 @@ export interface BlogPost {
 }
 
 export async function getLatestPosts(limit = 6): Promise<BlogPost[]> {
-    const { data: posts, error } = await supabase
+    const { data: posts, error } = await getSupabase()
         .from('content_publications')
         .select(`
             id,
@@ -135,7 +143,7 @@ export async function getLatestPosts(limit = 6): Promise<BlogPost[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-    const { data: post, error } = await supabase
+    const { data: post, error } = await getSupabase()
         .from('content_publications')
         .select(`
             id,

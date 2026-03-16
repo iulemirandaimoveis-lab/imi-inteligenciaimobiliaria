@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#131A35"/>
+      <stop offset="100%" stop-color="#0B1120"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with rounded corners -->
+  <rect width="32" height="32" rx="7" fill="url(#bg)"/>
+  <!-- Serif capital I — Libre Baskerville style -->
+  <!-- Top serif bar -->
+  <rect x="8" y="7.5" width="16" height="2.2" rx="0.4" fill="white"/>
+  <!-- Vertical stem -->
+  <rect x="13" y="9.7" width="6" height="12.4" fill="white"/>
+  <!-- Bottom serif bar -->
+  <rect x="8" y="22.1" width="16" height="2.4" rx="0.4" fill="white"/>
+</svg>

@@ -18,6 +18,8 @@ import { PageIntelHeader, KPICard, FilterTabs, type FilterTab } from '../../comp
 import { T } from '../../lib/theme'
 import { getStatusConfig } from '../../lib/constants'
 
+export const dynamic = 'force-dynamic'
+
 /* ─── ROLE CONFIG ──────────────────────────────────────────────── */
 const ROLE_CFG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
     broker:         { label: 'Corretor',  icon: User,   color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
@@ -155,7 +157,7 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                                         style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                                     >
                                         <Link
-                                            href={`/backoffice/settings/corretores`}
+                                            href={`/backoffice/settings/corretores/${broker.id}/editar`}
                                             onClick={() => setMenuOpen(false)}
                                             className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium hover:bg-[var(--bo-hover)] transition-colors"
                                             style={{ color: T.text }}

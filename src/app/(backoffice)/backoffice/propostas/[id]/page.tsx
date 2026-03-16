@@ -204,7 +204,7 @@ export default function PropostaDetailPage() {
 
           <div style={{ height: 16, width: 1, background: T.border }} />
 
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: T.text, fontWeight: 500, flex: 1 }}>
+          <h1 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 20, color: T.text, fontWeight: 500, flex: 1 }}>
             Proposta — {proposal.buyer_name}
           </h1>
 
@@ -235,7 +235,7 @@ export default function PropostaDetailPage() {
             <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, whiteSpace: 'nowrap' }}>
               Link do Cliente
             </div>
-            <div style={{ flex: 1, fontSize: 12, color: T.textMuted, fontFamily: "'DM Mono', monospace", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ flex: 1, fontSize: 12, color: T.textMuted, fontFamily: "'JetBrains Mono', monospace", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {publicLink}
             </div>
             <button

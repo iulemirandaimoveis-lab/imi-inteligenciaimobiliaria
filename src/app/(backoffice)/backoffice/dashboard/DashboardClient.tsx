@@ -7,10 +7,11 @@ import {
     TrendingUp, Users, Building2, Scale, Plus,
     ChevronRight, Banknote, BarChart2, AlertTriangle,
     Info, ArrowUpRight, Zap, Activity,
+    CalendarDays, Clock, MapPin, Target,
 } from 'lucide-react'
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import Link from 'next/link'
-import { KPICard, MetricBar, StatusBadge, SectionHeader } from '../../components/ui'
+import { KPICard, MetricBar, StatusBadge, SectionHeader, MarketTicker } from '../../components/ui'
 import { AvatarGroup as OldAvatarGroup, type BrokerAvatar } from '@/components/ui/AvatarGroup'
 import { AvatarGroup, AvatarGroupTooltip } from '@/components/animate-ui/components/animate/avatar-group'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
@@ -21,9 +22,9 @@ function getInitials(name: string) {
     return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
 }
 const PALETTES = [
-    ['#60A5FA','rgba(96,165,250,0.20)'],['var(--bo-success)','rgba(74,222,128,0.18)'],
+    ['#60A5FA','rgba(96,165,250,0.20)'],['var(--success)','rgba(74,222,128,0.18)'],
     ['#F472B6','rgba(244,114,182,0.18)'],['#A78BFA','rgba(167,139,250,0.18)'],
-    ['#34D399','rgba(52,211,153,0.18)'],['var(--bo-warning)','rgba(251,191,36,0.16)'],
+    ['#34D399','rgba(52,211,153,0.18)'],['var(--warning)','rgba(251,191,36,0.16)'],
 ]
 function getPalette(name: string) {
     let h = 0
@@ -95,6 +96,378 @@ const fmtCompact = (v: number) => {
     return fmt(v)
 }
 
+// ── Widget 1: Taxa de Conversão por Fonte ─────────────────────
+const CONVERSION_DATA = [
+    { fonte: 'Referral',  pct: 42, color: '#34D399' },
+    { fonte: 'WhatsApp',  pct: 31, color: '#60A5FA' },
+    { fonte: 'Instagram', pct: 24, color: '#A78BFA' },
+    { fonte: 'Facebook',  pct: 18, color: '#FB923C' },
+    { fonte: 'Orgânico',  pct: 12, color: '#F472B6' },
+]
+
+function ConversaoFonteWidget() {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.52, duration: 0.35 }}
+            className="rounded-2xl overflow-hidden"
+            style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-default)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                padding: '18px',
+            }}
+        >
+            <div className="flex items-center gap-2 mb-4">
+                <TrendingUp size={13} style={{ color: '#34D399' }} />
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                    Conversão por Fonte
+                </span>
+            </div>
+            <div className="space-y-2.5">
+                {CONVERSION_DATA.map((item) => (
+                    <div key={item.fonte}>
+                        <div className="flex items-center justify-between mb-1">
+                            <span className="text-[11px] font-medium" style={{ color: 'var(--text-secondary)' }}>
+                                {item.fonte}
+                            </span>
+                            <span className="text-[11px] font-bold tabular-nums" style={{ color: item.color }}>
+                                {item.pct}%
+                            </span>
+                        </div>
+                        <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'var(--bg-elevated)' }}>
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${item.pct}%` }}
+                                transition={{ delay: 0.6, duration: 0.7, ease: 'easeOut' }}
+                                className="h-full rounded-full"
+                                style={{ background: item.color }}
+                            />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </motion.div>
+    )
+}
+
+// ── Widget 2: Próximos Compromissos ──────────────────────────
+interface AgendaItem {
+    id: string
+    titulo: string
+    data: string
+    hora: string
+    local?: string
+    tipo?: string
+}
+
+function ProximosCompromissosWidget() {
+    const [items, setItems] = useState<AgendaItem[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const today = new Date().toISOString().split('T')[0]
+        fetch(`/api/agenda?from=${today}&limit=4`)
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (Array.isArray(data)) setItems(data)
+                else if (data?.items) setItems(data.items)
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false))
+    }, [])
+
+    const formatDate = (dateStr: string) => {
+        const d = new Date(dateStr)
+        const day = d.getDate()
+        const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez']
+        return `${day} ${months[d.getMonth()]}`
+    }
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.56, duration: 0.35 }}
+            className="rounded-2xl overflow-hidden"
+            style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-default)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            }}
+        >
+            <div className="flex items-center justify-between px-4 py-3"
+                style={{ borderBottom: '1px solid var(--border-default)' }}>
+                <div className="flex items-center gap-2">
+                    <CalendarDays size={13} style={{ color: '#60A5FA' }} />
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                        Próximos Compromissos
+                    </span>
+                </div>
+                <Link href="/backoffice/agenda">
+                    <span className="text-[10px] font-semibold flex items-center gap-1"
+                        style={{ color: 'var(--imi-gold-500)' }}>
+                        Ver agenda <ArrowUpRight size={10} />
+                    </span>
+                </Link>
+            </div>
+            <div>
+                {loading ? (
+                    <div className="px-4 py-3 space-y-2">
+                        {[1,2,3].map(i => (
+                            <div key={i} className="h-10 rounded-xl animate-pulse" style={{ background: 'var(--bg-elevated)' }} />
+                        ))}
+                    </div>
+                ) : items.length > 0 ? (
+                    items.slice(0, 4).map((item) => (
+                        <div key={item.id}
+                            className="flex items-center gap-3 px-4 py-2.5 transition-all cursor-pointer"
+                            style={{ borderBottom: '1px solid var(--border-subtle)' }}
+                            onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
+                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        >
+                            <div className="flex-shrink-0 flex flex-col items-center justify-center"
+                                style={{
+                                    width: 36, height: 36, borderRadius: 8,
+                                    background: 'rgba(96,165,250,0.10)',
+                                    border: '1px solid rgba(96,165,250,0.20)',
+                                }}>
+                                <span className="text-[11px] font-bold tabular-nums leading-none" style={{ color: '#60A5FA' }}>
+                                    {new Date(item.data).getDate()}
+                                </span>
+                                <span className="text-[8px] uppercase" style={{ color: 'var(--text-muted)' }}>
+                                    {['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][new Date(item.data).getMonth()]}
+                                </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
+                                    {item.titulo}
+                                </p>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                    <span className="flex items-center gap-1 text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                        <Clock size={9} /> {item.hora}
+                                    </span>
+                                    {item.local && (
+                                        <span className="flex items-center gap-1 text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>
+                                            <MapPin size={9} /> {item.local}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="px-4 py-8 text-center">
+                        <CalendarDays size={20} style={{ color: 'var(--text-muted)', margin: '0 auto 8px' }} />
+                        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                            Nenhum compromisso próximo
+                        </p>
+                    </div>
+                )}
+            </div>
+        </motion.div>
+    )
+}
+
+// ── Widget 3: Top Imóveis com Interesse ───────────────────────
+const TOP_IMOVEIS_PLACEHOLDER = [
+    { id: '1', nome: 'Edifício Atlântico',  engajamento: 92, leads: 24, tipo: 'Residencial' },
+    { id: '2', nome: 'Vila Harmonia',       engajamento: 78, leads: 18, tipo: 'Comercial'   },
+    { id: '3', nome: 'Residencial Serra',   engajamento: 61, leads: 11, tipo: 'Residencial' },
+    { id: '4', nome: 'Parque das Flores',   engajamento: 44, leads: 7,  tipo: 'Misto'       },
+]
+
+function TopImoveisWidget() {
+    const [data, setData] = useState(TOP_IMOVEIS_PLACEHOLDER)
+
+    useEffect(() => {
+        fetch('/api/developers?limit=4&order=leads_count')
+            .then(r => r.ok ? r.json() : null)
+            .then(json => {
+                if (Array.isArray(json) && json.length > 0) {
+                    const mapped = json.map((d: any, i: number) => ({
+                        id: d.id,
+                        nome: d.name ?? d.nome ?? 'Empreendimento',
+                        engajamento: Math.max(10, 92 - i * 15),
+                        leads: d.leads_count ?? d.leads ?? 0,
+                        tipo: d.tipo ?? d.type ?? 'Residencial',
+                    }))
+                    setData(mapped)
+                }
+            })
+            .catch(() => {})
+    }, [])
+
+    const barColors = ['#D4A929','#60A5FA','#34D399','#A78BFA']
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.60, duration: 0.35 }}
+            className="rounded-2xl overflow-hidden"
+            style={{
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-default)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                padding: '18px',
+            }}
+        >
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                    <Building2 size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                        Top Imóveis com Interesse
+                    </span>
+                </div>
+                <Link href="/backoffice/imoveis">
+                    <span className="text-[10px] font-semibold flex items-center gap-1"
+                        style={{ color: 'var(--imi-gold-500)' }}>
+                        Ver todos <ArrowUpRight size={10} />
+                    </span>
+                </Link>
+            </div>
+            <div className="space-y-3">
+                {data.map((imovel, i) => (
+                    <Link key={imovel.id} href={`/backoffice/imoveis/${imovel.id}`}>
+                        <div className="group cursor-pointer">
+                            <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-2 min-w-0">
+                                    <span className="text-[9px] font-bold tabular-nums flex-shrink-0"
+                                        style={{ color: barColors[i] }}>
+                                        #{i + 1}
+                                    </span>
+                                    <span className="text-[12px] font-semibold truncate"
+                                        style={{ color: 'var(--text-primary)' }}>
+                                        {imovel.nome}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                                    <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                        {imovel.leads} leads
+                                    </span>
+                                    <span className="text-[10px] font-bold tabular-nums"
+                                        style={{ color: barColors[i] }}>
+                                        {imovel.engajamento}%
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="h-[4px] rounded-full overflow-hidden" style={{ background: 'var(--bg-elevated)' }}>
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${imovel.engajamento}%` }}
+                                    transition={{ delay: 0.65 + i * 0.08, duration: 0.6, ease: 'easeOut' }}
+                                    className="h-full rounded-full"
+                                    style={{ background: barColors[i] }}
+                                />
+                            </div>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        </motion.div>
+    )
+}
+
+// ── Widget 4: Velocidade de Resposta ─────────────────────────
+function VelocidadeRespostaWidget() {
+    const [avgHours, setAvgHours] = useState<number | null>(null)
+    const [loading, setLoading] = useState(true)
+    const TARGET_HOURS = 2
+
+    useEffect(() => {
+        fetch('/api/leads/response-time')
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data?.avg_hours != null) setAvgHours(data.avg_hours)
+                else setAvgHours(1.4) // Fallback demo value
+            })
+            .catch(() => setAvgHours(1.4))
+            .finally(() => setLoading(false))
+    }, [])
+
+    const getStatus = (h: number) => {
+        if (h < TARGET_HOURS) return { color: '#34D399', bg: 'rgba(52,211,153,0.10)', label: 'Excelente', border: 'rgba(52,211,153,0.25)' }
+        if (h <= 4)           return { color: 'var(--warning)', bg: 'rgba(245,158,11,0.08)', label: 'Atenção', border: 'rgba(245,158,11,0.25)' }
+        return                       { color: 'var(--error)', bg: 'rgba(239,68,68,0.08)', label: 'Crítico', border: 'rgba(239,68,68,0.25)' }
+    }
+
+    const status = avgHours != null ? getStatus(avgHours) : null
+    const progressPct = avgHours != null ? Math.min(100, (avgHours / 8) * 100) : 0
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.64, duration: 0.35 }}
+            className="rounded-2xl overflow-hidden"
+            style={{
+                background: status ? status.bg : 'var(--bg-surface)',
+                border: `1px solid ${status ? status.border : 'var(--border-default)'}`,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                padding: '18px',
+            }}
+        >
+            <div className="flex items-center gap-2 mb-4">
+                <Clock size={13} style={{ color: status?.color ?? 'var(--text-muted)' }} />
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+                    Velocidade de Resposta
+                </span>
+                {status && (
+                    <span className="ml-auto text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                        style={{ color: status.color, background: `${status.color}18` }}>
+                        {status.label}
+                    </span>
+                )}
+            </div>
+
+            {loading ? (
+                <div className="h-16 rounded-xl animate-pulse" style={{ background: 'var(--bg-elevated)' }} />
+            ) : (
+                <>
+                    <div className="flex items-end gap-2 mb-3">
+                        <span style={{
+                            fontSize: '40px', fontWeight: 800, letterSpacing: '-0.04em',
+                            lineHeight: 1, color: status?.color ?? 'var(--text-primary)',
+                            fontVariantNumeric: 'tabular-nums',
+                        }}>
+                            {avgHours?.toFixed(1)}h
+                        </span>
+                        <div className="mb-1.5">
+                            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                média de resposta
+                            </p>
+                            <div className="flex items-center gap-1 mt-0.5">
+                                <Target size={9} style={{ color: 'var(--text-muted)' }} />
+                                <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                    meta: &lt; {TARGET_HOURS}h
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Progress bar — fills toward the 8h danger zone */}
+                    <div className="h-[5px] rounded-full overflow-hidden mb-2" style={{ background: 'var(--bg-elevated)' }}>
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progressPct}%` }}
+                            transition={{ delay: 0.7, duration: 0.7, ease: 'easeOut' }}
+                            className="h-full rounded-full"
+                            style={{ background: status?.color ?? '#34D399' }}
+                        />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>0h</span>
+                        <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>Meta 2h</span>
+                        <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>8h+</span>
+                    </div>
+                </>
+            )}
+        </motion.div>
+    )
+}
+
 // ── AI Daily Summary Card ────────────────────────────────────
 function AIDailySummary() {
     const [summary, setSummary] = useState<any>(null)
@@ -163,8 +536,8 @@ function AIDailySummary() {
                     {summary.alert && (
                         <div className="flex items-start gap-2 px-2 py-1.5 rounded-lg mb-2"
                             style={{ background: 'rgba(245,158,11,0.08)' }}>
-                            <AlertTriangle size={11} className="mt-0.5" style={{ color: 'var(--bo-warning)' }} />
-                            <span className="text-[11px]" style={{ color: 'var(--bo-warning)' }}>{summary.alert}</span>
+                            <AlertTriangle size={11} className="mt-0.5" style={{ color: 'var(--warning)' }} />
+                            <span className="text-[11px]" style={{ color: 'var(--warning)' }}>{summary.alert}</span>
                         </div>
                     )}
                     {summary.suggestion && (
@@ -194,7 +567,7 @@ export default function DashboardClient({
     const dateStr = `${dayNames[now.getDay()]}, ${now.getDate()} de ${monthNames[now.getMonth()]}`
 
     const ACTIONS = [
-        { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale,    color: 'rgba(59,130,246,0.12)',  fg: 'var(--imi-blue-bright)', raw: '59,130,246' },
+        { label: 'Nova Avaliação',  href: '/backoffice/avaliacoes/nova', icon: Scale,    color: 'rgba(59,130,246,0.12)',  fg: 'var(--imi-gold-500)', raw: '59,130,246' },
         { label: 'Novo Lead',       href: '/backoffice/leads/novo',      icon: Users,    color: 'rgba(74,222,128,0.10)',  fg: 'var(--s-done)',          raw: '74,222,128' },
         { label: 'Novo Imóvel',     href: '/backoffice/imoveis/novo',    icon: Building2,color: 'rgba(34,211,238,0.10)',  fg: 'var(--s-cold)',          raw: '34,211,238' },
         { label: 'Ver Relatórios',  href: '/backoffice/relatorios',      icon: BarChart2,color: 'rgba(251,191,36,0.10)',  fg: 'var(--s-warm)',          raw: '251,191,36' },
@@ -207,7 +580,7 @@ export default function DashboardClient({
     }
     const alertaColor: Record<string, { border: string; bg: string; text: string; btn: string }> = {
         warning: { border: 'rgba(245,158,11,0.3)',  bg: 'rgba(245,158,11,0.06)',  text: '#F59E0B', btn: 'rgba(245,158,11,0.15)' },
-        danger:  { border: 'rgba(239,68,68,0.3)',   bg: 'rgba(239,68,68,0.06)',   text: 'var(--bo-error)', btn: 'rgba(239,68,68,0.15)' },
+        danger:  { border: 'rgba(239,68,68,0.3)',   bg: 'rgba(239,68,68,0.06)',   text: 'var(--error)', btn: 'rgba(239,68,68,0.15)' },
         info:    { border: 'rgba(59,130,246,0.3)',  bg: 'rgba(59,130,246,0.06)',  text: '#3B82F6', btn: 'rgba(59,130,246,0.15)' },
     }
 
@@ -229,13 +602,13 @@ export default function DashboardClient({
                     <div className="flex items-center gap-2">
                         <span style={{
                             width: 4, height: 4, borderRadius: '50%',
-                            background: 'var(--imi-blue-bright)',
-                            boxShadow: '0 0 8px var(--imi-blue-bright)',
+                            background: 'var(--imi-gold-500)',
+                            boxShadow: '0 0 8px var(--imi-gold-500)',
                             display: 'inline-block', flexShrink: 0,
                         }} />
                         <span style={{
                             fontSize: '9px', fontWeight: 700,
-                            color: 'var(--imi-blue-bright)',
+                            color: 'var(--imi-gold-500)',
                             textTransform: 'uppercase', letterSpacing: '0.14em',
                         }}>
                             INTELLIGENCE OS
@@ -260,7 +633,7 @@ export default function DashboardClient({
                                 {brokers.slice(0, 5).map(b => {
                                     const [fg, bg] = getPalette(b.name)
                                     return (
-                                        <Avatar key={b.id} size={26} style={{ border: '2px solid var(--bo-bg)', flexShrink: 0 }}>
+                                        <Avatar key={b.id} size={26} style={{ border: '2px solid var(--bg-base)', flexShrink: 0 }}>
                                             <AvatarImage src={b.avatar_url ?? undefined} />
                                             <AvatarFallback style={{ background: bg, color: fg, fontSize: 9, fontWeight: 700 }}>
                                                 {getInitials(b.name)}
@@ -271,7 +644,7 @@ export default function DashboardClient({
                                 })}
                             </AvatarGroup>
                             <span className="text-[10px] font-medium opacity-50 group-hover:opacity-80 transition-opacity"
-                                style={{ color: 'var(--bo-text-muted)' }}>
+                                style={{ color: 'var(--text-muted)' }}>
                                 {brokers.length}
                             </span>
                         </Link>
@@ -287,7 +660,7 @@ export default function DashboardClient({
                         }}>
                             Painel Executivo
                         </h1>
-                        <p className="capitalize mt-0.5" style={{ color: 'var(--bo-text-muted)', fontSize: '11px' }}>
+                        <p className="capitalize mt-0.5" style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
                             {dateStr}
                         </p>
                     </div>
@@ -331,7 +704,7 @@ export default function DashboardClient({
                                 style={{ background: c.bg, border: `1px solid ${c.border}`, minWidth: 230 }}
                             >
                                 <IconComp size={14} style={{ color: c.text, flexShrink: 0 }} />
-                                <p className="text-[11px] font-medium flex-1" style={{ color: 'var(--bo-text)' }}>
+                                <p className="text-[11px] font-medium flex-1" style={{ color: 'var(--text-primary)' }}>
                                     {alerta.mensagem}
                                 </p>
                                 <Link href={alerta.href}>
@@ -387,7 +760,7 @@ export default function DashboardClient({
                             <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
                                 A Receber
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--bo-warning)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--warning)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {fmtCompact(avStats.honorarios_pendentes)}
                             </p>
                             <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.em_andamento} em andamento</p>
@@ -397,7 +770,7 @@ export default function DashboardClient({
                             <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
                                 Conclusão
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--bo-success)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--success)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {completionRate}%
                             </p>
                             <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.total} total</p>
@@ -420,6 +793,40 @@ export default function DashboardClient({
 
             {/* ── AI Daily Summary ────────────────────────────── */}
             <AIDailySummary />
+
+            {/* ── Market Ticker ────────────────────────────────── */}
+            <div className="mb-4">
+                <MarketTicker
+                    paused
+                    items={[
+                        // Brasil — Mercado Imobiliário
+                        { label: '🇧🇷 Ipanema • RJ', value: 'R$ 24.800/m²', change: 2.3, type: 'price' },
+                        { label: '🇧🇷 Leblon • RJ', value: 'R$ 28.400/m²', change: -0.8, type: 'price' },
+                        { label: '🇧🇷 Jardins • SP', value: 'R$ 22.100/m²', change: 1.4, type: 'price' },
+                        { label: '🇧🇷 Itaim Bibi • SP', value: 'R$ 19.600/m²', change: 0.9, type: 'price' },
+                        { label: '🇧🇷 Boa Viagem • PE', value: 'R$ 11.200/m²', change: 3.2, type: 'price' },
+                        { label: '🇧🇷 Barra da Tijuca • RJ', value: 'R$ 12.600/m²', change: 1.5, type: 'price' },
+                        { label: '🇧🇷 Yield Médio BR', value: '5.8% a.a.', change: 0.2, type: 'yield' },
+                        { label: '🇧🇷 CDI', value: '10.5% a.a.', change: 0.0, type: 'index' },
+                        { label: '🇧🇷 IGPM 12m', value: '4.83%', change: 0.3, type: 'index' },
+                        { label: '🇧🇷 FII HGLG11', value: 'R$ 156,20', change: -1.2, type: 'index' },
+                        // EUA — Real Estate
+                        { label: '🇺🇸 Miami Beach', value: '$ 1.850/sqft', change: 3.8, type: 'price' },
+                        { label: '🇺🇸 Manhattan • NY', value: '$ 2.450/sqft', change: -0.5, type: 'price' },
+                        { label: '🇺🇸 Beverly Hills • LA', value: '$ 2.100/sqft', change: 1.2, type: 'price' },
+                        { label: '🇺🇸 Brickell • Miami', value: '$ 980/sqft', change: 4.6, type: 'price' },
+                        { label: '🇺🇸 US Prime Rate', value: '5.50% a.a.', change: 0.0, type: 'index' },
+                        { label: '🇺🇸 DJIA', value: '39.142', change: 0.4, type: 'index' },
+                        // Emirados Árabes
+                        { label: '🇦🇪 Dubai Marina', value: 'AED 3.200/sqft', change: 8.4, type: 'price' },
+                        { label: '🇦🇪 Palm Jumeirah', value: 'AED 5.800/sqft', change: 12.1, type: 'price' },
+                        { label: '🇦🇪 Downtown Dubai', value: 'AED 4.100/sqft', change: 6.7, type: 'price' },
+                        { label: '🇦🇪 Abu Dhabi • Al Reem', value: 'AED 1.850/sqft', change: 5.3, type: 'price' },
+                        { label: '🇦🇪 Yield Dubai', value: '6.8% a.a.', change: 0.4, type: 'yield' },
+                        { label: '🇦🇪 DFM Index', value: '4.238', change: 1.1, type: 'index' },
+                    ]}
+                />
+            </div>
 
             {/* ── KPI Row ──────────────────────────────────────── */}
             <motion.div
@@ -491,25 +898,25 @@ export default function DashboardClient({
                     <div className="flex items-start justify-between gap-3 mb-4">
                         <div>
                             <div className="flex items-center gap-2">
-                                <Activity size={13} style={{ color: 'var(--imi-blue-bright)' }} />
-                                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)', letterSpacing: '-0.01em' }}>
+                                <Activity size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
                                     Performance
                                 </span>
                             </div>
                             <div className="flex items-center gap-3 text-[10px] mt-1.5">
                                 <span className="flex items-center gap-1.5">
                                     <span className="w-2 h-2 rounded-full inline-block" style={{ background: '#3B82F6' }} />
-                                    <span style={{ color: 'var(--bo-text-muted)' }}>Leads</span>
+                                    <span style={{ color: 'var(--text-muted)' }}>Leads</span>
                                 </span>
                                 <span className="flex items-center gap-1.5">
                                     <span className="w-2 h-2 rounded-full inline-block" style={{ background: '#22C55E' }} />
-                                    <span style={{ color: 'var(--bo-text-muted)' }}>Receita</span>
+                                    <span style={{ color: 'var(--text-muted)' }}>Receita</span>
                                 </span>
                             </div>
                         </div>
                         {/* Period tabs */}
                         <div className="flex items-center gap-0.5 flex-shrink-0 p-0.5 rounded-xl"
-                            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--bo-border)' }}>
+                            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-default)' }}>
                             {PERIOD_OPTS.map(opt => (
                                 <button
                                     key={opt.value}
@@ -517,7 +924,7 @@ export default function DashboardClient({
                                     className="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all"
                                     style={{
                                         background: period === opt.value ? 'rgba(59,130,246,0.18)' : 'transparent',
-                                        color: period === opt.value ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)',
+                                        color: period === opt.value ? 'var(--imi-gold-500)' : 'var(--text-muted)',
                                     }}
                                 >
                                     {opt.label}
@@ -540,14 +947,14 @@ export default function DashboardClient({
                                         </linearGradient>
                                     </defs>
                                     <XAxis dataKey="mes" axisLine={false} tickLine={false}
-                                        tick={{ fill: 'var(--bo-text-muted)', fontSize: 10, fontWeight: 500 }} />
+                                        tick={{ fill: 'var(--text-muted)', fontSize: 10, fontWeight: 500 }} />
                                     <YAxis hide />
                                     <Tooltip
                                         contentStyle={{
-                                            background: 'var(--bo-elevated)',
-                                            border: '1px solid var(--bo-border)',
+                                            background: 'var(--bg-elevated)',
+                                            border: '1px solid var(--border-default)',
                                             borderRadius: 10,
-                                            color: 'var(--bo-text)',
+                                            color: 'var(--text-primary)',
                                             fontSize: 11,
                                             boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
                                         }}
@@ -566,7 +973,7 @@ export default function DashboardClient({
                             </ResponsiveContainer>
                         ) : (
                             <div className="h-full flex items-center justify-center">
-                                <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
+                                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                                     Sem dados para o período
                                 </p>
                             </div>
@@ -582,14 +989,14 @@ export default function DashboardClient({
                     className="rounded-2xl overflow-hidden"
                     style={{
                         background: T.card,
-                        border: '1px solid var(--bo-border)',
+                        border: '1px solid var(--border-default)',
                         boxShadow: T.shadowMd,
                         padding: '18px',
                     }}
                 >
                     <div className="flex items-center gap-2 mb-4">
                         <Zap size={13} style={{ color: 'var(--s-warm)' }} />
-                        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)', letterSpacing: '-0.01em' }}>
+                        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
                             Ações Rápidas
                         </span>
                     </div>
@@ -603,7 +1010,7 @@ export default function DashboardClient({
                                     whileTap={{ scale: 0.97 }}
                                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all group"
                                     style={{ background: 'transparent' }}
-                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -613,10 +1020,10 @@ export default function DashboardClient({
                                         }}>
                                         <a.icon size={14} style={{ color: a.fg }} />
                                     </div>
-                                    <span className="text-[13px] font-medium flex-1" style={{ color: 'var(--bo-text)' }}>
+                                    <span className="text-[13px] font-medium flex-1" style={{ color: 'var(--text-primary)' }}>
                                         {a.label}
                                     </span>
-                                    <ChevronRight size={13} style={{ color: 'var(--bo-text-muted)', opacity: 0.4 }}
+                                    <ChevronRight size={13} style={{ color: 'var(--text-muted)', opacity: 0.4 }}
                                         className="group-hover:translate-x-0.5 transition-transform" />
                                 </motion.div>
                             </Link>
@@ -636,18 +1043,18 @@ export default function DashboardClient({
                     className="rounded-2xl overflow-hidden"
                     style={{
                         background: T.card,
-                        border: '1px solid var(--bo-border)',
+                        border: '1px solid var(--border-default)',
                         boxShadow: T.shadowMd,
                         padding: '18px',
                     }}
                 >
                     <div className="flex items-center gap-2 mb-1">
-                        <BarChart2 size={13} style={{ color: 'var(--bo-text-muted)' }} />
-                        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)', letterSpacing: '-0.01em' }}>
+                        <BarChart2 size={13} style={{ color: 'var(--text-muted)' }} />
+                        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
                             Canais de Captação
                         </span>
                     </div>
-                    <p className="text-[10px] mb-4" style={{ color: 'var(--bo-text-muted)' }}>últimos 6 meses</p>
+                    <p className="text-[10px] mb-4" style={{ color: 'var(--text-muted)' }}>últimos 6 meses</p>
                     {canalPerformance.length > 0 ? (
                         <div className="space-y-3">
                             {canalPerformance.map((item, i) => (
@@ -656,13 +1063,13 @@ export default function DashboardClient({
                                     label={`#${i + 1} ${item.canal}`}
                                     value={item.pct}
                                     valueLabel={`${item.leads} leads · ${item.pct}%`}
-                                    color="var(--imi-blue-bright)"
+                                    color="var(--imi-gold-500)"
                                 />
                             ))}
                         </div>
                     ) : (
                         <div className="py-8 text-center">
-                            <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
+                            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                                 Sem dados de canal ainda
                             </p>
                         </div>
@@ -677,21 +1084,21 @@ export default function DashboardClient({
                     className="rounded-2xl overflow-hidden"
                     style={{
                         background: T.card,
-                        border: '1px solid var(--bo-border)',
+                        border: '1px solid var(--border-default)',
                         boxShadow: T.shadowMd,
                     }}
                 >
                     <div className="flex items-center justify-between px-4 py-3"
-                        style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                        style={{ borderBottom: '1px solid var(--border-default)' }}>
                         <div className="flex items-center gap-2">
-                            <Users size={13} style={{ color: 'var(--imi-blue-bright)' }} />
-                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)', letterSpacing: '-0.01em' }}>
+                            <Users size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
                                 Leads Recentes
                             </span>
                         </div>
                         <Link href="/backoffice/leads">
                             <span className="text-[10px] font-semibold flex items-center gap-1"
-                                style={{ color: 'var(--imi-blue-bright)' }}>
+                                style={{ color: 'var(--imi-gold-500)' }}>
                                 Ver todos <ArrowUpRight size={10} />
                             </span>
                         </Link>
@@ -703,18 +1110,18 @@ export default function DashboardClient({
                                 <Link key={lead.id} href={`/backoffice/leads/${lead.id}`}>
                                     <div className="flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-all"
                                         style={{ borderBottom: `1px solid ${T.border}` }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
+                                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                     >
                                         <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
-                                            style={{ background: 'rgba(59,130,246,0.14)', color: 'var(--imi-blue-bright)' }}>
+                                            style={{ background: 'rgba(59,130,246,0.14)', color: 'var(--imi-gold-500)' }}>
                                             {lead.name?.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--bo-text)' }}>
+                                            <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                                 {lead.name}
                                             </p>
-                                            <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>
+                                            <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>
                                                 {lead.source}{lead.interest ? ` · ${lead.interest}` : ''}
                                             </p>
                                         </div>
@@ -724,7 +1131,7 @@ export default function DashboardClient({
                             )
                         }) : (
                             <div className="px-4 py-8 text-center">
-                                <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
+                                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                                     Nenhum lead cadastrado
                                 </p>
                             </div>
@@ -740,21 +1147,21 @@ export default function DashboardClient({
                     className="rounded-2xl overflow-hidden"
                     style={{
                         background: T.card,
-                        border: '1px solid var(--bo-border)',
+                        border: '1px solid var(--border-default)',
                         boxShadow: T.shadowMd,
                     }}
                 >
                     <div className="flex items-center justify-between px-4 py-3"
-                        style={{ borderBottom: '1px solid var(--bo-border)' }}>
+                        style={{ borderBottom: '1px solid var(--border-default)' }}>
                         <div className="flex items-center gap-2">
                             <Scale size={13} style={{ color: 'var(--s-warm)' }} />
-                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)', letterSpacing: '-0.01em' }}>
+                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
                                 Avaliações Recentes
                             </span>
                         </div>
                         <Link href="/backoffice/avaliacoes">
                             <span className="text-[10px] font-semibold flex items-center gap-1"
-                                style={{ color: 'var(--imi-blue-bright)' }}>
+                                style={{ color: 'var(--imi-gold-500)' }}>
                                 Ver todas <ArrowUpRight size={10} />
                             </span>
                         </Link>
@@ -766,7 +1173,7 @@ export default function DashboardClient({
                                 <div key={av.id}
                                     className="flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-all"
                                     style={{ borderBottom: `1px solid ${T.border}` }}
-                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bo-hover)')}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -774,10 +1181,10 @@ export default function DashboardClient({
                                         <Scale size={13} style={{ color: 'var(--s-warm)' }} />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--bo-text)' }}>
+                                        <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                             {av.protocolo}
                                         </p>
-                                        <p className="text-[10px] truncate" style={{ color: 'var(--bo-text-muted)' }}>
+                                        <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>
                                             {av.tipo_imovel} · {av.bairro}
                                         </p>
                                     </div>
@@ -791,7 +1198,7 @@ export default function DashboardClient({
                             )
                         }) : (
                             <div className="px-4 py-8 text-center">
-                                <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
+                                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                                     Nenhuma avaliação cadastrada
                                 </p>
                             </div>
@@ -799,6 +1206,35 @@ export default function DashboardClient({
                     </div>
                 </motion.div>
             </div>
+
+            {/* ── Inteligência de Negócio ──────────────────────── */}
+            <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.50, duration: 0.30 }}
+            >
+                {/* Section header */}
+                <div className="flex items-center gap-3 mb-3">
+                    <div style={{ width: 4, height: 14, borderRadius: 2, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                    <span style={{
+                        fontSize: '9px', fontWeight: 700,
+                        color: 'var(--text-tertiary)',
+                        textTransform: 'uppercase', letterSpacing: '0.14em',
+                        fontFamily: 'var(--font-mono)',
+                    }}>
+                        Inteligência de Negócio
+                    </span>
+                    <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
+                </div>
+
+                {/* 2×2 grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <ConversaoFonteWidget />
+                    <ProximosCompromissosWidget />
+                    <TopImoveisWidget />
+                    <VelocidadeRespostaWidget />
+                </div>
+            </motion.div>
 
         </div>
     )

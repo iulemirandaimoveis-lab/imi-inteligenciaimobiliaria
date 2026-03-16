@@ -1,18 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
     ArrowLeft, Link2, Plus, Copy, QrCode, ExternalLink,
     Trash2, Download, Check, Loader2, Search, RefreshCw
 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import QRCode from 'qrcode'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 export default function TrackingLinksPage() {
     const router = useRouter()
@@ -20,21 +19,49 @@ export default function TrackingLinksPage() {
     const [loading, setLoading] = useState(true)
     const [copiedId, setCopiedId] = useState<string | null>(null)
     const [search, setSearch] = useState('')
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+    const [secondsAgo, setSecondsAgo] = useState(0)
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-    useEffect(() => { loadLinks() }, [])
-
-    const loadLinks = async () => {
-        setLoading(true)
+    const loadLinks = useCallback(async (silent = false) => {
+        if (!silent) setLoading(true)
         try {
             const res = await fetch('/api/qr/links')
             const data = await res.json()
-            if (res.ok) setLinks(data.links || [])
+            if (res.ok) {
+                setLinks(data.links || [])
+                setLastUpdated(new Date())
+                setSecondsAgo(0)
+            }
         } catch (err) {
             console.error('Error loading links:', err)
         } finally {
-            setLoading(false)
+            if (!silent) setLoading(false)
         }
-    }
+    }, [])
+
+    // Initial load
+    useEffect(() => { loadLinks() }, [loadLinks])
+
+    // Auto-refresh every 30s when page is visible
+    useEffect(() => {
+        const refreshInterval = setInterval(() => {
+            if (document.visibilityState === 'visible') {
+                loadLinks(true) // silent refresh
+            }
+        }, 30_000)
+        return () => clearInterval(refreshInterval)
+    }, [loadLinks])
+
+    // Update "seconds ago" counter every second
+    useEffect(() => {
+        intervalRef.current = setInterval(() => {
+            if (lastUpdated) {
+                setSecondsAgo(Math.floor((Date.now() - lastUpdated.getTime()) / 1000))
+            }
+        }, 1000)
+        return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+    }, [lastUpdated])
 
     const handleCopy = (text: string, id: string) => {
         navigator.clipboard.writeText(text)
@@ -131,8 +158,13 @@ export default function TrackingLinksPage() {
                         style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
                     />
                 </div>
+                {lastUpdated && (
+                    <span className="text-[10px] whitespace-nowrap self-center" style={{ color: T.textMuted }}>
+                        {secondsAgo < 5 ? 'agora' : secondsAgo < 60 ? `${secondsAgo}s atrás` : `${Math.floor(secondsAgo / 60)}min atrás`}
+                    </span>
+                )}
                 <button
-                    onClick={loadLinks}
+                    onClick={() => loadLinks()}
                     className="h-10 w-10 rounded flex items-center justify-center"
                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}
                 >

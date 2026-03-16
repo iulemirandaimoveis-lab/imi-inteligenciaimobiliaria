@@ -125,7 +125,7 @@ export default function IndicesBackofficePage() {
             />
 
             {/* KPIs */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <KPICard
                     label="Total Índices"
                     value={loading ? '—' : indices.length}
@@ -174,7 +174,7 @@ export default function IndicesBackofficePage() {
                                         <div className="h-2.5 rounded" style={{ background: 'var(--bo-hover)', width: 80 }} />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-4 gap-4">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     {[...Array(4)].map((_, j) => (
                                         <div key={j} className="h-12 rounded-xl" style={{ background: 'var(--bo-hover)' }} />
                                     ))}

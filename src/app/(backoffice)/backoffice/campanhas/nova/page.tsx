@@ -762,7 +762,7 @@ export default function NovaCampanhaPage() {
               </div>
 
               {/* CTA */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: T.text }}>
                     Call to Action

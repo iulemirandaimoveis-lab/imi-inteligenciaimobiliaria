@@ -4,14 +4,13 @@
 import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 
-const supabase = createClient()
-
 export function useDevelopments(filters?: {
     search?: string
     status?: string
     type?: string
     developer?: string
 }) {
+    const supabase = createClient()
     const { data, error, mutate } = useSWR(['developments', filters], async () => {
         let query = supabase
             .from('developments')
@@ -52,6 +51,7 @@ export function useDevelopments(filters?: {
 }
 
 export function useDevelopment(id: string) {
+    const supabase = createClient()
     const { data, error, mutate } = useSWR(
         id ? ['development', id] : null,
         async () => {
@@ -75,6 +75,7 @@ export function useDevelopment(id: string) {
 }
 
 export async function createDevelopment(data: any) {
+    const supabase = createClient()
     const { data: newDev, error } = await supabase
         .from('developments')
         .insert(data)
@@ -85,6 +86,7 @@ export async function createDevelopment(data: any) {
 }
 
 export async function updateDevelopment(id: string, updates: any) {
+    const supabase = createClient()
     const { data: updatedDev, error } = await supabase
         .from('developments')
         .update(updates)
@@ -96,6 +98,7 @@ export async function updateDevelopment(id: string, updates: any) {
 }
 
 export async function deleteDevelopment(id: string) {
+    const supabase = createClient()
     const { error } = await supabase
         .from('developments')
         .delete()
@@ -104,6 +107,7 @@ export async function deleteDevelopment(id: string) {
 }
 
 export async function bulkUpdateDevelopments(ids: string[], updates: any) {
+    const supabase = createClient()
     const { error } = await supabase
         .from('developments')
         .update(updates)
@@ -112,6 +116,7 @@ export async function bulkUpdateDevelopments(ids: string[], updates: any) {
 }
 
 export async function bulkDeleteDevelopments(ids: string[]) {
+    const supabase = createClient()
     const { error } = await supabase
         .from('developments')
         .delete()

@@ -91,7 +91,7 @@ export class ErrorBoundary extends Component<Props, State> {
                             onClick={() => window.location.reload()}
                             className="flex items-center gap-2 px-5 h-10 rounded-xl text-sm font-semibold transition-colors"
                             style={{
-                                background: 'var(--bo-elevated)',
+                                background: 'var(--bg-elevated)',
                                 border: '1px solid var(--bo-border)',
                                 color: 'var(--bo-text)',
                             }}

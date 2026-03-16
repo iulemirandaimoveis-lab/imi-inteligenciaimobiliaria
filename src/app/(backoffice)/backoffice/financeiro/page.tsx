@@ -191,7 +191,7 @@ export default function FinanceiroPage() {
                   height: '38px', padding: '0 18px', borderRadius: '12px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
                   background: 'var(--bo-accent)',
-                  boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
+                  boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 28%, transparent)',
                   border: 'none', cursor: 'pointer',
                   flexShrink: 0,
                 }}
@@ -306,11 +306,11 @@ export default function FinanceiroPage() {
                           style={{
                             width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            background: 'rgba(0,178,127,0.12)', border: '1px solid rgba(0,178,127,0.25)',
+                            background: 'var(--success-bg, rgba(93,184,135,0.12))', border: '1px solid var(--border-subtle)',
                             cursor: 'pointer',
                           }}
                         >
-                          <Zap size={15} color="#00B27F" />
+                          <Zap size={15} color="var(--success)" />
                         </button>
                         {/* Mark paid manually */}
                         <button

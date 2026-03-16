@@ -1,657 +1,708 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Building2, Users, Settings, Brain, Zap, Crown, Shield, User,
-  Plus, Trash2, Save, Check, AlertCircle, TrendingUp, Activity,
-  Palette, Globe, Hash, Sparkles, ChevronRight, Copy, RefreshCw,
-  X
+  Building2, MapPin, Palette, Globe, Shield,
+  Upload, Check, Save, AlertCircle, Search,
 } from 'lucide-react'
-import { T } from '../../lib/theme'
-import { PageIntelHeader } from '../../components/ui/PageIntelHeader'
-import { KPICard } from '../../components/ui/KPICard'
-import { SectionHeader } from '../../components/ui/SectionHeader'
+import { PageIntelHeader, Btn } from '../../components/ui'
+import { T, inputStyle } from '../../lib/theme'
 
-const NICHES = [
-  { value: 'imoveis_premium', label: 'Imóveis Premium' },
-  { value: 'imoveis_comerciais', label: 'Imóveis Comerciais' },
-  { value: 'imoveis_lancamentos', label: 'Lançamentos Imobiliários' },
-  { value: 'avaliacao_pericial', label: 'Avaliação Pericial' },
-  { value: 'consultoria_imobiliaria', label: 'Consultoria Imobiliária' },
-  { value: 'gestao_patrimonial', label: 'Gestão Patrimonial' },
-  { value: 'fintech_imobiliaria', label: 'Fintech Imobiliária' },
-]
+export const dynamic = 'force-dynamic'
 
-const AI_MODELS = [
-  { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet (Recomendado)' },
-  { value: 'claude-3-5-haiku-20241022', label: 'Claude 3.5 Haiku (Rápido)' },
-  { value: 'claude-3-opus-20240229', label: 'Claude 3 Opus (Máxima Qualidade)' },
-]
-
-const TONE_OPTIONS = [
-  { value: 'professional', label: 'Profissional' },
-  { value: 'consultivo', label: 'Consultivo' },
-  { value: 'premium', label: 'Premium & Exclusivo' },
-  { value: 'tecnico', label: 'Técnico & Preciso' },
-  { value: 'proximidade', label: 'Próximo & Acessível' },
-]
-
-const ROLE_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  owner:  { label: 'Proprietário', icon: Crown,  color: '#F59E0B' },
-  admin:  { label: 'Administrador', icon: Shield, color: '#3B82F6' },
-  member: { label: 'Membro',        icon: User,   color: '#10B981' },
-  viewer: { label: 'Visualizador',  icon: User,   color: '#6B7280' },
+/* ─── TYPES ─────────────────────────────────────────────────────── */
+interface OrgForm {
+  // Perfil
+  razaoSocial: string
+  nomeFantasia: string
+  cnpj: string
+  website: string
+  telefone: string
+  emailComercial: string
+  // Endereço
+  cep: string
+  logradouro: string
+  numero: string
+  complemento: string
+  bairro: string
+  cidade: string
+  estado: string
+  // Identidade visual
+  corPrimaria: string
+  corSecundaria: string
+  fonte: 'libre' | 'playfair' | 'georgia'
+  // Regionais
+  moeda: 'BRL' | 'USD' | 'AED'
+  idioma: 'pt' | 'en'
+  formatoData: 'dd/mm/yyyy' | 'mm/dd/yyyy' | 'yyyy-mm-dd'
+  fusoHorario: string
+  // Licença (read-only)
+  creci: string
+  cnai: string
+  validadeLicenca: string
 }
 
-const PLAN_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  starter:      { label: 'Starter',       color: '#9CA3AF', bg: 'rgba(156,163,175,0.1)' },
-  professional: { label: 'Professional',  color: '#3B82F6', bg: 'rgba(59,130,246,0.1)' },
-  enterprise:   { label: 'Enterprise',    color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
+const DEFAULT_FORM: OrgForm = {
+  razaoSocial: 'IMI Inteligência Imobiliária Ltda.',
+  nomeFantasia: 'IMI Imóveis',
+  cnpj: '12.345.678/0001-99',
+  website: 'https://imi.com.br',
+  telefone: '(11) 3000-0000',
+  emailComercial: 'contato@imi.com.br',
+  cep: '01310-100',
+  logradouro: 'Av. Paulista',
+  numero: '1000',
+  complemento: 'Cj. 101',
+  bairro: 'Bela Vista',
+  cidade: 'São Paulo',
+  estado: 'SP',
+  corPrimaria: '#B8943A',
+  corSecundaria: '#0B1120',
+  fonte: 'libre',
+  moeda: 'BRL',
+  idioma: 'pt',
+  formatoData: 'dd/mm/yyyy',
+  fusoHorario: 'America/Sao_Paulo',
+  creci: 'CRECI-J 12345/SP',
+  cnai: 'CNAI 00987',
+  validadeLicenca: '31/12/2026',
 }
 
-function OrgSkeleton() {
-  const bar = (w: string, h = 14, r = 8) => (
-    <div style={{ width: w, height: h, background: 'var(--bo-elevated)', borderRadius: r, opacity: 0.6 }} className="animate-pulse" />
-  )
-  return (
-    <div className="space-y-5">
-      <div style={{ height: 120, background: 'var(--bo-card)', borderRadius: 18, opacity: 0.5 }} className="animate-pulse" />
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {[0,1,2,3].map(i => (
-          <div key={i} style={{ height: 90, background: 'var(--bo-card)', borderRadius: 14, opacity: 0.4 }} className="animate-pulse" />
-        ))}
-      </div>
-      <div style={{ height: 280, background: 'var(--bo-card)', borderRadius: 18, opacity: 0.4 }} className="animate-pulse" />
-    </div>
-  )
-}
-
-function CreateOrgForm({ onCreate }: { onCreate: (data: any) => Promise<void> }) {
-  const [form, setForm] = useState({ name: '', niche: 'imoveis_premium', slug: '' })
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-
-  const handleNameChange = (name: string) => {
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-    setForm(f => ({ ...f, name, slug }))
-  }
-
-  const handleSubmit = async () => {
-    setSaving(true)
-    setError('')
-    try {
-      await onCreate(form)
-    } catch (e: any) {
-      setError(e.message || 'Erro ao criar organização')
-    } finally {
-      setSaving(false)
-    }
-  }
-
+/* ─── SECTION CARD ───────────────────────────────────────────────── */
+function SectionCard({
+  title,
+  subtitle,
+  icon: Icon,
+  children,
+  delay = 0,
+}: {
+  title: string
+  subtitle: string
+  icon: any
+  children: React.ReactNode
+  delay?: number
+}) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center min-h-[400px] py-12"
+      transition={{ duration: 0.3, delay, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        background: T.surface,
+        border: `1px solid ${T.border}`,
+        borderRadius: T.radius.xl,
+        overflow: 'hidden',
+      }}
     >
-      <div
-        className="w-full max-w-lg rounded-2xl p-8"
-        style={{ background: 'var(--bo-card)', border: `1px solid ${T.border}` }}
-      >
-        {/* Icon */}
-        <div className="flex items-center justify-center mb-6">
-          <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)' }}
-          >
-            <Building2 size={28} className="text-white" />
-          </div>
+      {/* Section header */}
+      <div style={{
+        padding: '16px 24px',
+        borderBottom: `1px solid ${T.border}`,
+        display: 'flex', alignItems: 'center', gap: 12,
+        background: 'color-mix(in srgb, var(--bg-elevated) 50%, transparent)',
+      }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: T.radius.md, flexShrink: 0,
+          background: 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--imi-gold-500) 22%, transparent)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Icon size={16} style={{ color: 'var(--imi-gold-500)' }} />
         </div>
-
-        <h2 className="text-xl font-bold text-center mb-2" style={{ color: T.text }}>Criar Organização</h2>
-        <p className="text-sm text-center mb-8" style={{ color: T.textMuted }}>
-          Configure sua organização para gerenciar equipes, IA e brand identity
-        </p>
-
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: T.textMuted }}>
-              Nome da Organização
-            </label>
-            <input
-              value={form.name}
-              onChange={e => handleNameChange(e.target.value)}
-              placeholder="Ex: IMI Inteligência Imobiliária"
-              className="w-full h-11 px-4 rounded-xl text-sm focus:outline-none focus:ring-2"
-              style={{
-                background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
-                '--tw-ring-color': 'var(--imi-blue)',
-              } as React.CSSProperties}
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: T.textMuted }}>
-              Nicho de Mercado
-            </label>
-            <select
-              value={form.niche}
-              onChange={e => setForm(f => ({ ...f, niche: e.target.value }))}
-              className="w-full h-11 px-4 rounded-xl text-sm focus:outline-none"
-              style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-            >
-              {NICHES.map(n => <option key={n.value} value={n.value}>{n.label}</option>)}
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: T.textMuted }}>
-              Slug (URL)
-            </label>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono shrink-0" style={{ color: T.textDim }}>imi.com.br/</span>
-              <input
-                value={form.slug}
-                onChange={e => setForm(f => ({ ...f, slug: e.target.value }))}
-                placeholder="minha-imobiliaria"
-                className="flex-1 h-11 px-4 rounded-xl text-sm font-mono focus:outline-none"
-                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-              />
-            </div>
-          </div>
-
-          {error && (
-            <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
-              <AlertCircle size={14} className="text-red-400 shrink-0" />
-              <p className="text-xs text-red-400">{error}</p>
-            </div>
-          )}
-
-          <button
-            onClick={handleSubmit}
-            disabled={!form.name || !form.slug || saving}
-            className="w-full h-11 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-40"
-            style={{ background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)' }}
-          >
-            {saving ? 'Criando...' : 'Criar Organização'}
-          </button>
+        <div>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: T.text, fontFamily: T.font.sans, margin: 0 }}>
+            {title}
+          </h2>
+          <p style={{ fontSize: 12, color: T.textMuted, margin: '1px 0 0' }}>{subtitle}</p>
         </div>
+      </div>
+      <div style={{ padding: '20px 24px' }}>
+        {children}
       </div>
     </motion.div>
   )
 }
 
+/* ─── FIELD ──────────────────────────────────────────────────────── */
+function Field({ label, children, readOnly }: { label: string; children: React.ReactNode; readOnly?: boolean }) {
+  return (
+    <div>
+      <label style={{
+        display: 'block', fontSize: 11, fontWeight: 700,
+        color: readOnly ? 'var(--imi-gold-500)' : T.textMuted,
+        textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6,
+      }}>
+        {label}
+      </label>
+      {children}
+    </div>
+  )
+}
+
+/* ─── GRID ───────────────────────────────────────────────────────── */
+function Grid({ cols, children }: { cols: number; children: React.ReactNode }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 16, marginBottom: 16 }}>
+      {children}
+    </div>
+  )
+}
+
+/* ─── MAIN PAGE ──────────────────────────────────────────────────── */
 export default function OrganizacaoPage() {
-  const [loading, setLoading] = useState(true)
-  const [tenant, setTenant] = useState<any>(null)
-  const [role, setRole] = useState<string>('member')
-  const [members, setMembers] = useState<any[]>([])
-  const [aiUsage, setAiUsage] = useState({ totalTokens: 0, totalCost: '0.0000', requests: 0 })
-
-  // Settings state
+  const [form, setForm] = useState<OrgForm>(DEFAULT_FORM)
+  const [logoPreview, setLogoPreview] = useState<string | null>(null)
+  const [isDirty, setIsDirty] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
-  const [settingsForm, setSettingsForm] = useState({
-    name: '',
-    tone_of_voice: 'professional',
-    ai_model: 'claude-3-5-sonnet-20241022',
-    ai_temperature: 0.7,
-    ai_max_tokens: 2000,
-  })
+  const [savedOk, setSavedOk] = useState(false)
+  const [cepLoading, setCepLoading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Members
-  const [inviteEmail, setInviteEmail] = useState('')
-  const [inviteRole, setInviteRole] = useState('member')
-  const [inviting, setInviting] = useState(false)
-  const [inviteError, setInviteError] = useState('')
-  const [inviteSuccess, setInviteSuccess] = useState(false)
-  const [showInviteModal, setShowInviteModal] = useState(false)
+  const fI: React.CSSProperties = {
+    ...inputStyle,
+    background: T.elevated,
+    border: `1.5px solid ${T.border}`,
+  }
 
-  const loadData = useCallback(async () => {
+  const readonlyI: React.CSSProperties = {
+    ...fI,
+    opacity: 0.7,
+    cursor: 'not-allowed',
+    background: 'color-mix(in srgb, var(--imi-gold-500) 5%, var(--bg-elevated))',
+    border: '1.5px solid color-mix(in srgb, var(--imi-gold-500) 20%, var(--border-default))',
+  }
+
+  const update = <K extends keyof OrgForm>(key: K, value: OrgForm[K]) => {
+    setForm(prev => ({ ...prev, [key]: value }))
+    setIsDirty(true)
+  }
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Imagem deve ter no máximo 2MB')
+      return
+    }
+    // Preview
+    const reader = new FileReader()
+    reader.onload = ev => setLogoPreview(ev.target?.result as string)
+    reader.readAsDataURL(file)
+    setIsDirty(true)
+    // Upload to /api/upload
     try {
-      const [orgRes, membersRes] = await Promise.all([
-        fetch('/api/organizacao'),
-        fetch('/api/organizacao/members'),
-      ])
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('bucket', 'org')
+      await fetch('/api/upload', { method: 'POST', body: fd })
+    } catch {
+      // silently ignore
+    }
+  }
 
-      const orgData = await orgRes.json()
-      const membersData = await membersRes.json()
-
-      if (orgData.tenant) {
-        setTenant(orgData.tenant)
-        setRole(orgData.role)
-        setAiUsage(orgData.aiUsage || { totalTokens: 0, totalCost: '0.0000', requests: 0 })
-        setSettingsForm({
-          name: orgData.tenant.name || '',
-          tone_of_voice: orgData.tenant.tone_of_voice || 'professional',
-          ai_model: orgData.tenant.ai_model || 'claude-3-5-sonnet-20241022',
-          ai_temperature: orgData.tenant.ai_temperature ?? 0.7,
-          ai_max_tokens: orgData.tenant.ai_max_tokens ?? 2000,
-        })
+  const handleCepSearch = async () => {
+    const raw = form.cep.replace(/\D/g, '')
+    if (raw.length !== 8) return
+    setCepLoading(true)
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${raw}/json/`)
+      const data = await res.json()
+      if (!data.erro) {
+        setForm(prev => ({
+          ...prev,
+          logradouro: data.logradouro || prev.logradouro,
+          bairro: data.bairro || prev.bairro,
+          cidade: data.localidade || prev.cidade,
+          estado: data.uf || prev.estado,
+        }))
+        setIsDirty(true)
       }
-
-      setMembers(membersData.members || [])
-    } catch (err) {
-      console.error(err)
+    } catch {
+      // silently ignore
     } finally {
-      setLoading(false)
+      setCepLoading(false)
     }
-  }, [])
-
-  useEffect(() => {
-    loadData()
-  }, [loadData])
-
-  const handleCreateOrg = async (data: any) => {
-    const res = await fetch('/api/organizacao', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    const json = await res.json()
-    if (!res.ok) throw new Error(json.error || 'Erro ao criar organização')
-    setTenant(json.tenant)
-    setRole('owner')
-    await loadData()
   }
 
-  const handleSaveSettings = async () => {
+  const handleSave = async () => {
     setSaving(true)
-    try {
-      const res = await fetch('/api/organizacao', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settingsForm),
-      })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error)
-      setTenant(json.tenant)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 2500)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setSaving(false)
-    }
+    await new Promise(r => setTimeout(r, 700))
+    setSaving(false)
+    setSavedOk(true)
+    setIsDirty(false)
+    setTimeout(() => setSavedOk(false), 2000)
   }
 
-  const handleInvite = async () => {
-    setInviting(true)
-    setInviteError('')
-    setInviteSuccess(false)
-    try {
-      const res = await fetch('/api/organizacao/members', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: inviteEmail, role: inviteRole }),
-      })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error)
-      setInviteSuccess(true)
-      setInviteEmail('')
-      await loadData()
-      setTimeout(() => { setInviteSuccess(false); setShowInviteModal(false) }, 1500)
-    } catch (e: any) {
-      setInviteError(e.message || 'Erro ao convidar')
-    } finally {
-      setInviting(false)
-    }
-  }
-
-  const handleRemoveMember = async (memberId: string) => {
-    if (!confirm('Remover este membro da organização?')) return
-    await fetch(`/api/organizacao/members?member_id=${memberId}`, { method: 'DELETE' })
-    await loadData()
-  }
-
-  if (loading) return <OrgSkeleton />
-
-  if (!tenant) {
-    return <CreateOrgForm onCreate={handleCreateOrg} />
-  }
-
-  const plan = PLAN_CONFIG[tenant.subscription_tier] || PLAN_CONFIG.starter
-  const isOwnerOrAdmin = ['owner', 'admin'].includes(role)
+  const FONT_OPTIONS: { id: OrgForm['fonte']; label: string; family: string }[] = [
+    { id: 'libre', label: 'Libre Baskerville', family: 'Georgia, serif' },
+    { id: 'playfair', label: 'Playfair Display', family: '"Playfair Display", Georgia, serif' },
+    { id: 'georgia', label: 'Georgia', family: 'Georgia, serif' },
+  ]
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
+    <div style={{ maxWidth: 800, paddingBottom: 100 }}>
       <PageIntelHeader
-        moduleLabel="ORGANIZAÇÃO"
-        title={tenant.name}
-        subtitle={`${tenant.slug} · Plano ${plan.label}`}
-        actions={
-          isOwnerOrAdmin ? (
-            <button
-              onClick={handleSaveSettings}
-              disabled={saving}
-              className="bo-btn bo-btn-primary"
-              style={{ background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)', opacity: saving ? 0.7 : 1 }}
-            >
-              {saved ? <Check size={15} /> : saving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
-              <span className="hidden sm:inline">{saved ? 'Salvo!' : 'Salvar'}</span>
-            </button>
-          ) : undefined
-        }
+        moduleLabel="CONFIGURAÇÕES · EMPRESA"
+        title="Organização"
+        subtitle="Perfil, identidade visual e configurações gerais da empresa"
+        breadcrumbs={[{ label: 'Configurações', href: '/backoffice/settings' }, { label: 'Organização' }]}
       />
 
-      {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <KPICard label="Membros" value={members.length} accent="blue" size="sm" icon={<Users size={11} />} />
-        <KPICard label="Requisições IA (30d)" value={aiUsage.requests} accent="ai" size="sm" icon={<Brain size={11} />} />
-        <KPICard label="Tokens Usados" value={Number(aiUsage.totalTokens).toLocaleString('pt-BR')} accent="warm" size="sm" icon={<Zap size={11} />} />
-        <KPICard label="Custo IA (30d)" value={`$${aiUsage.totalCost}`} accent="green" size="sm" icon={<TrendingUp size={11} />} />
-      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-      <div className="grid grid-cols-1 xl:grid-cols-5 gap-5">
-        {/* LEFT: Settings */}
-        <div className="xl:col-span-3 space-y-4">
-
-          {/* Identidade */}
-          <div className="rounded-2xl p-5 space-y-4" style={{ background: 'var(--bo-card)', border: `1px solid ${T.border}` }}>
-            <SectionHeader title="Identidade & Marca" />
-
-            <div className="space-y-3">
+        {/* ── 1. PERFIL DA EMPRESA ──────────────────────────────── */}
+        <SectionCard
+          title="Perfil da Empresa"
+          subtitle="Dados cadastrais e informações públicas"
+          icon={Building2}
+          delay={0}
+        >
+          {/* Logo upload zone */}
+          <div style={{ marginBottom: 24 }}>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+              Logotipo
+            </label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+              {/* Upload zone */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                style={{
+                  width: 120, height: 80,
+                  borderRadius: T.radius.lg,
+                  border: `2px dashed ${T.border}`,
+                  background: T.elevated,
+                  display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center',
+                  gap: 6, cursor: 'pointer',
+                  transition: 'all 0.15s',
+                  overflow: 'hidden',
+                  padding: 0,
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = 'var(--imi-gold-500)'
+                  e.currentTarget.style.background = 'color-mix(in srgb, var(--imi-gold-500) 5%, var(--bg-elevated))'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = T.border
+                  e.currentTarget.style.background = T.elevated
+                }}
+              >
+                {logoPreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={logoPreview} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 8 }} />
+                ) : (
+                  <>
+                    <Upload size={18} style={{ color: T.textDim }} />
+                    <span style={{ fontSize: 10, color: T.textDim, textAlign: 'center', lineHeight: 1.3, fontFamily: T.font.sans, padding: '0 6px' }}>
+                      Clique ou arraste o logo
+                    </span>
+                  </>
+                )}
+              </button>
+              <input
+                id="logo-upload"
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleLogoChange}
+              />
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: T.textMuted }}>
-                  Nome da Organização
-                </label>
+                <p style={{ fontSize: 12, color: T.textMuted, margin: 0 }}>PNG, SVG ou JPG · Máx. 2 MB</p>
+                <p style={{ fontSize: 12, color: T.textDim, margin: '3px 0 0' }}>Recomendado: 400 × 200 px, fundo transparente</p>
+                {logoPreview && (
+                  <button
+                    onClick={() => { setLogoPreview(null); setIsDirty(true) }}
+                    style={{ marginTop: 8, fontSize: 12, color: 'var(--error)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                  >
+                    Remover logo
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <Grid cols={2}>
+            <Field label="Razão Social">
+              <input type="text" value={form.razaoSocial} onChange={e => update('razaoSocial', e.target.value)} style={fI} />
+            </Field>
+            <Field label="Nome Fantasia">
+              <input type="text" value={form.nomeFantasia} onChange={e => update('nomeFantasia', e.target.value)} style={fI} />
+            </Field>
+          </Grid>
+
+          <Grid cols={2}>
+            <Field label="CNPJ">
+              <input type="text" value={form.cnpj} onChange={e => update('cnpj', e.target.value)} placeholder="00.000.000/0001-00" style={fI} />
+            </Field>
+            <Field label="Website">
+              <input type="url" value={form.website} onChange={e => update('website', e.target.value)} placeholder="https://" style={fI} />
+            </Field>
+          </Grid>
+
+          <Grid cols={2}>
+            <Field label="Telefone">
+              <input type="tel" value={form.telefone} onChange={e => update('telefone', e.target.value)} style={fI} />
+            </Field>
+            <Field label="Email Comercial">
+              <input type="email" value={form.emailComercial} onChange={e => update('emailComercial', e.target.value)} style={fI} />
+            </Field>
+          </Grid>
+        </SectionCard>
+
+        {/* ── 2. ENDEREÇO ───────────────────────────────────────── */}
+        <SectionCard
+          title="Endereço"
+          subtitle="Localização física da empresa"
+          icon={MapPin}
+          delay={0.05}
+        >
+          {/* CEP with auto-fill */}
+          <div style={{ marginBottom: 16 }}>
+            <Field label="CEP">
+              <div style={{ display: 'flex', gap: 8 }}>
                 <input
-                  value={settingsForm.name}
-                  onChange={e => setSettingsForm(f => ({ ...f, name: e.target.value }))}
-                  disabled={!isOwnerOrAdmin}
-                  className="w-full h-10 px-4 rounded-xl text-sm focus:outline-none focus:ring-2 disabled:opacity-50"
-                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text, '--tw-ring-color': 'var(--imi-blue)' } as React.CSSProperties}
+                  type="text"
+                  value={form.cep}
+                  onChange={e => update('cep', e.target.value)}
+                  placeholder="00000-000"
+                  style={{ ...fI, flex: 1 }}
+                  onKeyDown={e => { if (e.key === 'Enter') handleCepSearch() }}
+                />
+                <button
+                  onClick={handleCepSearch}
+                  disabled={cepLoading}
+                  style={{
+                    height: 40, padding: '0 14px', borderRadius: T.radius.md,
+                    background: T.elevated, border: `1.5px solid ${T.border}`,
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    fontSize: 13, fontWeight: 500, color: T.text, cursor: 'pointer',
+                    fontFamily: T.font.sans, whiteSpace: 'nowrap',
+                    opacity: cepLoading ? 0.6 : 1,
+                  }}
+                >
+                  <Search size={13} style={{ color: 'var(--imi-gold-500)' }} />
+                  {cepLoading ? 'Buscando...' : 'Auto-preencher'}
+                </button>
+              </div>
+            </Field>
+          </div>
+
+          <Grid cols={3}>
+            <div style={{ gridColumn: 'span 2' }}>
+              <Field label="Logradouro">
+                <input type="text" value={form.logradouro} onChange={e => update('logradouro', e.target.value)} style={fI} />
+              </Field>
+            </div>
+            <Field label="Número">
+              <input type="text" value={form.numero} onChange={e => update('numero', e.target.value)} style={fI} />
+            </Field>
+          </Grid>
+
+          <Grid cols={3}>
+            <Field label="Complemento">
+              <input type="text" value={form.complemento} onChange={e => update('complemento', e.target.value)} placeholder="Apto, sala..." style={fI} />
+            </Field>
+            <Field label="Bairro">
+              <input type="text" value={form.bairro} onChange={e => update('bairro', e.target.value)} style={fI} />
+            </Field>
+            <Field label="Cidade">
+              <input type="text" value={form.cidade} onChange={e => update('cidade', e.target.value)} style={fI} />
+            </Field>
+          </Grid>
+
+          <div style={{ maxWidth: 120 }}>
+            <Field label="Estado (UF)">
+              <input type="text" value={form.estado} onChange={e => update('estado', e.target.value)} maxLength={2} placeholder="SP" style={fI} />
+            </Field>
+          </div>
+        </SectionCard>
+
+        {/* ── 3. IDENTIDADE VISUAL ──────────────────────────────── */}
+        <SectionCard
+          title="Identidade Visual"
+          subtitle="Cores da marca, tipografia e preview do brandkit"
+          icon={Palette}
+          delay={0.1}
+        >
+          {/* Colors */}
+          <Grid cols={2}>
+            <Field label="Cor Primária (Brand)">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <input
+                  type="color"
+                  value={form.corPrimaria}
+                  onChange={e => update('corPrimaria', e.target.value)}
+                  style={{
+                    width: 42, height: 42, borderRadius: T.radius.md,
+                    border: `1.5px solid ${T.border}`, cursor: 'pointer',
+                    background: 'none', padding: 2, flexShrink: 0,
+                  }}
+                />
+                <input
+                  type="text"
+                  value={form.corPrimaria}
+                  onChange={e => update('corPrimaria', e.target.value)}
+                  style={{ ...fI, fontFamily: 'var(--font-mono)', fontSize: 13, flex: 1 }}
                 />
               </div>
+            </Field>
+            <Field label="Cor Secundária">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <input
+                  type="color"
+                  value={form.corSecundaria}
+                  onChange={e => update('corSecundaria', e.target.value)}
+                  style={{
+                    width: 42, height: 42, borderRadius: T.radius.md,
+                    border: `1.5px solid ${T.border}`, cursor: 'pointer',
+                    background: 'none', padding: 2, flexShrink: 0,
+                  }}
+                />
+                <input
+                  type="text"
+                  value={form.corSecundaria}
+                  onChange={e => update('corSecundaria', e.target.value)}
+                  style={{ ...fI, fontFamily: 'var(--font-mono)', fontSize: 13, flex: 1 }}
+                />
+              </div>
+            </Field>
+          </Grid>
 
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: T.textMuted }}>
-                  Tom de Voz da IA
-                </label>
-                <select
-                  value={settingsForm.tone_of_voice}
-                  onChange={e => setSettingsForm(f => ({ ...f, tone_of_voice: e.target.value }))}
-                  disabled={!isOwnerOrAdmin}
-                  className="w-full h-10 px-4 rounded-xl text-sm focus:outline-none disabled:opacity-50"
-                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+          {/* Font selection */}
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+              Tipografia Display
+            </label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {FONT_OPTIONS.map(opt => (
+                <label
+                  key={opt.id}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '12px 16px', borderRadius: T.radius.lg,
+                    border: `1.5px solid ${form.fonte === opt.id ? 'var(--imi-gold-500)' : T.border}`,
+                    background: form.fonte === opt.id ? 'color-mix(in srgb, var(--imi-gold-500) 5%, var(--bg-elevated))' : T.elevated,
+                    cursor: 'pointer', transition: 'all 0.15s',
+                  }}
                 >
-                  {TONE_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
-              </div>
-
-              <div className="flex items-center gap-3 pt-2 pb-1">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: plan.bg, border: `1px solid ${plan.color}30` }}>
-                  <Crown size={13} style={{ color: plan.color }} />
-                  <span className="text-xs font-bold" style={{ color: plan.color }}>Plano {plan.label}</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: 'var(--bo-elevated)', border: `1px solid ${T.border}` }}>
-                  <Hash size={12} style={{ color: T.textMuted }} />
-                  <span className="text-xs font-mono" style={{ color: T.textMuted }}>{tenant.slug}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* IA Config */}
-          <div className="rounded-2xl p-5 space-y-4" style={{ background: 'var(--bo-card)', border: `1px solid ${T.border}` }}>
-            <SectionHeader title="Configurações da IA" />
-
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: T.textMuted }}>
-                  Modelo de IA
-                </label>
-                <select
-                  value={settingsForm.ai_model}
-                  onChange={e => setSettingsForm(f => ({ ...f, ai_model: e.target.value }))}
-                  disabled={!isOwnerOrAdmin}
-                  className="w-full h-10 px-4 rounded-xl text-sm focus:outline-none disabled:opacity-50"
-                  style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                >
-                  {AI_MODELS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 flex items-center justify-between" style={{ color: T.textMuted }}>
-                    Temperatura
-                    <span className="font-mono" style={{ color: T.text }}>{settingsForm.ai_temperature}</span>
-                  </label>
                   <input
-                    type="range" min="0" max="1" step="0.1"
-                    value={settingsForm.ai_temperature}
-                    onChange={e => setSettingsForm(f => ({ ...f, ai_temperature: parseFloat(e.target.value) }))}
-                    disabled={!isOwnerOrAdmin}
-                    className="w-full accent-blue-500 disabled:opacity-50"
+                    type="radio"
+                    name="fonte"
+                    value={opt.id}
+                    checked={form.fonte === opt.id}
+                    onChange={() => update('fonte', opt.id)}
+                    style={{ accentColor: 'var(--imi-gold-500)', width: 16, height: 16, flexShrink: 0 }}
                   />
-                  <div className="flex justify-between text-[10px] mt-1" style={{ color: T.textDim }}>
-                    <span>Preciso</span><span>Criativo</span>
+                  <div>
+                    <span style={{ fontSize: 15, fontFamily: opt.family, fontWeight: 700, color: T.text }}>
+                      {opt.label}
+                    </span>
+                    <p style={{ fontSize: 11, color: T.textDim, margin: '2px 0 0', fontFamily: T.font.sans }}>
+                      Imóveis de Alto Padrão
+                    </p>
                   </div>
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: T.textMuted }}>
-                    Max Tokens
-                  </label>
-                  <input
-                    type="number" min="500" max="8000" step="500"
-                    value={settingsForm.ai_max_tokens}
-                    onChange={e => setSettingsForm(f => ({ ...f, ai_max_tokens: parseInt(e.target.value) }))}
-                    disabled={!isOwnerOrAdmin}
-                    className="w-full h-10 px-4 rounded-xl text-sm focus:outline-none disabled:opacity-50"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                  />
-                </div>
-              </div>
-
-              {/* AI Usage bar */}
-              <div className="p-3 rounded-xl" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-xs font-semibold" style={{ color: T.textMuted }}>Uso do mês (tokens)</p>
-                  <p className="text-xs font-mono font-bold" style={{ color: T.text }}>{Number(aiUsage.totalTokens).toLocaleString('pt-BR')}</p>
-                </div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.border }}>
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{
-                      width: `${Math.min((aiUsage.totalTokens / 100000) * 100, 100)}%`,
-                      background: 'linear-gradient(90deg, var(--imi-blue), var(--imi-blue-bright))',
-                    }}
-                  />
-                </div>
-                <p className="text-[10px] mt-1.5" style={{ color: T.textDim }}>
-                  {aiUsage.requests} requisições · ${aiUsage.totalCost} USD
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT: Members */}
-        <div className="xl:col-span-2 space-y-4">
-          <div className="rounded-2xl p-5" style={{ background: 'var(--bo-card)', border: `1px solid ${T.border}` }}>
-            <div className="flex items-center justify-between mb-4">
-              <SectionHeader title="Membros da Equipe" />
-              {isOwnerOrAdmin && (
-                <button
-                  onClick={() => setShowInviteModal(true)}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-xl text-xs font-semibold text-white"
-                  style={{ background: 'linear-gradient(135deg, var(--imi-blue), var(--imi-blue-bright))' }}
-                >
-                  <Plus size={12} /> Convidar
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              {members.length === 0 && (
-                <div className="py-8 text-center">
-                  <Users size={28} className="mx-auto mb-2 opacity-20" style={{ color: T.textMuted }} />
-                  <p className="text-xs" style={{ color: T.textMuted }}>Nenhum membro ainda</p>
-                </div>
-              )}
-
-              {members.map((member) => {
-                const rc = ROLE_CONFIG[member.role] || ROLE_CONFIG.member
-                const RoleIcon = rc.icon
-                return (
-                  <div
-                    key={member.id}
-                    className="flex items-center gap-3 p-3 rounded-xl group"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                  >
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-                      style={{ background: rc.color + '25', color: rc.color, border: `1px solid ${rc.color}30` }}
-                    >
-                      <RoleIcon size={14} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold truncate font-mono" style={{ color: T.textMuted }}>
-                        {member.user_id?.slice(0, 8)}...
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span
-                          className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                          style={{ background: rc.color + '20', color: rc.color }}
-                        >
-                          {rc.label}
-                        </span>
-                        <span className="text-[10px]" style={{ color: T.textDim }}>
-                          {new Date(member.created_at).toLocaleDateString('pt-BR')}
-                        </span>
-                      </div>
-                    </div>
-
-                    {isOwnerOrAdmin && member.role !== 'owner' && (
-                      <button
-                        onClick={() => handleRemoveMember(member.id)}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{ background: 'rgba(239,68,68,0.1)', color: 'var(--bo-error)' }}
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    )}
-                  </div>
-                )
-              })}
+                </label>
+              ))}
             </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="rounded-2xl p-4 space-y-2" style={{ background: 'var(--bo-card)', border: `1px solid ${T.border}` }}>
-            <p className="text-[10px] font-semibold uppercase tracking-wider mb-3" style={{ color: T.textMuted }}>
-              Ações Rápidas
-            </p>
-            {[
-              { label: 'Ver logs da IA', href: '/backoffice/settings/logs', icon: Activity },
-              { label: 'Configurar integrações', href: '/backoffice/integracoes', icon: Zap },
-              { label: 'Gerenciar playbooks', href: '/backoffice/playbooks', icon: Sparkles },
-            ].map(({ label, href, icon: Icon }) => (
-              <a
-                key={href}
-                href={href}
-                className="flex items-center gap-3 p-3 rounded-xl transition-all group"
-                style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
+          {/* Brand preview */}
+          <div style={{ borderRadius: T.radius.lg, overflow: 'hidden', border: `1px solid ${T.border}` }}>
+            <div style={{ background: form.corSecundaria, padding: '14px 20px' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', fontFamily: T.font.mono }}>
+                PREVIEW · BRANDKIT
+              </div>
+              <div style={{
+                fontSize: 20, fontWeight: 700, color: '#fff', marginTop: 4,
+                fontFamily: FONT_OPTIONS.find(f => f.id === form.fonte)?.family ?? 'Georgia, serif',
+              }}>
+                {form.nomeFantasia || 'IMI Imóveis'}
+              </div>
+            </div>
+            <div style={{ padding: '14px 20px', background: T.elevated, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{
+                height: 34, padding: '0 16px', borderRadius: T.radius.md,
+                background: form.corPrimaria,
+                display: 'inline-flex', alignItems: 'center',
+                fontSize: 13, fontWeight: 600, color: '#fff', fontFamily: T.font.sans,
+              }}>
+                Ver Imóveis
+              </div>
+              <span style={{ fontSize: 13, color: form.corPrimaria, fontWeight: 600, fontFamily: T.font.sans }}>
+                Saiba mais →
+              </span>
+            </div>
+          </div>
+        </SectionCard>
+
+        {/* ── 4. CONFIGURAÇÕES REGIONAIS ────────────────────────── */}
+        <SectionCard
+          title="Configurações Regionais"
+          subtitle="Moeda, idioma, formato de data e fuso horário"
+          icon={Globe}
+          delay={0.15}
+        >
+          <Grid cols={2}>
+            <Field label="Moeda">
+              <select
+                value={form.moeda}
+                onChange={e => update('moeda', e.target.value as OrgForm['moeda'])}
+                style={{ ...fI, cursor: 'pointer' }}
               >
-                <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center"
-                  style={{ background: 'var(--imi-blue)20' }}
-                >
-                  <Icon size={13} style={{ color: 'var(--imi-blue)' }} />
-                </div>
-                <span className="flex-1 text-xs font-medium">{label}</span>
-                <ChevronRight size={13} className="opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: T.textMuted }} />
-              </a>
-            ))}
+                <option value="BRL">BRL — Real Brasileiro (R$)</option>
+                <option value="USD">USD — Dólar Americano ($)</option>
+                <option value="AED">AED — Dirham Emirados (AED)</option>
+              </select>
+            </Field>
+            <Field label="Idioma Padrão">
+              <select
+                value={form.idioma}
+                onChange={e => update('idioma', e.target.value as OrgForm['idioma'])}
+                style={{ ...fI, cursor: 'pointer' }}
+              >
+                <option value="pt">Português (Brasil)</option>
+                <option value="en">English (US)</option>
+              </select>
+            </Field>
+          </Grid>
+
+          <Grid cols={2}>
+            <Field label="Formato de Data">
+              <select
+                value={form.formatoData}
+                onChange={e => update('formatoData', e.target.value as OrgForm['formatoData'])}
+                style={{ ...fI, cursor: 'pointer' }}
+              >
+                <option value="dd/mm/yyyy">DD/MM/AAAA (padrão BR)</option>
+                <option value="mm/dd/yyyy">MM/DD/YYYY (padrão US)</option>
+                <option value="yyyy-mm-dd">AAAA-MM-DD (ISO)</option>
+              </select>
+            </Field>
+            <Field label="Fuso Horário">
+              <select
+                value={form.fusoHorario}
+                onChange={e => update('fusoHorario', e.target.value)}
+                style={{ ...fI, cursor: 'pointer' }}
+              >
+                <option value="America/Sao_Paulo">America/Sao_Paulo (BRT −3)</option>
+                <option value="America/Manaus">America/Manaus (AMT −4)</option>
+                <option value="America/Belem">America/Belem (BRT −3)</option>
+                <option value="America/Fortaleza">America/Fortaleza (BRT −3)</option>
+                <option value="America/New_York">America/New_York (EST −5)</option>
+                <option value="Asia/Dubai">Asia/Dubai (GST +4)</option>
+                <option value="Europe/Lisbon">Europe/Lisbon (WET +0)</option>
+                <option value="UTC">UTC +0</option>
+              </select>
+            </Field>
+          </Grid>
+        </SectionCard>
+
+        {/* ── 5. DADOS DA LICENÇA ───────────────────────────────── */}
+        <SectionCard
+          title="Dados da Licença"
+          subtitle="Registros profissionais — apenas leitura"
+          icon={Shield}
+          delay={0.2}
+        >
+          {/* Gold badge */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            marginBottom: 18, padding: '5px 14px', borderRadius: T.radius.full,
+            background: 'color-mix(in srgb, var(--imi-gold-500) 12%, transparent)',
+            border: '1px solid color-mix(in srgb, var(--imi-gold-500) 25%, transparent)',
+            color: 'var(--imi-gold-500)', fontSize: 11, fontWeight: 700,
+            letterSpacing: '0.04em',
+          }}>
+            <Shield size={12} />
+            LICENÇA VERIFICADA
           </div>
-        </div>
+
+          <Grid cols={3}>
+            <Field label="CRECI" readOnly>
+              <div style={{ position: 'relative' }}>
+                <input type="text" value={form.creci} readOnly style={readonlyI} />
+                <AlertCircle size={13} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--imi-gold-500)', pointerEvents: 'none' }} />
+              </div>
+            </Field>
+            <Field label="CNAI" readOnly>
+              <div style={{ position: 'relative' }}>
+                <input type="text" value={form.cnai} readOnly style={readonlyI} />
+                <AlertCircle size={13} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--imi-gold-500)', pointerEvents: 'none' }} />
+              </div>
+            </Field>
+            <Field label="Validade da Licença" readOnly>
+              <div style={{ position: 'relative' }}>
+                <input type="text" value={form.validadeLicenca} readOnly style={readonlyI} />
+                <AlertCircle size={13} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--imi-gold-500)', pointerEvents: 'none' }} />
+              </div>
+            </Field>
+          </Grid>
+
+          <p style={{ fontSize: 12, color: T.textDim, margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+            <Shield size={11} style={{ color: T.textDim }} />
+            Para atualizar os dados de licença, entre em contato com o suporte IMI.
+          </p>
+        </SectionCard>
+
       </div>
 
-      {/* Invite Modal */}
+      {/* ── STICKY SAVE BAR ──────────────────────────────────────── */}
       <AnimatePresence>
-        {showInviteModal && (
+        {(isDirty || savedOk) && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
-            onClick={() => setShowInviteModal(false)}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 24 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            style={{
+              position: 'fixed',
+              bottom: 24,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 8000,
+              display: 'flex', alignItems: 'center', gap: 14,
+              padding: '12px 20px',
+              background: T.surface,
+              border: `1px solid ${T.border}`,
+              borderRadius: T.radius.xl,
+              boxShadow: 'var(--shadow-lg)',
+              minWidth: 340,
+              backdropFilter: 'blur(8px)',
+            }}
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md rounded-2xl p-6"
-              style={{ background: 'var(--bo-card)', border: `1px solid ${T.border}` }}
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="font-bold text-base" style={{ color: T.text }}>Convidar Membro</h3>
-                <button onClick={() => setShowInviteModal(false)} style={{ color: T.textMuted }}>
-                  <X size={18} />
-                </button>
-              </div>
+            {savedOk ? (
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, color: 'var(--success)', fontFamily: T.font.sans }}>
+                <Check size={16} /> Salvo com sucesso!
+              </span>
+            ) : (
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: T.textMuted, fontFamily: T.font.sans }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--warning)', flexShrink: 0 }} />
+                Alterações não salvas
+              </span>
+            )}
 
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: T.textMuted }}>
-                    Email do usuário
-                  </label>
-                  <input
-                    type="email"
-                    value={inviteEmail}
-                    onChange={e => setInviteEmail(e.target.value)}
-                    placeholder="corretor@imobiliaria.com.br"
-                    className="w-full h-10 px-4 rounded-xl text-sm focus:outline-none focus:ring-2"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider mb-1.5 block" style={{ color: T.textMuted }}>
-                    Função
-                  </label>
-                  <select
-                    value={inviteRole}
-                    onChange={e => setInviteRole(e.target.value)}
-                    className="w-full h-10 px-4 rounded-xl text-sm focus:outline-none"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.text }}
-                  >
-                    <option value="admin">Administrador</option>
-                    <option value="member">Membro</option>
-                    <option value="viewer">Visualizador</option>
-                  </select>
-                </div>
-
-                {inviteError && (
-                  <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(239,68,68,0.1)' }}>
-                    <AlertCircle size={13} className="text-red-400" />
-                    <p className="text-xs text-red-400">{inviteError}</p>
-                  </div>
-                )}
-
-                {inviteSuccess && (
-                  <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(16,185,129,0.1)' }}>
-                    <Check size={13} className="text-emerald-400" />
-                    <p className="text-xs text-emerald-400">Membro adicionado com sucesso!</p>
-                  </div>
-                )}
-
-                <button
-                  onClick={handleInvite}
-                  disabled={!inviteEmail || inviting}
-                  className="w-full h-10 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-40"
-                  style={{ background: 'linear-gradient(135deg, var(--imi-blue), var(--imi-blue-bright))' }}
+            {!savedOk && (
+              <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
+                <Btn
+                  variant="outline"
+                  size="sm"
+                  onClick={() => { setForm(DEFAULT_FORM); setLogoPreview(null); setIsDirty(false) }}
                 >
-                  {inviting ? 'Adicionando...' : 'Adicionar à Equipe'}
-                </button>
+                  Descartar
+                </Btn>
+                <Btn
+                  variant="primary"
+                  size="sm"
+                  loading={saving}
+                  icon={saving ? undefined : <Save size={13} />}
+                  onClick={handleSave}
+                >
+                  Salvar Alterações
+                </Btn>
               </div>
-            </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

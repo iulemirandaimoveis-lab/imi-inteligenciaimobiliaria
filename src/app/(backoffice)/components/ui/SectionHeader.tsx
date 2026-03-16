@@ -1,5 +1,10 @@
 'use client'
 
+/**
+ * SectionHeader — IMI Design System v3
+ * DS3 pattern: section divider with title, optional badge and action link
+ */
+
 import React from 'react'
 
 interface SectionHeaderProps {
@@ -9,7 +14,7 @@ interface SectionHeaderProps {
     href?: string
     onClick?: () => void
   }
-  badge?: string | number   // e.g. "12" or "LIVE"
+  badge?: string | number
   badgeColor?: string
   className?: string
 }
@@ -20,9 +25,10 @@ export function SectionHeader({ title, action, badge, badgeColor, className = ''
       <div className="flex items-center gap-2">
         <span
           style={{
+            fontFamily: 'var(--font-sans)',
             fontSize: '13px',
             fontWeight: 700,
-            color: 'var(--bo-text)',
+            color: 'var(--text-primary)',
             letterSpacing: '-0.01em',
           }}
         >
@@ -31,13 +37,14 @@ export function SectionHeader({ title, action, badge, badgeColor, className = ''
         {badge !== undefined && (
           <span
             style={{
+              fontFamily: 'var(--font-mono)',
               fontSize: '9px',
               fontWeight: 700,
-              color: badgeColor ?? 'var(--imi-blue-bright)',
-              background: 'var(--imi-blue-dim)',
-              border: '1px solid var(--imi-blue-border)',
+              color: badgeColor ?? 'var(--imi-gold-500)',
+              background: 'rgba(184,148,58,0.10)',
+              border: '1px solid rgba(184,148,58,0.20)',
               padding: '1px 6px',
-              borderRadius: '6px',
+              borderRadius: 'var(--r-sm, 6px)',
               lineHeight: '14px',
             }}
           >
@@ -51,13 +58,15 @@ export function SectionHeader({ title, action, badge, badgeColor, className = ''
           <a
             href={action.href}
             style={{
+              fontFamily: 'var(--font-sans)',
               fontSize: '11px',
               fontWeight: 600,
-              color: 'var(--imi-blue-bright)',
+              color: 'var(--imi-gold-500)',
               textDecoration: 'none',
               display: 'flex',
               alignItems: 'center',
               gap: '2px',
+              transition: 'color var(--dur-1, 120ms) var(--ease)',
             }}
           >
             {action.label} <span style={{ fontSize: '14px', lineHeight: 1 }}>›</span>
@@ -66,9 +75,10 @@ export function SectionHeader({ title, action, badge, badgeColor, className = ''
           <button
             onClick={action.onClick}
             style={{
+              fontFamily: 'var(--font-sans)',
               fontSize: '11px',
               fontWeight: 600,
-              color: 'var(--imi-blue-bright)',
+              color: 'var(--imi-gold-500)',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
@@ -76,6 +86,7 @@ export function SectionHeader({ title, action, badge, badgeColor, className = ''
               alignItems: 'center',
               gap: '2px',
               padding: '4px 0',
+              transition: 'color var(--dur-1, 120ms) var(--ease)',
             }}
           >
             {action.label} <span style={{ fontSize: '14px', lineHeight: 1 }}>›</span>

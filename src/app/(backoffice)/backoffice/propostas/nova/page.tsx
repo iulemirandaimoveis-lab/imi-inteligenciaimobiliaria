@@ -152,7 +152,7 @@ function StepCard({ title, children }: { title: string; children: React.ReactNod
       transition={{ duration: 0.25, ease: 'easeOut' }}
       style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
     >
-      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, color: T.text, fontWeight: 500 }}>
+      <h2 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 22, color: T.text, fontWeight: 500 }}>
         {title}
       </h2>
       {children}

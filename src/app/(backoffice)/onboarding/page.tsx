@@ -43,9 +43,9 @@ const STEPS = [
 const inp: React.CSSProperties = {
     width: '100%', height: '48px', padding: '0 14px',
     borderRadius: '12px', fontSize: '14px',
-    color: 'var(--bo-text)',
-    background: 'var(--bo-surface)',
-    border: '1px solid var(--bo-border)',
+    color: 'var(--text-primary)',
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--border-default)',
     outline: 'none', boxSizing: 'border-box',
     transition: 'border-color 0.18s',
 }
@@ -120,14 +120,14 @@ export default function OnboardingPage() {
 
     const labelStyle: React.CSSProperties = {
         fontSize: '11px', fontWeight: 700, textTransform: 'uppercase',
-        letterSpacing: '0.1em', color: 'var(--bo-text-muted)',
+        letterSpacing: '0.1em', color: 'var(--text-secondary)',
         display: 'block', marginBottom: '6px',
     }
 
     return (
         <div style={{
             minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'var(--bo-surface)', padding: '24px',
+            background: 'var(--bg-surface)', padding: '24px',
         }}>
             <div style={{ width: '100%', maxWidth: '520px' }}>
 
@@ -140,9 +140,9 @@ export default function OnboardingPage() {
                                     width: '28px', height: '28px', borderRadius: '50%', flexShrink: 0,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     fontSize: '11px', fontWeight: 800,
-                                    background: step > s.id ? 'var(--s-done-bg)' : step === s.id ? 'var(--bo-accent)' : 'var(--bo-elevated)',
-                                    color: step > s.id ? 'var(--s-done)' : step === s.id ? '#fff' : 'var(--bo-text-muted)',
-                                    border: `1px solid ${step > s.id ? 'var(--s-done)' : step === s.id ? 'var(--bo-accent)' : 'var(--bo-border)'}`,
+                                    background: step > s.id ? 'var(--s-done-bg)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
+                                    color: step > s.id ? 'var(--s-done)' : step === s.id ? '#fff' : 'var(--text-secondary)',
+                                    border: `1px solid ${step > s.id ? 'var(--s-done)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--border-default)'}`,
                                     transition: 'all 0.3s ease',
                                 }}>
                                     {step > s.id ? <CheckCircle2 size={14} /> : s.id}
@@ -150,7 +150,7 @@ export default function OnboardingPage() {
                                 {i < STEPS.length - 1 && (
                                     <div style={{
                                         flex: 1, height: '2px', borderRadius: '2px',
-                                        background: step > s.id ? 'var(--s-done)' : 'var(--bo-border)',
+                                        background: step > s.id ? 'var(--s-done)' : 'var(--border-default)',
                                         transition: 'background 0.3s ease',
                                     }} />
                                 )}
@@ -164,33 +164,33 @@ export default function OnboardingPage() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     style={{
-                        background: 'var(--bo-card)',
-                        border: '1px solid var(--bo-border)',
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border-default)',
                         borderRadius: '24px',
                         overflow: 'hidden',
                     }}
                 >
                     {/* Header */}
                     <div style={{
-                        padding: '24px 28px', background: 'var(--bo-elevated)',
-                        borderBottom: '1px solid var(--bo-border)',
+                        padding: '24px 28px', background: 'var(--bg-elevated)',
+                        borderBottom: '1px solid var(--border-default)',
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <div style={{
                                 width: '42px', height: '42px', borderRadius: '12px',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                background: 'rgba(200,166,90,0.12)', border: '1px solid rgba(200,166,90,0.25)',
+                                background: 'rgba(184,148,58,0.12)', border: '1px solid rgba(184,148,58,0.25)',
                             }}>
-                                <Building2 size={20} style={{ color: 'var(--bo-accent)' }} />
+                                <Building2 size={20} style={{ color: 'var(--imi-gold-500)' }} />
                             </div>
                             <div>
-                                <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-accent)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '2px' }}>
+                                <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '2px' }}>
                                     CONFIGURAÇÃO INICIAL · PASSO {step}/3
                                 </p>
-                                <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--bo-text)' }}>
+                                <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>
                                     {STEPS[step - 1]?.title}
                                 </h2>
-                                <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', marginTop: '2px' }}>
+                                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
                                     {STEPS[step - 1]?.subtitle}
                                 </p>
                             </div>
@@ -212,8 +212,8 @@ export default function OnboardingPage() {
                                         value={data.companyName} onChange={e => set('companyName', e.target.value)}
                                         placeholder="Ex: Iule Miranda Imóveis"
                                         style={inp}
-                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--bo-accent)')}
-                                        onBlur={e => (e.currentTarget.style.borderColor = 'var(--bo-border)')}
+                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                        onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                     />
                                 </div>
                                 <div>
@@ -222,8 +222,8 @@ export default function OnboardingPage() {
                                         value={data.ownerName} onChange={e => set('ownerName', e.target.value)}
                                         placeholder="Nome completo"
                                         style={inp}
-                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--bo-accent)')}
-                                        onBlur={e => (e.currentTarget.style.borderColor = 'var(--bo-border)')}
+                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                        onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                     />
                                 </div>
                                 <div>
@@ -232,8 +232,8 @@ export default function OnboardingPage() {
                                         value={data.phone} onChange={e => set('phone', e.target.value)}
                                         placeholder="(81) 9 9999-9999"
                                         style={inp}
-                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--bo-accent)')}
-                                        onBlur={e => (e.currentTarget.style.borderColor = 'var(--bo-border)')}
+                                        onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                        onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                     />
                                 </div>
                             </motion.div>
@@ -256,15 +256,15 @@ export default function OnboardingPage() {
                                                 style={{
                                                     padding: '12px 14px', borderRadius: '12px', textAlign: 'left',
                                                     cursor: 'pointer', transition: 'all 0.18s ease',
-                                                    background: data.niche === n.value ? 'rgba(200,166,90,0.12)' : 'var(--bo-surface)',
-                                                    border: `1px solid ${data.niche === n.value ? 'rgba(200,166,90,0.4)' : 'var(--bo-border)'}`,
+                                                    background: data.niche === n.value ? 'rgba(184,148,58,0.12)' : 'var(--bg-surface)',
+                                                    border: `1px solid ${data.niche === n.value ? 'rgba(184,148,58,0.4)' : 'var(--border-default)'}`,
                                                 }}
                                             >
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                                                    <n.icon size={14} style={{ color: data.niche === n.value ? 'var(--bo-accent)' : 'var(--bo-text-muted)', flexShrink: 0 }} />
-                                                    <span style={{ fontSize: '12px', fontWeight: 700, color: data.niche === n.value ? 'var(--bo-text)' : 'var(--bo-text-muted)' }}>{n.label}</span>
+                                                    <n.icon size={14} style={{ color: data.niche === n.value ? 'var(--imi-gold-500)' : 'var(--text-secondary)', flexShrink: 0 }} />
+                                                    <span style={{ fontSize: '12px', fontWeight: 700, color: data.niche === n.value ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{n.label}</span>
                                                 </div>
-                                                <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)', marginLeft: '22px' }}>{n.desc}</p>
+                                                <p style={{ fontSize: '10px', color: 'var(--text-secondary)', marginLeft: '22px' }}>{n.desc}</p>
                                             </button>
                                         ))}
                                     </div>
@@ -277,8 +277,8 @@ export default function OnboardingPage() {
                                             value={data.city} onChange={e => set('city', e.target.value)}
                                             placeholder="Ex: Recife"
                                             style={inp}
-                                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--bo-accent)')}
-                                            onBlur={e => (e.currentTarget.style.borderColor = 'var(--bo-border)')}
+                                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                            onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                         />
                                     </div>
                                     <div>
@@ -286,8 +286,8 @@ export default function OnboardingPage() {
                                         <select
                                             value={data.state} onChange={e => set('state', e.target.value)}
                                             style={{ ...inp, width: '72px', cursor: 'pointer' }}
-                                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--bo-accent)')}
-                                            onBlur={e => (e.currentTarget.style.borderColor = 'var(--bo-border)')}
+                                            onFocus={e => (e.currentTarget.style.borderColor = 'var(--imi-gold-500)')}
+                                            onBlur={e => (e.currentTarget.style.borderColor = 'var(--border-default)')}
                                         >
                                             {STATES.map(s => <option key={s} value={s}>{s}</option>)}
                                         </select>
@@ -315,10 +315,10 @@ export default function OnboardingPage() {
                                     <CheckCircle2 size={40} style={{ color: 'var(--s-done)' }} />
                                 </motion.div>
                                 <div>
-                                    <h3 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--bo-text)', marginBottom: '8px' }}>
+                                    <h3 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
                                         {data.companyName ? `Bem-vindo, ${data.companyName}!` : 'Configuração concluída!'}
                                     </h3>
-                                    <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)', lineHeight: 1.6, maxWidth: '340px' }}>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '340px' }}>
                                         Sua conta está pronta. Explore os módulos de leads, empreendimentos, IA e muito mais.
                                     </p>
                                 </div>
@@ -330,11 +330,11 @@ export default function OnboardingPage() {
                                     ].map(item => (
                                         <div key={item.label} style={{
                                             padding: '14px 10px', borderRadius: '12px', textAlign: 'center',
-                                            background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                                            background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
                                         }}>
                                             <p style={{ fontSize: '22px', marginBottom: '4px' }}>{item.icon}</p>
-                                            <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)', marginBottom: '2px' }}>{item.label}</p>
-                                            <p style={{ fontSize: '9px', color: 'var(--bo-text-muted)' }}>{item.desc}</p>
+                                            <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>{item.label}</p>
+                                            <p style={{ fontSize: '9px', color: 'var(--text-secondary)' }}>{item.desc}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -344,8 +344,8 @@ export default function OnboardingPage() {
 
                     {/* Footer actions */}
                     <div style={{
-                        padding: '16px 28px', borderTop: '1px solid var(--bo-border)',
-                        background: 'var(--bo-elevated)',
+                        padding: '16px 28px', borderTop: '1px solid var(--border-default)',
+                        background: 'var(--bg-elevated)',
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px',
                     }}>
                         {step < 3 ? (
@@ -356,8 +356,8 @@ export default function OnboardingPage() {
                                         style={{
                                             height: '44px', padding: '0 20px', borderRadius: '12px',
                                             fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-                                            background: 'var(--bo-surface)', color: 'var(--bo-text-muted)',
-                                            border: '1px solid var(--bo-border)',
+                                            background: 'var(--bg-surface)', color: 'var(--text-secondary)',
+                                            border: '1px solid var(--border-default)',
                                             display: 'flex', alignItems: 'center', gap: '6px',
                                         }}
                                     >
@@ -374,7 +374,7 @@ export default function OnboardingPage() {
                                         height: '44px', padding: '0 24px', borderRadius: '12px',
                                         fontSize: '13px', fontWeight: 700, cursor: 'pointer',
                                         color: '#fff',
-                                        background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
+                                        background: 'linear-gradient(135deg, var(--imi-gold-500) 0%, var(--imi-gold-500) 100%)',
                                         border: 'none',
                                         display: 'flex', alignItems: 'center', gap: '8px',
                                         opacity: ((step === 1 && !step1Valid) || (step === 2 && !step2Valid)) ? 0.45 : 1,
@@ -398,7 +398,7 @@ export default function OnboardingPage() {
                                     width: '100%', height: '48px', borderRadius: '12px',
                                     fontSize: '14px', fontWeight: 800, cursor: 'pointer',
                                     color: '#fff',
-                                    background: 'linear-gradient(135deg, var(--imi-blue) 0%, var(--imi-blue-bright) 100%)',
+                                    background: 'linear-gradient(135deg, var(--imi-gold-500) 0%, var(--imi-gold-500) 100%)',
                                     border: 'none',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                                 }}
@@ -409,7 +409,7 @@ export default function OnboardingPage() {
                     </div>
                 </motion.div>
 
-                <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '11px', color: 'var(--bo-text-muted)' }}>
+                <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '11px', color: 'var(--text-secondary)' }}>
                     Você pode editar essas informações depois em <strong>Organização</strong>
                 </p>
             </div>

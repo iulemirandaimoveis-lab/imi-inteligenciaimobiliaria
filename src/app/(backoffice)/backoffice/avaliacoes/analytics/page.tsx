@@ -194,10 +194,10 @@ export default function AvaliacoesAnalyticsPage() {
             {/* KPI Scorecard */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                    { label: 'Volume de Laudos', value: data.total.toString(), icon: FileText, color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
-                    { label: 'Taxa de Entrega', value: `${completionRate}%`, icon: CheckCircle, color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
-                    { label: 'SLA Médio', value: `${data.avgTime.toFixed(1)} dias`, icon: Clock, color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)' },
-                    { label: 'Billing Total', value: formatCurrency(data.totalRevenue), icon: DollarSign, color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
+                    { label: 'Volume de Laudos', value: data.total.toString(), icon: FileText, color: 'var(--info)', bg: 'color-mix(in srgb, var(--info) 12%, transparent)' },
+                    { label: 'Taxa de Entrega', value: `${completionRate}%`, icon: CheckCircle, color: 'var(--success)', bg: 'color-mix(in srgb, var(--success) 12%, transparent)' },
+                    { label: 'SLA Médio', value: `${data.avgTime.toFixed(1)} dias`, icon: Clock, color: 'var(--bo-accent)', bg: 'color-mix(in srgb, var(--bo-accent) 12%, transparent)' },
+                    { label: 'Billing Total', value: formatCurrency(data.totalRevenue), icon: DollarSign, color: 'var(--warning)', bg: 'color-mix(in srgb, var(--warning) 12%, transparent)' },
                 ].map(({ label, value, icon: Icon, color, bg }) => (
                     <div key={label} className="rounded-2xl p-5 relative overflow-hidden" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: bg }}>
@@ -213,11 +213,11 @@ export default function AvaliacoesAnalyticsPage() {
             </div>
 
             {/* Status breakdown */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                    { label: 'Concluídas', value: data.completed, color: '#10B981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.2)' },
-                    { label: 'Em Andamento', value: data.pending, color: '#3B82F6', bg: 'rgba(59,130,246,0.08)', border: 'rgba(59,130,246,0.2)' },
-                    { label: 'Canceladas', value: data.cancelled, color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.2)' },
+                    { label: 'Concluídas', value: data.completed, color: 'var(--success)', bg: 'color-mix(in srgb, var(--success) 8%, transparent)', border: 'color-mix(in srgb, var(--success) 20%, transparent)' },
+                    { label: 'Em Andamento', value: data.pending, color: 'var(--info)', bg: 'color-mix(in srgb, var(--info) 8%, transparent)', border: 'color-mix(in srgb, var(--info) 20%, transparent)' },
+                    { label: 'Canceladas', value: data.cancelled, color: 'var(--error)', bg: 'color-mix(in srgb, var(--error) 8%, transparent)', border: 'color-mix(in srgb, var(--error) 20%, transparent)' },
                 ].map(({ label, value, color, bg, border }) => (
                     <div key={label} className="rounded-xl p-4 text-center" style={{ background: bg, border: `1px solid ${border}` }}>
                         <p className="text-2xl font-bold" style={{ color }}>{value}</p>
@@ -288,7 +288,7 @@ export default function AvaliacoesAnalyticsPage() {
                                         </div>
                                     </div>
                                     <div className="h-2.5 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                                        <div className="h-full rounded-full" style={{ width: `${item.percentage}%`, background: '#3B82F6' }} />
+                                        <div className="h-full rounded-full" style={{ width: `${item.percentage}%`, background: 'var(--info)' }} />
                                     </div>
                                 </div>
                             ))}
@@ -319,7 +319,7 @@ export default function AvaliacoesAnalyticsPage() {
                                     />
                                     <div className="absolute inset-y-0 left-4 flex items-center gap-3">
                                         <span className="text-xs font-bold" style={{ color: T.text }}>{month.total} demandas</span>
-                                        <span className="text-xs font-bold" style={{ color: '#10B981' }}>{month.completed} entregas</span>
+                                        <span className="text-xs font-bold" style={{ color: 'var(--success)' }}>{month.completed} entregas</span>
                                     </div>
                                 </div>
                                 <div className="w-24 text-right shrink-0">
@@ -382,12 +382,12 @@ export default function AvaliacoesAnalyticsPage() {
                                         <div className="flex items-center justify-between">
                                             <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.text }}>{item.neighborhood}</span>
                                             <div className="flex items-center gap-3">
-                                                {item.avgValue > 0 && <span className="text-xs font-bold" style={{ color: '#10B981' }}>{formatCurrency(item.avgValue)}</span>}
+                                                {item.avgValue > 0 && <span className="text-xs font-bold" style={{ color: 'var(--success)' }}>{formatCurrency(item.avgValue)}</span>}
                                                 <span className="text-xs px-2 py-0.5 rounded-md" style={{ background: T.elevated, color: T.textMuted }}>{item.count}</span>
                                             </div>
                                         </div>
                                         <div className="h-3 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                                            <div className="h-full rounded-full" style={{ width: `${pct}%`, background: '#10B981' }} />
+                                            <div className="h-full rounded-full" style={{ width: `${pct}%`, background: 'var(--success)' }} />
                                         </div>
                                     </div>
                                 )
@@ -405,7 +405,7 @@ export default function AvaliacoesAnalyticsPage() {
                 <h3 className="text-base font-bold mb-6" style={{ color: T.text }}>Executive Summary</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {[
-                        { label: 'Efficiency Score', value: `${completionRate}%`, sub: `${data.completed} Entregas / ${data.total} Demandas`, color: '#34D399' },
+                        { label: 'Efficiency Score', value: `${completionRate}%`, sub: `${data.completed} Entregas / ${data.total} Demandas`, color: 'var(--success)' },
                         {
                             label: 'Unit Billing Médio',
                             value: data.completed > 0 ? `R$${(data.totalRevenue / data.completed).toFixed(0)}` : '—',
@@ -416,13 +416,13 @@ export default function AvaliacoesAnalyticsPage() {
                             label: 'Velocidade Mensal',
                             value: (data.total / 6).toFixed(1),
                             sub: 'Avaliações/mês (histórico)',
-                            color: '#60A5FA'
+                            color: 'var(--info)'
                         },
                     ].map(({ label, value, sub, color }) => (
-                        <div key={label} className="text-center p-6 rounded-2xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</p>
+                        <div key={label} className="text-center p-6 rounded-2xl" style={{ background: 'var(--bg-elevated)', border: `1px solid ${T.border}` }}>
+                            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: T.textDim }}>{label}</p>
                             <p className="text-4xl font-black mb-1" style={{ color }}>{value}</p>
-                            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>{sub}</p>
+                            <p className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textDim }}>{sub}</p>
                         </div>
                     ))}
                 </div>

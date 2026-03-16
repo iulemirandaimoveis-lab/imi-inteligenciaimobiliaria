@@ -94,7 +94,7 @@ export default function PagarPage() {
             />
 
             {/* KPIs */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <KPICard
                     label="A Pagar"
                     value={fmt(totalPendente)}
@@ -175,7 +175,7 @@ export default function PagarPage() {
                                 style={{ background: T.surface, border: `1px solid ${T.border}` }}
 >
                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                                    style={{ background: 'rgba(229,115,115,0.10)' }}>
+                                    style={{ background: 'var(--error-bg, rgba(229,115,115,0.10))' }}>
                                     <ArrowDownCircle size={18} style={{ color: 'var(--bo-error)' }} />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -188,7 +188,7 @@ export default function PagarPage() {
                                         </span>
                                         <span
                                             className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
-                                            style={{ color: isOverdue ? 'var(--bo-error)' : sc.text, background: isOverdue ? 'rgba(229,115,115,0.12)' : sc.bg }}>
+                                            style={{ color: isOverdue ? 'var(--bo-error)' : sc.text, background: isOverdue ? 'var(--error-bg, rgba(229,115,115,0.12))' : sc.bg }}>
                                             <Icon size={9} /> {isOverdue ? 'Atrasado' : sc.label}
                                         </span>
                                     </div>

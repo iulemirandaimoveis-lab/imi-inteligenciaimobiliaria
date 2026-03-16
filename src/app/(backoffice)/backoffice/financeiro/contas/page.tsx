@@ -18,7 +18,7 @@ import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs, ActionMenu, StatusBadge } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 interface BankAccount {
     id: string
@@ -46,6 +46,7 @@ export default function ContasBancariasPage() {
 
     useEffect(() => {
         async function fetchContas() {
+            const supabase = createClient()
             const { data, error } = await supabase
                 .from('bank_accounts')
                 .select('*')
@@ -153,7 +154,7 @@ export default function ContasBancariasPage() {
                 <FilterTabs
                     tabs={[
                         { id: 'all',          label: 'Todas',       count: contas.length },
-                        { id: 'Corrente',     label: 'Corrente',    dotColor: '#60A5FA' },
+                        { id: 'Corrente',     label: 'Corrente',    dotColor: 'var(--s-cold)' },
                         { id: 'Poupança',     label: 'Poupança',    dotColor: 'var(--bo-success)' },
                         { id: 'Investimento', label: 'Investimento',dotColor: 'var(--bo-warning)' },
                     ] as FilterTab[]}

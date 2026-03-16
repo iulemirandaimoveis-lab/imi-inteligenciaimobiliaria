@@ -27,69 +27,69 @@ const LOCAL_STATUS_CONFIG: Record<string, {
 }> = {
   hot: {
     label: 'HOT',
-    color: 'var(--s-hot)',
-    bg: 'var(--s-hot-bg)',
-    dotColor: 'var(--s-hot)',
+    color: 'var(--error)',
+    bg: 'var(--error-bg)',
+    dotColor: 'var(--error)',
     glowClass: 'glow-hot',
   },
   warm: {
     label: 'WARM',
-    color: 'var(--s-warm)',
-    bg: 'var(--s-warm-bg)',
-    dotColor: 'var(--s-warm)',
+    color: 'var(--warning)',
+    bg: 'var(--warning-bg)',
+    dotColor: 'var(--warning)',
     glowClass: 'glow-warm',
   },
   cold: {
     label: 'COLD',
-    color: 'var(--s-cold)',
-    bg: 'var(--s-cold-bg)',
-    dotColor: 'var(--s-cold)',
+    color: 'var(--info)',
+    bg: 'var(--info-bg)',
+    dotColor: 'var(--info)',
     glowClass: 'glow-cold',
   },
   done: {
     label: 'FECHADO',
-    color: 'var(--s-done)',
-    bg: 'var(--s-done-bg)',
-    dotColor: 'var(--s-done)',
+    color: 'var(--success)',
+    bg: 'var(--success-bg)',
+    dotColor: 'var(--success)',
     glowClass: 'glow-ai',
   },
   active: {
     label: 'ATIVO',
-    color: 'var(--s-done)',
-    bg: 'var(--s-done-bg)',
-    dotColor: 'var(--s-done)',
+    color: 'var(--success)',
+    bg: 'var(--success-bg)',
+    dotColor: 'var(--success)',
     glowClass: 'glow-ai',
   },
   pend: {
     label: 'PENDENTE',
-    color: 'var(--s-pend)',
-    bg: 'var(--s-pend-bg)',
-    dotColor: 'var(--s-pend)',
+    color: 'var(--warning)',
+    bg: 'var(--warning-bg)',
+    dotColor: 'var(--warning)',
   },
   cancel: {
     label: 'CANCELADO',
-    color: 'var(--s-cancel)',
-    bg: 'var(--s-cancel-bg)',
-    dotColor: 'var(--s-cancel)',
+    color: 'var(--error)',
+    bg: 'var(--error-bg)',
+    dotColor: 'var(--error)',
   },
   draft: {
     label: 'RASCUNHO',
-    color: 'var(--bo-text-muted)',
-    bg: 'rgba(255,255,255,0.06)',
-    dotColor: 'var(--bo-text-muted)',
+    color: 'var(--text-disabled)',
+    bg: 'var(--bg-muted)',
+    dotColor: 'var(--text-disabled)',
   },
   live: {
     label: 'AO VIVO',
-    color: 'var(--imi-ai-green)',
-    bg: 'var(--imi-ai-green-bg)',
-    dotColor: 'var(--imi-ai-green)',
+    color: 'var(--success)',
+    bg: 'var(--success-bg)',
+    dotColor: 'var(--success)',
     glowClass: 'glow-ai',
   },
   ai: {
     label: 'IA',
-    color: 'var(--imi-ai-gold)',
-    bg: 'var(--imi-ai-bg)',
-    dotColor: 'var(--imi-ai-gold)',
+    color: 'var(--imi-gold-500)',
+    bg: 'rgba(184,148,58,0.10)',
+    dotColor: 'var(--imi-gold-500)',
   },
 }
 
@@ -118,9 +118,9 @@ export function StatusBadge({
     const key = (status || 'draft').toLowerCase()
     return LOCAL_STATUS_CONFIG[key] ?? {
       label: key.toUpperCase(),
-      color: 'var(--bo-text-muted)',
-      bg: 'rgba(255,255,255,0.06)',
-      dotColor: 'var(--bo-text-muted)',
+      color: 'var(--text-disabled)',
+      bg: 'var(--bg-muted)',
+      dotColor: 'var(--text-disabled)',
     }
   })()
 
@@ -130,7 +130,7 @@ export function StatusBadge({
   return (
     <span
       className={`
-        inline-flex items-center font-black rounded uppercase tracking-wider
+        inline-flex items-center rounded uppercase tracking-wider
         ${glow && cfg.glowClass ? cfg.glowClass : ''}
         ${className}
       `}
@@ -138,12 +138,15 @@ export function StatusBadge({
         color: cfg.color,
         background: cfg.bg,
         border: `1px solid ${cfg.color}22`,
+        fontFamily: 'var(--font-mono)',
+        fontWeight: 600,
         fontSize: sz.fontSize,
         padding: sz.padding,
         gap: sz.gap,
         letterSpacing: '0.06em',
         lineHeight: 1,
         whiteSpace: 'nowrap',
+        borderRadius: 'var(--r-full, 9999px)',
       }}
     >
       {dot && (

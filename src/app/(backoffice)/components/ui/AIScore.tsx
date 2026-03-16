@@ -1,5 +1,10 @@
 'use client'
 
+/**
+ * AIScore — IMI Design System v3
+ * DS3 pattern: pill badge with semantic color tiers, mono font, optional progress bar
+ */
+
 import React from 'react'
 
 interface AIScoreProps {
@@ -11,17 +16,17 @@ interface AIScoreProps {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return 'var(--s-done)'    // green
-  if (score >= 60) return 'var(--s-warm)'    // amber
-  if (score >= 40) return 'var(--s-cold)'    // cyan
-  return 'var(--s-cancel)'                   // red
+  if (score >= 80) return 'var(--success)'
+  if (score >= 60) return 'var(--warning)'
+  if (score >= 40) return 'var(--info)'
+  return 'var(--error)'
 }
 
 function getScoreBg(score: number): string {
-  if (score >= 80) return 'var(--s-done-bg)'
-  if (score >= 60) return 'var(--s-warm-bg)'
-  if (score >= 40) return 'var(--s-cold-bg)'
-  return 'var(--s-cancel-bg)'
+  if (score >= 80) return 'var(--success-bg)'
+  if (score >= 60) return 'var(--warning-bg)'
+  if (score >= 40) return 'var(--info-bg)'
+  return 'var(--error-bg)'
 }
 
 const SIZE_CONFIG = {
@@ -46,8 +51,12 @@ export function AIScore({
   return (
     <div className={`inline-flex flex-col gap-1 ${className}`}>
       <span
-        className="inline-flex items-center font-bold rounded-full"
         style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          fontFamily: 'var(--font-mono)',
+          fontWeight: 600,
+          borderRadius: 'var(--r-full, 9999px)',
           color,
           background: bg,
           border: `1px solid ${color}22`,
@@ -58,7 +67,6 @@ export function AIScore({
           whiteSpace: 'nowrap',
         }}
       >
-        {/* ⚡ lightning bolt */}
         <span style={{ fontSize: sz.iconSize }}>⚡</span>
         <span>{clamped}</span>
         {showLabel && <span style={{ opacity: 0.7, fontSize: `calc(${sz.fontSize} - 1px)` }}> AI</span>}
@@ -69,8 +77,8 @@ export function AIScore({
           style={{
             width: '100%',
             height: '3px',
-            borderRadius: '2px',
-            background: 'rgba(255,255,255,0.08)',
+            borderRadius: 'var(--r-xs, 3px)',
+            background: 'var(--bg-muted)',
             overflow: 'hidden',
           }}
         >
@@ -79,7 +87,7 @@ export function AIScore({
               width: `${clamped}%`,
               height: '100%',
               background: color,
-              borderRadius: '2px',
+              borderRadius: 'var(--r-xs, 3px)',
               transition: 'width 0.8s var(--ease-out)',
             }}
           />

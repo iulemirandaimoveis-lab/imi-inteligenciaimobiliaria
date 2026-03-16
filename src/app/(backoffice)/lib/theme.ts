@@ -1,72 +1,118 @@
 /**
- * Centralized backoffice theme tokens
+ * Centralized backoffice theme tokens — IMI Design System v3
  * Single source of truth — import from here instead of redefining T per file
+ * Maps to CSS variables defined in globals.css
  */
 export const T = {
     // Layout
     bg: 'transparent',
-    surface: 'var(--bo-surface)',
-    surfaceAlt: 'var(--bo-surface-alt)',
-    elevated: 'var(--bo-elevated)',
+    base: 'var(--bg-base)',
+    surface: 'var(--bg-surface)',
+    surfaceAlt: 'var(--bg-subtle)',
+    elevated: 'var(--bg-elevated)',
+    subtle: 'var(--bg-subtle)',
+    muted: 'var(--bg-muted)',
+    overlay: 'var(--bg-overlay)',
     card: 'var(--bo-card)',
     // Borders
-    border: 'var(--bo-border)',
-    borderLight: 'var(--bo-border-light)',
-    borderSubtle: 'var(--bo-border-subtle)',
-    borderStrong: 'var(--bo-border-strong)',
+    border: 'var(--border-default)',
+    borderLight: 'var(--border-subtle)',
+    borderSubtle: 'var(--border-subtle)',
+    borderStrong: 'var(--border-strong)',
     borderGold: 'var(--bo-border-gold)',
     borderActive: 'var(--bo-border-gold)',
-    // Text
-    text: 'var(--bo-text)',
-    textMuted: 'var(--bo-text-muted)',
-    textDim: 'var(--bo-text-dim)',
-    textTertiary: 'var(--bo-text-tertiary, var(--bo-text-muted))',
+    borderFocus: 'var(--border-focus)',
+    // Text — DS3 semantic
+    text: 'var(--text-primary)',
+    textMuted: 'var(--text-secondary)',
+    textDim: 'var(--text-tertiary)',
+    textTertiary: 'var(--text-tertiary)',
+    textDisabled: 'var(--text-disabled)',
+    textGold: 'var(--text-gold)',
+    textInverse: 'var(--text-inverse)',
     // Aliases (for legacy compat)
-    sub: 'var(--bo-text-muted)',
+    sub: 'var(--text-secondary)',
     // Accent
     accent: 'var(--bo-accent)',
     accentDim: 'var(--bo-accent-dim)',
-    accentBg: 'var(--bo-active-bg)',
-    activeBg: 'var(--bo-active-bg)',
-    gold: 'var(--bo-accent)',
+    accentBg: 'var(--bg-active)',
+    activeBg: 'var(--bg-active)',
+    gold: 'var(--imi-gold-500)',
     // States
-    hover: 'var(--bo-hover)',
-    shadow: 'var(--bo-shadow)',
-    // Semantic colors — CSS var with fallback
-    success: 'var(--bo-success, #34d399)',
-    successBg: 'var(--bo-success-bg, rgba(52,211,153,0.10))',
-    warning: 'var(--bo-warning, #fbbf24)',
-    warningBg: 'var(--bo-warning-bg, rgba(251,191,36,0.10))',
-    error: 'var(--bo-error, #f87171)',
-    errorBg: 'var(--bo-error-bg, rgba(248,113,113,0.08))',
-    info: 'var(--bo-info, #60a5fa)',
-    infoBg: 'var(--bo-info-bg, rgba(96,165,250,0.10))',
-    // Radius — consistent rounding scale
-    radius: { sm: '8px', md: '12px', lg: '16px', xl: '20px', full: '9999px' },
-    // Shadow — layered depth scale
-    shadowSm: '0 1px 2px rgba(0,0,0,0.05)',
-    shadowMd: '0 4px 12px rgba(0,0,0,0.08)',
-    shadowLg: '0 8px 24px rgba(0,0,0,0.12)',
-    cardShadow: 'var(--bo-card-shadow)',
-    // Transition — micro-interaction precision
-    transition: { fast: '120ms ease', normal: '200ms ease', slow: '300ms ease' },
+    hover: 'var(--bg-hover)',
+    active: 'var(--bg-active)',
+    shadow: 'var(--shadow-sm)',
+    // Semantic colors — DS3 tokens
+    success: 'var(--success)',
+    successBg: 'var(--success-bg)',
+    warning: 'var(--warning)',
+    warningBg: 'var(--warning-bg)',
+    error: 'var(--error)',
+    errorBg: 'var(--error-bg)',
+    info: 'var(--info)',
+    infoBg: 'var(--info-bg)',
+    // Radius — DS3 scale
+    radius: {
+        xs: 'var(--r-xs, 3px)',
+        sm: 'var(--r-sm, 6px)',
+        md: 'var(--r-md, 8px)',
+        lg: 'var(--r-lg, 12px)',
+        xl: 'var(--r-xl, 16px)',
+        '2xl': 'var(--r-2xl, 24px)',
+        full: '9999px',
+    },
+    // Shadow — DS3 depth scale
+    shadowXs: 'var(--shadow-xs)',
+    shadowSm: 'var(--shadow-sm)',
+    shadowMd: 'var(--shadow-md)',
+    shadowLg: 'var(--shadow-lg)',
+    shadowXl: 'var(--shadow-xl)',
+    shadowGold: 'var(--shadow-gold)',
+    cardShadow: 'var(--shadow-md)',
+    // Transition — DS3 motion
+    transition: {
+        fast: 'var(--dur-1) var(--ease)',
+        normal: 'var(--dur-2) var(--ease)',
+        slow: 'var(--dur-3) var(--ease)',
+        spring: 'var(--dur-3) var(--ease-spring)',
+    },
+    // Duration
+    dur: { micro: 'var(--dur-1)', fast: 'var(--dur-2)', normal: 'var(--dur-3)', slow: 'var(--dur-4)' },
+    // Easing
+    ease: { default: 'var(--ease)', spring: 'var(--ease-spring)', out: 'var(--ease-out)' },
+    // Font families
+    font: {
+        serif: 'var(--font-serif)',
+        sans: 'var(--font-sans)',
+        mono: 'var(--font-mono)',
+    },
 }
 
 /** Standard CTA button — solid accent, no gradients */
 export const ctaColor = T.accent
 export const ctaShadow = 'none'
 
-/** Common inline styles */
-export const cardStyle = {
-    background: T.elevated,
-    border: `1px solid ${T.border}`,
-    borderRadius: T.radius.lg,
+/** Common inline styles — DS3 */
+export const cardStyle: React.CSSProperties = {
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--border-subtle)',
+    borderRadius: 'var(--r-xl, 16px)',
+    boxShadow: 'var(--shadow-xs)',
 }
 
-export const inputStyle = {
-    background: T.surface,
-    border: `1px solid ${T.border}`,
-    color: T.text,
+export const inputStyle: React.CSSProperties = {
+    width: '100%',
+    height: 40,
+    padding: '0 14px',
+    background: 'var(--bg-surface)',
+    border: '1.5px solid var(--border-default)',
+    borderRadius: 'var(--r-md, 8px)',
+    color: 'var(--text-primary)',
+    fontFamily: 'var(--font-sans)',
+    fontSize: 14,
     outline: 'none',
-    borderRadius: T.radius.md,
+    transition: 'all var(--dur-2) var(--ease)',
 }
+
+// Importar React para CSSProperties
+import type React from 'react'

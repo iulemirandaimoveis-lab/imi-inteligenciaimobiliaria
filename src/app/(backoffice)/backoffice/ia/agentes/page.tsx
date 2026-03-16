@@ -132,17 +132,75 @@ export default function AgentesIAPage() {
     const totalTasksToday = AGENTS.reduce((s, a) => s + a.tasksToday, 0)
     const avgSuccess = Math.round(AGENTS.reduce((s, a) => s + a.successRate, 0) / AGENTS.length)
 
-    function handleRunAgent(agentId: string, agentName: string) {
+    // Maps each agent to a task_type + sample prompt for the AI Router
+    const AGENT_TASKS: Record<string, { task_type: string; prompt: string }> = {
+        'lead-qualifier': {
+            task_type: 'analise_lead',
+            prompt: 'Analise o perfil de lead padrão para imóveis premium em Boa Viagem, Recife. Retorne JSON com score, perfil, necessidades, imovel_ideal, proximo_passo e urgencia.',
+        },
+        'content-creator': {
+            task_type: 'legenda',
+            prompt: 'Crie uma legenda para Instagram sobre lançamento de apartamento premium em Boa Viagem com vista para o mar. 280 caracteres. Tom sofisticado.',
+        },
+        'market-analyst': {
+            task_type: 'custom',
+            prompt: 'Analise as tendências do mercado imobiliário premium de Recife (Boa Viagem, Pina, Setúbal) para o 1º semestre de 2026. Destaque variações de preço/m², oferta e demanda.',
+        },
+        'property-matcher': {
+            task_type: 'descricao',
+            prompt: 'Escreva uma descrição técnica e elegante para um apartamento de 120m², 3 quartos, 2 vagas, frente mar, no Edifício Acqua Premium, Boa Viagem, R$ 1.2M.',
+        },
+        'followup-agent': {
+            task_type: 'email',
+            prompt: 'Escreva um email de reengajamento para um lead que visitou apartamentos em Boa Viagem há 5 dias sem responder. Tom consultivo, CTA para agendar visita.',
+        },
+        'report-agent': {
+            task_type: 'custom',
+            prompt: 'Gere um resumo executivo semanal fictício para a IMI com: leads captados (47), visitas realizadas (12), propostas enviadas (3), conversões (1). Inclua recomendações estratégicas.',
+        },
+    }
+
+    async function handleRunAgent(agentId: string, agentName: string) {
         setRunningAgents(prev => new Set(prev).add(agentId))
-        toast.success(`${agentName} iniciado`, { description: 'O agente começará em instantes…' })
-        setTimeout(() => {
+        toast.success(`${agentName} iniciado`, { description: 'Conectando ao AI Router…' })
+
+        const agentTask = AGENT_TASKS[agentId] || {
+            task_type: 'custom',
+            prompt: `Execute uma tarefa de demonstração para o agente ${agentName}.`,
+        }
+
+        try {
+            const res = await fetch('/api/ai/router', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    task_type: agentTask.task_type,
+                    prompt: agentTask.prompt,
+                }),
+            })
+
+            const data = await res.json()
+
+            if (res.ok && data.success) {
+                const preview = (data.result as string)?.slice(0, 120)
+                toast.success(`${agentName} concluído`, {
+                    description: preview ? `${preview}…` : 'Tarefa executada com sucesso.',
+                    duration: 6000,
+                })
+            } else {
+                throw new Error(data.error || 'Erro desconhecido')
+            }
+        } catch (err: any) {
+            toast.error(`${agentName} falhou`, {
+                description: err?.message || 'Não foi possível executar o agente.',
+            })
+        } finally {
             setRunningAgents(prev => {
                 const next = new Set(prev)
                 next.delete(agentId)
                 return next
             })
-            toast.success(`${agentName} concluído`, { description: 'Tarefa executada com sucesso.' })
-        }, 3000)
+        }
     }
 
     return (

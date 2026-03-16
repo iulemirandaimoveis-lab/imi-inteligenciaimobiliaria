@@ -33,11 +33,11 @@ function ShimmerRow({ cols }: { cols: number }) {
           <div
             style={{
               height: 14,
-              borderRadius: 4,
-              background: T.border,
-              opacity: 0.5,
+              borderRadius: 'var(--r-xs, 3px)',
+              background: 'linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-hover) 50%, var(--bg-muted) 75%)',
+              backgroundSize: '200% 100%',
               width: `${55 + (i * 17) % 40}%`,
-              animation: 'shimmer 1.6s ease-in-out infinite',
+              animation: 'dt-shimmer 1.6s ease-in-out infinite',
             }}
           />
         </td>
@@ -100,13 +100,13 @@ export function DataTable<T extends Record<string, unknown>>({
   const renderSortIcon = (key: string) => {
     if (sortKey !== key || !sortDir) {
       return (
-        <span style={{ color: T.textMuted, opacity: 0.35, marginLeft: 4, fontSize: 9 }}>
+        <span style={{ color: T.textTertiary, opacity: 0.35, marginLeft: 4, fontSize: 9 }}>
           {'▲'}
         </span>
       )
     }
     return (
-      <span style={{ color: T.accent, marginLeft: 4, fontSize: 9 }}>
+      <span style={{ color: 'var(--imi-gold-500)', marginLeft: 4, fontSize: 9 }}>
         {sortDir === 'asc' ? '▲' : '▼'}
       </span>
     )
@@ -116,9 +116,11 @@ export function DataTable<T extends Record<string, unknown>>({
   const tableWrapperStyle: React.CSSProperties = {
     width: '100%',
     overflowX: 'auto',
-    borderRadius: T.radius.md,
-    border: `1px solid ${T.border}`,
-    background: T.elevated,
+    overflow: 'hidden',
+    borderRadius: T.radius.xl,
+    border: `1px solid ${T.borderSubtle}`,
+    background: T.surface,
+    boxShadow: T.shadowXs,
   }
 
   const tableStyle: React.CSSProperties = {
@@ -130,17 +132,18 @@ export function DataTable<T extends Record<string, unknown>>({
   const thStyle = (col: Column<T>): React.CSSProperties => ({
     padding: '10px 16px',
     textAlign: 'left',
-    background: T.surface,
-    color: T.textMuted,
-    fontSize: 11,
+    background: T.muted,
+    color: T.textTertiary,
+    fontFamily: T.font.mono,
+    fontSize: 10,
     fontWeight: 600,
     textTransform: 'uppercase',
-    letterSpacing: '0.06em',
+    letterSpacing: '0.10em',
     whiteSpace: 'nowrap',
     userSelect: 'none',
     cursor: col.sortable ? 'pointer' : 'default',
     width: col.width ?? 'auto',
-    borderBottom: `1px solid ${T.border}`,
+    borderBottom: `1px solid ${T.borderSubtle}`,
     position: stickyHeader ? 'sticky' : undefined,
     top: stickyHeader ? 0 : undefined,
     zIndex: stickyHeader ? 2 : undefined,
@@ -150,8 +153,9 @@ export function DataTable<T extends Record<string, unknown>>({
   const tdStyle: React.CSSProperties = {
     padding: '12px 16px',
     color: T.text,
+    fontFamily: T.font.sans,
     fontSize: 13,
-    borderBottom: `1px solid ${T.border}`,
+    borderBottom: `1px solid ${T.borderSubtle}`,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -164,9 +168,9 @@ export function DataTable<T extends Record<string, unknown>>({
     <>
       {/* Shimmer keyframe */}
       <style>{`
-        @keyframes shimmer {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
+        @keyframes dt-shimmer {
+          0%   { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
         }
       `}</style>
 
@@ -201,7 +205,7 @@ export function DataTable<T extends Record<string, unknown>>({
               <tr>
                 <td colSpan={columns.length} style={{ padding: '48px 16px', textAlign: 'center' }}>
                   {emptyState ?? (
-                    <span style={{ color: T.textMuted, fontSize: 13 }}>
+                    <span style={{ color: T.textTertiary, fontSize: 13, fontFamily: T.font.sans }}>
                       Nenhum registro encontrado.
                     </span>
                   )}

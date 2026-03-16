@@ -14,6 +14,8 @@ import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
 import { PageIntelHeader, KPICard, FilterTabs } from '@/app/(backoffice)/components/ui'
 import type { FilterTab } from '@/app/(backoffice)/components/ui'
+import { useIsMobile } from '@/hooks/use-is-mobile'
+import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../mobile-ui'
 
 // Derive status config from centralized constants
 const buildStatus = (key: string) => {
@@ -36,7 +38,499 @@ const VIEW_TABS = [
     { key: 'performance',  label: 'Performance' },
 ]
 
+// ─── Mobile KPI icons ─────────────────────────────────────────────────────────
+
+function KpiIcon({ children, color }: { children: React.ReactNode; color: string }) {
+    return (
+        <div style={{
+            width: 28, height: 28, borderRadius: 8,
+            background: `${color}18`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color,
+            flexShrink: 0,
+        }}>
+            {children}
+        </div>
+    )
+}
+
+// ─── Mobile Inventario Component ─────────────────────────────────────────────
+
+interface MobileInventarioProps {
+    developments: any[]
+    filtered: any[]
+    loading: boolean
+    busca: string
+    setBusca: (v: string) => void
+    activeType: string
+    setActiveType: (v: string) => void
+    totalPublished: number
+    totalSold: number
+    totalCampaign: number
+    totalDraft: number
+}
+
+function MobileInventario({
+    developments,
+    filtered,
+    loading,
+    busca,
+    setBusca,
+    activeType,
+    setActiveType,
+    totalPublished,
+    totalSold,
+    totalCampaign,
+}: MobileInventarioProps) {
+    const getStatus = (d: any) => {
+        const s = d.status_commercial || d.status_comercial || 'draft'
+        return STATUS_CONFIG[s] || { label: s, color: '#5C6B7D', bg: 'var(--bg-elevated)' }
+    }
+
+    const getPrice = (d: any) => {
+        const v = d.price_min || d.price_max
+        if (!v) return null
+        return `R$ ${Number(v).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}`
+    }
+
+    const getImage = (d: any) => {
+        const g = d.gallery_images
+        if (Array.isArray(g) && g.length > 0) return g[0]
+        return null
+    }
+
+    const FILTER_CHIPS = [
+        { value: 'all',        label: 'Todos',       count: developments.length },
+        { value: 'apartment',  label: 'Residencial', count: developments.filter(d => d.type !== 'commercial' && d.tipo !== 'comercial').length },
+        { value: 'commercial', label: 'Comercial',   count: developments.filter(d => d.type === 'commercial' || d.tipo === 'comercial').length },
+        { value: 'draft',      label: 'Rascunhos',   count: developments.filter(d => ['draft', 'rascunho'].includes(d.status_commercial || d.status_comercial || '')).length },
+    ]
+
+    return (
+        <div style={{
+            minHeight: '100vh',
+            background: 'var(--bg-base)',
+            paddingTop: 72,
+            paddingBottom: 80,
+        }}>
+            <MobileGlobalStyles />
+
+            {/* AppBar */}
+            <MobileAppBar
+                title="Inventário"
+                subtitle="Portfolio de empreendimentos"
+                actions={
+                    <Link href="/backoffice/imoveis/novo" style={{ textDecoration: 'none' }}>
+                        <button
+                            className="mob-btn-tap"
+                            style={{
+                                width: 44, height: 44, borderRadius: 10,
+                                background: 'rgba(184,148,58,0.15)',
+                                border: 'none', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                color: 'var(--imi-gold-500)',
+                                touchAction: 'manipulation',
+                                WebkitTapHighlightColor: 'transparent',
+                            } as React.CSSProperties}
+                        >
+                            <Plus size={22} />
+                        </button>
+                    </Link>
+                }
+            />
+
+            {/* KPI Strip — 2×2 grid */}
+            <div style={{
+                display: 'grid', gridTemplateColumns: '1fr 1fr',
+                gap: 10, padding: '0 16px 16px',
+            }}>
+                {/* Total */}
+                <div style={{
+                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    display: 'flex', flexDirection: 'column', gap: 8,
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{
+                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
+                            textTransform: 'uppercase' as const, color: '#5C6B7D',
+                        }}>Total</span>
+                        <KpiIcon color="#5B9BD5"><Building2 size={14} /></KpiIcon>
+                    </div>
+                    <span style={{
+                        fontFamily: 'var(--font-dm-mono, monospace)',
+                        fontSize: 22, fontWeight: 700, color: '#EBE7E0',
+                        lineHeight: 1,
+                    }}>{loading ? '—' : developments.length}</span>
+                </div>
+
+                {/* Publicados */}
+                <div style={{
+                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    display: 'flex', flexDirection: 'column', gap: 8,
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{
+                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
+                            textTransform: 'uppercase' as const, color: '#5C6B7D',
+                        }}>Publicados</span>
+                        <KpiIcon color="#5DB887"><Eye size={14} /></KpiIcon>
+                    </div>
+                    <span style={{
+                        fontFamily: 'var(--font-dm-mono, monospace)',
+                        fontSize: 22, fontWeight: 700, color: '#EBE7E0',
+                        lineHeight: 1,
+                    }}>{loading ? '—' : totalPublished}</span>
+                </div>
+
+                {/* Vendidos */}
+                <div style={{
+                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    display: 'flex', flexDirection: 'column', gap: 8,
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{
+                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
+                            textTransform: 'uppercase' as const, color: '#5C6B7D',
+                        }}>Vendidos</span>
+                        <KpiIcon color="#D4913A"><Building2 size={14} /></KpiIcon>
+                    </div>
+                    <span style={{
+                        fontFamily: 'var(--font-dm-mono, monospace)',
+                        fontSize: 22, fontWeight: 700, color: '#EBE7E0',
+                        lineHeight: 1,
+                    }}>{loading ? '—' : totalSold}</span>
+                </div>
+
+                {/* Em Campanha */}
+                <div style={{
+                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    display: 'flex', flexDirection: 'column', gap: 8,
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{
+                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
+                            textTransform: 'uppercase' as const, color: '#5C6B7D',
+                        }}>Em Campanha</span>
+                        <KpiIcon color="var(--imi-gold-500)"><Tag size={14} /></KpiIcon>
+                    </div>
+                    <span style={{
+                        fontFamily: 'var(--font-dm-mono, monospace)',
+                        fontSize: 22, fontWeight: 700, color: '#EBE7E0',
+                        lineHeight: 1,
+                    }}>{loading ? '—' : totalCampaign}</span>
+                </div>
+            </div>
+
+            {/* Search bar */}
+            <div style={{ padding: '0 16px 12px', position: 'relative' }}>
+                <svg
+                    width="16" height="16" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="2"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    style={{
+                        position: 'absolute', left: 30, top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: '#5C6B7D', pointerEvents: 'none',
+                    }}
+                >
+                    <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                </svg>
+                <input
+                    value={busca}
+                    onChange={e => setBusca(e.target.value)}
+                    placeholder="Buscar empreendimento..."
+                    style={{
+                        width: '100%', height: 44, boxSizing: 'border-box',
+                        background: 'var(--bg-elevated)',
+                        border: '1px solid rgba(184,148,58,0.15)',
+                        borderRadius: 10,
+                        padding: '0 14px 0 40px',
+                        fontFamily: 'var(--font-montserrat, sans-serif)',
+                        fontSize: 14, color: '#EBE7E0',
+                        outline: 'none',
+                        touchAction: 'manipulation',
+                        WebkitTapHighlightColor: 'transparent',
+                    } as React.CSSProperties}
+                />
+            </div>
+
+            {/* Filter chips */}
+            <div style={{
+                display: 'flex', gap: 8, overflowX: 'auto',
+                padding: '0 16px 16px',
+                scrollbarWidth: 'none' as const,
+            }}>
+                <style suppressHydrationWarning>{`.inv-chips::-webkit-scrollbar{display:none}`}</style>
+                {FILTER_CHIPS.map(chip => {
+                    const isActive = activeType === chip.value
+                    return (
+                        <button
+                            key={chip.value}
+                            onClick={() => setActiveType(chip.value)}
+                            className="mob-chip-tap"
+                            style={{
+                                flexShrink: 0,
+                                display: 'flex', alignItems: 'center', gap: 5,
+                                height: 32, padding: '0 12px',
+                                borderRadius: 999,
+                                background: isActive ? 'var(--imi-gold-500)' : 'transparent',
+                                border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
+                                color: isActive ? '#0B1120' : '#9FAAB8',
+                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontSize: 11, fontWeight: isActive ? 700 : 500,
+                                cursor: 'pointer',
+                                touchAction: 'manipulation',
+                                WebkitTapHighlightColor: 'transparent',
+                                whiteSpace: 'nowrap',
+                            } as React.CSSProperties}
+                        >
+                            {chip.label}
+                            <span style={{
+                                fontFamily: 'var(--font-dm-mono, monospace)',
+                                fontSize: 10, fontWeight: 700,
+                                color: isActive ? '#0B1120' : '#5C6B7D',
+                                marginLeft: 2,
+                            }}>{chip.count}</span>
+                        </button>
+                    )
+                })}
+            </div>
+
+            {/* Content area */}
+            <div style={{ padding: '0 16px' }}>
+                {/* Loading skeletons */}
+                {loading && (
+                    <>
+                        <style suppressHydrationWarning>{`
+                            @keyframes inv-shimmer {
+                                0%   { background-position: -200% center; }
+                                100% { background-position:  200% center; }
+                            }
+                        `}</style>
+                        {[1, 2, 3].map(i => (
+                            <div key={i} style={{
+                                borderRadius: 12, overflow: 'hidden',
+                                marginBottom: 12,
+                                background: 'var(--bg-elevated)',
+                                border: '1px solid rgba(184,148,58,0.12)',
+                            }}>
+                                {/* Image skeleton */}
+                                <div style={{
+                                    aspectRatio: '3/2',
+                                    background: `linear-gradient(90deg, #162040 25%, #1A3250 50%, #162040 75%)`,
+                                    backgroundSize: '200% 100%',
+                                    animation: 'inv-shimmer 1.5s ease-in-out infinite',
+                                }} />
+                                {/* Body skeleton */}
+                                <div style={{ padding: '12px 14px' }}>
+                                    <div style={{
+                                        height: 14, borderRadius: 6, marginBottom: 8,
+                                        background: `linear-gradient(90deg, #1A3250 25%, #101830 50%, #1A3250 75%)`,
+                                        backgroundSize: '200% 100%',
+                                        animation: 'inv-shimmer 1.5s ease-in-out infinite',
+                                        width: '70%',
+                                    }} />
+                                    <div style={{
+                                        height: 10, borderRadius: 6,
+                                        background: `linear-gradient(90deg, #1A3250 25%, #101830 50%, #1A3250 75%)`,
+                                        backgroundSize: '200% 100%',
+                                        animation: 'inv-shimmer 1.5s ease-in-out infinite',
+                                        width: '40%',
+                                    }} />
+                                </div>
+                            </div>
+                        ))}
+                    </>
+                )}
+
+                {/* Empty state */}
+                {!loading && filtered.length === 0 && (
+                    <div style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center',
+                        justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center',
+                    }}>
+                        <div style={{
+                            width: 72, height: 72, borderRadius: 20,
+                            background: 'rgba(184,148,58,0.06)',
+                            border: '1px solid rgba(184,148,58,0.18)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                            <Building2 size={32} style={{ color: 'rgba(184,148,58,0.4)' }} />
+                        </div>
+                        <div>
+                            <div style={{
+                                fontFamily: 'var(--font-playfair, serif)',
+                                fontSize: 18, fontWeight: 600, color: '#EBE7E0', marginBottom: 6,
+                            }}>Nenhum empreendimento</div>
+                            <div style={{
+                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontSize: 13, color: '#5C6B7D', lineHeight: 1.6,
+                            }}>
+                                {busca ? 'Nenhum resultado para sua busca.' : 'Adicione seu primeiro imóvel.'}
+                            </div>
+                        </div>
+                        <Link href="/backoffice/imoveis/novo" style={{ textDecoration: 'none' }}>
+                            <button
+                                className="mob-btn-tap"
+                                style={{
+                                    height: 44, padding: '0 24px', borderRadius: 10,
+                                    background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
+                                    fontFamily: 'var(--font-montserrat, sans-serif)',
+                                    fontSize: 12, fontWeight: 700, letterSpacing: '1px',
+                                    textTransform: 'uppercase' as const, color: '#0B1120',
+                                    touchAction: 'manipulation',
+                                    WebkitTapHighlightColor: 'transparent',
+                                } as React.CSSProperties}
+                            >
+                                + Cadastrar imóvel
+                            </button>
+                        </Link>
+                    </div>
+                )}
+
+                {/* Property cards */}
+                {!loading && filtered.map((d) => {
+                    const status = getStatus(d)
+                    const price = getPrice(d)
+                    const image = getImage(d)
+
+                    return (
+                        <Link
+                            key={d.id}
+                            href={`/backoffice/imoveis/${d.id}`}
+                            style={{
+                                display: 'block', textDecoration: 'none', color: 'inherit',
+                                marginBottom: 12,
+                            }}
+                        >
+                            <div
+                                className="mob-card-inner"
+                                style={{
+                                    background: 'var(--bg-elevated)',
+                                    borderRadius: 12,
+                                    border: '1px solid rgba(184,148,58,0.12)',
+                                    overflow: 'hidden',
+                                    touchAction: 'manipulation',
+                                    WebkitTapHighlightColor: 'transparent',
+                                } as React.CSSProperties}
+                            >
+                                {/* Image container — 3:2 ratio, gradient overlay */}
+                                <div style={{ position: 'relative', aspectRatio: '3/2', background: 'var(--bg-muted)' }}>
+                                    {image ? (
+                                        <Image
+                                            src={image}
+                                            alt={d.name || 'Imóvel'}
+                                            fill
+                                            sizes="(max-width: 768px) 100vw"
+                                            style={{ objectFit: 'cover' }}
+                                        />
+                                    ) : (
+                                        <div style={{
+                                            width: '100%', height: '100%',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            background: 'linear-gradient(135deg, #162040 0%, #1A3250 100%)',
+                                        }}>
+                                            <Building2 size={44} style={{ color: 'rgba(184,148,58,0.15)' }} />
+                                        </div>
+                                    )}
+
+                                    {/* Gradient overlay */}
+                                    <div style={{
+                                        position: 'absolute', inset: 0,
+                                        background: 'linear-gradient(to top, rgba(11,25,40,0.97) 0%, transparent 60%)',
+                                        borderRadius: '12px 12px 0 0',
+                                    }} />
+
+                                    {/* Status badge — top-left */}
+                                    <div style={{ position: 'absolute', top: 10, left: 10 }}>
+                                        <span style={{
+                                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                                            fontSize: 9, fontWeight: 700, letterSpacing: '0.8px',
+                                            textTransform: 'uppercase' as const,
+                                            color: status.color,
+                                            background: status.bg,
+                                            border: `1px solid ${status.color}40`,
+                                            padding: '4px 8px', borderRadius: 999,
+                                        }}>
+                                            {status.label}
+                                        </span>
+                                    </div>
+
+                                    {/* Property name + status at image bottom */}
+                                    <div style={{
+                                        position: 'absolute', bottom: 0, left: 0, right: 0,
+                                        padding: '12px 14px',
+                                    }}>
+                                        <div style={{
+                                            fontFamily: 'var(--font-playfair, serif)',
+                                            fontSize: 15, fontWeight: 700, color: '#EBE7E0',
+                                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                        }}>{d.name}</div>
+                                    </div>
+                                </div>
+
+                                {/* Card body — price + specs */}
+                                <div style={{ padding: '12px 14px' }}>
+                                    {/* Price */}
+                                    {price && (
+                                        <div style={{
+                                            fontFamily: 'var(--font-dm-mono, monospace)',
+                                            fontSize: 16, fontWeight: 400, color: 'var(--imi-gold-500)',
+                                            fontVariantNumeric: 'tabular-nums',
+                                            marginBottom: 8,
+                                        }}>{price}</div>
+                                    )}
+
+                                    {/* Specs row */}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                        {d.bedrooms && (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                <Bed size={12} style={{ color: '#5C6B7D' }} />
+                                                <span style={{
+                                                    fontFamily: 'var(--font-dm-mono, monospace)',
+                                                    fontSize: 12, color: '#9FAAB8',
+                                                }}>{d.bedrooms}</span>
+                                            </div>
+                                        )}
+                                        {d.bathrooms && (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                <Bath size={12} style={{ color: '#5C6B7D' }} />
+                                                <span style={{
+                                                    fontFamily: 'var(--font-dm-mono, monospace)',
+                                                    fontSize: 12, color: '#9FAAB8',
+                                                }}>{d.bathrooms}</span>
+                                            </div>
+                                        )}
+                                        {d.area && (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                <Maximize2 size={12} style={{ color: '#5C6B7D' }} />
+                                                <span style={{
+                                                    fontFamily: 'var(--font-dm-mono, monospace)',
+                                                    fontSize: 12, color: '#9FAAB8',
+                                                }}>{d.area}m²</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>
+                    )
+                })}
+            </div>
+
+            <MobileBottomNav />
+        </div>
+    )
+}
+
+// ─── Main Page Component ──────────────────────────────────────────────────────
+
 export default function InventarioPage() {
+    const isMobile = useIsMobile()
     const [developments, setDevelopments] = useState<any[]>([])
     const [viewCounts, setViewCounts] = useState<Record<string, number>>({})
     const [loading, setLoading] = useState(true)
@@ -97,10 +591,29 @@ export default function InventarioPage() {
     // Summary counts
     const totalPublished = developments.filter(d => ['published', 'publicado'].includes(d.status_commercial || d.status_comercial || '')).length
     const totalSold = developments.filter(d => ['sold', 'vendido'].includes(d.status_commercial || d.status_comercial || '')).length
-
     const totalCampaign = developments.filter(d => ['campaign', 'campanha'].includes(d.status_commercial || d.status_comercial || '')).length
     const totalDraft = developments.filter(d => ['draft', 'rascunho'].includes(d.status_commercial || d.status_comercial || '')).length
 
+    // ── Mobile branch ──────────────────────────────────────────────────────────
+    if (isMobile) {
+        return (
+            <MobileInventario
+                developments={developments}
+                filtered={filtered}
+                loading={loading}
+                busca={busca}
+                setBusca={setBusca}
+                activeType={activeType}
+                setActiveType={setActiveType}
+                totalPublished={totalPublished}
+                totalSold={totalSold}
+                totalCampaign={totalCampaign}
+                totalDraft={totalDraft}
+            />
+        )
+    }
+
+    // ── Desktop branch ─────────────────────────────────────────────────────────
     return (
         <div className="space-y-6 pb-10">
             {/* Header */}

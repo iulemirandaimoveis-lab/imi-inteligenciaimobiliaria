@@ -218,7 +218,7 @@ export default function LeadDetailPage() {
             <button
               onClick={() => router.push(`/backoffice/propostas/nova?lead_id=${id}`)}
               className="bo-btn bo-btn-sm"
-              style={{ background: 'rgba(201,168,76,0.12)', color: '#C9A84C', borderColor: 'rgba(201,168,76,0.25)' }}
+              style={{ background: 'rgba(184,148,58,0.12)', color: 'var(--imi-gold-500)', borderColor: 'rgba(184,148,58,0.25)' }}
               title="Criar Proposta"
             >
               <FileText size={13} />
@@ -352,11 +352,11 @@ export default function LeadDetailPage() {
         <div style={{
           position: 'absolute', top: '-30px', right: '-20px',
           width: '100px', height: '100px', borderRadius: '50%',
-          background: 'var(--imi-blue-dim)', filter: 'blur(30px)', pointerEvents: 'none',
+          background: 'rgba(184,148,58,0.10)', filter: 'blur(30px)', pointerEvents: 'none',
         }} />
 
         {/* Label */}
-        <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-blue-bright)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px', position: 'relative' }}>
+        <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px', position: 'relative' }}>
           LEAD PROFILE
         </div>
 
@@ -391,12 +391,12 @@ export default function LeadDetailPage() {
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               background: 'var(--bo-elevated)',
-              border: '1px solid var(--imi-blue-border)',
+              border: '1px solid rgba(184,148,58,0.25)',
               borderRadius: '14px', padding: '10px 12px',
               flexShrink: 0,
             }}
           >
-            <span style={{ fontSize: '8px', fontWeight: 700, color: 'var(--imi-blue-bright)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
+            <span style={{ fontSize: '8px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
               AI Intent
             </span>
             <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--bo-text)', lineHeight: 1 }}>
@@ -406,30 +406,41 @@ export default function LeadDetailPage() {
         </div>
 
         {/* Contact actions */}
-        <div className="grid grid-cols-2 gap-2 mb-5">
+        <div className="grid grid-cols-3 gap-2 mb-5">
           <a
             href={`tel:${lead.phone}`}
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              height: '46px', borderRadius: '12px', fontSize: '13px', fontWeight: 600,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              height: '46px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
               color: 'var(--bo-text)', background: 'var(--bo-elevated)',
               border: '1px solid var(--bo-border)', textDecoration: 'none',
             }}
           >
-            <Phone size={15} style={{ color: 'var(--imi-blue-bright)' }} /> Ligar
+            <Phone size={14} style={{ color: 'var(--imi-gold-500)' }} /> Ligar
           </a>
           <a
             href={`https://wa.me/55${(lead.phone ?? '').replace(/\D/g, '')}`}
             target="_blank" rel="noopener noreferrer"
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              height: '46px', borderRadius: '12px', fontSize: '13px', fontWeight: 700,
-              color: '#fff', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              height: '46px', borderRadius: '12px', fontSize: '12px', fontWeight: 700,
+              color: 'var(--text-inverse)', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
               border: 'none', textDecoration: 'none',
             }}
           >
-            <MessageSquare size={15} /> WhatsApp
+            <MessageSquare size={14} /> WhatsApp
           </a>
+          <button
+            onClick={() => router.push(`/backoffice/hoje?lead_id=${id}&action=agendar`)}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              height: '46px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
+              color: 'var(--bo-text)', background: 'var(--bo-elevated)',
+              border: '1px solid var(--bo-border)', cursor: 'pointer',
+            }}
+          >
+            <Calendar size={14} style={{ color: 'var(--imi-gold-500)' }} /> Agendar
+          </button>
         </div>
 
         {/* Contact info grid */}
@@ -535,15 +546,15 @@ export default function LeadDetailPage() {
                   {aiAnalysis.urgency && (
                     <span style={{
                       fontSize: '10px', fontWeight: 700,
-                      color: aiAnalysis.urgency === 'alta' ? 'var(--bo-error)' : aiAnalysis.urgency === 'media' ? '#F59E0B' : '#6B7280',
-                      background: aiAnalysis.urgency === 'alta' ? 'rgba(239,68,68,0.12)' : aiAnalysis.urgency === 'media' ? 'rgba(245,158,11,0.12)' : 'rgba(107,114,128,0.12)',
+                      color: aiAnalysis.urgency === 'alta' ? 'var(--bo-error)' : aiAnalysis.urgency === 'media' ? 'var(--warning)' : 'var(--text-secondary)',
+                      background: aiAnalysis.urgency === 'alta' ? 'rgba(239,68,68,0.12)' : aiAnalysis.urgency === 'media' ? 'rgba(245,158,11,0.12)' : 'var(--bg-elevated)',
                       padding: '2px 8px', borderRadius: '6px',
                     }}>
                       Urgência {aiAnalysis.urgency}
                     </span>
                   )}
                   {aiAnalysis.approach && (
-                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--imi-blue-bright)', background: 'rgba(59,130,246,0.12)', padding: '2px 8px', borderRadius: '6px' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--imi-gold-500)', background: 'rgba(59,130,246,0.12)', padding: '2px 8px', borderRadius: '6px' }}>
                       via {aiAnalysis.approach}
                     </span>
                   )}
@@ -553,7 +564,7 @@ export default function LeadDetailPage() {
                     </span>
                   )}
                   {aiAnalysis.keyRisk && (
-                    <span style={{ fontSize: '10px', color: '#E8A87C', padding: '2px 8px', background: 'rgba(232,168,124,0.08)', borderRadius: '6px' }}>
+                    <span style={{ fontSize: '10px', color: 'var(--warning)', padding: '2px 8px', background: 'rgba(245,158,11,0.08)', borderRadius: '6px' }}>
                       ⚠ {aiAnalysis.keyRisk}
                     </span>
                   )}
@@ -590,10 +601,10 @@ export default function LeadDetailPage() {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.06em',
-                  color: isActive ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)',
+                  color: isActive ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)',
                   background: 'none',
                   border: 'none',
-                  borderBottom: `2px solid ${isActive ? 'var(--imi-blue-bright)' : 'transparent'}`,
+                  borderBottom: `2px solid ${isActive ? 'var(--imi-gold-500)' : 'transparent'}`,
                   cursor: 'pointer',
                   transition: 'all 0.18s',
                 }}
@@ -630,14 +641,14 @@ export default function LeadDetailPage() {
                           position: 'relative', zIndex: 1,
                           width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
                           background: event.accent
-                            ? 'var(--imi-blue-dim)'
+                            ? 'rgba(184,148,58,0.10)'
                             : 'rgba(255,255,255,0.04)',
-                          border: `2px solid ${event.accent ? 'var(--imi-blue-border)' : 'var(--bo-border)'}`,
+                          border: `2px solid ${event.accent ? 'rgba(184,148,58,0.25)' : 'var(--bo-border)'}`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
                           <event.icon
                             size={14}
-                            style={{ color: event.accent ? 'var(--imi-blue-bright)' : 'var(--bo-text-muted)' }}
+                            style={{ color: event.accent ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)' }}
                           />
                         </div>
 
@@ -762,7 +773,7 @@ export default function LeadDetailPage() {
                     transition: 'all 0.18s',
                   }}
                 >
-                  <Send size={14} style={{ color: note.trim() ? '#fff' : 'var(--bo-text-muted)' }} />
+                  <Send size={14} style={{ color: note.trim() ? 'var(--text-inverse)' : 'var(--bo-text-muted)' }} />
                 </button>
               </div>
             </div>

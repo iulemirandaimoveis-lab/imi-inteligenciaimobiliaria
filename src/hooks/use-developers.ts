@@ -6,8 +6,6 @@ import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import useSWR, { mutate } from 'swr'
 
-const supabase = createClient()
-
 export interface Developer {
     id: string
     name: string
@@ -21,6 +19,7 @@ export interface Developer {
 }
 
 export function useDevelopers() {
+    const supabase = createClient()
     const { data, error, mutate: revalidate } = useSWR('developers', async () => {
         const { data, error } = await supabase
             .from('developers')
@@ -40,6 +39,7 @@ export function useDevelopers() {
 }
 
 export function useDeveloper(id: string | null) {
+    const supabase = createClient()
     const { data, error, mutate: revalidate } = useSWR(
         id ? ['developer', id] : null,
         async () => {
@@ -63,6 +63,7 @@ export function useDeveloper(id: string | null) {
 }
 
 export function useDeveloperActions() {
+    const supabase = createClient()
     const [loading, setLoading] = useState(false)
 
     const createDeveloper = useCallback(async (data: Partial<Developer>) => {

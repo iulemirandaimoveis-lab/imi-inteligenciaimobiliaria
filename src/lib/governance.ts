@@ -1,9 +1,17 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
-)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _supabase: SupabaseClient<any> | null = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getSupabase(): SupabaseClient<any> {
+    if (!_supabase) {
+        _supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+            process.env.SUPABASE_SERVICE_ROLE_KEY || 'build-placeholder'
+        )
+    }
+    return _supabase!
+}
 
 // ── RBAC ────────────────────────────────────────────────────────
 
@@ -21,7 +29,7 @@ async function loadPermissions(): Promise<Record<string, boolean>> {
         return permissionsCache
     }
 
-    const { data } = await supabase
+    const { data } = await getSupabase()
         .from('role_permissions')
         .select('role, module, action, allowed')
 
@@ -50,7 +58,7 @@ export async function checkPermission(
 
 export async function getUserRole(userId: string): Promise<UserRole> {
     // Check team_members first
-    const { data: member } = await supabase
+    const { data: member } = await getSupabase()
         .from('team_members')
         .select('role')
         .eq('user_id', userId)
@@ -59,7 +67,7 @@ export async function getUserRole(userId: string): Promise<UserRole> {
     if (member?.role) return member.role as UserRole
 
     // Check auth user_metadata
-    const { data: { user } } = await supabase.auth.admin.getUserById(userId)
+    const { data: { user } } = await getSupabase().auth.admin.getUserById(userId)
     const metaRole = user?.user_metadata?.role?.toLowerCase()
     if (metaRole && ['admin', 'manager', 'agent', 'viewer'].includes(metaRole)) {
         return metaRole as UserRole
@@ -84,7 +92,7 @@ export interface AuditEntry {
 
 export async function logAudit(entry: AuditEntry) {
     try {
-        await supabase.from('activity_logs').insert({
+        await getSupabase().from('activity_logs').insert({
             user_id: entry.user_id || null,
             action: entry.action,
             entity_type: entry.entity_type,

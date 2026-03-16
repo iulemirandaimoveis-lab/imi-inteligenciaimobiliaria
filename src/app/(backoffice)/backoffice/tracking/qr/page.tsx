@@ -16,7 +16,7 @@ import QRCode from 'qrcode'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 const SOURCES = [
     {
@@ -115,6 +115,7 @@ export default function QRGeneratorPage() {
     }, [])
 
     useEffect(() => {
+        const supabase = createClient()
         // Load developments (all — the QR tool is internal, no status filter needed)
         supabase.from('developments').select('id, name, slug').order('name')
             .then(({ data }) => {
@@ -232,7 +233,7 @@ export default function QRGeneratorPage() {
 
             {/* Stats — only when there are links */}
             {links.length > 0 && (
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                         { label: 'Links Ativos', value: activeLinks, icon: <QrCode size={13} />, color: '#60A5FA' },
                         { label: 'Total Cliques', value: totalClicks, icon: <MousePointer size={13} />, color: 'var(--bo-success)' },
@@ -307,7 +308,7 @@ export default function QRGeneratorPage() {
                 {/* Channel picker */}
                 <div className="p-5 pb-4" style={{ borderBottom: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: T.textMuted }}>Canal de Marketing</p>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {SOURCES.map(src => {
                             const active = selectedSource.value === src.value
                             return (
@@ -346,7 +347,7 @@ export default function QRGeneratorPage() {
                 {/* Corretor + Equipe */}
                 <div className="p-5 pb-4" style={{ borderBottom: `1px solid ${T.border}` }}>
                     <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: T.textMuted }}>Atribuição</p>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {/* Broker selector */}
                         <div className="relative">
                             <p className="text-[10px] font-semibold mb-1.5" style={{ color: T.textMuted }}>Corretor</p>

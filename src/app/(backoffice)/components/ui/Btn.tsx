@@ -1,6 +1,6 @@
 /**
- * Btn — Botão canônico IMI
- * UM padrão. Zero gradientes. Elegância institucional.
+ * Btn — Botao canonico IMI DS3
+ * Inline styles with DS3 tokens. Self-contained, no external CSS classes.
  *
  * Uso:
  *   <Btn>Salvar</Btn>
@@ -10,10 +10,10 @@
  *   <Btn as="a" href="/...">Link</Btn>
  */
 
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import { Loader2 } from 'lucide-react'
 
-export type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline'
+export type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline' | 'gold'
 export type BtnSize    = 'xs' | 'sm' | 'md' | 'lg' | 'icon'
 
 interface BtnBaseProps {
@@ -43,16 +43,122 @@ type AnchorProps = BtnBaseProps &
 
 type BtnProps = ButtonProps | AnchorProps
 
-function buildClass(
-  variant: BtnVariant = 'primary',
-  size: BtnSize = 'md',
-  full?: boolean,
-  className?: string,
-): string {
-  const v = `bo-btn-${variant}`
-  const s = size === 'icon' ? 'bo-btn-icon' : size !== 'md' ? `bo-btn-${size}` : ''
-  const f = full ? 'bo-btn-full' : ''
-  return ['bo-btn', v, s, f, className].filter(Boolean).join(' ')
+/* ── Variant styles ───────────────────────────────────────── */
+
+interface VariantStyle {
+  background: string
+  color: string
+  border: string
+  hoverBackground: string
+  hoverColor?: string
+  activeTransform?: string
+}
+
+const VARIANT_STYLES: Record<string, VariantStyle> = {
+  primary: {
+    background: 'var(--imi-gold-500)',
+    color: '#FFFFFF',
+    border: '1px solid transparent',
+    hoverBackground: 'color-mix(in srgb, var(--imi-gold-500) 85%, #000)',
+    activeTransform: 'scale(0.97)',
+  },
+  gold: {
+    background: 'var(--imi-gold-500)',
+    color: '#FFFFFF',
+    border: '1px solid transparent',
+    hoverBackground: 'color-mix(in srgb, var(--imi-gold-500) 85%, #000)',
+    activeTransform: 'scale(0.97)',
+  },
+  secondary: {
+    background: 'var(--bg-muted)',
+    color: 'var(--text-primary)',
+    border: '1px solid var(--border-default)',
+    hoverBackground: 'var(--bg-hover)',
+  },
+  ghost: {
+    background: 'transparent',
+    color: 'var(--text-secondary)',
+    border: '1px solid transparent',
+    hoverBackground: 'var(--bg-hover)',
+  },
+  danger: {
+    background: 'var(--error-bg)',
+    color: 'var(--error)',
+    border: '1px solid transparent',
+    hoverBackground: 'color-mix(in srgb, var(--error-bg) 80%, var(--error))',
+  },
+  outline: {
+    background: 'transparent',
+    color: 'var(--text-primary)',
+    border: '1px solid var(--border-default)',
+    hoverBackground: 'var(--bg-hover)',
+  },
+}
+
+/* ── Size styles ──────────────────────────────────────────── */
+
+interface SizeStyle {
+  height: number
+  paddingInline: number
+  fontSize: number
+  gap: number
+  iconSize: number
+}
+
+const SIZE_STYLES: Record<string, SizeStyle> = {
+  xs: { height: 28, paddingInline: 10, fontSize: 12, gap: 4, iconSize: 12 },
+  sm: { height: 34, paddingInline: 14, fontSize: 13, gap: 6, iconSize: 14 },
+  md: { height: 40, paddingInline: 18, fontSize: 14, gap: 8, iconSize: 16 },
+  lg: { height: 48, paddingInline: 24, fontSize: 15, gap: 10, iconSize: 18 },
+  icon: { height: 40, paddingInline: 0, fontSize: 14, gap: 0, iconSize: 16 },
+}
+
+/* Map icon-size variant to the matching size height */
+const ICON_SIZE_MAP: Record<string, number> = {
+  xs: 28, sm: 34, md: 40, lg: 48,
+}
+
+function buildStyle(
+  variant: BtnVariant,
+  size: BtnSize,
+  full: boolean | undefined,
+  hovered: boolean,
+  pressed: boolean,
+  disabled: boolean,
+): React.CSSProperties {
+  const v = VARIANT_STYLES[variant] || VARIANT_STYLES.primary
+  const s = SIZE_STYLES[size] || SIZE_STYLES.md
+
+  const isIcon = size === 'icon'
+
+  const style: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: `${s.gap}px`,
+    height: `${s.height}px`,
+    paddingInline: isIcon ? undefined : `${s.paddingInline}px`,
+    width: isIcon ? `${s.height}px` : full ? '100%' : undefined,
+    fontSize: `${s.fontSize}px`,
+    fontFamily: 'var(--font-sans)',
+    fontWeight: 500,
+    lineHeight: 1,
+    borderRadius: 'var(--r-md, 8px)',
+    border: v.border,
+    background: hovered && !disabled ? v.hoverBackground : v.background,
+    color: hovered && v.hoverColor && !disabled ? v.hoverColor : v.color,
+    cursor: disabled ? 'default' : 'pointer',
+    opacity: disabled ? 0.5 : 1,
+    pointerEvents: disabled ? 'none' : undefined,
+    transition: 'all var(--dur-2, 200ms) var(--ease)',
+    transform: pressed && v.activeTransform && !disabled ? v.activeTransform : undefined,
+    textDecoration: 'none',
+    whiteSpace: 'nowrap',
+    userSelect: 'none',
+    outline: 'none',
+  }
+
+  return style
 }
 
 export function Btn(props: BtnProps) {
@@ -65,22 +171,59 @@ export function Btn(props: BtnProps) {
     full,
     className,
     children,
+    style: styleProp,
     ...rest
   } = props
 
-  const cls = buildClass(variant, size, full, className)
+  const [hovered, setHovered] = useState(false)
+  const [pressed, setPressed] = useState(false)
+  const [focused, setFocused] = useState(false)
+
+  const isDisabled = loading || !!(rest as React.ButtonHTMLAttributes<HTMLButtonElement>).disabled
+
+  const onMouseEnter = useCallback(() => setHovered(true), [])
+  const onMouseLeave = useCallback(() => { setHovered(false); setPressed(false) }, [])
+  const onMouseDown = useCallback(() => setPressed(true), [])
+  const onMouseUp = useCallback(() => setPressed(false), [])
+  const onFocus = useCallback(() => setFocused(true), [])
+  const onBlur = useCallback(() => setFocused(false), [])
+
+  const computedStyle = buildStyle(variant, size, full, hovered, pressed, isDisabled)
+
+  // Focus ring
+  if (focused && !isDisabled) {
+    computedStyle.outline = '2px solid var(--border-focus)'
+    computedStyle.outlineOffset = '2px'
+  }
+
+  // Merge any externally passed style
+  const finalStyle = styleProp ? { ...computedStyle, ...styleProp } : computedStyle
+
+  const spinnerSize = SIZE_STYLES[size]?.iconSize ?? 14
+
   const content = (
     <>
-      {loading ? <Loader2 size={14} className="animate-spin" /> : icon}
+      {loading ? <Loader2 size={spinnerSize} className="animate-spin" /> : icon}
       {size !== 'icon' && children}
       {!loading && iconRight}
     </>
   )
 
+  const commonProps = {
+    className,
+    style: finalStyle,
+    onMouseEnter,
+    onMouseLeave,
+    onMouseDown,
+    onMouseUp,
+    onFocus,
+    onBlur,
+  }
+
   if ((props as AnchorProps).as === 'a') {
     const { as: _as, ...anchorRest } = rest as AnchorProps & { as: 'a' }
     return (
-      <a className={cls} {...anchorRest}>
+      <a {...commonProps} {...anchorRest}>
         {content}
       </a>
     )
@@ -89,8 +232,8 @@ export function Btn(props: BtnProps) {
   const { as: _as, ...btnRest } = rest as ButtonProps & { as?: 'button' }
   return (
     <button
-      className={cls}
-      disabled={loading || (btnRest as React.ButtonHTMLAttributes<HTMLButtonElement>).disabled}
+      {...commonProps}
+      disabled={isDisabled}
       {...(btnRest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
     >
       {content}

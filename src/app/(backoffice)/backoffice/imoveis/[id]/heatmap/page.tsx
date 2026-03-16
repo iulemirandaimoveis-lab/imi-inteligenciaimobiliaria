@@ -12,6 +12,8 @@ import { createClient } from '@/lib/supabase/client'
 import { motion } from 'framer-motion'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
+import { useIsMobile } from '@/hooks/use-is-mobile'
+import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-ui'
 
 // Section heatmap segments — in real production these would come from page_views/tracking
 const SECTIONS_DEFAULT = [
@@ -23,9 +25,223 @@ const SECTIONS_DEFAULT = [
 
 type RangeKey = '7d' | '30d' | '90d'
 
+// ─── Mobile Heatmap Component ──────────────────────────────────────────────────
+
+interface MobileHeatmapProps {
+    id: string
+    development: any
+    sections: typeof SECTIONS_DEFAULT
+    range: RangeKey
+    setRange: (r: RangeKey) => void
+}
+
+function MobileHeatmap({ id, development, sections, range, setRange }: MobileHeatmapProps) {
+    const rangeOptions: RangeKey[] = ['7d', '30d', '90d']
+
+    function retentionColor(retention: number): string {
+        if (retention >= 70) return '#6BB87B'
+        if (retention >= 40) return '#F59E0B'
+        return '#F87171'
+    }
+
+    return (
+        <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
+            <MobileGlobalStyles />
+
+            <MobileAppBar
+                title="Heatmap"
+                subtitle="atenção por seção"
+                backHref={`/backoffice/imoveis/${id}`}
+            />
+
+            {/* Period chips */}
+            <div style={{
+                position: 'fixed', top: 56, left: 0, right: 0, zIndex: 40,
+                background: 'var(--bg-base)',
+                borderBottom: '1px solid rgba(184,148,58,0.1)',
+                display: 'flex', gap: 8,
+                overflowX: 'auto', scrollbarWidth: 'none',
+                padding: '10px 16px',
+            }}>
+                {rangeOptions.map(r => {
+                    const isActive = range === r
+                    return (
+                        <button
+                            key={r}
+                            onClick={() => setRange(r)}
+                            style={{
+                                flexShrink: 0,
+                                height: 32, minWidth: 48,
+                                padding: '0 14px',
+                                borderRadius: 999,
+                                background: isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.08)',
+                                border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
+                                color: isActive ? '#0B1120' : '#9FAAB8',
+                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontSize: 12, fontWeight: isActive ? 700 : 500,
+                                cursor: 'pointer',
+                                letterSpacing: '0.3px',
+                                touchAction: 'manipulation',
+                            }}
+                        >
+                            {r}
+                        </button>
+                    )
+                })}
+            </div>
+
+            {/* Content */}
+            <div style={{ paddingTop: 108, paddingBottom: 56, padding: '108px 14px 56px' }}>
+
+                {/* Property name strip */}
+                {development && (
+                    <div style={{
+                        background: 'var(--bg-elevated)',
+                        border: '1px solid rgba(184,148,58,0.12)',
+                        borderRadius: 12,
+                        padding: '12px 14px',
+                        marginBottom: 12,
+                    }}>
+                        <div style={{
+                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontSize: 9, fontWeight: 700,
+                            letterSpacing: '2px', textTransform: 'uppercase',
+                            color: '#5C6B7D', marginBottom: 3,
+                        }}>
+                            LISTING HEATMAP
+                        </div>
+                        <div style={{
+                            fontFamily: 'var(--font-playfair, serif)',
+                            fontSize: 15, fontWeight: 600,
+                            color: '#EBE7E0',
+                        }}>
+                            {development.name || '—'}
+                        </div>
+                        {development.neighborhood && (
+                            <div style={{
+                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                fontSize: 11, color: '#5C6B7D', marginTop: 2,
+                            }}>
+                                {development.neighborhood}, {development.city}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Section retention cards */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {sections.map((section, i) => {
+                        const color = retentionColor(section.retention)
+                        const isDown = section.trend === 'down'
+                        return (
+                            <div
+                                key={section.key}
+                                style={{
+                                    background: 'var(--bg-elevated)',
+                                    border: '1px solid rgba(184,148,58,0.12)',
+                                    borderRadius: 12,
+                                    padding: '14px 14px',
+                                }}
+                            >
+                                {/* Header row */}
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <div style={{
+                                            width: 32, height: 32,
+                                            borderRadius: 8,
+                                            background: `${color}18`,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            flexShrink: 0,
+                                        }}>
+                                            <section.icon size={14} style={{ color }} />
+                                        </div>
+                                        <div>
+                                            <div style={{
+                                                fontFamily: 'var(--font-playfair, serif)',
+                                                fontSize: 14, fontWeight: 600,
+                                                color: '#EBE7E0',
+                                            }}>
+                                                {section.label}
+                                            </div>
+                                            <div style={{
+                                                fontFamily: 'var(--font-montserrat, sans-serif)',
+                                                fontSize: 10, color: '#5C6B7D', marginTop: 1,
+                                            }}>
+                                                {section.detail}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                                        <span style={{
+                                            fontFamily: 'var(--font-dm-mono, monospace)',
+                                            fontSize: 16, fontWeight: 700,
+                                            color: 'var(--imi-gold-500)',
+                                        }}>
+                                            {section.retention}%
+                                        </span>
+                                        <span style={{ fontSize: 14, color: isDown ? '#F87171' : '#6BB87B' }}>
+                                            {isDown ? '↓' : '↑'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Retention bar */}
+                                <div style={{
+                                    height: 6, borderRadius: 4,
+                                    background: 'rgba(255,255,255,0.06)',
+                                    overflow: 'hidden',
+                                }}>
+                                    <div style={{
+                                        height: '100%',
+                                        width: `${section.retention}%`,
+                                        borderRadius: 4,
+                                        background: color,
+                                        transition: 'width 500ms ease',
+                                    }} />
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+
+                {/* AI Insight footer */}
+                <div style={{
+                    marginTop: 14,
+                    background: 'rgba(251,191,36,0.06)',
+                    border: '1px solid rgba(251,191,36,0.18)',
+                    borderRadius: 12,
+                    padding: '12px 14px',
+                    display: 'flex', gap: 10,
+                }}>
+                    <Zap size={14} style={{ color: '#F59E0B', flexShrink: 0, marginTop: 1 }} />
+                    <div>
+                        <div style={{
+                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontSize: 9, fontWeight: 700,
+                            letterSpacing: '2px', textTransform: 'uppercase',
+                            color: '#F59E0B', marginBottom: 4,
+                        }}>
+                            Insight IA
+                        </div>
+                        <div style={{
+                            fontFamily: 'var(--font-montserrat, sans-serif)',
+                            fontSize: 12, color: '#9FAAB8', lineHeight: 1.5,
+                        }}>
+                            Usuários saem na seção &quot;Preços&quot;. Considere adicionar labels &quot;Financiamento Facilitado&quot; próximo para reter interesse.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <MobileBottomNav />
+        </div>
+    )
+}
+
 export default function ImovelHeatmapPage() {
     const params = useParams()
     const router = useRouter()
+    const isMobile = useIsMobile()
     const id = params?.id as string
 
     const [development, setDevelopment] = useState<any>(null)
@@ -100,6 +316,18 @@ export default function ImovelHeatmapPage() {
                     <div key={i} style={{ height: 56, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.3 }} />
                 ))}
             </div>
+        )
+    }
+
+    if (isMobile) {
+        return (
+            <MobileHeatmap
+                id={id}
+                development={development}
+                sections={SECTIONS_DEFAULT}
+                range={range}
+                setRange={setRange}
+            />
         )
     }
 

@@ -15,43 +15,43 @@
   --surface-1: var(--bo-elevated);
   --surface-2: var(--bo-card);
 
-  /* ── Status — NEON palette (same in both modes) ── */
-  --s-hot:    #F87171;  --s-hot-bg:    rgba(248,113,113,0.14);
-  --s-warm:   #FBBF24;  --s-warm-bg:   rgba(251,191,36,0.14);
-  --s-cold:   #22D3EE;  --s-cold-bg:   rgba(34,211,238,0.12);
-  --s-done:   #4ADE80;  --s-done-bg:   rgba(74,222,128,0.12);
-  --s-pend:   #A78BFA;  --s-pend-bg:   rgba(167,139,250,0.12);
-  --s-cancel: #F87171;  --s-cancel-bg: rgba(248,113,113,0.10);
+  /* ── Status — DS3 semantic mapping ── */
+  --s-hot:    var(--error);     --s-hot-bg:    var(--error-bg);
+  --s-warm:   var(--warning);   --s-warm-bg:   var(--warning-bg);
+  --s-cold:   var(--info);      --s-cold-bg:   var(--info-bg);
+  --s-done:   var(--success);   --s-done-bg:   var(--success-bg);
+  --s-pend:   #A78BFA;          --s-pend-bg:   rgba(167,139,250,0.12);
+  --s-cancel: var(--error);     --s-cancel-bg: var(--error-bg);
 
-  /* ── IMI Intelligence accent tokens (same in both modes) ── */
-  --imi-blue:        #2563EB;
-  --imi-blue-bright: #3B82F6;
-  --imi-blue-dim:    rgba(37,99,235,0.12);
-  --imi-blue-border: rgba(59,130,246,0.25);
+  /* ── Legacy blue aliases → DS3 gold (accent migration) ── */
+  --imi-blue:        var(--imi-gold-500);
+  --imi-blue-bright: var(--imi-gold-500);
+  --imi-blue-dim:    rgba(184,148,58,0.10);
+  --imi-blue-border: rgba(184,148,58,0.25);
 
   /* AI Gold — insight cards, premium actions */
-  --imi-ai-gold:   #EAB308;
-  --imi-ai-bg:     rgba(234,179,8,0.10);
-  --imi-ai-border: rgba(234,179,8,0.25);
+  --imi-ai-gold:   var(--imi-gold-500);
+  --imi-ai-bg:     rgba(184,148,58,0.10);
+  --imi-ai-border: rgba(184,148,58,0.25);
 
   /* AI Green — live, active states */
-  --imi-ai-green:    #4ADE80;
-  --imi-ai-green-bg: rgba(74,222,128,0.10);
+  --imi-ai-green:    var(--success);
+  --imi-ai-green-bg: var(--success-bg);
 
-  /* Neon exact (Stitch) */
-  --imi-neon-hot:  #FF3131;
-  --imi-neon-warm: #FFD700;
-  --imi-neon-cold: #00F5FF;
+  /* Neon exact (legacy compat) */
+  --imi-neon-hot:  var(--error);
+  --imi-neon-warm: var(--warning);
+  --imi-neon-cold: var(--info);
 
-  /* Semantic status — backoffice safety net */
-  --bo-success: #34d399;
-  --bo-success-bg: rgba(52,211,153,0.12);
-  --bo-warning: #fbbf24;
-  --bo-warning-bg: rgba(251,191,36,0.12);
-  --bo-error: #f87171;
-  --bo-error-bg: rgba(248,113,113,0.10);
-  --bo-info: #60a5fa;
-  --bo-info-bg: rgba(96,165,250,0.12);
+  /* Semantic status — DS3 mapped */
+  --bo-success:    var(--success);
+  --bo-success-bg: var(--success-bg);
+  --bo-warning:    var(--warning);
+  --bo-warning-bg: var(--warning-bg);
+  --bo-error:      var(--error);
+  --bo-error-bg:   var(--error-bg);
+  --bo-info:       var(--info);
+  --bo-info-bg:    var(--info-bg);
 }
 
 /* ── BACKOFFICE INPUT DARK ─────────────────────────────────── */
@@ -159,69 +159,78 @@
   max-width: 100%;
 }
 .intel-card:hover {
-  border-color: rgba(59,130,246,0.25);
-  box-shadow: 0 0 0 1px rgba(59,130,246,0.08), 0 4px 16px rgba(59,130,246,0.06), 0 1px 3px rgba(0,0,0,0.06);
+  border-color: rgba(184,148,58,0.25);
+  box-shadow: 0 0 0 1px rgba(184,148,58,0.08), 0 4px 16px rgba(184,148,58,0.06), 0 1px 3px rgba(0,0,0,0.06);
   transform: translateY(-1px);
 }
 /* Dark mode: deep dark card with glassmorphism */
-.dark .intel-card {
-  background: rgba(20,28,43,0.88);
+.dark .intel-card,
+[data-theme="dark"] .intel-card {
+  background: rgba(16,24,48,0.88);
   border-color: rgba(255,255,255,0.06);
   box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 2px 12px rgba(0,0,0,0.18);
 }
-.dark .intel-card:hover {
-  border-color: rgba(59,130,246,0.28);
-  box-shadow: 0 0 0 1px rgba(59,130,246,0.10), 0 8px 32px rgba(59,130,246,0.09), 0 2px 12px rgba(0,0,0,0.22), 0 1px 0 rgba(255,255,255,0.04) inset;
+.dark .intel-card:hover,
+[data-theme="dark"] .intel-card:hover {
+  border-color: rgba(184,148,58,0.28);
+  box-shadow: 0 0 0 1px rgba(184,148,58,0.10), 0 8px 32px rgba(184,148,58,0.09), 0 2px 12px rgba(0,0,0,0.22), 0 1px 0 rgba(255,255,255,0.04) inset;
 }
 
 /* ── PREMIUM CARD VARIANTS ─────────────────────────────────── */
 /* AI / featured card — gold accent */
 .intel-card-ai {
-  background: linear-gradient(135deg, rgba(234,179,8,0.06) 0%, var(--bo-card) 50%);
-  border: 1px solid rgba(234,179,8,0.22);
-  border-radius: 16px;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  background: linear-gradient(135deg, rgba(184,148,58,0.06) 0%, var(--bg-surface) 50%);
+  border: 1px solid rgba(184,148,58,0.22);
+  border-radius: var(--r-xl, 16px);
+  transition: all var(--dur-3, 280ms) var(--ease);
   overflow: hidden;
   min-width: 0;
   max-width: 100%;
 }
 
 .intel-card-ai:hover {
-  border-color: rgba(234,179,8,0.38);
-  box-shadow: 0 0 32px rgba(234,179,8,0.10), 0 8px 24px rgba(0,0,0,0.15);
+  border-color: rgba(184,148,58,0.38);
+  box-shadow: 0 0 32px rgba(184,148,58,0.10), 0 8px 24px rgba(0,0,0,0.15);
   transform: translateY(-1px);
 }
 
-/* Colored top-border accent utilities (use on intel-card) */
-.card-accent-blue  { border-top: 1.5px solid rgba(59,130,246,0.50) !important; }
-.card-accent-green { border-top: 1.5px solid rgba(74,222,128,0.50) !important; }
-.card-accent-warm  { border-top: 1.5px solid rgba(251,191,36,0.50)  !important; }
-.card-accent-cold  { border-top: 1.5px solid rgba(34,211,238,0.50)  !important; }
-.card-accent-hot   { border-top: 1.5px solid rgba(248,113,113,0.50) !important; }
-.card-accent-ai    { border-top: 1.5px solid rgba(234,179,8,0.50)   !important; }
+/* Colored top-border accent utilities — DS3 */
+.card-accent-gold  { border-top: 3px solid var(--imi-gold-500) !important; }
+.card-accent-navy  { border-top: 3px solid var(--imi-navy-400) !important; }
+.card-accent-blue  { border-top: 3px solid var(--imi-navy-400) !important; }
+.card-accent-green { border-top: 3px solid var(--success)      !important; }
+.card-accent-warm  { border-top: 3px solid var(--warning)      !important; }
+.card-accent-cold  { border-top: 3px solid var(--info)         !important; }
+.card-accent-hot   { border-top: 3px solid var(--error)        !important; }
+.card-accent-ai    { border-top: 3px solid var(--imi-gold-500) !important; }
 
-/* ── GRADIENT TEXT UTILITIES ───────────────────────────────── */
+/* ── GRADIENT TEXT UTILITIES — DS3 ─────────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, var(--bo-text) 0%, rgba(148,163,184,0.80) 100%);
+  color: var(--text-primary);
+}
+
+.gradient-text-gold {
+  background: linear-gradient(135deg, var(--imi-gold-500) 0%, var(--imi-gold-300) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* Legacy alias */
 .gradient-text-blue {
-  background: linear-gradient(135deg, #E0EEFF 0%, #93C5FD 100%);
+  background: linear-gradient(135deg, var(--imi-navy-200) 0%, var(--imi-navy-100) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 /* ── NEON GLOW UTILITIES ───────────────────────────────────── */
-.glow-hot  { box-shadow: 0 0 10px rgba(248,113,113,0.40), 0 0 24px rgba(248,113,113,0.15); }
-.glow-warm { box-shadow: 0 0 10px rgba(251,191,36,0.40),  0 0 24px rgba(251,191,36,0.15); }
-.glow-cold { box-shadow: 0 0 10px rgba(34,211,238,0.40),  0 0 24px rgba(34,211,238,0.15); }
-.glow-blue { box-shadow: 0 0 12px rgba(59,130,246,0.38),  0 0 32px rgba(59,130,246,0.12); }
-.glow-ai   { box-shadow: 0 0 10px rgba(74,222,128,0.38),  0 0 24px rgba(74,222,128,0.12); }
-.glow-gold { box-shadow: 0 0 10px rgba(234,179,8,0.40),   0 0 24px rgba(234,179,8,0.15); }
+.glow-hot  { box-shadow: 0 0 10px rgba(192,40,44,0.40),   0 0 24px rgba(192,40,44,0.15); }
+.glow-warm { box-shadow: 0 0 10px rgba(138,96,0,0.40),    0 0 24px rgba(138,96,0,0.15); }
+.glow-cold { box-shadow: 0 0 10px rgba(26,78,138,0.40),   0 0 24px rgba(26,78,138,0.15); }
+.glow-blue { box-shadow: 0 0 12px rgba(61,81,138,0.38),   0 0 32px rgba(61,81,138,0.12); }
+.glow-ai   { box-shadow: 0 0 10px rgba(26,122,74,0.38),   0 0 24px rgba(26,122,74,0.12); }
+.glow-gold { box-shadow: 0 0 10px rgba(184,148,58,0.40),  0 0 24px rgba(184,148,58,0.15); }
 
 /* ── LIVE INDICATOR ────────────────────────────────────────── */
 .live-dot {
@@ -420,13 +429,18 @@
   border-radius: 10px !important;
 }
 
-/* ── SCROLLBAR DARK ──────────────────────────────────────── */
-.backoffice-root ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
+/* ── SCROLLBAR — theme-aware ─────────────────────────────── */
+:root .backoffice-root ::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
 }
-
-.backoffice-root ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.14);
+:root .backoffice-root ::-webkit-scrollbar-thumb:hover {
+  background: var(--imi-gold-500);
+}
+.dark .backoffice-root ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.10);
+}
+.dark .backoffice-root ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.18);
 }
 
 /* ── PREMIUM CARD — Bloomberg Terminal floating surface ──────── */
@@ -449,15 +463,22 @@
   left: 0;
   right: 0;
   height: 1px;
+  /* Theme-aware top edge highlight */
   background: rgba(255,255,255,0.06);
   pointer-events: none;
   border-radius: 16px 16px 0 0;
 }
+:root .premium-card::before {
+  background: rgba(184,148,58,0.12);
+}
 
 .premium-card:hover {
-  border-color: rgba(59,130,246,0.20);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+  border-color: rgba(184,148,58,0.28);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.07);
   transform: translateY(-1px);
+}
+:root .premium-card:hover {
+  box-shadow: 0 8px 32px rgba(11,17,32,0.12), 0 2px 8px rgba(11,17,32,0.06);
 }
 
 /* ── PRECISION STAT SURFACE — KPI number display ─────────────── */
@@ -470,7 +491,7 @@
 }
 
 .stat-surface:hover {
-  border-color: rgba(59,130,246,0.18);
+  border-color: rgba(184,148,58,0.22);
   box-shadow: var(--bo-card-shadow);
 }
 
@@ -508,8 +529,8 @@
 }
 
 .btn-premium:hover {
-  filter: brightness(1.12);
-  box-shadow: 0 4px 16px rgba(59,130,246,0.35), 0 0 0 1px rgba(255,255,255,0.10) inset;
+  filter: brightness(1.10);
+  box-shadow: 0 4px 16px rgba(184,148,58,0.32), 0 0 0 1px rgba(255,255,255,0.10) inset;
   transform: translateY(-1px);
 }
 
@@ -565,8 +586,8 @@
 }
 
 .input-precision:focus {
-  border-color: var(--bo-accent);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+  border-color: var(--imi-gold-500);
+  box-shadow: 0 0 0 3px rgba(184,148,58,0.14);
 }
 
 /* ── SECTION DIVIDER PRECISION ───────────────────────────────── */

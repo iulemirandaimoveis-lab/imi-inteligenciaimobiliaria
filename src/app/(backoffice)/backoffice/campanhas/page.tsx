@@ -19,7 +19,7 @@ import { MetricBar } from '@/app/(backoffice)/components/ui/MetricBar'
 import { StatusBadge } from '@/app/(backoffice)/components/ui/StatusBadge'
 import { T } from '@/app/(backoffice)/lib/theme'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 export interface Campaign {
   id: string
@@ -54,6 +54,7 @@ function useMetaStatus() {
 
 function useCampanhas(filters: { search?: string; status?: string; type?: string }) {
   return useSWR(['campanhas', filters], async () => {
+    const supabase = createClient()
     let query = supabase
       .from('campaigns')
       .select('*')
@@ -125,7 +126,7 @@ function CampaignCard({ c, index, onClick }: { c: Campaign; index: number; onCli
   const budgetPct = c.budget ? Math.min(100, Math.round((c.spent / c.budget) * 100)) : 0
   const convPct = c.leads ? Math.min(100, Math.round((c.conversions / c.leads) * 100)) : 0
   const statusCfg = STATUS_MAP[c.status] ?? STATUS_MAP.draft
-  const budgetColor = budgetPct >= 90 ? 'var(--s-hot)' : budgetPct >= 70 ? 'var(--s-warm)' : 'var(--imi-blue-bright)'
+  const budgetColor = budgetPct >= 90 ? 'var(--s-hot)' : budgetPct >= 70 ? 'var(--s-warm)' : 'var(--imi-gold-500)'
 
   return (
     <motion.div

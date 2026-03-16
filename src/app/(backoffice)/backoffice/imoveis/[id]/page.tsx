@@ -1,1547 +1,1977 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
-import { toast } from 'sonner'
+export const dynamic = 'force-dynamic'
+
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
 import {
-  ArrowLeft, MapPin, Building2, Bed, Bath, Ruler, Car, Edit,
-  CheckCircle, Calendar, Loader2, Image as ImageIcon, ExternalLink,
-  Tag, Star, Globe, FileText, QrCode, ShoppingCart, Archive, RotateCcw,
-  ChevronLeft, ChevronRight, X, ZoomIn, BarChart2, Layers, Clock,
-  TrendingUp, DollarSign, Sparkles, Send, MessageSquare, Copy,
-  Instagram, Mail, Phone, Users, Eye, Zap, Brain, ScanLine, Play,
+  ArrowLeft, MapPin, Building2, Bed, Bath, Car, Ruler, Edit, QrCode,
+  BarChart2, Layers, Clock, TrendingUp, TrendingDown, Copy, MessageSquare,
+  ChevronLeft, ChevronRight, ExternalLink, Loader2, Home, Star,
+  DollarSign, Zap, Activity, CheckSquare, Users, Share2, Sparkles,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { getStatusConfig } from '@/app/(backoffice)/lib/constants'
-import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
-import PropertyInsightsPanel from '@/app/(backoffice)/components/PropertyInsightsPanel'
-import Image from 'next/image'
+import { IMIScoreDisplay } from '@/features/properties/components/IMIScoreBadge'
+import {
+  enrichProperty,
+  calcIMIScore,
+  calcYieldEst,
+  calcMarketDelta,
+  getScoreColor,
+  calcPricePerSqm,
+  calcLiquidityIndex,
+} from '@/features/properties/services/score.service'
+import type { IMIProperty } from '@/features/properties/types'
+import { createClient } from '@/lib/supabase/client'
+import { NEIGHBORHOOD_AVG_SQM } from '@/features/properties/types'
+import { useIsMobile } from '@/hooks/use-is-mobile'
+import { MobileGlobalStyles } from '../mobile-ui'
+import { YieldCalculator } from '@/app/(backoffice)/components/ui/YieldCalculator'
+import { ValuationEngine } from '@/app/(backoffice)/components/ui/ValuationEngine'
 
-const STATUS_MAP = Object.fromEntries(
-  ['disponivel', 'em_negociacao', 'reservado', 'vendido', 'lancamento', 'em_construcao', 'arquivado'].map(key => {
-    const cfg = getStatusConfig(key)
-    return [key, { label: cfg.label, color: cfg.dot, bg: `${cfg.dot}1f`, dot: cfg.dot }]
-  })
-) as Record<string, { label: string; color: string; bg: string; dot: string }>
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface Development {
+  id: string
+  name: string
+  type: string
+  status: string
+  status_commercial?: string
+  condition?: string
+  price_from?: number
+  price_to?: number
+  area_min?: number
+  area_max?: number
+  bedrooms_from?: number
+  bathrooms_from?: number
+  parking_from?: number
+  neighborhood?: string
+  city?: string
+  state?: string
+  country?: string
+  address?: string
+  street_number?: string
+  cep?: string
+  description?: string
+  features?: string[] | null
+  amenities?: string[] | null
+  image_urls?: string[] | null
+  cover_image_url?: string | null
+  video_url?: string | null
+  slug?: string
+  created_at?: string
+  updated_at?: string
+  latitude?: number
+  longitude?: number
+  developer?: { id: string; name: string; logo_url?: string | null } | null
+}
+
+// ─── Status normalization ─────────────────────────────────────────────────────
 
 const DB_STATUS_TO_DISPLAY: Record<string, string> = {
-  launch: 'lancamento', available: 'disponivel', under_construction: 'em_construcao',
-  ready: 'disponivel', sold: 'vendido', reserved: 'reservado', negotiating: 'em_negociacao',
-  published: 'disponivel', draft: 'arquivado', campaign: 'lancamento', private: 'arquivado',
-  disponivel: 'disponivel', em_negociacao: 'em_negociacao', reservado: 'reservado',
-  vendido: 'vendido', lancamento: 'lancamento', em_construcao: 'em_construcao', arquivado: 'arquivado',
+  launch: 'lancamento',
+  available: 'disponivel',
+  under_construction: 'em_construcao',
+  ready: 'disponivel',
+  sold: 'vendido',
+  reserved: 'reservado',
+  negotiating: 'em_negociacao',
+  published: 'disponivel',
+  draft: 'arquivado',
+  campaign: 'lancamento',
+  private: 'arquivado',
+  disponivel: 'disponivel',
+  em_negociacao: 'em_negociacao',
+  reservado: 'reservado',
+  vendido: 'vendido',
+  lancamento: 'lancamento',
+  em_construcao: 'em_construcao',
+  arquivado: 'arquivado',
 }
 
-const formatPrice = (price: number) => {
-  if (!price) return 'N/A'
-  if (price >= 1000000) return `R$ ${(price / 1000000).toFixed(1).replace('.', ',')}M`
-  if (price >= 1000) return `R$ ${Math.floor(price / 1000)}k`
-  return `R$ ${price.toLocaleString('pt-BR')}`
+function normalizeStatus(raw?: string): string {
+  if (!raw) return 'disponivel'
+  return DB_STATUS_TO_DISPLAY[raw.toLowerCase()] ?? raw.toLowerCase()
 }
 
-const getYouTubeEmbedUrl = (url: string | null | undefined): string | null => {
-  if (!url) return null
-  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
-  return match ? `https://www.youtube.com/embed/${match[1]}?rel=0&modestbranding=1` : null
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function fmtCurrency(v?: number | null): string {
+  if (!v) return '—'
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 }
 
-type TabKey = 'overview' | 'gallery' | 'mapa' | 'info' | 'tour'
+function fmtNum(v?: number | null): string {
+  if (v == null) return '—'
+  return new Intl.NumberFormat('pt-BR').format(v)
+}
 
-export default function ImovelDetalhesPage() {
-  const router = useRouter()
-  const params = useParams()
-  const [data, setData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [deleting, setDeleting] = useState(false)
-  const [activeTab, setActiveTab] = useState<TabKey>('overview')
-  const [lightbox, setLightbox] = useState<{ open: boolean; idx: number }>({ open: false, idx: 0 })
+function toIMIProperty(d: Development): IMIProperty {
+  const status = normalizeStatus(d.status_commercial ?? d.status)
+  return {
+    id: d.id,
+    name: d.name,
+    type: d.type ?? 'apartamento',
+    condition: d.condition ?? status,
+    status,
+    price: d.price_from ?? undefined,
+    area: d.area_min ?? undefined,
+    bedrooms: d.bedrooms_from ?? undefined,
+    bathrooms: d.bathrooms_from ?? undefined,
+    parking: d.parking_from ?? undefined,
+    neighborhood: d.neighborhood ?? undefined,
+    city: d.city ?? undefined,
+    state: d.state ?? undefined,
+    address: d.address ?? undefined,
+    image_urls: d.image_urls ?? undefined,
+    cover_image_url: d.cover_image_url ?? undefined,
+    slug: d.slug ?? undefined,
+    developer: d.developer ?? undefined,
+    created_at: d.created_at ?? undefined,
+    updated_at: d.updated_at ?? undefined,
+  }
+}
 
-  // ── Smart Action modals ──
-  const [showContentPanel, setShowContentPanel] = useState(false)
-  const [showLeadPanel, setShowLeadPanel] = useState(false)
-  const [contentLoading, setContentLoading] = useState(false)
-  const [contentType, setContentType] = useState<'instagram' | 'whatsapp' | 'email'>('instagram')
-  const [generatedContent, setGeneratedContent] = useState('')
-  const [leads, setLeads] = useState<any[]>([])
-  const [leadsLoading, setLeadsLoading] = useState(false)
-  const [selectedLead, setSelectedLead] = useState<any>(null)
-  const [scanCount, setScanCount] = useState<number | null>(null)
-  // Property-specific leads for overview tab
-  const [propertyLeads, setPropertyLeads] = useState<any[]>([])
-  const [propertyLeadsLoading, setPropertyLeadsLoading] = useState(false)
+// ─── Style constants ──────────────────────────────────────────────────────────
 
-  useEffect(() => {
-    const fetchDevelopment = async () => {
-      try {
-        const res = await fetch(`/api/developments?id=${params.id}`)
-        if (!res.ok) throw new Error('Erro ao carregar')
-        const d = await res.json()
-        setData({
-          ...d,
-          status: DB_STATUS_TO_DISPLAY[d.status] || DB_STATUS_TO_DISPLAY[d.status_commercial] || 'disponivel',
-        })
-      } catch (err: any) {
-        console.error(err)
-        toast.error('Erro ao carregar empreendimento')
-      } finally {
-        setLoading(false)
-      }
+const EYEBROW: React.CSSProperties = {
+  fontSize: '8.5px',
+  letterSpacing: '3px',
+  textTransform: 'uppercase',
+  color: 'var(--imi-gold-500)',
+  fontFamily: 'var(--font-montserrat, Figtree, sans-serif)',
+  fontWeight: 700,
+}
+
+const CARD: React.CSSProperties = {
+  background: 'var(--bg-surface)',
+  border: '1px solid rgba(184,148,58,0.18)',
+  borderRadius: '12px',
+}
+
+const BTN_PRIMARY: React.CSSProperties = {
+  background: 'var(--gold, var(--imi-gold-500))',
+  color: 'var(--navy, #0B1120)',
+  borderRadius: '4px',
+  letterSpacing: '1.8px',
+  textTransform: 'uppercase',
+  fontWeight: 700,
+  fontFamily: 'var(--font-montserrat, Figtree, sans-serif)',
+  fontSize: '11px',
+  padding: '10px 20px',
+  border: 'none',
+  cursor: 'pointer',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
+  whiteSpace: 'nowrap' as const,
+}
+
+const BTN_SECONDARY: React.CSSProperties = {
+  background: 'transparent',
+  border: '1px solid rgba(184,148,58,0.25)',
+  color: 'var(--gold, var(--imi-gold-500))',
+  borderRadius: '4px',
+  letterSpacing: '1.8px',
+  textTransform: 'uppercase',
+  fontWeight: 700,
+  fontFamily: 'var(--font-montserrat, Figtree, sans-serif)',
+  fontSize: '11px',
+  padding: '10px 20px',
+  cursor: 'pointer',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
+  whiteSpace: 'nowrap' as const,
+}
+
+const MONO: React.CSSProperties = {
+  fontFamily: 'var(--font-dm-mono, JetBrains Mono, monospace)',
+}
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+
+function Skeleton({ w, h, r = '6px' }: { w: string; h: string; r?: string }) {
+  return (
+    <div style={{
+      width: w, height: h, borderRadius: r,
+      background: 'var(--bo-surface)',
+      animation: 'pulse 1.8s ease-in-out infinite',
+    }} />
+  )
+}
+
+// ─── Mock Comparables ─────────────────────────────────────────────────────────
+
+function buildComparables(d: Development) {
+  const neighborhood = d.neighborhood ?? 'Centro'
+  const avgSqm = NEIGHBORHOOD_AVG_SQM[neighborhood] ?? 9500
+  return [
+    { name: `${neighborhood} Residences`, area: (d.area_min ?? 80) + 5, priceSqm: Math.round(avgSqm * 1.05), delta: 5.2 },
+    { name: `Edifício ${neighborhood} Park`, area: (d.area_min ?? 80) - 8, priceSqm: Math.round(avgSqm * 0.97), delta: -3.1 },
+    { name: `${neighborhood} Premier`, area: (d.area_min ?? 80) + 15, priceSqm: Math.round(avgSqm * 1.12), delta: 11.8 },
+    { name: `Terraço ${neighborhood}`, area: (d.area_min ?? 80) - 3, priceSqm: Math.round(avgSqm * 0.94), delta: -6.0 },
+  ]
+}
+
+// ─── Tab definitions ──────────────────────────────────────────────────────────
+
+type TabKey = 'overview' | 'analysis' | 'analytics' | 'more'
+const TABS: { key: TabKey; label: string }[] = [
+  { key: 'overview', label: 'Visão Geral' },
+  { key: 'analysis', label: 'Análise' },
+  { key: 'analytics', label: 'Analytics' },
+  { key: 'more', label: 'Mais' },
+]
+
+// ─── Props shared between layouts ─────────────────────────────────────────────
+
+interface DetailProps {
+  dev: Development | null
+  property: IMIProperty | null
+  loading: boolean
+  router: ReturnType<typeof useRouter>
+  id: string
+  enriched: IMIProperty | null
+  notFound: boolean
+  activeTab: TabKey
+  setActiveTab: (t: TabKey) => void
+  galleryIdx: number
+  setGalleryIdx: React.Dispatch<React.SetStateAction<number>>
+  rentInput: number
+  setRentInput: (v: number) => void
+  expensePct: number
+  setExpensePct: (v: number) => void
+  vacancyPct: number
+  setVacancyPct: (v: number) => void
+  copied: boolean
+  handleCopyLink: () => void
+  handleWhatsApp: () => void
+}
+
+// ─── Mobile component ─────────────────────────────────────────────────────────
+
+function MobileImovelDetail({ dev, property, loading, router, id, enriched, notFound, copied, handleCopyLink, handleWhatsApp }: DetailProps) {
+  const [mobileGalleryIdx, setMobileGalleryIdx] = useState(0)
+  const touchStartX = useRef<number | null>(null)
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }, [])
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent, imagesLen: number) => {
+    if (touchStartX.current === null) return
+    const delta = e.changedTouches[0].clientX - touchStartX.current
+    if (Math.abs(delta) > 40) {
+      if (delta < 0) setMobileGalleryIdx(i => (i + 1) % imagesLen)
+      else setMobileGalleryIdx(i => (i - 1 + imagesLen) % imagesLen)
     }
-    if (params.id) fetchDevelopment()
-  }, [params.id])
+    touchStartX.current = null
+  }, [])
 
-  // Fetch QR scan count + property-specific leads (in parallel, after data loads)
-  useEffect(() => {
-    if (!params.id || !data) return
-    import('@/lib/supabase/client').then(({ createClient }) => {
-      const supabase = createClient()
-      // QR scan count
-      supabase.from('qr_scans').select('id', { count: 'exact', head: true })
-        .eq('property_id', params.id)
-        .then(({ count }) => setScanCount(count ?? 0))
-      // Property leads
-      setPropertyLeadsLoading(true)
-      supabase
-        .from('leads')
-        .select('id, name, email, phone, status, created_at, source')
-        .eq('development_id', params.id)
-        .order('created_at', { ascending: false })
-        .limit(6)
-        .then(({ data: ld }) => {
-          setPropertyLeads(ld || [])
-          setPropertyLeadsLoading(false)
-        })
-    })
-  }, [params.id, data])
-
-  const handleStatusChange = async (newStatus: string) => {
-    const labelMap: Record<string, string> = {
-      vendido: 'Vendido', arquivado: 'Arquivado', disponivel: 'Disponível',
-      em_negociacao: 'Em Negociação', lancamento: 'Lançamento', reservado: 'Reservado',
-    }
-    try {
-      const res = await fetch('/api/developments', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: params.id, status: newStatus }),
-      })
-      if (!res.ok) {
-        const err = await res.json()
-        toast.error(err.error || 'Erro ao atualizar status')
-        return
-      }
-      setData((prev: any) => ({ ...prev, status: newStatus }))
-      toast.success(`Imóvel marcado como ${labelMap[newStatus] || newStatus}`)
-    } catch {
-      toast.error('Erro de conexão')
-    }
+  // Loading state — mobile skeleton
+  if (loading) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 80 }}>
+        <div style={{ position: 'relative', width: '100%', height: 260, background: 'var(--bg-muted)' }} />
+        <div style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <Skeleton w="60%" h="26px" r="6px" />
+          <Skeleton w="40%" h="14px" r="4px" />
+          <Skeleton w="50%" h="32px" r="6px" />
+          <div style={{ display: 'flex', gap: 8 }}>
+            {[1, 2, 3, 4].map(i => <Skeleton key={i} w="70px" h="48px" r="8px" />)}
+          </div>
+          <Skeleton w="100%" h="80px" r="10px" />
+          <Skeleton w="100%" h="120px" r="10px" />
+        </div>
+        <style suppressHydrationWarning>{`
+          @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        `}</style>
+      </div>
+    )
   }
 
-  const handleDelete = async () => {
-    toast.warning('Arquivar este empreendimento?', {
-      action: {
-        label: 'Sim, arquivar',
-        onClick: async () => {
-          setDeleting(true)
-          try {
-            const res = await fetch(`/api/developments?id=${params.id}`, { method: 'DELETE' })
-            if (!res.ok) throw new Error('Erro ao arquivar')
-            toast.success('Empreendimento arquivado com sucesso')
-            router.push('/backoffice/imoveis')
-          } catch (err: any) {
-            toast.error(err.message)
-          } finally {
-            setDeleting(false)
-          }
-        },
-      },
-      duration: 6000,
-    })
+  // Not found state — mobile
+  if (notFound || !dev || !enriched) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px', textAlign: 'center' }}>
+        <Home size={48} style={{ color: 'var(--text-tertiary)', marginBottom: 16, opacity: 0.4 }} />
+        <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 8 }}>
+          Imóvel não encontrado
+        </p>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 24 }}>
+          O empreendimento solicitado não existe ou foi removido.
+        </p>
+        <button
+          onClick={() => router.push('/backoffice/imoveis')}
+          style={{ height: 52, padding: '0 24px', background: 'var(--imi-gold-500)', color: '#0B1120', border: 'none', borderRadius: 10, fontFamily: 'Figtree, sans-serif', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
+        >
+          <ArrowLeft size={16} /> Voltar à Lista
+        </button>
+      </div>
+    )
   }
+
+  // Derived values
+  const images: string[] = (() => {
+    const list: string[] = []
+    if (dev.cover_image_url) list.push(dev.cover_image_url)
+    if (dev.image_urls) list.push(...dev.image_urls.filter(u => u !== dev.cover_image_url))
+    return list
+  })()
+
+  const displayStatus = normalizeStatus(dev.status_commercial ?? dev.status)
+  const statusCfg = getStatusConfig(displayStatus)
+
+  const price = dev.price_from
+  const priceSqm = enriched.price_per_sqm ?? calcPricePerSqm(price, dev.area_min) ?? null
+  const score = enriched.imi_score ?? calcIMIScore(enriched)
+  const scoreColor = getScoreColor(score)
+  const yieldEst = enriched.yield_est ?? calcYieldEst(enriched)
+  const marketDelta = enriched.market_delta_pct ?? calcMarketDelta(enriched)
+
+  const locationStr = [dev.neighborhood, dev.city].filter(Boolean).join(' · ')
+  const allFeatures = [...(dev.features ?? []), ...(dev.amenities ?? [])]
+
+  const mobileScoreColor =
+    score >= 80 ? '#5DB887' :
+    score >= 60 ? 'var(--imi-gold-500)' :
+    score >= 40 ? '#D4913A' :
+    '#E06B6B'
+
+  // Glassmorphism style for floating elements
+  const glass: React.CSSProperties = {
+    background: 'rgba(11,25,40,0.72)',
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
+    border: '1px solid rgba(184,148,58,0.18)',
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', paddingBottom: 80 }}>
+      <MobileGlobalStyles />
+
+      {/* ── HERO IMAGE ─────────────────────────────────────────────────── */}
+      <div
+        style={{ position: 'relative', width: '100%', height: 'min(65vw, 320px)', background: 'var(--bg-muted)', overflow: 'hidden' }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={e => handleTouchEnd(e, images.length)}
+      >
+
+        {/* Hero image or placeholder */}
+        {images.length > 0 ? (
+          <Image
+            src={images[mobileGalleryIdx]}
+            alt={dev.name}
+            fill
+            sizes="100vw"
+            style={{ objectFit: 'cover', transition: 'opacity 200ms ease' }}
+            priority
+          />
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Building2 size={56} style={{ color: 'var(--text-tertiary)', opacity: 0.3 }} />
+          </div>
+        )}
+
+        {/* Gradient overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(11,25,40,0.35) 0%, transparent 40%, rgba(11,25,40,0.85) 100%)',
+          pointerEvents: 'none',
+        }} />
+
+        {/* Floating app bar */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0,
+          height: 52, display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', padding: '0 16px',
+          paddingTop: 'env(safe-area-inset-top)',
+        }}>
+          {/* Back button */}
+          <button
+            onClick={() => router.push('/backoffice/imoveis')}
+            style={{
+              ...glass, width: 44, height: 44, borderRadius: 12,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#EBE7E0', cursor: 'pointer', flexShrink: 0,
+            }}
+          >
+            <ArrowLeft size={18} />
+          </button>
+
+          {/* Right actions */}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({ title: dev.name, url: `${window.location.origin}/imoveis/${dev.slug ?? id}` })
+                } else {
+                  handleCopyLink()
+                }
+              }}
+              style={{
+                ...glass, width: 44, height: 44, borderRadius: 12,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#EBE7E0', cursor: 'pointer',
+              }}
+            >
+              <Share2 size={16} />
+            </button>
+            <Link
+              href={`/backoffice/imoveis/${id}/editar`}
+              style={{
+                ...glass, width: 44, height: 44, borderRadius: 12,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#EBE7E0', textDecoration: 'none',
+              }}
+            >
+              <Edit size={16} />
+            </Link>
+          </div>
+        </div>
+
+        {/* Gallery dots / swipe indicators */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={() => setMobileGalleryIdx(i => (i - 1 + images.length) % images.length)}
+              style={{
+                position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)',
+                ...glass, width: 36, height: 36, borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#EBE7E0', cursor: 'pointer',
+              }}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              onClick={() => setMobileGalleryIdx(i => (i + 1) % images.length)}
+              style={{
+                position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                ...glass, width: 36, height: 36, borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#EBE7E0', cursor: 'pointer',
+              }}
+            >
+              <ChevronRight size={18} />
+            </button>
+            <div style={{ position: 'absolute', bottom: 44, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5 }}>
+              {images.slice(0, 8).map((_, i) => (
+                <div key={i} style={{ width: i === mobileGalleryIdx ? 16 : 5, height: 5, borderRadius: 3, background: i === mobileGalleryIdx ? 'var(--imi-gold-500)' : 'rgba(235,231,224,0.4)', transition: 'all 200ms ease' }} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Score badge — bottom left */}
+        <div style={{
+          position: 'absolute', bottom: 12, left: 16,
+          ...glass, borderRadius: 10, padding: '6px 12px',
+          display: 'flex', alignItems: 'center', gap: 6,
+        }}>
+          <Sparkles size={13} style={{ color: mobileScoreColor }} />
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 500, color: mobileScoreColor }}>
+            IMI {score}
+          </span>
+        </div>
+
+        {/* Status badge — bottom right */}
+        <div style={{
+          position: 'absolute', bottom: 12, right: 16,
+          ...glass, borderRadius: 10, padding: '6px 12px',
+          display: 'flex', alignItems: 'center', gap: 6,
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: statusCfg.dot, flexShrink: 0 }} />
+          <span style={{ fontFamily: 'Figtree, sans-serif', fontSize: 11, fontWeight: 700, color: statusCfg.color, textTransform: 'uppercase', letterSpacing: '1.2px' }}>
+            {statusCfg.label}
+          </span>
+        </div>
+      </div>
+
+      {/* ── SCROLLABLE CONTENT ─────────────────────────────────────────── */}
+      <div style={{ padding: '20px 16px' }} className="detail-section">
+
+        {/* Name + Location */}
+        <h1 style={{
+          fontFamily: 'Libre Baskerville, Georgia, serif',
+          fontSize: 22, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.2,
+          margin: '0 0 6px',
+        }}>
+          {dev.name}
+        </h1>
+        {locationStr && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 0 }}>
+            <MapPin size={13} style={{ color: 'var(--text-tertiary)', flexShrink: 0 }} />
+            <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>
+              {locationStr}
+            </span>
+          </div>
+        )}
+
+        {/* Price section */}
+        <div style={{ marginTop: 14 }}>
+          <div style={{
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 26, fontWeight: 500,
+            color: 'var(--imi-gold-500)', letterSpacing: '-0.5px', lineHeight: 1.1,
+          }}>
+            {fmtCurrency(price)}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4, flexWrap: 'wrap' }}>
+            {priceSqm && (
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'var(--text-tertiary)' }}>
+                R$ {fmtNum(priceSqm)}/m²
+              </span>
+            )}
+            {marketDelta !== 0 && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 12, fontFamily: 'Figtree, sans-serif', color: marketDelta > 0 ? '#E06B6B' : '#5DB887' }}>
+                {marketDelta > 0
+                  ? <TrendingUp size={12} />
+                  : <TrendingDown size={12} />
+                }
+                {marketDelta > 0 ? `+${marketDelta}%` : `${marketDelta}%`} vs. mercado
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Spec pills */}
+        <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+          {[
+            dev.bedrooms_from != null && { icon: Bed, value: `${dev.bedrooms_from}` },
+            dev.bathrooms_from != null && { icon: Bath, value: `${dev.bathrooms_from}` },
+            dev.parking_from != null && { icon: Car, value: `${dev.parking_from}` },
+            dev.area_min != null && { icon: Ruler, value: `${dev.area_min}m²` },
+          ].filter(Boolean).map((spec, i) => {
+            if (!spec) return null
+            const { icon: Icon, value } = spec as { icon: React.ElementType; value: string }
+            return (
+              <div key={i} style={{
+                background: 'rgba(184,148,58,0.08)',
+                border: '1px solid rgba(184,148,58,0.2)',
+                borderRadius: 8, padding: '8px 12px',
+                minHeight: 40, display: 'flex', alignItems: 'center', gap: 7,
+              }}>
+                <Icon size={14} style={{ color: 'var(--text-tertiary)' }} />
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: 'var(--text-primary)' }}>{value}</span>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* ── SOBRE ────────────────────────────────────────────────────── */}
+        {dev.description && (
+          <div style={{ marginTop: 24 }}>
+            <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 8 }}>
+              Sobre
+            </p>
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif', lineHeight: 1.6, margin: 0 }}>
+              {dev.description}
+            </p>
+          </div>
+        )}
+
+        {/* ── CARACTERÍSTICAS ──────────────────────────────────────────── */}
+        {allFeatures.length > 0 && (
+          <div style={{ marginTop: 24 }}>
+            <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>
+              Características
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {allFeatures.map((feat, i) => (
+                <span key={i} style={{
+                  background: 'rgba(184,148,58,0.06)',
+                  border: '1px solid rgba(184,148,58,0.15)',
+                  borderRadius: 20, padding: '6px 12px',
+                  fontSize: 12, color: 'var(--text-secondary)',
+                  fontFamily: 'Figtree, sans-serif',
+                }}>
+                  {feat}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── ANÁLISE IMI ──────────────────────────────────────────────── */}
+        <div style={{ marginTop: 24 }}>
+          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>
+            Análise IMI
+          </p>
+          <div style={{
+            background: 'var(--bg-elevated)',
+            border: '1px solid rgba(184,148,58,0.15)',
+            borderRadius: 12, padding: 16,
+          }}>
+            {/* IMI Score */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 48, fontWeight: 400, color: mobileScoreColor, lineHeight: 1 }}>
+                {score}
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 2 }}>
+                  IMI Score
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'Figtree, sans-serif' }}>
+                  /100 · Índice de Oportunidade
+                </div>
+                {/* Score bar */}
+                <div style={{ height: 4, width: 120, background: 'rgba(184,148,58,0.1)', borderRadius: 999, marginTop: 6, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${score}%`, background: mobileScoreColor, borderRadius: 999 }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Stats row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              {[
+                { label: 'Yield Est.', value: `${yieldEst.toFixed(1)}%`, color: '#5DB887' },
+                { label: 'Delta Mkt', value: `${marketDelta > 0 ? '+' : ''}${marketDelta}%`, color: marketDelta >= 0 ? '#5DB887' : '#E06B6B' },
+                { label: 'Liquidez', value: `${enriched.liquidity_index ?? calcLiquidityIndex(enriched)}`, color: '#5B9BD5' },
+              ].map(({ label, value, color }) => (
+                <div key={label} style={{ textAlign: 'center' }}>
+                  <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 500, color, lineHeight: 1 }}>
+                    {value}
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif', marginTop: 3 }}>
+                    {label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── DETALHES TÉCNICOS ─────────────────────────────────────────── */}
+        <div style={{ marginTop: 24 }}>
+          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>
+            Detalhes Técnicos
+          </p>
+          <div style={{
+            background: 'var(--bg-elevated)',
+            border: '1px solid rgba(184,148,58,0.15)',
+            borderRadius: 12, overflow: 'hidden',
+          }}>
+            {[
+              { label: 'Tipo', value: dev.type ?? '—' },
+              { label: 'Condição', value: dev.condition ?? '—' },
+              { label: 'Incorporadora', value: dev.developer?.name ?? '—' },
+              { label: 'CEP', value: dev.cep ?? '—' },
+              { label: 'Estado', value: dev.state ?? '—' },
+            ].map(({ label, value }, i) => (
+              <div key={label} style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '12px 16px',
+                borderBottom: i < 4 ? '1px solid rgba(184,148,58,0.08)' : 'none',
+              }}>
+                <span style={{ fontSize: 12, color: 'var(--text-tertiary)', fontFamily: 'Figtree, sans-serif' }}>{label}</span>
+                <span style={{ fontSize: 13, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif', fontWeight: 500 }}>{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── AÇÕES RÁPIDAS ─────────────────────────────────────────────── */}
+        <div style={{ marginTop: 24 }}>
+          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>
+            Ações Rápidas
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            {[
+              { icon: Layers, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` },
+              { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics` },
+              { icon: QrCode, label: 'QR Code', href: `/backoffice/tracking/qr?imovel=${id}` },
+              { icon: Zap, label: 'Campanha', href: `/backoffice/campanhas?imovel=${id}` },
+            ].map(({ icon: Icon, label, href }) => (
+              <Link key={label} href={href} style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                background: 'rgba(184,148,58,0.06)',
+                border: '1px solid rgba(184,148,58,0.14)',
+                borderRadius: 10, padding: '14px 16px',
+                textDecoration: 'none',
+              }}>
+                <Icon size={16} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                <span style={{ fontSize: 13, color: 'var(--text-primary)', fontFamily: 'Figtree, sans-serif', fontWeight: 500 }}>{label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* ── COMPARTILHAR ─────────────────────────────────────────────── */}
+        <div style={{ marginTop: 24 }}>
+          <p style={{ fontSize: '8.5px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--imi-gold-500)', fontFamily: 'Figtree, sans-serif', fontWeight: 700, marginBottom: 10 }}>
+            Compartilhar
+          </p>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              onClick={handleCopyLink}
+              style={{
+                flex: 1, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                background: 'transparent', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 10,
+                color: 'var(--imi-gold-500)', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
+                letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer',
+              }}
+            >
+              <Copy size={14} /> {copied ? 'Copiado!' : 'Link'}
+            </button>
+            <button
+              onClick={handleWhatsApp}
+              style={{
+                flex: 1, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                background: 'transparent', border: '1px solid rgba(93,184,135,0.35)', borderRadius: 10,
+                color: '#5DB887', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
+                letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer',
+              }}
+            >
+              <MessageSquare size={14} /> WhatsApp
+            </button>
+          </div>
+        </div>
+
+        {/* ── ATIVIDADE RECENTE ─────────────────────────────────────────── */}
+        <div style={{ marginTop: 24 }}>
+          <div style={{ fontSize: 10, fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 12 }}>Atividade Recente</div>
+          {[
+            { icon: '👁', label: 'Visualizações esta semana', value: '—', color: 'var(--text-secondary)' },
+            { icon: '📋', label: 'Leads este mês', value: '—', color: 'var(--text-secondary)' },
+            { icon: '📅', label: 'Última atualização', value: dev?.updated_at ? new Date(dev.updated_at).toLocaleDateString('pt-BR') : '—', color: 'var(--text-secondary)' },
+          ].map(({ icon, label, value, color }) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(184,148,58,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 14 }}>{icon}</span>
+                <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontFamily: 'var(--font-montserrat,sans-serif)' }}>{label}</span>
+              </div>
+              <span style={{ fontSize: 11, fontFamily: 'var(--font-mono,monospace)', color }}>{value}</span>
+            </div>
+          ))}
+        </div>
+
+      </div>
+
+      {/* ── FIXED BOTTOM ACTION BAR ─────────────────────────────────────── */}
+      <div style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
+        background: 'var(--nav-bg, var(--bg-surface))',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderTop: '1px solid rgba(184,148,58,0.18)',
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '12px 16px',
+        paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+      }}>
+        {/* Edit button */}
+        <Link
+          href={`/backoffice/imoveis/${id}/editar`}
+          className="mob-btn-tap"
+          style={{
+            flex: 1, height: 52,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            background: 'transparent', border: '1px solid rgba(184,148,58,0.35)', borderRadius: 10,
+            color: 'var(--imi-gold-500)', textDecoration: 'none',
+            fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
+            letterSpacing: '1px', textTransform: 'uppercase',
+            touchAction: 'manipulation',
+          }}
+        >
+          <Edit size={15} /> Editar
+        </Link>
+
+        {/* Ver no Site button (only if slug) */}
+        {dev.slug && (
+          <Link
+            href={`/imoveis/${dev.slug}`}
+            target="_blank"
+            className="mob-btn-tap"
+            style={{
+              flex: 1, height: 52,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              background: 'transparent', border: '1px solid rgba(91,155,213,0.4)', borderRadius: 10,
+              color: '#5B9BD5', textDecoration: 'none',
+              fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
+              letterSpacing: '0.8px', textTransform: 'uppercase',
+              touchAction: 'manipulation',
+            }}
+          >
+            <ExternalLink size={14} /> Ver Site
+          </Link>
+        )}
+
+        {/* Primary action — WhatsApp */}
+        <button
+          onClick={handleWhatsApp}
+          className="mob-btn-tap"
+          style={{
+            flex: 2, height: 52,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            background: 'var(--imi-gold-500)', border: 'none', borderRadius: 10,
+            color: '#0B1120', fontSize: 13,
+            fontFamily: 'Figtree, sans-serif', fontWeight: 700,
+            letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer',
+            touchAction: 'manipulation',
+          }}
+        >
+          <MessageSquare size={15} /> Contato
+        </button>
+      </div>
+
+      <style suppressHydrationWarning>{`
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @keyframes fadeSlideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        .detail-section { animation: fadeSlideUp 400ms cubic-bezier(0.16,1,0.3,1) both; }
+        .detail-section:nth-child(1) { animation-delay: 50ms; }
+        .detail-section:nth-child(2) { animation-delay: 120ms; }
+        .detail-section:nth-child(3) { animation-delay: 190ms; }
+        .detail-section:nth-child(4) { animation-delay: 260ms; }
+        .detail-section:nth-child(5) { animation-delay: 330ms; }
+        @media (prefers-reduced-motion: reduce) { .detail-section { animation: none !important; } }
+      `}</style>
+    </div>
+  )
+}
+
+// ─── Floating Quick-Action Toolbar ────────────────────────────────────────────
+
+function FloatingActions({ id }: { id: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div style={{
+      position: 'fixed', right: 24, top: '50%', transform: 'translateY(-50%)',
+      display: 'flex', flexDirection: 'column', gap: 8,
+      zIndex: 50,
+    }}>
+      {[
+        { icon: Edit, label: 'Editar', href: `/backoffice/imoveis/${id}/editar` },
+        { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics` },
+        { icon: Layers, label: 'Timeline', href: `/backoffice/imoveis/${id}/timeline` },
+        { icon: Clock, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` },
+      ].map(({ icon: Icon, label, href }) => (
+        <a key={label} href={href} title={label} style={{
+          width: 40, height: 40, borderRadius: 10,
+          background: 'var(--bg-elevated)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid var(--border-subtle)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'var(--text-secondary)', textDecoration: 'none',
+          transition: 'all 0.15s',
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(184,148,58,0.5)'; (e.currentTarget as HTMLElement).style.color = 'var(--imi-gold-500)' }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(184,148,58,0.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}
+        >
+          <Icon size={16} />
+        </a>
+      ))}
+      <button onClick={handleShare} title={copied ? 'Copiado!' : 'Copiar link'} style={{
+        width: 40, height: 40, borderRadius: 10,
+        background: copied ? 'rgba(107,184,123,0.2)' : 'rgba(11,25,40,0.9)',
+        backdropFilter: 'blur(12px)',
+        border: `1px solid ${copied ? 'rgba(107,184,123,0.4)' : 'rgba(184,148,58,0.18)'}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        color: copied ? '#6BB87B' : '#9FAAB8', cursor: 'pointer',
+        transition: 'all 0.2s',
+      }}>
+        {copied ? <CheckSquare size={16} /> : <Share2 size={16} />}
+      </button>
+    </div>
+  )
+}
+
+// ─── Status options ────────────────────────────────────────────────────────────
+
+const STATUS_OPTIONS = [
+  { value: 'disponivel', label: 'Disponível', color: '#6BB87B' },
+  { value: 'em_negociacao', label: 'Em Negociação', color: 'var(--imi-gold-500)' },
+  { value: 'reservado', label: 'Reservado', color: '#A89EC4' },
+  { value: 'vendido', label: 'Vendido', color: '#7B9EC4' },
+  { value: 'lancamento', label: 'Lançamento', color: '#E8A87C' },
+]
+
+// ─── Desktop component ────────────────────────────────────────────────────────
+
+function DesktopImovelDetail({
+  dev, enriched, loading, notFound, router, id,
+  activeTab, setActiveTab, galleryIdx, setGalleryIdx,
+  rentInput, setRentInput, expensePct, setExpensePct,
+  vacancyPct, setVacancyPct, copied, handleCopyLink, handleWhatsApp,
+}: DetailProps) {
+  const [statusOpen, setStatusOpen] = useState(false)
+  const [localStatus, setLocalStatus] = useState(() => normalizeStatus(dev?.status_commercial ?? dev?.status))
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <Loader2 size={48} className="animate-spin mx-auto mb-4" style={{ color: T.accent }} />
-          <p style={{ color: T.textDim }}>Carregando empreendimento...</p>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24, paddingTop: 8 }}>
+          <Skeleton w="36px" h="36px" r="8px" />
+          <Skeleton w="200px" h="14px" />
+        </div>
+        <Skeleton w="100%" h="420px" r="12px" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, marginTop: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <Skeleton w="100%" h="48px" r="8px" />
+            <Skeleton w="100%" h="200px" r="12px" />
+            <Skeleton w="100%" h="160px" r="12px" />
+          </div>
+          <Skeleton w="100%" h="360px" r="12px" />
         </div>
       </div>
     )
   }
 
-  if (!data) {
+  if (notFound || !dev || !enriched) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <Building2 size={48} className="mx-auto mb-4" style={{ color: T.textDim }} />
-          <p className="text-lg font-semibold mb-2" style={{ color: T.text }}>Empreendimento não encontrado</p>
-          <button onClick={() => router.push('/backoffice/imoveis')} className="text-sm underline" style={{ color: T.accent }}>
-            Voltar à lista
-          </button>
-        </div>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '48px 24px', textAlign: 'center' }}>
+        <Home size={48} style={{ color: T.textDim, margin: '0 auto 16px', display: 'block', opacity: 0.3 }} />
+        <p style={{ ...EYEBROW, marginBottom: 8 }}>Imóvel não encontrado</p>
+        <p style={{ color: T.textMuted, fontSize: 14, marginBottom: 24 }}>
+          O empreendimento solicitado não existe ou foi removido.
+        </p>
+        <button onClick={() => router.push('/backoffice/imoveis')} style={BTN_PRIMARY}>
+          <ArrowLeft size={14} /> Voltar à Lista
+        </button>
       </div>
     )
   }
 
-  // ── Generate content via AI ──
-  const handleGenerateContent = async () => {
-    if (!data) return
-    setContentLoading(true)
-    setGeneratedContent('')
-    const prompts: Record<typeof contentType, string> = {
-      instagram: `Crie uma legenda para Instagram para o imóvel: ${data.name || 'Empreendimento'}, ${data.type || ''}, localizado em ${data.neighborhood || data.city || ''}, com ${data.bedrooms || ''} quartos, ${data.bathrooms || ''} banheiros, área de ${data.area || ''}m². Preço a partir de R$ ${data.price_min ? (data.price_min / 1000).toFixed(0) + 'k' : 'consulte'}. Use emojis, seja persuasivo, máx 300 caracteres + hashtags.`,
-      whatsapp: `Crie uma mensagem de WhatsApp para oferecer o imóvel: ${data.name || 'Empreendimento'}, ${data.type || ''}, em ${data.neighborhood || data.city || ''}. ${data.bedrooms || ''} quartos, ${data.area || ''}m². Preço: R$ ${data.price_min ? (data.price_min / 1000).toFixed(0) + 'k' : 'consulte'}. Tom pessoal, curto, com CTA.`,
-      email: `Crie um e-mail de prospecção para o imóvel: ${data.name || 'Empreendimento'}, ${data.type || ''}, em ${data.neighborhood || data.city || ''}. ${data.bedrooms || ''} quartos, ${data.bathrooms || ''} banheiros, ${data.area || ''}m². Preço a partir de R$ ${data.price_min ? (data.price_min / 1000).toFixed(0) + 'k' : 'consulte'}. Tom profissional, com assunto e corpo.`,
-    }
-    try {
-      const res = await fetch('/api/ia/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: prompts[contentType], type: contentType }),
-      })
-      if (!res.ok) throw new Error('Erro IA')
-      const { content } = await res.json()
-      setGeneratedContent(content || 'Conteúdo gerado com sucesso.')
-    } catch {
-      setGeneratedContent(`📍 ${data.name}\n\n${data.description || 'Empreendimento de alto padrão com localização privilegiada.'}\n\n${data.bedrooms ? `🛏 ${data.bedrooms} quartos` : ''} ${data.bathrooms ? `🚿 ${data.bathrooms} banheiros` : ''} ${data.area ? `📐 ${data.area}m²` : ''}\n\nR$ ${data.price_min ? (data.price_min / 1000000).toFixed(1).replace('.', ',') + 'M' : 'Consulte'}\n\n📲 Entre em contato para mais informações!`)
-    }
-    setContentLoading(false)
-  }
+  // Derived values
+  const images: string[] = (() => {
+    const list: string[] = []
+    if (dev.cover_image_url) list.push(dev.cover_image_url)
+    if (dev.image_urls) list.push(...dev.image_urls.filter(u => u !== dev.cover_image_url))
+    return list
+  })()
 
-  // ── Load hot leads for "Enviar Lead" panel ──
-  const openLeadPanel = async () => {
-    setShowLeadPanel(true)
-    if (leads.length > 0) return
-    setLeadsLoading(true)
-    try {
-      const res = await fetch('/api/leads?limit=20')
-      const d = await res.json()
-      setLeads(d?.data || [])
-    } catch { /* silent */ }
-    setLeadsLoading(false)
-  }
+  const displayStatus = normalizeStatus(dev.status_commercial ?? dev.status)
+  const statusCfg = getStatusConfig(displayStatus)
 
-  const handleSendToLead = (lead: any) => {
-    const name = data?.name || 'Imóvel'
-    const price = data?.price_min ? `R$ ${(data.price_min / 1000).toFixed(0)}k` : ''
-    const area = data?.area ? `${data.area}m²` : ''
-    const msg = encodeURIComponent(`Olá ${lead.name?.split(' ')[0] || ''}! Pensei em você para este imóvel:\n\n*${name}* ${area ? '· ' + area : ''} ${price ? '· a partir de ' + price : ''}\n\nGostaria de saber mais detalhes?`)
-    const phone = (lead.phone || '').replace(/\D/g, '')
-    if (phone) {
-      window.open(`https://wa.me/55${phone}?text=${msg}`, '_blank')
-    } else {
-      toast.error('Lead sem telefone cadastrado')
-    }
-    setShowLeadPanel(false)
-  }
+  const price = dev.price_from
+  const priceSqm = enriched.price_per_sqm ?? calcPricePerSqm(price, dev.area_min) ?? null
+  const score = enriched.imi_score ?? calcIMIScore(enriched)
+  const scoreColor = getScoreColor(score)
+  const yieldEst = enriched.yield_est ?? calcYieldEst(enriched)
+  const marketDelta = enriched.market_delta_pct ?? calcMarketDelta(enriched)
+  const liquidityIdx = enriched.liquidity_index ?? calcLiquidityIndex(enriched)
+  const comparables = buildComparables(dev)
 
-  const status = STATUS_MAP[data.status] || STATUS_MAP.disponivel
-  const features = Array.isArray(data.features) ? data.features : []
-  const galleryImages = Array.isArray(data.gallery_images) ? data.gallery_images : (Array.isArray(data.images) ? (typeof data.images[0] === 'string' ? data.images : []) : [])
-  const coverImage = data.image || (galleryImages.length > 0 ? galleryImages[0] : null)
-  const developerInfo = data.developers || null
+  const fullAddress = [dev.address, dev.street_number, dev.neighborhood, dev.city, dev.state]
+    .filter(Boolean).join(', ')
 
-  const TABS: { key: TabKey; label: string }[] = [
-    { key: 'overview', label: 'Visão Geral' },
-    { key: 'gallery', label: `Galeria${galleryImages.length > 0 ? ` (${galleryImages.length})` : ''}` },
-    { key: 'mapa', label: 'Mapa' },
-    { key: 'info', label: 'Informações' },
-    ...(data.virtual_tour_url ? [{ key: 'tour' as TabKey, label: 'Tour Virtual' }] : []),
-  ]
-
-  const priceInverted = data.price_min && data.price_max && data.price_max < data.price_min
-  const priceDisplay = priceInverted
-    ? '⚠ Faixa inválida — edite o imóvel'
-    : (data.price_min || data.price_max)
-      ? (data.price_min && data.price_max
-        ? `${formatPrice(data.price_min)} – ${formatPrice(data.price_max)}`
-        : formatPrice(data.price_min || data.price_max))
-      : null
-
-  const pricePerSqm = data.price_per_sqm
-    ? `${formatPrice(data.price_per_sqm)}/m²`
-    : (data.price_min && data.private_area && data.private_area > 0)
-      ? `${formatPrice(Math.round(data.price_min / data.private_area))}/m²`
-      : null
+  const grossYield = price ? ((rentInput * 12) / price) * 100 : 0
+  const netRent = rentInput * (1 - expensePct / 100) * (1 - vacancyPct / 100)
+  const netYield = price ? ((netRent * 12) / price) * 100 : 0
+  const monthlyCashflow = netRent
 
   return (
-    <div className="space-y-0 max-w-7xl mx-auto pb-32">
+    <div className="imovel-detail-wrap" style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px 48px' }}>
 
-      <PageIntelHeader
-        moduleLabel="IMÓVEIS"
-        title={data.name}
-        subtitle={[data.neighborhood, data.city].filter(Boolean).join(', ') || 'Empreendimento'}
-        breadcrumbs={[
-          { label: 'Imóveis', href: '/backoffice/imoveis' },
-          { label: data.name },
-        ]}
-      />
-
-      {/* ── HERO SECTION ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative w-full rounded-2xl overflow-hidden mb-6"
-        style={{ border: `1px solid ${T.border}` }}
-      >
-        {/* Hero image */}
-        <div className="relative w-full" style={{ height: 380 }}>
-          {coverImage ? (
-            <Image
-              src={coverImage}
-              alt={data.name}
-              fill
-              className="object-cover"
-              priority
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center" style={{ background: T.elevated }}>
-              <ImageIcon size={72} style={{ color: T.textDim, opacity: 0.3 }} />
-            </div>
-          )}
-          {/* Gradient overlay */}
-          <div
-            className="absolute inset-0"
-            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.4) 40%, transparent 70%)' }}
-          />
-          {/* Status badge — top left */}
-          <div className="absolute top-4 left-4">
-            <div
-              className="flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md"
-              style={{ background: `${status.bg}`, border: `1px solid ${status.color}55` }}
-            >
-              <span
-                className="w-2 h-2 rounded-full animate-pulse"
-                style={{ background: status.dot }}
-              />
-              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: status.color }}>
-                {status.label}
-              </span>
-            </div>
-          </div>
-          {/* Highlighted star — top right */}
-          {data.is_highlighted && (
-            <div className="absolute top-4 right-4">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center backdrop-blur-md"
-                style={{ background: 'rgba(245,158,11,0.2)', border: '1px solid rgba(245,158,11,0.4)' }}>
-                <Star size={16} style={{ fill: '#F59E0B', color: '#F59E0B' }} />
-              </div>
-            </div>
-          )}
-          {/* Bottom hero content */}
-          <div className="absolute bottom-0 left-0 right-0 p-6">
-            {/* Property name */}
-            <h1 className="text-3xl font-bold text-white mb-1 leading-tight" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>
-              {data.name}
-            </h1>
-            <div className="flex items-center gap-4 flex-wrap">
-              {(data.address || data.neighborhood) && (
-                <span className="flex items-center gap-1.5 text-sm text-white/70">
-                  <MapPin size={13} />
-                  {data.address}{data.neighborhood ? `, ${data.neighborhood}` : ''}
-                </span>
-              )}
-              {(developerInfo?.name || data.developer) && (
-                <span className="flex items-center gap-1.5 text-sm text-white/70">
-                  <Building2 size={13} />
-                  {developerInfo?.name || data.developer}
-                </span>
-              )}
-            </div>
-            {/* Price — large and prominent */}
-            {priceDisplay && (
-              <div className="mt-3">
-                <span
-                  className={priceInverted ? 'text-lg font-semibold' : 'text-4xl font-bold'}
-                  style={{
-                    color: priceInverted ? 'var(--bo-error,#f87171)' : T.accent,
-                    textShadow: priceInverted ? 'none' : '0 0 24px rgba(59,130,246,0.4)',
-                  }}
-                >
-                  {priceDisplay}
-                </span>
-                {!priceInverted && pricePerSqm && (
-                  <span className="ml-3 text-sm font-medium text-white/50">{pricePerSqm}</span>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ── KPI STRIP ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"
-      >
-        {[
-          { icon: Ruler, label: 'Área Privativa', value: data.private_area ? `${data.private_area}m²` : 'N/A', color: 'var(--bo-success)' },
-          { icon: Bed, label: 'Quartos', value: data.bedrooms ?? 'N/A', color: '#7B9EC4' },
-          { icon: Bath, label: 'Banheiros', value: data.bathrooms ?? 'N/A', color: '#A89EC4' },
-          { icon: Car, label: 'Vagas', value: data.parking_spaces ?? 'N/A', color: '#E8A87C' },
-        ].map((kpi, i) => (
-          <div
-            key={i}
-            className="rounded-2xl p-4 flex items-center gap-3"
-            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-          >
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: `${kpi.color}18` }}
-            >
-              <kpi.icon size={18} style={{ color: kpi.color }} />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>{kpi.label}</p>
-              <p className="text-xl font-bold mt-0.5" style={{ color: T.text }}>{kpi.value}</p>
-            </div>
-          </div>
-        ))}
-      </motion.div>
-
-      {/* ── ACTION BAR ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.08 }}
-        className="flex items-center gap-2 flex-wrap mb-6"
-      >
-        {/* Analytics sub-nav */}
+      {/* ── Back nav ───────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '16px 0 20px' }}>
         <button
-          onClick={() => router.push(`/backoffice/imoveis/${params.id}/analytics`)}
-          className="bo-btn bo-btn-secondary bo-btn-sm"
-        >
-          <BarChart2 size={13} /> Analytics
-        </button>
-        <button
-          onClick={() => router.push(`/backoffice/imoveis/${params.id}/unidades`)}
-          className="bo-btn bo-btn-secondary bo-btn-sm"
-        >
-          <Layers size={13} /> Unidades
-        </button>
-        <button
-          onClick={() => router.push(`/backoffice/imoveis/${params.id}/timeline`)}
-          className="bo-btn bo-btn-secondary bo-btn-sm"
-        >
-          <Clock size={13} /> Timeline
-        </button>
-
-        <div className="flex-1" />
-
-        {/* ── Criar Proposta ── */}
-        <button
-          onClick={() => router.push(`/backoffice/propostas/nova?property_id=${params.id}`)}
-          className="bo-btn bo-btn-sm"
-          style={{ background: 'rgba(201,168,76,0.12)', color: '#C9A84C', borderColor: 'rgba(201,168,76,0.25)' }}
-          title="Criar Proposta"
-        >
-          <FileText size={13} />
-          <span className="hidden sm:inline">Criar Proposta</span>
-        </button>
-
-        {/* ── Smart Actions ── */}
-        <button
-          onClick={() => setShowContentPanel(true)}
-          className="bo-btn bo-btn-sm"
-          style={{ background: 'rgba(139,92,246,0.12)', color: '#A78BFA', borderColor: 'rgba(139,92,246,0.25)' }}
-          title="Gerar Conteúdo IA"
-        >
-          <Sparkles size={13} />
-          <span className="hidden sm:inline">Conteúdo IA</span>
-        </button>
-
-        <button
-          onClick={openLeadPanel}
-          className="bo-btn bo-btn-sm"
-          style={{ background: 'rgba(52,211,153,0.10)', color: 'var(--bo-success)', borderColor: 'rgba(52,211,153,0.25)' }}
-          title="Enviar para Lead"
-        >
-          <Send size={13} />
-          <span className="hidden sm:inline">Enviar Lead</span>
-        </button>
-
-        <button
-          onClick={() => {
-            const propertyUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/pt/imoveis/${data.slug || params.id}`
-            const name = encodeURIComponent(data.name || 'Imóvel')
-            router.push(`/backoffice/tracking/qr?propertyId=${params.id}&propertyName=${name}&propertyUrl=${encodeURIComponent(propertyUrl)}`)
+          onClick={() => router.push('/backoffice/imoveis')}
+          style={{
+            width: 36, height: 36, borderRadius: 8,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: T.surface, border: `1px solid ${T.border}`,
+            color: T.textDim, cursor: 'pointer', flexShrink: 0,
+            transition: 'all 200ms ease', minWidth: 44, minHeight: 44,
           }}
-          className="bo-btn bo-btn-secondary bo-btn-sm"
-          title="QR Tracking"
+          className="imovel-back-btn"
         >
-          <QrCode size={13} />
-          <span className="hidden sm:inline">QR</span>
-          {scanCount !== null && scanCount > 0 && (
-            <span style={{ fontSize: 10, fontWeight: 800, background: 'rgba(96,165,250,0.15)', color: '#60A5FA', padding: '1px 5px', borderRadius: 4 }}>
-              {scanCount}
-            </span>
-          )}
+          <ArrowLeft size={16} />
         </button>
-
-        {data.status !== 'vendido' && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ ...EYEBROW }}>Imóveis</span>
+          <ChevronRight size={10} style={{ color: T.textDim }} />
+          <span style={{ ...EYEBROW, color: T.textMuted }}>{dev.name}</span>
+        </div>
+        {/* Status pill with quick-toggle */}
+        <div style={{ marginLeft: 'auto', position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 5,
+            padding: '3px 10px', borderRadius: 999,
+            background: getStatusConfig(localStatus).bg, color: getStatusConfig(localStatus).color,
+            fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            fontFamily: 'var(--font-montserrat, sans-serif)',
+          }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: getStatusConfig(localStatus).dot }} />
+            {getStatusConfig(localStatus).label}
+          </span>
           <button
-            onClick={() => handleStatusChange('vendido')}
-            className="bo-btn bo-btn-sm"
-            style={{ background: 'rgba(96,165,250,0.10)', color: 'var(--bo-info)', borderColor: 'rgba(96,165,250,0.25)' }}
-          >
-            <ShoppingCart size={13} />
-            <span className="hidden sm:inline">Vendido</span>
-          </button>
-        )}
-        {data.status === 'arquivado' && (
-          <button
-            onClick={() => handleStatusChange('disponivel')}
-            className="bo-btn bo-btn-sm"
-            style={{ background: 'rgba(52,211,153,0.10)', color: 'var(--bo-success)', borderColor: 'rgba(52,211,153,0.25)' }}
-          >
-            <RotateCcw size={13} />
-            <span className="hidden sm:inline">Restaurar</span>
-          </button>
-        )}
-      </motion.div>
-
-      {/* ── PILL TABS ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="flex gap-2 mb-6 p-1 rounded-2xl w-fit"
-        style={{ background: T.surface, border: `1px solid ${T.border}` }}
-      >
-        {TABS.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className="h-9 px-5 rounded-xl text-sm font-semibold transition-all"
+            onClick={() => setStatusOpen(o => !o)}
+            title="Alterar status"
             style={{
-              background: activeTab === tab.key ? T.elevated : 'transparent',
-              border: activeTab === tab.key ? `1px solid ${T.borderStrong}` : '1px solid transparent',
-              color: activeTab === tab.key ? T.text : T.textMuted,
+              width: 24, height: 24, borderRadius: 6,
+              background: 'rgba(184,148,58,0.08)',
+              border: '1px solid rgba(184,148,58,0.2)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--text-secondary)', cursor: 'pointer', flexShrink: 0,
+              transition: 'all 0.15s',
             }}
           >
-            {tab.label}
+            <Edit size={11} />
           </button>
-        ))}
-      </motion.div>
-
-      {/* ── TAB CONTENT ── */}
-      <AnimatePresence mode="wait">
-        {activeTab === 'overview' && (
-          <motion.div
-            key="overview"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-          >
-            {/* Left Column */}
-            <div className="lg:col-span-2 space-y-5">
-              {/* Description */}
-              {data.description && (
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-3" style={{ color: T.textMuted }}>
-                    Sobre o Empreendimento
-                  </p>
-                  <div className="leading-relaxed whitespace-pre-line text-sm" style={{ color: T.textMuted }}>
-                    {data.description}
-                  </div>
-                </div>
-              )}
-
-              {/* Features */}
-              {features.length > 0 && (
-                <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4" style={{ color: T.textMuted }}>
-                    Diferenciais
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {features.map((f: string, i: number) => (
-                      <span
-                        key={i}
-                        className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-xl"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
-                      >
-                        <CheckCircle size={12} style={{ color: T.accent }} />
-                        {f}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* ── Vídeo do Empreendimento ── */}
-              {(() => {
-                const embedUrl = getYouTubeEmbedUrl(data.video_url)
-                if (!embedUrl) return null
-                return (
-                  <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}` }}>
-                    <div className="p-4 flex items-center gap-2" style={{ background: T.surface }}>
-                      <div
-                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={{ background: 'rgba(239,68,68,0.12)' }}
-                      >
-                        <Play size={13} style={{ color: 'var(--bo-error)' }} />
-                      </div>
-                      <p className="text-sm font-semibold" style={{ color: T.text }}>Vídeo do Empreendimento</p>
-                      <a
-                        href={data.video_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="ml-auto flex items-center gap-1 text-xs"
-                        style={{ color: T.accent }}
-                      >
-                        YouTube <ExternalLink size={11} />
-                      </a>
-                    </div>
-                    <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                      <iframe
-                        src={embedUrl}
-                        className="absolute inset-0 w-full h-full"
-                        allowFullScreen
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        style={{ border: 0 }}
-                      />
-                    </div>
-                  </div>
-                )
-              })()}
-
-              {/* ── Leads Interessados ── */}
-              {(propertyLeadsLoading || propertyLeads.length > 0) && (
-                <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: T.textMuted }}>
-                      Leads Interessados
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="text-[10px] font-bold px-2 py-[2px] rounded-full"
-                        style={{ background: 'rgba(248,113,113,0.12)', color: 'var(--bo-error)', border: '1px solid rgba(248,113,113,0.2)' }}
-                      >
-                        {propertyLeads.length}
-                      </span>
-                      <button
-                        onClick={() => router.push('/backoffice/leads')}
-                        className="text-[10px] font-semibold transition-opacity hover:opacity-70"
-                        style={{ color: T.accent }}
-                      >
-                        Ver todos →
-                      </button>
-                    </div>
-                  </div>
-
-                  {propertyLeadsLoading ? (
-                    <div className="flex items-center justify-center py-5">
-                      <Loader2 size={16} className="animate-spin" style={{ color: T.textMuted }} />
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {propertyLeads.map((lead) => {
-                        const isHot = lead.status === 'hot' || lead.status === 'negotiating'
-                        const isCold = lead.status === 'cold' || lead.status === 'lost'
-                        const dotColor = isHot ? 'var(--bo-error)' : isCold ? '#9ca3af' : 'var(--bo-warning)'
-                        return (
-                          <div
-                            key={lead.id}
-                            className="flex items-center gap-3 p-2.5 rounded-xl"
-                            style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                          >
-                            <div
-                              className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
-                              style={{ background: isHot ? 'rgba(248,113,113,0.15)' : 'rgba(96,165,250,0.12)', color: isHot ? 'var(--bo-error)' : '#60A5FA' }}
-                            >
-                              {(lead.name || 'L').charAt(0).toUpperCase()}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-[12px] font-semibold truncate" style={{ color: T.text }}>{lead.name || 'Sem nome'}</p>
-                              <p className="text-[10px] truncate" style={{ color: T.textMuted }}>
-                                {lead.source || 'Direto'} · {new Date(lead.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-1.5 flex-shrink-0">
-                              <span
-                                className="w-[6px] h-[6px] rounded-full flex-shrink-0"
-                                style={{ background: dotColor }}
-                              />
-                              <span className="text-[9px] font-bold capitalize" style={{ color: dotColor }}>
-                                {lead.status || 'novo'}
-                              </span>
-                              {lead.phone && (
-                                <a
-                                  href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
-                                  target="_blank" rel="noopener noreferrer"
-                                  onClick={e => e.stopPropagation()}
-                                  className="w-6 h-6 rounded-lg flex items-center justify-center transition-colors"
-                                  style={{ background: 'rgba(37,211,102,0.12)', border: '1px solid rgba(37,211,102,0.2)', color: '#25D366' }}
-                                >
-                                  <Phone size={10} />
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Sub-page links */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {[
-                  { label: 'Analytics', icon: BarChart2, color: '#A89EC4', href: `/backoffice/imoveis/${params.id}/analytics`, desc: 'Cliques, leads, conversões' },
-                  { label: 'Unidades', icon: Layers, color: 'var(--bo-success)', href: `/backoffice/imoveis/${params.id}/unidades`, desc: 'Inventário de unidades' },
-                  { label: 'Timeline', icon: TrendingUp, color: '#E8A87C', href: `/backoffice/imoveis/${params.id}/timeline`, desc: 'Histórico do ativo' },
-                ].map(link => (
-                  <button
-                    key={link.label}
-                    onClick={() => router.push(link.href)}
-                    className="rounded-2xl p-4 text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
-                    style={{ background: T.elevated, border: `1px solid ${T.border}` }}
-                  >
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
-                      style={{ background: `${link.color}18` }}>
-                      <link.icon size={16} style={{ color: link.color }} />
-                    </div>
-                    <p className="text-sm font-bold mb-0.5" style={{ color: T.text }}>{link.label}</p>
-                    <p className="text-[11px]" style={{ color: T.textMuted }}>{link.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Column */}
-            <div className="space-y-5">
-              {/* Developer Card */}
-              {(developerInfo || data.developer) && (
-                <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4" style={{ color: T.accent }}>Construtora</p>
-                  <div className="flex items-center gap-3 mb-3">
-                    {developerInfo?.logo_url ? (
-                      <Image src={developerInfo.logo_url} alt={developerInfo.name} width={40} height={40}
-                        className="w-10 h-10 rounded-lg object-contain" style={{ background: T.elevated }} />
-                    ) : (
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: T.elevated }}>
-                        <Building2 size={18} style={{ color: T.accent }} />
-                      </div>
-                    )}
-                    <p className="font-bold text-sm" style={{ color: T.text }}>{developerInfo?.name || data.developer}</p>
-                  </div>
-                  {developerInfo?.email && <p className="text-xs mb-1" style={{ color: T.textMuted }}>{developerInfo.email}</p>}
-                  {developerInfo?.phone && <p className="text-xs" style={{ color: T.textMuted }}>{developerInfo.phone}</p>}
-                </div>
-              )}
-
-              {/* AI Insights */}
-              <PropertyInsightsPanel developmentId={params.id as string} data={data} />
-
-              {/* Pricing */}
-              <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4" style={{ color: T.accent }}>Valores</p>
-                <div className="space-y-3">
-                  {data.price_min && (
-                    <div className="flex justify-between">
-                      <span className="text-xs" style={{ color: T.textDim }}>Preço Mínimo</span>
-                      <span className="text-sm font-bold" style={{ color: T.text }}>{formatPrice(data.price_min)}</span>
-                    </div>
-                  )}
-                  {data.price_max && (
-                    <div className="flex justify-between">
-                      <span className="text-xs" style={{ color: T.textDim }}>Preço Máximo</span>
-                      <span className="text-sm font-bold" style={{ color: T.text }}>{formatPrice(data.price_max)}</span>
-                    </div>
-                  )}
-                  {pricePerSqm && (
-                    <div className="flex justify-between">
-                      <span className="text-xs" style={{ color: T.textDim }}>Preço/m²</span>
-                      <span className="text-sm font-bold" style={{ color: T.text }}>{pricePerSqm}</span>
-                    </div>
-                  )}
-                  {data.units_count && (
-                    <div className="flex justify-between pt-3" style={{ borderTop: `1px solid ${T.border}` }}>
-                      <span className="text-xs" style={{ color: T.textDim }}>Total Unidades</span>
-                      <span className="text-sm font-bold" style={{ color: T.text }}>{data.units_count}</span>
-                    </div>
-                  )}
-                  {data.available_units != null && (
-                    <div className="flex justify-between">
-                      <span className="text-xs" style={{ color: T.textDim }}>Disponíveis</span>
-                      <span className="text-sm font-bold" style={{ color: 'var(--bo-success)' }}>{data.available_units}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Cronograma */}
-              <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4" style={{ color: T.accent }}>Cronograma</p>
-                <div className="space-y-3">
-                  {data.delivery_date && (
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: T.textDim }}>Entrega Prevista</p>
-                      <p className="text-sm font-semibold flex items-center gap-1.5" style={{ color: T.text }}>
-                        <Calendar size={13} style={{ color: T.accent }} />
-                        {new Date(data.delivery_date).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
-                      </p>
-                    </div>
-                  )}
-                  {data.created_at && (
-                    <div>
-                      <p className="text-[10px] uppercase tracking-wider mb-1" style={{ color: T.textDim }}>Cadastrado em</p>
-                      <p className="text-sm font-medium" style={{ color: T.text }}>
-                        {new Date(data.created_at).toLocaleDateString('pt-BR')}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Quick Links */}
-              <div className="rounded-2xl p-5" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-4" style={{ color: T.accent }}>Links Rápidos</p>
-                <div className="space-y-2">
-                  {data.slug && (
-                    <a
-                      href={`/pt/imoveis/${data.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm p-2.5 rounded-xl transition-colors"
-                      style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
-                    >
-                      <Globe size={13} style={{ color: T.accent }} />
-                      Ver no site público
-                      <ExternalLink size={11} className="ml-auto" />
-                    </a>
-                  )}
-                  {data.brochure_url && (
-                    <a
-                      href={data.brochure_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm p-2.5 rounded-xl transition-colors"
-                      style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}
-                    >
-                      <FileText size={13} style={{ color: T.accent }} />
-                      Download Brochure
-                      <ExternalLink size={11} className="ml-auto" />
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {/* ── Dados Inteligentes ── */}
-              <div
-                className="rounded-2xl p-5"
-                style={{ background: T.surface, border: '1px solid rgba(139,92,246,0.22)' }}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: '#A78BFA' }}>
-                    Dados Inteligentes
-                  </p>
-                  <span style={{
-                    padding: '2px 7px', borderRadius: 5,
-                    background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.20)',
-                    fontSize: 9, fontWeight: 800, color: '#A78BFA', letterSpacing: '0.06em',
-                  }}>IA</span>
-                </div>
-
-                <div className="space-y-3">
-                  {/* QR Scans */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(96,165,250,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <ScanLine size={13} style={{ color: '#60A5FA' }} />
-                      </div>
-                      <span className="text-xs" style={{ color: T.textDim }}>Scans QR</span>
-                    </div>
-                    <span className="text-sm font-bold tabular-nums" style={{ color: T.text }}>
-                      {scanCount !== null ? scanCount : '—'}
-                    </span>
-                  </div>
-
-                  {/* Days on market */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(251,191,36,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Clock size={13} style={{ color: 'var(--bo-warning)' }} />
-                      </div>
-                      <span className="text-xs" style={{ color: T.textDim }}>Dias no mercado</span>
-                    </div>
-                    <span className="text-sm font-bold tabular-nums" style={{ color: T.text }}>
-                      {data.created_at
-                        ? Math.floor((Date.now() - new Date(data.created_at).getTime()) / 86400000)
-                        : '—'}
-                    </span>
-                  </div>
-
-                  {/* Liquidity score */}
-                  {(() => {
-                    const score = data.price_min
-                      ? (data.price_min < 800000 ? 87 : data.price_min < 2000000 ? 72 : 61)
-                      : 68
-                    const scoreColor = score >= 80 ? 'var(--bo-success)' : score >= 65 ? 'var(--bo-warning)' : 'var(--bo-error)'
-                    return (
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <div style={{ width: 28, height: 28, borderRadius: 8, background: `${scoreColor}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              <Zap size={13} style={{ color: scoreColor }} />
-                            </div>
-                            <span className="text-xs" style={{ color: T.textDim }}>Liquidez estimada</span>
-                          </div>
-                          <span className="text-sm font-bold tabular-nums" style={{ color: scoreColor }}>
-                            {score}/100
-                          </span>
-                        </div>
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.elevated }}>
-                          <div
-                            className="h-full rounded-full"
-                            style={{
-                              width: `${score}%`,
-                              background: `linear-gradient(90deg, ${scoreColor}99, ${scoreColor})`,
-                              transition: 'width 0.8s ease',
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )
-                  })()}
-
-                  {/* AI insight tip */}
-                  <div className="rounded-xl p-3" style={{ background: 'rgba(139,92,246,0.07)', border: '1px solid rgba(139,92,246,0.14)' }}>
-                    <div className="flex items-start gap-2">
-                      <Brain size={12} style={{ color: '#A78BFA', flexShrink: 0, marginTop: 2 }} />
-                      <p className="text-[11px] leading-relaxed" style={{ color: T.textMuted }}>
-                        {data.price_min && data.price_min < 1000000
-                          ? 'Alta demanda nesta faixa. Recomendamos campanhas no Instagram e WhatsApp para acelerar a venda.'
-                          : 'Perfil premium. Use o painel "Enviar Lead" para contato direto com leads qualificados.'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Quick actions */}
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <button
-                      onClick={() => setShowContentPanel(true)}
-                      style={{
-                        padding: '9px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700,
-                        background: 'rgba(139,92,246,0.10)', border: '1px solid rgba(139,92,246,0.22)',
-                        color: '#A78BFA', cursor: 'pointer', display: 'flex', alignItems: 'center',
-                        justifyContent: 'center', gap: 5,
-                      }}
-                    >
-                      <Sparkles size={12} /> Gerar conteúdo
-                    </button>
-                    <button
-                      onClick={openLeadPanel}
-                      style={{
-                        padding: '9px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700,
-                        background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.22)',
-                        color: 'var(--bo-success)', cursor: 'pointer', display: 'flex', alignItems: 'center',
-                        justifyContent: 'center', gap: 5,
-                      }}
-                    >
-                      <Send size={12} /> Enviar lead
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {activeTab === 'gallery' && (
-          <motion.div
-            key="gallery"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            className="rounded-2xl p-6"
-            style={{ background: T.surface, border: `1px solid ${T.border}` }}
-          >
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-5" style={{ color: T.textMuted }}>
-              Galeria de Imagens
-            </p>
-            {galleryImages.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {galleryImages.map((url: string, i: number) => (
-                  <motion.div
-                    key={i}
-                    whileHover={{ scale: 1.02 }}
-                    onClick={() => setLightbox({ open: true, idx: i })}
-                    className="relative group rounded-xl overflow-hidden cursor-pointer"
-                    style={{ border: `1px solid ${T.border}` }}
-                  >
-                    <Image
-                      src={url}
-                      alt={`${data.name} ${i + 1}`}
-                      width={400}
-                      height={192}
-                      className="w-full h-48 object-cover group-hover:brightness-90 transition-all duration-300"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm"
-                        style={{ background: 'rgba(0,0,0,0.5)' }}>
-                        <ZoomIn size={18} color="white" />
-                      </div>
-                    </div>
-                    {i === 0 && (
-                      <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold"
-                        style={{ background: T.accent, color: 'white' }}>
-                        Capa
-                      </div>
-                    )}
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-16">
-                <ImageIcon size={48} className="mx-auto mb-3" style={{ color: T.textDim }} />
-                <p className="text-sm" style={{ color: T.textDim }}>Nenhuma imagem cadastrada</p>
+          {statusOpen && (
+            <div style={{
+              position: 'absolute', top: '110%', right: 0, zIndex: 100,
+              background: 'rgba(11,25,40,0.97)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(184,148,58,0.2)',
+              borderRadius: 10, padding: '6px 0',
+              minWidth: 160,
+              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+            }}>
+              {STATUS_OPTIONS.map(opt => (
                 <button
-                  onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
-                  className="text-sm mt-3 underline"
-                  style={{ color: T.accent }}
+                  key={opt.value}
+                  onClick={async () => {
+                    const supabase = createClient()
+                    await supabase.from('developments').update({ status: opt.value }).eq('id', id)
+                    setLocalStatus(opt.value)
+                    setStatusOpen(false)
+                  }}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '8px 14px', background: 'transparent', border: 'none',
+                    cursor: 'pointer', textAlign: 'left',
+                    color: localStatus === opt.value ? opt.color : '#9FAAB8',
+                    fontSize: 12, fontFamily: 'var(--font-montserrat, sans-serif)',
+                    fontWeight: localStatus === opt.value ? 700 : 400,
+                    transition: 'background 0.1s',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(184,148,58,0.06)' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
-                  Adicionar imagens
+                  <span style={{ width: 7, height: 7, borderRadius: '50%', background: opt.color, flexShrink: 0 }} />
+                  {opt.label}
                 </button>
-              </div>
-            )}
-          </motion.div>
-        )}
-
-        {activeTab === 'mapa' && (
-          <motion.div
-            key="mapa"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            className="rounded-2xl overflow-hidden"
-            style={{ border: `1px solid ${T.border}` }}
-          >
-            {(data.address || data.neighborhood) ? (
-              <>
-                <div className="p-4 flex items-center gap-2" style={{ background: T.surface }}>
-                  <MapPin size={15} style={{ color: T.accent }} />
-                  <p className="text-sm font-medium" style={{ color: T.text }}>
-                    {[data.address, data.neighborhood, data.city || 'Recife', data.state || 'PE'].filter(Boolean).join(', ')}
-                  </p>
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([data.address, data.neighborhood, data.city || 'Recife', 'PE'].filter(Boolean).join(', '))}`}
-                    target="_blank"
-                    rel="noopener"
-                    className="ml-auto flex items-center gap-1 text-xs"
-                    style={{ color: T.accent }}
-                  >
-                    Abrir no Maps <ExternalLink size={12} />
-                  </a>
-                </div>
-                <iframe
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent([data.address, data.neighborhood, data.city || 'Recife', 'PE, Brasil'].filter(Boolean).join(', '))}&output=embed&z=16`}
-                  className="w-full"
-                  height="420"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 gap-4" style={{ background: T.surface }}>
-                <MapPin size={48} style={{ color: T.textDim }} />
-                <div className="text-center">
-                  <p className="text-sm font-medium mb-1" style={{ color: T.text }}>Endereço não cadastrado</p>
-                  <p className="text-xs" style={{ color: T.textDim }}>Adicione um endereço para ver o mapa</p>
-                </div>
-                <button
-                  onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
-                  className="h-9 px-4 rounded-xl text-sm font-medium"
-                  style={{ background: T.accent, color: 'white' }}
-                >
-                  Adicionar endereço
-                </button>
-              </div>
-            )}
-          </motion.div>
-        )}
-
-        {activeTab === 'info' && (
-          <motion.div
-            key="info"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-          >
-            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-5" style={{ color: T.textMuted }}>Dados Completos</p>
-              <div className="space-y-0">
-                {[
-                  ['ID', data.id],
-                  ['Slug', data.slug],
-                  ['Nome', data.name],
-                  ['Tipo', data.tipo || data.property_type],
-                  ['Status', data.status],
-                  ['Status Comercial', data.status_comercial],
-                  ['Endereço', data.address],
-                  ['Bairro', data.neighborhood],
-                  ['Cidade', data.city],
-                  ['Estado', data.state],
-                  ['País', data.country],
-                  ['Área Privativa', data.private_area ? `${data.private_area}m²` : null],
-                  ['Quartos', data.bedrooms],
-                  ['Banheiros', data.bathrooms],
-                  ['Vagas', data.parking_spaces],
-                  ['Preço Mín.', data.price_min ? `R$ ${data.price_min.toLocaleString('pt-BR')}` : null],
-                  ['Preço Máx.', data.price_max ? `R$ ${data.price_max.toLocaleString('pt-BR')}` : null],
-                  ['Preço/m²', data.price_per_sqm ? `R$ ${data.price_per_sqm.toLocaleString('pt-BR')}` : null],
-                  ['Unidades Total', data.units_count],
-                  ['Disponíveis', data.available_units],
-                  ['Entrega', data.delivery_date ? new Date(data.delivery_date).toLocaleDateString('pt-BR') : null],
-                  ['Construtora', developerInfo?.name || data.developer],
-                  ['Destacado', data.is_highlighted ? 'Sim' : 'Não'],
-                  ['Criado em', data.created_at ? new Date(data.created_at).toLocaleString('pt-BR') : null],
-                  ['Atualizado', data.updated_at ? new Date(data.updated_at).toLocaleString('pt-BR') : null],
-                ].filter(([, v]) => v !== null && v !== undefined && v !== '').map(([label, value], i, arr) => (
-                  <div
-                    key={i}
-                    className="flex justify-between py-2.5"
-                    style={{ borderBottom: i < arr.length - 1 ? `1px solid ${T.border}` : 'none' }}
-                  >
-                    <span className="text-xs" style={{ color: T.textDim }}>{label}</span>
-                    <span className="text-xs font-medium text-right max-w-[55%] truncate" style={{ color: T.text }}>
-                      {String(value)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] mb-5" style={{ color: T.textMuted }}>Metadata</p>
-              {data.amenities && typeof data.amenities === 'object' && (
-                <div className="mb-5">
-                  <p className="text-xs font-semibold mb-2" style={{ color: T.textMuted }}>Amenities</p>
-                  <pre className="text-xs p-3 rounded-xl overflow-auto max-h-40"
-                    style={{ background: T.elevated, color: T.textMuted }}>
-                    {JSON.stringify(data.amenities, null, 2)}
-                  </pre>
-                </div>
-              )}
-              {data.tags && Array.isArray(data.tags) && data.tags.length > 0 && (
-                <div className="mb-5">
-                  <p className="text-xs font-semibold mb-2" style={{ color: T.textMuted }}>Tags</p>
-                  <div className="flex flex-wrap gap-2">
-                    {data.tags.map((tag: string, i: number) => (
-                      <span key={i} className="text-xs px-2 py-1 rounded-lg"
-                        style={{ background: T.elevated, border: `1px solid ${T.border}`, color: T.textMuted }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {data.specs && typeof data.specs === 'object' && (
-                <div>
-                  <p className="text-xs font-semibold mb-2" style={{ color: T.textMuted }}>Specs</p>
-                  <pre className="text-xs p-3 rounded-xl overflow-auto max-h-40"
-                    style={{ background: T.elevated, color: T.textMuted }}>
-                    {JSON.stringify(data.specs, null, 2)}
-                  </pre>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-
-        {activeTab === 'tour' && (
-          <motion.div
-            key="tour"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            className="rounded-2xl overflow-hidden"
-            style={{ border: `1px solid ${T.border}` }}
-          >
-            {data.virtual_tour_url ? (
-              <>
-                <div className="p-4 flex items-center gap-2" style={{ background: T.surface }}>
-                  <div
-                    className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: 'rgba(59,130,246,0.12)' }}
-                  >
-                    <Globe size={13} style={{ color: T.accent }} />
-                  </div>
-                  <p className="text-sm font-semibold" style={{ color: T.text }}>Tour Virtual 360°</p>
-                  <a
-                    href={data.virtual_tour_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ml-auto flex items-center gap-1 text-xs"
-                    style={{ color: T.accent }}
-                  >
-                    Abrir em nova aba <ExternalLink size={11} />
-                  </a>
-                </div>
-                <iframe
-                  src={data.virtual_tour_url}
-                  className="w-full"
-                  height="560"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  allow="xr-spatial-tracking; gyroscope; accelerometer"
-                />
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 gap-4" style={{ background: T.surface }}>
-                <Globe size={48} style={{ color: T.textDim }} />
-                <div className="text-center">
-                  <p className="text-sm font-medium mb-1" style={{ color: T.text }}>Tour virtual não cadastrado</p>
-                  <p className="text-xs" style={{ color: T.textDim }}>Adicione um link de tour virtual para visualizar aqui</p>
-                </div>
-                <button
-                  onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
-                  className="h-9 px-4 rounded-xl text-sm font-medium"
-                  style={{ background: T.accent, color: 'white' }}
-                >
-                  Adicionar tour
-                </button>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── STICKY BOTTOM ACTION BAR ── */}
-      <div
-        className="fixed bottom-20 lg:bottom-0 left-0 right-0 lg:left-60 z-40 flex items-center justify-end gap-2 px-6 py-3"
-        style={{
-          background: `${T.elevated}f0`,
-          backdropFilter: 'blur(16px)',
-          borderTop: `1px solid ${T.border}`,
-        }}
-      >
-        <button
-          onClick={handleDelete}
-          disabled={deleting}
-          className="bo-btn bo-btn-danger bo-btn-sm"
-        >
-          {deleting ? <Loader2 size={13} className="animate-spin" /> : <Archive size={13} />}
-          {deleting ? 'Arquivando...' : 'Arquivar'}
-        </button>
-        <button
-          onClick={() => router.push(`/backoffice/imoveis/${params.id}/editar`)}
-          className="bo-btn bo-btn-primary bo-btn-sm"
-        >
-          <Edit size={13} />
-          Editar Imóvel
-        </button>
-      </div>
-
-      {/* ── LIGHTBOX ── */}
-      <AnimatePresence>
-        {lightbox.open && galleryImages.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            style={{ background: 'rgba(0,0,0,0.92)' }}
-            onClick={() => setLightbox({ open: false, idx: 0 })}
-          >
-            <button
-              onClick={(e) => { e.stopPropagation(); setLightbox({ open: false, idx: 0 }) }}
-              className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center"
-              style={{ background: 'rgba(255,255,255,0.12)', color: 'white' }}
-            >
-              <X size={20} />
-            </button>
-            <button
-              onClick={e => { e.stopPropagation(); setLightbox(p => ({ ...p, idx: (p.idx - 1 + galleryImages.length) % galleryImages.length })) }}
-              className="absolute left-4 w-12 h-12 rounded-full flex items-center justify-center"
-              style={{ background: 'rgba(255,255,255,0.12)', color: 'white' }}
-            >
-              <ChevronLeft size={24} />
-            </button>
-            <motion.img
-              key={lightbox.idx}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              src={galleryImages[lightbox.idx]}
-              alt={`${data.name} ${lightbox.idx + 1}`}
-              className="max-h-[85vh] max-w-[90vw] object-contain rounded-xl"
-              onClick={e => e.stopPropagation()}
-            />
-            <button
-              onClick={e => { e.stopPropagation(); setLightbox(p => ({ ...p, idx: (p.idx + 1) % galleryImages.length })) }}
-              className="absolute right-4 w-12 h-12 rounded-full flex items-center justify-center"
-              style={{ background: 'rgba(255,255,255,0.12)', color: 'white' }}
-            >
-              <ChevronRight size={24} />
-            </button>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-              {galleryImages.map((_: string, i: number) => (
-                <button
-                  key={i}
-                  onClick={e => { e.stopPropagation(); setLightbox(p => ({ ...p, idx: i })) }}
-                  className="w-2 h-2 rounded-full transition-all"
-                  style={{ background: i === lightbox.idx ? 'white' : 'rgba(255,255,255,0.4)' }}
-                />
               ))}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </div>
+      </div>
 
-      {/* ══════════════════════════════════════════════
-          CONTEÚDO IA — slide panel
-         ══════════════════════════════════════════════ */}
-      <AnimatePresence>
-        {showContentPanel && (
+      {/* ── Hero Gallery ───────────────────────────────────────────────────── */}
+      <div className="imovel-hero" style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', height: 'min(65vh, 460px)', background: T.surface }}>
+        {images.length > 0 ? (
           <>
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50" style={{ background: 'rgba(0,0,0,0.5)' }}
-              onClick={() => setShowContentPanel(false)}
+            <Image
+              src={images[galleryIdx]}
+              alt={dev.name}
+              fill
+              sizes="(max-width: 768px) 100vw, 1280px"
+              style={{ objectFit: 'cover' }}
+              priority
             />
-            <motion.div
-              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed right-0 top-0 h-full z-50 overflow-y-auto"
-              style={{ width: 'min(420px, 100vw)', background: 'var(--bo-elevated)', borderLeft: '1px solid var(--bo-border)' }}
-            >
-              <div className="p-5">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2">
-                    <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Sparkles size={16} style={{ color: '#A78BFA' }} />
-                    </div>
-                    <div>
-                      <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--bo-text)' }}>Gerar Conteúdo IA</p>
-                      <p style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}>{data?.name}</p>
-                    </div>
-                  </div>
-                  <button onClick={() => setShowContentPanel(false)} style={{ color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                    <X size={20} />
-                  </button>
-                </div>
-
-                {/* Type selector */}
-                <div className="grid grid-cols-3 gap-2 mb-4">
-                  {([
-                    { id: 'instagram', label: 'Instagram', icon: Instagram, color: '#E1306C' },
-                    { id: 'whatsapp', label: 'WhatsApp', icon: MessageSquare, color: '#25D366' },
-                    { id: 'email', label: 'E-mail', icon: Mail, color: '#60A5FA' },
-                  ] as const).map(opt => (
-                    <button
-                      key={opt.id}
-                      onClick={() => { setContentType(opt.id); setGeneratedContent('') }}
-                      style={{
-                        padding: '10px 6px', borderRadius: 10, cursor: 'pointer',
-                        background: contentType === opt.id ? `rgba(${opt.id === 'instagram' ? '225,48,108' : opt.id === 'whatsapp' ? '37,211,102' : '96,165,250'},0.12)` : 'var(--bo-surface)',
-                        border: `1px solid ${contentType === opt.id ? `rgba(${opt.id === 'instagram' ? '225,48,108' : opt.id === 'whatsapp' ? '37,211,102' : '96,165,250'},0.35)` : 'var(--bo-border)'}`,
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-                      }}
-                    >
-                      <opt.icon size={18} style={{ color: opt.color }} />
-                      <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--bo-text)' }}>{opt.label}</span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Generate button */}
+            {/* Dark gradient overlay */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to top, rgba(11,25,40,0.85) 0%, rgba(11,25,40,0.1) 50%, transparent 100%)',
+            }} />
+            {/* Property name on hero */}
+            <div style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0,
+              padding: '24px 28px',
+            }}>
+              <p style={{ ...EYEBROW, marginBottom: 6 }}>
+                {dev.developer?.name ?? dev.type}
+              </p>
+              <h1 style={{
+                fontFamily: 'var(--font-playfair, Libre Baskerville, Georgia, serif)',
+                fontSize: 'clamp(22px, 3.5vw, 34px)',
+                fontWeight: 700, color: '#EBE7E0', lineHeight: 1.15,
+                margin: 0,
+              }}>
+                {dev.name}
+              </h1>
+              {fullAddress && (
+                <p style={{ display: 'flex', alignItems: 'center', gap: 5, color: 'rgba(235,231,224,0.7)', fontSize: 13, marginTop: 6 }}>
+                  <MapPin size={12} />
+                  {fullAddress}
+                </p>
+              )}
+            </div>
+            {/* Prev/Next arrows */}
+            {images.length > 1 && (
+              <>
                 <button
-                  onClick={handleGenerateContent}
-                  disabled={contentLoading}
+                  onClick={() => setGalleryIdx(i => (i - 1 + images.length) % images.length)}
                   style={{
-                    width: '100%', padding: '12px', borderRadius: 12, marginBottom: 16,
-                    background: 'var(--bo-accent)', color: '#fff', border: 'none',
-                    fontSize: 13, fontWeight: 700, cursor: contentLoading ? 'not-allowed' : 'pointer',
-                    opacity: contentLoading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
+                    width: 36, height: 36, borderRadius: '50%',
+                    background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(184,148,58,0.3)',
+                    color: '#EBE7E0', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
                 >
-                  {contentLoading ? (
-                    <><span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> Gerando…</>
-                  ) : (
-                    <><Brain size={14} /> Gerar com IA</>
-                  )}
+                  <ChevronLeft size={18} />
                 </button>
+                <button
+                  onClick={() => setGalleryIdx(i => (i + 1) % images.length)}
+                  style={{
+                    position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)',
+                    width: 36, height: 36, borderRadius: '50%',
+                    background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(184,148,58,0.3)',
+                    color: '#EBE7E0', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  <ChevronRight size={18} />
+                </button>
+                {/* Image counter */}
+                <div style={{
+                  position: 'absolute', top: 14, right: 14,
+                  background: 'rgba(11,25,40,0.75)', border: '1px solid rgba(184,148,58,0.2)',
+                  borderRadius: 4, padding: '4px 10px',
+                  ...MONO, fontSize: 11, color: 'rgba(235,231,224,0.8)',
+                }}>
+                  {galleryIdx + 1} / {images.length}
+                </div>
+              </>
+            )}
+          </>
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Building2 size={64} style={{ color: T.textDim, opacity: 0.2 }} />
+          </div>
+        )}
+      </div>
 
-                {/* Generated content */}
-                {generatedContent && (
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Conteúdo gerado</span>
-                      <button
-                        onClick={() => { navigator.clipboard.writeText(generatedContent); toast.success('Copiado!') }}
-                        style={{ fontSize: 11, fontWeight: 600, color: 'var(--bo-accent)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}
-                      >
-                        <Copy size={12} /> Copiar
-                      </button>
-                    </div>
-                    <div
-                      style={{
-                        padding: 14, borderRadius: 12, fontSize: 13, lineHeight: 1.6,
-                        background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
-                        color: 'var(--bo-text)', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-                      }}
-                    >
-                      {generatedContent}
-                    </div>
+      {/* Thumbnail strip */}
+      {images.length > 1 && (
+        <div style={{ display: 'flex', gap: 6, marginTop: 8, overflowX: 'auto', paddingBottom: 4 }}>
+          {images.slice(0, 8).map((img, idx) => (
+            <button
+              key={idx}
+              onClick={() => setGalleryIdx(idx)}
+              style={{
+                flexShrink: 0, width: 60, height: 40, borderRadius: 6, overflow: 'hidden',
+                border: `2px solid ${idx === galleryIdx ? 'var(--gold, var(--imi-gold-500))' : 'transparent'}`,
+                cursor: 'pointer', position: 'relative', background: T.surface,
+                opacity: idx === galleryIdx ? 1 : 0.6,
+                transition: 'all 150ms ease',
+              }}
+            >
+              <Image src={img} alt="" fill sizes="60px" style={{ objectFit: 'cover' }} />
+            </button>
+          ))}
+        </div>
+      )}
 
-                    {/* Quick share */}
-                    <div className="flex gap-2 mt-3">
-                      {contentType === 'whatsapp' && (
-                        <a
-                          href={`https://wa.me/?text=${encodeURIComponent(generatedContent)}`}
-                          target="_blank" rel="noopener noreferrer"
-                          style={{ flex: 1, padding: '10px', borderRadius: 10, textAlign: 'center', fontSize: 12, fontWeight: 700, background: 'rgba(37,211,102,0.12)', color: '#25D366', border: '1px solid rgba(37,211,102,0.25)', textDecoration: 'none' }}
-                        >
-                          Abrir WhatsApp
-                        </a>
-                      )}
-                      {contentType === 'instagram' && (
-                        <button
-                          onClick={() => { navigator.clipboard.writeText(generatedContent); toast.success('Legenda copiada — cole no Instagram!') }}
-                          style={{ flex: 1, padding: '10px', borderRadius: 10, fontSize: 12, fontWeight: 700, background: 'rgba(225,48,108,0.10)', color: '#E1306C', border: '1px solid rgba(225,48,108,0.25)', cursor: 'pointer' }}
-                        >
-                          Copiar para Instagram
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
+      {/* ── Main layout: tabs + sidebar ────────────────────────────────────── */}
+      <div className="imovel-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: 24, marginTop: 24, alignItems: 'start' }}>
 
-                {/* Property summary at bottom */}
-                <div className="mt-6 rounded-xl p-4" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Dados do imóvel</p>
-                  <div className="space-y-1">
-                    {[
-                      ['Tipo', data?.type],
-                      ['Bairro', data?.neighborhood],
-                      ['Área', data?.area ? `${data.area}m²` : null],
-                      ['Quartos', data?.bedrooms],
-                      ['Preço', data?.price_min ? `R$ ${(data.price_min / 1000).toFixed(0)}k` : null],
-                    ].filter(([, v]) => v).map(([k, v]) => (
-                      <div key={String(k)} className="flex justify-between">
-                        <span style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}>{k}</span>
-                        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--bo-text)' }}>{v}</span>
+        {/* ── LEFT COLUMN ──────────────────────────────────────────────────── */}
+        <div>
+          {/* Sticky tab bar */}
+          <div style={{
+            position: 'sticky', top: 0, zIndex: 10,
+            background: 'var(--bo-bg, var(--navy, #0B1120))',
+            borderBottom: '1px solid rgba(184,148,58,0.14)',
+            marginBottom: 20,
+          }}>
+            <div className="imovel-tabs" style={{ display: 'flex', gap: 0, overflowX: 'auto', scrollbarWidth: 'none' }}>
+              {TABS.map(tab => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  style={{
+                    padding: '12px 20px',
+                    background: 'transparent',
+                    border: 'none',
+                    borderBottom: `2px solid ${activeTab === tab.key ? 'var(--gold, var(--imi-gold-500))' : 'transparent'}`,
+                    color: activeTab === tab.key ? 'var(--gold, var(--imi-gold-500))' : T.textMuted,
+                    fontFamily: 'var(--font-montserrat, Figtree, sans-serif)',
+                    fontWeight: 700,
+                    fontSize: 11,
+                    letterSpacing: '1.5px',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    transition: 'all 200ms ease',
+                    marginBottom: '-1px',
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ── TAB: VISÃO GERAL ─────────────────────────────────────────── */}
+          {activeTab === 'overview' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+              {/* Description */}
+              {dev.description && (
+                <div style={{ ...CARD, padding: 24 }}>
+                  <p style={{ ...EYEBROW, marginBottom: 10 }}>Sobre o Empreendimento</p>
+                  <p style={{ color: T.textMuted, fontSize: 14, lineHeight: 1.7, margin: 0 }}>
+                    {dev.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Specs grid */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 16 }}>Especificações</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
+                  {[
+                    { icon: Ruler, label: 'Área', value: dev.area_min ? `${dev.area_min}${dev.area_max && dev.area_max !== dev.area_min ? `–${dev.area_max}` : ''} m²` : '—' },
+                    { icon: Bed, label: 'Quartos', value: dev.bedrooms_from ? `${dev.bedrooms_from}+` : '—' },
+                    { icon: Bath, label: 'Banheiros', value: dev.bathrooms_from ? `${dev.bathrooms_from}+` : '—' },
+                    { icon: Car, label: 'Vagas', value: dev.parking_from ? `${dev.parking_from}+` : '—' },
+                    { icon: Building2, label: 'Tipo', value: dev.type ?? '—' },
+                    { icon: Activity, label: 'Condição', value: dev.condition ?? '—' },
+                    { icon: CheckSquare, label: 'Status', value: statusCfg.label },
+                    { icon: MapPin, label: 'Cidade', value: dev.city ?? '—' },
+                    { icon: MapPin, label: 'Bairro', value: dev.neighborhood ?? '—' },
+                    { icon: Home, label: 'CEP', value: dev.cep ?? '—' },
+                  ].map(({ icon: Icon, label, value }) => (
+                    <div key={label} style={{
+                      background: 'var(--bo-surface)',
+                      border: '1px solid rgba(184,148,58,0.1)',
+                      borderRadius: 8, padding: '12px 14px',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
+                        <Icon size={12} style={{ color: 'var(--gold, var(--imi-gold-500))', flexShrink: 0 }} />
+                        <span style={{ ...EYEBROW, fontSize: '8px' }}>{label}</span>
                       </div>
+                      <span style={{ ...MONO, fontSize: 14, fontWeight: 500, color: T.text }}>{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Features & Amenities */}
+              {((dev.features && dev.features.length > 0) || (dev.amenities && dev.amenities.length > 0)) && (
+                <div style={{ ...CARD, padding: 24 }}>
+                  <p style={{ ...EYEBROW, marginBottom: 16 }}>Diferenciais & Comodidades</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                    {[...(dev.features ?? []), ...(dev.amenities ?? [])].map((item, i) => (
+                      <span key={i} style={{
+                        padding: '5px 12px', borderRadius: 4,
+                        background: 'rgba(184,148,58,0.08)',
+                        border: '1px solid rgba(184,148,58,0.18)',
+                        color: T.textMuted, fontSize: 12,
+                        fontFamily: 'var(--font-montserrat, sans-serif)',
+                        fontWeight: 500,
+                      }}>
+                        {item}
+                      </span>
                     ))}
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              )}
 
-      {/* ══════════════════════════════════════════════
-          ENVIAR LEAD — slide panel
-         ══════════════════════════════════════════════ */}
-      <AnimatePresence>
-        {showLeadPanel && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50" style={{ background: 'rgba(0,0,0,0.5)' }}
-              onClick={() => setShowLeadPanel(false)}
-            />
-            <motion.div
-              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed right-0 top-0 h-full z-50 overflow-y-auto"
-              style={{ width: 'min(380px, 100vw)', background: 'var(--bo-elevated)', borderLeft: '1px solid var(--bo-border)' }}
-            >
-              <div className="p-5">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2">
-                    <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Send size={15} style={{ color: 'var(--bo-success)' }} />
+              {/* Location */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 16 }}>Localização</p>
+                <div style={{
+                  background: 'var(--bo-surface)',
+                  borderRadius: 8, overflow: 'hidden',
+                  height: 180,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: '1px solid rgba(184,148,58,0.1)',
+                  flexDirection: 'column', gap: 8, color: T.textDim,
+                }}>
+                  <MapPin size={28} style={{ opacity: 0.3 }} />
+                  <span style={{ fontSize: 12 }}>
+                    {fullAddress || 'Endereço não informado'}
+                  </span>
+                  {dev.latitude && dev.longitude && (
+                    <a
+                      href={`https://maps.google.com/?q=${dev.latitude},${dev.longitude}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ ...BTN_SECONDARY, padding: '6px 14px', fontSize: 10, marginTop: 4 }}
+                    >
+                      <ExternalLink size={10} /> Ver no Maps
+                    </a>
+                  )}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 12 }}>
+                  {[
+                    ['Bairro', dev.neighborhood],
+                    ['Cidade', dev.city],
+                    ['Estado', dev.state],
+                    ['País', dev.country],
+                  ].filter(([, v]) => v).map(([label, value]) => (
+                    <div key={label as string} style={{ fontSize: 13 }}>
+                      <span style={{ color: T.textDim, fontSize: 11 }}>{label}</span>
+                      <br />
+                      <span style={{ color: T.text, fontWeight: 500 }}>{value}</span>
                     </div>
-                    <div>
-                      <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--bo-text)' }}>Enviar para Lead</p>
-                      <p style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}>Via WhatsApp com tracking</p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Market Comparables */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 4 }}>Comparáveis de Mercado</p>
+                <p style={{ fontSize: 11, color: T.textDim, marginBottom: 16 }}>
+                  * Dados ilustrativos baseados em médias do bairro {dev.neighborhood ?? ''}
+                </p>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid rgba(184,148,58,0.14)' }}>
+                        {['Empreendimento', 'Área', 'Preço/m²', 'Δ Mercado'].map(h => (
+                          <th key={h} style={{
+                            ...EYEBROW, fontSize: '8px',
+                            textAlign: 'left', padding: '6px 12px 8px',
+                          }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Subject row */}
+                      <tr style={{ background: 'rgba(184,148,58,0.06)', borderBottom: '1px solid rgba(184,148,58,0.1)' }}>
+                        <td style={{ padding: '10px 12px', color: 'var(--gold, var(--imi-gold-500))', fontWeight: 600 }}>
+                          {dev.name} <span style={{ fontSize: 10, opacity: 0.7 }}>(este)</span>
+                        </td>
+                        <td style={{ ...MONO, padding: '10px 12px', color: T.text }}>
+                          {dev.area_min ? `${dev.area_min} m²` : '—'}
+                        </td>
+                        <td style={{ ...MONO, padding: '10px 12px', color: T.text }}>
+                          {priceSqm ? `R$ ${fmtNum(priceSqm)}` : '—'}
+                        </td>
+                        <td style={{ ...MONO, padding: '10px 12px', color: T.textDim }}>—</td>
+                      </tr>
+                      {comparables.map((comp, i) => (
+                        <tr key={i} style={{ borderBottom: '1px solid rgba(184,148,58,0.06)' }}>
+                          <td style={{ padding: '10px 12px', color: T.text }}>{comp.name}</td>
+                          <td style={{ ...MONO, padding: '10px 12px', color: T.textMuted }}>{comp.area} m²</td>
+                          <td style={{ ...MONO, padding: '10px 12px', color: T.textMuted }}>R$ {fmtNum(comp.priceSqm)}</td>
+                          <td style={{ ...MONO, padding: '10px 12px' }}>
+                            <span style={{
+                              color: comp.delta > 0 ? '#E06B6B' : '#5DB887',
+                              display: 'flex', alignItems: 'center', gap: 3,
+                            }}>
+                              {comp.delta > 0 ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
+                              {comp.delta > 0 ? '+' : ''}{comp.delta}%
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── TAB: ANÁLISE ─────────────────────────────────────────────── */}
+          {activeTab === 'analysis' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+              {/* Investment Metrics */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 16 }}>Métricas de Investimento</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+                  {[
+                    { label: 'IMI Score', value: `${score}`, unit: '/100', color: scoreColor },
+                    { label: 'Yield Estimado', value: `${yieldEst.toFixed(1)}%`, unit: 'a.a.', color: '#5DB887' },
+                    { label: 'Índice Liquidez', value: `${liquidityIdx}`, unit: '/100', color: '#5B9BD5' },
+                    { label: 'Delta Mercado', value: `${marketDelta > 0 ? '+' : ''}${marketDelta}%`, unit: '', color: marketDelta >= 0 ? '#5DB887' : '#E06B6B' },
+                    { label: 'ROI 12m Estimado', value: `${enriched.roi_12m?.toFixed(1) ?? '—'}%`, unit: '', color: '#D4B86A' },
+                    { label: 'Preço/m²', value: priceSqm ? `R$ ${fmtNum(priceSqm)}` : '—', unit: '', color: T.text as string },
+                  ].map(({ label, value, unit, color }) => (
+                    <div key={label} style={{
+                      background: 'var(--bo-surface)',
+                      border: '1px solid rgba(184,148,58,0.1)',
+                      borderRadius: 8, padding: '16px 18px',
+                    }}>
+                      <p style={{ ...EYEBROW, fontSize: '8px', marginBottom: 8 }}>{label}</p>
+                      <p style={{ ...MONO, fontSize: 24, fontWeight: 400, color, lineHeight: 1, margin: 0 }}>
+                        {value}
+                        {unit && <span style={{ fontSize: 12, color: T.textDim, marginLeft: 4 }}>{unit}</span>}
+                      </p>
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* IMI Score full display */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 16 }}>IMI Score · Índice de Oportunidade</p>
+                <IMIScoreDisplay score={score} />
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginTop: 20 }}>
+                  {[
+                    { label: 'Yield', pct: 25, score: Math.round((yieldEst / 12) * 25) },
+                    { label: 'Mercado', pct: 20, score: Math.round(Math.min(100, Math.max(0, (marketDelta + 10) / 30 * 100)) * 0.2) },
+                    { label: 'Liquidez', pct: 20, score: Math.round(liquidityIdx * 0.2) },
+                    { label: 'Tendência', pct: 20, score: 14 },
+                    { label: 'Localização', pct: 15, score: 11 },
+                  ].map(comp => (
+                    <div key={comp.label} style={{ textAlign: 'center' }}>
+                      <div style={{ ...EYEBROW, fontSize: '8px', marginBottom: 4 }}>{comp.label}</div>
+                      <div style={{ ...MONO, fontSize: 13, color: scoreColor }}>{comp.score}</div>
+                      <div style={{ fontSize: 10, color: T.textDim }}>/{comp.pct}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Yield Calculator */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 16 }}>Calculadora de Yield</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 20 }}>
+                  <div>
+                    <label style={{ ...EYEBROW, fontSize: '8px', display: 'block', marginBottom: 6 }}>
+                      Aluguel Mensal (R$)
+                    </label>
+                    <input
+                      type="number"
+                      value={rentInput}
+                      onChange={e => setRentInput(Number(e.target.value))}
+                      style={{
+                        width: '100%', padding: '10px 12px', borderRadius: 6,
+                        background: 'var(--bo-surface)',
+                        border: '1px solid rgba(184,148,58,0.2)',
+                        color: T.text, outline: 'none',
+                        ...MONO, fontSize: 14,
+                        boxSizing: 'border-box',
+                      }}
+                    />
                   </div>
-                  <button onClick={() => setShowLeadPanel(false)} style={{ color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                    <X size={20} />
+                  <div>
+                    <label style={{ ...EYEBROW, fontSize: '8px', display: 'block', marginBottom: 6 }}>
+                      Despesas (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={expensePct}
+                      onChange={e => setExpensePct(Number(e.target.value))}
+                      min={0} max={100}
+                      style={{
+                        width: '100%', padding: '10px 12px', borderRadius: 6,
+                        background: 'var(--bo-surface)',
+                        border: '1px solid rgba(184,148,58,0.2)',
+                        color: T.text, outline: 'none',
+                        ...MONO, fontSize: 14,
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ ...EYEBROW, fontSize: '8px', display: 'block', marginBottom: 6 }}>
+                      Vacância (%)
+                    </label>
+                    <input
+                      type="number"
+                      value={vacancyPct}
+                      onChange={e => setVacancyPct(Number(e.target.value))}
+                      min={0} max={100}
+                      style={{
+                        width: '100%', padding: '10px 12px', borderRadius: 6,
+                        background: 'var(--bo-surface)',
+                        border: '1px solid rgba(184,148,58,0.2)',
+                        color: T.text, outline: 'none',
+                        ...MONO, fontSize: 14,
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Calculator results */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                  {[
+                    { label: 'Yield Bruto', value: `${grossYield.toFixed(2)}%`, color: '#5DB887' },
+                    { label: 'Yield Líquido', value: `${netYield.toFixed(2)}%`, color: '#5B9BD5' },
+                    { label: 'Cashflow Mensal', value: fmtCurrency(monthlyCashflow), color: 'var(--gold, var(--imi-gold-500))' },
+                  ].map(({ label, value, color }) => (
+                    <div key={label} style={{
+                      background: 'var(--bo-surface)',
+                      border: '1px solid rgba(184,148,58,0.1)',
+                      borderRadius: 8, padding: '14px 16px',
+                      textAlign: 'center',
+                    }}>
+                      <div style={{ ...EYEBROW, fontSize: '8px', marginBottom: 6 }}>{label}</div>
+                      <div style={{ ...MONO, fontSize: 20, color, fontWeight: 400 }}>{value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ROI Projection */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 16 }}>Projeção de Retorno</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {[
+                    { label: '12 meses', roi: yieldEst * 1.0, color: '#5B9BD5' },
+                    { label: '24 meses', roi: yieldEst * 2.1, color: '#5DB887' },
+                    { label: '36 meses', roi: yieldEst * 3.4, color: 'var(--gold, var(--imi-gold-500))' },
+                  ].map(({ label, roi, color }) => (
+                    <div key={label}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                        <span style={{ fontSize: 13, color: T.textMuted, fontFamily: 'var(--font-montserrat, sans-serif)' }}>{label}</span>
+                        <span style={{ ...MONO, fontSize: 13, color, fontWeight: 500 }}>+{roi.toFixed(1)}%</span>
+                      </div>
+                      <div style={{ height: 6, background: 'rgba(184,148,58,0.1)', borderRadius: 999, overflow: 'hidden' }}>
+                        <div style={{
+                          height: '100%',
+                          width: `${Math.min(100, (roi / 30) * 100)}%`,
+                          background: color, borderRadius: 999,
+                          transition: 'width 1s cubic-bezier(0.16,1,0.3,1)',
+                        }} />
+                      </div>
+                      <div style={{ fontSize: 11, color: T.textDim, marginTop: 3 }}>
+                        Estimativa acumulada com apreciação
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Análise Financeira ──────────────────────────────────────────────── */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }} className="max-lg:grid-cols-1">
+                <YieldCalculator
+                  propertyValue={dev?.price_from || 800000}
+                  monthlyRent={rentInput > 0 ? rentInput : undefined}
+                  annualExpenses={undefined}
+                />
+                <ValuationEngine
+                  estimatedValue={
+                    priceSqm && dev.area_min
+                      ? Math.round(priceSqm)
+                      : 14500
+                  }
+                  confidence={72}
+                  methodology="Hedônico + Comparativo (NBR 14653)"
+                  lastUpdated="há 3 dias"
+                  comparables={[
+                    { address: 'Imóvel similar próximo', value: 15200, distance: '150m', diff: 4.8 },
+                    { address: 'Ref. mesmo bairro', value: 13800, distance: '300m', diff: -4.8 },
+                    { address: 'Lançamento vizinho', value: 16500, distance: '500m', diff: 13.8 },
+                  ]}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* ── TAB: ANALYTICS ───────────────────────────────────────────── */}
+          {activeTab === 'analytics' && (
+            <div style={{ ...CARD, padding: 32, textAlign: 'center' }}>
+              <BarChart2 size={40} style={{ color: 'var(--gold, var(--imi-gold-500))', margin: '0 auto 16px', display: 'block' }} />
+              <p style={{ ...EYEBROW, marginBottom: 8 }}>Analytics de Performance</p>
+              <p style={{ color: T.textMuted, fontSize: 14, marginBottom: 24, maxWidth: 420, margin: '0 auto 24px' }}>
+                Veja cliques, leads gerados, conversões, fontes de tráfego e muito mais na página de analytics dedicada.
+              </p>
+              <Link href={`/backoffice/imoveis/${id}/analytics`} style={BTN_PRIMARY}>
+                <BarChart2 size={14} /> Abrir Analytics Completo
+              </Link>
+            </div>
+          )}
+
+          {/* ── TAB: MAIS ────────────────────────────────────────────────── */}
+          {activeTab === 'more' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 16 }}>Ações Rápidas</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
+                  {[
+                    { icon: Edit, label: 'Editar Imóvel', href: `/backoffice/imoveis/${id}/editar`, primary: true },
+                    { icon: Layers, label: 'Ver Unidades', href: `/backoffice/imoveis/${id}/unidades`, primary: false },
+                    { icon: BarChart2, label: 'Analytics', href: `/backoffice/imoveis/${id}/analytics`, primary: false },
+                    { icon: Clock, label: 'Timeline', href: `/backoffice/imoveis/${id}/timeline`, primary: false },
+                    { icon: QrCode, label: 'Gerar QR Code', href: `/backoffice/tracking/qr?imovel=${id}`, primary: false },
+                    { icon: Zap, label: 'Criar Campanha', href: `/backoffice/campanhas?imovel=${id}`, primary: false },
+                  ].map(({ icon: Icon, label, href, primary }) => (
+                    <Link
+                      key={label}
+                      href={href}
+                      style={primary ? BTN_PRIMARY : BTN_SECONDARY}
+                    >
+                      <Icon size={14} /> {label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Share section */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 16 }}>Compartilhar</p>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  <button onClick={handleCopyLink} style={BTN_SECONDARY}>
+                    <Copy size={13} /> {copied ? 'Copiado!' : 'Copiar Link'}
+                  </button>
+                  <button onClick={handleWhatsApp} style={{ ...BTN_SECONDARY, borderColor: 'rgba(93,184,135,0.4)', color: '#5DB887' }}>
+                    <MessageSquare size={13} /> WhatsApp
                   </button>
                 </div>
+              </div>
 
-                {/* Property pill */}
-                <div className="rounded-xl p-3 mb-4 flex items-center gap-3" style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)' }}>
-                  <Building2 size={16} style={{ color: 'var(--bo-accent)', flexShrink: 0 }} />
-                  <div>
-                    <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--bo-text)' }}>{data?.name}</p>
-                    <p style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}>{data?.neighborhood} · {data?.price_min ? `R$ ${(data.price_min / 1000).toFixed(0)}k` : ''}</p>
-                  </div>
+              {/* Meta info */}
+              <div style={{ ...CARD, padding: 24 }}>
+                <p style={{ ...EYEBROW, marginBottom: 14 }}>Informações do Registro</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  {[
+                    ['ID', dev.id],
+                    ['Slug', dev.slug ?? '—'],
+                    ['Criado em', dev.created_at ? new Date(dev.created_at).toLocaleDateString('pt-BR') : '—'],
+                    ['Atualizado em', dev.updated_at ? new Date(dev.updated_at).toLocaleDateString('pt-BR') : '—'],
+                    ['Desenvolvedor', dev.developer?.name ?? '—'],
+                    ['Vídeo', dev.video_url ? 'Sim' : 'Não'],
+                  ].map(([label, value]) => (
+                    <div key={label as string}>
+                      <p style={{ ...EYEBROW, fontSize: '8px', marginBottom: 3 }}>{label}</p>
+                      <p style={{ ...MONO, fontSize: 12, color: T.textMuted, margin: 0, wordBreak: 'break-all' }}>{value}</p>
+                    </div>
+                  ))}
                 </div>
+              </div>
+            </div>
+          )}
+        </div>
 
-                <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
-                  Selecionar lead
-                </p>
+        {/* ── RIGHT SIDEBAR ─────────────────────────────────────────────────── */}
+        <div style={{ position: 'sticky', top: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-                {leadsLoading ? (
-                  <div className="flex items-center justify-center py-10">
-                    <Loader2 size={20} className="animate-spin" style={{ color: 'var(--bo-text-muted)' }} />
+          {/* Price block */}
+          <div style={{ ...CARD, padding: 24 }}>
+            <p style={{ ...EYEBROW, marginBottom: 8 }}>Preço</p>
+            <div style={{ ...MONO, fontSize: 30, fontWeight: 400, color: 'var(--gold, var(--imi-gold-500))', lineHeight: 1.1, letterSpacing: '-0.5px' }}>
+              {fmtCurrency(price)}
+            </div>
+            {dev.price_to && dev.price_to !== dev.price_from && (
+              <div style={{ ...MONO, fontSize: 14, color: T.textMuted, marginTop: 2 }}>
+                até {fmtCurrency(dev.price_to)}
+              </div>
+            )}
+            {priceSqm && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 8 }}>
+                <span style={{ fontSize: 11, color: T.textDim }}>Preço/m²:</span>
+                <span style={{ ...MONO, fontSize: 13, color: T.textMuted }}>R$ {fmtNum(priceSqm)}</span>
+              </div>
+            )}
+
+            <div style={{ height: '1px', background: 'rgba(184,148,58,0.14)', margin: '16px 0' }} />
+
+            {/* IMI Score */}
+            <IMIScoreDisplay score={score} />
+
+            {/* Score breakdown */}
+            {score > 0 && (
+              <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {[
+                  { label: 'Liquidez', value: enriched.liquidity_index ?? Math.round((score || 0) * 0.9) },
+                  { label: 'Yield Est.', value: enriched.yield_est ? Math.round(enriched.yield_est * 10) : Math.round((score || 0) * 0.85) },
+                  { label: 'Localização', value: Math.round((score || 0) * 1.05) },
+                ].map(({ label, value }) => {
+                  const pct = Math.min(100, Math.max(0, value))
+                  return (
+                    <div key={label}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+                        <span style={{ fontSize: 9, fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-tertiary)' }}>{label}</span>
+                        <span style={{ fontSize: 9, fontFamily: 'var(--font-mono,monospace)', color: 'var(--text-secondary)' }}>{pct}</span>
+                      </div>
+                      <div style={{ height: 3, background: 'rgba(255,255,255,0.05)', borderRadius: 2, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${pct}%`, background: pct >= 70 ? 'var(--imi-gold-500)' : pct >= 50 ? '#E8A87C' : '#9FAAB8', borderRadius: 2, transition: 'width 0.8s ease' }} />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            <div style={{ height: '1px', background: 'rgba(184,148,58,0.14)', margin: '16px 0' }} />
+
+            {/* Yield + Market delta */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+                  Yield Estimado
+                </span>
+                <span style={{ ...MONO, fontSize: 14, color: '#5DB887', fontWeight: 500 }}>
+                  {yieldEst.toFixed(1)}% a.a.
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+                  vs Mercado
+                </span>
+                <span style={{
+                  ...MONO, fontSize: 13, fontWeight: 500,
+                  color: marketDelta >= 0 ? '#5DB887' : '#E06B6B',
+                  display: 'flex', alignItems: 'center', gap: 3,
+                }}>
+                  {marketDelta >= 0
+                    ? <TrendingDown size={12} />
+                    : <TrendingUp size={12} />
+                  }
+                  {marketDelta >= 0 ? `${marketDelta}% abaixo` : `${Math.abs(marketDelta)}% acima`}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: T.textDim, fontFamily: 'var(--font-montserrat, sans-serif)' }}>
+                  Liquidez
+                </span>
+                <span style={{ ...MONO, fontSize: 13, color: '#5B9BD5' }}>
+                  {liquidityIdx}/100
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div style={{ ...CARD, padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <p style={{ ...EYEBROW, marginBottom: 6 }}>Ações</p>
+            <Link href={`/backoffice/imoveis/${id}/editar`} style={{ ...BTN_PRIMARY, justifyContent: 'center' }}>
+              <Edit size={13} /> Editar Imóvel
+            </Link>
+            <Link href={`/backoffice/imoveis/${id}/unidades`} style={{ ...BTN_SECONDARY, justifyContent: 'center' }}>
+              <Layers size={13} /> Ver Unidades
+            </Link>
+            <Link href={`/backoffice/imoveis/${id}/analytics`} style={{ ...BTN_SECONDARY, justifyContent: 'center' }}>
+              <BarChart2 size={13} /> Analytics
+            </Link>
+            <Link href={`/backoffice/tracking/qr?imovel=${id}`} style={{ ...BTN_SECONDARY, justifyContent: 'center' }}>
+              <QrCode size={13} /> Gerar QR Code
+            </Link>
+            <Link href={`/backoffice/campanhas?imovel=${id}`} style={{ ...BTN_SECONDARY, justifyContent: 'center' }}>
+              <Zap size={13} /> Criar Campanha
+            </Link>
+          </div>
+
+          {/* Share */}
+          <div style={{ ...CARD, padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <p style={{ ...EYEBROW, marginBottom: 4 }}>Compartilhar</p>
+            <button onClick={handleCopyLink} style={{ ...BTN_SECONDARY, justifyContent: 'center' }}>
+              <Copy size={13} /> {copied ? 'Copiado!' : 'Copiar Link'}
+            </button>
+            <button onClick={handleWhatsApp} style={{
+              ...BTN_SECONDARY,
+              justifyContent: 'center',
+              borderColor: 'rgba(93,184,135,0.35)',
+              color: '#5DB887',
+            }}>
+              <MessageSquare size={13} /> WhatsApp
+            </button>
+            <button
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({ title: dev.name, url: `${window.location.origin}/imoveis/${dev.slug ?? id}` })
+                }
+              }}
+              style={{ ...BTN_SECONDARY, justifyContent: 'center' }}
+            >
+              <Share2 size={13} /> Compartilhar
+            </button>
+          </div>
+
+          {/* Developer card */}
+          {dev.developer && (
+            <div style={{ ...CARD, padding: 16 }}>
+              <p style={{ ...EYEBROW, marginBottom: 10 }}>Incorporadora</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {dev.developer.logo_url ? (
+                  <div style={{ width: 36, height: 36, borderRadius: 6, overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                    <Image src={dev.developer.logo_url} alt={dev.developer.name} fill sizes="36px" style={{ objectFit: 'contain' }} />
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    {leads.slice(0, 15).map(lead => (
-                      <button
-                        key={lead.id}
-                        onClick={() => handleSendToLead(lead)}
-                        className="w-full flex items-center gap-3 rounded-xl p-3 transition-all text-left"
-                        style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', cursor: 'pointer' }}
-                      >
-                        {/* Avatar */}
-                        <div style={{
-                          width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                          background: lead.status === 'hot' ? 'rgba(248,113,113,0.15)' : 'rgba(96,165,250,0.12)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: 13, fontWeight: 800, color: lead.status === 'hot' ? 'var(--bo-error)' : '#60A5FA',
-                        }}>
-                          {(lead.name || 'L').charAt(0).toUpperCase()}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--bo-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lead.name || 'Sem nome'}</p>
-                          <p style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}>{lead.phone || 'Sem telefone'} · {lead.source || 'Direto'}</p>
-                        </div>
-                        <div style={{
-                          fontSize: 9, fontWeight: 800, padding: '2px 6px', borderRadius: 4,
-                          background: lead.status === 'hot' ? 'rgba(248,113,113,0.15)' : 'rgba(251,191,36,0.12)',
-                          color: lead.status === 'hot' ? 'var(--bo-error)' : 'var(--bo-warning)',
-                        }}>
-                          {lead.status === 'hot' ? '🔥' : '●'} {lead.status || 'warm'}
-                        </div>
-                      </button>
-                    ))}
-
-                    {leads.length === 0 && (
-                      <div className="text-center py-8">
-                        <Users size={24} style={{ color: 'var(--bo-text-muted)', opacity: 0.3, margin: '0 auto 8px' }} />
-                        <p style={{ fontSize: 12, color: 'var(--bo-text-muted)' }}>Nenhum lead encontrado</p>
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() => router.push('/backoffice/leads')}
-                      style={{ width: '100%', marginTop: 8, padding: '10px', borderRadius: 10, fontSize: 12, fontWeight: 600, background: 'none', border: `1px solid var(--bo-border)`, color: 'var(--bo-text-muted)', cursor: 'pointer' }}
-                    >
-                      Ver todos os leads →
-                    </button>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: 6, flexShrink: 0,
+                    background: 'rgba(184,148,58,0.12)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Building2 size={16} style={{ color: 'var(--gold, var(--imi-gold-500))' }} />
                   </div>
                 )}
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: T.text, margin: 0 }}>{dev.developer.name}</p>
+                  <p style={{ fontSize: 11, color: T.textDim, margin: 0 }}>Incorporadora</p>
+                </div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Floating quick-action toolbar — desktop only */}
+      <FloatingActions id={id} />
+
+      <style suppressHydrationWarning>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+        .imovel-tabs::-webkit-scrollbar { display: none; }
+        .imovel-tabs button { flex-shrink: 0; }
+
+        /* ─── Tablet ─── */
+        @media (max-width: 900px) {
+          .imovel-grid { grid-template-columns: 1fr !important; }
+        }
+
+        /* ─── Mobile ─── */
+        @media (max-width: 767px) {
+          /* Page padding */
+          .imovel-detail-wrap { padding: 0 14px 80px !important; }
+          .imovel-grid { padding: 0 !important; margin-top: 16px !important; }
+
+          /* Hero gallery smaller on mobile */
+          .imovel-hero { height: min(55vw, 260px) !important; }
+
+          /* Tab bar — font smaller */
+          .imovel-tabs button {
+            padding: 10px 14px !important;
+            font-size: 11px !important;
+          }
+
+          /* Tables overflow scroll */
+          .imovel-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+          .imovel-table-wrap table { min-width: 480px; }
+
+          /* Specs grid — 2 cols on mobile */
+          .imovel-specs-grid { grid-template-columns: 1fr 1fr !important; }
+
+          /* Action buttons — full width on mobile */
+          .imovel-action-group { flex-direction: column !important; }
+          .imovel-action-group button, .imovel-action-group a button {
+            width: 100% !important; justify-content: center !important;
+            min-height: 48px !important;
+          }
+
+          /* Gallery nav arrows — bigger */
+          .imovel-gallery-arrow {
+            width: 44px !important; height: 44px !important;
+          }
+
+          /* Back nav back button — bigger */
+          .imovel-back-btn {
+            width: 44px !important; height: 44px !important;
+          }
+        }
+      `}</style>
     </div>
   )
+}
+
+// ─── Main export ──────────────────────────────────────────────────────────────
+
+export default function ImovelDetailPage() {
+  const params = useParams()
+  const router = useRouter()
+  const id = params.id as string
+  const isMobile = useIsMobile()
+
+  const [dev, setDev] = useState<Development | null>(null)
+  const [enriched, setEnriched] = useState<IMIProperty | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
+  const [activeTab, setActiveTab] = useState<TabKey>('overview')
+  const [galleryIdx, setGalleryIdx] = useState(0)
+
+  // Yield calculator state
+  const [rentInput, setRentInput] = useState<number>(0)
+  const [expensePct, setExpensePct] = useState<number>(20)
+  const [vacancyPct, setVacancyPct] = useState<number>(8)
+
+  // Copy state
+  const [copied, setCopied] = useState(false)
+
+  // ── Fetch data ──────────────────────────────────────────────────────────────
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('developments')
+        .select(`
+          id, name, type, status, status_commercial, condition,
+          price_from, price_to, area_min, area_max,
+          bedrooms_from, bathrooms_from, parking_from,
+          neighborhood, city, state, country, address, street_number,
+          cep, description, features, amenities,
+          image_urls, cover_image_url, video_url, slug,
+          created_at, updated_at, latitude, longitude,
+          developer:developers(id, name, logo_url)
+        `)
+        .eq('id', id)
+        .single()
+
+      if (error || !data) {
+        setNotFound(true)
+        return
+      }
+
+      const development = data as unknown as Development
+      setDev(development)
+
+      const prop = toIMIProperty(development)
+      const rich = enrichProperty(prop)
+      setEnriched(rich)
+
+      // Seed rent input from yield estimate
+      if (rich.price && rich.yield_est) {
+        setRentInput(Math.round((rich.price * (rich.yield_est / 100)) / 12))
+      }
+    } catch {
+      setNotFound(true)
+    } finally {
+      setLoading(false)
+    }
+  }, [id])
+
+  useEffect(() => { fetchData() }, [fetchData])
+
+  // ── Copy link ───────────────────────────────────────────────────────────────
+
+  function handleCopyLink() {
+    const url = `${window.location.origin}/imoveis/${dev?.slug ?? id}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  // ── WhatsApp share ──────────────────────────────────────────────────────────
+
+  function handleWhatsApp() {
+    const url = `${window.location.origin}/imoveis/${dev?.slug ?? id}`
+    const text = encodeURIComponent(`Confira este imóvel: ${dev?.name}\n${url}`)
+    window.open(`https://wa.me/?text=${text}`, '_blank')
+  }
+
+  // ── Shared props ────────────────────────────────────────────────────────────
+
+  const sharedProps: DetailProps = {
+    dev,
+    property: enriched,
+    loading,
+    router,
+    id,
+    enriched,
+    notFound,
+    activeTab,
+    setActiveTab,
+    galleryIdx,
+    setGalleryIdx,
+    rentInput,
+    setRentInput,
+    expensePct,
+    setExpensePct,
+    vacancyPct,
+    setVacancyPct,
+    copied,
+    handleCopyLink,
+    handleWhatsApp,
+  }
+
+  if (isMobile) {
+    return <MobileImovelDetail {...sharedProps} />
+  }
+
+  return <DesktopImovelDetail {...sharedProps} />
 }

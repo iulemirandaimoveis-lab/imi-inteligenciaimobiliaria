@@ -17,46 +17,52 @@ import {
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
 const BOTTOM_ITEMS = [
-    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,          color: '#F59E0B', bg: 'rgba(245,158,11,0.13)'  },
-    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,    color: '#D4A929', bg: 'rgba(212,169,41,0.13)'  },
-    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,        color: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
-    { name: 'Agenda',  href: '/backoffice/agenda',    icon: CalendarDays, color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)'  },
+    { name: 'Hoje',    href: '/backoffice/hoje',      icon: Sun,          color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.13)'  },
+    { name: 'Imóveis', href: '/backoffice/imoveis',   icon: Building2,    color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.13)'  },
+    { name: 'Leads',   href: '/backoffice/leads',     icon: Users,        color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.12)' },
+    { name: 'Agenda',  href: '/backoffice/agenda',    icon: CalendarDays, color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.12)'  },
 ]
 
 // Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
-    { label: 'Novo Lead',      desc: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: '#E8A87C', bg: 'rgba(232,168,124,0.13)' },
-    { label: 'Novo Evento',    desc: 'Agendar compromisso',      href: '/backoffice/agenda',          icon: CalendarPlus, color: '#8B5CF6', bg: 'rgba(139,92,246,0.13)'  },
-    { label: 'Novo Imóvel',    desc: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: '#486581', bg: 'rgba(72,101,129,0.16)'  },
-    { label: 'Nova Avaliação', desc: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--bo-success)', bg: 'var(--bo-success-bg)' },
+    { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--imi-gold-500)', iconBg: 'rgba(184,148,58,0.14)'  },
+    { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: '#60A5FA',              iconBg: 'rgba(96,165,250,0.14)'  },
+    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: '#A78BFA',              iconBg: 'rgba(167,139,250,0.14)' },
+    { label: 'Nova Campanha',  subtitle: 'Criar campanha de mídia',  href: '/backoffice/campanhas/nova',  icon: CalendarPlus, color: '#FB923C',              iconBg: 'rgba(251,146,60,0.14)'  },
+    { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,   color: '#34D399',              iconBg: 'rgba(52,211,153,0.14)'  },
+    { label: 'Novo Contrato',  subtitle: 'Registrar contrato',       href: '/backoffice/contratos/novo',  icon: FileSignature,color: '#F87171',              iconBg: 'rgba(248,113,113,0.14)' },
 ]
 
+// Badge values: 'NEW' | 'BREVE' | undefined
+type NavItemBadge = 'NEW' | 'BREVE'
+interface GroupItem { name: string; href: string; icon: React.ElementType; badge?: NavItemBadge }
+
 // Full nav groups — horizontal Netflix-style rows
-const GROUPS = [
+const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem[] }> = [
     {
         label: 'Visão Executiva', color: '#6B9EC4', bg: 'rgba(107,158,196,0.12)',
         items: [
-            { name: 'Dashboard',    href: '/backoffice/dashboard',            icon: LayoutDashboard },
+            { name: 'Dashboard',    href: '/backoffice/dashboard',            icon: LayoutDashboard, badge: 'NEW'   },
             { name: 'Metas',        href: '/backoffice/financeiro/metas',     icon: Target },
-            { name: 'Relatórios',   href: '/backoffice/relatorios',           icon: FileStack },
+            { name: 'Relatórios',   href: '/backoffice/relatorios',           icon: FileStack,       badge: 'NEW'   },
             { name: 'Global Intel', href: '/backoffice/relatorios/executivo', icon: Brain },
         ],
     },
     {
         label: 'Captação', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)',
         items: [
-            { name: 'Leads',         href: '/backoffice/leads',            icon: Users },
+            { name: 'Leads',         href: '/backoffice/leads',            icon: Users,         badge: 'NEW'   },
             { name: 'Inbox IA',      href: '/backoffice/leads/inbox',      icon: Inbox },
             { name: 'Comportamento', href: '/backoffice/leads/behavior',   icon: BarChart3 },
-            { name: 'Campanhas',     href: '/backoffice/campanhas',        icon: Megaphone },
+            { name: 'Campanhas',     href: '/backoffice/campanhas',        icon: Megaphone,     badge: 'NEW'   },
             { name: 'Ads',           href: '/backoffice/campanhas/ads',    icon: BarChart2 },
-            { name: 'QR Tracking',   href: '/backoffice/tracking/qr',      icon: QrCode },
-            { name: 'Omni Channel',  href: '/backoffice/omnichannel',      icon: Layers },
-            { name: 'WhatsApp',      href: '/backoffice/whatsapp',         icon: MessageSquare },
+            { name: 'QR Tracking',   href: '/backoffice/tracking/qr',      icon: QrCode,        badge: 'NEW'   },
+            { name: 'Omni Channel',  href: '/backoffice/omnichannel',      icon: Layers,        badge: 'BREVE' },
+            { name: 'WhatsApp',      href: '/backoffice/whatsapp',         icon: MessageSquare, badge: 'BREVE' },
         ],
     },
     {
-        label: 'Conversão', color: 'var(--bo-success)', bg: 'var(--bo-success-bg)',
+        label: 'Conversão', color: 'var(--success)', bg: 'var(--success-bg)',
         items: [
             { name: 'Pipeline',   href: '/backoffice/leads/pipeline',    icon: TrendingUp },
             { name: 'Simulações', href: '/backoffice/credito/simulador', icon: CreditCard },
@@ -66,9 +72,9 @@ const GROUPS = [
     {
         label: 'Portfólio', color: '#D4A929', bg: 'rgba(212,169,41,0.12)',
         items: [
-            { name: 'Imóveis',      href: '/backoffice/imoveis',            icon: Building2  },
-            { name: 'Construtoras', href: '/backoffice/construtoras',       icon: Building   },
-            { name: 'Projetos',     href: '/backoffice/projetos',           icon: FolderOpen },
+            { name: 'Imóveis',      href: '/backoffice/imoveis',            icon: Building2,  badge: 'NEW'   },
+            { name: 'Construtoras', href: '/backoffice/construtoras',       icon: Building,   badge: 'NEW'   },
+            { name: 'Projetos',     href: '/backoffice/projetos',           icon: FolderOpen, badge: 'NEW'   },
             { name: 'Publicações',  href: '/backoffice/conteudos',          icon: FileText   },
             { name: 'Criador IA',   href: '/backoffice/conteudo/criador',   icon: Wand2      },
             { name: 'eBook IA',     href: '/backoffice/conteudo/ebook',     icon: BookMarked },
@@ -79,15 +85,15 @@ const GROUPS = [
         label: 'Inteligência', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)',
         items: [
             { name: 'eBooks',      href: '/backoffice/inteligencia/ebooks',       icon: BookOpen  },
-            { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack },
+            { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack, badge: 'NEW' },
             { name: 'Indicadores', href: '/backoffice/inteligencia/indicadores',  icon: LineChart },
-            { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain     },
+            { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain,     badge: 'NEW' },
         ],
     },
     {
         label: 'Operação', color: '#4ECDC4', bg: 'rgba(78,205,196,0.12)',
         items: [
-            { name: 'Avaliações',     href: '/backoffice/avaliacoes',                  icon: Scale         },
+            { name: 'Avaliações',     href: '/backoffice/avaliacoes',                  icon: Scale,        badge: 'NEW'   },
             { name: 'Nova Avaliação', href: '/backoffice/avaliacoes/nova',             icon: Scale         },
             { name: 'Email + Hon.',   href: '/backoffice/avaliacoes/email-honorarios', icon: Scale         },
             { name: 'NBR',            href: '/backoffice/avaliacoes/exercicios',       icon: BookOpen      },
@@ -101,7 +107,7 @@ const GROUPS = [
     {
         label: 'Financeiro', color: '#84CC16', bg: 'rgba(132,204,22,0.10)',
         items: [
-            { name: 'Visão Geral', href: '/backoffice/financeiro',         icon: Banknote    },
+            { name: 'Visão Geral', href: '/backoffice/financeiro',         icon: Banknote,    badge: 'NEW'   },
             { name: 'A Receber',   href: '/backoffice/financeiro/receber', icon: TrendingUp  },
             { name: 'A Pagar',     href: '/backoffice/financeiro/pagar',   icon: TrendingDown },
             { name: 'Metas',       href: '/backoffice/financeiro/metas',   icon: Target      },
@@ -110,9 +116,9 @@ const GROUPS = [
     {
         label: 'Crescimento', color: '#A78BFA', bg: 'rgba(167,139,250,0.12)',
         items: [
-            { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap        },
-            { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen   },
-            { name: 'Analytics',     href: '/backoffice/tracking',      icon: BarChart2  },
+            { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap,       badge: 'BREVE' },
+            { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen,  badge: 'NEW'   },
+            { name: 'Analytics',     href: '/backoffice/tracking',      icon: BarChart2, badge: 'NEW'   },
             { name: 'Central IA',    href: '/backoffice/ia',            icon: Sparkles   },
             { name: 'IA Avaliações', href: '/backoffice/avaliacoes/ia', icon: Sparkles   },
         ],
@@ -120,8 +126,8 @@ const GROUPS = [
     {
         label: 'Configurações', color: '#94A3B8', bg: 'rgba(148,163,184,0.10)',
         items: [
-            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building  },
-            { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users     },
+            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building,  badge: 'BREVE' },
+            { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users,     badge: 'NEW'   },
             { name: 'Integrações',  href: '/backoffice/integracoes',         icon: Plug      },
             { name: 'Settings',     href: '/backoffice/settings',            icon: Settings  },
             { name: 'Corretores',   href: '/backoffice/settings/corretores', icon: Users     },
@@ -131,25 +137,55 @@ const GROUPS = [
     },
 ]
 
+// ── Netflix tile badge ─────────────────────────────────────────────
+function TileBadge({ badge }: { badge: string }) {
+    const isNew = badge === 'NEW'
+    return (
+        <span style={{
+            position: 'absolute',
+            top: 6,
+            right: 6,
+            fontSize: 9,
+            fontWeight: isNew ? 700 : 600,
+            padding: '1px 5px',
+            borderRadius: 999,
+            letterSpacing: isNew ? '0.06em' : '0.05em',
+            background: isNew ? 'rgba(45,143,92,0.15)' : 'var(--bg-muted)',
+            color: isNew ? '#2D8F5C' : 'var(--text-tertiary)',
+            border: isNew ? '1px solid rgba(45,143,92,0.2)' : '1px solid var(--border-subtle)',
+            lineHeight: 1.4,
+            pointerEvents: 'none',
+        }}>
+            {isNew ? 'NEW' : 'EM BREVE'}
+        </span>
+    )
+}
+
 // ── Netflix tile card ──────────────────────────────────────────────
 function NetflixItemCard({
-    name, icon: Icon, color, bg, active,
-}: { name: string; icon: React.ElementType; color: string; bg: string; active: boolean }) {
+    name, icon: Icon, color, bg, active, badge,
+}: { name: string; icon: React.ElementType; color: string; bg: string; active: boolean; badge?: string }) {
     return (
-        <div className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[62px]">
+        <div className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[64px]" style={{ position: 'relative' }}>
             <div
-                className="w-[48px] h-[48px] rounded-2xl flex items-center justify-center"
+                className="w-[48px] h-[48px] flex items-center justify-center transition-all duration-150"
                 style={{
-                    background: active ? bg : 'var(--bo-icon-bg)',
-                    boxShadow: active ? `0 0 0 1.5px ${color}80` : 'none',
-                    transition: 'background 0.15s, box-shadow 0.15s',
+                    borderRadius: 'var(--r-lg)',
+                    background: active ? bg : 'var(--bg-elevated)',
+                    border: active ? `1px solid ${color}40` : '1px solid var(--border-subtle)',
+                    boxShadow: active ? `0 2px 8px ${color}28` : 'none',
+                    position: 'relative',
                 }}
             >
-                <Icon size={19} style={{ color: active ? color : 'var(--bo-text-muted)' }} />
+                <Icon size={19} style={{ color: active ? color : 'var(--text-tertiary)' }} />
             </div>
+            {badge && <TileBadge badge={badge} />}
             <span
                 className="text-[9px] font-semibold text-center leading-tight w-full"
-                style={{ color: active ? color : 'var(--bo-text-muted)' }}
+                style={{
+                    color: active ? color : 'var(--text-tertiary)',
+                    fontFamily: 'var(--font-sans)',
+                }}
             >
                 {name}
             </span>
@@ -160,11 +196,15 @@ function NetflixItemCard({
 // ── Netflix row label ──────────────────────────────────────────────
 function NetflixRowLabel({ color, label }: { color: string; label: string }) {
     return (
-        <div className="flex items-center gap-2 px-4 mb-2">
-            <div className="w-[3px] h-[13px] rounded-full flex-shrink-0" style={{ background: color }} />
+        <div className="flex items-center gap-2.5 px-4 mb-2">
+            {/* DS3 brandkit 4px indicator */}
+            <div
+                className="flex-shrink-0"
+                style={{ width: 4, height: 14, borderRadius: 2, background: color }}
+            />
             <span
-                className="text-[10px] font-bold tracking-[0.1em] uppercase"
-                style={{ color: 'var(--bo-text-muted)' }}
+                className="text-[10px] font-bold tracking-[0.12em] uppercase"
+                style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}
             >
                 {label}
             </span>
@@ -185,9 +225,23 @@ function NetflixRow({ children }: { children: React.ReactNode }) {
             {/* Right fade hint */}
             <div
                 className="absolute right-0 top-0 bottom-0 w-6 pointer-events-none"
-                style={{ background: 'linear-gradient(to left, var(--bo-drawer-bg, #0f1318) 20%, transparent)' }}
+                style={{ background: 'linear-gradient(to left, var(--bg-base) 20%, transparent)' }}
             />
         </div>
+    )
+}
+
+// ── Vertical divider between nav items ────────────────────────────
+function NavDivider() {
+    return (
+        <div
+            style={{
+                width: 1,
+                height: 28,
+                background: 'var(--border-default)',
+                flexShrink: 0,
+            }}
+        />
     )
 }
 
@@ -209,6 +263,10 @@ export function MobileBottomNav() {
         setOpen(false)
     }, [pathname])
 
+    // Hide when imoveis module has its own module nav
+    const isImoveisModule = pathname?.startsWith('/backoffice/imoveis')
+    if (isImoveisModule) return null
+
     return (
         <>
             {/* ── Bottom Bar ─────────────────────────────────────── */}
@@ -216,59 +274,89 @@ export function MobileBottomNav() {
                 className="lg:hidden fixed bottom-0 inset-x-0 z-50"
                 style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             >
+                {/* Nav container — DS3 standard radius (not pill-shaped) */}
                 <div
-                    className="mx-2 mb-2 rounded-2xl"
+                    className="mx-3 mb-3"
                     style={{
+                        borderRadius: 'var(--r-xl)',
                         background: 'var(--nav-bg)',
                         backdropFilter: 'blur(24px)',
                         WebkitBackdropFilter: 'blur(24px)',
-                        border: '1px solid var(--bo-border)',
-                        boxShadow: 'var(--bo-shadow)',
+                        border: '1px solid var(--border-default)',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
                     }}
                 >
-                    <div className="flex items-center justify-between px-1 py-0.5">
+                    <div className="flex items-center h-16 px-1">
 
-                        {/* Left 2: Dashboard + Imóveis */}
-                        {BOTTOM_ITEMS.slice(0, 2).map(item => {
+                        {/* Hoje */}
+                        {(() => {
+                            const item = BOTTOM_ITEMS[0]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
                                 <Link key={item.href} href={item.href} className="flex-1">
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center py-2 w-full"
+                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
                                     >
                                         <item.icon
                                             size={18}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? item.color : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="text-[10px] font-semibold mt-0.5 transition-colors duration-150"
-                                            style={{ color: active ? item.color : 'var(--nav-inactive)' }}
+                                            className="text-[10px] font-semibold transition-colors duration-150"
+                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
                                         </span>
                                     </motion.div>
                                 </Link>
                             )
-                        })}
+                        })()}
 
-                        {/* Center: Mais (elevated, opens mega-menu) */}
-                        <div className="flex-shrink-0 flex flex-col items-center justify-center px-3">
+                        <NavDivider />
+
+                        {/* Imóveis */}
+                        {(() => {
+                            const item = BOTTOM_ITEMS[1]
+                            const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
+                            return (
+                                <Link key={item.href} href={item.href} className="flex-1">
+                                    <motion.div
+                                        whileTap={{ scale: 0.85 }}
+                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                    >
+                                        <item.icon
+                                            size={18}
+                                            className="transition-colors duration-150"
+                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                        />
+                                        <span
+                                            className="text-[10px] font-semibold transition-colors duration-150"
+                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                        >
+                                            {item.name}
+                                        </span>
+                                    </motion.div>
+                                </Link>
+                            )
+                        })()}
+
+                        <NavDivider />
+
+                        {/* Mais — center, inline, distinct background */}
+                        <div className="flex-1 flex flex-col items-center justify-center gap-0.5">
                             <motion.button
                                 whileTap={{ scale: 0.88 }}
                                 onClick={() => setOpen(v => !v)}
-                                className="flex items-center justify-center rounded-2xl"
+                                className="flex items-center justify-center"
                                 style={{
-                                    width: 52,
-                                    height: 52,
-                                    marginTop: '-18px',
-                                    background: open ? 'var(--bo-accent)' : 'var(--bo-icon-bg)',
-                                    border: `1.5px solid ${open ? 'var(--bo-accent)' : 'var(--bo-border)'}`,
-                                    boxShadow: open
-                                        ? '0 4px 24px rgba(72,101,129,0.5)'
-                                        : '0 4px 20px rgba(0,0,0,0.25)',
-                                    transition: 'background 0.2s, border-color 0.2s, box-shadow 0.2s',
+                                    width: 44,
+                                    height: 44,
+                                    borderRadius: 14,
+                                    background: open ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
+                                    border: `1px solid ${open ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
+                                    transition: 'background 0.2s, border-color 0.2s',
                                 }}
                             >
                                 <AnimatePresence mode="wait">
@@ -280,7 +368,7 @@ export function MobileBottomNav() {
                                             exit={{ rotate: 45, opacity: 0 }}
                                             transition={{ duration: 0.18 }}
                                         >
-                                            <X size={22} color="white" strokeWidth={2.5} />
+                                            <X size={20} color="white" strokeWidth={2.5} />
                                         </motion.div>
                                     ) : (
                                         <motion.div
@@ -290,43 +378,75 @@ export function MobileBottomNav() {
                                             exit={{ scale: 0.7, opacity: 0 }}
                                             transition={{ duration: 0.18 }}
                                         >
-                                            <MoreHorizontal size={22} style={{ color: 'var(--bo-text-muted)' }} strokeWidth={2} />
+                                            <MoreHorizontal size={20} style={{ color: 'var(--text-tertiary)' }} strokeWidth={2} />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
                             </motion.button>
                             <span
-                                className="text-[9px] font-semibold mt-0.5"
-                                style={{ color: open ? 'var(--bo-accent)' : 'var(--nav-inactive)' }}
+                                className="text-[10px] font-semibold transition-colors duration-150"
+                                style={{ color: open ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
                             >
                                 Mais
                             </span>
                         </div>
 
-                        {/* Right 2: Leads + Agenda */}
-                        {BOTTOM_ITEMS.slice(2, 4).map(item => {
+                        <NavDivider />
+
+                        {/* Leads */}
+                        {(() => {
+                            const item = BOTTOM_ITEMS[2]
                             const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
                             return (
                                 <Link key={item.href} href={item.href} className="flex-1">
                                     <motion.div
                                         whileTap={{ scale: 0.85 }}
-                                        className="flex flex-col items-center justify-center py-2 w-full"
+                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
                                     >
                                         <item.icon
                                             size={18}
                                             className="transition-colors duration-150"
-                                            style={{ color: active ? item.color : 'var(--nav-inactive)' }}
+                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
                                         />
                                         <span
-                                            className="text-[10px] font-semibold mt-0.5 transition-colors duration-150"
-                                            style={{ color: active ? item.color : 'var(--nav-inactive)' }}
+                                            className="text-[10px] font-semibold transition-colors duration-150"
+                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
                                         >
                                             {item.name}
                                         </span>
                                     </motion.div>
                                 </Link>
                             )
-                        })}
+                        })()}
+
+                        <NavDivider />
+
+                        {/* Agenda */}
+                        {(() => {
+                            const item = BOTTOM_ITEMS[3]
+                            const active = !open && (pathname === item.href || pathname?.startsWith(item.href + '/'))
+                            return (
+                                <Link key={item.href} href={item.href} className="flex-1">
+                                    <motion.div
+                                        whileTap={{ scale: 0.85 }}
+                                        className="flex flex-col items-center justify-center h-full w-full gap-0.5"
+                                    >
+                                        <item.icon
+                                            size={18}
+                                            className="transition-colors duration-150"
+                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                        />
+                                        <span
+                                            className="text-[10px] font-semibold transition-colors duration-150"
+                                            style={{ color: active ? 'var(--imi-gold-500)' : 'var(--nav-inactive)' }}
+                                        >
+                                            {item.name}
+                                        </span>
+                                    </motion.div>
+                                </Link>
+                            )
+                        })()}
+
                     </div>
                 </div>
             </div>
@@ -366,23 +486,73 @@ export function MobileBottomNav() {
                             animate={{ y: 0 }}
                             exit={{ y: '100%' }}
                             transition={{ type: 'spring', stiffness: 420, damping: 42 }}
-                            className="lg:hidden fixed bottom-0 inset-x-0 z-50 rounded-t-3xl flex flex-col"
+                            className="lg:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col"
                             style={{
-                                background: 'var(--bo-drawer-bg)',
-                                border: '1px solid var(--bo-border)',
-                                borderBottom: 'none',
-                                boxShadow: '0 -8px 64px rgba(0,0,0,0.4)',
+                                borderRadius: 'var(--r-xl) var(--r-xl) 0 0',
+                                background: 'var(--bg-surface)',
+                                borderTop: '1px solid var(--border-default)',
+                                borderLeft: '1px solid var(--border-default)',
+                                borderRight: '1px solid var(--border-default)',
+                                boxShadow: '0 -8px 40px rgba(0,0,0,0.25)',
                                 maxHeight: 'min(94dvh, 94vh)',
                                 height: 'min(94dvh, 94vh)',
                                 overflow: 'hidden',
                             }}
                         >
-                            {/* Drag Handle — arrastar pra baixo fecha */}
+                            {/* ── Header with drag handle + IMI brand + close ── */}
                             <div
-                                className="flex justify-center pt-3 pb-1 flex-shrink-0 touch-none cursor-grab active:cursor-grabbing"
+                                className="flex-shrink-0 touch-none cursor-grab active:cursor-grabbing"
                                 onPointerDown={e => dragControls.start(e)}
                             >
-                                <div className="w-10 h-1 rounded-full" style={{ background: 'var(--bo-border)' }} />
+                                {/* Drag handle */}
+                                <div className="flex justify-center pt-3 pb-0">
+                                    <div
+                                        className="w-9 h-[3px]"
+                                        style={{ borderRadius: 'var(--r-full)', background: 'var(--border-strong)' }}
+                                    />
+                                </div>
+                                {/* Brand row */}
+                                <div
+                                    className="flex items-center justify-between px-4 pt-3 pb-3"
+                                    style={{ borderBottom: '1px solid var(--border-subtle)' }}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <span style={{
+                                            fontFamily: "'Libre Baskerville', Georgia, serif",
+                                            fontSize: 16,
+                                            fontWeight: 700,
+                                            color: 'var(--text-primary)',
+                                            letterSpacing: '-0.01em',
+                                            lineHeight: 1,
+                                        }}>IMI</span>
+                                        <div style={{ width: 1, height: 13, background: 'var(--border-strong)', flexShrink: 0 }} />
+                                        <span style={{
+                                            fontSize: 7,
+                                            fontWeight: 700,
+                                            color: 'var(--text-gold)',
+                                            letterSpacing: '0.12em',
+                                            textTransform: 'uppercase' as const,
+                                            lineHeight: 1.25,
+                                            fontFamily: 'var(--font-sans)',
+                                        }}>
+                                            MENU<br />PRINCIPAL
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={() => setOpen(false)}
+                                        className="flex items-center justify-center"
+                                        style={{
+                                            width: 32,
+                                            height: 32,
+                                            borderRadius: 'var(--r-md)',
+                                            background: 'var(--bg-elevated)',
+                                            border: '1px solid var(--border-subtle)',
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        <X size={14} style={{ color: 'var(--text-tertiary)' }} />
+                                    </button>
+                                </div>
                             </div>
 
                             {/* ── Netflix scrollable rows ── */}
@@ -390,45 +560,98 @@ export function MobileBottomNav() {
                                 className="overflow-y-auto flex-1"
                                 style={{ paddingBottom: 'calc(88px + env(safe-area-inset-bottom))' }}
                             >
-                                {/* Quick Create — prominent landscape cards */}
+                                {/* Quick Create — premium 2-column launcher */}
                                 <motion.div
-                                    className="pt-4"
+                                    className="pt-4 px-4"
                                     initial={{ opacity: 0, y: 12 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.05, duration: 0.28 }}
                                 >
-                                    <NetflixRowLabel color="#E8A87C" label="Criar Novo" />
-                                    <NetflixRow>
+                                    {/* Section label */}
+                                    <div className="flex items-center gap-2.5 mb-3">
+                                        <div style={{ width: 4, height: 12, borderRadius: 2, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                                        <span style={{
+                                            fontSize: '9px', fontWeight: 700,
+                                            color: 'var(--text-tertiary)',
+                                            letterSpacing: '0.14em',
+                                            textTransform: 'uppercase',
+                                            fontFamily: 'var(--font-mono)',
+                                        }}>
+                                            CRIAR NOVO
+                                        </span>
+                                        <div className="flex-1 h-px" style={{ background: 'var(--border-subtle)' }} />
+                                    </div>
+
+                                    {/* 2-column grid — min-w-0 prevents overflow */}
+                                    <div className="grid grid-cols-2 gap-2 w-full">
                                         {QUICK_CREATE.map((item, i) => (
                                             <motion.div
                                                 key={item.href}
-                                                initial={{ opacity: 0, scale: 0.88 }}
+                                                initial={{ opacity: 0, scale: 0.90 }}
                                                 animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ delay: 0.08 + i * 0.06, type: 'spring', stiffness: 380, damping: 26 }}
+                                                transition={{ delay: 0.08 + i * 0.045, type: 'spring', stiffness: 400, damping: 28 }}
                                             >
                                                 <Link href={item.href} onClick={() => setOpen(false)}>
                                                     <motion.div
-                                                        whileTap={{ scale: 0.94 }}
-                                                        className="flex-shrink-0 w-[78px] rounded-xl p-2 flex flex-col gap-1.5"
+                                                        whileTap={{ scale: 0.96 }}
+                                                        className="flex items-center gap-2.5 px-3 min-w-0"
                                                         style={{
-                                                            background: item.bg,
-                                                            border: `1px solid ${item.color}28`,
+                                                            height: 60,
+                                                            borderRadius: 'var(--r-lg)',
+                                                            background: 'var(--bg-elevated)',
+                                                            border: '1px solid var(--border-subtle)',
+                                                            transition: 'border-color 0.15s, box-shadow 0.15s',
+                                                        }}
+                                                        onHoverStart={e => {
+                                                            const el = (e.target as HTMLElement).closest('[data-quick-card]') as HTMLElement | null
+                                                            if (el) {
+                                                                el.style.borderColor = 'rgba(184,148,58,0.45)'
+                                                                el.style.boxShadow = '0 2px 10px rgba(184,148,58,0.10)'
+                                                            }
+                                                        }}
+                                                        onHoverEnd={e => {
+                                                            const el = (e.target as HTMLElement).closest('[data-quick-card]') as HTMLElement | null
+                                                            if (el) {
+                                                                el.style.borderColor = ''
+                                                                el.style.boxShadow = ''
+                                                            }
                                                         }}
                                                     >
+                                                        {/* Colored icon box */}
                                                         <div
-                                                            className="w-7 h-7 rounded-lg flex items-center justify-center"
-                                                            style={{ background: `${item.color}25` }}
+                                                            className="flex-shrink-0 flex items-center justify-center"
+                                                            style={{
+                                                                width: 36, height: 36,
+                                                                borderRadius: 8,
+                                                                background: item.iconBg,
+                                                                border: `1px solid ${item.color}28`,
+                                                            }}
                                                         >
-                                                            <item.icon size={13} style={{ color: item.color }} />
+                                                            <item.icon size={15} style={{ color: item.color }} />
                                                         </div>
-                                                        <p className="text-[10px] font-bold leading-tight" style={{ color: 'var(--bo-text)' }}>
-                                                            {item.label}
-                                                        </p>
+
+                                                        {/* Text */}
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-[12px] font-semibold truncate leading-tight"
+                                                                style={{ color: 'var(--text-primary)' }}>
+                                                                {item.label}
+                                                            </p>
+                                                            <p className="text-[9px] truncate mt-0.5 leading-tight"
+                                                                style={{ color: 'var(--text-tertiary)' }}>
+                                                                {item.subtitle}
+                                                            </p>
+                                                        </div>
+
+                                                        {/* Arrow */}
+                                                        <span className="flex-shrink-0 text-[13px] font-light"
+                                                            style={{ color: 'var(--text-tertiary)', opacity: 0.6 }}>
+                                                            →
+                                                        </span>
                                                     </motion.div>
                                                 </Link>
                                             </motion.div>
                                         ))}
-                                    </NetflixRow>
+                                    </div>
                                 </motion.div>
 
                                 {/* ── GROUPS as Netflix horizontal rows ── */}
@@ -453,6 +676,7 @@ export function MobileBottomNav() {
                                                                 color={group.color}
                                                                 bg={group.bg}
                                                                 active={active}
+                                                                badge={item.badge}
                                                             />
                                                         </motion.div>
                                                     </Link>

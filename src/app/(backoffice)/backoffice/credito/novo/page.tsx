@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 const STEPS = [
     { id: 1, name: 'Cliente', description: 'Dados pessoais', icon: User },
@@ -116,6 +116,7 @@ export default function CreditoNovoPage() {
         if (!validateStep(currentStep)) return
         setIsSubmitting(true)
         try {
+            const supabase = createClient()
             // Build full address from parts
             const fullAddress = [formData.property_address, formData.property_city, formData.property_state]
                 .filter(Boolean).join(', ')

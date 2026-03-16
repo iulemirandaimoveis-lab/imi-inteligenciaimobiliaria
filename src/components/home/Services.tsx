@@ -48,7 +48,7 @@ export default function Services({ dict }: ServicesProps) {
     ]
 
     return (
-        <section className="py-16 lg:py-20 bg-[#0D1117]">
+        <section className="py-16 lg:py-20" style={{ background: 'var(--imi-navy-900)' }}>
             <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
 
                 {/* Section label */}
@@ -59,8 +59,8 @@ export default function Services({ dict }: ServicesProps) {
                     transition={{ duration: 0.5 }}
                     className="flex items-center gap-3 mb-10"
                 >
-                    <div className="w-8 h-px bg-[#334E68]" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#486581]">Nossos Serviços</span>
+                    <div className="w-8 h-px" style={{ background: 'var(--imi-navy-400)' }} />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: 'var(--imi-navy-300)', fontFamily: 'var(--font-sans)' }}>Nossos Serviços</span>
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
@@ -74,8 +74,8 @@ export default function Services({ dict }: ServicesProps) {
                         >
                             <Link
                                 href={item.href}
-                                className="group relative block rounded-2xl p-7 border border-white/[0.06] overflow-hidden transition-all duration-300 hover:border-[#334E68]/50"
-                                style={{ background: '#141420', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
+                                className="group relative block rounded-2xl p-7 border border-white/[0.06] overflow-hidden transition-all duration-300 hover:border-[rgba(61,81,138,0.5)]"
+                                style={{ background: 'var(--imi-navy-800)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}
                             >
                                 {/* Corner glow on hover */}
                                 <div
@@ -90,18 +90,18 @@ export default function Services({ dict }: ServicesProps) {
                                 <div className="relative z-10">
                                     {/* Icon + tag */}
                                     <div className="flex items-start justify-between mb-6">
-                                        <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-white/[0.05] border border-white/[0.08] group-hover:border-[#334E68]/40 group-hover:bg-[#334E68]/10 transition-all duration-300">
-                                            <item.icon className="w-5 h-5 text-white/70 group-hover:text-[#9FB3C8] transition-colors duration-300" strokeWidth={1.5} />
+                                        <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-white/[0.05] border border-white/[0.08] transition-all duration-300">
+                                            <item.icon className="w-5 h-5 text-white/70 transition-colors duration-300" strokeWidth={1.5} />
                                         </div>
-                                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#627D98] bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06]">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.06]" style={{ color: 'var(--imi-navy-300)', fontFamily: 'var(--font-sans)' }}>
                                             {item.tag}
                                         </span>
                                     </div>
 
-                                    <h3 className="text-[16px] font-bold text-white mb-2">{item.title}</h3>
-                                    <p className="text-[13px] text-white/50 leading-relaxed mb-6">{item.desc}</p>
+                                    <h3 className="text-[16px] font-bold text-white mb-2" style={{ fontFamily: 'var(--font-sans)' }}>{item.title}</h3>
+                                    <p className="text-[13px] text-white/50 leading-relaxed mb-6" style={{ fontFamily: 'var(--font-sans)' }}>{item.desc}</p>
 
-                                    <div className="flex items-center gap-2 text-[12px] font-semibold text-[#486581] group-hover:text-[#9FB3C8] group-hover:gap-3 transition-all duration-200">
+                                    <div className="flex items-center gap-2 text-[12px] font-semibold group-hover:gap-3 transition-all duration-200" style={{ color: 'var(--imi-navy-300)', fontFamily: 'var(--font-sans)' }}>
                                         Saiba mais <ArrowRight size={12} />
                                     </div>
                                 </div>

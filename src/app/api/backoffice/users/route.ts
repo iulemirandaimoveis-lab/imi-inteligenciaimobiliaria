@@ -1,26 +1,56 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
-// Protected: requires CRON_SECRET or valid admin session
-function isAuthorized(request: Request): boolean {
-    const authHeader = request.headers.get('authorization')
-    const cronSecret = process.env.CRON_SECRET
+export const dynamic = 'force-dynamic'
 
-    // Allow if valid CRON_SECRET is provided
-    if (cronSecret && authHeader === `Bearer ${cronSecret}`) return true
-
-    // In production, this should validate a Supabase Auth session + admin role.
-    // For now, we block unauthenticated access entirely.
-    return false
-}
+// Check if service role key is configured
+const hasServiceKey = !!(process.env.SUPABASE_SERVICE_ROLE_KEY)
 
 export async function POST(request: Request) {
     try {
-        if (!isAuthorized(request)) {
-            return NextResponse.json(
-                { error: 'Acesso não autorizado. Use o Supabase Dashboard para criar usuários.' },
-                { status: 403 }
-            )
+        // Verify the caller is authenticated
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        // Check if caller has admin role — try both tables (users + profiles)
+        let isAdmin = false
+        if (hasServiceKey) {
+            const { data: userRow } = await supabaseAdmin
+                .from('users')
+                .select('role')
+                .eq('id', user.id)
+                .single()
+            if (userRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(userRow.role)) {
+                isAdmin = true
+            }
+            if (!isAdmin) {
+                const { data: profileRow } = await supabaseAdmin
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single()
+                if (profileRow && ['admin', 'ADMIN', 'SUPER_ADMIN'].includes(profileRow.role)) {
+                    isAdmin = true
+                }
+            }
+        } else {
+            // Without service key, check via authenticated client
+            const { data: userRow } = await supabase
+                .from('users')
+                .select('role')
+                .eq('id', user.id)
+                .single()
+            if (userRow && ['ADMIN', 'admin', 'SUPER_ADMIN'].includes(userRow.role)) {
+                isAdmin = true
+            }
+        }
+
+        if (!isAdmin) {
+            return NextResponse.json({ error: 'Apenas administradores podem criar usuários' }, { status: 403 })
         }
 
         const body = await request.json()
@@ -33,32 +63,78 @@ export async function POST(request: Request) {
             )
         }
 
-        // 1. Create user in Supabase Auth
-        const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
-            email,
-            password,
-            email_confirm: true,
-            user_metadata: { name, role: role || 'EDITOR' }
-        })
-
-        if (authError) {
-            console.error('Error creating auth user:', authError)
-            return NextResponse.json({ error: authError.message }, { status: 500 })
+        if (password.length < 6) {
+            return NextResponse.json(
+                { error: 'Senha deve ter pelo menos 6 caracteres' },
+                { status: 400 }
+            )
         }
 
-        const newUserId = authUser.user.id
+        const validRole = role || 'EDITOR'
 
-        // 2. Insert into public.users
-        const { error: dbError } = await supabaseAdmin
-            .from('users')
-            .insert({ id: newUserId, email, name, role: role || 'EDITOR' })
+        if (hasServiceKey) {
+            // Admin flow: create user via admin API (bypasses email confirmation)
+            const { data: authUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+                email,
+                password,
+                email_confirm: true,
+                user_metadata: { name, role: validRole }
+            })
 
-        if (dbError) {
-            console.error('Error creating public user:', dbError)
-            return NextResponse.json({ error: dbError.message }, { status: 500 })
+            if (createError) {
+                console.error('Error creating auth user:', createError)
+                return NextResponse.json({ error: createError.message }, { status: 500 })
+            }
+
+            const newUserId = authUser.user.id
+
+            // Sync to public.users (camelCase columns)
+            await supabaseAdmin
+                .from('users')
+                .upsert({ id: newUserId, email, name, role: validRole })
+                .then(({ error }) => error && console.error('Sync users error:', error))
+
+            // Also sync to profiles
+            await supabaseAdmin
+                .from('profiles')
+                .upsert({ id: newUserId, email, name, role: validRole.toLowerCase() })
+                .then(({ error }) => error && console.error('Sync profiles error:', error))
+
+            return NextResponse.json({ success: true, user: { id: newUserId, email, name, role: validRole } })
+        } else {
+            // Fallback: use regular signUp (user will need to confirm email)
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: { name, role: validRole },
+                    emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'}/login`,
+                }
+            })
+
+            if (signUpError) {
+                return NextResponse.json({ error: signUpError.message }, { status: 500 })
+            }
+
+            // Sync to public.users and profiles so the user appears in the list
+            if (signUpData.user) {
+                const newUserId = signUpData.user.id
+                await supabase
+                    .from('users')
+                    .upsert({ id: newUserId, email, name, role: validRole, createdAt: new Date().toISOString() })
+                    .then(({ error }) => error && console.error('Sync users error (fallback):', error))
+                await supabase
+                    .from('profiles')
+                    .upsert({ id: newUserId, email, name, role: validRole.toLowerCase(), created_at: new Date().toISOString() })
+                    .then(({ error }) => error && console.error('Sync profiles error (fallback):', error))
+            }
+
+            return NextResponse.json({
+                success: true,
+                user: { id: signUpData.user?.id, email, name, role: validRole },
+                message: 'Usuário criado com sucesso.'
+            })
         }
-
-        return NextResponse.json({ success: true, user: authUser.user })
 
     } catch (error: any) {
         console.error('API Error:', error)
@@ -66,5 +142,37 @@ export async function POST(request: Request) {
             { error: error.message || 'Erro interno no servidor' },
             { status: 500 }
         )
+    }
+}
+
+export async function GET(request: Request) {
+    try {
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        // Try profiles first (has more columns), fallback to users
+        const client = hasServiceKey ? supabaseAdmin : supabase
+        const { data, error } = await client
+            .from('profiles')
+            .select('id, email, name, role, avatar_url, phone, is_active, created_at')
+            .order('created_at', { ascending: false })
+
+        if (error) {
+            // Fallback to users table with camelCase columns
+            const { data: usersData, error: usersError } = await client
+                .from('users')
+                .select('id, email, name, role, "createdAt"')
+                .order('"createdAt"', { ascending: false })
+
+            if (usersError) throw usersError
+            return NextResponse.json({ users: usersData || [] })
+        }
+
+        return NextResponse.json({ users: data || [] })
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 })
     }
 }

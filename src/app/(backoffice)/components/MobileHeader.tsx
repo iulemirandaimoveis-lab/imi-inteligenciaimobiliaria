@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, X, ChevronRight, ChevronLeft, Settings, LogOut, Moon, Sun, User } from 'lucide-react'
+import { Bell, X, ChevronRight, ChevronLeft, Settings, LogOut, Sun, User, Camera } from 'lucide-react'
 import Link from 'next/link'
 import ThemeToggle from './ThemeToggle'
 import { createClient } from '@/lib/supabase/client'
@@ -55,9 +55,7 @@ const PAGE_TITLES: Record<string, string> = {
 }
 
 function getPageTitle(pathname: string): string {
-    // Exact match first
     if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname]
-    // Closest parent match
     const segments = pathname.split('/')
     while (segments.length > 2) {
         segments.pop()
@@ -75,6 +73,59 @@ function timeAgo(d: string) {
     return `${Math.floor(diff / 1440)}d`
 }
 
+// ── Avatar button — reusable ───────────────────────────────────────
+function AvatarButton({
+    avatarUrl,
+    userInfo,
+    accountOpen,
+    onClick,
+    size = 34,
+}: {
+    avatarUrl: string | null
+    userInfo: { name: string; email: string; initials: string; role?: string } | null
+    accountOpen: boolean
+    onClick: () => void
+    size?: number
+}) {
+    return (
+        <motion.button
+            whileTap={{ scale: 0.88 }}
+            onClick={onClick}
+            className="flex items-center justify-center overflow-hidden flex-shrink-0"
+            style={{
+                width: size,
+                height: size,
+                minWidth: size,
+                minHeight: size,
+                aspectRatio: '1/1',
+                borderRadius: '50%',
+                border: accountOpen
+                    ? '2px solid var(--imi-gold-400)'
+                    : '2px solid rgba(184,148,58,0.35)',
+                background: avatarUrl ? 'transparent' : 'var(--imi-gold-500)',
+                transition: 'border-color 0.2s',
+                flexShrink: 0,
+            }}
+        >
+            {avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                    src={avatarUrl}
+                    alt={userInfo?.name ?? 'Avatar'}
+                    className="w-full h-full object-cover"
+                />
+            ) : (
+                <span
+                    className="font-bold text-white select-none"
+                    style={{ fontSize: size > 32 ? 12 : 11 }}
+                >
+                    {userInfo?.initials ?? <User size={size > 32 ? 14 : 12} />}
+                </span>
+            )}
+        </motion.button>
+    )
+}
+
 export default function MobileHeader() {
     const router = useRouter()
     const pathname = usePathname()
@@ -83,46 +134,25 @@ export default function MobileHeader() {
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [unreadCount, setUnreadCount] = useState(0)
     const [userInfo, setUserInfo] = useState<{ name: string; email: string; initials: string; role?: string } | null>(null)
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
     const panelRef = useRef<HTMLDivElement>(null)
     const accountPanelRef = useRef<HTMLDivElement>(null)
 
     const title = getPageTitle(pathname)
 
-    // Sub-page detection: ['backoffice', 'leads', '123'] → length 3 → sub-page
+    // Sub-page: segments like ['backoffice', 'leads', '123'] → length 3 → sub-page
     const segments = pathname?.split('/').filter(Boolean) || []
     const isSubPage = segments.length > 2
 
-    // Load company logo — localStorage first, then /api/settings fallback
-    const [companyLogo, setCompanyLogo] = useState<string | null>(null)
-    useEffect(() => {
-        try {
-            const cached = localStorage.getItem('imi-company-logo')
-            if (cached) {
-                setCompanyLogo(cached)
-                return
-            }
-        } catch {}
-
-        // Fallback: fetch from settings API
-        fetch('/api/settings')
-            .then(r => r.ok ? r.json() : null)
-            .then(data => {
-                if (data?.logo_url) {
-                    setCompanyLogo(data.logo_url)
-                    try { localStorage.setItem('imi-company-logo', data.logo_url) } catch {}
-                }
-            })
-            .catch(() => {})
-    }, [])
-
-    // Load Supabase user info for account drawer
+    // Load Supabase user info and avatar
     useEffect(() => {
         const supabase = createClient()
         supabase.auth.getUser().then(async ({ data: { user } }) => {
             if (user) {
                 const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Admin'
                 const initials = name.split(' ').slice(0, 2).map((n: string) => n[0]).join('').toUpperCase()
-                // Fetch role from users table
+                const avatar = user.user_metadata?.avatar_url || null
+                setAvatarUrl(avatar)
                 let role: string | undefined
                 try {
                     const { data: dbUser } = await supabase
@@ -147,34 +177,28 @@ export default function MobileHeader() {
                     setUnreadCount(data.filter((n: Notification) => !n.read).length)
                 }
             })
-            .catch(() => { })
+            .catch(() => {})
     }, [pathname])
 
-    // Close notification panel on outside click
+    // Close panels on outside click
     useEffect(() => {
         if (!notifOpen) return
         const handler = (e: MouseEvent) => {
-            if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-                setNotifOpen(false)
-            }
+            if (panelRef.current && !panelRef.current.contains(e.target as Node)) setNotifOpen(false)
         }
         document.addEventListener('mousedown', handler)
         return () => document.removeEventListener('mousedown', handler)
     }, [notifOpen])
 
-    // Close account drawer on outside click
     useEffect(() => {
         if (!accountOpen) return
         const handler = (e: MouseEvent) => {
-            if (accountPanelRef.current && !accountPanelRef.current.contains(e.target as Node)) {
-                setAccountOpen(false)
-            }
+            if (accountPanelRef.current && !accountPanelRef.current.contains(e.target as Node)) setAccountOpen(false)
         }
         document.addEventListener('mousedown', handler)
         return () => document.removeEventListener('mousedown', handler)
     }, [accountOpen])
 
-    // Close panels on route change
     useEffect(() => { setNotifOpen(false); setAccountOpen(false) }, [pathname])
 
     const markAllRead = async () => {
@@ -186,7 +210,7 @@ export default function MobileHeader() {
             })
             setNotifications(prev => prev.map(n => ({ ...n, read: true })))
             setUnreadCount(0)
-        } catch { }
+        } catch {}
     }
 
     const handleSignOut = async () => {
@@ -202,97 +226,151 @@ export default function MobileHeader() {
             <div
                 className="lg:hidden fixed top-0 inset-x-0 z-40"
                 style={{
-                    background: 'var(--header-bg)',
+                    background: 'color-mix(in srgb, var(--bg-surface) 88%, transparent)',
                     backdropFilter: 'blur(20px)',
                     WebkitBackdropFilter: 'blur(20px)',
-                    borderBottom: '1px solid var(--bo-border-strong)',
+                    borderBottom: '1px solid var(--border-default)',
                     boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+                    paddingTop: 'env(safe-area-inset-top, 0px)',
                 }}
             >
-                <div className="relative flex items-center h-14 px-2">
-                    {/* Left: back button or brand logo */}
-                    <div className="w-12 flex items-center justify-center flex-shrink-0">
-                        {isSubPage ? (
-                            <motion.button
-                                whileTap={{ scale: 0.88 }}
-                                onClick={() => router.back()}
-                                className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
-                                style={{ background: 'var(--bo-elevated)' }}
-                            >
-                                <ChevronLeft size={20} style={{ color: 'var(--bo-text)' }} />
-                            </motion.button>
-                        ) : (
-                            <motion.button
-                                whileTap={{ scale: 0.90 }}
-                                onClick={() => setAccountOpen(v => !v)}
-                                className="flex items-center justify-center w-9 h-9 rounded-xl overflow-hidden transition-all"
-                                style={{
-                                    background: companyLogo ? 'transparent' : 'var(--bo-elevated)',
-                                    border: accountOpen ? '1px solid var(--bo-border-gold)' : '1px solid transparent',
-                                }}
-                            >
-                                {companyLogo ? (
-                                    /* eslint-disable-next-line @next/next/no-img-element */
-                                    <img
-                                        src={companyLogo}
-                                        alt="Logo"
-                                        className="w-full h-full object-contain"
-                                    />
-                                ) : (
-                                    <span
-                                        className="text-sm font-bold"
-                                        style={{ color: 'var(--nav-active)', fontFamily: "'Playfair Display', Georgia, serif" }}
-                                    >
+                <div className="flex items-center h-14 px-3 gap-2">
+
+                    {/* ── LEFT SLOT ─────────────────────────────────── */}
+                    <div className="flex items-center flex-shrink-0">
+                        <AnimatePresence mode="wait">
+                            {isSubPage ? (
+                                /* Back button on sub-pages */
+                                <motion.button
+                                    key="back"
+                                    initial={{ opacity: 0, x: -6 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -6 }}
+                                    transition={{ duration: 0.16 }}
+                                    whileTap={{ scale: 0.88 }}
+                                    onClick={() => router.back()}
+                                    className="flex items-center justify-center"
+                                    style={{
+                                        width: 36,
+                                        height: 36,
+                                        borderRadius: 'var(--r-md)',
+                                        background: 'var(--bg-elevated)',
+                                        border: '1px solid var(--border-subtle)',
+                                    }}
+                                >
+                                    <ChevronLeft size={18} style={{ color: 'var(--text-primary)' }} />
+                                </motion.button>
+                            ) : (
+                                /* IMI Brand Logo on root pages */
+                                <motion.div
+                                    key="brand"
+                                    initial={{ opacity: 0, x: -6 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -6 }}
+                                    transition={{ duration: 0.18 }}
+                                    className="flex items-center gap-2"
+                                >
+                                    {/* IMI wordmark — uses text-primary so dark in light mode, light in dark mode */}
+                                    <span style={{
+                                        fontFamily: "'Libre Baskerville', Georgia, serif",
+                                        fontSize: 20,
+                                        fontWeight: 700,
+                                        color: 'var(--text-primary)',
+                                        letterSpacing: '-0.01em',
+                                        lineHeight: 1,
+                                    }}>
                                         IMI
                                     </span>
-                                )}
-                            </motion.button>
-                        )}
-                    </div>
-
-                    {/* Center: page title — absolute so it's truly centered */}
-                    <div className="absolute inset-x-0 flex items-center justify-center pointer-events-none">
-                        <AnimatePresence mode="wait">
-                            <motion.span
-                                key={title}
-                                initial={{ opacity: 0, y: 4 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -4 }}
-                                transition={{ duration: 0.18 }}
-                                className="text-[15px] font-semibold tracking-[-0.01em]"
-                                style={{ color: 'var(--bo-text)' }}
-                            >
-                                {title}
-                            </motion.span>
+                                    {/* Divider */}
+                                    <div style={{
+                                        width: 1,
+                                        height: 16,
+                                        background: 'var(--border-strong)',
+                                        flexShrink: 0,
+                                    }} />
+                                    {/* Tagline — text-gold adapts: gold-600 in light, gold-400 in dark */}
+                                    <span style={{
+                                        fontSize: 7,
+                                        fontWeight: 700,
+                                        color: 'var(--text-gold)',
+                                        letterSpacing: '0.15em',
+                                        textTransform: 'uppercase',
+                                        lineHeight: 1.25,
+                                        fontFamily: 'var(--font-sans)',
+                                    }}>
+                                        INTELIGÊNCIA<br />IMOBILIÁRIA
+                                    </span>
+                                </motion.div>
+                            )}
                         </AnimatePresence>
                     </div>
 
-                    {/* Right: Theme + Bell */}
-                    <div className="ml-auto flex items-center gap-0.5 flex-shrink-0">
-                        {/* Theme Toggle */}
-                        <ThemeToggle size="sm" />
+                    {/* ── CENTER — Page title on sub-pages (absolute so truly centered) ── */}
+                    {isSubPage && (
+                        <div className="absolute inset-x-0 flex items-center justify-center pointer-events-none">
+                            <AnimatePresence mode="wait">
+                                <motion.span
+                                    key={title}
+                                    initial={{ opacity: 0, y: 4 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -4 }}
+                                    transition={{ duration: 0.18 }}
+                                    className="text-[15px] font-semibold tracking-[-0.01em]"
+                                    style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-sans)' }}
+                                >
+                                    {title}
+                                </motion.span>
+                            </AnimatePresence>
+                        </div>
+                    )}
 
-                        {/* Notifications */}
-                        <button
+                    {/* ── RIGHT SLOT — Bell + Avatar ────────────────── */}
+                    <div className="ml-auto flex items-center gap-1 flex-shrink-0">
+
+                        {/* Notification Bell */}
+                        <motion.button
+                            whileTap={{ scale: 0.88 }}
                             onClick={() => setNotifOpen(!notifOpen)}
-                            className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-all"
-                            style={{ background: notifOpen ? 'var(--bo-elevated)' : 'transparent' }}
+                            className="relative flex items-center justify-center"
+                            style={{
+                                width: 36,
+                                height: 36,
+                                borderRadius: 'var(--r-md)',
+                                background: notifOpen ? 'var(--bg-elevated)' : 'transparent',
+                                border: notifOpen ? '1px solid var(--border-default)' : '1px solid transparent',
+                                transition: 'background 0.15s, border-color 0.15s',
+                            }}
                         >
-                            <Bell size={18} style={{ color: notifOpen ? 'var(--bo-accent)' : 'var(--bo-text-muted)' }} />
+                            <Bell
+                                size={18}
+                                style={{ color: notifOpen ? 'var(--imi-gold-500)' : 'var(--text-tertiary)' }}
+                            />
                             {unreadCount > 0 && (
                                 <span
-                                    className="absolute top-1 right-1 w-4 h-4 text-[9px] font-bold text-white rounded-full flex items-center justify-center"
-                                    style={{ background: 'var(--bo-accent)', boxShadow: '0 0 0 2px var(--bo-surface)' }}
+                                    className="absolute top-[5px] right-[5px] min-w-[14px] h-[14px] px-0.5 text-[9px] font-bold text-white rounded-full flex items-center justify-center"
+                                    style={{
+                                        background: 'var(--imi-gold-500)',
+                                        boxShadow: '0 0 0 2px var(--bg-surface)',
+                                    }}
                                 >
                                     {unreadCount > 9 ? '9+' : unreadCount}
                                 </span>
                             )}
-                        </button>
+                        </motion.button>
+
+                        {/* Avatar — always on right, after bell */}
+                        <AvatarButton
+                            avatarUrl={avatarUrl}
+                            userInfo={userInfo}
+                            accountOpen={accountOpen}
+                            onClick={() => setAccountOpen(v => !v)}
+                            size={34}
+                        />
                     </div>
                 </div>
             </div>
 
-            {/* ── Account Drawer (logo tap) ── */}
+            {/* ── Account Drawer ── */}
             <AnimatePresence>
                 {accountOpen && (
                     <>
@@ -301,45 +379,60 @@ export default function MobileHeader() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="lg:hidden fixed inset-0 z-50"
-                            style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+                            style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }}
                             onClick={() => setAccountOpen(false)}
                         />
                         <motion.div
                             ref={accountPanelRef}
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
+                            initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -8, scale: 0.97 }}
                             transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-                            className="lg:hidden fixed top-14 left-3 z-50 rounded-2xl overflow-hidden"
+                            className="lg:hidden fixed top-[60px] right-3 z-50 overflow-hidden"
                             style={{
-                                background: 'var(--bo-elevated)',
-                                border: '1px solid var(--bo-border)',
-                                boxShadow: '0 12px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)',
-                                minWidth: 220,
+                                background: 'var(--bg-elevated)',
+                                border: '1px solid var(--border-default)',
+                                borderRadius: 'var(--r-xl)',
+                                boxShadow: '0 12px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)',
+                                minWidth: 228,
                             }}
                         >
-                            {/* User info */}
+                            {/* User info header */}
                             <div
                                 className="flex items-center gap-3 px-4 py-4"
-                                style={{ borderBottom: '1px solid var(--bo-border)' }}
+                                style={{ borderBottom: '1px solid var(--border-subtle)' }}
                             >
                                 <div
-                                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-                                    style={{ background: 'var(--bo-accent)' }}
+                                    className="rounded-full overflow-hidden flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+                                    style={{
+                                        width: 40, height: 40, minWidth: 40, minHeight: 40, aspectRatio: '1/1',
+                                        background: avatarUrl ? 'transparent' : 'var(--imi-gold-500)',
+                                        border: '1.5px solid rgba(184,148,58,0.35)',
+                                    }}
                                 >
-                                    {userInfo?.initials ?? <User size={16} />}
+                                    {avatarUrl ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={avatarUrl} alt={userInfo?.name ?? 'Avatar'} className="w-full h-full object-cover" />
+                                    ) : (
+                                        userInfo?.initials ?? <User size={16} />
+                                    )}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold truncate" style={{ color: 'var(--bo-text)' }}>
+                                    <p className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-sans)' }}>
                                         {userInfo?.name ?? 'Carregando...'}
                                     </p>
-                                    <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--bo-text-muted)' }}>
+                                    <p className="text-[11px] truncate mt-0.5" style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-sans)' }}>
                                         {userInfo?.email ?? ''}
                                     </p>
                                     {userInfo?.role && (
                                         <span
-                                            className="inline-block mt-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide"
-                                            style={{ background: 'var(--bo-active-bg)', color: 'var(--bo-accent)' }}
+                                            className="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+                                            style={{
+                                                background: 'rgba(184,148,58,0.10)',
+                                                color: 'var(--imi-gold-500)',
+                                                borderRadius: 'var(--r-sm)',
+                                                fontFamily: 'var(--font-mono)',
+                                            }}
                                         >
                                             {userInfo.role}
                                         </span>
@@ -347,34 +440,62 @@ export default function MobileHeader() {
                                 </div>
                             </div>
 
-                            {/* Actions */}
+                            {/* Menu rows */}
                             <div className="p-1.5">
-                                {/* Dark mode toggle row */}
+                                {/* Appearance row with theme toggle */}
                                 <div
-                                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
-                                    style={{ color: 'var(--bo-text-muted)' }}
+                                    className="flex items-center gap-3 px-3 py-2.5"
+                                    style={{ borderRadius: 'var(--r-md)', color: 'var(--text-secondary)' }}
                                 >
                                     <Sun size={14} className="flex-shrink-0" />
-                                    <span className="text-sm flex-1">Aparência</span>
+                                    <span className="text-sm flex-1" style={{ fontFamily: 'var(--font-sans)' }}>Aparência</span>
                                     <ThemeToggle size="sm" />
                                 </div>
 
                                 <Link
+                                    href="/backoffice/hoje"
+                                    onClick={() => setAccountOpen(false)}
+                                    className="flex items-center gap-3 px-3 py-2.5 text-sm transition-colors"
+                                    style={{
+                                        borderRadius: 'var(--r-md)',
+                                        color: 'var(--text-secondary)',
+                                        fontFamily: 'var(--font-sans)',
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
+                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                >
+                                    <Camera size={14} className="flex-shrink-0" />
+                                    Alterar foto
+                                </Link>
+
+                                <Link
                                     href="/backoffice/settings"
                                     onClick={() => setAccountOpen(false)}
-                                    className="hover-card flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
-                                    style={{ color: 'var(--bo-text-muted)' }}
+                                    className="flex items-center gap-3 px-3 py-2.5 text-sm transition-colors"
+                                    style={{
+                                        borderRadius: 'var(--r-md)',
+                                        color: 'var(--text-secondary)',
+                                        fontFamily: 'var(--font-sans)',
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
+                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <Settings size={14} className="flex-shrink-0" />
                                     Configurações
                                 </Link>
 
-                                <div className="h-px my-1" style={{ background: 'var(--bo-border)' }} />
+                                <div className="my-1" style={{ height: 1, background: 'var(--border-subtle)' }} />
 
                                 <button
                                     onClick={handleSignOut}
-                                    className="hover-card w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all"
-                                    style={{ color: 'var(--s-cancel)' }}
+                                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm transition-colors"
+                                    style={{
+                                        borderRadius: 'var(--r-md)',
+                                        color: 'var(--error)',
+                                        fontFamily: 'var(--font-sans)',
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = 'var(--error-bg)')}
+                                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                 >
                                     <LogOut size={14} className="flex-shrink-0" />
                                     Sair
@@ -394,29 +515,33 @@ export default function MobileHeader() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="lg:hidden fixed inset-0 z-50"
-                            style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+                            style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }}
                             onClick={() => setNotifOpen(false)}
                         />
                         <motion.div
                             ref={panelRef}
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
+                            initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -8, scale: 0.97 }}
                             transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                            className="lg:hidden fixed top-14 inset-x-3 z-50 rounded-2xl overflow-hidden"
+                            className="lg:hidden fixed top-[60px] inset-x-3 z-50 overflow-hidden"
                             style={{
-                                background: 'var(--bo-elevated)',
-                                border: '1px solid var(--bo-border)',
-                                boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
+                                background: 'var(--bg-elevated)',
+                                border: '1px solid var(--border-default)',
+                                borderRadius: 'var(--r-xl)',
+                                boxShadow: 'var(--shadow-xl)',
                                 maxHeight: '70vh',
                             }}
                         >
                             {/* Header */}
                             <div
                                 className="flex items-center justify-between px-4 py-3"
-                                style={{ borderBottom: '1px solid var(--bo-border)' }}
+                                style={{ borderBottom: '1px solid var(--border-subtle)' }}
                             >
-                                <span className="text-sm font-bold" style={{ color: 'var(--bo-text)' }}>
+                                <span
+                                    className="text-sm font-bold"
+                                    style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-sans)' }}
+                                >
                                     Notificações
                                 </span>
                                 <div className="flex items-center gap-3">
@@ -424,50 +549,63 @@ export default function MobileHeader() {
                                         <button
                                             onClick={markAllRead}
                                             className="text-[11px] font-semibold"
-                                            style={{ color: 'var(--bo-accent)' }}
+                                            style={{ color: 'var(--imi-gold-500)', fontFamily: 'var(--font-sans)' }}
                                         >
                                             Marcar lidas
                                         </button>
                                     )}
-                                    <button onClick={() => setNotifOpen(false)}>
-                                        <X size={16} style={{ color: 'var(--bo-text-muted)' }} />
+                                    <button
+                                        onClick={() => setNotifOpen(false)}
+                                        className="flex items-center justify-center"
+                                        style={{ width: 24, height: 24, borderRadius: 'var(--r-sm)', background: 'var(--bg-hover)' }}
+                                    >
+                                        <X size={14} style={{ color: 'var(--text-tertiary)' }} />
                                     </button>
                                 </div>
                             </div>
 
-                            {/* List */}
-                            <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 52px)' }}>
+                            {/* Notification list */}
+                            <div className="overflow-y-auto" style={{ maxHeight: 'calc(70vh - 52px - 48px)' }}>
                                 {notifications.length > 0 ? notifications.map(n => (
                                     <div
                                         key={n.id}
                                         className="flex gap-3 px-4 py-3 transition-all"
                                         style={{
-                                            background: n.read ? 'transparent' : 'var(--bo-hover)',
-                                            borderBottom: '1px solid var(--bo-border)',
+                                            background: n.read ? 'transparent' : 'var(--bg-hover)',
+                                            borderBottom: '1px solid var(--border-subtle)',
                                         }}
                                     >
                                         <div
-                                            className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-                                            style={{ background: n.read ? 'transparent' : 'var(--bo-accent)' }}
+                                            className="w-1.5 h-1.5 rounded-full mt-2 shrink-0"
+                                            style={{ background: n.read ? 'transparent' : 'var(--imi-gold-500)' }}
                                         />
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-semibold" style={{ color: 'var(--bo-text)' }}>
+                                            <p
+                                                className="text-xs font-semibold"
+                                                style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-sans)' }}
+                                            >
                                                 {n.title}
                                             </p>
                                             {n.message && (
-                                                <p className="text-[11px] mt-0.5 truncate" style={{ color: 'var(--bo-text-muted)' }}>
+                                                <p
+                                                    className="text-[11px] mt-0.5 truncate"
+                                                    style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-sans)' }}
+                                                >
                                                     {n.message}
                                                 </p>
                                             )}
-                                            <p className="text-[10px] mt-1" style={{ color: 'var(--bo-text-muted)' }}>
+                                            <p
+                                                className="text-[10px] mt-1"
+                                                style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)' }}
+                                            >
                                                 {timeAgo(n.created_at)}
                                             </p>
                                         </div>
                                     </div>
                                 )) : (
                                     <div className="py-10 text-center">
-                                        <Bell size={24} className="mx-auto mb-2" style={{ color: 'var(--bo-text-muted)', opacity: 0.3 }} />
-                                        <p className="text-xs" style={{ color: 'var(--bo-text-muted)' }}>
+                                        <Bell size={22} className="mx-auto mb-2 opacity-20" style={{ color: 'var(--text-tertiary)' }} />
+                                        <p className="text-xs" style={{ color: 'var(--text-tertiary)', fontFamily: 'var(--font-sans)' }}>
                                             Nenhuma notificação
                                         </p>
                                     </div>
@@ -477,12 +615,12 @@ export default function MobileHeader() {
                             {/* Footer */}
                             <div
                                 className="px-4 py-3 text-center"
-                                style={{ borderTop: '1px solid var(--bo-border)' }}
+                                style={{ borderTop: '1px solid var(--border-subtle)' }}
                             >
                                 <button
                                     onClick={() => { setNotifOpen(false); router.push('/backoffice/notificacoes') }}
-                                    className="text-xs font-semibold flex items-center justify-center gap-1 mx-auto"
-                                    style={{ color: 'var(--bo-accent)' }}
+                                    className="inline-flex items-center gap-1 text-xs font-semibold mx-auto"
+                                    style={{ color: 'var(--imi-gold-500)', fontFamily: 'var(--font-sans)' }}
                                 >
                                     Ver todas <ChevronRight size={12} />
                                 </button>

@@ -6,8 +6,6 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { RealtimeChannel } from '@supabase/supabase-js'
 
-const supabase = createClient()
-
 export interface RealtimeEvent<T = any> {
     eventType: 'INSERT' | 'UPDATE' | 'DELETE'
     new: T
@@ -31,6 +29,7 @@ export interface UseRealtimeOptions<T> {
 export function useRealtimeTable<T = any>(
     options: UseRealtimeOptions<T>
 ) {
+    const supabase = createClient()
     const [channel, setChannel] = useState<RealtimeChannel | null>(null)
     const [connected, setConnected] = useState(false)
     const [error, setError] = useState<Error | null>(null)
@@ -163,6 +162,7 @@ export function useRealtimeLeads(
  * Hook para notificações real-time
  */
 export function useRealtimeNotifications(userId?: string) {
+    const supabase = createClient()
     const [notifications, setNotifications] = useState<any[]>([])
     const [unreadCount, setUnreadCount] = useState(0)
 
@@ -248,6 +248,7 @@ function playNotificationSound() {
  * Hook para presença online (quem está online no backoffice)
  */
 export function useOnlinePresence(roomName: string = 'online-users') {
+    const supabase = createClient()
     const [onlineUsers, setOnlineUsers] = useState<any[]>([])
     const [channel, setChannel] = useState<RealtimeChannel | null>(null)
 

@@ -162,7 +162,7 @@ export default function ContextualTooltip({
                         width: pos.spotlightRect.width + 8,
                         height: pos.spotlightRect.height + 8,
                         boxShadow: '0 0 0 9999px rgba(0,0,0,0.45), 0 0 20px rgba(59,130,246,0.3)',
-                        border: '2px solid var(--bo-accent)',
+                        border: '2px solid var(--imi-gold-500)',
                     }}
                 />
             )}
@@ -187,23 +187,23 @@ export default function ContextualTooltip({
                     <div
                         className="rounded-2xl overflow-hidden"
                         style={{
-                            background: 'var(--bo-surface)',
-                            border: '1px solid var(--bo-border)',
+                            background: 'var(--bg-surface)',
+                            border: '1px solid var(--border-default)',
                             boxShadow: '0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05)',
                         }}
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between px-4 pt-3 pb-1">
                             <div className="flex items-center gap-1.5">
-                                <Lightbulb size={11} style={{ color: 'var(--bo-accent)' }} />
-                                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--bo-text-muted)' }}>
+                                <Lightbulb size={11} style={{ color: 'var(--imi-gold-500)' }} />
+                                <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-secondary)' }}>
                                     Dica {currentIndex + 1}/{totalTips}
                                 </span>
                             </div>
                             <button
                                 onClick={onSkip}
                                 className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors"
-                                style={{ color: 'var(--bo-text-muted)' }}
+                                style={{ color: 'var(--text-secondary)' }}
                             >
                                 <X size={12} />
                             </button>
@@ -211,17 +211,17 @@ export default function ContextualTooltip({
 
                         {/* Content */}
                         <div className="px-4 pb-3">
-                            <h3 className="text-sm font-bold mb-1" style={{ color: 'var(--bo-text)' }}>
+                            <h3 className="text-sm font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                                 {tip.title}
                             </h3>
-                            <p className="text-xs leading-relaxed" style={{ color: 'var(--bo-text-muted)' }}>
+                            <p className="text-xs leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                                 {tip.description}
                             </p>
                         </div>
 
                         {/* Footer */}
                         <div className="flex items-center justify-between px-4 pb-3 pt-1"
-                            style={{ borderTop: '1px solid var(--bo-border)' }}>
+                            style={{ borderTop: '1px solid var(--border-default)' }}>
                             {/* Dots */}
                             <div className="flex items-center gap-1">
                                 {Array.from({ length: totalTips }, (_, i) => (
@@ -231,7 +231,7 @@ export default function ContextualTooltip({
                                         style={{
                                             width: i === currentIndex ? 14 : 5,
                                             height: 5,
-                                            background: i <= currentIndex ? 'var(--bo-accent)' : 'var(--bo-border)',
+                                            background: i <= currentIndex ? 'var(--imi-gold-500)' : 'var(--border-default)',
                                             opacity: i <= currentIndex ? 1 : 0.4,
                                         }}
                                     />
@@ -244,7 +244,7 @@ export default function ContextualTooltip({
                                     <button
                                         onClick={onPrev}
                                         className="w-7 h-7 flex items-center justify-center rounded-lg transition-colors hover:bg-white/5"
-                                        style={{ color: 'var(--bo-text-muted)' }}
+                                        style={{ color: 'var(--text-secondary)' }}
                                     >
                                         <ChevronLeft size={14} />
                                     </button>
@@ -252,7 +252,7 @@ export default function ContextualTooltip({
                                 <button
                                     onClick={onNext}
                                     className="h-7 px-3 rounded-lg text-[11px] font-bold text-white flex items-center gap-1 transition-all hover:brightness-110"
-                                    style={{ background: 'var(--bo-accent)' }}
+                                    style={{ background: 'var(--imi-gold-500)' }}
                                 >
                                     {isLast ? 'Entendi!' : 'Próximo'}
                                     {!isLast && <ChevronRight size={12} />}

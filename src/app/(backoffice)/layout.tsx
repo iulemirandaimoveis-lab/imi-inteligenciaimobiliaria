@@ -9,6 +9,7 @@ import { Toaster } from 'sonner'
 import { BackofficeRealtimeProvider } from './components/BackofficeRealtimeProvider'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import OnboardingWrapper from './components/OnboardingWrapper'
+import PWAManager from './components/PWAManager'
 
 export default async function BackofficeLayout({
     children,
@@ -23,8 +24,9 @@ export default async function BackofficeLayout({
         <div
             className="backoffice-root min-h-screen transition-colors duration-200"
             style={{
-                background: 'var(--bo-surface)',
-                color: 'var(--bo-text)',
+                background: 'var(--bg-base)',
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-sans)',
             }}
         >
             <OnboardingWrapper>
@@ -33,7 +35,7 @@ export default async function BackofficeLayout({
                 <MobileHeader />
 
                 {/* Main Content — pt-14 on mobile for MobileHeader, lg:pt-16 for DesktopHeader */}
-                <main className="pt-14 lg:pt-16 lg:pl-60 min-h-screen overflow-x-hidden" style={{ maxWidth: '100vw' }}>
+                <main className="pt-14 lg:pt-16 lg:pl-60 min-h-screen overflow-x-hidden" style={{ maxWidth: '100%' }}>
                     <div className="p-4 pb-28 lg:p-6 lg:pb-6">
                         <ErrorBoundary>
                             <BackofficeRealtimeProvider>
@@ -44,6 +46,7 @@ export default async function BackofficeLayout({
                 </main>
 
                 <MobileBottomNav />
+                <PWAManager />
                 <CommandPalette />
             </OnboardingWrapper>
             <Toaster
@@ -55,10 +58,12 @@ export default async function BackofficeLayout({
                 toastOptions={{
                     duration: 4000,
                     style: {
-                        background: 'var(--bo-elevated)',
-                        border: '1px solid var(--bo-border-gold)',
-                        color: 'var(--bo-text)',
+                        background: 'var(--bg-elevated)',
+                        border: '1px solid rgba(184,148,58,0.20)',
+                        color: 'var(--text-primary)',
+                        fontFamily: 'var(--font-sans)',
                         fontSize: '13px',
+                        borderRadius: 'var(--r-lg, 12px)',
                     },
                 }}
             />

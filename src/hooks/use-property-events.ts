@@ -4,8 +4,6 @@ import useSWR from 'swr'
 import { createClient } from '@/lib/supabase/client'
 import { useCallback } from 'react'
 
-const supabase = createClient()
-
 export interface PropertyEvent {
     id: string
     property_id: string
@@ -17,6 +15,7 @@ export interface PropertyEvent {
 }
 
 export function usePropertyEvents(propertyId: string) {
+    const supabase = createClient()
     const fetcher = useCallback(async () => {
         if (!propertyId) return []
         const { data, error } = await supabase
@@ -43,6 +42,7 @@ export function usePropertyEvents(propertyId: string) {
 }
 
 export async function createEvent(data: any) {
+    const supabase = createClient()
     const { data: event, error } = await supabase
         .from('property_events')
         .insert(data)

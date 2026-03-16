@@ -237,6 +237,7 @@ export const developerSchema = z.object({
     estado: z.string().optional(),
     state: z.string().optional(),
     cep: z.string().optional(),
+    pais: z.string().optional(),
     address: z.string().optional(),
     description: z.string().optional(),
     observacoes: z.string().optional(),
@@ -244,6 +245,13 @@ export const developerSchema = z.object({
     logo_url: z.string().url().optional().or(z.literal('')),
     instagram: z.string().optional(),
     linkedin: z.string().optional(),
+    inscricaoEstadual: z.string().optional(),
+    inscricaoMunicipal: z.string().optional(),
+    // Responsável
+    nomeResponsavel: z.string().optional(),
+    cargoResponsavel: z.string().optional(),
+    emailResponsavel: z.string().email().optional().or(z.literal('')),
+    telefoneResponsavel: z.string().optional(),
 }).refine(data => data.name || data.nomeFantasia, {
     message: 'name ou nomeFantasia é obrigatório',
     path: ['name'],

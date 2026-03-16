@@ -42,16 +42,16 @@ export function EmptyState({
       {icon && (
         <div
           style={{
-            width: 48,
-            height: 48,
+            width: 52,
+            height: 52,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            opacity: 0.15,
-            color: 'var(--bo-text)',
+            borderRadius: 'var(--r-xl)',
+            background: 'var(--bg-muted)',
+            color: 'var(--text-tertiary)',
             marginBottom: '16px',
-            // Scale child SVG to 48px
-            fontSize: '48px',
+            fontSize: '24px',
           }}
           aria-hidden="true"
         >
@@ -62,8 +62,9 @@ export function EmptyState({
       <p
         style={{
           fontSize: '18px',
-          fontWeight: 700,
-          color: 'var(--bo-text)',
+          fontWeight: 600,
+          color: 'var(--text-primary)',
+          fontFamily: 'var(--font-sans)',
           marginBottom: description ? '8px' : 0,
           lineHeight: 1.3,
         }}
@@ -75,11 +76,10 @@ export function EmptyState({
         <p
           style={{
             fontSize: '14px',
-            color: 'var(--bo-text-muted)',
-            maxWidth: '384px',
+            color: 'var(--text-tertiary)',
+            maxWidth: '320px',
             margin: '0 auto',
             lineHeight: 1.55,
-            marginBottom: action ? '20px' : 0,
           }}
         >
           {description}
@@ -87,7 +87,7 @@ export function EmptyState({
       )}
 
       {action && (
-        <div style={{ marginTop: description ? 0 : '20px' }}>
+        <div style={{ marginTop: '20px' }}>
           {action}
         </div>
       )}

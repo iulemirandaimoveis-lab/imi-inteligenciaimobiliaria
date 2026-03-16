@@ -43,7 +43,7 @@ function StatCounter({ to, suffix = '' }: { to: number; suffix?: string }) {
 const STATS = [
   { value: 500, suffix: '+', label: 'Laudos NBR 14653' },
   { value: 12, suffix: ' anos', label: 'de experiência' },
-  { value: 3, suffix: ' mercados', label: 'Brasil · Dubai · EUA' },
+  { value: 3, suffix: ' mercados', label: 'Brasil · EUA · Emirados' },
   { value: 100, suffix: '%', label: 'conformidade CRECI/CNAI' },
 ]
 
@@ -63,7 +63,7 @@ export default function Hero({ dict }: HeroProps) {
   }
 
   return (
-    <section className="relative min-h-[100dvh] flex flex-col overflow-hidden bg-[#141420]">
+    <section className="relative min-h-[100dvh] flex flex-col overflow-hidden" style={{ background: 'var(--imi-navy-800)' }}>
       {/* Background image */}
       <div className="absolute inset-0">
         <div
@@ -71,7 +71,7 @@ export default function Hero({ dict }: HeroProps) {
           style={{ backgroundImage: "url('/hero-bg.jpg')" }}
         />
         {/* Dark overlay gradient - stronger on the left for text readibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#141420] via-[#141420]/80 to-transparent md:bg-gradient-to-r md:from-[#141420] md:via-[#141420]/90 md:to-transparent" />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, var(--imi-navy-800) 0%, rgba(16,24,48,0.8) 50%, transparent 100%)' }} />
       </div>
 
       {/* Gold glow orb */}
@@ -100,7 +100,7 @@ export default function Hero({ dict }: HeroProps) {
               {TRUST.map(t => {
                 const Icon = t.icon
                 return (
-                  <div key={t.text} className="flex items-center gap-1.5 bg-white/8 border border-white/10 rounded-full px-3 py-1">
+                  <div key={t.text} className="flex items-center gap-1.5 bg-white/8 border border-white/10 px-3 py-1" style={{ borderRadius: 4 }}>
                     <Icon size={12} className="text-white/70" />
                     <span className="text-xs text-white/70 font-medium">{t.text}</span>
                   </div>
@@ -122,7 +122,7 @@ export default function Hero({ dict }: HeroProps) {
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
               className="text-sm sm:text-lg text-white/60 mb-8 sm:mb-10 max-w-lg font-light leading-relaxed"
             >
-              {dict.hero_subtitle || 'Avaliações NBR 14653, consultoria patrimonial e acesso a oportunidades de alto padrão — Recife, Dubai e EUA.'}
+              {dict.hero_subtitle || 'Avaliações NBR 14653, consultoria patrimonial e acesso a oportunidades de alto padrão — Brasil, Estados Unidos e Emirados Árabes.'}
             </motion.p>
 
             {/* CTAs */}
@@ -148,24 +148,45 @@ export default function Hero({ dict }: HeroProps) {
               <div className="flex flex-wrap gap-2">
                 {[
                   { label: 'Alto Padrão', icon: Building2, href: `/${lang}/imoveis` },
-                  { label: 'Dubai', icon: Globe, href: `/${lang}/imoveis?pais=dubai` },
-                  { label: 'Pronta Entrega', icon: Home, href: `/${lang}/imoveis?status=ready` },
+                  { label: 'Dubai',        icon: Globe,     href: `/${lang}/imoveis?pais=dubai` },
+                  { label: 'Pronta Entrega', icon: Home,   href: `/${lang}/imoveis?status=ready` },
                 ].map(item => (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="group flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-white/60 hover:text-white transition-all duration-200"
-                    style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)' }}
+                    className="group flex items-center gap-2 px-4 py-2 text-xs font-semibold transition-all duration-200"
+                    style={{
+                      borderRadius: 4,
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.10)',
+                      color: 'rgba(255,255,255,0.60)',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.10)'
+                      ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.20)'
+                      ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.95)'
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'
+                      ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.10)'
+                      ;(e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.60)'
+                    }}
                   >
                     <item.icon size={11} />
                     {item.label}
-                    <ArrowRight size={10} className="opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all duration-200" />
                   </Link>
                 ))}
                 <Link
                   href={`/${lang}/imoveis`}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-[#0A1017] transition-all duration-200 hover:opacity-90"
-                  style={{ background: 'rgba(200,166,90,0.95)' }}
+                  className="group flex items-center gap-2 px-4 py-2 text-xs font-bold transition-all duration-200"
+                  style={{
+                    borderRadius: 4,
+                    background: 'var(--imi-gold-500)',
+                    border: '1px solid transparent',
+                    color: '#0A1017',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = '0.88' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = '1' }}
                 >
                   Ver todos
                   <ArrowRight size={10} />

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -28,7 +31,7 @@ export async function GET(
     const country = req.headers.get('x-vercel-ip-country') ?? ''
     const city = req.headers.get('x-vercel-ip-city') ?? ''
 
-    await Promise.allSettled([
+    const [scanResult, rpcResult] = await Promise.allSettled([
       supabase.from('qr_scans').insert({
         qr_link_id: id,
         property_id: link.property_id ?? null,
@@ -44,6 +47,18 @@ export async function GET(
       }),
       supabase.rpc('increment_qr_scans', { link_id: id }),
     ])
+
+    // Log failures for debugging (visible in Vercel function logs)
+    if (scanResult.status === 'rejected') {
+      console.error('[QR-TRACKING] qr_scans INSERT rejected:', id, scanResult.reason)
+    } else if (scanResult.value?.error) {
+      console.error('[QR-TRACKING] qr_scans INSERT error:', id, scanResult.value.error)
+    }
+    if (rpcResult.status === 'rejected') {
+      console.error('[QR-TRACKING] increment_qr_scans rejected:', id, rpcResult.reason)
+    } else if (rpcResult.value?.error) {
+      console.error('[QR-TRACKING] increment_qr_scans error:', id, rpcResult.value.error)
+    }
 
     // Redirect to destination
     const dest = link.destination_url.startsWith('http')

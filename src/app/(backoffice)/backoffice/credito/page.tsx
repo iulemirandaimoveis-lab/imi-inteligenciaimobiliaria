@@ -14,7 +14,7 @@ import { PageIntelHeader, KPICard } from '../../components/ui'
 import { T } from '../../lib/theme'
 import { getStatusConfig } from '../../lib/constants'
 
-const supabase = createClient()
+export const dynamic = 'force-dynamic'
 
 interface CreditApplication {
   id: string
@@ -35,6 +35,7 @@ interface CreditApplication {
 
 function useCreditApplications() {
   return useSWR('credit_applications', async () => {
+    const supabase = createClient()
     const { data, error } = await supabase
       .from('credit_applications')
       .select('id, protocol, client_name, client_email, bank, financed_amount, property_value, term_months, interest_rate, monthly_payment, system, status, property_address, created_at')
@@ -186,7 +187,7 @@ function SimuladorCredito() {
         ))}
       </div>
 
-      <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--s-warm-bg)', border: '1px solid rgba(245,158,11,0.2)' }}>
+      <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'var(--s-warm-bg)', border: '1px solid var(--border-subtle)' }}>
         <User size={14} style={{ color: 'var(--s-warm)' }} className="flex-shrink-0" />
         <p className="text-xs" style={{ color: 'var(--s-warm)' }}>
           Renda mínima estimada: <strong>{fmt(primeiraParcela * 3)}/mês</strong> (comprometimento máx. 30%)
@@ -195,7 +196,7 @@ function SimuladorCredito() {
 
       <Link href="/backoffice/credito/novo"
         className="flex items-center justify-center gap-2 w-full rounded-2xl text-sm font-bold text-white transition-all hover:opacity-90"
-        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px rgba(37,99,235,0.22)' }}>
+        style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 22%, transparent)' }}>
         Iniciar Processo de Crédito <ArrowRight size={14} />
       </Link>
 
@@ -207,7 +208,7 @@ function SimuladorCredito() {
             Análise de Investimento
           </p>
           <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full"
-            style={{ background: 'rgba(72,101,129,0.15)', color: T.textMuted }}>
+            style={{ background: 'var(--bg-elevated)', color: T.textMuted }}>
             Simulação
           </span>
         </div>
@@ -307,7 +308,7 @@ export default function CreditoPage() {
             whileTap={{ scale: 0.96 }}
             onClick={() => window.location.href = '/backoffice/credito/novo'}
             className="flex items-center gap-2 px-5 rounded-2xl text-sm font-bold text-white flex-shrink-0"
-            style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}
+            style={{ height: '44px', background: T.accent, boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 22%, transparent)', border: 'none' }}
           >
             <Plus size={16} /> <span className="hidden sm:inline">Nova Operação</span>
           </motion.button>

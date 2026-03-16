@@ -143,8 +143,7 @@ export default async function AboutPage({
                         <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Quem Somos</span>
                     </div>
                     <h1
-                        className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white"
-                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white"
                     >
                         IMI – Inteligência <br /><span className="text-[#486581] italic">Imobiliária</span>
                     </h1>
@@ -191,8 +190,7 @@ export default async function AboutPage({
                                 <span className="text-[#627D98] font-bold uppercase tracking-[0.25em] text-[11px]">Identidade Profissional</span>
                             </div>
                             <h2
-                                className="text-3xl sm:text-4xl font-bold text-white mb-3"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                className="font-display text-3xl sm:text-4xl font-bold text-white mb-3"
                             >
                                 Iule Miranda
                             </h2>
@@ -223,7 +221,7 @@ export default async function AboutPage({
                                 href="https://www.linkedin.com/in/iule-miranda-imoveis"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-3 px-8 h-12 rounded-xl bg-[#0077b5] text-white font-semibold text-sm transition-all duration-300 hover:bg-[#005e8e] shadow-lg shadow-[#0077b5]/20"
+                                className="inline-flex items-center justify-center gap-3 px-8 h-12 rounded-[4px] bg-[#0077b5] text-white font-semibold text-sm transition-all duration-300 hover:bg-[#005e8e] shadow-lg shadow-[#0077b5]/20"
                             >
                                 <Linkedin className="w-4 h-4" strokeWidth={2} />
                                 Conectar no LinkedIn
@@ -243,8 +241,7 @@ export default async function AboutPage({
                             <div className="w-8 h-px bg-[#334E68]" />
                         </div>
                         <h2
-                            className="text-3xl sm:text-4xl font-bold text-white mb-4"
-                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                            className="font-display text-3xl sm:text-4xl font-bold text-white mb-4"
                         >
                             Nossos Valores
                         </h2>
@@ -259,8 +256,7 @@ export default async function AboutPage({
                                     <item.icon className="w-5 h-5" strokeWidth={1.5} />
                                 </div>
                                 <h3
-                                    className="text-xl font-bold text-white mb-3"
-                                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                    className="font-display text-xl font-bold text-white mb-3"
                                 >
                                     {item.title}
                                 </h3>
@@ -278,8 +274,7 @@ export default async function AboutPage({
                         {stats.map((stat) => (
                             <div key={stat.label} className="text-center">
                                 <div
-                                    className="text-4xl md:text-5xl font-bold text-white mb-2"
-                                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                    className="font-display text-4xl md:text-5xl font-bold text-white mb-2"
                                 >
                                     {stat.number}
                                 </div>
@@ -299,8 +294,7 @@ export default async function AboutPage({
                             <span className="text-[#627D98] font-bold uppercase tracking-[0.25em] text-[11px]">Presença Digital</span>
                         </div>
                         <h2
-                            className="text-3xl sm:text-4xl font-bold text-white mb-4"
-                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                            className="font-display text-3xl sm:text-4xl font-bold text-white mb-4"
                         >
                             Conteúdo que <span className="text-[#486581] italic">Educa</span> e Inspira
                         </h2>
@@ -329,7 +323,7 @@ export default async function AboutPage({
                                         href={s.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center justify-center gap-2 h-9 rounded-xl text-[12px] font-bold transition-all duration-200"
+                                        className="flex items-center justify-center gap-2 h-9 rounded-[4px] text-[12px] font-bold transition-all duration-200"
                                         style={{
                                             background: s.colorBg,
                                             color: s.color,
@@ -356,8 +350,7 @@ export default async function AboutPage({
                                 <span className="text-[#627D98] font-bold uppercase tracking-[0.25em] text-[11px]">Publicações</span>
                             </div>
                             <h2
-                                className="text-3xl sm:text-4xl font-bold text-white mb-4"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                className="font-display text-3xl sm:text-4xl font-bold text-white mb-4"
                             >
                                 Biblioteca <span className="text-[#486581] italic">IMI</span>
                             </h2>
@@ -389,8 +382,7 @@ export default async function AboutPage({
                                 <div className="p-6 flex flex-col flex-1">
                                     <p className="text-[#486581] text-[10px] font-bold uppercase tracking-[0.15em] mb-2">{book.subtitle}</p>
                                     <h3
-                                        className="text-white font-bold text-[15px] leading-snug mb-3 group-hover:text-[#486581] transition-colors"
-                                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                        className="font-display text-white font-bold text-[15px] leading-snug mb-3 group-hover:text-[#486581] transition-colors"
                                     >
                                         {book.title}
                                     </h3>
@@ -398,7 +390,7 @@ export default async function AboutPage({
                                     <div className="flex gap-2.5">
                                         <Link
                                             href={`/${lang}/biblioteca/${book.slug}`}
-                                            className="flex-1 h-10 flex items-center justify-center rounded-lg bg-[#1A1E2A] border border-white/[0.06] text-white text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-[#21263A] transition-all"
+                                            className="flex-1 h-10 flex items-center justify-center rounded-[4px] bg-[#1A1E2A] border border-white/[0.06] text-white text-[11px] font-bold uppercase tracking-[0.1em] hover:bg-[#21263A] transition-all"
                                         >
                                             Ver Livro
                                         </Link>
@@ -407,7 +399,7 @@ export default async function AboutPage({
                                                 href={book.amazonUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#FF9900]/10 border border-[#FF9900]/20 text-[#FF9900] hover:bg-[#FF9900]/20 transition-all"
+                                                className="w-10 h-10 flex items-center justify-center rounded-[4px] bg-[#FF9900]/10 border border-[#FF9900]/20 text-[#FF9900] hover:bg-[#FF9900]/20 transition-all"
                                                 title="Comprar na Amazon"
                                             >
                                                 <ExternalLink className="w-4 h-4" />
@@ -426,8 +418,7 @@ export default async function AboutPage({
                 <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
                     <h2
-                        className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight"
-                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-white tracking-tight"
                     >
                         Vamos <span className="text-[#486581] italic">Conversar?</span>
                     </h2>
@@ -437,7 +428,7 @@ export default async function AboutPage({
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link
                             href={`/${lang}/contato`}
-                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold bg-[#102A43] text-white hover:bg-[#1A2F44] rounded-xl transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#102A43]/30"
+                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold bg-[#102A43] text-white hover:bg-[#1A2F44] rounded-[4px] transition-all duration-300 hover:-translate-y-0.5 shadow-lg shadow-[#102A43]/30"
                         >
                             <MessageCircle className="w-4 h-4" />
                             Entrar em Contato
@@ -446,7 +437,7 @@ export default async function AboutPage({
                             href="https://wa.me/5581997230455"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold border border-white/10 text-slate-300 hover:bg-white/[0.04] hover:text-white rounded-xl transition-all duration-300"
+                            className="inline-flex items-center justify-center gap-3 h-14 px-10 text-sm font-bold border border-white/10 text-slate-300 hover:bg-white/[0.04] hover:text-white rounded-[4px] transition-all duration-300"
                         >
                             WhatsApp Direto
                         </a>

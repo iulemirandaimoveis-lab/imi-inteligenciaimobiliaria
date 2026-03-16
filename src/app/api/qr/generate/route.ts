@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         // originalUrl = public website (destination after redirect)
         // shortUrl base = THIS deployment (where /l/[shortCode] route lives)
         const publicSiteUrl = 'https://www.iulemirandaimoveis.com.br'
-        const trackingBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://youthful-fermi.vercel.app'
+        const trackingBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
 
         const params = new URLSearchParams()
         params.set('utm_source', utm_source)
