@@ -1,4 +1,8 @@
 /**
+ * @jest-environment node
+ */
+
+/**
  * Tests for the /api/leads route handlers (GET, POST)
  * Mocks Supabase client and governance utilities
  */
