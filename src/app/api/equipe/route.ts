@@ -15,9 +15,9 @@ export async function GET() {
 
         if (error) throw error
         return NextResponse.json({ data: data || [] })
-    } catch (err: any) {
+    } catch (err) {
         console.error('GET /api/equipe:', err)
-        return NextResponse.json({ error: err.message }, { status: 500 })
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 
@@ -52,9 +52,9 @@ export async function POST(request: Request) {
 
         if (error) throw error
         return NextResponse.json(data, { status: 201 })
-    } catch (err: any) {
+    } catch (err) {
         console.error('POST /api/equipe:', err)
-        return NextResponse.json({ error: err.message }, { status: 500 })
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 
@@ -71,7 +71,7 @@ export async function PATCH(request: Request) {
             return NextResponse.json({ error: 'id é obrigatório' }, { status: 400 })
         }
 
-        const updates: Record<string, any> = { updated_at: new Date().toISOString() }
+        const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
         if (name !== undefined) updates.name = name.trim()
         if (email !== undefined) updates.email = email.trim().toLowerCase()
         if (phone !== undefined) updates.phone = phone?.trim() || null
@@ -87,9 +87,9 @@ export async function PATCH(request: Request) {
 
         if (error) throw error
         return NextResponse.json(data)
-    } catch (err: any) {
+    } catch (err) {
         console.error('PATCH /api/equipe:', err)
-        return NextResponse.json({ error: err.message }, { status: 500 })
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 
@@ -113,8 +113,8 @@ export async function DELETE(request: Request) {
 
         if (error) throw error
         return NextResponse.json({ success: true })
-    } catch (err: any) {
+    } catch (err) {
         console.error('DELETE /api/equipe:', err)
-        return NextResponse.json({ error: err.message }, { status: 500 })
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }
 }

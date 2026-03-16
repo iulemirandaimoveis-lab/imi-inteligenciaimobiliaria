@@ -3,7 +3,41 @@ import { getModeloById, IDIOMAS_LABEL } from '@/lib/modelos-contratos'
 
 export const runtime = 'nodejs'
 
-function qualificaParte(p: any, label: string) {
+interface Parte {
+  nome?: string
+  razao_social?: string
+  tipo?: string
+  cpf_cnpj?: string
+  representante?: string
+  cargo_representante?: string
+  estado_civil?: string
+  profissao?: string
+  nacionalidade?: string
+  endereco?: string
+  cidade?: string
+  estado?: string
+  email?: string
+  telefone?: string
+}
+
+interface Campo {
+  section: string
+  label: string
+  key: string
+}
+
+interface Modelo {
+  nome: string
+  jurisdicao?: string
+  campos: Campo[]
+  categoria: string
+}
+
+interface IdiomaInfo {
+  label: string
+}
+
+function qualificaParte(p: Parte, label: string) {
   if (!p) return ''
   let text = `**${label}**\n\n`
   text += `**Nome/Razão Social:** ${p.nome || p.razao_social || 'Não informado'}\n`
@@ -26,11 +60,11 @@ function qualificaParte(p: any, label: string) {
 }
 
 function generateLocalContractMarkdown(
-  modelo: any,
-  idiomaInfo: any,
-  contratante: any,
-  contratado: any,
-  dados: Record<string, any>,
+  modelo: Modelo,
+  idiomaInfo: IdiomaInfo,
+  contratante: Parte,
+  contratado: Parte,
+  dados: Record<string, unknown>,
   criadoPorNome: string,
   notasAdicionais?: string
 ) {
@@ -50,36 +84,36 @@ function generateLocalContractMarkdown(
   md += `As partes concordam com a negociação referente ao escopo deste instrumento (${modelo.nome}), sob a jurisdição aplicável (${modelo.jurisdicao || 'BR'}).\n\n`
   
   md += `**Especificações do Objeto:**\n`
-  modelo.campos.filter((c: any) => c.section === 'objeto').forEach((c: any) => {
+  modelo.campos.filter((c: Campo) => c.section === 'objeto').forEach((c: Campo) => {
     md += `- **${c.label}:** ${dados[c.key] || 'Não especificado'}\n`
   })
   md += '\n'
   
   md += `## 3. DOS VALORES E CONDIÇÕES DE PAGAMENTO\n\n`
-  modelo.campos.filter((c: any) => c.section === 'valores').forEach((c: any) => {
+  modelo.campos.filter((c: Campo) => c.section === 'valores').forEach((c: Campo) => {
     md += `- **${c.label}:** ${dados[c.key] || 'Não especificado'}\n`
   })
   md += '\n'
   
   md += `## 4. DOS PRAZOS E VIGÊNCIA\n\n`
-  modelo.campos.filter((c: any) => c.section === 'prazos').forEach((c: any) => {
+  modelo.campos.filter((c: Campo) => c.section === 'prazos').forEach((c: Campo) => {
     md += `- **${c.label}:** ${dados[c.key] || 'Não especificado'}\n`
   })
   md += '\n'
   
   md += `## 5. DAS GARANTIAS (SE APLICÁVEL)\n\n`
-  const garantias = modelo.campos.filter((c: any) => c.section === 'garantias')
+  const garantias = modelo.campos.filter((c: Campo) => c.section === 'garantias')
   if(garantias.length === 0) {
      md += `Não há garantias específicas declaradas nestes campos automáticos.\n\n`
   } else {
-     garantias.forEach((c: any) => {
+     garantias.forEach((c: Campo) => {
        md += `- **${c.label}:** ${dados[c.key] || 'Não especificado'}\n`
      })
      md += '\n'
   }
   
   md += `## 6. DAS CONDIÇÕES GERAIS E PECULIARIDADES\n\n`
-  modelo.campos.filter((c: any) => c.section === 'condicoes').forEach((c: any) => {
+  modelo.campos.filter((c: Campo) => c.section === 'condicoes').forEach((c: Campo) => {
     md += `- **${c.label}:** ${dados[c.key] || 'Não especificado'}\n`
   })
   
@@ -163,8 +197,8 @@ export async function POST(req: NextRequest) {
       idiomas_adicionais,
     })
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('gerar-contrato error:', error)
-    return NextResponse.json({ error: error.message || 'Erro interno' }, { status: 500 })
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Erro interno' }, { status: 500 })
   }
 }

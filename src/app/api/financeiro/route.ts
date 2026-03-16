@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
             pagination: { page, limit, total: count || 0, pages: Math.ceil((count || 0) / limit) },
         })
 
-    } catch (err: any) {
+    } catch (err) {
         console.error('Error in GET /api/financeiro:', err)
         return NextResponse.json({ error: 'Internal Server Error', data: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } }, { status: 500 })
     }
@@ -98,8 +98,8 @@ export async function POST(req: NextRequest) {
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data, { status: 201 })
 
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 
@@ -125,8 +125,8 @@ export async function PUT(req: NextRequest) {
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json(data)
 
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 
@@ -148,7 +148,7 @@ export async function DELETE(req: NextRequest) {
         if (error) return NextResponse.json({ error: error.message }, { status: 500 })
         return NextResponse.json({ success: true })
 
-    } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: 500 })
+    } catch (err) {
+        return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal Server Error' }, { status: 500 })
     }
 }
