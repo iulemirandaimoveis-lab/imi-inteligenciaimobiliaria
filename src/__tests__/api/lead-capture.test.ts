@@ -9,38 +9,38 @@
 
 // ── Mocks ──────────────────────────────────────────────────────────
 
-const mockInsert = jest.fn()
-const mockUpdate = jest.fn()
-const mockSelect = jest.fn()
-const mockMaybeSingle = jest.fn()
-const mockSingle = jest.fn()
-const mockUpsert = jest.fn()
-const mockEq = jest.fn()
-const mockGte = jest.fn()
-const mockLimit = jest.fn()
-const mockOrder = jest.fn()
+const MOCK_LEAD = { id: 'test-lead-id', name: 'Test User', score: 50 }
+const MOCK_ADMIN = { id: 'admin-user-id' }
 
-function buildChain() {
-    const chain: Record<string, jest.Mock> = {
-        select: mockSelect,
-        insert: mockInsert,
-        update: mockUpdate,
-        upsert: mockUpsert,
-        eq: mockEq,
-        gte: mockGte,
-        limit: mockLimit,
-        order: mockOrder,
-        single: mockSingle,
-        maybeSingle: mockMaybeSingle,
-    }
-    // Make every method return the chain for fluent API
-    Object.values(chain).forEach(fn => fn.mockReturnValue(chain))
+// Helper: build a query chain that always resolves to a given value
+function makeChain(resolvedValue: unknown) {
+    const chain: Record<string, jest.Mock> = {}
+    const methods = ['select', 'insert', 'update', 'upsert', 'eq', 'gte', 'lte',
+        'limit', 'order', 'single', 'maybeSingle', 'in']
+    methods.forEach(m => {
+        chain[m] = jest.fn().mockReturnValue(chain)
+    })
+    // Terminal methods return the resolved value
+    chain.single = jest.fn().mockResolvedValue(resolvedValue)
+    chain.maybeSingle = jest.fn().mockResolvedValue(resolvedValue)
+    // insert().select().single() chain
+    chain.insert = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue(resolvedValue),
+        }),
+    })
     return chain
 }
 
+// Per-table mock registry
+let tableResponses: Record<string, unknown> = {}
+
 jest.mock('@/lib/supabase/admin', () => ({
     supabaseAdmin: {
-        from: jest.fn(() => buildChain()),
+        from: jest.fn((table: string) => {
+            const resolved = tableResponses[table] ?? { data: null, error: null }
+            return makeChain(resolved)
+        }),
     },
 }))
 
@@ -70,20 +70,15 @@ function makeRequest(body: object) {
 describe('POST /api/leads/capture', () => {
     beforeEach(() => {
         jest.clearAllMocks()
-        // Default: no duplicate found, insert succeeds
-        mockMaybeSingle.mockResolvedValue({ data: null })
-        mockSingle.mockResolvedValue({
-            data: { id: 'test-lead-id', name: 'Test' },
-            error: null,
-        })
-        mockInsert.mockReturnValue({
-            select: jest.fn().mockReturnValue({
-                single: jest.fn().mockResolvedValue({
-                    data: { id: 'test-lead-id', name: 'Test', score: 50 },
-                    error: null,
-                }),
-            }),
-        })
+        // Default per-table responses
+        tableResponses = {
+            leads: { data: MOCK_LEAD, error: null },
+            profiles: { data: MOCK_ADMIN, error: null },
+            notifications: { data: null, error: null },
+            team_members: { data: null, error: null },       // no members → skip round-robin
+            settings: { data: null, error: null },
+            tracking_sessions: { data: null, error: null },
+        }
     })
 
     it('rejects request with no name', async () => {
@@ -104,14 +99,16 @@ describe('POST /api/leads/capture', () => {
         const req = makeRequest({ name: 'Test User', email: 'test@email.com' })
         const res = await POST(req)
         const json = await res.json()
+        expect(res.status).toBe(200)
         expect(json.success).toBe(true)
-        expect(json.lead_id).toBeDefined()
+        expect(json.lead_id).toBe('test-lead-id')
     })
 
     it('accepts request with name and phone only', async () => {
         const req = makeRequest({ name: 'Test User', phone: '81999999999' })
         const res = await POST(req)
         const json = await res.json()
+        expect(res.status).toBe(200)
         expect(json.success).toBe(true)
     })
 
