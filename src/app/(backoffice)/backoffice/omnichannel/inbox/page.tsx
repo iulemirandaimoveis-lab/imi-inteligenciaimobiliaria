@@ -32,7 +32,7 @@ interface Message {
     starred?: boolean
 }
 
-const CHANNEL_CFG: Record<Exclude<Channel, 'all'>, { label: string; color: string; bg: string; icon: any }> = {
+const CHANNEL_CFG: Record<Exclude<Channel, 'all'>, { label: string; color: string; bg: string; icon: React.ElementType }> = {
     whatsapp:  { label: 'WhatsApp',  color: '#25D366', bg: 'rgba(37,211,102,0.12)',  icon: MessageCircle },
     instagram: { label: 'Instagram', color: '#E1306C', bg: 'rgba(225,48,108,0.12)',  icon: Instagram },
     gmail:     { label: 'Gmail',     color: '#EA4335', bg: 'rgba(234,67,53,0.12)',   icon: Mail },
@@ -150,7 +150,7 @@ export default function SocialInboxPage() {
                 const gmailData = await gmailRes.json()
                 setGmailConnected(true)
                 if (gmailData.messages) {
-                    all.push(...gmailData.messages.map((m: any) => ({
+                    all.push(...gmailData.messages.map((m: { id: string; from: string; subject?: string; snippet?: string; date?: string; unread?: boolean; threadId?: string }) => ({
                         id: m.id,
                         channel: 'gmail' as const,
                         from: m.from.replace(/<.*>/, '').trim() || m.from,
@@ -236,8 +236,8 @@ export default function SocialInboxPage() {
                 toast.info(`Resposta via ${CHANNEL_CFG[selected.channel].label} em breve!`)
             }
             setReply('')
-        } catch (e: any) {
-            toast.error('Erro ao enviar: ' + e.message)
+        } catch (e: unknown) {
+            toast.error('Erro ao enviar: ' + (e as Error).message)
         } finally {
             setSending(false)
         }
@@ -290,7 +290,7 @@ export default function SocialInboxPage() {
                     }}>
                     Todos {messages.length > 0 && `(${messages.length})`}
                 </button>
-                {(Object.entries(CHANNEL_CFG) as [Exclude<Channel, 'all'>, any][]).map(([ch, cfg]) => {
+                {(Object.entries(CHANNEL_CFG) as [Exclude<Channel, 'all'>, typeof CHANNEL_CFG[keyof typeof CHANNEL_CFG]][]).map(([ch, cfg]) => {
                     const count = channelCount(ch)
                     if (count === 0 && ch !== 'whatsapp' && ch !== 'gmail') return null
                     const Icon = cfg.icon

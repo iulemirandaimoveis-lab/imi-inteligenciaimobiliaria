@@ -26,7 +26,7 @@ export function generateMetadata({
     const metaTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`
     const metaDescription = description || SITE_DESCRIPTION
     const url = `${SITE_URL}${path}`
-    const metaImage = image || `${SITE_URL}/og-image.jpg`
+    const metaImage = image || `${SITE_URL}/og-image.svg`
 
     const ogBase = {
         title: metaTitle,
@@ -79,7 +79,7 @@ export function generateOrganizationSchema() {
             width: 512,
             height: 512,
         },
-        image: `${SITE_URL}/og-image.jpg`,
+        image: `${SITE_URL}/og-image.svg`,
         priceRange: '$$$$',
         areaServed: [
             { '@type': 'City', name: 'Recife', '@id': 'https://www.wikidata.org/wiki/Q48547' },
@@ -202,7 +202,7 @@ export function generateArticleSchema({
         headline: title,
         description,
         url: url.startsWith('http') ? url : `${SITE_URL}${url}`,
-        image: image || `${SITE_URL}/og-image.jpg`,
+        image: image || `${SITE_URL}/og-image.svg`,
         datePublished: publishedTime,
         dateModified: modifiedTime || publishedTime,
         author: {

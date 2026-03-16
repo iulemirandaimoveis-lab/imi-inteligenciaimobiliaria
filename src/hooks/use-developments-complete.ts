@@ -24,7 +24,7 @@ export interface Development {
     description: string
     short_description: string
     features: string[]
-    specs: any
+    specs: Record<string, string | number | boolean | null>
     price_from: number | null
     price_to: number | null
     property_type: string
@@ -189,7 +189,7 @@ export function useDevelopmentActions() {
             if (error) throw error
 
             // Revalidar cache
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
 
             return result as Development
         } catch (err) {
@@ -220,7 +220,7 @@ export function useDevelopmentActions() {
 
             // Revalidar cache
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
 
             return result as Development
         } catch (err) {
@@ -245,7 +245,7 @@ export function useDevelopmentActions() {
             if (error) throw error
 
             // Revalidar cache
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
         } catch (err) {
             const error = err as Error
             setError(error)
@@ -293,7 +293,7 @@ export function useDevelopmentActions() {
             if (error) throw error
 
             // Revalidar cache
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
 
             return result as Development
         } catch (err) {
@@ -316,7 +316,7 @@ export function useDevelopmentActions() {
                 .select().single()
             if (error) throw error
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
             return data
         } catch (e) { throw e } finally { setLoading(false) }
     }, [])
@@ -331,7 +331,7 @@ export function useDevelopmentActions() {
                 .select().single()
             if (error) throw error
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
             return data
         } catch (e) { throw e } finally { setLoading(false) }
     }, [])
@@ -346,7 +346,7 @@ export function useDevelopmentActions() {
                 .select().single()
             if (error) throw error
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
             return data
         } catch (e) { throw e } finally { setLoading(false) }
     }, [])
@@ -361,7 +361,7 @@ export function useDevelopmentActions() {
                 .select().single()
             if (error) throw error
             mutate(['development', id])
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
             return data
         } catch (e) { throw e } finally { setLoading(false) }
     }, [])
@@ -436,7 +436,7 @@ export function useBulkDevelopmentActions() {
 
             if (error) throw error
 
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
         } finally {
             setLoading(false)
         }
@@ -453,7 +453,7 @@ export function useBulkDevelopmentActions() {
 
             if (error) throw error
 
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
         } finally {
             setLoading(false)
         }
@@ -470,7 +470,7 @@ export function useBulkDevelopmentActions() {
 
             if (error) throw error
 
-            mutate((key: any) => Array.isArray(key) && key[0] === 'developments')
+            mutate((key: unknown) => Array.isArray(key) && key[0] === 'developments')
         } finally {
             setLoading(false)
         }

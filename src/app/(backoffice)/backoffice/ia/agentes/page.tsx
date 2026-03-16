@@ -115,13 +115,13 @@ const CATEGORIES = [
     { id: 'inteligencia', label: 'Inteligência' },
 ]
 
-const STATUS_ICONS_IA: Record<string, any> = { active: CheckCircle2, idle: Clock, scheduled: Clock, error: AlertCircle }
+const STATUS_ICONS_IA: Record<string, React.ElementType> = { active: CheckCircle2, idle: Clock, scheduled: Clock, error: AlertCircle }
 const STATUS_MAP = Object.fromEntries(
     Object.entries({ active: 'Ativo', idle: 'Em espera', scheduled: 'Agendado', error: 'Erro' }).map(([key, label]) => {
         const cfg = getStatusConfig(key)
         return [key, { label, color: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS_IA[key] || Clock }]
     })
-) as Record<string, { label: string; color: string; bg: string; icon: any }>
+) as Record<string, { label: string; color: string; bg: string; icon: React.ElementType }>
 
 export default function AgentesIAPage() {
     const [category, setCategory] = useState('todos')
@@ -198,9 +198,9 @@ export default function AgentesIAPage() {
             } else {
                 throw new Error(data.error || 'Erro desconhecido')
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error(`${agentName} falhou`, {
-                description: err?.message || 'Não foi possível executar o agente.',
+                description: (err as Error)?.message || 'Não foi possível executar o agente.',
             })
         } finally {
             setRunningAgents(prev => {

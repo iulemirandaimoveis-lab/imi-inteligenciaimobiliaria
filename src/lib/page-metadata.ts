@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 
 const BASE = 'https://www.iulemirandaimoveis.com.br'
 const SITE = 'IMI — Iule Miranda Imóveis'
-const OG   = `${BASE}/og-image.jpg`
+const OG   = `${BASE}/og-image.svg`
 
 function meta(
   title: string,

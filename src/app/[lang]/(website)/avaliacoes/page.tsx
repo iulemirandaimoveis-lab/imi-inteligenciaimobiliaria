@@ -46,9 +46,53 @@ const PROCESS = [
   { n: '03', title: 'Laudo Técnico', desc: 'Emissão do documento final com valor conclusivo, fundamentação e ART do responsável técnico.' },
 ]
 
+const FAQ_DATA = [
+  {
+    question: 'O que é uma avaliação imobiliária NBR 14653?',
+    answer: 'É um laudo técnico que determina o valor de mercado de um imóvel seguindo a norma NBR 14653 da ABNT. Utiliza métodos científicos como comparativo direto de dados de mercado, método evolutivo e método da renda para determinar o valor justo do imóvel.',
+  },
+  {
+    question: 'Quanto custa uma avaliação imobiliária em Recife?',
+    answer: 'O valor varia conforme o tipo e porte do imóvel. Apartamentos residenciais partem de R$ 1.200. Imóveis comerciais e industriais possuem valores sob consulta. Solicite um orçamento detalhado pelo formulário ou WhatsApp.',
+  },
+  {
+    question: 'Qual o prazo para emissão do laudo de avaliação?',
+    answer: 'O prazo padrão é de 5 a 7 dias úteis. Oferecemos prazo expresso de 72 horas para casos urgentes, como processos judiciais e financiamentos bancários.',
+  },
+  {
+    question: 'O laudo é aceito por bancos para financiamento?',
+    answer: 'Sim. Nossos laudos são aceitos pela Caixa Econômica Federal, Bradesco, Itaú, Santander e demais instituições financeiras. Emitimos no formato PTAM exigido pelos bancos.',
+  },
+  {
+    question: 'O avaliador é certificado pelo CNAI?',
+    answer: 'Sim. O responsável técnico é avaliador certificado pelo CNAI (Cadastro Nacional de Avaliadores Imobiliários) sob o número 53290, habilitado pelo COFECI para emitir laudos em todo o território nacional.',
+  },
+  {
+    question: 'Para que serve a avaliação judicial de imóvel?',
+    answer: 'A avaliação judicial é utilizada em processos de inventário, divórcio, partilha de bens, desapropriação, execuções judiciais e arbitragens. O laudo pericial fundamentado é aceito pelo TJPE e demais tribunais.',
+  },
+]
+
+const FAQ_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_DATA.map(faq => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+}
+
 export default function AppraisalsPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
       {/* HERO */}
       <section className="relative bg-[#141420] overflow-hidden">
         <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '40px 40px' }} />
@@ -169,6 +213,31 @@ export default function AppraisalsPage() {
               <p className="text-[#6C757D] max-w-md mx-auto font-light">Preencha o formulário e retornaremos em até 24 horas com um orçamento detalhado.</p>
             </div>
             <AppraisalForm />
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="section-padding bg-[#F8F9FA]">
+        <div className="container-custom">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-14">
+              <span className="text-[#486581] text-[11px] font-bold uppercase tracking-[0.25em]">Dúvidas Frequentes</span>
+              <h2 className="text-[30px] lg:text-[40px] font-black mt-4 mb-4 text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Perguntas Frequentes</h2>
+            </div>
+            <div className="space-y-4">
+              {FAQ_DATA.map((faq, i) => (
+                <details key={i} className="group bg-white border border-[#E9ECEF] rounded-xl overflow-hidden">
+                  <summary className="flex items-center justify-between cursor-pointer p-5 text-[15px] font-semibold text-[#1A1A1A] hover:bg-[#FAFBFC] transition-colors">
+                    {faq.question}
+                    <span className="ml-4 text-[#486581] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+                  </summary>
+                  <div className="px-5 pb-5 text-[14px] text-[#6C757D] leading-relaxed">
+                    {faq.answer}
+                  </div>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       </section>
