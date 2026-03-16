@@ -103,6 +103,44 @@ export async function POST(request: NextRequest) {
                 read: false,
             })
 
+        // 3b. Round-robin assignment to active team members (non-blocking)
+        void (async () => {
+            try {
+                // Get active team members
+                const { data: members } = await supabaseAdmin
+                    .from('team_members')
+                    .select('id, user_id')
+                    .eq('is_active', true)
+                    .order('id')
+
+                if (members && members.length > 0) {
+                    // Get current round-robin counter from settings
+                    const { data: setting } = await supabaseAdmin
+                        .from('settings')
+                        .select('value')
+                        .eq('key', 'lead_rr_index')
+                        .maybeSingle()
+
+                    const currentIdx = setting ? parseInt(setting.value as string, 10) || 0 : 0
+                    const nextIdx = (currentIdx + 1) % members.length
+                    const assignedMember = members[currentIdx % members.length]
+
+                    // Assign lead
+                    await supabaseAdmin
+                        .from('leads')
+                        .update({ assigned_to: assignedMember.user_id })
+                        .eq('id', lead.id)
+
+                    // Update counter
+                    await supabaseAdmin
+                        .from('settings')
+                        .upsert({ key: 'lead_rr_index', value: String(nextIdx) }, { onConflict: 'key' })
+                }
+            } catch {
+                // Assignment failure is non-critical
+            }
+        })()
+
         // 4. AI qualification (non-blocking, soft fail)
         try {
             const { qualifyLeadWithClaude } = await import('@/lib/ai/lead-qualifier')

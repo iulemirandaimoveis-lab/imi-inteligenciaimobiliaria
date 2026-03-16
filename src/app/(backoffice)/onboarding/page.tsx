@@ -72,6 +72,9 @@ export default function OnboardingPage() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) throw new Error('Not authenticated')
 
+            // Trial period: 14 days from onboarding
+            const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+
             // Upsert tenant record
             const { data: tenant, error: tenantErr } = await supabase
                 .from('tenants')
@@ -82,6 +85,8 @@ export default function OnboardingPage() {
                     city: data.city,
                     state: data.state,
                     plan: data.plan,
+                    subscription_tier: 'starter',
+                    trial_ends_at: trialEndsAt,
                     created_by: user.id,
                     updated_at: new Date().toISOString(),
                 }, { onConflict: 'created_by' })
@@ -103,9 +108,15 @@ export default function OnboardingPage() {
                     }, { onConflict: 'tenant_id,user_id' })
             }
 
-            // Update user metadata with onboarding complete flag
+            // Update user metadata with onboarding complete flag + trial info
             await supabase.auth.updateUser({
-                data: { onboarding_complete: true, company: data.companyName },
+                data: {
+                    onboarding_complete: true,
+                    company: data.companyName,
+                    subscription_tier: 'starter',
+                    trial_ends_at: trialEndsAt,
+                    tenant_id: tenant?.id || null,
+                },
             })
 
             setStep(3)
