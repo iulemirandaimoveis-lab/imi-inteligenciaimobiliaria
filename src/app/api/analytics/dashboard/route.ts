@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
             .from('leads')
             .select('source')
 
-        const origins = sourceData?.reduce((acc: any, curr) => {
+        const origins = sourceData?.reduce((acc: Record<string, number>, curr) => {
             const src = curr.source || 'Não Identificado'
             acc[src] = (acc[src] || 0) + 1
             return acc
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
             }
         })
 
-    } catch (err: any) {
+    } catch (err) {
         console.error('Analytics Error:', err)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }

@@ -32,14 +32,14 @@ export function useContextualOnboarding() {
 
     // When route changes, check if there are tips for this route
     useEffect(() => {
-        const module = getModuleForRoute(pathname)
+        const currentMod = getModuleForRoute(pathname)
         const routeTips = getTipsForRoute(pathname)
 
-        setCurrentModule(module)
+        setCurrentModule(currentMod)
         setTips(routeTips)
         setCurrentTipIndex(0)
 
-        if (module && routeTips.length > 0 && !isModuleCompleted(module)) {
+        if (currentMod && routeTips.length > 0 && !isModuleCompleted(currentMod)) {
             // Auto-trigger after brief delay on first visit
             const timer = setTimeout(() => setIsActive(true), 1200)
             return () => clearTimeout(timer)

@@ -51,7 +51,7 @@ export default function DashboardRecentActivity() {
     })
 
     useRealtimeLeads((lead) => {
-        const isHighScore = (lead.score || 0) >= 80
+        const isHighScore = (Number(lead.score) || 0) >= 80
 
         addActivity({
             type: isHighScore ? 'high_score' : 'lead',
@@ -84,7 +84,7 @@ export default function DashboardRecentActivity() {
                 .limit(10)
 
             recentLeads?.forEach(lead => {
-                const isHighScore = (lead.score || 0) >= 80
+                const isHighScore = (Number(lead.score) || 0) >= 80
                 allActivities.push({
                     id: `lead-${lead.id}`,
                     type: isHighScore ? 'high_score' : 'lead',

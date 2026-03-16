@@ -88,7 +88,9 @@ export default function LeadDetailPage() {
   const id = params?.id as string | undefined
 
   const { lead, isLoading, isError, revalidate } = useLead(id ?? null)
-  const [activeTab, setActiveTab] = useState<'timeline' | 'history' | 'notes'>('timeline')
+  const [activeTab, setActiveTab] = useState<'timeline' | 'history' | 'notes' | 'matches'>('timeline')
+  const [matches, setMatches] = useState<any[]>([])
+  const [matchesLoading, setMatchesLoading] = useState(false)
   const [note, setNote] = useState('')
   const [aiAnalysis, setAiAnalysis] = useState<any>(null)
   const [aiLoading, setAiLoading] = useState(false)
@@ -585,9 +587,10 @@ export default function LeadDetailPage() {
         {/* Tab header */}
         <div className="flex" style={{ borderBottom: '1px solid var(--bo-border)' }}>
           {[
-            { key: 'timeline', label: 'Behavioral Timeline' },
+            { key: 'timeline', label: 'Timeline' },
             { key: 'history',  label: 'Histórico' },
             { key: 'notes',    label: 'Notas' },
+            { key: 'matches',  label: 'Imóveis' },
           ].map((tab) => {
             const isActive = activeTab === tab.key
             return (
@@ -776,6 +779,100 @@ export default function LeadDetailPage() {
                   <Send size={14} style={{ color: note.trim() ? 'var(--text-inverse)' : 'var(--bo-text-muted)' }} />
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* ── Matches ── */}
+          {activeTab === 'matches' && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <SectionHeader title="Imóveis Compatíveis" badge={matches.length > 0 ? `${matches.length} resultado${matches.length !== 1 ? 's' : ''}` : undefined} />
+                {matches.length === 0 && !matchesLoading && (
+                  <button
+                    onClick={() => {
+                      if (!id) return
+                      setMatchesLoading(true)
+                      fetch(`/api/leads/${id}/matches`)
+                        .then(r => r.json())
+                        .then(res => setMatches(res.matches ?? []))
+                        .catch(() => {})
+                        .finally(() => setMatchesLoading(false))
+                    }}
+                    className="bo-btn bo-btn-sm"
+                    style={{ fontSize: '11px' }}
+                  >
+                    <Sparkles size={11} />
+                    Buscar matches
+                  </button>
+                )}
+              </div>
+
+              {matchesLoading && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--bo-text-muted)', fontSize: '13px', padding: '24px 0' }}>
+                  <Loader2 size={14} className="animate-spin" />
+                  Analisando compatibilidade...
+                </div>
+              )}
+
+              {!matchesLoading && matches.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--bo-text-muted)', fontSize: '13px' }}>
+                  <Building2 size={24} style={{ opacity: 0.3, margin: '0 auto 8px' }} />
+                  <p>Clique em "Buscar matches" para encontrar imóveis compatíveis</p>
+                </div>
+              )}
+
+              {matches.map((m, i) => (
+                <div
+                  key={m.id}
+                  style={{
+                    display: 'flex', alignItems: 'flex-start', gap: '12px',
+                    padding: '12px', borderRadius: '12px', marginBottom: '8px',
+                    background: i === 0 ? 'rgba(184,148,58,0.07)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${i === 0 ? 'rgba(184,148,58,0.2)' : 'var(--bo-border)'}`,
+                  }}
+                >
+                  <div style={{
+                    minWidth: '40px', height: '40px', borderRadius: '10px',
+                    background: i === 0 ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.05)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Building2 size={16} style={{ color: i === 0 ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>{m.name}</span>
+                      <span style={{
+                        fontSize: '10px', fontWeight: 700, padding: '2px 7px',
+                        borderRadius: '20px',
+                        background: m.match_score >= 80 ? 'rgba(34,197,94,0.15)' : m.match_score >= 60 ? 'rgba(234,179,8,0.15)' : 'rgba(255,255,255,0.06)',
+                        color: m.match_score >= 80 ? '#4ade80' : m.match_score >= 60 ? '#fbbf24' : 'var(--bo-text-muted)',
+                      }}>
+                        {m.match_score}% match
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', margin: '2px 0' }}>
+                      {[m.city, m.state].filter(Boolean).join(', ')}
+                      {m.min_price && ` · R$ ${(m.min_price / 1000).toFixed(0)}k${m.max_price ? `–${(m.max_price / 1000).toFixed(0)}k` : '+'}`}
+                    </p>
+                    {m.match_reasons?.length > 0 && (
+                      <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)', opacity: 0.7 }}>
+                        {m.match_reasons.join(' · ')}
+                      </p>
+                    )}
+                  </div>
+                  <a
+                    href={`/backoffice/empreendimentos/${m.id}`}
+                    style={{
+                      fontSize: '11px', color: 'var(--bo-text-muted)',
+                      textDecoration: 'none', whiteSpace: 'nowrap',
+                      padding: '4px 8px', borderRadius: '8px',
+                      background: 'rgba(255,255,255,0.05)',
+                    }}
+                  >
+                    Ver →
+                  </a>
+                </div>
+              ))}
             </div>
           )}
         </div>

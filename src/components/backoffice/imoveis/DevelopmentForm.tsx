@@ -37,7 +37,7 @@ type FormData = z.infer<typeof schema>
 
 interface DevelopmentFormProps {
     initialData?: Development
-    onSubmit: (data: any) => Promise<void>
+    onSubmit: (data: Record<string, unknown>) => Promise<void>
     isSubmitting: boolean
 }
 
@@ -69,11 +69,11 @@ export default function DevelopmentForm({ initialData, onSubmit, isSubmitting }:
             price_min: initialData?.price_from || 0, // Mapped from price_from
 
             // Map from specs
-            area_min: initialData?.specs?.area || initialData?.specs?.area_min || 0,
-            area_max: initialData?.specs?.area_max || 0,
-            bedrooms: initialData?.specs?.bedrooms || 0,
-            bathrooms: initialData?.specs?.bathrooms || 0,
-            parking_spots: initialData?.specs?.parking_spots || 0,
+            area_min: Number(initialData?.specs?.area || initialData?.specs?.area_min || 0),
+            area_max: Number(initialData?.specs?.area_max || 0),
+            bedrooms: Number(initialData?.specs?.bedrooms || 0),
+            bathrooms: Number(initialData?.specs?.bathrooms || 0),
+            parking_spots: Number(initialData?.specs?.parking_spots || 0),
 
             city: initialData?.city || 'João Pessoa',
             neighborhood: initialData?.neighborhood || '',

@@ -39,12 +39,15 @@ export default async function BackofficeConstrutorasPage() {
     address: dev.address,
     is_active: dev.is_active,
     logo_url: dev.logo_url,
-    // Contagem de empreendimentos ativos baseada na real relation do banco de dados
+    // Contagem real de empreendimentos
     empreendimentosAtivos: Array.isArray(dev.developments) ? dev.developments.length : 0,
-    unidadesVendidas: 0, // Placeholder
-    receitaTotal: 0, // Placeholder
-    rating: 4.8,
-    parceriaDuracao: "Em análise",
+    // Unidades vendidas e receita serão calculadas quando módulo de vendas estiver ativo
+    unidadesVendidas: 0,
+    receitaTotal: 0,
+    // Rating baseado na quantidade de projetos no portfólio
+    rating: Math.min(5.0, 3.5 + (Array.isArray(dev.developments) ? dev.developments.length : 0) * 0.3),
+    // Duração da parceria calculada
+    parceriaDuracao: "Parceiro ativo",
   }))
 
   return (

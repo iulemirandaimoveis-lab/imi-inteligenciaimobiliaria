@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
     Bot, Brain, Sparkles, Zap, Play, Pause, Settings,
     MessageSquare, Users, Building2, BarChart3, Mail,
@@ -24,9 +24,9 @@ const AGENTS = [
         colorRaw: '59,130,246',
         status: 'active' as const,
         model: 'Claude Sonnet',
-        tasksToday: 47,
+        tasksToday: 0,
         successRate: 94,
-        lastRun: '2 min atrás',
+        lastRun: '\u2014',
         tools: ['Supabase', 'WhatsApp', 'Email'],
         category: 'captacao',
     },
@@ -39,9 +39,9 @@ const AGENTS = [
         colorRaw: '139,92,246',
         status: 'active' as const,
         model: 'Claude Sonnet',
-        tasksToday: 23,
+        tasksToday: 0,
         successRate: 98,
-        lastRun: '15 min atrás',
+        lastRun: '\u2014',
         tools: ['Instagram', 'LinkedIn', 'Email'],
         category: 'conteudo',
     },
@@ -54,9 +54,9 @@ const AGENTS = [
         colorRaw: '16,185,129',
         status: 'idle' as const,
         model: 'Claude Sonnet',
-        tasksToday: 8,
+        tasksToday: 0,
         successRate: 100,
-        lastRun: '2h atrás',
+        lastRun: '\u2014',
         tools: ['FIPE ZAP', 'SECOVI', 'Supabase'],
         category: 'inteligencia',
     },
@@ -69,9 +69,9 @@ const AGENTS = [
         colorRaw: '245,158,11',
         status: 'active' as const,
         model: 'Claude Haiku',
-        tasksToday: 31,
+        tasksToday: 0,
         successRate: 87,
-        lastRun: '5 min atrás',
+        lastRun: '\u2014',
         tools: ['Supabase', 'WhatsApp'],
         category: 'conversao',
     },
@@ -84,9 +84,9 @@ const AGENTS = [
         colorRaw: '239,68,68',
         status: 'idle' as const,
         model: 'Claude Haiku',
-        tasksToday: 12,
+        tasksToday: 0,
         successRate: 73,
-        lastRun: '1h atrás',
+        lastRun: '\u2014',
         tools: ['WhatsApp', 'Email', 'Supabase'],
         category: 'conversao',
     },
@@ -99,9 +99,9 @@ const AGENTS = [
         colorRaw: '6,182,212',
         status: 'scheduled' as const,
         model: 'Claude Sonnet',
-        tasksToday: 3,
+        tasksToday: 0,
         successRate: 100,
-        lastRun: 'Seg passada',
+        lastRun: '\u2014',
         tools: ['Supabase', 'Email', 'PDF'],
         category: 'inteligencia',
     },
@@ -115,21 +115,29 @@ const CATEGORIES = [
     { id: 'inteligencia', label: 'Inteligência' },
 ]
 
-const STATUS_ICONS_IA: Record<string, any> = { active: CheckCircle2, idle: Clock, scheduled: Clock, error: AlertCircle }
+const STATUS_ICONS_IA: Record<string, React.ElementType> = { active: CheckCircle2, idle: Clock, scheduled: Clock, error: AlertCircle }
 const STATUS_MAP = Object.fromEntries(
     Object.entries({ active: 'Ativo', idle: 'Em espera', scheduled: 'Agendado', error: 'Erro' }).map(([key, label]) => {
         const cfg = getStatusConfig(key)
         return [key, { label, color: cfg.dot, bg: `${cfg.dot}1f`, icon: STATUS_ICONS_IA[key] || Clock }]
     })
-) as Record<string, { label: string; color: string; bg: string; icon: any }>
+) as Record<string, { label: string; color: string; bg: string; icon: React.ElementType }>
 
 export default function AgentesIAPage() {
     const [category, setCategory] = useState('todos')
     const [runningAgents, setRunningAgents] = useState<Set<string>>(new Set())
+    const [agentStats, setAgentStats] = useState<Record<string, { tasksToday: number }>>({})
+
+    useEffect(() => {
+        fetch('/api/ai/agents/stats')
+            .then(r => r.json())
+            .then(data => { if (data?.agents) setAgentStats(data.agents) })
+            .catch(() => {})
+    }, [])
 
     const filtered = category === 'todos' ? AGENTS : AGENTS.filter(a => a.category === category)
     const activeCount = AGENTS.filter(a => a.status === 'active').length
-    const totalTasksToday = AGENTS.reduce((s, a) => s + a.tasksToday, 0)
+    const totalTasksToday = AGENTS.reduce((s, a) => s + a.tasksToday + (agentStats[a.id]?.tasksToday || 0), 0)
     const avgSuccess = Math.round(AGENTS.reduce((s, a) => s + a.successRate, 0) / AGENTS.length)
 
     // Maps each agent to a task_type + sample prompt for the AI Router
@@ -190,9 +198,9 @@ export default function AgentesIAPage() {
             } else {
                 throw new Error(data.error || 'Erro desconhecido')
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error(`${agentName} falhou`, {
-                description: err?.message || 'Não foi possível executar o agente.',
+                description: (err as Error)?.message || 'Não foi possível executar o agente.',
             })
         } finally {
             setRunningAgents(prev => {
@@ -356,7 +364,7 @@ export default function AgentesIAPage() {
                                         Tarefas hoje
                                     </div>
                                     <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--bo-text)' }}>
-                                        {agent.tasksToday}
+                                        {agent.tasksToday + (agentStats[agent.id]?.tasksToday || 0)}
                                     </div>
                                 </div>
                                 <div style={{ flex: 1 }}>

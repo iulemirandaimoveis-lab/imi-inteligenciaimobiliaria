@@ -35,8 +35,8 @@ export interface Lead {
     created_at: string
     updated_at: string
     last_interaction_at: string | null
-    development?: any
-    interactions?: any[]
+    development?: { id: string; name: string; slug: string } | null
+    interactions?: { id: string; type: string; content: string; created_at: string }[]
 }
 
 export interface LeadFilters {
@@ -65,7 +65,45 @@ const LEAD_SELECT = `
   development:developments(id, name, slug)
 `
 
-function mapLead(l: any): Lead {
+interface RawLead {
+    id: string
+    name?: string | null
+    email?: string | null
+    phone?: string | null
+    whatsapp?: string | null
+    status?: string | null
+    score?: number | null
+    ai_score?: number | null
+    source?: string | null
+    origin?: string | null
+    utm_source?: string | null
+    interest_type?: string | null
+    interest_location?: string | null
+    capital?: number | null
+    budget_min?: number | null
+    budget_max?: number | null
+    development_id?: string | null
+    message?: string | null
+    notes?: string | null
+    assigned_to?: string | null
+    tags?: string[] | null
+    country?: string | null
+    currency?: string | null
+    language?: string | null
+    city?: string | null
+    state?: string | null
+    nationality?: string | null
+    investment_goal?: string | null
+    experience_level?: string | null
+    created_at?: string | null
+    updated_at?: string | null
+    last_interaction_at?: string | null
+    development?: { id: string; name: string; slug: string } | { id: string; name: string; slug: string }[] | null
+    interactions?: { id: string; type: string; content: string; created_at: string }[]
+}
+
+function mapLead(l: RawLead): Lead {
+    const dev = Array.isArray(l.development) ? l.development[0] : l.development
     return {
         id: l.id,
         name: l.name || 'Sem nome',
@@ -96,7 +134,7 @@ function mapLead(l: any): Lead {
         created_at: l.created_at || new Date().toISOString(),
         updated_at: l.updated_at || l.created_at || new Date().toISOString(),
         last_interaction_at: l.last_interaction_at || null,
-        development: l.development || null,
+        development: dev || null,
         interactions: l.interactions || [],
     }
 }

@@ -45,7 +45,7 @@ export function usePropertyUnits(propertyId: string) {
     }
 }
 
-export async function createUnit(data: any) {
+export async function createUnit(data: Omit<PropertyUnit, 'id' | 'created_at'>) {
     const supabase = createClient()
     const { data: unit, error } = await supabase
         .from('property_units')
@@ -56,7 +56,7 @@ export async function createUnit(data: any) {
     return unit
 }
 
-export async function updateUnit(id: string, data: any) {
+export async function updateUnit(id: string, data: Partial<PropertyUnit>) {
     const supabase = createClient()
     const { data: unit, error } = await supabase
         .from('property_units')

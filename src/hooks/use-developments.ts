@@ -74,7 +74,7 @@ export function useDevelopment(id: string) {
     }
 }
 
-export async function createDevelopment(data: any) {
+export async function createDevelopment(data: Record<string, unknown>) {
     const supabase = createClient()
     const { data: newDev, error } = await supabase
         .from('developments')
@@ -85,7 +85,7 @@ export async function createDevelopment(data: any) {
     return newDev
 }
 
-export async function updateDevelopment(id: string, updates: any) {
+export async function updateDevelopment(id: string, updates: Record<string, unknown>) {
     const supabase = createClient()
     const { data: updatedDev, error } = await supabase
         .from('developments')
@@ -106,7 +106,7 @@ export async function deleteDevelopment(id: string) {
     if (error) throw error
 }
 
-export async function bulkUpdateDevelopments(ids: string[], updates: any) {
+export async function bulkUpdateDevelopments(ids: string[], updates: Record<string, unknown>) {
     const supabase = createClient()
     const { error } = await supabase
         .from('developments')
