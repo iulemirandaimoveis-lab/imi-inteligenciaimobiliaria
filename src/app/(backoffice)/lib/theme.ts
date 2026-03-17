@@ -80,11 +80,14 @@ export const T = {
     dur: { micro: 'var(--dur-1)', fast: 'var(--dur-2)', normal: 'var(--dur-3)', slow: 'var(--dur-4)' },
     // Easing
     ease: { default: 'var(--ease)', spring: 'var(--ease-spring)', out: 'var(--ease-out)' },
-    // Font families
+    // Font families — DS3.1 semantic roles
     font: {
         serif: 'var(--font-serif)',
         sans: 'var(--font-sans)',
         mono: 'var(--font-mono)',
+        display: 'var(--font-display)',
+        ui: 'var(--font-ui)',
+        data: 'var(--font-data)',
     },
 }
 

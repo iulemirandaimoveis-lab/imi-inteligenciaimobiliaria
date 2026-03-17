@@ -1,34 +1,30 @@
 import type { Metadata, Viewport } from 'next';
-import { Libre_Baskerville, Figtree, JetBrains_Mono, Inter } from 'next/font/google';
-// DEPLOY_VERSION: v2.0.0 - DS3 NAVY×GOLD
+import localFont from 'next/font/local';
+// DEPLOY_VERSION: v3.1.0 - DS3.1 DESIGN SYSTEM UPGRADE
 import './globals.css';
 
-const libreBaskerville = Libre_Baskerville({
-    subsets: ['latin'],
-    weight: ['400', '700'],
-    style: ['normal', 'italic'],
-    variable: '--font-libre-baskerville',
+const cormorant = localFont({
+    src: [
+        { path: '../../public/fonts/cormorant-garamond-latin-wght-normal.woff2', style: 'normal' },
+        { path: '../../public/fonts/cormorant-garamond-latin-wght-italic.woff2', style: 'italic' },
+    ],
+    variable: '--font-cormorant',
     display: 'swap',
 });
 
-const figtree = Figtree({
-    subsets: ['latin'],
-    weight: ['300', '400', '500', '600'],
-    variable: '--font-figtree',
+const outfit = localFont({
+    src: '../../public/fonts/outfit-latin-wght-normal.woff2',
+    variable: '--font-outfit',
     display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({
-    subsets: ['latin'],
-    weight: ['300', '400', '500'],
-    variable: '--font-jetbrains-mono',
-    display: 'swap',
-});
-
-const inter = Inter({
-    subsets: ['latin'],
-    weight: ['300', '400', '500', '600', '700'],
-    variable: '--font-inter',
+const dmMono = localFont({
+    src: [
+        { path: '../../public/fonts/dm-mono-latin-300-normal.woff2', weight: '300', style: 'normal' },
+        { path: '../../public/fonts/dm-mono-latin-400-normal.woff2', weight: '400', style: 'normal' },
+        { path: '../../public/fonts/dm-mono-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    ],
+    variable: '--font-dm-mono',
     display: 'swap',
 });
 
@@ -73,8 +69,8 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="pt-BR" suppressHydrationWarning className={`${libreBaskerville.variable} ${figtree.variable} ${jetbrainsMono.variable} ${inter.variable}`}>
-            <body className={`${figtree.className} min-h-screen bg-[var(--bo-bg,#0B1120)] relative`}>
+        <html lang="pt-BR" suppressHydrationWarning className={`${cormorant.variable} ${outfit.variable} ${dmMono.variable}`}>
+            <body className={`${outfit.className} min-h-screen bg-[var(--bo-bg,#0B1120)] relative`}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="dark"

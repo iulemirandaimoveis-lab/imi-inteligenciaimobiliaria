@@ -16,6 +16,7 @@ import { AvatarGroup as OldAvatarGroup, type BrokerAvatar } from '@/components/u
 import { AvatarGroup, AvatarGroupTooltip } from '@/components/animate-ui/components/animate/avatar-group'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { T } from '@/app/(backoffice)/lib/theme'
+import { staggerContainer, cardVariants } from '@/lib/motion-config'
 
 // ── Avatar helpers ─────────────────────────────────────────────
 function getInitials(name: string) {
@@ -505,10 +506,12 @@ function AIDailySummary() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="rounded-2xl p-4"
+            className="rounded-2xl p-5"
             style={{
-                background: 'linear-gradient(135deg, rgba(59,130,246,0.06) 0%, rgba(168,85,247,0.04) 100%)',
-                border: '1px solid rgba(59,130,246,0.15)',
+                background: 'linear-gradient(135deg, var(--surface-raised, var(--bg-surface)) 0%, rgba(200,164,74,0.06) 100%)',
+                border: '1px solid var(--surface-border-gold, rgba(200,164,74,0.30))',
+                borderLeft: '3px solid var(--color-gold, var(--imi-gold-500))',
+                boxShadow: 'var(--shadow-gold-glow, 0 0 30px rgba(200,164,74,0.20))',
             }}
         >
             {loading ? (
@@ -518,10 +521,16 @@ function AIDailySummary() {
                 </div>
             ) : summary ? (
                 <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <Zap size={12} style={{ color: T.accent }} />
-                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.accent }}>
-                            Resumo IA do Dia
+                    <div className="flex items-center gap-2 mb-3">
+                        <span style={{ color: 'var(--color-gold, var(--imi-gold-500))', fontSize: '16px' }}>✦</span>
+                        <span style={{
+                            fontFamily: 'var(--font-display)',
+                            fontSize: '18px',
+                            fontStyle: 'italic',
+                            fontWeight: 400,
+                            color: 'var(--color-gold, var(--imi-gold-500))',
+                        }}>
+                            Briefing IA
                         </span>
                     </div>
                     <p className="text-xs font-medium mb-2" style={{ color: T.text }}>{summary.greeting}</p>
@@ -655,8 +664,9 @@ export default function DashboardClient({
                 <div className="flex items-end justify-between gap-3">
                     <div>
                         <h1 className="gradient-text" style={{
-                            fontSize: '26px', fontWeight: 800,
-                            lineHeight: 1.15, letterSpacing: '-0.03em', margin: 0,
+                            fontFamily: 'var(--font-display)',
+                            fontSize: '32px', fontWeight: 400,
+                            lineHeight: 1.20, letterSpacing: '-0.01em', margin: 0,
                         }}>
                             Painel Executivo
                         </h1>
@@ -746,7 +756,7 @@ export default function DashboardClient({
                         <p style={{ fontSize: '9px', fontWeight: 700, color: '#60A5FA', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 6 }}>
                             Honorários Totais Recebidos
                         </p>
-                        <div style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, fontVariantNumeric: 'tabular-nums', color: T.text }}>
+                        <div style={{ fontFamily: 'var(--font-data)', fontSize: '36px', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 1, fontVariantNumeric: 'tabular-nums', color: T.text }}>
                             {fmtCompact(avStats.honorarios_recebidos)}
                         </div>
                         <p style={{ fontSize: '11px', color: 'rgba(148,163,184,0.8)', marginTop: 5 }}>
@@ -760,7 +770,7 @@ export default function DashboardClient({
                             <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
                                 A Receber
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--warning)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontFamily: 'var(--font-data)', fontSize: '22px', fontWeight: 400, color: 'var(--warning)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {fmtCompact(avStats.honorarios_pendentes)}
                             </p>
                             <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.em_andamento} em andamento</p>
@@ -770,7 +780,7 @@ export default function DashboardClient({
                             <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
                                 Conclusão
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--success)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontFamily: 'var(--font-data)', fontSize: '22px', fontWeight: 400, color: 'var(--success)', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {completionRate}%
                             </p>
                             <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>{avStats.total} total</p>
@@ -780,7 +790,7 @@ export default function DashboardClient({
                             <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(148,163,184,0.7)', textTransform: 'uppercase', letterSpacing: '0.10em', marginBottom: 3 }}>
                                 Leads
                             </p>
-                            <p style={{ fontSize: '22px', fontWeight: 800, color: '#60A5FA', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
+                            <p style={{ fontFamily: 'var(--font-data)', fontSize: '22px', fontWeight: 400, color: '#60A5FA', letterSpacing: '-0.03em', fontVariantNumeric: 'tabular-nums' }}>
                                 {stats.total_leads}
                             </p>
                             <p style={{ fontSize: '10px', color: 'rgba(148,163,184,0.6)', marginTop: 2 }}>
@@ -830,52 +840,60 @@ export default function DashboardClient({
 
             {/* ── KPI Row ──────────────────────────────────────── */}
             <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.14, duration: 0.35 }}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-2 lg:grid-cols-4 gap-4"
                 data-tour="kpis"
             >
-                <Link href="/backoffice/financeiro">
-                    <KPICard
-                        label="Honorários Recebidos"
-                        value={fmtCompact(avStats.honorarios_recebidos)}
-                        sublabel={`${avStats.concluidas} concluídas`}
-                        icon={<Banknote size={14} />}
-                        accent="green"
-                        size="md"
-                    />
-                </Link>
-                <Link href="/backoffice/leads">
-                    <KPICard
-                        label="Leads Ativos"
-                        value={String(stats.total_leads)}
-                        sublabel={stats.leads_today > 0 ? `+${stats.leads_today} hoje` : 'pipeline'}
-                        icon={<Users size={14} />}
-                        accent="blue"
-                        size="md"
-                    />
-                </Link>
-                <Link href="/backoffice/avaliacoes">
-                    <KPICard
-                        label="A Receber"
-                        value={fmtCompact(avStats.honorarios_pendentes)}
-                        sublabel={`${avStats.em_andamento} em andamento`}
-                        icon={<Scale size={14} />}
-                        accent="warm"
-                        size="md"
-                    />
-                </Link>
-                <Link href="/backoffice/imoveis">
-                    <KPICard
-                        label="Portfólio"
-                        value={String(imoveisCount)}
-                        sublabel="imóveis cadastrados"
-                        icon={<Building2 size={14} />}
-                        accent="cold"
-                        size="md"
-                    />
-                </Link>
+                <motion.div variants={cardVariants}>
+                    <Link href="/backoffice/financeiro">
+                        <KPICard
+                            label="Honorários Recebidos"
+                            value={fmtCompact(avStats.honorarios_recebidos)}
+                            sublabel={`${avStats.concluidas} concluídas`}
+                            icon={<Banknote size={14} />}
+                            accent="green"
+                            size="md"
+                        />
+                    </Link>
+                </motion.div>
+                <motion.div variants={cardVariants}>
+                    <Link href="/backoffice/leads">
+                        <KPICard
+                            label="Leads Ativos"
+                            value={String(stats.total_leads)}
+                            sublabel={stats.leads_today > 0 ? `+${stats.leads_today} hoje` : 'pipeline'}
+                            icon={<Users size={14} />}
+                            accent="blue"
+                            size="md"
+                        />
+                    </Link>
+                </motion.div>
+                <motion.div variants={cardVariants}>
+                    <Link href="/backoffice/avaliacoes">
+                        <KPICard
+                            label="A Receber"
+                            value={fmtCompact(avStats.honorarios_pendentes)}
+                            sublabel={`${avStats.em_andamento} em andamento`}
+                            icon={<Scale size={14} />}
+                            accent="warm"
+                            size="md"
+                        />
+                    </Link>
+                </motion.div>
+                <motion.div variants={cardVariants}>
+                    <Link href="/backoffice/imoveis">
+                        <KPICard
+                            label="Portfólio"
+                            value={String(imoveisCount)}
+                            sublabel="imóveis cadastrados"
+                            icon={<Building2 size={14} />}
+                            accent="cold"
+                            size="md"
+                        />
+                    </Link>
+                </motion.div>
             </motion.div>
 
             {/* ── Gráfico + Ações Rápidas ─────────────────────── */}
