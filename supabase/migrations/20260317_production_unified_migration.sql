@@ -13,36 +13,29 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
 -- ═══════════════════════════════════════════════════════════════
--- 0.5 LIMPAR TABELAS PARCIALMENTE CRIADAS (da v1 com erro)
--- Só remove tabelas NOVAS que não tinham dados antes
+-- 0.5 LIMPAR objetos parcialmente criados (tabelas OU views)
+-- Usa DO block para dropar cada objeto independente do tipo
 -- ═══════════════════════════════════════════════════════════════
-DROP TABLE IF EXISTS public.proposal_events CASCADE;
-DROP TABLE IF EXISTS public.projeto_unidades CASCADE;
-DROP TABLE IF EXISTS public.avaliacoes_kb_upload_queue CASCADE;
-DROP TABLE IF EXISTS public.valuation_requests CASCADE;
-DROP TABLE IF EXISTS public.ai_tasks CASCADE;
-DROP TABLE IF EXISTS public.daily_sales_stats CASCADE;
-DROP TABLE IF EXISTS public.bank_accounts CASCADE;
-DROP TABLE IF EXISTS public.system_error_logs CASCADE;
-DROP TABLE IF EXISTS public.widgets_config CASCADE;
-DROP TABLE IF EXISTS public.consultorias CASCADE;
-DROP TABLE IF EXISTS public.integration_configs CASCADE;
-DROP TABLE IF EXISTS public.media CASCADE;
-DROP TABLE IF EXISTS public.page_views CASCADE;
-DROP TABLE IF EXISTS public.tracking_sessions CASCADE;
-DROP TABLE IF EXISTS public.market_reports CASCADE;
-DROP TABLE IF EXISTS public.projetos CASCADE;
-DROP TABLE IF EXISTS public.ebooks CASCADE;
-DROP TABLE IF EXISTS public.conteudos CASCADE;
-DROP TABLE IF EXISTS public.avaliacoes CASCADE;
-DROP TABLE IF EXISTS public.proposals CASCADE;
-DROP TABLE IF EXISTS public.contratos CASCADE;
-DROP TABLE IF EXISTS public.financial_goals CASCADE;
-DROP TABLE IF EXISTS public.financial_transactions CASCADE;
-DROP TABLE IF EXISTS public.profiles CASCADE;
-DROP TABLE IF EXISTS public.role_permissions CASCADE;
-DROP TABLE IF EXISTS public.brokers CASCADE;
-DROP VIEW IF EXISTS v_proposals_with_score CASCADE;
+DO $$
+DECLARE
+  obj TEXT;
+BEGIN
+  FOR obj IN SELECT unnest(ARRAY[
+    'v_proposals_with_score',
+    'proposal_events', 'projeto_unidades', 'avaliacoes_kb_upload_queue',
+    'valuation_requests', 'ai_tasks', 'daily_sales_stats', 'bank_accounts',
+    'system_error_logs', 'widgets_config', 'consultorias', 'integration_configs',
+    'media', 'page_views', 'tracking_sessions', 'market_reports', 'projetos',
+    'ebooks', 'conteudos', 'avaliacoes', 'proposals', 'contratos',
+    'financial_goals', 'financial_transactions', 'profiles', 'role_permissions',
+    'brokers'
+  ])
+  LOOP
+    -- Tenta dropar como view primeiro, depois como tabela
+    EXECUTE format('DROP VIEW IF EXISTS public.%I CASCADE', obj);
+    EXECUTE format('DROP TABLE IF EXISTS public.%I CASCADE', obj);
+  END LOOP;
+END $$;
 
 -- ═══════════════════════════════════════════════════════════════
 -- 1. BROKERS (Corretores)
