@@ -50,31 +50,20 @@ export async function uploadFile(
             throw new Error('Arquivo muito grande. Máximo: 50MB')
         }
 
-        // Gerar nome único
-        const timestamp = Date.now()
-        const randomString = Math.random().toString(36).substring(2, 15)
-        // Extrair extensão segura
-        const originalName = file.name
-        const extension = originalName.substring(originalName.lastIndexOf('.') + 1)
-        const fileName = `${timestamp}-${randomString}.${extension}`
-        const filePath = `${folder}/${fileName}`
+        // Upload via API route (uses supabaseAdmin to bypass storage RLS)
+        const formData = new FormData()
+        formData.append('file', file)
 
-        // Upload
-        const { data, error } = await getSupabase().storage
-            .from(bucket)
-            .upload(filePath, file, {
-                cacheControl: '3600',
-                upsert: false
-            })
+        const res = await fetch(`/api/upload?folder=${encodeURIComponent(folder)}&bucket=${encodeURIComponent(bucket)}`, {
+            method: 'POST',
+            body: formData,
+        })
 
-        if (error) {
-            throw error
+        const json = await res.json()
+
+        if (!res.ok || !json.success) {
+            throw new Error(json.error || 'Erro ao fazer upload')
         }
-
-        // Obter URL pública
-        const { data: urlData } = getSupabase().storage
-            .from(bucket)
-            .getPublicUrl(filePath)
 
         if (onProgress) {
             onProgress({
@@ -85,8 +74,8 @@ export async function uploadFile(
         }
 
         return {
-            url: urlData.publicUrl,
-            path: filePath
+            url: json.data.url,
+            path: json.data.fileName,
         }
     } catch (error: any) {
         console.error('Erro no upload:', error)

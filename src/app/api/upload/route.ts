@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
         const file = formData.get('file') as File
         const { searchParams } = new URL(request.url)
         const folder = searchParams.get('folder') || 'properties'
+        const bucketParam = searchParams.get('bucket')
 
         if (!file) {
             return NextResponse.json(
@@ -58,11 +59,10 @@ export async function POST(request: NextRequest) {
         // Gera nome único
         const ext = file.name.split('.').pop()
         const timestamp = Date.now()
-        // When folder is used as bucket name (e.g. 'developers'), store file at root of bucket
-        // For the default 'properties' folder, store inside 'media' bucket under folder path
+        // Determine bucket: explicit param > dedicated bucket detection > default 'media'
         const isDedicatedBucket = ['developers', 'avatars', 'media'].includes(folder)
-        const bucket = isDedicatedBucket ? folder : 'media'
-        const filePath = isDedicatedBucket ? `${timestamp}-${nanoid(8)}.${ext}` : `${folder}/${nanoid(16)}.${ext}`
+        const bucket = bucketParam || (isDedicatedBucket ? folder : 'media')
+        const filePath = (isDedicatedBucket && !bucketParam) ? `${timestamp}-${nanoid(8)}.${ext}` : `${folder}/${nanoid(16)}.${ext}`
 
         // Converte File para ArrayBuffer
         const arrayBuffer = await file.arrayBuffer()
