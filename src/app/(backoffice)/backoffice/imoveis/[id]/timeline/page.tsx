@@ -31,7 +31,7 @@ const EVENT_CONFIG: Record<string, { color: string; bg: string; icon: any }> = {
     creation:       { color: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: Plus },
     price_change:   { color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: Banknote },
     campaign_start: { color: '#a78bfa', bg: 'rgba(167,139,250,0.12)', icon: Activity },
-    sold:           { color: '#F59E0B', bg: 'rgba(245,158,11,0.12)', icon: CheckCircle2 },
+    sold:           { color: 'var(--warning)', bg: 'rgba(245,158,11,0.12)', icon: CheckCircle2 },
     visit:          { color: 'var(--bo-accent)', bg: 'var(--bo-active-bg)', icon: Users },
     lead_gen:       { color: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
 }
@@ -51,12 +51,12 @@ function MobileTimelineLoading() {
                         }}
                     >
                         <div style={{
-                            width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                            width: 40, height: 40, borderRadius: 4, flexShrink: 0,
                             background: 'linear-gradient(90deg, #162040 25%, #1A3250 50%, #162040 75%)',
                             backgroundSize: '200% 100%',
                             animation: 'shimmer 1.5s ease-in-out infinite',
                         }} />
-                        <div style={{ flex: 1, borderRadius: 12, height: 88,
+                        <div style={{ flex: 1, borderRadius: 4, height: 88,
                             background: 'linear-gradient(90deg, #162040 25%, #1A3250 50%, #162040 75%)',
                             backgroundSize: '200% 100%',
                             animation: 'shimmer 1.5s ease-in-out infinite',
@@ -73,10 +73,10 @@ function MobileTimelineLoading() {
 function DesktopTimelineLoading() {
     return (
         <div className="max-w-4xl mx-auto pb-20 space-y-4 animate-pulse">
-            <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 10, width: '40%', opacity: 0.5 }} />
-            <div style={{ height: 80, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.4 }} />
+            <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 4, width: '40%', opacity: 0.5 }} />
+            <div style={{ height: 80, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.4 }} />
             {[1, 2, 3].map(i => (
-                <div key={i} style={{ height: 120, background: 'var(--bo-card)', borderRadius: 20, opacity: 0.3 }} />
+                <div key={i} style={{ height: 120, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.3 }} />
             ))}
         </div>
     )
@@ -120,7 +120,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                         <span style={{
                             display: 'inline-block',
                             padding: '5px 14px',
-                            borderRadius: 999,
+                            borderRadius: 4,
                             background: 'rgba(184,148,58,0.10)',
                             border: '1px solid rgba(184,148,58,0.28)',
                             fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -168,7 +168,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                         <div style={{
                                             width: 40,
                                             height: 40,
-                                            borderRadius: 12,
+                                            borderRadius: 4,
                                             background: cfg.bg,
                                             border: `1px solid ${cfg.color}40`,
                                             display: 'flex',
@@ -185,7 +185,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                         <div style={{
                                             flex: 1,
                                             background: 'var(--bg-elevated)',
-                                            borderRadius: 12,
+                                            borderRadius: 4,
                                             padding: 14,
                                             border: '1px solid rgba(184,148,58,0.12)',
                                         }}>
@@ -193,10 +193,10 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                             <span style={{
                                                 display: 'inline-block',
                                                 padding: '2px 8px',
-                                                borderRadius: 999,
+                                                borderRadius: 4,
                                                 background: cfg.bg,
                                                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                                                fontSize: 9,
+                                                fontSize: 11,
                                                 fontWeight: 700,
                                                 letterSpacing: '0.8px',
                                                 textTransform: 'uppercase' as const,
@@ -211,7 +211,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                                 fontFamily: 'var(--font-playfair, serif)',
                                                 fontSize: 14,
                                                 fontWeight: 600,
-                                                color: '#EBE7E0',
+                                                color: 'var(--imi-cream)',
                                                 marginBottom: 4,
                                                 lineHeight: 1.3,
                                             }}>
@@ -221,8 +221,8 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                             {/* Date */}
                                             <div style={{
                                                 fontFamily: 'var(--font-dm-mono, monospace)',
-                                                fontSize: 10,
-                                                color: '#5C6B7D',
+                                                fontSize: 11,
+                                                color: 'var(--text-secondary)',
                                                 marginBottom: 6,
                                             }}>
                                                 {format(new Date(event.event_date), "dd MMM 'yy", { locale: ptBR })}
@@ -233,7 +233,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                                 <div style={{
                                                     fontFamily: 'var(--font-montserrat, sans-serif)',
                                                     fontSize: 12,
-                                                    color: '#9FAAB8',
+                                                    color: 'var(--text-tertiary)',
                                                     lineHeight: 1.5,
                                                 }}>
                                                     {event.description}
@@ -259,7 +259,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                         <div style={{
                             width: 64,
                             height: 64,
-                            borderRadius: 18,
+                            borderRadius: 4,
                             background: 'rgba(184,148,58,0.06)',
                             border: '1px solid rgba(184,148,58,0.15)',
                             display: 'flex',
@@ -273,7 +273,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                             fontFamily: 'var(--font-playfair, serif)',
                             fontSize: 18,
                             fontWeight: 600,
-                            color: '#EBE7E0',
+                            color: 'var(--imi-cream)',
                             marginBottom: 8,
                         }}>
                             Sem histórico registrado
@@ -281,7 +281,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                         <div style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
                             fontSize: 13,
-                            color: '#9FAAB8',
+                            color: 'var(--text-tertiary)',
                             lineHeight: 1.6,
                             maxWidth: 260,
                         }}>
@@ -301,8 +301,8 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                     height: 52,
                     padding: '0 20px',
                     background: 'var(--imi-gold-500)',
-                    color: '#0B1120',
-                    borderRadius: 26,
+                    color: T.text,
+                    borderRadius: 4,
                     border: 'none',
                     cursor: 'pointer',
                     display: 'flex',

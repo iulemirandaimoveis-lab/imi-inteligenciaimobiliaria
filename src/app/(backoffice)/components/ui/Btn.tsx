@@ -57,14 +57,14 @@ interface VariantStyle {
 const VARIANT_STYLES: Record<string, VariantStyle> = {
   primary: {
     background: 'var(--imi-gold-500)',
-    color: '#FFFFFF',
+    color: 'var(--text-inverse)',
     border: '1px solid transparent',
     hoverBackground: 'color-mix(in srgb, var(--imi-gold-500) 85%, #000)',
     activeTransform: 'scale(0.97)',
   },
   gold: {
     background: 'var(--imi-gold-500)',
-    color: '#FFFFFF',
+    color: 'var(--text-inverse)',
     border: '1px solid transparent',
     hoverBackground: 'color-mix(in srgb, var(--imi-gold-500) 85%, #000)',
     activeTransform: 'scale(0.97)',
@@ -107,9 +107,9 @@ interface SizeStyle {
 
 const SIZE_STYLES: Record<string, SizeStyle> = {
   xs: { height: 28, paddingInline: 10, fontSize: 12, gap: 4, iconSize: 12 },
-  sm: { height: 34, paddingInline: 14, fontSize: 13, gap: 6, iconSize: 14 },
+  sm: { height: 34, paddingInline: 14, fontSize: 13, gap: 8, iconSize: 14 },
   md: { height: 40, paddingInline: 18, fontSize: 14, gap: 8, iconSize: 16 },
-  lg: { height: 48, paddingInline: 24, fontSize: 15, gap: 10, iconSize: 18 },
+  lg: { height: 48, paddingInline: 24, fontSize: 15, gap: 8, iconSize: 18 },
   icon: { height: 40, paddingInline: 0, fontSize: 14, gap: 0, iconSize: 16 },
 }
 
@@ -143,7 +143,7 @@ function buildStyle(
     fontFamily: 'var(--font-sans)',
     fontWeight: 500,
     lineHeight: 1,
-    borderRadius: 'var(--r-md, 8px)',
+    borderRadius: 'var(--r-md, 4px)',
     border: v.border,
     background: hovered && !disabled ? v.hoverBackground : v.background,
     color: hovered && v.hoverColor && !disabled ? v.hoverColor : v.color,

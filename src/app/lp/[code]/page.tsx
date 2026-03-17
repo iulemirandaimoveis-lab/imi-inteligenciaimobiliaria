@@ -31,13 +31,7 @@ async function getDevelopment(code: string) {
 
     const { data } = await supabaseAdmin
         .from('developments')
-        .select(`
-            id, name, slug, type, description, city, state,
-            min_price, max_price, bedrooms_options, status,
-            cover_image_url, gallery_images,
-            developer:developers(name, logo_url),
-            total_units, available_units, area_min, area_max
-        `)
+        .select('*')
         .eq('id', devId)
         .single()
 

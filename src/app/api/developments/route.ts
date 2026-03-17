@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
         if (id) {
             const { data, error } = await supabase
                 .from('developments')
-                .select('*, developers(id, name, slug, logo_url, email, phone)')
+                .select('*')
                 .eq('id', id)
                 .single()
 
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
         const { data, error } = await supabase
             .from('developments')
-            .select('*, developers(id, name, slug, logo_url)')
+            .select('*')
             .order('created_at', { ascending: false })
 
         if (error) {

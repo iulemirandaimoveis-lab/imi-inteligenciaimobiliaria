@@ -146,7 +146,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                     <button
                         onClick={() => router.push('/backoffice/equipe')}
                         className="mt-4 h-10 px-5 rounded-xl text-sm font-medium"
-                        style={{ background: T.accent, color: '#fff' }}
+                        style={{ background: T.accent, color: 'var(--text-inverse)' }}
                     >
                         Voltar para Equipe
                     </button>
@@ -287,7 +287,7 @@ export default function EditarCorretorPage({ params }: { params: { id: string } 
                                                             style={{
                                                                 background: isSelected ? T.accent : 'transparent',
                                                                 borderColor: isSelected ? T.accent : T.border,
-                                                                color: '#fff',
+                                                                color: 'var(--text-inverse)',
                                                             }}>
                                                             {isSelected && <CheckSquare size={14} />}
                                                         </div>

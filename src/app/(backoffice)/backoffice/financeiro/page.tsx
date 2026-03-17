@@ -133,21 +133,22 @@ export default function FinanceiroPage() {
 
   const inputStyle = {
     width: '100%', height: '44px', padding: '0 12px',
-    borderRadius: '10px', fontSize: '13px', color: 'var(--bo-text)',
-    background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
+    borderRadius: '4px', fontSize: '13px', color: 'var(--text-primary)',
+    background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
     outline: 'none', boxSizing: 'border-box' as const,
+    transition: 'var(--dur-2) var(--ease)',
   }
 
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div style={{ height: '72px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ height: '72px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
         <div style={{ display: 'flex', gap: '12px' }}>
           {[1,2,3,4].map(i => (
-            <div key={i} style={{ flex: 1, height: '88px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} style={{ flex: 1, height: '88px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
           ))}
         </div>
-        <div style={{ height: '300px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ height: '300px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
       </div>
     )
   }
@@ -173,8 +174,8 @@ export default function FinanceiroPage() {
                 }}
                 title="Exportar CSV do mês atual"
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '38px', padding: '0 14px', borderRadius: '12px',
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  height: '40px', padding: '0 16px', borderRadius: '4px',
                   fontSize: '12px', fontWeight: 600, color: 'var(--bo-text-muted)',
                   background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
                   cursor: 'pointer', flexShrink: 0,
@@ -187,11 +188,11 @@ export default function FinanceiroPage() {
                 whileHover={{ scale: 1.02 }}
                 onClick={() => setShowForm(true)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '38px', padding: '0 18px', borderRadius: '12px',
-                  fontSize: '13px', fontWeight: 700, color: '#fff',
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  height: '40px', padding: '0 20px', borderRadius: '4px',
+                  fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
                   background: 'var(--bo-accent)',
-                  boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 28%, transparent)',
+                  boxShadow: 'var(--shadow-sm)',
                   border: 'none', cursor: 'pointer',
                   flexShrink: 0,
                 }}
@@ -232,7 +233,7 @@ export default function FinanceiroPage() {
         transition={{ delay: 0.14, duration: 0.35 }}
         style={{ overflow: 'hidden' }}
       >
-        <div style={{ padding: '14px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
           <SectionHeader title="Lançamentos" badge={filtered.length} />
           <FilterTabs tabs={filterTabs} active={tipoFilter} onChange={setTipoFilter} />
         </div>
@@ -245,9 +246,9 @@ export default function FinanceiroPage() {
             <button
               onClick={() => setShowForm(true)}
               style={{
-                marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
-                height: '38px', padding: '0 18px', borderRadius: '12px',
-                fontSize: '13px', fontWeight: 700, color: '#fff',
+                marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px',
+                height: '40px', padding: '0 20px', borderRadius: '4px',
+                fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
                 background: 'var(--bo-accent)',
                 border: 'none', cursor: 'pointer',
               }}
@@ -267,7 +268,7 @@ export default function FinanceiroPage() {
                   transition={{ delay: i * 0.03 }}
                   style={{
                     display: 'flex', alignItems: 'center', gap: '12px',
-                    padding: '12px 14px',
+                    padding: '12px 16px',
                     borderBottom: '1px solid var(--bo-border)',
                   }}
                 >
@@ -278,15 +279,15 @@ export default function FinanceiroPage() {
                     }
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text)', marginBottom: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text)', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {t.description}
                     </p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'var(--bo-surface)', padding: '1px 6px', borderRadius: '6px', border: '1px solid var(--bo-border)' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--bo-text-muted)', background: 'var(--bo-surface)', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--bo-border)' }}>
                         {t.category}
                       </span>
                       {t.due_date && (
-                        <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>
                           {new Date(t.due_date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
                         </span>
                       )}
@@ -294,7 +295,7 @@ export default function FinanceiroPage() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                    <p style={{ fontSize: '13px', fontWeight: 700, color: t.type === 'receita' ? 'var(--s-done)' : 'var(--s-hot)' }}>
+                    <p style={{ fontSize: '13px', fontWeight: 700, color: t.type === 'receita' ? 'var(--s-done)' : 'var(--s-hot)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
                       {t.type === 'despesa' ? '−' : '+'}{formatCurrency(Number(t.amount))}
                     </p>
                     {t.status === 'pendente' && (
@@ -304,7 +305,7 @@ export default function FinanceiroPage() {
                           onClick={() => setPixTx(t)}
                           title="Gerar cobrança Pix"
                           style={{
-                            width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
+                            width: '32px', height: '32px', borderRadius: '4px', flexShrink: 0,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             background: 'var(--success-bg, rgba(93,184,135,0.12))', border: '1px solid var(--border-subtle)',
                             cursor: 'pointer',
@@ -317,7 +318,7 @@ export default function FinanceiroPage() {
                           onClick={() => markPaid(t.id)}
                           title="Marcar como pago"
                           style={{
-                            width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
+                            width: '32px', height: '32px', borderRadius: '4px', flexShrink: 0,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             background: 'var(--s-done-bg)', border: 'none', cursor: 'pointer',
                           }}
@@ -355,7 +356,7 @@ export default function FinanceiroPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            style={{ width: '100%', maxWidth: '480px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+            style={{ width: '100%', maxWidth: '480px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--bo-text)' }}>Novo Lançamento</h3>
@@ -369,8 +370,8 @@ export default function FinanceiroPage() {
               {(['receita', 'despesa'] as const).map(tp => (
                 <button key={tp} onClick={() => setForm(f => ({ ...f, type: tp }))}
                   style={{
-                    flex: 1, height: '40px', borderRadius: '10px', fontSize: '13px', fontWeight: 600,
-                    cursor: 'pointer', transition: 'all 0.18s ease',
+                    flex: 1, height: '40px', borderRadius: '4px', fontSize: '13px', fontWeight: 600,
+                    cursor: 'pointer', transition: 'var(--dur-2) var(--ease)',
                     background: form.type === tp ? (tp === 'receita' ? 'var(--s-done-bg)' : 'var(--s-hot-bg)') : 'var(--bo-surface)',
                     color: form.type === tp ? (tp === 'receita' ? 'var(--s-done)' : 'var(--s-hot)') : 'var(--bo-text-muted)',
                     border: `1px solid ${form.type === tp ? (tp === 'receita' ? 'var(--s-done)' : 'var(--s-hot)') : 'var(--bo-border)'}`,
@@ -382,27 +383,27 @@ export default function FinanceiroPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Descrição *</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '8px' }}>Descrição *</label>
                 <input value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                   placeholder="Ex: Comissão Venda Apt 905" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Valor (R$) *</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '8px' }}>Valor (R$) *</label>
                 <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
                   placeholder="0.00" style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Categoria</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '8px' }}>Categoria</label>
                 <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} style={inputStyle}>
                   {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Data de Vencimento</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '8px' }}>Data de Vencimento</label>
                 <input type="date" value={form.due_date} onChange={e => setForm(f => ({ ...f, due_date: e.target.value }))} style={inputStyle} />
               </div>
               <div>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Método de Pagamento</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '8px' }}>Método de Pagamento</label>
                 <select value={form.payment_method} onChange={e => setForm(f => ({ ...f, payment_method: e.target.value }))} style={inputStyle}>
                   <option value="">Não informado</option>
                   <option value="pix">PIX</option>
@@ -413,20 +414,20 @@ export default function FinanceiroPage() {
                 </select>
               </div>
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '6px' }}>Observações</label>
+                <label style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' as const, color: 'var(--bo-text-muted)', display: 'block', marginBottom: '8px' }}>Observações</label>
                 <textarea value={form.notes || ''} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                   rows={2} placeholder="Notas adicionais..."
-                  style={{ ...inputStyle, height: 'auto', padding: '10px 12px', resize: 'none' }} />
+                  style={{ ...inputStyle, height: 'auto', padding: '8px 12px', resize: 'none' }} />
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <button onClick={() => setShowForm(false)}
-                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
+                style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
                 Cancelar
               </button>
               <button onClick={handleSubmit} disabled={saving}
-                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.7 : 1 }}>
+                style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', color: 'var(--text-inverse)', background: 'var(--bo-accent)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.7 : 1 }}>
                 {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={16} />}
                 {saving ? 'Salvando...' : 'Salvar'}
               </button>

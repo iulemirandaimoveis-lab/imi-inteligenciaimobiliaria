@@ -189,7 +189,7 @@ export default function ContextualTooltip({
                         style={{
                             background: 'var(--bg-surface)',
                             border: '1px solid var(--border-default)',
-                            boxShadow: '0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05)',
+                            boxShadow: 'var(--shadow-lg)',
                         }}
                     >
                         {/* Header */}

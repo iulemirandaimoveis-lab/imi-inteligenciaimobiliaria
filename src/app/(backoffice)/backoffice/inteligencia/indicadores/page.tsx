@@ -37,10 +37,10 @@ type NewForm = {
 const CATEGORIES = ['performance', 'liquidez', 'preco', 'oferta', 'macro']
 
 const CATEGORY_META: Record<string, { label: string; color: string; bg: string; Icon: any }> = {
-    performance: { label: 'Performance',  color: '#3B82F6', bg: 'rgba(59,130,246,0.10)',  Icon: BarChart3 },
-    liquidez:    { label: 'Liquidez',     color: '#10B981', bg: 'rgba(16,185,129,0.10)',  Icon: Gauge },
-    preco:       { label: 'Preço',        color: '#F59E0B', bg: 'rgba(245,158,11,0.10)',  Icon: DollarSign },
-    oferta:      { label: 'Oferta',       color: '#8B5CF6', bg: 'rgba(139,92,246,0.10)',  Icon: Package },
+    performance: { label: 'Performance',  color: 'var(--info)', bg: 'rgba(59,130,246,0.10)',  Icon: BarChart3 },
+    liquidez:    { label: 'Liquidez',     color: 'var(--success)', bg: 'rgba(16,185,129,0.10)',  Icon: Gauge },
+    preco:       { label: 'Preço',        color: 'var(--warning)', bg: 'rgba(245,158,11,0.10)',  Icon: DollarSign },
+    oferta:      { label: 'Oferta',       color: 'var(--imi-gold-500)', bg: 'rgba(139,92,246,0.10)',  Icon: Package },
     macro:       { label: 'Macro',        color: '#EC4899', bg: 'rgba(236,72,153,0.10)',  Icon: TrendingUp },
 }
 

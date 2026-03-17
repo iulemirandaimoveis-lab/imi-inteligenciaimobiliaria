@@ -34,13 +34,13 @@ interface NavSection {
 // ── Section colors for visual differentiation ──
 const SECTION_COLORS: Record<string, string> = {
     'Operações Diárias': 'var(--imi-gold-500)',
-    'Captação': '#E8A87C',
+    'Captação': 'var(--warning)',
     'Conversão': '#4ADE80',
     'Portfólio': '#D4A929',
     'Operação': '#4ECDC4',
     'Financeiro': '#84CC16',
-    'Inteligência': '#60A5FA',
-    'Configurações': '#94A3B8',
+    'Inteligência': 'var(--info)',
+    'Configurações': 'var(--text-tertiary)',
 }
 
 // ── 8 groups: Operações Diárias always open, rest collapsed by default ──
@@ -108,7 +108,7 @@ const SECTIONS: NavSection[] = [
             {
                 label: 'Conteúdo', icon: FileText,
                 children: [
-                    { label: 'Publicações', href: '/backoffice/conteudos',          icon: FileText,   badge: 'BREVE' },
+                    { label: 'Publicações', href: '/backoffice/conteudos',          icon: FileText,   badge: 'NEW'   },
                     { label: 'Criador IA',  href: '/backoffice/conteudo/criador',   icon: Wand2,      badge: 'NEW'   },
                     { label: 'eBook IA',    href: '/backoffice/conteudo/ebook',     icon: BookMarked, badge: 'NEW'   },
                     { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',     icon: Video,      badge: 'NEW'   },
@@ -207,7 +207,7 @@ const SECTIONS: NavSection[] = [
 // ── Badge styling helper ──────────────────────────────────────────
 function badgeStyle(badge: string | number) {
     const base = {
-        fontSize: 8,
+        fontSize: 11,
         fontFamily: 'var(--font-mono)',
         fontWeight: 700 as const,
         padding: '2px 5px',
@@ -218,15 +218,15 @@ function badgeStyle(badge: string | number) {
         flexShrink: 0,
     }
     if (badge === 'NEW') {
-        return { ...base, background: '#2D8F5C', color: '#fff', border: 'none', boxShadow: '0 1px 4px rgba(45,143,92,0.25)' }
+        return { ...base, background: '#2D8F5C', color: 'var(--text-inverse)', border: 'none', boxShadow: '0 1px 4px rgba(45,143,92,0.25)' }
     }
     if (badge === 'IA') {
         return { ...base, background: 'var(--imi-gold-500)', color: 'var(--bg-base)', border: 'none', boxShadow: '0 1px 4px rgba(184,148,58,0.25)' }
     }
     if (badge === 'BREVE') {
-        return { ...base, fontSize: 7, background: 'rgba(148,163,184,0.15)', color: 'var(--text-tertiary)', border: '1px solid rgba(148,163,184,0.15)' }
+        return { ...base, fontSize: 11, background: 'rgba(148,163,184,0.15)', color: 'var(--text-tertiary)', border: '1px solid rgba(148,163,184,0.15)' }
     }
-    return { ...base, background: 'var(--bg-elevated)', color: '#fff', border: '1px solid transparent' }
+    return { ...base, background: 'var(--bg-elevated)', color: 'var(--text-inverse)', border: '1px solid transparent' }
 }
 
 // ── Badge display text helper ─────────────────────────────────────
@@ -379,13 +379,13 @@ function SectionComponent({ section }: { section: NavSection }) {
                 {/* Color indicator */}
                 <div
                     className="flex-shrink-0"
-                    style={{ width: 3, height: 12, borderRadius: 2, background: sectionColor, opacity: open ? 1 : 0.4, transition: 'opacity 0.2s' }}
+                    style={{ width: 3, height: 12, borderRadius: 4, background: sectionColor, opacity: open ? 1 : 0.4, transition: 'opacity 0.2s' }}
                 />
                 <p
                     className="flex-1 text-left uppercase"
                     style={{
                         fontFamily: 'var(--font-sans)',
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 700,
                         letterSpacing: '0.10em',
                         color: open ? 'var(--text-secondary)' : 'var(--text-tertiary)',
@@ -466,7 +466,7 @@ export function DesktopSidebar() {
                     className="leading-[1.35] select-none"
                     style={{
                         fontFamily: 'var(--font-sans)',
-                        fontSize: 8,
+                        fontSize: 11,
                         fontWeight: 500,
                         letterSpacing: '0.22em',
                         textTransform: 'uppercase',

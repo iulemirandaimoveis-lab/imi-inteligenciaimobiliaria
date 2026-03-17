@@ -266,7 +266,7 @@ export default function NovoCorretorPage() {
                                                             style={{
                                                                 background: isSelected ? T.accent : 'transparent',
                                                                 borderColor: isSelected ? T.accent : T.border,
-                                                                color: '#fff',
+                                                                color: 'var(--text-inverse)',
                                                             }}>
                                                             {isSelected && <CheckSquare size={14} />}
                                                         </div>

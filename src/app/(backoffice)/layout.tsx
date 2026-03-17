@@ -63,7 +63,7 @@ export default async function BackofficeLayout({
                         color: 'var(--text-primary)',
                         fontFamily: 'var(--font-sans)',
                         fontSize: '13px',
-                        borderRadius: 'var(--r-lg, 12px)',
+                        borderRadius: 'var(--r-lg, 4px)',
                     },
                 }}
             />

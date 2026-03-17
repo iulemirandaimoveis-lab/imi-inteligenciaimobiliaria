@@ -43,7 +43,7 @@ const VIEW_TABS = [
 function KpiIcon({ children, color }: { children: React.ReactNode; color: string }) {
     return (
         <div style={{
-            width: 28, height: 28, borderRadius: 8,
+            width: 28, height: 28, borderRadius: 4,
             background: `${color}18`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color,
@@ -84,7 +84,7 @@ function MobileInventario({
 }: MobileInventarioProps) {
     const getStatus = (d: any) => {
         const s = d.status_commercial || d.status_comercial || 'draft'
-        return STATUS_CONFIG[s] || { label: s, color: '#5C6B7D', bg: 'var(--bg-elevated)' }
+        return STATUS_CONFIG[s] || { label: s, color: 'var(--text-secondary)', bg: 'var(--bg-elevated)' }
     }
 
     const getPrice = (d: any) => {
@@ -124,7 +124,7 @@ function MobileInventario({
                         <button
                             className="mob-btn-tap"
                             style={{
-                                width: 44, height: 44, borderRadius: 10,
+                                width: 44, height: 44, borderRadius: 4,
                                 background: 'rgba(184,148,58,0.15)',
                                 border: 'none', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -146,80 +146,80 @@ function MobileInventario({
             }}>
                 {/* Total */}
                 <div style={{
-                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    background: 'var(--bg-elevated)', borderRadius: 4, padding: 14,
                     display: 'flex', flexDirection: 'column', gap: 8,
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
-                            textTransform: 'uppercase' as const, color: '#5C6B7D',
+                            fontSize: 11, fontWeight: 600, letterSpacing: '1.5px',
+                            textTransform: 'uppercase' as const, color: 'var(--text-secondary)',
                         }}>Total</span>
                         <KpiIcon color="#5B9BD5"><Building2 size={14} /></KpiIcon>
                     </div>
                     <span style={{
                         fontFamily: 'var(--font-dm-mono, monospace)',
-                        fontSize: 22, fontWeight: 700, color: '#EBE7E0',
+                        fontSize: 22, fontWeight: 700, color: 'var(--imi-cream)',
                         lineHeight: 1,
                     }}>{loading ? '—' : developments.length}</span>
                 </div>
 
                 {/* Publicados */}
                 <div style={{
-                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    background: 'var(--bg-elevated)', borderRadius: 4, padding: 14,
                     display: 'flex', flexDirection: 'column', gap: 8,
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
-                            textTransform: 'uppercase' as const, color: '#5C6B7D',
+                            fontSize: 11, fontWeight: 600, letterSpacing: '1.5px',
+                            textTransform: 'uppercase' as const, color: 'var(--text-secondary)',
                         }}>Publicados</span>
                         <KpiIcon color="#5DB887"><Eye size={14} /></KpiIcon>
                     </div>
                     <span style={{
                         fontFamily: 'var(--font-dm-mono, monospace)',
-                        fontSize: 22, fontWeight: 700, color: '#EBE7E0',
+                        fontSize: 22, fontWeight: 700, color: 'var(--imi-cream)',
                         lineHeight: 1,
                     }}>{loading ? '—' : totalPublished}</span>
                 </div>
 
                 {/* Vendidos */}
                 <div style={{
-                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    background: 'var(--bg-elevated)', borderRadius: 4, padding: 14,
                     display: 'flex', flexDirection: 'column', gap: 8,
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
-                            textTransform: 'uppercase' as const, color: '#5C6B7D',
+                            fontSize: 11, fontWeight: 600, letterSpacing: '1.5px',
+                            textTransform: 'uppercase' as const, color: 'var(--text-secondary)',
                         }}>Vendidos</span>
                         <KpiIcon color="#D4913A"><Building2 size={14} /></KpiIcon>
                     </div>
                     <span style={{
                         fontFamily: 'var(--font-dm-mono, monospace)',
-                        fontSize: 22, fontWeight: 700, color: '#EBE7E0',
+                        fontSize: 22, fontWeight: 700, color: 'var(--imi-cream)',
                         lineHeight: 1,
                     }}>{loading ? '—' : totalSold}</span>
                 </div>
 
                 {/* Em Campanha */}
                 <div style={{
-                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    background: 'var(--bg-elevated)', borderRadius: 4, padding: 14,
                     display: 'flex', flexDirection: 'column', gap: 8,
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
-                            textTransform: 'uppercase' as const, color: '#5C6B7D',
+                            fontSize: 11, fontWeight: 600, letterSpacing: '1.5px',
+                            textTransform: 'uppercase' as const, color: 'var(--text-secondary)',
                         }}>Em Campanha</span>
                         <KpiIcon color="var(--imi-gold-500)"><Tag size={14} /></KpiIcon>
                     </div>
                     <span style={{
                         fontFamily: 'var(--font-dm-mono, monospace)',
-                        fontSize: 22, fontWeight: 700, color: '#EBE7E0',
+                        fontSize: 22, fontWeight: 700, color: 'var(--imi-cream)',
                         lineHeight: 1,
                     }}>{loading ? '—' : totalCampaign}</span>
                 </div>
@@ -234,7 +234,7 @@ function MobileInventario({
                     style={{
                         position: 'absolute', left: 30, top: '50%',
                         transform: 'translateY(-50%)',
-                        color: '#5C6B7D', pointerEvents: 'none',
+                        color: 'var(--text-secondary)', pointerEvents: 'none',
                     }}
                 >
                     <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
@@ -247,10 +247,10 @@ function MobileInventario({
                         width: '100%', height: 44, boxSizing: 'border-box',
                         background: 'var(--bg-elevated)',
                         border: '1px solid rgba(184,148,58,0.15)',
-                        borderRadius: 10,
+                        borderRadius: 4,
                         padding: '0 14px 0 40px',
                         fontFamily: 'var(--font-montserrat, sans-serif)',
-                        fontSize: 14, color: '#EBE7E0',
+                        fontSize: 14, color: 'var(--imi-cream)',
                         outline: 'none',
                         touchAction: 'manipulation',
                         WebkitTapHighlightColor: 'transparent',
@@ -276,10 +276,10 @@ function MobileInventario({
                                 flexShrink: 0,
                                 display: 'flex', alignItems: 'center', gap: 5,
                                 height: 32, padding: '0 12px',
-                                borderRadius: 999,
+                                borderRadius: 4,
                                 background: isActive ? 'var(--imi-gold-500)' : 'transparent',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
-                                color: isActive ? '#0B1120' : '#9FAAB8',
+                                color: isActive ? T.text : 'var(--text-tertiary)',
                                 fontFamily: 'var(--font-montserrat, sans-serif)',
                                 fontSize: 11, fontWeight: isActive ? 700 : 500,
                                 cursor: 'pointer',
@@ -291,8 +291,8 @@ function MobileInventario({
                             {chip.label}
                             <span style={{
                                 fontFamily: 'var(--font-dm-mono, monospace)',
-                                fontSize: 10, fontWeight: 700,
-                                color: isActive ? '#0B1120' : '#5C6B7D',
+                                fontSize: 11, fontWeight: 700,
+                                color: isActive ? T.text : 'var(--text-secondary)',
                                 marginLeft: 2,
                             }}>{chip.count}</span>
                         </button>
@@ -313,7 +313,7 @@ function MobileInventario({
                         `}</style>
                         {[1, 2, 3].map(i => (
                             <div key={i} style={{
-                                borderRadius: 12, overflow: 'hidden',
+                                borderRadius: 4, overflow: 'hidden',
                                 marginBottom: 12,
                                 background: 'var(--bg-elevated)',
                                 border: '1px solid rgba(184,148,58,0.12)',
@@ -328,14 +328,14 @@ function MobileInventario({
                                 {/* Body skeleton */}
                                 <div style={{ padding: '12px 14px' }}>
                                     <div style={{
-                                        height: 14, borderRadius: 6, marginBottom: 8,
+                                        height: 14, borderRadius: 4, marginBottom: 8,
                                         background: `linear-gradient(90deg, #1A3250 25%, #101830 50%, #1A3250 75%)`,
                                         backgroundSize: '200% 100%',
                                         animation: 'inv-shimmer 1.5s ease-in-out infinite',
                                         width: '70%',
                                     }} />
                                     <div style={{
-                                        height: 10, borderRadius: 6,
+                                        height: 10, borderRadius: 4,
                                         background: `linear-gradient(90deg, #1A3250 25%, #101830 50%, #1A3250 75%)`,
                                         backgroundSize: '200% 100%',
                                         animation: 'inv-shimmer 1.5s ease-in-out infinite',
@@ -354,7 +354,7 @@ function MobileInventario({
                         justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center',
                     }}>
                         <div style={{
-                            width: 72, height: 72, borderRadius: 20,
+                            width: 72, height: 72, borderRadius: 4,
                             background: 'rgba(184,148,58,0.06)',
                             border: '1px solid rgba(184,148,58,0.18)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -364,11 +364,11 @@ function MobileInventario({
                         <div>
                             <div style={{
                                 fontFamily: 'var(--font-playfair, serif)',
-                                fontSize: 18, fontWeight: 600, color: '#EBE7E0', marginBottom: 6,
+                                fontSize: 18, fontWeight: 600, color: 'var(--imi-cream)', marginBottom: 6,
                             }}>Nenhum empreendimento</div>
                             <div style={{
                                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                                fontSize: 13, color: '#5C6B7D', lineHeight: 1.6,
+                                fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6,
                             }}>
                                 {busca ? 'Nenhum resultado para sua busca.' : 'Adicione seu primeiro imóvel.'}
                             </div>
@@ -377,11 +377,11 @@ function MobileInventario({
                             <button
                                 className="mob-btn-tap"
                                 style={{
-                                    height: 44, padding: '0 24px', borderRadius: 10,
+                                    height: 44, padding: '0 24px', borderRadius: 4,
                                     background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
                                     fontFamily: 'var(--font-montserrat, sans-serif)',
                                     fontSize: 12, fontWeight: 700, letterSpacing: '1px',
-                                    textTransform: 'uppercase' as const, color: '#0B1120',
+                                    textTransform: 'uppercase' as const, color: T.text,
                                     touchAction: 'manipulation',
                                     WebkitTapHighlightColor: 'transparent',
                                 } as React.CSSProperties}
@@ -411,7 +411,7 @@ function MobileInventario({
                                 className="mob-card-inner"
                                 style={{
                                     background: 'var(--bg-elevated)',
-                                    borderRadius: 12,
+                                    borderRadius: 4,
                                     border: '1px solid rgba(184,148,58,0.12)',
                                     overflow: 'hidden',
                                     touchAction: 'manipulation',
@@ -442,19 +442,19 @@ function MobileInventario({
                                     <div style={{
                                         position: 'absolute', inset: 0,
                                         background: 'linear-gradient(to top, rgba(11,25,40,0.97) 0%, transparent 60%)',
-                                        borderRadius: '12px 12px 0 0',
+                                        borderRadius: '4px 4px 0 0',
                                     }} />
 
                                     {/* Status badge — top-left */}
                                     <div style={{ position: 'absolute', top: 10, left: 10 }}>
                                         <span style={{
                                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                                            fontSize: 9, fontWeight: 700, letterSpacing: '0.8px',
+                                            fontSize: 11, fontWeight: 700, letterSpacing: '0.8px',
                                             textTransform: 'uppercase' as const,
                                             color: status.color,
                                             background: status.bg,
                                             border: `1px solid ${status.color}40`,
-                                            padding: '4px 8px', borderRadius: 999,
+                                            padding: '4px 8px', borderRadius: 4,
                                         }}>
                                             {status.label}
                                         </span>
@@ -467,7 +467,7 @@ function MobileInventario({
                                     }}>
                                         <div style={{
                                             fontFamily: 'var(--font-playfair, serif)',
-                                            fontSize: 15, fontWeight: 700, color: '#EBE7E0',
+                                            fontSize: 15, fontWeight: 700, color: 'var(--imi-cream)',
                                             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                         }}>{d.name}</div>
                                     </div>
@@ -489,28 +489,28 @@ function MobileInventario({
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                         {d.bedrooms && (
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                                <Bed size={12} style={{ color: '#5C6B7D' }} />
+                                                <Bed size={12} style={{ color: 'var(--text-secondary)' }} />
                                                 <span style={{
                                                     fontFamily: 'var(--font-dm-mono, monospace)',
-                                                    fontSize: 12, color: '#9FAAB8',
+                                                    fontSize: 12, color: 'var(--text-tertiary)',
                                                 }}>{d.bedrooms}</span>
                                             </div>
                                         )}
                                         {d.bathrooms && (
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                                <Bath size={12} style={{ color: '#5C6B7D' }} />
+                                                <Bath size={12} style={{ color: 'var(--text-secondary)' }} />
                                                 <span style={{
                                                     fontFamily: 'var(--font-dm-mono, monospace)',
-                                                    fontSize: 12, color: '#9FAAB8',
+                                                    fontSize: 12, color: 'var(--text-tertiary)',
                                                 }}>{d.bathrooms}</span>
                                             </div>
                                         )}
                                         {d.area && (
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                                <Maximize2 size={12} style={{ color: '#5C6B7D' }} />
+                                                <Maximize2 size={12} style={{ color: 'var(--text-secondary)' }} />
                                                 <span style={{
                                                     fontFamily: 'var(--font-dm-mono, monospace)',
-                                                    fontSize: 12, color: '#9FAAB8',
+                                                    fontSize: 12, color: 'var(--text-tertiary)',
                                                 }}>{d.area}m²</span>
                                             </div>
                                         )}
@@ -543,7 +543,7 @@ export default function InventarioPage() {
         Promise.all([
             supabase
                 .from('developments')
-                .select('id, name, slug, price_min, price_max, tipo, type, status_commercial, status_comercial, gallery_images, bedrooms, bathrooms, area, views')
+                .select('*')
                 .order('created_at', { ascending: false }),
             supabase
                 .from('page_views')
@@ -801,7 +801,7 @@ export default function InventarioPage() {
                                                 <div className="absolute inset-0 flex items-center justify-center"
                                                     style={{ background: 'rgba(0,0,0,0.45)' }}>
                                                     <span className="text-xl font-black text-orange-400 uppercase tracking-[0.15em]"
-                                                        style={{ border: '2px solid #f97316', padding: '4px 14px', borderRadius: 6 }}>
+                                                        style={{ border: '2px solid #f97316', padding: '4px 14px', borderRadius: 4 }}>
                                                         Sold Out
                                                     </span>
                                                 </div>

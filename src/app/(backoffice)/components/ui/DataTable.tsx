@@ -33,7 +33,7 @@ function ShimmerRow({ cols }: { cols: number }) {
           <div
             style={{
               height: 14,
-              borderRadius: 'var(--r-xs, 3px)',
+              borderRadius: 'var(--r-xs, 4px)',
               background: 'linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-hover) 50%, var(--bg-muted) 75%)',
               backgroundSize: '200% 100%',
               width: `${55 + (i * 17) % 40}%`,
@@ -100,13 +100,13 @@ export function DataTable<T extends Record<string, unknown>>({
   const renderSortIcon = (key: string) => {
     if (sortKey !== key || !sortDir) {
       return (
-        <span style={{ color: T.textTertiary, opacity: 0.35, marginLeft: 4, fontSize: 9 }}>
+        <span style={{ color: T.textTertiary, opacity: 0.35, marginLeft: 4, fontSize: 11 }}>
           {'▲'}
         </span>
       )
     }
     return (
-      <span style={{ color: 'var(--imi-gold-500)', marginLeft: 4, fontSize: 9 }}>
+      <span style={{ color: 'var(--imi-gold-500)', marginLeft: 4, fontSize: 11 }}>
         {sortDir === 'asc' ? '▲' : '▼'}
       </span>
     )
@@ -135,7 +135,7 @@ export function DataTable<T extends Record<string, unknown>>({
     background: T.muted,
     color: T.textTertiary,
     fontFamily: T.font.mono,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: 600,
     textTransform: 'uppercase',
     letterSpacing: '0.10em',

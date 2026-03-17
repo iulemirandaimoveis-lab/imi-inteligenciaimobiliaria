@@ -73,9 +73,9 @@ const canais = [
   { value: 'instagram', label: 'Instagram Ads', icon: Instagram, hex: '#E1306C' },
   { value: 'facebook', label: 'Facebook Ads', icon: Facebook, hex: '#1877F2' },
   { value: 'google', label: 'Google Ads', icon: Search, hex: '#EA4335' },
-  { value: 'email', label: 'Email Marketing', icon: Mail, hex: '#10B981' },
+  { value: 'email', label: 'Email Marketing', icon: Mail, hex: 'var(--success)' },
   { value: 'whatsapp', label: 'WhatsApp Business', icon: MessageSquare, hex: '#25D366' },
-  { value: 'site', label: 'Site/Blog', icon: Globe, hex: '#8B5CF6' },
+  { value: 'site', label: 'Site/Blog', icon: Globe, hex: 'var(--imi-gold-500)' },
 ]
 
 const objetivos = [
@@ -354,9 +354,9 @@ export default function NovaCampanhaPage() {
                     className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
                     style={
                       isCompleted
-                        ? { background: 'var(--s-done)', color: '#fff' }
+                        ? { background: 'var(--s-done)', color: 'var(--text-inverse)' }
                         : isActive
-                          ? { background: T.accent, color: '#fff' }
+                          ? { background: T.accent, color: 'var(--text-inverse)' }
                           : { background: T.elevated, color: T.textMuted }
                     }
                   >

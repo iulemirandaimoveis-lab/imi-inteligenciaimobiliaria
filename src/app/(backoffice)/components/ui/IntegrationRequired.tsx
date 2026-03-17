@@ -51,7 +51,7 @@ export function IntegrationRequired({
         style={{
           width: 80,
           height: 80,
-          borderRadius: 'var(--r-xl, 16px)',
+          borderRadius: 'var(--r-xl, 4px)',
           background: 'rgba(184,148,58,0.08)',
           border: '1px solid rgba(184,148,58,0.20)',
           display: 'flex',
@@ -74,12 +74,12 @@ export function IntegrationRequired({
               top: -10,
               right: -10,
               background: badgeColor ?? 'var(--imi-gold-500)',
-              color: '#FFFFFF',
-              fontSize: 9,
+              color: 'var(--text-inverse)',
+              fontSize: 11,
               fontWeight: 700,
               letterSpacing: '1.5px',
               textTransform: 'uppercase',
-              padding: '3px 8px',
+              padding: '4px 8px',
               borderRadius: 'var(--r-full, 9999px)',
               fontFamily: 'var(--font-mono)',
               whiteSpace: 'nowrap',
@@ -93,7 +93,7 @@ export function IntegrationRequired({
       {/* Eyebrow */}
       <p
         style={{
-          fontSize: 9,
+          fontSize: 11,
           letterSpacing: '3px',
           textTransform: 'uppercase',
           color: 'var(--imi-gold-500)',
@@ -139,7 +139,7 @@ export function IntegrationRequired({
           style={{
             background: 'var(--bg-muted)',
             border: '1px solid rgba(184,148,58,0.12)',
-            borderRadius: 'var(--r-xl, 16px)',
+            borderRadius: 'var(--r-xl, 4px)',
             padding: '20px 24px',
             maxWidth: 440,
             width: '100%',
@@ -149,7 +149,7 @@ export function IntegrationRequired({
         >
           <p
             style={{
-              fontSize: 10,
+              fontSize: 11,
               letterSpacing: '2px',
               textTransform: 'uppercase',
               color: 'var(--imi-gold-500)',
@@ -160,9 +160,9 @@ export function IntegrationRequired({
           >
             Como configurar
           </p>
-          <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
             {steps.map((step, i) => (
-              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+              <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                 <span
                   style={{
                     minWidth: 22,
@@ -173,7 +173,7 @@ export function IntegrationRequired({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: 700,
                     color: 'var(--imi-gold-500)',
                     fontFamily: 'var(--font-mono)',
@@ -201,8 +201,8 @@ export function IntegrationRequired({
               height: 44,
               padding: '0 20px',
               background: 'var(--imi-gold-500)',
-              color: '#FFFFFF',
-              borderRadius: 'var(--r-md, 8px)',
+              color: 'var(--text-inverse)',
+              borderRadius: 'var(--r-md, 4px)',
               fontSize: 13,
               fontWeight: 600,
               fontFamily: 'var(--font-sans)',
@@ -231,7 +231,7 @@ export function IntegrationRequired({
               background: 'rgba(184,148,58,0.08)',
               border: '1px solid rgba(184,148,58,0.20)',
               color: 'var(--imi-gold-500)',
-              borderRadius: 'var(--r-md, 8px)',
+              borderRadius: 'var(--r-md, 4px)',
               fontSize: 13,
               fontWeight: 500,
               fontFamily: 'var(--font-sans)',
@@ -259,7 +259,7 @@ export function IntegrationRequired({
               background: 'rgba(184,148,58,0.08)',
               border: '1px solid rgba(184,148,58,0.20)',
               color: 'var(--imi-gold-500)',
-              borderRadius: 'var(--r-md, 8px)',
+              borderRadius: 'var(--r-md, 4px)',
               fontSize: 13,
               fontWeight: 500,
               fontFamily: 'var(--font-sans)',

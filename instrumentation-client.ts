@@ -1,5 +1,5 @@
-// sentry.client.config.ts — Browser-side Sentry config
-// Set SENTRY_DSN env var to enable error tracking
+// instrumentation-client.ts — Browser-side Sentry config
+// Replaces sentry.client.config.ts for Turbopack compatibility
 import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({

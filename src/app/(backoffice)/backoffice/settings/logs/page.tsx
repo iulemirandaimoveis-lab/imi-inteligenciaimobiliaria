@@ -135,7 +135,7 @@ export default function LogsPage() {
   const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
     success: { label: 'Sucesso', color: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)', icon: CheckCircle },
     error: { label: 'Erro', color: 'var(--bo-error)', bg: 'rgba(229,115,115,0.12)', icon: XCircle },
-    warning: { label: 'Aviso', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
+    warning: { label: 'Aviso', color: 'var(--warning)', bg: 'rgba(232,168,124,0.12)', icon: AlertCircle },
     info: { label: 'Info', color: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)', icon: Info },
   }
 
@@ -144,7 +144,7 @@ export default function LogsPage() {
     border: `1px solid ${T.border}`,
     color: T.text,
     height: '44px',
-    borderRadius: '12px',
+    borderRadius: '4px',
     padding: '0 12px',
     fontSize: '13px',
     outline: 'none',
@@ -323,7 +323,7 @@ export default function LogsPage() {
 
       {/* Info */}
       <div className="rounded-2xl p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
-        <p className="text-sm" style={{ color: '#8CA4B8' }}>
+        <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
           <strong style={{ color: T.text }}>Retenção:</strong> Logs são mantidos por 90 dias. Exportações são recomendadas para auditoria de longo prazo.
         </p>
       </div>

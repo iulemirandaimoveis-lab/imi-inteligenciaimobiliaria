@@ -95,6 +95,8 @@ const ANCHOR_SECTIONS = [
 export default async function DevelopmentDetailPage({ params }: { params: { slug: string, lang: string } }) {
     const supabase = await createClient()
 
+    // Query development + developer (safe join via FK)
+    // Broker join is separate to avoid FK errors if brokers table is missing
     const { data, error } = await supabase
         .from('developments')
         .select(`
@@ -105,14 +107,6 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                 website,
                 phone,
                 email
-            ),
-            broker:brokers (
-                id,
-                name,
-                email,
-                phone,
-                creci,
-                avatar_url
             )
         `)
         .eq('slug', params.slug)
@@ -124,13 +118,21 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
 
     const development = mapDbPropertyToDevelopment(data)
 
-    // Extract broker info if available
-    const brokerData = Array.isArray(data.broker) ? data.broker[0] : data.broker
+    // Fetch broker separately (resilient — won't break if brokers table is missing)
+    let brokerData: any = null
+    if (data.broker_id) {
+        const { data: broker } = await supabase
+            .from('brokers')
+            .select('id, name, email, phone, creci, avatar_url')
+            .eq('id', data.broker_id)
+            .single()
+        brokerData = broker
+    }
 
     // Fetch similar properties (same city, different slug, max 4)
     const { data: similarRaw } = await supabase
         .from('developments')
-        .select(`*, developers(id, name, slug, logo_url)`)
+        .select('*')
         .eq('status_commercial', 'published')
         .eq('city', data.city || 'Recife')
         .neq('slug', params.slug)

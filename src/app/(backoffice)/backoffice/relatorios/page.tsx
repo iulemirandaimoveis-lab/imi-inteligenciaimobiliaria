@@ -90,11 +90,11 @@ const RELATORIOS = [
 ]
 
 const CAT_MAP: Record<string, { label: string; text: string; bg: string }> = {
-    avaliacoes: { label: 'Avaliações', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
+    avaliacoes: { label: 'Avaliações', text: 'var(--text-secondary)', bg: 'rgba(168,158,196,0.12)' },
     financeiro: { label: 'Financeiro', text: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)' },
-    crm: { label: 'CRM', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
+    crm: { label: 'CRM', text: 'var(--info)', bg: 'rgba(123,158,196,0.12)' },
     imoveis: { label: 'Imóveis', text: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)' },
-    consultorias: { label: 'Consultorias', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
+    consultorias: { label: 'Consultorias', text: 'var(--warning)', bg: 'rgba(232,168,124,0.12)' },
 }
 
 const CATEGORIAS = ['Todos', 'Avaliações', 'Financeiro', 'CRM', 'Imóveis', 'Consultorias']
@@ -200,8 +200,8 @@ export default function RelatoriosPage() {
                         {[
                             { label: 'Total Leads', value: funnel?.reduce((s, f) => s + f.value, 0) || 0, color: 'var(--bo-accent)' },
                             { label: 'Fechados', value: won, color: '#4CAF7D' },
-                            { label: 'Taxa Conversão', value: `${conversionRate}%`, color: '#A89EC4' },
-                            { label: 'Empreendimentos', value: byDev?.length || 0, color: '#E8A87C' },
+                            { label: 'Taxa Conversão', value: `${conversionRate}%`, color: 'var(--text-secondary)' },
+                            { label: 'Empreendimentos', value: byDev?.length || 0, color: 'var(--warning)' },
                         ].map((kpi, i) => (
                             <div key={i} className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <p className="text-xs mb-2" style={{ color: T.textDim }}>{kpi.label}</p>
@@ -244,8 +244,8 @@ export default function RelatoriosPage() {
                                 <ResponsiveContainer width="100%" height={160}>
                                     <LineChart data={temporal} margin={{ left: -10, right: 10, top: 4, bottom: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="var(--bo-border)" />
-                                        <XAxis dataKey="semana" tick={{ fontSize: 10, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
-                                        <YAxis tick={{ fontSize: 10, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
+                                        <XAxis dataKey="semana" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
+                                        <YAxis tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
                                         <Line type="monotone" dataKey="leads" name="Leads" stroke="var(--bo-accent)" strokeWidth={2} dot={{ fill: 'var(--bo-accent)', r: 3 }} />
                                     </LineChart>
@@ -264,8 +264,8 @@ export default function RelatoriosPage() {
                                 <ResponsiveContainer width="100%" height={160}>
                                     <BarChart data={byDev} layout="vertical" margin={{ left: 0, right: 20, top: 0, bottom: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="var(--bo-border)" horizontal={false} />
-                                        <XAxis type="number" tick={{ fontSize: 10, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
-                                        <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fill: 'var(--bo-text-muted)' }} width={95} axisLine={false} tickLine={false} />
+                                        <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
+                                        <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} width={95} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
                                         <Bar dataKey="leads" name="Leads" fill="var(--bo-accent)" radius={[0, 4, 4, 0]} maxBarSize={16} />
                                     </BarChart>
@@ -310,7 +310,7 @@ export default function RelatoriosPage() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-1">
                                                 <p className="text-sm font-semibold" style={{ color: T.text }}>{r.label}</p>
-                                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
                                                     style={{ color: cat?.text, background: cat?.bg }}>
                                                     {cat?.label}
                                                 </span>
@@ -325,9 +325,9 @@ export default function RelatoriosPage() {
                                                 <div key={f} className="flex items-center gap-1 px-2 py-1 rounded-lg"
                                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                                     {f === 'PDF'
-                                                        ? <File size={11} style={{ color: '#E8A87C' }} />
+                                                        ? <File size={11} style={{ color: 'var(--warning)' }} />
                                                         : <FileSpreadsheet size={11} style={{ color: 'var(--bo-success)' }} />}
-                                                    <span className="text-[10px] font-semibold" style={{ color: T.textDim }}>{f}</span>
+                                                    <span className="text-[11px] font-semibold" style={{ color: T.textDim }}>{f}</span>
                                                 </div>
                                             ))}
                                         </div>

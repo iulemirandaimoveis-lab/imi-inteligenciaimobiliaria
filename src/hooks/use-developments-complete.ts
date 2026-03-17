@@ -79,7 +79,7 @@ export function useDevelopments(filters: DevelopmentFilters = {}) {
         async () => {
             let query = supabase
                 .from('developments')
-                .select('*, developer:developers(name, logo_url)', { count: 'exact' })
+                .select('*', { count: 'exact' })
 
             // Aplicar filtros
             if (filters.search) {
@@ -146,7 +146,7 @@ export function useDevelopment(id: string | null) {
         async () => {
             const { data, error } = await supabase
                 .from('developments')
-                .select('*, developer:developers(*), units:development_units(count)')
+                .select('*')
                 .eq('id', id)
                 .single()
 

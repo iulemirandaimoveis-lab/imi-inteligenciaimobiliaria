@@ -111,7 +111,7 @@ export default function OnboardingTutorial({
                             style={{
                                 background: 'var(--bg-surface)',
                                 border: '1px solid var(--border-default)',
-                                boxShadow: '0 16px 48px rgba(0,0,0,0.35)',
+                                boxShadow: 'var(--shadow-xl)',
                             }}
                             onClick={e => e.stopPropagation()}
                         >

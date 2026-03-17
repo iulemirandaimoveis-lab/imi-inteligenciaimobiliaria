@@ -11,11 +11,22 @@ export default async function PropostaPublicaPage({ params }: Props) {
 
   const { data: proposal } = await supabase
     .from('proposals')
-    .select('*, imoveis(titulo, fotos, endereco, area_total, quartos, banheiros, vagas, descricao)')
+    .select('*')
     .eq('token', params.token)
     .single()
 
   if (!proposal) notFound()
+
+  // Fetch development data if linked
+  let development = null
+  if (proposal.development_id) {
+    const { data: dev } = await supabase
+      .from('developments')
+      .select('name, description, neighborhood, city, state, images, gallery_images, image, area_min, area_from, bedrooms, bathrooms, parking_spaces')
+      .eq('id', proposal.development_id)
+      .single()
+    development = dev
+  }
 
   // Mark as viewed (server-side on first open)
   if (proposal.status === 'sent') {
@@ -25,5 +36,5 @@ export default async function PropostaPublicaPage({ params }: Props) {
       .eq('id', proposal.id)
   }
 
-  return <PropostaPublicaClient proposal={{ ...proposal, status: proposal.status === 'sent' ? 'viewed' : proposal.status }} />
+  return <PropostaPublicaClient proposal={{ ...proposal, development, status: proposal.status === 'sent' ? 'viewed' : proposal.status }} />
 }

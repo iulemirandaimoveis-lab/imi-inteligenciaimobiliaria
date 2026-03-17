@@ -27,29 +27,32 @@ export default function TimelineChart({ data }: TimelineChartProps) {
                             <stop offset="95%" stopColor="#EAB308" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-subtle)" />
                     <XAxis
                         dataKey="month"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#94A3B8', fontSize: 10 }}
+                        tick={{ fill: 'var(--text-tertiary)', fontSize: 11 }}
                     />
                     <YAxis
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: '#94A3B8', fontSize: 10 }}
+                        tick={{ fill: 'var(--text-tertiary)', fontSize: 11 }}
                     />
                     <Tooltip
                         contentStyle={{
-                            borderRadius: '12px',
-                            border: 'none',
-                            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
+                            background: 'var(--bg-elevated)',
+                            borderRadius: 4,
+                            border: '1px solid var(--border-default)',
+                            color: 'var(--text-primary)',
+                            fontSize: 11,
+                            boxShadow: 'var(--shadow-md)',
                         }}
                     />
                     <Area
                         type="monotone"
                         dataKey="leads"
-                        stroke="#EAB308"
+                        stroke="var(--imi-gold-500)"
                         strokeWidth={3}
                         fillOpacity={1}
                         fill="url(#colorLeads)"

@@ -315,7 +315,7 @@ export default function IAHubPage() {
         const s = providerStatus[id]
         if (s === 'loading') return <Loader2 size={14} className="animate-spin" style={{ color: T.textMuted }} />
         if (s === 'ok') return <CheckCircle2 size={14} style={{ color: T.success }} />
-        if (s === 'unconfigured') return <AlertCircle size={14} style={{ color: '#F59E0B' }} />
+        if (s === 'unconfigured') return <AlertCircle size={14} style={{ color: 'var(--warning)' }} />
         return <XCircle size={14} style={{ color: T.error }} />
     }
 
@@ -431,7 +431,7 @@ export default function IAHubPage() {
                                     return (
                                         <span className="text-[10px] font-bold px-2.5 py-1 rounded-full" style={{
                                             background: isOk ? 'rgba(16,185,129,0.12)' : 'rgba(107,114,128,0.10)',
-                                            color: isOk ? '#10B981' : T.textMuted,
+                                            color: isOk ? 'var(--success)' : T.textMuted,
                                             border: `1px solid ${isOk ? 'rgba(16,185,129,0.25)' : 'rgba(107,114,128,0.18)'}`,
                                         }}>
                                             {isOk ? '● Conectado' : '○ Não Configurado'}
@@ -444,7 +444,7 @@ export default function IAHubPage() {
                                     className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-[10px] font-semibold transition-all disabled:opacity-60"
                                     style={{
                                         background: T.elevated,
-                                        color: connResult[provider.id] === 'ok' ? '#10B981'
+                                        color: connResult[provider.id] === 'ok' ? 'var(--success)'
                                             : connResult[provider.id] === 'fail' ? 'var(--bo-error)'
                                             : T.textMuted,
                                         border: `1px solid ${T.border}`,
@@ -570,7 +570,7 @@ export default function IAHubPage() {
                 {/* Model Routing Table */}
                 <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                     <div className="flex items-center gap-2 mb-4">
-                        <Braces size={16} style={{ color: '#8B5CF6' }} />
+                        <Braces size={16} style={{ color: 'var(--imi-gold-500)' }} />
                         <h2 className="text-sm font-bold" style={{ color: T.text }}>Roteamento por Tarefa</h2>
                     </div>
 

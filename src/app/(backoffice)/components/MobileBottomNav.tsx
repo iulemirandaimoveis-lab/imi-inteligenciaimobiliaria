@@ -27,10 +27,10 @@ const BOTTOM_ITEMS = [
 // Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
     { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--imi-gold-500)', iconBg: 'rgba(184,148,58,0.14)'  },
-    { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: '#60A5FA',              iconBg: 'rgba(96,165,250,0.14)'  },
-    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: '#A78BFA',              iconBg: 'rgba(167,139,250,0.14)' },
+    { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: 'var(--info)',              iconBg: 'rgba(96,165,250,0.14)'  },
+    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--imi-gold-400)',              iconBg: 'rgba(167,139,250,0.14)' },
     { label: 'Nova Campanha',  subtitle: 'Criar campanha de mídia',  href: '/backoffice/campanhas/nova',  icon: CalendarPlus, color: '#FB923C',              iconBg: 'rgba(251,146,60,0.14)'  },
-    { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,   color: '#34D399',              iconBg: 'rgba(52,211,153,0.14)'  },
+    { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,   color: 'var(--success)',              iconBg: 'rgba(52,211,153,0.14)'  },
     { label: 'Novo Contrato',  subtitle: 'Registrar contrato',       href: '/backoffice/contratos/novo',  icon: FileSignature,color: '#F87171',              iconBg: 'rgba(248,113,113,0.14)' },
 ]
 
@@ -50,7 +50,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Captação', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)',
+        label: 'Captação', color: 'var(--warning)', bg: 'rgba(232,168,124,0.12)',
         items: [
             { name: 'Leads',         href: '/backoffice/leads',            icon: Users,         badge: 'NEW'   },
             { name: 'Inbox IA',      href: '/backoffice/leads/inbox',      icon: Inbox },
@@ -85,7 +85,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Inteligência', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)',
+        label: 'Inteligência', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)',
         items: [
             { name: 'eBooks',      href: '/backoffice/inteligencia/ebooks',       icon: BookOpen  },
             { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack,   badge: 'NEW' },
@@ -119,7 +119,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Crescimento', color: '#A78BFA', bg: 'rgba(167,139,250,0.12)',
+        label: 'Crescimento', color: 'var(--imi-gold-400)', bg: 'rgba(167,139,250,0.12)',
         items: [
             { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap,       badge: 'BREVE' },
             { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen,  badge: 'NEW'   },
@@ -129,7 +129,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Configurações', color: '#94A3B8', bg: 'rgba(148,163,184,0.10)',
+        label: 'Configurações', color: 'var(--text-tertiary)', bg: 'rgba(148,163,184,0.10)',
         items: [
             { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building,    badge: 'BREVE' },
             { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users,       badge: 'NEW'   },
@@ -155,7 +155,7 @@ function TileBadge({ badge }: { badge: string }) {
             fontSize: isNew ? 8 : 7,
             fontWeight: 700,
             padding: isNew ? '2px 5px' : '2px 4px',
-            borderRadius: 6,
+            borderRadius: 4,
             letterSpacing: '0.05em',
             background: isNew ? '#2D8F5C' : 'rgba(148,163,184,0.20)',
             color: isNew ? '#fff' : 'var(--text-tertiary)',
@@ -178,7 +178,7 @@ function NetflixItemCard({
             <div
                 className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200"
                 style={{
-                    borderRadius: 14,
+                    borderRadius: 4,
                     background: active ? bg : 'var(--bg-elevated)',
                     border: active ? `1.5px solid ${color}50` : '1px solid var(--border-subtle)',
                     boxShadow: active ? `0 4px 14px ${color}30` : '0 1px 3px rgba(0,0,0,0.06)',
@@ -208,7 +208,7 @@ function NetflixRowLabel({ color, label }: { color: string; label: string }) {
             {/* Colored indicator */}
             <div
                 className="flex-shrink-0"
-                style={{ width: 3, height: 16, borderRadius: 2, background: color, boxShadow: `0 0 8px ${color}40` }}
+                style={{ width: 3, height: 16, borderRadius: 4, background: color, boxShadow: `0 0 8px ${color}40` }}
             />
             <span
                 className="text-[11px] font-bold tracking-[0.10em] uppercase"
@@ -292,7 +292,7 @@ export function MobileBottomNav() {
                         backdropFilter: 'blur(24px)',
                         WebkitBackdropFilter: 'blur(24px)',
                         border: '1px solid var(--border-default)',
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
+                        boxShadow: 'var(--shadow-lg)',
                     }}
                 >
                     <div className="flex items-center h-16 px-1">
@@ -362,7 +362,7 @@ export function MobileBottomNav() {
                                 style={{
                                     width: 44,
                                     height: 44,
-                                    borderRadius: 14,
+                                    borderRadius: 4,
                                     background: open ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
                                     border: `1px solid ${open ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
                                     transition: 'background 0.2s, border-color 0.2s',
@@ -497,7 +497,7 @@ export function MobileBottomNav() {
                             transition={{ type: 'spring', stiffness: 420, damping: 42 }}
                             className="lg:hidden fixed bottom-0 inset-x-0 z-50 flex flex-col"
                             style={{
-                                borderRadius: '20px 20px 0 0',
+                                borderRadius: '4px 4px 0 0',
                                 background: 'var(--bg-surface)',
                                 borderTop: '1px solid var(--border-default)',
                                 borderLeft: '1px solid var(--border-default)',
@@ -538,7 +538,7 @@ export function MobileBottomNav() {
                                         }}>IMI</span>
                                         <div style={{ width: 1, height: 13, background: 'var(--border-strong)', flexShrink: 0 }} />
                                         <span style={{
-                                            fontSize: 7,
+                                            fontSize: 11,
                                             fontWeight: 700,
                                             color: 'var(--text-gold)',
                                             letterSpacing: '0.12em',
@@ -602,8 +602,8 @@ export function MobileBottomNav() {
                                     <div className="flex gap-2">
                                         {[
                                             { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.12)' },
-                                            { label: 'Imóveis', value: '—', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
-                                            { label: 'Leads', value: '—', color: '#34D399', bg: 'rgba(52,211,153,0.12)' },
+                                            { label: 'Imóveis', value: '—', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
+                                            { label: 'Leads', value: '—', color: 'var(--success)', bg: 'rgba(52,211,153,0.12)' },
                                         ].map((w, i) => (
                                             <div
                                                 key={w.label}
@@ -633,9 +633,9 @@ export function MobileBottomNav() {
                                 >
                                     {/* Section label */}
                                     <div className="flex items-center gap-2.5 mb-3">
-                                        <div style={{ width: 4, height: 12, borderRadius: 2, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                                        <div style={{ width: 4, height: 12, borderRadius: 4, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
                                         <span style={{
-                                            fontSize: '9px', fontWeight: 700,
+                                            fontSize: '11px', fontWeight: 700,
                                             color: 'var(--text-tertiary)',
                                             letterSpacing: '0.14em',
                                             textTransform: 'uppercase',
@@ -686,7 +686,7 @@ export function MobileBottomNav() {
                                                             className="flex-shrink-0 flex items-center justify-center"
                                                             style={{
                                                                 width: 36, height: 36,
-                                                                borderRadius: 8,
+                                                                borderRadius: 4,
                                                                 background: item.iconBg,
                                                                 border: `1px solid ${item.color}28`,
                                                             }}

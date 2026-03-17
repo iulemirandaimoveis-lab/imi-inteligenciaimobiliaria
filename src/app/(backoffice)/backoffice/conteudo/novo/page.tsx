@@ -50,10 +50,10 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 // ⚠️ NÃO MODIFICAR - Tipos de conteúdo
 const TIPOS_CONTEUDO = [
-  { id: 'blog',      label: 'Artigo Blog',       icon: FileText,  desc: 'SEO-friendly, 800-2000 palavras',     color: '#3B82F6', bg: 'rgba(59,130,246,0.12)'  },
+  { id: 'blog',      label: 'Artigo Blog',       icon: FileText,  desc: 'SEO-friendly, 800-2000 palavras',     color: 'var(--info)', bg: 'rgba(59,130,246,0.12)'  },
   { id: 'email',     label: 'E-mail Marketing',  icon: Mail,      desc: 'Newsletter, follow-up, prospecção',   color: 'var(--bo-success)', bg: 'rgba(74,222,128,0.12)'  },
-  { id: 'instagram', label: 'Post Instagram',    icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars',  color: '#F472B6', bg: 'rgba(244,114,182,0.12)' },
-  { id: 'linkedin',  label: 'Post LinkedIn',     icon: Linkedin,  desc: 'Artigo ou post profissional',         color: '#60A5FA', bg: 'rgba(96,165,250,0.12)'  },
+  { id: 'instagram', label: 'Post Instagram',    icon: Instagram, desc: 'Caption + hashtags, máx. 300 chars',  color: 'var(--error)', bg: 'rgba(244,114,182,0.12)' },
+  { id: 'linkedin',  label: 'Post LinkedIn',     icon: Linkedin,  desc: 'Artigo ou post profissional',         color: 'var(--info)', bg: 'rgba(96,165,250,0.12)'  },
   { id: 'facebook',  label: 'Post Facebook',     icon: Facebook,  desc: 'Post com engajamento',                color: '#818CF8', bg: 'rgba(129,140,248,0.12)' },
   { id: 'landing',   label: 'Landing Page Copy', icon: Globe,     desc: 'Hero, benefícios, CTA',              color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.12)'  },
 ]
@@ -342,19 +342,19 @@ export default function NovoConteudoPage() {
                     key={t.id}
                     onClick={() => setTipo(t.id)}
                     style={{
-                      width: '100%', display: 'flex', alignItems: 'center', gap: '14px',
-                      padding: '12px 14px', borderRadius: '16px', textAlign: 'left',
+                      width: '100%', display: 'flex', alignItems: 'center', gap: '16px',
+                      padding: '12px 14px', borderRadius: '4px', textAlign: 'left',
                       cursor: 'pointer', transition: 'all 0.15s', border: 'none',
                       background: isActive ? `${t.bg}` : 'transparent',
                       outline: isActive ? `1px solid ${t.color}40` : '1px solid transparent',
                     }}
                   >
-                    <div style={{ width: '38px', height: '38px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: t.bg, color: t.color }}>
+                    <div style={{ width: '38px', height: '38px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: t.bg, color: t.color }}>
                       <Icon size={19} />
                     </div>
                     <div>
                       <p style={{ fontSize: '13px', fontWeight: 700, color: T.text, lineHeight: 1.3 }}>{t.label}</p>
-                      <p style={{ fontSize: '10px', fontWeight: 500, color: T.textMuted, marginTop: '2px' }}>{t.desc}</p>
+                      <p style={{ fontSize: '11px', fontWeight: 500, color: T.textMuted, marginTop: '2px' }}>{t.desc}</p>
                     </div>
                     {isActive && (
                       <div style={{ marginLeft: 'auto', width: '8px', height: '8px', borderRadius: '50%', background: t.color, flexShrink: 0 }} />
@@ -428,7 +428,7 @@ export default function NovoConteudoPage() {
               {/* Campo título */}
               <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
                     <TipoIcon size={16} />
                   </div>
                   <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
@@ -518,7 +518,7 @@ export default function NovoConteudoPage() {
               </div>
 
               <div className="flex items-center gap-3 mb-8">
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
                   <TipoIcon size={20} />
                 </div>
                 <div>

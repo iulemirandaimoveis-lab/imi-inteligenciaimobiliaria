@@ -26,7 +26,7 @@ const TEMAS = [
 const CANAIS = [
     { value: 'instagram', label: 'Instagram', icon: Instagram, color: '#E1306C', bg: 'rgba(225,48,108,0.12)' },
     { value: 'linkedin', label: 'LinkedIn', icon: Linkedin, color: '#0A66C2', bg: 'rgba(10,102,194,0.12)' },
-    { value: 'newsletter', label: 'Newsletter', icon: Mail, color: '#6366F1', bg: 'rgba(99,102,241,0.12)' },
+    { value: 'newsletter', label: 'Newsletter', icon: Mail, color: 'var(--info)', bg: 'rgba(99,102,241,0.12)' },
 ]
 
 const OUTPUT_TABS = [
@@ -126,33 +126,33 @@ export default function CriadorIAPage() {
 
             {/* Step stepper pills */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-                style={{ display: 'flex', gap: 6, marginBottom: 24 }}>
+                style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
                 {['Tema', 'Imóvel', 'Canal'].map((s, i) => (
                     <div key={s} style={{
-                        display: 'flex', alignItems: 'center', gap: 6,
-                        padding: '6px 14px', borderRadius: 20,
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '6px 14px', borderRadius: 4,
                         background: i === 0 ? 'rgba(99,102,241,0.15)' : T.elevated,
                         border: `1px solid ${i === 0 ? 'rgba(99,102,241,0.4)' : T.border}`,
                     }}>
-                        <div style={{ width: 18, height: 18, borderRadius: '50%', background: i === 0 ? '#6366F1' : T.border, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <span style={{ fontSize: 9, fontWeight: 800, color: i === 0 ? '#fff' : T.textMuted }}>{i + 1}</span>
+                        <div style={{ width: 18, height: 18, borderRadius: '50%', background: i === 0 ? 'var(--info)' : T.border, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <span style={{ fontSize: 11, fontWeight: 800, color: i === 0 ? '#fff' : T.textMuted }}>{i + 1}</span>
                         </div>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: i === 0 ? '#6366F1' : T.textMuted }}>{s}</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: i === 0 ? 'var(--info)' : T.textMuted }}>{s}</span>
                     </div>
                 ))}
             </motion.div>
 
             {/* TEMA DROPDOWN */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ marginBottom: 14 }}>
-                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>
+                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>
                     Definir Tema do Conteúdo
                 </p>
                 <div style={{ position: 'relative' }}>
                     <button
                         onClick={() => setShowTemaDropdown(!showTemaDropdown)}
                         style={{
-                            width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                            padding: '13px 16px', borderRadius: 14,
+                            width: '100%', display: 'flex', alignItems: 'center', gap: 8,
+                            padding: '12px 16px', borderRadius: 4,
                             background: T.elevated, border: `1px solid ${T.border}`,
                             cursor: 'pointer',
                         }}
@@ -169,8 +169,8 @@ export default function CriadorIAPage() {
                                 style={{
                                     position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
                                     background: T.surface, border: `1px solid ${T.border}`,
-                                    borderRadius: 14, padding: 6, zIndex: 50,
-                                    boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+                                    borderRadius: 4, padding: 6, zIndex: 50,
+                                    boxShadow: 'var(--shadow-lg)',
                                 }}
                             >
                                 {TEMAS.map(t => (
@@ -178,11 +178,11 @@ export default function CriadorIAPage() {
                                         key={t.value}
                                         onClick={() => { setTema(t); setShowTemaDropdown(false) }}
                                         style={{
-                                            width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 8,
+                                            width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 4,
                                             background: tema.value === t.value ? 'rgba(99,102,241,0.1)' : 'transparent',
                                             border: 'none', cursor: 'pointer',
                                             fontSize: 13, fontWeight: tema.value === t.value ? 600 : 400,
-                                            color: tema.value === t.value ? '#6366F1' : T.text,
+                                            color: tema.value === t.value ? 'var(--info)' : T.text,
                                         }}
                                     >
                                         {t.label}
@@ -196,7 +196,7 @@ export default function CriadorIAPage() {
 
             {/* SELECIONAR PROPRIEDADE */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.13 }} style={{ marginBottom: 14 }}>
-                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>
+                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>
                     Selecionar Propriedade
                 </p>
                 <div style={{ position: 'relative' }}>
@@ -204,20 +204,20 @@ export default function CriadorIAPage() {
                         onClick={() => setShowDevDropdown(!showDevDropdown)}
                         style={{
                             width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-                            padding: '12px 14px', borderRadius: 14,
+                            padding: '12px 14px', borderRadius: 4,
                             background: T.elevated, border: `1px solid ${T.border}`,
                             cursor: 'pointer',
                         }}
                     >
-                        <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <Building2 size={16} style={{ color: '#6366F1' }} />
+                        <div style={{ width: 36, height: 36, borderRadius: 4, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <Building2 size={16} style={{ color: 'var(--info)' }} />
                         </div>
                         <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
                             <p style={{ fontSize: 13, fontWeight: 700, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {selectedDev ? selectedDev.name : 'Selecionar...'}
                             </p>
                             {selectedDev?.price_min && (
-                                <p style={{ fontSize: 10, color: T.textMuted }}>
+                                <p style={{ fontSize: 11, color: T.textMuted }}>
                                     R$ {Number(selectedDev.price_min).toLocaleString('pt-BR')}
                                 </p>
                             )}
@@ -233,8 +233,8 @@ export default function CriadorIAPage() {
                                 style={{
                                     position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
                                     background: T.surface, border: `1px solid ${T.border}`,
-                                    borderRadius: 14, padding: 6, zIndex: 50,
-                                    boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+                                    borderRadius: 4, padding: 6, zIndex: 50,
+                                    boxShadow: 'var(--shadow-lg)',
                                     maxHeight: 220, overflowY: 'auto',
                                 }}
                             >
@@ -243,7 +243,7 @@ export default function CriadorIAPage() {
                                         key={dev.id}
                                         onClick={() => { setSelectedDev(dev); setShowDevDropdown(false) }}
                                         style={{
-                                            width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 8,
+                                            width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 4,
                                             background: selectedDev?.id === dev.id ? 'rgba(99,102,241,0.1)' : 'transparent',
                                             border: 'none', cursor: 'pointer',
                                             fontSize: 13, fontWeight: 500, color: T.text,
@@ -260,7 +260,7 @@ export default function CriadorIAPage() {
 
             {/* CANAIS */}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.16 }} style={{ marginBottom: 22 }}>
-                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 8 }}>
+                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 8 }}>
                     Canais de Destino
                 </p>
                 <div style={{ display: 'flex', gap: 8 }}>
@@ -272,8 +272,8 @@ export default function CriadorIAPage() {
                                 key={canal.value}
                                 onClick={() => setActiveCanal(canal)}
                                 style={{
-                                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
-                                    height: 44, borderRadius: 12,
+                                    flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                                    height: 44, borderRadius: 4,
                                     background: isActive ? canal.bg : T.elevated,
                                     border: `1.5px solid ${isActive ? canal.color : T.border}`,
                                     cursor: 'pointer', transition: 'all 0.15s',
@@ -297,10 +297,10 @@ export default function CriadorIAPage() {
                 onClick={handleGenerate}
                 disabled={generating}
                 style={{
-                    width: '100%', height: 52, borderRadius: 16,
+                    width: '100%', height: 52, borderRadius: 4,
                     background: generating ? 'rgba(59,130,246,0.4)' : 'var(--bo-accent)',
-                    color: '#fff', fontSize: 15, fontWeight: 600,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                    color: 'var(--text-inverse)', fontSize: 15, fontWeight: 600,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     border: generating ? 'none' : '1px solid rgba(255,255,255,0.12)',
                     cursor: generating ? 'not-allowed' : 'pointer',
                     boxShadow: generating ? 'none' : '0 0 24px rgba(59,130,246,0.32), inset 0 1px 0 rgba(255,255,255,0.12)',
@@ -321,20 +321,20 @@ export default function CriadorIAPage() {
                     >
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                             <p style={{ fontSize: 13, fontWeight: 800, color: T.text }}>Output Sugerido</p>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 8, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.3)' }}>
-                                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#6366F1', animation: 'pulse 2s infinite' }} />
-                                <span style={{ fontSize: 9, fontWeight: 700, color: '#6366F1', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Gerado Agora</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 10px', borderRadius: 4, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.3)' }}>
+                                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--info)', animation: 'pulse 2s infinite' }} />
+                                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--info)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Gerado Agora</span>
                             </div>
                         </div>
 
                         {/* Tabs */}
-                        <div style={{ display: 'flex', gap: 4, marginBottom: 14, background: T.elevated, borderRadius: 12, padding: 4 }}>
+                        <div style={{ display: 'flex', gap: 4, marginBottom: 14, background: T.elevated, borderRadius: 4, padding: 4 }}>
                             {OUTPUT_TABS.map(tab => (
                                 <button
                                     key={tab.key}
                                     onClick={() => setOutputTab(tab.key as any)}
                                     style={{
-                                        flex: 1, height: 34, borderRadius: 10, fontSize: 11, fontWeight: 700,
+                                        flex: 1, height: 34, borderRadius: 4, fontSize: 11, fontWeight: 700,
                                         background: outputTab === tab.key ? T.surface : 'transparent',
                                         border: outputTab === tab.key ? `1px solid ${T.border}` : '1px solid transparent',
                                         color: outputTab === tab.key ? T.text : T.textMuted,
@@ -347,30 +347,30 @@ export default function CriadorIAPage() {
                         </div>
 
                         {/* Content card */}
-                        <div style={{ borderRadius: 18, background: 'linear-gradient(145deg, #151d2a, #0d111a)', border: '1px solid rgba(255,255,255,0.09)', padding: 20, marginBottom: 14, minHeight: 180, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.3)' }}>
+                        <div style={{ borderRadius: 4, background: 'linear-gradient(145deg, #151d2a, #0d111a)', border: '1px solid rgba(255,255,255,0.09)', padding: 20, marginBottom: 14, minHeight: 180, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.3)' }}>
                             {generating ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 160 }}>
-                                    <Loader2 size={28} className="animate-spin" style={{ color: '#6366F1' }} />
+                                    <Loader2 size={28} className="animate-spin" style={{ color: 'var(--info)' }} />
                                     <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>Gerando conteúdo com IA...</p>
                                 </div>
                             ) : currentOutputText ? (
                                 <>
                                     {outputTab === 'prompt' && (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                                            <ImageIcon size={14} style={{ color: '#6366F1' }} />
-                                            <span style={{ fontSize: 10, fontWeight: 700, color: '#6366F1', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Image Prompt IA</span>
+                                            <ImageIcon size={14} style={{ color: 'var(--info)' }} />
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--info)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Image Prompt IA</span>
                                         </div>
                                     )}
                                     {outputTab === 'legenda' && (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                                             <Hash size={14} style={{ color: activeCanal.color }} />
-                                            <span style={{ fontSize: 10, fontWeight: 700, color: activeCanal.color, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Legenda {activeCanal.label}</span>
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: activeCanal.color, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Legenda {activeCanal.label}</span>
                                         </div>
                                     )}
                                     {outputTab === 'reels' && (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                                            <MessageSquare size={14} style={{ color: '#F59E0B' }} />
-                                            <span style={{ fontSize: 10, fontWeight: 700, color: '#F59E0B', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Script Reels</span>
+                                            <MessageSquare size={14} style={{ color: 'var(--warning)' }} />
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--warning)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Script Reels</span>
                                         </div>
                                     )}
                                     <p style={{ fontSize: 13, lineHeight: 1.7, color: 'rgba(255,255,255,0.85)', whiteSpace: 'pre-wrap', fontWeight: 400 }}>
@@ -382,25 +382,25 @@ export default function CriadorIAPage() {
 
                         {/* Actions */}
                         {output && !generating && (
-                            <div style={{ display: 'flex', gap: 10, marginBottom: 28 }}>
+                            <div style={{ display: 'flex', gap: 8, marginBottom: 28 }}>
                                 <button
                                     onClick={() => currentOutputText && copyText(currentOutputText, outputTab)}
                                     style={{
-                                        flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 600,
+                                        flex: 1, height: 46, borderRadius: 4, fontSize: 13, fontWeight: 600,
                                         background: T.elevated, border: `1px solid ${T.border}`,
                                         color: T.text, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                                         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
                                         transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
                                     }}
                                 >
-                                    {copied === outputTab ? <Check size={16} style={{ color: '#4ade80' }} /> : <Copy size={16} />}
+                                    {copied === outputTab ? <Check size={16} style={{ color: 'var(--success)' }} /> : <Copy size={16} />}
                                     {copied === outputTab ? 'Copiado!' : 'Copiar'}
                                 </button>
                                 <button
                                     style={{
-                                        flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 600,
+                                        flex: 1, height: 46, borderRadius: 4, fontSize: 13, fontWeight: 600,
                                         background: 'var(--bo-accent)',
-                                        color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                                        color: 'var(--text-inverse)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                                         border: '1px solid rgba(255,255,255,0.1)',
                                         boxShadow: '0 0 20px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
                                         transition: 'all 0.15s cubic-bezier(0.4,0,0.2,1)',
@@ -422,7 +422,7 @@ export default function CriadorIAPage() {
                     <p style={{ fontSize: 11, fontWeight: 700, color: T.textMuted, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                         Próximos Posts
                     </p>
-                    <button style={{ fontSize: 11, fontWeight: 700, color: '#6366F1', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <button style={{ fontSize: 11, fontWeight: 700, color: 'var(--info)', background: 'none', border: 'none', cursor: 'pointer' }}>
                         Ver Calendário
                     </button>
                 </div>
@@ -431,20 +431,20 @@ export default function CriadorIAPage() {
                         <div
                             key={d.num}
                             style={{
-                                flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-                                padding: '14px 6px', borderRadius: 16,
+                                flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                                padding: '14px 6px', borderRadius: 4,
                                 background: i === 0 ? 'rgba(99,102,241,0.12)' : T.elevated,
                                 border: `1px solid ${i === 0 ? 'rgba(99,102,241,0.35)' : T.border}`,
                             }}
                         >
-                            <span style={{ fontSize: 9, fontWeight: 700, color: i === 0 ? '#6366F1' : T.textMuted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: i === 0 ? 'var(--info)' : T.textMuted, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                                 {d.day}
                             </span>
-                            <span style={{ fontSize: 20, fontWeight: 800, color: i === 0 ? '#6366F1' : T.text }}>
+                            <span style={{ fontSize: 20, fontWeight: 800, color: i === 0 ? 'var(--info)' : T.text }}>
                                 {d.num}
                             </span>
                             {i < 3 && (
-                                <div style={{ width: 5, height: 5, borderRadius: '50%', background: i === 0 ? '#6366F1' : 'rgba(255,255,255,0.2)' }} />
+                                <div style={{ width: 5, height: 5, borderRadius: '50%', background: i === 0 ? 'var(--info)' : 'rgba(255,255,255,0.2)' }} />
                             )}
                         </div>
                     ))}

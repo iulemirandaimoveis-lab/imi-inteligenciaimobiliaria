@@ -47,11 +47,11 @@ const nextConfig = {
 }
 
 module.exports = withSentryConfig(nextConfig, {
-    // Disable source map upload during build when no Sentry auth token is set
     silent: true,
+    hideSourceMaps: true,
     disableServerWebpackPlugin: !process.env.SENTRY_AUTH_TOKEN,
     disableClientWebpackPlugin: !process.env.SENTRY_AUTH_TOKEN,
-    // Auto-instrument API routes and server components
-    autoInstrumentServerFunctions: true,
-    hideSourceMaps: true,
+    webpack: {
+        autoInstrumentServerFunctions: true,
+    },
 })
