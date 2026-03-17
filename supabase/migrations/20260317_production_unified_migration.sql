@@ -14,11 +14,12 @@ CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
 -- ═══════════════════════════════════════════════════════════════
 -- 0.5 LIMPAR objetos parcialmente criados (tabelas OU views)
--- Usa DO block para dropar cada objeto independente do tipo
+-- Consulta pg_class para descobrir tipo antes de dropar
 -- ═══════════════════════════════════════════════════════════════
 DO $$
 DECLARE
   obj TEXT;
+  obj_type TEXT;
 BEGIN
   FOR obj IN SELECT unnest(ARRAY[
     'v_proposals_with_score',
@@ -31,9 +32,18 @@ BEGIN
     'brokers'
   ])
   LOOP
-    -- Tenta dropar como view primeiro, depois como tabela
-    EXECUTE format('DROP VIEW IF EXISTS public.%I CASCADE', obj);
-    EXECUTE format('DROP TABLE IF EXISTS public.%I CASCADE', obj);
+    SELECT c.relkind INTO obj_type
+    FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relname = obj;
+
+    IF obj_type = 'v' THEN
+      EXECUTE format('DROP VIEW public.%I CASCADE', obj);
+    ELSIF obj_type = 'r' THEN
+      EXECUTE format('DROP TABLE public.%I CASCADE', obj);
+    ELSIF obj_type = 'm' THEN
+      EXECUTE format('DROP MATERIALIZED VIEW public.%I CASCADE', obj);
+    END IF;
+    -- Se não existe, não faz nada
   END LOOP;
 END $$;
 
