@@ -331,7 +331,7 @@ function VerticalStepper({
             key={step.id}
             role="listitem"
             aria-current={status === 'active' ? 'step' : undefined}
-            style={{ display: 'flex', gap: 14 }}
+            style={{ display: 'flex', gap: 16 }}
           >
             {/* Left: circle + connector */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>

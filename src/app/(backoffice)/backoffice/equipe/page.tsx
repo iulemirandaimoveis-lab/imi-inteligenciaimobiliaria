@@ -22,9 +22,9 @@ export const dynamic = 'force-dynamic'
 
 /* ─── ROLE CONFIG ──────────────────────────────────────────────── */
 const ROLE_CFG: Record<string, { label: string; icon: any; color: string; bg: string }> = {
-    broker:         { label: 'Corretor',  icon: User,   color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
+    broker:         { label: 'Corretor',  icon: User,   color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
     broker_manager: { label: 'Gerente',   icon: Crown,  color: 'var(--bo-warning)', bg: 'rgba(251,191,36,0.12)' },
-    admin:          { label: 'Admin',     icon: Shield, color: '#A78BFA', bg: 'rgba(167,139,250,0.12)' },
+    admin:          { label: 'Admin',     icon: Shield, color: 'var(--imi-gold-400)', bg: 'rgba(167,139,250,0.12)' },
 }
 
 /* ─── BROKER CARD ──────────────────────────────────────────────── */
@@ -81,7 +81,7 @@ function BrokerCard({ broker, index, onToggleStatus }: {
                             style={{
                                 background: isActive ? 'rgba(59,130,246,0.15)' : T.elevated,
                                 border: `1px solid ${isActive ? 'rgba(59,130,246,0.25)' : T.border}`,
-                                color: isActive ? '#60A5FA' : T.textMuted,
+                                color: isActive ? 'var(--info)' : T.textMuted,
                             }}
                         >
                             {broker.avatar_url ? (
@@ -231,7 +231,7 @@ function EmptyEquipe({ onAddFirst }: { onAddFirst: () => void }) {
                 className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
                 style={{ background: 'rgba(96,165,250,0.10)' }}
             >
-                <Users size={28} style={{ color: '#60A5FA', opacity: 0.7 }} />
+                <Users size={28} style={{ color: 'var(--info)', opacity: 0.7 }} />
             </div>
             <h3 className="text-base font-semibold mb-2" style={{ color: T.text }}>
                 Nenhum membro na equipe

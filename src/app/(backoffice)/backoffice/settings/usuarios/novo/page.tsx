@@ -147,7 +147,7 @@ export default function NovoUsuarioPage() {
 
                     {/* Info box */}
                     <div className="rounded-xl p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
-                        <p className="text-xs" style={{ color: '#8CA4B8' }}>
+                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                             💡 O usuário receberá as credenciais para acessar o sistema. A senha pode ser alterada no primeiro acesso.
                         </p>
                     </div>

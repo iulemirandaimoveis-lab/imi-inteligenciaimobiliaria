@@ -40,8 +40,8 @@ const STATUS_LABELS: Record<string, string> = {
   reservado: 'Reservado', em_negociacao: 'Negociação', vendido: 'Vendido', arquivado: 'Arquivado',
 }
 const STATUS_COLORS: Record<string, string> = {
-  disponivel: '#5DB887', lancamento: 'var(--imi-gold-500)', em_construcao: '#5B9BD5',
-  reservado: '#D4913A', em_negociacao: '#9FAAB8', vendido: '#E06B6B', arquivado: '#5C6B7D',
+  disponivel: 'var(--success)', lancamento: 'var(--imi-gold-500)', em_construcao: '#5B9BD5',
+  reservado: '#D4913A', em_negociacao: 'var(--text-tertiary)', vendido: 'var(--error)', arquivado: 'var(--text-secondary)',
 }
 
 /* ─── Neighborhood data ──────────────────────────────────────────── */
@@ -109,7 +109,7 @@ function TabBtn({ active, onClick, children }: {
         background: active ? 'rgba(184,148,58,0.12)' : 'transparent',
         border: active ? '1px solid rgba(184,148,58,0.35)' : '1px solid transparent',
         color: active ? 'var(--bo-accent, var(--imi-gold-500))' : 'var(--bo-text-muted, #9FAAB8)',
-        fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px',
+        fontSize: '11px', fontWeight: 700, letterSpacing: '1.5px',
         textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
         cursor: 'pointer', transition: 'all 0.2s',
       }}
@@ -143,7 +143,7 @@ function StatCard({ label, value, sub, color }: {
       </span>
       {sub && (
         <span style={{
-          fontSize: '10px', color: 'var(--bo-text-dim, #5C6B7D)',
+          fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)',
           fontFamily: 'var(--font-montserrat, sans-serif)',
         }}>
           {sub}
@@ -230,7 +230,7 @@ function RankingTab() {
             style={{
               display: 'grid',
               gridTemplateColumns: '32px 1fr 120px 90px 80px 1fr',
-              padding: '13px 20px',
+              padding: '12px 20px',
               borderBottom: i < sorted.length - 1 ? '1px solid rgba(184,148,58,0.05)' : 'none',
               gap: 12,
               alignItems: 'center',
@@ -240,7 +240,7 @@ function RankingTab() {
             <span style={{
               fontFamily: 'var(--font-dm-mono, monospace)',
               fontSize: '11px',
-              color: i === 0 ? 'var(--imi-gold-500)' : i === 1 ? '#9FAAB8' : i === 2 ? '#D4913A' : 'var(--bo-text-dim, #5C6B7D)',
+              color: i === 0 ? 'var(--imi-gold-500)' : i === 1 ? 'var(--text-tertiary)' : i === 2 ? '#D4913A' : 'var(--bo-text-dim, #5C6B7D)',
               fontWeight: i < 3 ? 600 : 400,
             }}>
               {i + 1}
@@ -266,7 +266,7 @@ function RankingTab() {
             {/* Yield */}
             <span style={{
               fontFamily: 'var(--font-dm-mono, monospace)',
-              fontSize: '12px', color: '#5DB887',
+              fontSize: '12px', color: 'var(--success)',
             }}>
               {d.yield.toFixed(1)}% a.a.
             </span>
@@ -274,13 +274,13 @@ function RankingTab() {
             {/* Trend */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               {d.trend >= 0
-                ? <ChevronUp size={12} style={{ color: '#5DB887', flexShrink: 0 }} />
-                : <ChevronDown size={12} style={{ color: '#E06B6B', flexShrink: 0 }} />
+                ? <ChevronUp size={12} style={{ color: 'var(--success)', flexShrink: 0 }} />
+                : <ChevronDown size={12} style={{ color: 'var(--error)', flexShrink: 0 }} />
               }
               <span style={{
                 fontFamily: 'var(--font-dm-mono, monospace)',
                 fontSize: '11px',
-                color: d.trend >= 0 ? '#5DB887' : '#E06B6B',
+                color: d.trend >= 0 ? 'var(--success)' : 'var(--error)',
               }}>
                 {d.trend >= 0 ? '+' : ''}{d.trend}%
               </span>
@@ -329,7 +329,7 @@ function AnaliseTab() {
     .slice(0, 3)
     .map(([name]) => name)
 
-  const chartColors = ['var(--imi-gold-500)', '#5DB887', '#5B9BD5']
+  const chartColors = ['var(--imi-gold-500)', 'var(--success)', '#5B9BD5']
 
   // Price heatmap: neighborhoods × metrics
   const heatmapNeighs = neighborhoods.slice(0, 8)
@@ -426,18 +426,18 @@ function AnaliseTab() {
                   </div>
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: 3,
-                    padding: '3px 8px', borderRadius: 4,
+                    padding: '4px 8px', borderRadius: 4,
                     background: trend12m >= 0 ? 'rgba(93,184,135,0.12)' : 'rgba(224,107,107,0.12)',
                     border: `1px solid ${trend12m >= 0 ? 'rgba(93,184,135,0.3)' : 'rgba(224,107,107,0.3)'}`,
                   }}>
                     {trend12m >= 0
-                      ? <ChevronUp size={10} style={{ color: '#5DB887' }} />
-                      : <ChevronDown size={10} style={{ color: '#E06B6B' }} />
+                      ? <ChevronUp size={10} style={{ color: 'var(--success)' }} />
+                      : <ChevronDown size={10} style={{ color: 'var(--error)' }} />
                     }
                     <span style={{
                       fontFamily: 'var(--font-dm-mono, monospace)',
-                      fontSize: '10px',
-                      color: trend12m >= 0 ? '#5DB887' : '#E06B6B',
+                      fontSize: '11px',
+                      color: trend12m >= 0 ? 'var(--success)' : 'var(--error)',
                     }}>
                       {trend12m >= 0 ? '+' : ''}{trend12m}%
                     </span>
@@ -526,15 +526,15 @@ function AnaliseTab() {
                   <div
                     key={m}
                     style={{
-                      padding: '5px 8px', borderRadius: 4,
+                      padding: '4px 8px', borderRadius: 4,
                       background: bg,
                       textAlign: 'center',
                     }}
                   >
                     <span style={{
                       fontFamily: 'var(--font-dm-mono, monospace)',
-                      fontSize: '10px',
-                      color: m === 'Tendência' && val < 0 ? '#E06B6B' : 'var(--bo-text, #EBE7E0)',
+                      fontSize: '11px',
+                      color: m === 'Tendência' && val < 0 ? 'var(--error)' : 'var(--bo-text, #EBE7E0)',
                     }}>
                       {display}
                     </span>
@@ -580,10 +580,10 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
         <Link href="/backoffice/imoveis/novo">
           <button style={{
             display: 'flex', alignItems: 'center', gap: 6,
-            padding: '9px 18px', borderRadius: 4,
+            padding: '8px 16px', borderRadius: 4,
             background: 'var(--gold, var(--imi-gold-500))', border: 'none',
             color: 'var(--navy, #0B1120)',
-            fontSize: '10px', fontWeight: 700, letterSpacing: '1.8px',
+            fontSize: '11px', fontWeight: 700, letterSpacing: '1.8px',
             textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
             cursor: 'pointer',
           }}>
@@ -612,14 +612,14 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
   }) {
     const sc = p.imi_score ?? 0
     const scColor = getScoreColor(sc)
-    const stColor = STATUS_COLORS[p.status] ?? '#9FAAB8'
+    const stColor = STATUS_COLORS[p.status] ?? 'var(--text-tertiary)'
 
     return (
       <Link href={`/backoffice/imoveis/${p.id}`}>
         <div
           style={{
             display: 'flex', alignItems: 'center', gap: 14,
-            padding: '11px 16px',
+            padding: '12px 16px',
             borderBottom: '1px solid rgba(184,148,58,0.05)',
             cursor: 'pointer',
             transition: 'background 0.15s',
@@ -646,7 +646,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
               {p.name}
             </p>
             <p style={{
-              fontSize: '9px', color: 'var(--bo-text-dim, #5C6B7D)',
+              fontSize: '11px', color: 'var(--bo-text-dim, #5C6B7D)',
               fontFamily: 'var(--font-montserrat, sans-serif)',
             }}>
               {[p.neighborhood, p.city].filter(Boolean).join(', ')}
@@ -654,7 +654,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
           </div>
           <span style={{
             fontFamily: 'var(--font-dm-mono, monospace)',
-            fontSize: '10px', color: 'var(--bo-text-muted, #9FAAB8)',
+            fontSize: '11px', color: 'var(--bo-text-muted, #9FAAB8)',
             flexShrink: 0,
           }}>
             {fmt(p.price)}
@@ -671,7 +671,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
           {metric === 'delta' && (
             <span style={{
               fontFamily: 'var(--font-dm-mono, monospace)',
-              fontSize: '11px', color: '#5DB887',
+              fontSize: '11px', color: 'var(--success)',
               flexShrink: 0, width: 52, textAlign: 'right',
             }}>
               +{(p.market_delta_pct ?? 0).toFixed(1)}%
@@ -680,7 +680,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
           {metric === 'yield' && (
             <span style={{
               fontFamily: 'var(--font-dm-mono, monospace)',
-              fontSize: '11px', color: '#5DB887',
+              fontSize: '11px', color: 'var(--success)',
               flexShrink: 0, width: 56, textAlign: 'right',
             }}>
               {(p.yield_est ?? 0).toFixed(2)}%
@@ -866,7 +866,7 @@ function MobileExplorer() {
         </button>
         <span style={{
           fontFamily: 'var(--font-playfair, "Libre Baskerville", serif)',
-          fontSize: '17px', fontWeight: 600, color: '#EBE7E0',
+          fontSize: '17px', fontWeight: 600, color: 'var(--imi-cream)',
           flex: 1,
         }}>
           Explorer de Mercado
@@ -892,7 +892,7 @@ function MobileExplorer() {
               borderBottom: activeTab === tab.id
                 ? '2px solid var(--imi-gold-500)'
                 : '2px solid transparent',
-              color: activeTab === tab.id ? 'var(--imi-gold-500)' : '#9FAAB8',
+              color: activeTab === tab.id ? 'var(--imi-gold-500)' : 'var(--text-tertiary)',
               fontSize: '12px', fontWeight: activeTab === tab.id ? 700 : 500,
               letterSpacing: '0.5px', cursor: 'pointer',
               whiteSpace: 'nowrap', flexShrink: 0,
@@ -928,7 +928,7 @@ function MobileExplorer() {
                     background: rankSort === s ? 'rgba(184,148,58,0.12)' : '#162040',
                     border: rankSort === s ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(184,148,58,0.12)',
                     borderRadius: 4,
-                    color: rankSort === s ? 'var(--imi-gold-500)' : '#9FAAB8',
+                    color: rankSort === s ? 'var(--imi-gold-500)' : 'var(--text-tertiary)',
                     fontSize: '11px', fontWeight: 700, letterSpacing: '1px',
                     textTransform: 'uppercase', cursor: 'pointer',
                     fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -963,7 +963,7 @@ function MobileExplorer() {
                 <span style={{
                   fontFamily: 'var(--font-dm-mono, monospace)',
                   fontSize: '14px', fontWeight: i < 3 ? 700 : 400,
-                  color: i === 0 ? 'var(--imi-gold-500)' : i === 1 ? '#9FAAB8' : i === 2 ? '#D4913A' : '#5C6B7D',
+                  color: i === 0 ? 'var(--imi-gold-500)' : i === 1 ? 'var(--text-tertiary)' : i === 2 ? '#D4913A' : 'var(--text-secondary)',
                   width: 24, flexShrink: 0, textAlign: 'center',
                 }}>
                   {i + 1}
@@ -971,7 +971,7 @@ function MobileExplorer() {
                 {/* Name */}
                 <span style={{
                   flex: 1, fontSize: '13px', fontWeight: 500,
-                  color: '#EBE7E0', fontFamily: 'var(--font-montserrat, sans-serif)',
+                  color: 'var(--imi-cream)', fontFamily: 'var(--font-montserrat, sans-serif)',
                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}>
                   {d.name}
@@ -986,12 +986,12 @@ function MobileExplorer() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 3, justifyContent: 'flex-end', marginTop: 2 }}>
                     {d.trend >= 0
-                      ? <ChevronUp size={10} style={{ color: '#5DB887' }} />
-                      : <ChevronDown size={10} style={{ color: '#E06B6B' }} />
+                      ? <ChevronUp size={10} style={{ color: 'var(--success)' }} />
+                      : <ChevronDown size={10} style={{ color: 'var(--error)' }} />
                     }
                     <span style={{
                       fontFamily: 'var(--font-dm-mono, monospace)',
-                      fontSize: '11px', color: '#5DB887',
+                      fontSize: '11px', color: 'var(--success)',
                     }}>
                       {d.yield.toFixed(1)}%
                     </span>
@@ -1020,7 +1020,7 @@ function MobileExplorer() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               {[
                 { label: 'Preço Médio/m²', value: `R$ ${(avgPrice / 1000).toFixed(1)}k`, color: 'var(--imi-gold-500)' },
-                { label: 'Yield Médio', value: `${avgYield}%`, color: '#5DB887' },
+                { label: 'Yield Médio', value: `${avgYield}%`, color: 'var(--success)' },
                 { label: 'Melhor Yield', value: bestYieldNeigh[0], color: '#5B9BD5' },
                 { label: 'Menor Preço/m²', value: bestPriceNeigh[0], color: '#D4913A' },
               ].map(stat => (
@@ -1032,7 +1032,7 @@ function MobileExplorer() {
                 }}>
                   <span style={{
                     fontSize: '8.5px', letterSpacing: '2px', textTransform: 'uppercase',
-                    color: '#5C6B7D', fontWeight: 700,
+                    color: 'var(--text-secondary)', fontWeight: 700,
                     fontFamily: 'var(--font-montserrat, sans-serif)',
                   }}>
                     {stat.label}
@@ -1075,25 +1075,25 @@ function MobileExplorer() {
                     justifyContent: 'space-between', marginBottom: 10,
                   }}>
                     <span style={{
-                      fontSize: '13px', fontWeight: 600, color: '#EBE7E0',
+                      fontSize: '13px', fontWeight: 600, color: 'var(--imi-cream)',
                       fontFamily: 'var(--font-montserrat, sans-serif)',
                     }}>
                       {n}
                     </span>
                     <div style={{
                       display: 'flex', alignItems: 'center', gap: 3,
-                      padding: '3px 8px', borderRadius: 4,
+                      padding: '4px 8px', borderRadius: 4,
                       background: trend >= 0 ? 'rgba(93,184,135,0.12)' : 'rgba(224,107,107,0.12)',
                       border: `1px solid ${trend >= 0 ? 'rgba(93,184,135,0.3)' : 'rgba(224,107,107,0.3)'}`,
                     }}>
                       {trend >= 0
-                        ? <ChevronUp size={10} style={{ color: '#5DB887' }} />
-                        : <ChevronDown size={10} style={{ color: '#E06B6B' }} />
+                        ? <ChevronUp size={10} style={{ color: 'var(--success)' }} />
+                        : <ChevronDown size={10} style={{ color: 'var(--error)' }} />
                       }
                       <span style={{
                         fontFamily: 'var(--font-dm-mono, monospace)',
                         fontSize: '11px',
-                        color: trend >= 0 ? '#5DB887' : '#E06B6B',
+                        color: trend >= 0 ? 'var(--success)' : 'var(--error)',
                       }}>
                         {trend >= 0 ? '+' : ''}{trend}%
                       </span>
@@ -1102,7 +1102,7 @@ function MobileExplorer() {
                   <div style={{ display: 'flex', gap: 16 }}>
                     <div>
                       <div style={{
-                        fontSize: '8px', color: '#5C6B7D', letterSpacing: '1.5px',
+                        fontSize: '11px', color: 'var(--text-secondary)', letterSpacing: '1.5px',
                         textTransform: 'uppercase', marginBottom: 3,
                         fontFamily: 'var(--font-montserrat, sans-serif)',
                       }}>
@@ -1117,7 +1117,7 @@ function MobileExplorer() {
                     </div>
                     <div>
                       <div style={{
-                        fontSize: '8px', color: '#5C6B7D', letterSpacing: '1.5px',
+                        fontSize: '11px', color: 'var(--text-secondary)', letterSpacing: '1.5px',
                         textTransform: 'uppercase', marginBottom: 3,
                         fontFamily: 'var(--font-montserrat, sans-serif)',
                       }}>
@@ -1125,7 +1125,7 @@ function MobileExplorer() {
                       </div>
                       <div style={{
                         fontFamily: 'var(--font-dm-mono, monospace)',
-                        fontSize: '13px', color: '#5DB887',
+                        fontSize: '13px', color: 'var(--success)',
                       }}>
                         {yld.toFixed(1)}%
                       </div>
@@ -1151,7 +1151,7 @@ function MobileExplorer() {
                   borderTopColor: 'var(--imi-gold-500)',
                   animation: 'mob-spin 0.8s linear infinite',
                 }} />
-                <span style={{ color: '#9FAAB8', fontSize: '12px' }}>Carregando imóveis…</span>
+                <span style={{ color: 'var(--text-tertiary)', fontSize: '12px' }}>Carregando imóveis…</span>
               </div>
             ) : properties.length === 0 ? (
               <div style={{
@@ -1168,7 +1168,7 @@ function MobileExplorer() {
                 </div>
                 <p style={{
                   fontFamily: 'var(--font-playfair, serif)',
-                  fontSize: '18px', color: '#EBE7E0',
+                  fontSize: '18px', color: 'var(--imi-cream)',
                 }}>
                   Sem imóveis cadastrados
                 </p>
@@ -1176,7 +1176,7 @@ function MobileExplorer() {
                   <button style={{
                     height: 44, paddingLeft: 20, paddingRight: 20, borderRadius: 4,
                     background: 'var(--imi-gold-500)', border: 'none',
-                    color: '#0B1120', fontSize: '11px', fontWeight: 700,
+                    color: T.text, fontSize: '11px', fontWeight: 700,
                     letterSpacing: '1.5px', textTransform: 'uppercase',
                     fontFamily: 'var(--font-montserrat, sans-serif)',
                     cursor: 'pointer',
@@ -1200,7 +1200,7 @@ function MobileExplorer() {
                 {top10Score.map((p, i) => {
                   const sc = p.imi_score ?? 0
                   const scColor = getScoreColor(sc)
-                  const stColor = STATUS_COLORS[p.status] ?? '#9FAAB8'
+                  const stColor = STATUS_COLORS[p.status] ?? 'var(--text-tertiary)'
                   return (
                     <Link key={p.id} href={`/backoffice/imoveis/${p.id}`}>
                       <div style={{
@@ -1213,14 +1213,14 @@ function MobileExplorer() {
                         <span style={{
                           fontFamily: 'var(--font-dm-mono, monospace)',
                           fontSize: '13px', width: 22, flexShrink: 0, textAlign: 'center',
-                          color: i < 3 ? 'var(--imi-gold-500)' : '#5C6B7D',
+                          color: i < 3 ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
                           fontWeight: i < 3 ? 700 : 400,
                         }}>
                           {i + 1}
                         </span>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{
-                            fontSize: '13px', fontWeight: 500, color: '#EBE7E0',
+                            fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)',
                             fontFamily: 'var(--font-montserrat, sans-serif)',
                             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                             marginBottom: 2,
@@ -1228,7 +1228,7 @@ function MobileExplorer() {
                             {p.name}
                           </p>
                           <p style={{
-                            fontSize: '10px', color: '#5C6B7D',
+                            fontSize: '11px', color: 'var(--text-secondary)',
                             fontFamily: 'var(--font-montserrat, sans-serif)',
                           }}>
                             {[p.neighborhood, p.city].filter(Boolean).join(', ')}
@@ -1242,9 +1242,9 @@ function MobileExplorer() {
                           {sc}
                         </span>
                         <span style={{
-                          display: 'inline-flex', padding: '3px 8px', borderRadius: 4,
+                          display: 'inline-flex', padding: '4px 8px', borderRadius: 4,
                           background: `${stColor}18`, border: `1px solid ${stColor}35`,
-                          fontSize: '8px', fontWeight: 600,
+                          fontSize: '11px', fontWeight: 600,
                           color: stColor, fontFamily: 'var(--font-montserrat, sans-serif)',
                           textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0,
                         }}>
@@ -1266,7 +1266,7 @@ function MobileExplorer() {
                   </span>
                 </div>
                 {top5Yield.map((p, i) => {
-                  const stColor = STATUS_COLORS[p.status] ?? '#9FAAB8'
+                  const stColor = STATUS_COLORS[p.status] ?? 'var(--text-tertiary)'
                   return (
                     <Link key={p.id} href={`/backoffice/imoveis/${p.id}`}>
                       <div style={{
@@ -1279,13 +1279,13 @@ function MobileExplorer() {
                         <span style={{
                           fontFamily: 'var(--font-dm-mono, monospace)',
                           fontSize: '13px', width: 22, flexShrink: 0, textAlign: 'center',
-                          color: i < 3 ? 'var(--imi-gold-500)' : '#5C6B7D', fontWeight: i < 3 ? 700 : 400,
+                          color: i < 3 ? 'var(--imi-gold-500)' : 'var(--text-secondary)', fontWeight: i < 3 ? 700 : 400,
                         }}>
                           {i + 1}
                         </span>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{
-                            fontSize: '13px', fontWeight: 500, color: '#EBE7E0',
+                            fontSize: '13px', fontWeight: 500, color: 'var(--imi-cream)',
                             fontFamily: 'var(--font-montserrat, sans-serif)',
                             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                             marginBottom: 2,
@@ -1293,7 +1293,7 @@ function MobileExplorer() {
                             {p.name}
                           </p>
                           <p style={{
-                            fontSize: '10px', color: '#5C6B7D',
+                            fontSize: '11px', color: 'var(--text-secondary)',
                             fontFamily: 'var(--font-montserrat, sans-serif)',
                           }}>
                             {fmt(p.price)}
@@ -1301,7 +1301,7 @@ function MobileExplorer() {
                         </div>
                         <span style={{
                           fontFamily: 'var(--font-dm-mono, monospace)',
-                          fontSize: '14px', fontWeight: 600, color: '#5DB887', flexShrink: 0,
+                          fontSize: '14px', fontWeight: 600, color: 'var(--success)', flexShrink: 0,
                         }}>
                           {(p.yield_est ?? 0).toFixed(2)}%
                         </span>
@@ -1381,15 +1381,15 @@ function DesktopExplorer() {
           {/* Breadcrumb */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
             <Eyebrow>IMI</Eyebrow>
-            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 10 }}>›</span>
+            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
             <Link href="/backoffice/imoveis">
               <span style={{
-                fontSize: '8px', fontWeight: 500, letterSpacing: '2px',
+                fontSize: '11px', fontWeight: 500, letterSpacing: '2px',
                 textTransform: 'uppercase', color: 'var(--bo-text-dim, #5C6B7D)',
                 fontFamily: 'var(--font-montserrat, sans-serif)', cursor: 'pointer',
               }}>Imóveis</span>
             </Link>
-            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 10 }}>›</span>
+            <span style={{ color: 'rgba(184,148,58,0.3)', fontSize: 11 }}>›</span>
             <Eyebrow>Market Intelligence</Eyebrow>
           </div>
 
@@ -1418,7 +1418,7 @@ function DesktopExplorer() {
                   background: 'transparent',
                   border: '1px solid rgba(184,148,58,0.25)',
                   color: 'var(--gold, var(--imi-gold-500))',
-                  fontSize: '10px', fontWeight: 600, letterSpacing: '1.5px',
+                  fontSize: '11px', fontWeight: 600, letterSpacing: '1.5px',
                   textTransform: 'uppercase', fontFamily: 'var(--font-montserrat, sans-serif)',
                   cursor: 'pointer',
                 }}>

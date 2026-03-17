@@ -102,7 +102,7 @@ export default function AvaliacoesPage() {
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px',
                 height: '44px', padding: '0 20px', borderRadius: '4px',
-                fontSize: '13px', fontWeight: 700, color: '#fff',
+                fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
                 background: 'var(--imi-gold-500)',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                 border: 'none', cursor: 'pointer',
@@ -141,7 +141,7 @@ export default function AvaliacoesPage() {
           padding: '16px 20px',
         }}
       >
-        <div style={{ marginBottom: 12, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <div style={{ marginBottom: 12, fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
           Pipeline de Avaliações
         </div>
         <Stepper
@@ -161,7 +161,7 @@ export default function AvaliacoesPage() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, duration: 0.3 }}
-        style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none', marginInline: '-4px', paddingInline: '4px', paddingBottom: '4px' }}
+        style={{ display: 'flex', gap: '8px', overflowX: 'auto', scrollbarWidth: 'none', marginInline: '-4px', paddingInline: '4px', paddingBottom: '4px' }}
       >
         {QUICK_ACTIONS.map((a) => (
           <Link key={a.href} href={a.href} style={{ textDecoration: 'none', flexShrink: 0 }}>
@@ -273,7 +273,7 @@ export default function AvaliacoesPage() {
                   {/* Content */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
-                      <span style={{ fontSize: '10px', fontFamily: 'monospace', color: 'var(--text-tertiary)' }}>
+                      <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-tertiary)' }}>
                         {av.protocolo || '—'}
                       </span>
                       <StatusBadge status={sc.statusKey} label={sc.label} size="xs" />
@@ -294,11 +294,11 @@ export default function AvaliacoesPage() {
                       </p>
                     )}
                     <span style={{
-                      fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '4px',
+                      fontSize: '11px', fontWeight: 700, padding: '2px 7px', borderRadius: '4px',
                       background: `${hc.color}18`, color: hc.color,
                     }}>{hc.label}</span>
                     {av.valor_estimado && (
-                      <p style={{ fontSize: '10px', color: 'var(--text-tertiary)', marginTop: '4px', fontVariantNumeric: 'tabular-nums' }}>
+                      <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px', fontVariantNumeric: 'tabular-nums' }}>
                         Vlr: {fmt(Number(av.valor_estimado))}
                       </p>
                     )}
@@ -332,7 +332,7 @@ export default function AvaliacoesPage() {
               style={{
                 marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
                 height: '44px', padding: '0 20px', borderRadius: '4px',
-                fontSize: '13px', fontWeight: 700, color: '#fff',
+                fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
                 background: 'var(--imi-gold-500)',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.22)',
                 border: 'none', cursor: 'pointer',

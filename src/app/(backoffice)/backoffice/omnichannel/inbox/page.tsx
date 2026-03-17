@@ -441,7 +441,7 @@ export default function SocialInboxPage() {
                                         style={{ borderTop: `1px solid ${T.border}` }}>
                                         <button onClick={handleAiSuggest} disabled={aiLoading}
                                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold transition-all disabled:opacity-50"
-                                            style={{ background: 'rgba(167,139,250,0.12)', color: '#A78BFA' }}>
+                                            style={{ background: 'rgba(167,139,250,0.12)', color: 'var(--imi-gold-400)' }}>
                                             {aiLoading ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
                                             Sugerir com IA
                                         </button>

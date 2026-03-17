@@ -71,16 +71,16 @@ function useCampanhas(filters: { search?: string; status?: string; type?: string
 }
 
 const CHANNEL_MAP: Record<string, { label: string; icon: React.ElementType; color: string }> = {
-  google: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },
-  facebook: { label: 'Facebook', icon: Facebook, color: '#6366F1' },
-  instagram: { label: 'Instagram', icon: Instagram, color: '#F472B6' },
+  google: { label: 'Google Ads', icon: Globe, color: 'var(--info)' },
+  facebook: { label: 'Facebook', icon: Facebook, color: 'var(--info)' },
+  instagram: { label: 'Instagram', icon: Instagram, color: 'var(--error)' },
   email: { label: 'Email', icon: Mail, color: '#22D3EE' },
   whatsapp: { label: 'WhatsApp', icon: MessageSquare, color: 'var(--bo-success)' },
-  site: { label: 'Site', icon: Globe, color: '#34D399' },
+  site: { label: 'Site', icon: Globe, color: 'var(--success)' },
   // Legacy keys for backward compat
-  google_ads: { label: 'Google Ads', icon: Globe, color: '#3B82F6' },
-  organic: { label: 'Orgânico', icon: TrendingUp, color: '#34D399' },
-  referral: { label: 'Indicação', icon: Users, color: '#A78BFA' },
+  google_ads: { label: 'Google Ads', icon: Globe, color: 'var(--info)' },
+  organic: { label: 'Orgânico', icon: TrendingUp, color: 'var(--success)' },
+  referral: { label: 'Indicação', icon: Users, color: 'var(--imi-gold-400)' },
   other: { label: 'Outro', icon: BarChart3, color: '#8B949E' },
 }
 
@@ -111,7 +111,7 @@ function ChannelBadge({ channel }: { channel: string }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: '4px',
-      fontSize: '10px', fontWeight: 700,
+      fontSize: '11px', fontWeight: 700,
       color: cfg.color, background: `${cfg.color}15`,
       border: `1px solid ${cfg.color}30`,
       borderRadius: '4px', padding: '2px 8px',
@@ -164,7 +164,7 @@ function CampaignCard({ c, index, onClick }: { c: Campaign; index: number; onCli
           <div key={label} style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'center' }}>
             <Icon size={12} color="var(--bo-text-muted)" />
             <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>{value}</span>
-            <span style={{ fontSize: '9px', color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
+            <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</span>
           </div>
         ))}
       </div>
@@ -259,8 +259,8 @@ export default function CampanhasPage() {
               {/* Meta connection badge */}
               {metaStatus && (
                 <span style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '5px',
-                  fontSize: '10px', fontWeight: 700, padding: '4px 10px',
+                  display: 'inline-flex', alignItems: 'center', gap: '4px',
+                  fontSize: '11px', fontWeight: 700, padding: '4px 10px',
                   borderRadius: '4px',
                   background: metaStatus.connected ? 'rgba(0,178,127,0.1)' : 'rgba(148,163,184,0.08)',
                   color: metaStatus.connected ? 'var(--s-done)' : 'var(--bo-text-muted)',
@@ -277,7 +277,7 @@ export default function CampanhasPage() {
                   disabled={syncing}
                   title="Sincronizar campanhas do Meta Ads"
                   style={{
-                    display: 'flex', alignItems: 'center', gap: '5px',
+                    display: 'flex', alignItems: 'center', gap: '4px',
                     height: '38px', padding: '0 14px', borderRadius: '4px',
                     fontSize: '12px', fontWeight: 700,
                     color: syncing ? 'var(--bo-text-muted)' : 'var(--bo-text)',
@@ -299,7 +299,7 @@ export default function CampanhasPage() {
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '38px', padding: '0 18px', borderRadius: '4px',
-                  fontSize: '13px', fontWeight: 700, color: '#fff',
+                  fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
                   background: 'var(--bo-accent)',
                   boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                   border: 'none', cursor: 'pointer',
@@ -321,7 +321,7 @@ export default function CampanhasPage() {
             key="sync-toast"
             initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
             style={{
-              display: 'flex', alignItems: 'center', gap: '10px',
+              display: 'flex', alignItems: 'center', gap: '8px',
               padding: '10px 16px', borderRadius: '4px',
               background: syncResult.success ? 'rgba(0,178,127,0.1)' : 'rgba(248,113,113,0.1)',
               border: `1px solid ${syncResult.success ? 'rgba(0,178,127,0.25)' : 'rgba(248,113,113,0.25)'}`,
@@ -412,7 +412,7 @@ export default function CampanhasPage() {
             style={{
               marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
               height: '38px', padding: '0 18px', borderRadius: '4px',
-              fontSize: '13px', fontWeight: 700, color: '#fff',
+              fontSize: '13px', fontWeight: 700, color: 'var(--text-inverse)',
               background: 'var(--bo-accent)',
               boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
               border: 'none', cursor: 'pointer',

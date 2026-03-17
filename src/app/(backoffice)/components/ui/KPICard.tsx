@@ -141,7 +141,7 @@ export function KPICard({
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 3,
+              gap: 4,
               padding: '2px 8px',
               borderRadius: 9999,
               fontFamily: 'var(--font-data)',

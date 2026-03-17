@@ -117,12 +117,12 @@ export default function ConstrutoraDetalhesPage() {
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       lancamento: 'var(--bo-accent)',
-      em_construcao: '#F59E0B',
-      pronto: '#10B981',
-      em_obras: '#F59E0B',
-      archived: '#6B7280',
+      em_construcao: 'var(--warning)',
+      pronto: 'var(--success)',
+      em_obras: 'var(--warning)',
+      archived: 'var(--text-secondary)',
     }
-    return colors[status] || '#6B7280'
+    return colors[status] || 'var(--text-secondary)'
   }
 
   const getStatusLabel = (status: string) => {
@@ -223,7 +223,7 @@ export default function ConstrutoraDetalhesPage() {
           className="px-3 py-1 rounded-lg text-xs font-bold"
           style={{
             backgroundColor: data.is_active ? 'rgba(16,185,129,0.12)' : 'rgba(107,114,128,0.12)',
-            color: data.is_active ? '#10B981' : '#6B7280',
+            color: data.is_active ? 'var(--success)' : 'var(--text-secondary)',
             border: `1px solid ${data.is_active ? 'rgba(16,185,129,0.25)' : 'rgba(107,114,128,0.25)'}`,
           }}
         >
@@ -274,11 +274,11 @@ export default function ConstrutoraDetalhesPage() {
         </div>
         <div className="rounded-xl p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Vendidas</p>
-          <p className="text-2xl font-bold" style={{ color: '#10B981' }}>{soldUnits}</p>
+          <p className="text-2xl font-bold" style={{ color: 'var(--success)' }}>{soldUnits}</p>
         </div>
         <div className="rounded-xl p-4" style={{ backgroundColor: T.surface, border: `1px solid ${T.border}` }}>
           <p className="text-xs mb-1" style={{ color: T.textMuted }}>Disponíveis</p>
-          <p className="text-2xl font-bold" style={{ color: '#F59E0B' }}>{availableUnits}</p>
+          <p className="text-2xl font-bold" style={{ color: 'var(--warning)' }}>{availableUnits}</p>
         </div>
       </div>
 
@@ -536,13 +536,13 @@ export default function ConstrutoraDetalhesPage() {
                       {dev.available_units != null && (
                         <div>
                           <span className="text-xs" style={{ color: T.textMuted }}>Disponíveis: </span>
-                          <span className="text-sm font-bold" style={{ color: '#F59E0B' }}>{dev.available_units}</span>
+                          <span className="text-sm font-bold" style={{ color: 'var(--warning)' }}>{dev.available_units}</span>
                         </div>
                       )}
                       {dev.min_price != null && (
                         <div>
                           <span className="text-xs" style={{ color: T.textMuted }}>A partir de </span>
-                          <span className="text-sm font-bold" style={{ color: '#10B981' }}>{formatPrice(dev.min_price)}</span>
+                          <span className="text-sm font-bold" style={{ color: 'var(--success)' }}>{formatPrice(dev.min_price)}</span>
                         </div>
                       )}
                     </div>

@@ -100,7 +100,7 @@ export default function CampanhaAnalyticsPage() {
         <button
           onClick={() => router.back()}
           className="h-11 px-5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-80"
-          style={{ background: T.accent, color: '#fff' }}
+          style={{ background: T.accent, color: 'var(--text-inverse)' }}
         >
           Voltar
         </button>
@@ -151,7 +151,7 @@ export default function CampanhaAnalyticsPage() {
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.12)' }}>
-              <DollarSign size={20} style={{ color: '#3B82F6' }} />
+              <DollarSign size={20} style={{ color: 'var(--info)' }} />
             </div>
             <div className="text-right">
               <p className="text-xs" style={{ color: T.textMuted }}>Orçamento Total</p>
@@ -171,9 +171,9 @@ export default function CampanhaAnalyticsPage() {
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.12)' }}>
-              <Users size={20} style={{ color: '#10B981' }} />
+              <Users size={20} style={{ color: 'var(--success)' }} />
             </div>
-            <TrendingUp size={16} style={{ color: '#10B981' }} />
+            <TrendingUp size={16} style={{ color: 'var(--success)' }} />
           </div>
           <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>{formatNumber(leads)}</p>
           <p className="text-sm" style={{ color: T.textMuted }}>
@@ -185,7 +185,7 @@ export default function CampanhaAnalyticsPage() {
         <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.12)' }}>
-              <Calendar size={20} style={{ color: '#8B5CF6' }} />
+              <Calendar size={20} style={{ color: 'var(--imi-gold-500)' }} />
             </div>
           </div>
           <p className="text-2xl font-bold mb-1" style={{ color: T.text }}>
@@ -213,12 +213,12 @@ export default function CampanhaAnalyticsPage() {
       {/* Meta Ads Notice */}
       <div className="rounded-2xl p-5 flex items-start gap-4"
         style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)' }}>
-        <Zap size={20} style={{ color: '#3B82F6', flexShrink: 0, marginTop: 2 }} />
+        <Zap size={20} style={{ color: 'var(--info)', flexShrink: 0, marginTop: 2 }} />
         <div>
           <p className="text-sm font-bold mb-1" style={{ color: T.text }}>Métricas de performance em tempo real</p>
           <p className="text-sm" style={{ color: T.textMuted }}>
             Impressões, CTR, CPC e dados diários são sincronizados via <strong>Meta Ads API</strong>.
-            Configure o token de acesso em <a href="/backoffice/integracoes" className="underline" style={{ color: '#3B82F6' }}>Integrações → Meta Ads</a> para visualizar.
+            Configure o token de acesso em <a href="/backoffice/integracoes" className="underline" style={{ color: 'var(--info)' }}>Integrações → Meta Ads</a> para visualizar.
           </p>
         </div>
       </div>

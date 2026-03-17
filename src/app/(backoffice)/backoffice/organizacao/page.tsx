@@ -274,7 +274,7 @@ export default function OrganizacaoPage() {
                   background: T.elevated,
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center',
-                  gap: 6, cursor: 'pointer',
+                  gap: 8, cursor: 'pointer',
                   transition: 'all 0.15s',
                   overflow: 'hidden',
                   padding: 0,
@@ -294,7 +294,7 @@ export default function OrganizacaoPage() {
                 ) : (
                   <>
                     <Upload size={18} style={{ color: T.textDim }} />
-                    <span style={{ fontSize: 10, color: T.textDim, textAlign: 'center', lineHeight: 1.3, fontFamily: T.font.sans, padding: '0 6px' }}>
+                    <span style={{ fontSize: 11, color: T.textDim, textAlign: 'center', lineHeight: 1.3, fontFamily: T.font.sans, padding: '0 6px' }}>
                       Clique ou arraste o logo
                     </span>
                   </>
@@ -376,7 +376,7 @@ export default function OrganizacaoPage() {
                   style={{
                     height: 40, padding: '0 14px', borderRadius: T.radius.md,
                     background: T.elevated, border: `1.5px solid ${T.border}`,
-                    display: 'flex', alignItems: 'center', gap: 6,
+                    display: 'flex', alignItems: 'center', gap: 8,
                     fontSize: 13, fontWeight: 500, color: T.text, cursor: 'pointer',
                     fontFamily: T.font.sans, whiteSpace: 'nowrap',
                     opacity: cepLoading ? 0.6 : 1,
@@ -429,7 +429,7 @@ export default function OrganizacaoPage() {
           {/* Colors */}
           <Grid cols={2}>
             <Field label="Cor Primária (Brand)">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <input
                   type="color"
                   value={form.corPrimaria}
@@ -449,7 +449,7 @@ export default function OrganizacaoPage() {
               </div>
             </Field>
             <Field label="Cor Secundária">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <input
                   type="color"
                   value={form.corSecundaria}
@@ -511,11 +511,11 @@ export default function OrganizacaoPage() {
           {/* Brand preview */}
           <div style={{ borderRadius: T.radius.lg, overflow: 'hidden', border: `1px solid ${T.border}` }}>
             <div style={{ background: form.corSecundaria, padding: '14px 20px' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', fontFamily: T.font.mono }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', fontFamily: T.font.mono }}>
                 PREVIEW · BRANDKIT
               </div>
               <div style={{
-                fontSize: 20, fontWeight: 700, color: '#fff', marginTop: 4,
+                fontSize: 20, fontWeight: 700, color: 'var(--text-inverse)', marginTop: 4,
                 fontFamily: FONT_OPTIONS.find(f => f.id === form.fonte)?.family ?? 'Georgia, serif',
               }}>
                 {form.nomeFantasia || 'IMI Imóveis'}
@@ -526,7 +526,7 @@ export default function OrganizacaoPage() {
                 height: 34, padding: '0 16px', borderRadius: T.radius.md,
                 background: form.corPrimaria,
                 display: 'inline-flex', alignItems: 'center',
-                fontSize: 13, fontWeight: 600, color: '#fff', fontFamily: T.font.sans,
+                fontSize: 13, fontWeight: 600, color: 'var(--text-inverse)', fontFamily: T.font.sans,
               }}>
                 Ver Imóveis
               </div>
@@ -608,7 +608,7 @@ export default function OrganizacaoPage() {
         >
           {/* Gold badge */}
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
+            display: 'inline-flex', alignItems: 'center', gap: 8,
             marginBottom: 18, padding: '5px 14px', borderRadius: T.radius.full,
             background: 'color-mix(in srgb, var(--imi-gold-500) 12%, transparent)',
             border: '1px solid color-mix(in srgb, var(--imi-gold-500) 25%, transparent)',
@@ -640,7 +640,7 @@ export default function OrganizacaoPage() {
             </Field>
           </Grid>
 
-          <p style={{ fontSize: 12, color: T.textDim, margin: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+          <p style={{ fontSize: 12, color: T.textDim, margin: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
             <Shield size={11} style={{ color: T.textDim }} />
             Para atualizar os dados de licença, entre em contato com o suporte IMI.
           </p>
@@ -662,7 +662,7 @@ export default function OrganizacaoPage() {
               left: '50%',
               transform: 'translateX(-50%)',
               zIndex: 8000,
-              display: 'flex', alignItems: 'center', gap: 14,
+              display: 'flex', alignItems: 'center', gap: 16,
               padding: '12px 20px',
               background: T.surface,
               border: `1px solid ${T.border}`,
@@ -677,7 +677,7 @@ export default function OrganizacaoPage() {
                 <Check size={16} /> Salvo com sucesso!
               </span>
             ) : (
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: T.textMuted, fontFamily: T.font.sans }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: T.textMuted, fontFamily: T.font.sans }}>
                 <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--warning)', flexShrink: 0 }} />
                 Alterações não salvas
               </span>

@@ -19,13 +19,13 @@ const fmtDate = (s: string) =>
   s ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short' }).format(new Date(s)) : '—'
 
 const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }> = {
-  draft:     { label: 'Rascunho',    bg: 'rgba(107,119,133,0.12)', color: '#6b7785' },
-  sent:      { label: 'Enviada',     bg: 'rgba(96,165,250,0.12)',  color: '#60a5fa' },
-  viewed:    { label: 'Visualizada', bg: 'rgba(167,139,250,0.12)', color: '#a78bfa' },
-  countered: { label: 'Contraposta', bg: 'rgba(251,191,36,0.12)', color: '#fbbf24' },
-  accepted:  { label: 'Aceita',      bg: 'rgba(52,211,153,0.12)', color: '#34d399' },
-  rejected:  { label: 'Recusada',    bg: 'rgba(248,113,113,0.10)', color: '#f87171' },
-  expired:   { label: 'Expirada',    bg: 'rgba(107,119,133,0.10)', color: '#6b7785' },
+  draft:     { label: 'Rascunho',    bg: 'rgba(107,119,133,0.12)', color: 'var(--text-tertiary)' },
+  sent:      { label: 'Enviada',     bg: 'rgba(96,165,250,0.12)',  color: 'var(--info)' },
+  viewed:    { label: 'Visualizada', bg: 'rgba(167,139,250,0.12)', color: 'var(--info)' },
+  countered: { label: 'Contraposta', bg: 'rgba(251,191,36,0.12)', color: 'var(--warning)' },
+  accepted:  { label: 'Aceita',      bg: 'rgba(52,211,153,0.12)', color: 'var(--success)' },
+  rejected:  { label: 'Recusada',    bg: 'rgba(248,113,113,0.10)', color: 'var(--error)' },
+  expired:   { label: 'Expirada',    bg: 'rgba(107,119,133,0.10)', color: 'var(--text-tertiary)' },
 }
 
 const ALL_STATUSES = ['all', 'draft', 'sent', 'viewed', 'countered', 'accepted', 'rejected']
@@ -81,20 +81,20 @@ export default function PropostasPage() {
             { label: 'Aceitas', value: String(accepted), icon: CheckCircle },
             { label: 'Volume aceito', value: totalValue > 0 ? fmt(totalValue) : '—', icon: Send },
           ].map(({ label, value, icon: Icon, accent }) => (
-            <div key={label} style={{ ...cardStyle, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div key={label} style={{ ...cardStyle, padding: '16px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 32, height: 32, borderRadius: T.radius.sm, background: accent ? T.accentBg : T.surface, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${accent ? T.borderGold : T.border}` }}>
                 <Icon size={14} color={accent ? T.accent : T.textMuted} />
               </div>
               <div>
-                <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{label}</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: accent ? T.accent : T.text }}>{value}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: T.textMuted, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{label}</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: accent ? T.accent : T.text, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>{value}</div>
               </div>
             </div>
           ))}
         </div>
 
         {/* Filters */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', flex: 1, minWidth: 220 }}>
             <Search size={13} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: T.textMuted }} />
             <input
@@ -102,13 +102,13 @@ export default function PropostasPage() {
               onChange={e => setSearch(e.target.value)}
               placeholder="Buscar por comprador, e-mail..."
               style={{
-                width: '100%', paddingLeft: 34, paddingRight: 12, paddingTop: 9, paddingBottom: 9,
+                width: '100%', paddingLeft: 36, paddingRight: 12, paddingTop: 8, paddingBottom: 8,
                 background: T.surface, border: `1px solid ${T.border}`, borderRadius: T.radius.md,
                 color: T.text, fontSize: 13, outline: 'none',
               }}
             />
           </div>
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             {ALL_STATUSES.map(s => {
               const cfg = s === 'all' ? { label: 'Todas', bg: '', color: T.textMuted } : STATUS_LABELS[s]
               const active = statusFilter === s
@@ -117,10 +117,12 @@ export default function PropostasPage() {
                   key={s}
                   onClick={() => setStatusFilter(s)}
                   style={{
-                    padding: '6px 12px', borderRadius: T.radius.sm, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                    padding: '4px 12px', borderRadius: T.radius.sm, fontSize: 11, fontWeight: 600, cursor: 'pointer',
                     border: `1px solid ${active ? T.accent : T.border}`,
                     background: active ? T.accentBg : 'transparent',
                     color: active ? T.accent : T.textMuted,
+                    letterSpacing: '0.05em', textTransform: 'uppercase',
+                    transition: T.transition.fast,
                   }}
                 >
                   {cfg?.label ?? s}
@@ -135,8 +137,8 @@ export default function PropostasPage() {
           {/* Header */}
           <div style={{
             display: 'grid', gridTemplateColumns: '1fr 140px 130px 100px 80px 32px',
-            padding: '10px 20px', borderBottom: `1px solid ${T.border}`,
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.textMuted
+            padding: '12px 20px', borderBottom: `1px solid ${T.border}`,
+            fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.textMuted
           }}>
             <span>Comprador / Imóvel</span>
             <span>Valor</span>
@@ -158,7 +160,7 @@ export default function PropostasPage() {
                   <p>Nenhuma proposta ainda.</p>
                   <button
                     onClick={() => router.push('/backoffice/propostas/nova')}
-                    style={{ marginTop: 12, padding: '8px 20px', background: T.accent, border: 'none', borderRadius: T.radius.md, color: '#000', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
+                    style={{ marginTop: 12, padding: '8px 20px', background: T.accent, border: 'none', borderRadius: T.radius.md, color: 'var(--text-inverse)', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}
                   >
                     Criar Primeira Proposta
                   </button>
@@ -179,7 +181,7 @@ export default function PropostasPage() {
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '1fr 140px 130px 100px 80px 32px',
-                  padding: '14px 20px',
+                  padding: '12px 20px',
                   borderBottom: `1px solid ${T.borderSubtle}`,
                   cursor: 'pointer',
                   transition: T.transition.fast,
@@ -190,21 +192,21 @@ export default function PropostasPage() {
                 {/* Buyer */}
                 <div>
                   <div style={{ fontSize: 13, color: T.text, fontWeight: 500 }}>{p.buyer_name}</div>
-                  <div style={{ fontSize: 11, color: T.textMuted, marginTop: 1 }}>
+                  <div style={{ fontSize: 11, color: T.textMuted, marginTop: 4 }}>
                     {p.property_snapshot?.titulo || p.buyer_email || '—'}
                   </div>
                 </div>
 
                 {/* Value */}
-                <div style={{ fontSize: 13, color: T.accent, fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
+                <div style={{ fontSize: 13, color: T.accent, fontWeight: 700, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
                   {fmt(p.proposed_value)}
                 </div>
 
                 {/* Status badge */}
                 <div>
                   <span style={{
-                    padding: '3px 10px', borderRadius: 4, fontSize: 10, fontWeight: 700,
-                    letterSpacing: '0.06em', textTransform: 'uppercase',
+                    padding: '4px 12px', borderRadius: 4, fontSize: 11, fontWeight: 600,
+                    letterSpacing: '0.05em', textTransform: 'uppercase',
                     background: statusCfg.bg, color: statusCfg.color,
                   }}>
                     {statusCfg.label}
@@ -212,10 +214,10 @@ export default function PropostasPage() {
                 </div>
 
                 {/* Score */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  {p.tier === 'hot' && <Flame size={13} color="#f87171" />}
-                  {p.tier === 'warm' && <Thermometer size={13} color="#fbbf24" />}
-                  {(!p.tier || p.tier === 'cold') && <Snowflake size={13} color="#60a5fa" />}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  {p.tier === 'hot' && <Flame size={13} color="var(--error)" />}
+                  {p.tier === 'warm' && <Thermometer size={13} color="var(--warning)" />}
+                  {(!p.tier || p.tier === 'cold') && <Snowflake size={13} color="var(--info)" />}
                   <span style={{ fontSize: 12, color: T.textMuted }}>{p.score ?? 0}</span>
                 </div>
 

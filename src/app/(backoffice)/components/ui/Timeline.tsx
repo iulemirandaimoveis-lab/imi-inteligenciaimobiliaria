@@ -72,7 +72,7 @@ function BadgePill({ label, status }: { label: string; status?: TimelineStatus }
         padding: '2px 8px',
         borderRadius: 'var(--r-full, 9999px)',
         fontFamily: 'var(--font-mono)',
-        fontSize: 10,
+        fontSize: 11,
         fontWeight: 600,
         letterSpacing: '0.06em',
         textTransform: 'uppercase',
@@ -203,7 +203,7 @@ function EventRow({ event, isLast, compact }: EventRowProps) {
           <span
             style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: 10,
+              fontSize: 11,
               color: 'var(--text-tertiary)',
               whiteSpace: 'nowrap',
               flexShrink: 0,

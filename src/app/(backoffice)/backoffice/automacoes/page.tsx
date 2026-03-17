@@ -176,7 +176,7 @@ function RuleCard({
         transition: 'opacity 0.3s',
       }} />
 
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
         {/* Trigger icon */}
         <div style={{
           width: 40, height: 40, borderRadius: T.radius.lg, flexShrink: 0,
@@ -195,14 +195,14 @@ function RuleCard({
                 {rule.name}
               </span>
               <span style={{
-                fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: T.radius.full,
+                fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: T.radius.full,
                 background: T.elevated, color: T.textDim, letterSpacing: '0.04em',
               }}>
                 {rule.category}
               </span>
               {/* Status badge */}
               <span style={{
-                fontSize: 10, fontWeight: 700, padding: '2px 9px', borderRadius: T.radius.full,
+                fontSize: 11, fontWeight: 700, padding: '2px 9px', borderRadius: T.radius.full,
                 background: isActive ? 'var(--success-bg)' : T.elevated,
                 color: isActive ? 'var(--success)' : T.textDim,
                 border: `1px solid ${isActive ? 'color-mix(in srgb, var(--success) 20%, transparent)' : T.border}`,
@@ -225,9 +225,9 @@ function RuleCard({
           </div>
 
           {/* Trigger → Action */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
             <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 5,
+              display: 'inline-flex', alignItems: 'center', gap: 4,
               fontSize: 11, padding: '4px 10px', borderRadius: T.radius.full, fontWeight: 500,
               background: 'color-mix(in srgb, var(--info) 10%, transparent)',
               color: 'var(--info)',
@@ -238,7 +238,7 @@ function RuleCard({
             </div>
             <ArrowRight size={12} style={{ color: T.textDim, flexShrink: 0 }} />
             <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 5,
+              display: 'inline-flex', alignItems: 'center', gap: 4,
               fontSize: 11, padding: '4px 10px', borderRadius: T.radius.full, fontWeight: 500,
               background: isActive
                 ? 'color-mix(in srgb, var(--imi-gold-500) 10%, transparent)'
@@ -270,7 +270,7 @@ function RuleCard({
               }}>
                 {rule.conversionRate}% convertidos
               </span>
-              <span style={{ fontSize: 11, color: T.textDim, display: 'flex', alignItems: 'center', gap: 3 }}>
+              <span style={{ fontSize: 11, color: T.textDim, display: 'flex', alignItems: 'center', gap: 4 }}>
                 <Clock size={10} /> {rule.lastFired}
               </span>
             </div>
@@ -457,7 +457,7 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                   <p style={{ fontSize: 13, color: T.textMuted, marginBottom: 16 }}>
                     Quando deve esta automação ser disparada?
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
                     {TRIGGER_OPTIONS.map(opt => {
                       const Icon = opt.icon
                       const sel = selectedTrigger === opt.id
@@ -475,7 +475,7 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                             transition: 'all 0.15s',
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                             <Icon size={16} style={{ color: sel ? 'var(--imi-gold-500)' : T.textMuted, flexShrink: 0 }} />
                             <span style={{ fontSize: 13, fontWeight: 600, color: sel ? 'var(--imi-gold-500)' : T.text, fontFamily: T.font.sans }}>
                               {opt.label}
@@ -497,7 +497,7 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                   <p style={{ fontSize: 13, color: T.textMuted, marginBottom: 16 }}>
                     O que deve acontecer quando o gatilho for acionado?
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
                     {ACTION_OPTIONS.map(opt => {
                       const Icon = opt.icon
                       const sel = selectedAction === opt.id
@@ -515,7 +515,7 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                             transition: 'all 0.15s',
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                             <Icon size={16} style={{ color: sel ? 'var(--imi-gold-500)' : T.textMuted, flexShrink: 0 }} />
                             <span style={{ fontSize: 13, fontWeight: 600, color: sel ? 'var(--imi-gold-500)' : T.text, fontFamily: T.font.sans }}>
                               {opt.label}
@@ -533,7 +533,7 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
 
               {/* STEP 3: Configure */}
               {step === 3 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                   <p style={{ fontSize: 13, color: T.textMuted, margin: 0 }}>
                     Configure os detalhes da automação.
                   </p>
@@ -551,11 +551,11 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
                         background: T.elevated, border: `1px solid ${T.border}`,
                         flexWrap: 'wrap',
                       }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--info)', fontWeight: 500 }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--info)', fontWeight: 500 }}>
                           <TrigI size={12} /> {trig?.label}
                         </span>
                         <ArrowRight size={12} style={{ color: T.textDim }} />
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--imi-gold-500)', fontWeight: 500 }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--imi-gold-500)', fontWeight: 500 }}>
                           <ActI size={12} /> {act?.label}
                         </span>
                       </div>
@@ -777,7 +777,7 @@ export default function AutomacoesPage() {
             </Btn>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {rules.map((rule, i) => (
               <RuleCard
                 key={rule.id}
@@ -811,7 +811,7 @@ export default function AutomacoesPage() {
                 {['Horário', 'Regra', 'Entidade', 'Resultado'].map(h => (
                   <th key={h} style={{
                     padding: '10px 16px', textAlign: 'left',
-                    fontSize: 10, fontWeight: 700, color: T.textDim,
+                    fontSize: 11, fontWeight: 700, color: T.textDim,
                     textTransform: 'uppercase', letterSpacing: '0.06em',
                     whiteSpace: 'nowrap',
                   }}>
@@ -829,16 +829,16 @@ export default function AutomacoesPage() {
                 { time: '08:50', rule: 'Follow-up Automático', entity: 'Lead #1038', ok: false },
               ].map((entry, i, arr) => (
                 <tr key={i} style={{ borderBottom: i < arr.length - 1 ? `1px solid ${T.border}` : 'none' }}>
-                  <td style={{ padding: '11px 16px', fontSize: 12, color: T.textDim, fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
+                  <td style={{ padding: '12px 16px', fontSize: 12, color: T.textDim, fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
                     {entry.time}
                   </td>
-                  <td style={{ padding: '11px 16px', fontSize: 12, fontWeight: 600, color: T.text, whiteSpace: 'nowrap' }}>
+                  <td style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: T.text, whiteSpace: 'nowrap' }}>
                     {entry.rule}
                   </td>
-                  <td style={{ padding: '11px 16px', fontSize: 12, color: T.textDim, whiteSpace: 'nowrap' }}>
+                  <td style={{ padding: '12px 16px', fontSize: 12, color: T.textDim, whiteSpace: 'nowrap' }}>
                     {entry.entity}
                   </td>
-                  <td style={{ padding: '11px 16px' }}>
+                  <td style={{ padding: '12px 16px' }}>
                     <span style={{
                       display: 'inline-flex', alignItems: 'center', gap: 4,
                       fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: T.radius.full,

@@ -201,9 +201,9 @@ export default function CreditoNovoPage() {
                                         className="w-7 h-7 rounded-full flex items-center justify-center transition-all"
                                         style={
                                             done
-                                                ? { background: T.success, color: '#fff' }
+                                                ? { background: T.success, color: 'var(--text-inverse)' }
                                                 : active
-                                                    ? { background: T.accent, color: '#fff' }
+                                                    ? { background: T.accent, color: 'var(--text-inverse)' }
                                                     : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }
                                         }
                                     >

@@ -83,7 +83,7 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
               <span
                 style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '10px',
+                  fontSize: '11px',
                   fontWeight: 700,
                   background: isActive ? 'rgba(184,148,58,0.12)' : 'var(--bg-muted)',
                   color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',

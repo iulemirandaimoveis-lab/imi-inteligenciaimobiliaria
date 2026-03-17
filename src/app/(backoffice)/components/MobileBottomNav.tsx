@@ -27,10 +27,10 @@ const BOTTOM_ITEMS = [
 // Quick-create actions (shown in mega-menu)
 const QUICK_CREATE = [
     { label: 'Novo Imóvel',    subtitle: 'Cadastrar empreendimento', href: '/backoffice/imoveis/novo',    icon: Building2,    color: 'var(--imi-gold-500)', iconBg: 'rgba(184,148,58,0.14)'  },
-    { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: '#60A5FA',              iconBg: 'rgba(96,165,250,0.14)'  },
-    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: '#A78BFA',              iconBg: 'rgba(167,139,250,0.14)' },
+    { label: 'Novo Lead',      subtitle: 'Adicionar ao pipeline',    href: '/backoffice/leads/novo',      icon: UserPlus,     color: 'var(--info)',              iconBg: 'rgba(96,165,250,0.14)'  },
+    { label: 'Nova Avaliação', subtitle: 'Iniciar laudo técnico',    href: '/backoffice/avaliacoes/nova', icon: ClipboardList,color: 'var(--imi-gold-400)',              iconBg: 'rgba(167,139,250,0.14)' },
     { label: 'Nova Campanha',  subtitle: 'Criar campanha de mídia',  href: '/backoffice/campanhas/nova',  icon: CalendarPlus, color: '#FB923C',              iconBg: 'rgba(251,146,60,0.14)'  },
-    { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,   color: '#34D399',              iconBg: 'rgba(52,211,153,0.14)'  },
+    { label: 'Nova Proposta',  subtitle: 'Gerar proposta comercial', href: '/backoffice/propostas/nova',  icon: BookMarked,   color: 'var(--success)',              iconBg: 'rgba(52,211,153,0.14)'  },
     { label: 'Novo Contrato',  subtitle: 'Registrar contrato',       href: '/backoffice/contratos/novo',  icon: FileSignature,color: '#F87171',              iconBg: 'rgba(248,113,113,0.14)' },
 ]
 
@@ -50,7 +50,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Captação', color: '#E8A87C', bg: 'rgba(232,168,124,0.12)',
+        label: 'Captação', color: 'var(--warning)', bg: 'rgba(232,168,124,0.12)',
         items: [
             { name: 'Leads',         href: '/backoffice/leads',            icon: Users,         badge: 'NEW'   },
             { name: 'Inbox IA',      href: '/backoffice/leads/inbox',      icon: Inbox },
@@ -85,7 +85,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Inteligência', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)',
+        label: 'Inteligência', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)',
         items: [
             { name: 'eBooks',      href: '/backoffice/inteligencia/ebooks',       icon: BookOpen  },
             { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack,   badge: 'NEW' },
@@ -119,7 +119,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Crescimento', color: '#A78BFA', bg: 'rgba(167,139,250,0.12)',
+        label: 'Crescimento', color: 'var(--imi-gold-400)', bg: 'rgba(167,139,250,0.12)',
         items: [
             { name: 'Automações',    href: '/backoffice/automacoes',    icon: Zap,       badge: 'BREVE' },
             { name: 'Playbooks',     href: '/backoffice/playbooks',     icon: BookOpen,  badge: 'NEW'   },
@@ -129,7 +129,7 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         ],
     },
     {
-        label: 'Configurações', color: '#94A3B8', bg: 'rgba(148,163,184,0.10)',
+        label: 'Configurações', color: 'var(--text-tertiary)', bg: 'rgba(148,163,184,0.10)',
         items: [
             { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building,    badge: 'BREVE' },
             { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users,       badge: 'NEW'   },
@@ -538,7 +538,7 @@ export function MobileBottomNav() {
                                         }}>IMI</span>
                                         <div style={{ width: 1, height: 13, background: 'var(--border-strong)', flexShrink: 0 }} />
                                         <span style={{
-                                            fontSize: 7,
+                                            fontSize: 11,
                                             fontWeight: 700,
                                             color: 'var(--text-gold)',
                                             letterSpacing: '0.12em',
@@ -602,8 +602,8 @@ export function MobileBottomNav() {
                                     <div className="flex gap-2">
                                         {[
                                             { label: 'Hoje', value: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }), color: 'var(--imi-gold-500)', bg: 'rgba(184,148,58,0.12)' },
-                                            { label: 'Imóveis', value: '—', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
-                                            { label: 'Leads', value: '—', color: '#34D399', bg: 'rgba(52,211,153,0.12)' },
+                                            { label: 'Imóveis', value: '—', color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
+                                            { label: 'Leads', value: '—', color: 'var(--success)', bg: 'rgba(52,211,153,0.12)' },
                                         ].map((w, i) => (
                                             <div
                                                 key={w.label}
@@ -635,7 +635,7 @@ export function MobileBottomNav() {
                                     <div className="flex items-center gap-2.5 mb-3">
                                         <div style={{ width: 4, height: 12, borderRadius: 4, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
                                         <span style={{
-                                            fontSize: '9px', fontWeight: 700,
+                                            fontSize: '11px', fontWeight: 700,
                                             color: 'var(--text-tertiary)',
                                             letterSpacing: '0.14em',
                                             textTransform: 'uppercase',

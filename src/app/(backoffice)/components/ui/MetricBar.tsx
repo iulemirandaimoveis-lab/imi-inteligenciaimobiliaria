@@ -24,7 +24,7 @@ export function MetricBar({ label, value, valueLabel, color, className = '' }: M
       <div className="flex justify-between items-center">
         <span style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: '10px',
+          fontSize: '11px',
           fontWeight: 500,
           color: 'var(--text-tertiary)',
           textTransform: 'uppercase' as const,
@@ -34,7 +34,7 @@ export function MetricBar({ label, value, valueLabel, color, className = '' }: M
         </span>
         <span style={{
           fontFamily: 'var(--font-mono)',
-          fontSize: '10px',
+          fontSize: '11px',
           fontWeight: 700,
           color: 'var(--text-primary)',
         }}>

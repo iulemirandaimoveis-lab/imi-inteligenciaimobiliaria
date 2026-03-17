@@ -50,14 +50,14 @@ const inputStyle: React.CSSProperties = {
     width: '100%',
     height: '44px',
     borderRadius: '4px',
-    padding: '0 14px 0 42px',
+    padding: '0 16px 0 44px',
     fontSize: '14px',
     outline: 'none',
 }
 
 const inputStyleNoIcon: React.CSSProperties = {
     ...inputStyle,
-    padding: '0 14px',
+    padding: '0 16px',
 }
 
 export default function NovoLeadPage() {
@@ -145,8 +145,8 @@ export default function NovoLeadPage() {
     }
 
     const getScoreColor = (): React.CSSProperties => {
-        if (score >= 15) return { background: 'rgba(34,197,94,0.12)', border: '1.5px solid rgba(34,197,94,0.35)', color: 'var(--bo-success)' }
-        if (score >= 10) return { background: 'rgba(245,158,11,0.12)', border: '1.5px solid rgba(245,158,11,0.35)', color: 'var(--warning)' }
+        if (score >= 15) return { background: 'var(--success-bg)', border: '1.5px solid var(--success)', color: 'var(--success)' }
+        if (score >= 10) return { background: 'var(--warning-bg)', border: '1.5px solid var(--warning)', color: 'var(--warning)' }
         return { background: 'var(--bg-elevated)', border: '1.5px solid var(--border-default)', color: 'var(--text-secondary)' }
     }
 
@@ -183,8 +183,8 @@ export default function NovoLeadPage() {
                         <div className="px-5 py-3 rounded-xl flex items-center gap-3" style={getScoreColor()}>
                             <Sparkles size={16} />
                             <div>
-                                <p className="text-xs font-medium opacity-80">Score</p>
-                                <p className="text-lg font-bold leading-tight">{score}/20</p>
+                                <p className="font-semibold opacity-80 uppercase" style={{ fontSize: '11px', letterSpacing: '0.05em' }}>Score</p>
+                                <p className="text-lg font-bold leading-tight" style={{ fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>{score}/20</p>
                             </div>
                             <p className="text-sm font-bold ml-1">{getScoreLabel()}</p>
                         </div>
@@ -201,7 +201,7 @@ export default function NovoLeadPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             {/* Nome */}
                             <div className="md:col-span-2">
-                                <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Nome Completo *</label>
+                                <label className="block font-semibold mb-2 uppercase" style={{ color: T.textMuted, fontSize: '11px', letterSpacing: '0.05em' }}>Nome Completo *</label>
                                 <div className="relative">
                                     <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                     <input
@@ -212,12 +212,12 @@ export default function NovoLeadPage() {
                                         style={{ ...inputStyle, border: errors.name ? '1px solid var(--error)' : `1px solid ${T.border}` }}
                                     />
                                 </div>
-                                {errors.name && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error)' }}><AlertCircle size={12} />{errors.name}</p>}
+                                {errors.name && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--error)' }}><AlertCircle size={12} />{errors.name}</p>}
                             </div>
 
                             {/* Email */}
                             <div>
-                                <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Email *</label>
+                                <label className="block font-semibold mb-2 uppercase" style={{ color: T.textMuted, fontSize: '11px', letterSpacing: '0.05em' }}>Email *</label>
                                 <div className="relative">
                                     <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                     <input
@@ -228,12 +228,12 @@ export default function NovoLeadPage() {
                                         style={{ ...inputStyle, border: errors.email ? '1px solid var(--error)' : `1px solid ${T.border}` }}
                                     />
                                 </div>
-                                {errors.email && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error)' }}><AlertCircle size={12} />{errors.email}</p>}
+                                {errors.email && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--error)' }}><AlertCircle size={12} />{errors.email}</p>}
                             </div>
 
                             {/* Telefone */}
                             <div>
-                                <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Telefone *</label>
+                                <label className="block font-semibold mb-2 uppercase" style={{ color: T.textMuted, fontSize: '11px', letterSpacing: '0.05em' }}>Telefone *</label>
                                 <div className="relative">
                                     <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                     <input
@@ -245,12 +245,12 @@ export default function NovoLeadPage() {
                                         style={{ ...inputStyle, border: errors.phone ? '1px solid var(--error)' : `1px solid ${T.border}` }}
                                     />
                                 </div>
-                                {errors.phone && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error)' }}><AlertCircle size={12} />{errors.phone}</p>}
+                                {errors.phone && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--error)' }}><AlertCircle size={12} />{errors.phone}</p>}
                             </div>
 
                             {/* CPF */}
                             <div className="md:col-span-2">
-                                <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>CPF (opcional)</label>
+                                <label className="block font-semibold mb-2 uppercase" style={{ color: T.textMuted, fontSize: '11px', letterSpacing: '0.05em' }}>CPF (opcional)</label>
                                 <div className="relative">
                                     <FileText size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                     <input
@@ -272,30 +272,30 @@ export default function NovoLeadPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             {/* Origem */}
                             <div>
-                                <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Origem do Lead *</label>
+                                <label className="block font-semibold mb-2 uppercase" style={{ color: T.textMuted, fontSize: '11px', letterSpacing: '0.05em' }}>Origem do Lead *</label>
                                 <div className="relative">
                                     <Tag size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                     <select
                                         value={formData.origem}
                                         onChange={e => handleChange('origem', e.target.value)}
-                                        style={{ ...inputStyle, border: errors.origem ? '1px solid var(--error)' : `1px solid ${T.border}`, paddingRight: '14px' }}
+                                        style={{ ...inputStyle, border: errors.origem ? '1px solid var(--error)' : `1px solid ${T.border}`, paddingRight: '16px' }}
                                     >
                                         <option value="">Selecione...</option>
                                         {origens.map(o => <option key={o} value={o}>{o}</option>)}
                                     </select>
                                 </div>
-                                {errors.origem && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--bo-error)' }}><AlertCircle size={12} />{errors.origem}</p>}
+                                {errors.origem && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: 'var(--error)' }}><AlertCircle size={12} />{errors.origem}</p>}
                             </div>
 
                             {/* Tipo de Imóvel */}
                             <div>
-                                <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Tipo de Imóvel</label>
+                                <label className="block font-semibold mb-2 uppercase" style={{ color: T.textMuted, fontSize: '11px', letterSpacing: '0.05em' }}>Tipo de Imóvel</label>
                                 <div className="relative">
                                     <Building2 size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                     <select
                                         value={formData.interesse}
                                         onChange={e => handleChange('interesse', e.target.value)}
-                                        style={{ ...inputStyle, paddingRight: '14px' }}
+                                        style={{ ...inputStyle, paddingRight: '16px' }}
                                     >
                                         <option value="">Selecione...</option>
                                         {tiposImovel.map(t => <option key={t} value={t}>{t}</option>)}
@@ -305,13 +305,13 @@ export default function NovoLeadPage() {
 
                             {/* Localização */}
                             <div>
-                                <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Localização Preferida</label>
+                                <label className="block font-semibold mb-2 uppercase" style={{ color: T.textMuted, fontSize: '11px', letterSpacing: '0.05em' }}>Localização Preferida</label>
                                 <div className="relative">
                                     <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                     <select
                                         value={formData.localizacao}
                                         onChange={e => handleChange('localizacao', e.target.value)}
-                                        style={{ ...inputStyle, paddingRight: '14px' }}
+                                        style={{ ...inputStyle, paddingRight: '16px' }}
                                     >
                                         <option value="">Selecione...</option>
                                         {localizacoes.map(l => <option key={l} value={l}>{l}</option>)}
@@ -321,13 +321,13 @@ export default function NovoLeadPage() {
 
                             {/* Orçamento */}
                             <div>
-                                <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Faixa de Orçamento</label>
+                                <label className="block font-semibold mb-2 uppercase" style={{ color: T.textMuted, fontSize: '11px', letterSpacing: '0.05em' }}>Faixa de Orçamento</label>
                                 <div className="relative">
                                     <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textMuted }} />
                                     <select
                                         value={formData.orcamento}
                                         onChange={e => handleChange('orcamento', e.target.value)}
-                                        style={{ ...inputStyle, paddingRight: '14px' }}
+                                        style={{ ...inputStyle, paddingRight: '16px' }}
                                     >
                                         <option value="">Selecione...</option>
                                         {faixasOrcamento.map(f => <option key={f.label} value={f.label}>{f.label}</option>)}
@@ -351,7 +351,7 @@ export default function NovoLeadPage() {
                                 color: T.text,
                                 width: '100%',
                                 borderRadius: '4px',
-                                padding: '12px 14px',
+                                padding: '12px 16px',
                                 fontSize: '14px',
                                 outline: 'none',
                                 resize: 'vertical',
@@ -367,15 +367,15 @@ export default function NovoLeadPage() {
 
                         {/* Status Inicial */}
                         <div>
-                            <p className="text-xs mb-1.5" style={{ color: T.textMuted }}>Status Inicial</p>
-                            <div className="px-3 py-2 rounded-lg text-sm font-medium" style={{ background: 'rgba(245,158,11,0.12)', color: 'var(--warning)', border: '1px solid rgba(245,158,11,0.25)' }}>
+                            <p className="uppercase mb-2" style={{ color: T.textMuted, fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em' }}>Status Inicial</p>
+                            <div className="px-3 py-2 rounded-lg text-sm font-medium" style={{ background: 'var(--warning-bg)', color: 'var(--warning)', border: '1px solid var(--warning)' }}>
                                 Pendente
                             </div>
                         </div>
 
                         {/* Score Breakdown */}
                         <div>
-                            <p className="text-xs mb-3" style={{ color: T.textMuted }}>Fatores de Qualificação</p>
+                            <p className="uppercase mb-3" style={{ color: T.textMuted, fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em' }}>Fatores de Qualificação</p>
                             <div className="space-y-2 text-sm">
                                 {[
                                     { label: 'Email válido', active: formData.email.includes('@'), pts: '+2' },
@@ -386,14 +386,14 @@ export default function NovoLeadPage() {
                                 ].map(item => (
                                     <div key={item.label} className="flex items-center justify-between">
                                         <span style={{ color: T.textMuted }}>{item.label}</span>
-                                        <span style={{ color: item.active ? 'var(--bo-success)' : T.textMuted, fontWeight: item.active ? 600 : 400 }}>
+                                        <span style={{ color: item.active ? 'var(--success)' : T.textMuted, fontWeight: item.active ? 600 : 400 }}>
                                             {item.active ? item.pts : '0'}
                                         </span>
                                     </div>
                                 ))}
                                 <div className="flex items-center justify-between">
                                     <span style={{ color: T.textMuted }}>Orçamento</span>
-                                    <span style={{ color: formData.orcamento ? 'var(--bo-success)' : T.textMuted, fontWeight: formData.orcamento ? 600 : 400 }}>
+                                    <span style={{ color: formData.orcamento ? 'var(--success)' : T.textMuted, fontWeight: formData.orcamento ? 600 : 400 }}>
                                         {formData.orcamento ? `+${faixasOrcamento.find(f => f.label === formData.orcamento)?.score || 0}` : '0'}
                                     </span>
                                 </div>
@@ -401,11 +401,11 @@ export default function NovoLeadPage() {
                         </div>
 
                         {/* Dica */}
-                        <div className="rounded-xl p-4" style={{ background: 'rgba(72,101,129,0.08)', border: '1px solid rgba(72,101,129,0.2)' }}>
+                        <div className="rounded-xl p-4" style={{ background: 'var(--info-bg)', border: '1px solid var(--border-subtle)' }}>
                             <div className="flex gap-3">
-                                <AlertCircle size={16} className="flex-shrink-0 mt-0.5" style={{ color: T.accent }} />
+                                <AlertCircle size={16} className="flex-shrink-0 mt-1" style={{ color: T.accent }} />
                                 <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                                    <p className="font-semibold mb-0.5">Dica de Qualificação</p>
+                                    <p className="font-semibold mb-1">Dica de Qualificação</p>
                                     <p>Leads com score acima de 15 têm 3× mais chances de conversão.</p>
                                 </div>
                             </div>

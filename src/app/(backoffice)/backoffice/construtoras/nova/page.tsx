@@ -17,9 +17,10 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   height: '44px',
   borderRadius: '4px',
-  padding: '0 14px',
+  padding: '0 16px',
   fontSize: '14px',
   outline: 'none',
+  transition: T.transition.fast,
 }
 
 const cardStyle: React.CSSProperties = {
@@ -27,6 +28,7 @@ const cardStyle: React.CSSProperties = {
   border: `1px solid ${T.border}`,
   borderRadius: '4px',
   padding: '24px',
+  boxShadow: 'var(--shadow-xs)',
 }
 
 export default function NovaConstrutora() {
@@ -124,7 +126,7 @@ export default function NovaConstrutora() {
         value={(formData as any)[name]}
         onChange={opts?.mask ? e => setFormData(p => ({ ...p, [name]: opts.mask!(e.target.value) })) : handleChange}
         placeholder={opts?.placeholder}
-        style={{ ...inputStyle, border: errors[name] ? '1px solid #ef4444' : `1px solid ${T.border}` }}
+        style={{ ...inputStyle, border: errors[name] ? '1px solid var(--error)' : `1px solid ${T.border}` }}
       />
       {errors[name] && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={11} />{errors[name]}</p>}
     </div>
@@ -164,7 +166,7 @@ export default function NovaConstrutora() {
                   <button type="button"
                     onClick={() => { setLogoFile(null); setLogoPreview(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
                     className="absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center text-white"
-                    style={{ background: 'var(--bo-error)' }}>
+                    style={{ background: 'var(--error)' }}>
                     <X size={11} />
                   </button>
                 </>
@@ -206,7 +208,7 @@ export default function NovaConstrutora() {
               <input type="text" name="cnpj" value={formData.cnpj}
                 onChange={e => setFormData(p => ({ ...p, cnpj: formatCNPJ(e.target.value) }))}
                 placeholder="00.000.000/0000-00" maxLength={18}
-                style={{ ...inputStyle, border: errors.cnpj ? '1px solid #ef4444' : `1px solid ${T.border}` }} />
+                style={{ ...inputStyle, border: errors.cnpj ? '1px solid var(--error)' : `1px solid ${T.border}` }} />
               {errors.cnpj && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={11} />{errors.cnpj}</p>}
             </div>
             {field('inscricaoEstadual', 'Inscrição Estadual', { placeholder: '000.000.000.000' })}
@@ -225,7 +227,7 @@ export default function NovaConstrutora() {
               <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>CEP *</label>
               <input type="text" name="cep" value={formData.cep} placeholder="00000-000" maxLength={9}
                 onChange={e => setFormData(p => ({ ...p, cep: formatCEP(e.target.value) }))}
-                style={{ ...inputStyle, border: errors.cep ? '1px solid #ef4444' : `1px solid ${T.border}` }} />
+                style={{ ...inputStyle, border: errors.cep ? '1px solid var(--error)' : `1px solid ${T.border}` }} />
               {errors.cep && <p className="mt-1 text-xs text-red-400">{errors.cep}</p>}
             </div>
             <div className="md:col-span-2">
@@ -251,7 +253,7 @@ export default function NovaConstrutora() {
               <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Telefone *</label>
               <input type="text" name="telefone" value={formData.telefone} placeholder="(81) 3456-7890" maxLength={15}
                 onChange={e => setFormData(p => ({ ...p, telefone: formatPhone(e.target.value) }))}
-                style={{ ...inputStyle, border: errors.telefone ? '1px solid #ef4444' : `1px solid ${T.border}` }} />
+                style={{ ...inputStyle, border: errors.telefone ? '1px solid var(--error)' : `1px solid ${T.border}` }} />
               {errors.telefone && <p className="mt-1 text-xs text-red-400">{errors.telefone}</p>}
             </div>
             <div>
@@ -279,7 +281,7 @@ export default function NovaConstrutora() {
               <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>Telefone *</label>
               <input type="text" name="telefoneResponsavel" value={formData.telefoneResponsavel} placeholder="(81) 99876-5432" maxLength={15}
                 onChange={e => setFormData(p => ({ ...p, telefoneResponsavel: formatPhone(e.target.value) }))}
-                style={{ ...inputStyle, border: errors.telefoneResponsavel ? '1px solid #ef4444' : `1px solid ${T.border}` }} />
+                style={{ ...inputStyle, border: errors.telefoneResponsavel ? '1px solid var(--error)' : `1px solid ${T.border}` }} />
               {errors.telefoneResponsavel && <p className="mt-1 text-xs text-red-400">{errors.telefoneResponsavel}</p>}
             </div>
           </div>
@@ -295,8 +297,9 @@ export default function NovaConstrutora() {
             placeholder="Informações adicionais sobre a construtora..."
             style={{
               background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
-              width: '100%', borderRadius: '4px', padding: '12px 14px', fontSize: '14px',
+              width: '100%', borderRadius: '4px', padding: '12px 16px', fontSize: '14px',
               outline: 'none', resize: 'vertical',
+              transition: T.transition.fast,
             }} />
         </div>
 

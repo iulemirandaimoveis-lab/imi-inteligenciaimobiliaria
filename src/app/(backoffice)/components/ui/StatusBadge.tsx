@@ -94,8 +94,8 @@ const LOCAL_STATUS_CONFIG: Record<string, {
 }
 
 const SIZE_STYLES = {
-  xs: { fontSize: '9px', padding: '2px 6px', gap: '4px', dotSize: '5px' },
-  sm: { fontSize: '10px', padding: '3px 8px', gap: '5px', dotSize: '5px' },
+  xs: { fontSize: '11px', padding: '2px 6px', gap: '4px', dotSize: '5px' },
+  sm: { fontSize: '11px', padding: '4px 8px', gap: '4px', dotSize: '5px' },
   md: { fontSize: '11px', padding: '4px 10px', gap: '6px', dotSize: '6px' },
 }
 

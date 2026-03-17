@@ -325,7 +325,7 @@ export default function LeadsInboxPage() {
                                                         className="h-full rounded-full transition-all"
                                                         style={{
                                                             width: `${Math.min(lead.score, 100)}%`,
-                                                            background: lead.score >= 75 ? tc.text : lead.score >= 45 ? 'var(--bo-warning)' : '#94A3B8',
+                                                            background: lead.score >= 75 ? tc.text : lead.score >= 45 ? 'var(--bo-warning)' : 'var(--text-tertiary)',
                                                         }}
                                                     />
                                                 </div>

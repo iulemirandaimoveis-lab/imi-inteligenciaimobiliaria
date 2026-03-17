@@ -130,7 +130,7 @@ export default function PixChargeModal({
                     borderBottom: '1px solid var(--bo-border)',
                     background: 'var(--bo-elevated)',
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{
                             width: '34px', height: '34px', borderRadius: '4px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -213,7 +213,7 @@ export default function PixChargeModal({
                             )}
 
                             {/* Actions */}
-                            <div style={{ display: 'flex', gap: '10px' }}>
+                            <div style={{ display: 'flex', gap: '8px' }}>
                                 <button
                                     onClick={onClose}
                                     style={{
@@ -231,7 +231,7 @@ export default function PixChargeModal({
                                     style={{
                                         flex: 2, height: '44px', borderRadius: '4px',
                                         fontSize: '13px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
-                                        color: '#fff',
+                                        color: 'var(--text-inverse)',
                                         background: 'linear-gradient(135deg, #00B27F 0%, #00D9A0 100%)',
                                         border: 'none',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
@@ -253,7 +253,7 @@ export default function PixChargeModal({
                         <motion.div
                             key="qr"
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center' }}
+                            style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}
                         >
                             {/* QR Image */}
                             <div style={{
@@ -324,7 +324,7 @@ export default function PixChargeModal({
                             </button>
 
                             {/* Provider badge */}
-                            <p style={{ fontSize: '10px', color: 'var(--bo-text-dim)', textAlign: 'center' }}>
+                            <p style={{ fontSize: '11px', color: 'var(--bo-text-dim)', textAlign: 'center' }}>
                                 Provedor: {providerLabel} · TXID: {charge.txid.slice(0, 12)}…
                             </p>
                         </motion.div>
@@ -361,7 +361,7 @@ export default function PixChargeModal({
                                 style={{
                                     height: '44px', padding: '0 32px', borderRadius: '4px',
                                     fontSize: '13px', fontWeight: 700, cursor: 'pointer',
-                                    color: '#fff',
+                                    color: 'var(--text-inverse)',
                                     background: 'linear-gradient(135deg, #00B27F 0%, #00D9A0 100%)',
                                     border: 'none',
                                 }}

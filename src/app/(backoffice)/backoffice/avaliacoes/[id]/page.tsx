@@ -158,9 +158,9 @@ export default function AvaliacaoDetalhesPage() {
         : 50
     const rangeSpread = hasRange ? ((rangeMax - rangeMin) / rangeEst * 100) : 0
     const rangeConf = rangeSpread < 10
-        ? { label: 'Alta Confiança', color: '#10B981', bg: 'rgba(16,185,129,0.12)' }
+        ? { label: 'Alta Confiança', color: 'var(--success)', bg: 'rgba(16,185,129,0.12)' }
         : rangeSpread < 20
-        ? { label: 'Média Confiança', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' }
+        ? { label: 'Média Confiança', color: 'var(--warning)', bg: 'rgba(245,158,11,0.12)' }
         : { label: 'Confiança Baixa', color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' }
 
     return (
@@ -240,10 +240,10 @@ export default function AvaliacaoDetalhesPage() {
                         <div className="flex items-start justify-between mb-3">
                             <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Valor Avaliado</p>
                             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.12)' }}>
-                                <TrendingUp size={14} style={{ color: '#10B981' }} />
+                                <TrendingUp size={14} style={{ color: 'var(--success)' }} />
                             </div>
                         </div>
-                        <p className="text-lg font-bold leading-tight" style={{ color: '#10B981' }}>{formatPrice(Number(data.valor_estimado))}</p>
+                        <p className="text-lg font-bold leading-tight" style={{ color: 'var(--success)' }}>{formatPrice(Number(data.valor_estimado))}</p>
                     </div>
                 )}
                 {data.valor_m2 && (
@@ -251,7 +251,7 @@ export default function AvaliacaoDetalhesPage() {
                         <div className="flex items-start justify-between mb-3">
                             <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Preço/m²</p>
                             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(139,92,246,0.12)' }}>
-                                <BarChart2 size={14} style={{ color: '#8B5CF6' }} />
+                                <BarChart2 size={14} style={{ color: 'var(--imi-gold-500)' }} />
                             </div>
                         </div>
                         <p className="text-lg font-bold leading-tight" style={{ color: 'var(--bo-accent)' }}>{formatPrice(Number(data.valor_m2))}/m²</p>
@@ -262,7 +262,7 @@ export default function AvaliacaoDetalhesPage() {
                         <div className="flex items-start justify-between mb-3">
                             <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Área Privativa</p>
                             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.08)' }}>
-                                <Ruler size={14} style={{ color: '#10B981' }} />
+                                <Ruler size={14} style={{ color: 'var(--success)' }} />
                             </div>
                         </div>
                         <p className="text-lg font-bold leading-tight" style={{ color: T.text }}>{data.area_privativa} m²</p>
@@ -273,13 +273,13 @@ export default function AvaliacaoDetalhesPage() {
                         <div className="flex items-start justify-between mb-3">
                             <p className="text-[10px] font-semibold uppercase tracking-wide leading-tight" style={{ color: T.textDim }}>Honorários</p>
                             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(245,158,11,0.12)' }}>
-                                <DollarSign size={14} style={{ color: '#F59E0B' }} />
+                                <DollarSign size={14} style={{ color: 'var(--warning)' }} />
                             </div>
                         </div>
                         <p className="text-lg font-bold leading-tight" style={{ color: T.accent }}>{formatPrice(Number(data.honorarios))}</p>
                         {data.honorarios_status && (
                             <p className="text-[10px] font-bold mt-1.5" style={{
-                                color: data.honorarios_status === 'pago' ? 'var(--bo-success)' : data.honorarios_status === 'parcial' ? 'var(--bo-accent)' : '#E8A87C'
+                                color: data.honorarios_status === 'pago' ? 'var(--bo-success)' : data.honorarios_status === 'parcial' ? 'var(--bo-accent)' : 'var(--warning)'
                             }}>
                                 ● {data.honorarios_status === 'pago' ? 'Pago' : data.honorarios_status === 'parcial' ? 'Parcial' : 'Pendente'}
                             </p>
@@ -334,21 +334,21 @@ export default function AvaliacaoDetalhesPage() {
                                     )}
                                     {data.banheiros != null && (
                                         <div className="text-center">
-                                            <Bath size={24} className="mx-auto mb-2" style={{ color: '#8B5CF6' }} />
+                                            <Bath size={24} className="mx-auto mb-2" style={{ color: 'var(--imi-gold-500)' }} />
                                             <p className="text-xl font-bold" style={{ color: T.text }}>{data.banheiros}</p>
                                             <p className="text-xs" style={{ color: T.textMuted }}>Banheiros</p>
                                         </div>
                                     )}
                                     {data.area_privativa != null && (
                                         <div className="text-center">
-                                            <Ruler size={24} className="mx-auto mb-2" style={{ color: '#10B981' }} />
+                                            <Ruler size={24} className="mx-auto mb-2" style={{ color: 'var(--success)' }} />
                                             <p className="text-xl font-bold" style={{ color: T.text }}>{data.area_privativa}m²</p>
                                             <p className="text-xs" style={{ color: T.textMuted }}>Área</p>
                                         </div>
                                     )}
                                     {data.vagas != null && (
                                         <div className="text-center">
-                                            <Car size={24} className="mx-auto mb-2" style={{ color: '#F59E0B' }} />
+                                            <Car size={24} className="mx-auto mb-2" style={{ color: 'var(--warning)' }} />
                                             <p className="text-xl font-bold" style={{ color: T.text }}>{data.vagas}</p>
                                             <p className="text-xs" style={{ color: T.textMuted }}>Vagas</p>
                                         </div>
@@ -392,7 +392,7 @@ export default function AvaliacaoDetalhesPage() {
                                             {/* Floating estimated value label above marker */}
                                             <div className="absolute top-0 text-center pointer-events-none"
                                                 style={{ left: `${rangePct}%`, transform: 'translateX(-50%)' }}>
-                                                <p className="text-sm font-bold whitespace-nowrap" style={{ color: '#10B981' }}>
+                                                <p className="text-sm font-bold whitespace-nowrap" style={{ color: 'var(--success)' }}>
                                                     {formatPrice(rangeEst)}
                                                 </p>
                                                 <p className="text-[10px] mb-1" style={{ color: T.textDim }}>Avaliado</p>
@@ -416,7 +416,7 @@ export default function AvaliacaoDetalhesPage() {
                                                         border: '2.5px solid #10B981',
                                                         boxShadow: '0 2px 8px rgba(16,185,129,0.4)',
                                                     }}>
-                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#10B981' }} />
+                                                    <div className="w-2 h-2 rounded-full" style={{ background: 'var(--success)' }} />
                                                 </div>
                                             </div>
                                         </div>
@@ -462,7 +462,7 @@ export default function AvaliacaoDetalhesPage() {
                                         {data.valor_estimado && (
                                             <div className="flex justify-between">
                                                 <span style={{ color: T.textMuted }}>Avaliado</span>
-                                                <span className="font-bold" style={{ color: '#10B981' }}>{formatPrice(Number(data.valor_estimado))}</span>
+                                                <span className="font-bold" style={{ color: 'var(--success)' }}>{formatPrice(Number(data.valor_estimado))}</span>
                                             </div>
                                         )}
                                         {data.valor_maximo && (
@@ -525,7 +525,7 @@ export default function AvaliacaoDetalhesPage() {
                                         : isBelowMarket
                                         ? `${((1 - ratio) * 100).toFixed(0)}% abaixo da média`
                                         : 'Na média do bairro'
-                                    const verdictColor = isPremium ? '#F59E0B' : isBelowMarket ? '#10B981' : '#3B82F6'
+                                    const verdictColor = isPremium ? 'var(--warning)' : isBelowMarket ? 'var(--success)' : 'var(--info)'
                                     return (
                                         <div className="flex items-center gap-3 p-3 rounded-xl"
                                             style={{ background: `${verdictColor}12`, border: `1px solid ${verdictColor}30` }}>
@@ -632,7 +632,7 @@ export default function AvaliacaoDetalhesPage() {
                                             <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Grau Invest.</p>
                                                 <p className="text-lg font-bold" style={{
-                                                    color: aiAnalysis.investmentGrade === 'A' ? '#10B981' : aiAnalysis.investmentGrade === 'B' ? '#3B82F6' : aiAnalysis.investmentGrade === 'C' ? '#F59E0B' : 'var(--bo-error)'
+                                                    color: aiAnalysis.investmentGrade === 'A' ? 'var(--success)' : aiAnalysis.investmentGrade === 'B' ? 'var(--info)' : aiAnalysis.investmentGrade === 'C' ? 'var(--warning)' : 'var(--bo-error)'
                                                 }}>{aiAnalysis.investmentGrade}</p>
                                             </div>
                                         )}
@@ -640,7 +640,7 @@ export default function AvaliacaoDetalhesPage() {
                                             <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                                 <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Tendência</p>
                                                 <p className="text-sm font-bold" style={{
-                                                    color: aiAnalysis.marketTrend === 'alta' ? '#10B981' : aiAnalysis.marketTrend === 'queda' ? 'var(--bo-error)' : '#F59E0B'
+                                                    color: aiAnalysis.marketTrend === 'alta' ? 'var(--success)' : aiAnalysis.marketTrend === 'queda' ? 'var(--bo-error)' : 'var(--warning)'
                                                 }}>{aiAnalysis.marketTrend}</p>
                                             </div>
                                         )}

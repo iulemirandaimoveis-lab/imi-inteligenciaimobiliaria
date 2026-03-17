@@ -290,7 +290,7 @@ export default function MobileHeader() {
                                     }} />
                                     {/* Tagline — text-gold adapts: gold-600 in light, gold-400 in dark */}
                                     <span style={{
-                                        fontSize: 7,
+                                        fontSize: 11,
                                         fontWeight: 700,
                                         color: 'var(--text-gold)',
                                         letterSpacing: '0.15em',

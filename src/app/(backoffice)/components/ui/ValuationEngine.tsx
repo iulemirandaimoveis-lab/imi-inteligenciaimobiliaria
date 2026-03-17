@@ -128,7 +128,7 @@ export function ValuationEngine({
           <span
             style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: 600,
               color: 'var(--text-tertiary)',
               textTransform: 'uppercase',
@@ -141,7 +141,7 @@ export function ValuationEngine({
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: 9,
+                fontSize: 11,
                 color: 'var(--text-disabled)',
                 letterSpacing: '0.04em',
               }}
@@ -179,7 +179,7 @@ export function ValuationEngine({
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: 10,
+                fontSize: 11,
                 color: 'var(--text-tertiary)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
@@ -260,13 +260,13 @@ export function ValuationEngine({
                 alignItems: 'center',
               }}
             >
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-disabled)', letterSpacing: '0.04em' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-disabled)', letterSpacing: '0.04em' }}>
                 R$ {formatBRL(min)}
               </span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                 Intervalo de confiança
               </span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--text-disabled)', letterSpacing: '0.04em' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-disabled)', letterSpacing: '0.04em' }}>
                 R$ {formatBRL(max)}
               </span>
             </div>
@@ -276,7 +276,7 @@ export function ValuationEngine({
                 style={{
                   marginTop: 6,
                   fontFamily: 'var(--font-mono)',
-                  fontSize: 10,
+                  fontSize: 11,
                   color: 'var(--text-tertiary)',
                 }}
               >
@@ -309,7 +309,7 @@ export function ValuationEngine({
               <span
                 style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: 10,
+                  fontSize: 11,
                   color: 'var(--text-tertiary)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.08em',
@@ -317,7 +317,7 @@ export function ValuationEngine({
               >
                 Confiança
               </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span
                   style={{
                     fontFamily: 'var(--font-mono)',
@@ -331,10 +331,10 @@ export function ValuationEngine({
                 <span
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: 10,
+                    fontSize: 11,
                     color: confidenceColor(clampedConfidence),
                     background: confidenceBg(clampedConfidence),
-                    padding: '1px 7px',
+                    padding: '2px 8px',
                     borderRadius: 9999,
                   }}
                 >
@@ -371,7 +371,7 @@ export function ValuationEngine({
               <div
                 style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: 10,
+                  fontSize: 11,
                   color: 'var(--text-tertiary)',
                   textTransform: 'uppercase',
                   letterSpacing: '0.10em',
@@ -380,7 +380,7 @@ export function ValuationEngine({
               >
                 Comparáveis
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {comparables.slice(0, 4).map((comp, i) => {
                   const isPos = comp.diff > 0
                   const isNeg = comp.diff < 0
@@ -405,7 +405,7 @@ export function ValuationEngine({
                       <span
                         style={{
                           fontFamily: 'var(--font-mono)',
-                          fontSize: 10,
+                          fontSize: 11,
                           color: 'var(--text-secondary)',
                           flex: 1,
                           overflow: 'hidden',
@@ -419,7 +419,7 @@ export function ValuationEngine({
                       <span
                         style={{
                           fontFamily: 'var(--font-mono)',
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: 600,
                           color: 'var(--text-primary)',
                           flexShrink: 0,
@@ -432,10 +432,10 @@ export function ValuationEngine({
                         <span
                           style={{
                             fontFamily: 'var(--font-mono)',
-                            fontSize: 9,
+                            fontSize: 11,
                             color: 'var(--text-tertiary)',
                             background: 'var(--bg-muted)',
-                            padding: '1px 5px',
+                            padding: '2px 4px',
                             borderRadius: 'var(--r-xs, 4px)',
                             flexShrink: 0,
                           }}
@@ -450,9 +450,9 @@ export function ValuationEngine({
                           alignItems: 'center',
                           gap: 2,
                           fontFamily: 'var(--font-mono)',
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: 600,
-                          padding: '1px 6px',
+                          padding: '2px 8px',
                           borderRadius: 9999,
                           background: isPos
                             ? 'rgba(0,178,127,0.12)'
@@ -489,14 +489,14 @@ export function ValuationEngine({
             paddingTop: 10,
             display: 'flex',
             alignItems: 'center',
-            gap: 5,
+            gap: 4,
           }}
         >
           <Zap size={9} style={{ color: 'var(--imi-gold-400)', flexShrink: 0 }} />
           <span
             style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: 9,
+              fontSize: 11,
               color: 'var(--text-tertiary)',
               fontStyle: 'italic',
               letterSpacing: '0.04em',

@@ -40,7 +40,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
 
     function retentionColor(retention: number): string {
         if (retention >= 70) return '#6BB87B'
-        if (retention >= 40) return '#F59E0B'
+        if (retention >= 40) return 'var(--warning)'
         return '#F87171'
     }
 
@@ -76,7 +76,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                 borderRadius: 4,
                                 background: isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.08)',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
-                                color: isActive ? '#0B1120' : '#9FAAB8',
+                                color: isActive ? T.text : 'var(--text-tertiary)',
                                 fontFamily: 'var(--font-montserrat, sans-serif)',
                                 fontSize: 12, fontWeight: isActive ? 700 : 500,
                                 cursor: 'pointer',
@@ -104,23 +104,23 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                     }}>
                         <div style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 9, fontWeight: 700,
+                            fontSize: 11, fontWeight: 700,
                             letterSpacing: '2px', textTransform: 'uppercase',
-                            color: '#5C6B7D', marginBottom: 3,
+                            color: 'var(--text-secondary)', marginBottom: 3,
                         }}>
                             LISTING HEATMAP
                         </div>
                         <div style={{
                             fontFamily: 'var(--font-playfair, serif)',
                             fontSize: 15, fontWeight: 600,
-                            color: '#EBE7E0',
+                            color: 'var(--imi-cream)',
                         }}>
                             {development.name || '—'}
                         </div>
                         {development.neighborhood && (
                             <div style={{
                                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                                fontSize: 11, color: '#5C6B7D', marginTop: 2,
+                                fontSize: 11, color: 'var(--text-secondary)', marginTop: 2,
                             }}>
                                 {development.neighborhood}, {development.city}
                             </div>
@@ -159,13 +159,13 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                             <div style={{
                                                 fontFamily: 'var(--font-playfair, serif)',
                                                 fontSize: 14, fontWeight: 600,
-                                                color: '#EBE7E0',
+                                                color: 'var(--imi-cream)',
                                             }}>
                                                 {section.label}
                                             </div>
                                             <div style={{
                                                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                                                fontSize: 10, color: '#5C6B7D', marginTop: 1,
+                                                fontSize: 11, color: 'var(--text-secondary)', marginTop: 1,
                                             }}>
                                                 {section.detail}
                                             </div>
@@ -213,19 +213,19 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                     padding: '12px 14px',
                     display: 'flex', gap: 10,
                 }}>
-                    <Zap size={14} style={{ color: '#F59E0B', flexShrink: 0, marginTop: 1 }} />
+                    <Zap size={14} style={{ color: 'var(--warning)', flexShrink: 0, marginTop: 1 }} />
                     <div>
                         <div style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 9, fontWeight: 700,
+                            fontSize: 11, fontWeight: 700,
                             letterSpacing: '2px', textTransform: 'uppercase',
-                            color: '#F59E0B', marginBottom: 4,
+                            color: 'var(--warning)', marginBottom: 4,
                         }}>
                             Insight IA
                         </div>
                         <div style={{
                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                            fontSize: 12, color: '#9FAAB8', lineHeight: 1.5,
+                            fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.5,
                         }}>
                             Usuários saem na seção &quot;Preços&quot;. Considere adicionar labels &quot;Financiamento Facilitado&quot; próximo para reter interesse.
                         </div>
@@ -580,7 +580,7 @@ export default function ImovelHeatmapPage() {
 
                 <button
                     className="w-full mt-5 h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99]"
-                    style={{ background: '#3B82F6', color: '#fff' }}
+                    style={{ background: 'var(--info)', color: 'var(--text-inverse)' }}
                 >
                     <Share2 size={14} /> Compartilhar Analytics
                 </button>

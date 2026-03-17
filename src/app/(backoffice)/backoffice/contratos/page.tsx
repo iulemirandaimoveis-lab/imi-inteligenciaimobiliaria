@@ -176,7 +176,7 @@ export default function ContratosPage() {
               }}
             >
               <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   Fluxo do Contrato
                 </span>
               </div>
@@ -375,7 +375,7 @@ export default function ContratosPage() {
                                                         <div className="flex items-center gap-1.5 mb-1">
                                                             <p className="text-xs font-semibold" style={{ color: T.text }}>{m.nome}</p>
                                                             {m.popular && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--bg-hover)', color: T.accent }}>✦</span>}
-                                                            {m.internacional && <Globe size={9} style={{ color: '#E8A87C' }} />}
+                                                            {m.internacional && <Globe size={9} style={{ color: 'var(--warning)' }} />}
                                                         </div>
                                                         <p className="text-[10px] line-clamp-2" style={{ color: T.textDim }}>{m.descricao}</p>
                                                         <div className="flex gap-0.5 mt-1.5">

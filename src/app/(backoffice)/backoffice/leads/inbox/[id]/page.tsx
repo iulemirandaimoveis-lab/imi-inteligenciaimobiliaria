@@ -29,7 +29,7 @@ function getScore(lead: any): number {
 function getUrgency(lead: any, score: number): { label: string; dots: number; color: string } {
     if (score >= 80 || lead.status === 'hot') return { label: 'Alta', dots: 3, color: 'var(--bo-success)' }
     if (score >= 60 || lead.status === 'warm' || lead.status === 'contacted') return { label: 'Média', dots: 2, color: 'var(--bo-warning)' }
-    return { label: 'Baixa', dots: 1, color: '#94A3B8' }
+    return { label: 'Baixa', dots: 1, color: 'var(--text-tertiary)' }
 }
 
 function getBudgetLabel(lead: any): string {
@@ -213,7 +213,7 @@ export default function LeadInboxDetailPage() {
     const urgency = getUrgency(lead, score)
     const budgetLabel = getBudgetLabel(lead)
     const abordagem = getAbordagem(lead, score)
-    const scoreColor = score >= 80 ? 'var(--bo-success)' : score >= 60 ? 'var(--bo-warning)' : '#94A3B8'
+    const scoreColor = score >= 80 ? 'var(--bo-success)' : score >= 60 ? 'var(--bo-warning)' : 'var(--text-tertiary)'
     const initials = lead.name?.split(' ').map((n: string) => n[0]).slice(0, 2).join('') || 'LD'
 
     return (
@@ -236,7 +236,7 @@ export default function LeadInboxDetailPage() {
                         flexShrink: 0,
                     }}>
                         <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--bo-success)', animation: 'pulse 2s infinite' }} />
-                        <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '0.1em', color: 'var(--bo-success)', textTransform: 'uppercase' }}>
+                        <span style={{ fontSize: 11, fontWeight: 900, letterSpacing: '0.1em', color: 'var(--bo-success)', textTransform: 'uppercase' }}>
                             {assumed ? 'EM ATENDIMENTO' : 'IA ATIVA · QUALIFICANDO'}
                         </span>
                     </div>
@@ -259,7 +259,7 @@ export default function LeadInboxDetailPage() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <Brain size={13} style={{ color: T.textMuted }} />
-                        <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.12em', color: T.textMuted, textTransform: 'uppercase' }}>
+                        <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', color: T.textMuted, textTransform: 'uppercase' }}>
                             Resumo de Qualificação
                         </span>
                     </div>
@@ -283,7 +283,7 @@ export default function LeadInboxDetailPage() {
                             </div>
                         </div>
                         <div>
-                            <p style={{ fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', color: T.textMuted, textTransform: 'uppercase' }}>SCORE IA</p>
+                            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: T.textMuted, textTransform: 'uppercase' }}>SCORE IA</p>
                             <p style={{ fontSize: 12, fontWeight: 700, color: scoreColor }}>
                                 {score >= 80 ? 'Excelente' : score >= 60 ? 'Bom' : 'Regular'}
                             </p>
@@ -321,7 +321,7 @@ export default function LeadInboxDetailPage() {
                             background: 'rgba(255,255,255,0.03)',
                             border: `1px solid ${T.border}`,
                         }}>
-                            <p style={{ fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>
+                            <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', color: T.textMuted, textTransform: 'uppercase', marginBottom: 6 }}>
                                 {item.label}
                             </p>
                             {item.render ? item.render() : (
@@ -341,7 +341,7 @@ export default function LeadInboxDetailPage() {
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                         <Zap size={10} style={{ color: '#486581' }} />
-                        <span style={{ fontSize: 8, fontWeight: 900, letterSpacing: '0.12em', color: '#486581', textTransform: 'uppercase' }}>
+                        <span style={{ fontSize: 11, fontWeight: 900, letterSpacing: '0.12em', color: '#486581', textTransform: 'uppercase' }}>
                             Abordagem Sugerida
                         </span>
                     </div>
@@ -426,8 +426,8 @@ export default function LeadInboxDetailPage() {
                     <Bot size={14} style={{ color: 'var(--bo-success)' }} />
                     <span style={{ fontSize: 12, fontWeight: 700, color: T.text }}>Conversa de Qualificação IA</span>
                     <span style={{
-                        marginLeft: 'auto', fontSize: 9, fontWeight: 800,
-                        padding: '3px 8px', borderRadius: 4,
+                        marginLeft: 'auto', fontSize: 11, fontWeight: 800,
+                        padding: '4px 8px', borderRadius: 4,
                         background: 'rgba(74,222,128,0.12)', color: 'var(--bo-success)',
                     }}>
                         {messages.length} mensagens
@@ -437,7 +437,7 @@ export default function LeadInboxDetailPage() {
                 {/* Date separator */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px' }}>
                     <div style={{ flex: 1, height: 1, background: T.border }} />
-                    <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.12em', color: T.textMuted, textTransform: 'uppercase' }}>
+                    <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', color: T.textMuted, textTransform: 'uppercase' }}>
                         HOJE {messages[0]?.time || '14:18'}
                     </span>
                     <div style={{ flex: 1, height: 1, background: T.border }} />
@@ -473,7 +473,7 @@ export default function LeadInboxDetailPage() {
                                     {isBot ? (
                                         <Bot size={13} style={{ color: 'var(--bo-success)' }} />
                                     ) : (
-                                        <span style={{ fontSize: 9, fontWeight: 800, color: '#60A5FA' }}>{initials}</span>
+                                        <span style={{ fontSize: 11, fontWeight: 800, color: '#60A5FA' }}>{initials}</span>
                                     )}
                                 </div>
                                 {/* Bubble + time */}
@@ -497,7 +497,7 @@ export default function LeadInboxDetailPage() {
                                             {msg.text}
                                         </p>
                                     </div>
-                                    <span style={{ fontSize: 9, color: T.textMuted, padding: '0 2px' }}>{msg.time}</span>
+                                    <span style={{ fontSize: 11, color: T.textMuted, padding: '0 2px' }}>{msg.time}</span>
                                 </div>
                             </motion.div>
                         )
@@ -572,7 +572,7 @@ export default function LeadInboxDetailPage() {
                                     style={{
                                         width: 38, height: 38, borderRadius: 4, border: 'none', cursor: 'pointer',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        background: chatInput.trim() ? '#3B82F6' : T.elevated,
+                                        background: chatInput.trim() ? 'var(--info)' : T.elevated,
                                         opacity: chatInput.trim() ? 1 : 0.5,
                                         transition: 'all 0.15s',
                                     }}
@@ -614,7 +614,7 @@ export default function LeadInboxDetailPage() {
                         style={{
                             flex: 1, height: 52, borderRadius: 4, textDecoration: 'none',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                            fontSize: 14, fontWeight: 600, color: '#ffffff',
+                            fontSize: 14, fontWeight: 600, color: 'var(--text-inverse)',
                             background: 'var(--bo-accent)',
                             border: '1px solid rgba(255,255,255,0.1)',
                             boxShadow: '0 0 24px rgba(59,130,246,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',

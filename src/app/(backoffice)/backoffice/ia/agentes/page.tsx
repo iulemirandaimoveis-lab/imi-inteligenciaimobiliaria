@@ -20,7 +20,7 @@ const AGENTS = [
         name: 'Agente Qualificador',
         description: 'Analisa leads automaticamente e classifica por temperatura, perfil e probabilidade de conversão.',
         icon: Users,
-        color: '#3B82F6',
+        color: 'var(--info)',
         colorRaw: '59,130,246',
         status: 'active' as const,
         model: 'Claude Sonnet',
@@ -35,7 +35,7 @@ const AGENTS = [
         name: 'Agente de Conteúdo',
         description: 'Cria posts, legendas, hashtags e textos de e-mail com base no portfólio de imóveis e métricas de engajamento.',
         icon: FileText,
-        color: '#8B5CF6',
+        color: 'var(--imi-gold-500)',
         colorRaw: '139,92,246',
         status: 'active' as const,
         model: 'Claude Sonnet',
@@ -50,7 +50,7 @@ const AGENTS = [
         name: 'Agente de Mercado',
         description: 'Monitora índices INCC, FIPE ZAP e SECOVI, gera relatórios de inteligência de preços por bairro.',
         icon: TrendingUp,
-        color: '#10B981',
+        color: 'var(--success)',
         colorRaw: '16,185,129',
         status: 'idle' as const,
         model: 'Claude Sonnet',
@@ -65,7 +65,7 @@ const AGENTS = [
         name: 'Agente Matchmaker',
         description: 'Cruza o perfil do lead com o portfólio de imóveis e sugere as 3 melhores opções com justificativa personalizada.',
         icon: Building2,
-        color: '#F59E0B',
+        color: 'var(--warning)',
         colorRaw: '245,158,11',
         status: 'active' as const,
         model: 'Claude Haiku',
@@ -219,8 +219,8 @@ export default function AgentesIAPage() {
                 actions={
                     <button
                         style={{
-                            display: 'flex', alignItems: 'center', gap: 6,
-                            background: 'var(--bo-accent)', color: '#fff',
+                            display: 'flex', alignItems: 'center', gap: 8,
+                            background: 'var(--bo-accent)', color: 'var(--text-inverse)',
                             border: 'none', borderRadius: 4, padding: '8px 14px',
                             fontSize: 13, fontWeight: 600, cursor: 'pointer',
                         }}
@@ -253,7 +253,7 @@ export default function AgentesIAPage() {
                     background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.25)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                 }}>
-                    <Brain size={20} style={{ color: '#A78BFA' }} />
+                    <Brain size={20} style={{ color: 'var(--imi-gold-400)' }} />
                 </div>
                 <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bo-text)', marginBottom: 2 }}>
@@ -270,7 +270,7 @@ export default function AgentesIAPage() {
                     rel="noopener noreferrer"
                     style={{
                         display: 'flex', alignItems: 'center', gap: 4,
-                        fontSize: 11, fontWeight: 600, color: '#A78BFA',
+                        fontSize: 11, fontWeight: 600, color: 'var(--imi-gold-400)',
                         textDecoration: 'none', flexShrink: 0,
                     }}
                 >
@@ -462,7 +462,7 @@ export default function AgentesIAPage() {
                     onClick={() => toast.info('Em breve: builder de agentes personalizado')}
                     style={{
                         padding: '8px 20px', borderRadius: 4, fontSize: 12, fontWeight: 700,
-                        background: 'var(--bo-accent)', color: '#fff', border: 'none', cursor: 'pointer',
+                        background: 'var(--bo-accent)', color: 'var(--text-inverse)', border: 'none', cursor: 'pointer',
                     }}
                 >
                     Em breve

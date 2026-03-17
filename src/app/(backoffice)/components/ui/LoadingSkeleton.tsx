@@ -73,7 +73,7 @@ function KPISkeleton() {
             padding: '14px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
+            gap: '8px',
           }}
         >
           {/* label row */}
@@ -171,7 +171,7 @@ function ListSkeleton({ count = 4 }: { count?: number }) {
             style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0 }}
           />
           {/* text lines */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '7px' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <ShimmerBlock style={{ height: 11, width: `${55 + (i % 3) * 15}%`, borderRadius: 'var(--r-xs, 4px)' }} />
             <ShimmerBlock style={{ height: 9, width: `${35 + (i % 2) * 20}%`, borderRadius: 'var(--r-xs, 4px)' }} />
           </div>

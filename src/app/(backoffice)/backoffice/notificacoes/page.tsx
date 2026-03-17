@@ -27,10 +27,10 @@ const TYPE_ICONS: Record<string, any> = {
     update: Rocket,
 }
 const TYPE_COLORS: Record<string, string> = {
-    lead: '#7B9EC4', imovel: 'var(--bo-success)', financeiro: 'var(--bo-accent)', contrato: '#A89EC4',
-    alerta: 'var(--bo-error)', info: '#7B9EC4', sucesso: 'var(--bo-success)',
-    system: '#8B5CF6', development: 'var(--bo-success)', evaluation: '#F59E0B', comment: 'var(--bo-text-muted)',
-    update: '#10B981',
+    lead: 'var(--info)', imovel: 'var(--bo-success)', financeiro: 'var(--bo-accent)', contrato: 'var(--text-secondary)',
+    alerta: 'var(--bo-error)', info: 'var(--info)', sucesso: 'var(--bo-success)',
+    system: 'var(--imi-gold-500)', development: 'var(--bo-success)', evaluation: 'var(--warning)', comment: 'var(--bo-text-muted)',
+    update: 'var(--success)',
 }
 
 const timeAgo = (d: string) => {
@@ -94,7 +94,7 @@ export default function NotificacoesPage() {
                         <div key={i} className="animate-pulse flex items-start gap-3 p-4 rounded-2xl"
                             style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                             <div style={{ width: '36px', height: '36px', borderRadius: '4px', background: T.elevated, flexShrink: 0 }} />
-                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '7px' }}>
+                            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                 <div style={{ height: '12px', width: '55%', borderRadius: '4px', background: T.elevated }} />
                                 <div style={{ height: '10px', width: '75%', borderRadius: '4px', background: T.elevated }} />
                                 <div style={{ height: '9px', width: '20%', borderRadius: '4px', background: T.elevated }} />

@@ -115,10 +115,10 @@ export default function CampanhaDetalhesPage() {
     const KPIS = [
         { label: 'Impressões', value: fmtN(campanha.impressions), color: T.textMuted },
         { label: 'Cliques', value: fmtN(campanha.clicks), color: '#7BA3C2' },
-        { label: 'CTR', value: campanha.ctr != null ? `${Number(campanha.ctr).toFixed(1)}%` : '—', color: '#A89EC4' },
+        { label: 'CTR', value: campanha.ctr != null ? `${Number(campanha.ctr).toFixed(1)}%` : '—', color: 'var(--text-secondary)' },
         { label: 'Leads', value: fmtN(campanha.leads), color: T.accent },
         { label: 'Conversões', value: fmtN(campanha.conversions), color: '#4CAF7D' },
-        { label: 'CPL', value: fmtBRL(campanha.cost_per_lead), color: '#E8A87C' },
+        { label: 'CPL', value: fmtBRL(campanha.cost_per_lead), color: 'var(--warning)' },
         { label: 'ROI', value: campanha.roi != null ? `${Number(campanha.roi).toFixed(0)}%` : '—', color: 'var(--bo-success)' },
         { label: 'Orçamento', value: fmtBRL(campanha.budget), color: T.text },
     ]
@@ -178,7 +178,7 @@ export default function CampanhaDetalhesPage() {
                         <div className="h-full rounded-full transition-all"
                             style={{
                                 width: `${progressPct}%`,
-                                background: progressPct > 90 ? '#E87C7C' : progressPct > 70 ? '#E8A87C' : T.accent,
+                                background: progressPct > 90 ? '#E87C7C' : progressPct > 70 ? 'var(--warning)' : T.accent,
                             }} />
                     </div>
                 </div>
@@ -204,7 +204,7 @@ export default function CampanhaDetalhesPage() {
                                 <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
                                     <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: T.textMuted }}>Performance</p>
                                     <p className="text-sm font-bold" style={{
-                                        color: aiAnalysis.status === 'excelente' ? '#10B981' : aiAnalysis.status === 'bom' ? '#3B82F6' : aiAnalysis.status === 'regular' ? '#F59E0B' : 'var(--bo-error)'
+                                        color: aiAnalysis.status === 'excelente' ? 'var(--success)' : aiAnalysis.status === 'bom' ? 'var(--info)' : aiAnalysis.status === 'regular' ? 'var(--warning)' : 'var(--bo-error)'
                                     }}>{aiAnalysis.status}</p>
                                 </div>
                             )}
@@ -269,7 +269,7 @@ export default function CampanhaDetalhesPage() {
                         <div className="space-y-4">
                             {funnel.map((stage, idx) => {
                                 const pct = maxFunnel > 0 ? (stage.count / maxFunnel) * 100 : 0
-                                const COLORS = [T.accent, '#7BA3C2', '#A89EC4', '#4CAF7D']
+                                const COLORS = [T.accent, '#7BA3C2', 'var(--text-secondary)', '#4CAF7D']
                                 return (
                                     <div key={idx}>
                                         <div className="flex items-center justify-between mb-1.5">

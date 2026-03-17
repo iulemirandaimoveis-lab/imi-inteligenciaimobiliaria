@@ -22,7 +22,7 @@ const SOURCE_COLORS: Record<string, { bg: string; text: string; label: string }>
     'facebook':   { bg: '#1877F2', text: '#fff', label: 'FACEBOOK'    },
     'instagram':  { bg: '#C13584', text: '#fff', label: 'INSTAGRAM'   },
     'organic':    { bg: 'var(--bo-success)', text: '#0F0F1E', label: 'ORGÂNICO' },
-    'direct':     { bg: '#94A3B8', text: '#0F0F1E', label: 'DIRETO'   },
+    'direct':     { bg: 'var(--text-tertiary)', text: '#0F0F1E', label: 'DIRETO'   },
     'referral':   { bg: '#A78BFA', text: '#fff', label: 'INDICAÇÃO'   },
     'whatsapp':   { bg: '#25D366', text: '#fff', label: 'WHATSAPP'    },
 }

@@ -625,17 +625,17 @@ export default function EditarImovelPage() {
             onClick={() => router.back()}
             style={{
               width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'transparent', border: 'none', cursor: 'pointer', color: '#9FAAB8',
+              background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)',
               borderRadius: 4, flexShrink: 0,
             }}
           >
             <ArrowLeft size={20} />
           </button>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: 15, color: '#EBE7E0', margin: 0, lineHeight: 1.2 }}>
+            <p style={{ fontFamily: 'var(--font-playfair, serif)', fontSize: 15, color: 'var(--imi-cream)', margin: 0, lineHeight: 1.2 }}>
               Editar Imóvel
             </p>
-            <p style={{ fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 10, color: '#9FAAB8', margin: 0 }}>
+            <p style={{ fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 11, color: 'var(--text-tertiary)', margin: 0 }}>
               {currentTabIndex + 1}/{totalTabs} — {TABS[currentTabIndex]?.label}
             </p>
           </div>
@@ -1039,8 +1039,8 @@ export default function EditarImovelPage() {
             onClick={currentTabIndex < totalTabs - 1 ? () => setActiveTab(TABS[currentTabIndex + 1].id) : handleSubmit}
             style={{
               flex: 1, height: 52, borderRadius: 4,
-              background: currentTabIndex < totalTabs - 1 ? 'var(--imi-gold-500)' : '#10B981',
-              border: 'none', color: currentTabIndex < totalTabs - 1 ? '#0B1120' : 'white',
+              background: currentTabIndex < totalTabs - 1 ? 'var(--imi-gold-500)' : 'var(--success)',
+              border: 'none', color: currentTabIndex < totalTabs - 1 ? T.text : 'white',
               fontFamily: 'var(--font-montserrat, sans-serif)', fontSize: 13, fontWeight: 800,
               letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', touchAction: 'manipulation',
             }}

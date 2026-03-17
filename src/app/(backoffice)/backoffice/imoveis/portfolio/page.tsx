@@ -334,7 +334,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                   {['Imóvel', 'Tipo', 'Score', 'Preço', 'Área', 'Status', 'Bairro', ''].map((h, i) => (
                     <th key={i} style={{
                       padding: '10px 16px', textAlign: 'left',
-                      fontSize: 10, fontWeight: 600, color: DT.textDim,
+                      fontSize: 11, fontWeight: 600, color: DT.textDim,
                       textTransform: 'uppercase', letterSpacing: '0.07em',
                       whiteSpace: 'nowrap',
                     }}>{h}</th>

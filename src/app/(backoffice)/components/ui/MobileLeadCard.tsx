@@ -179,13 +179,13 @@ export function MobileLeadCard({
           {(meta?.origin || meta?.location) && (
             <div className="flex items-center gap-2 mt-1" style={{ flexWrap: 'wrap' }}>
               {meta?.origin && (
-                <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-tertiary)' }}>
+                <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-tertiary)' }}>
                   {ORIGIN_ICON[meta.origin.toLowerCase()] ?? <Globe size={9} />}
                   {meta.origin}
                 </span>
               )}
               {meta?.location && (
-                <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-tertiary)' }}>
+                <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-tertiary)' }}>
                   <MapPin size={9} />
                   {meta.location}
                 </span>
@@ -197,7 +197,7 @@ export function MobileLeadCard({
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
           {score !== undefined && <AIScore score={score} size="xs" />}
           {meta?.lastActivity && (
-            <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'var(--text-tertiary)' }}>
+            <span className="flex items-center gap-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-tertiary)' }}>
               <Clock size={8} />
               {meta.lastActivity}
             </span>
@@ -213,12 +213,12 @@ export function MobileLeadCard({
               className="flex items-center gap-1"
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '9px',
+                fontSize: '11px',
                 fontWeight: 700,
                 color: aiCfg.color,
                 background: aiCfg.bg,
                 border: `1px solid ${aiCfg.border}`,
-                padding: '3px 8px',
+                padding: '4px 8px',
                 borderRadius: 'var(--r-md, 4px)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
@@ -231,7 +231,7 @@ export function MobileLeadCard({
           )}
           {meta?.product && (
             <>
-              <span style={{ color: 'var(--border-default)', fontSize: '10px' }}>•</span>
+              <span style={{ color: 'var(--border-default)', fontSize: '11px' }}>•</span>
               <span
                 style={{
                   fontFamily: 'var(--font-sans)',
@@ -286,7 +286,7 @@ export function MobileLeadCard({
           <span
             style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: '9px',
+              fontSize: '11px',
               fontWeight: 600,
               color: 'var(--imi-gold-500)',
               background: 'rgba(184,148,58,0.10)',

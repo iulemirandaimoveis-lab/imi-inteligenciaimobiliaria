@@ -184,7 +184,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                         </button>
                         <span
                             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium"
-                            style={{ background: 'rgba(139,92,246,0.12)', color: '#A78BFA', border: '1px solid rgba(139,92,246,0.25)' }}
+                            style={{ background: 'rgba(139,92,246,0.12)', color: 'var(--imi-gold-400)', border: '1px solid rgba(139,92,246,0.25)' }}
                         >
                             <Sparkles size={12} />
                             Claude AI
@@ -207,13 +207,13 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                                         className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
                                         style={{
                                             background: isDone ? 'rgba(107,184,123,0.15)' : isActive ? 'rgba(139,92,246,0.15)' : 'rgba(255,255,255,0.04)',
-                                            border: `2px solid ${isDone ? 'var(--bo-success)' : isActive ? '#8B5CF6' : T.border}`,
-                                            color: isDone ? 'var(--bo-success)' : isActive ? '#8B5CF6' : T.sub,
+                                            border: `2px solid ${isDone ? 'var(--bo-success)' : isActive ? 'var(--imi-gold-500)' : T.border}`,
+                                            color: isDone ? 'var(--bo-success)' : isActive ? 'var(--imi-gold-500)' : T.sub,
                                         }}
                                     >
                                         {isDone ? <CheckCircle size={20} /> : <StepIcon size={20} />}
                                     </div>
-                                    <p className="text-xs font-medium mt-2" style={{ color: isActive ? '#8B5CF6' : isDone ? 'var(--bo-success)' : T.sub }}>
+                                    <p className="text-xs font-medium mt-2" style={{ color: isActive ? 'var(--imi-gold-500)' : isDone ? 'var(--bo-success)' : T.sub }}>
                                         {step.label}
                                     </p>
                                 </div>
@@ -325,7 +325,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                                     <div key={file.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: T.bg }}>
                                         {file.type === 'image'
                                             ? <ImageIcon size={17} style={{ color: 'var(--bo-accent)' }} />
-                                            : <FileText size={17} style={{ color: '#8B5CF6' }} />
+                                            : <FileText size={17} style={{ color: 'var(--imi-gold-500)' }} />
                                         }
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-medium truncate" style={{ color: T.text }}>{file.name}</p>
@@ -345,8 +345,8 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                         <div className="flex gap-3">
                             <AlertCircle size={18} style={{ color: 'var(--bo-accent)', flexShrink: 0, marginTop: 1 }} />
                             <div>
-                                <p className="text-sm font-bold mb-1" style={{ color: '#8CA4B8' }}>Documentos Recomendados</p>
-                                <ul className="text-xs space-y-0.5" style={{ color: '#8CA4B8' }}>
+                                <p className="text-sm font-bold mb-1" style={{ color: 'var(--text-secondary)' }}>Documentos Recomendados</p>
+                                <ul className="text-xs space-y-0.5" style={{ color: 'var(--text-secondary)' }}>
                                     <li>• Escritura ou matrícula do imóvel</li>
                                     <li>• IPTU atualizado</li>
                                     <li>• Fotos internas e externas (mínimo 5)</li>
@@ -378,7 +378,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                             className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
                             style={{ background: 'rgba(139,92,246,0.12)' }}
                         >
-                            <Loader2 size={40} className="animate-spin" style={{ color: '#8B5CF6' }} />
+                            <Loader2 size={40} className="animate-spin" style={{ color: 'var(--imi-gold-500)' }} />
                         </div>
                         <h2 className="text-xl font-bold mb-3" style={{ color: T.text }}>Analisando com IA...</h2>
                         <p className="text-sm mb-8" style={{ color: T.sub }}>
@@ -396,7 +396,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                                     {i < 2
                                         ? <CheckCircle size={18} style={{ color: 'var(--bo-success)', flexShrink: 0 }} />
                                         : i === 2
-                                            ? <Loader2 size={18} className="animate-spin flex-shrink-0" style={{ color: '#8B5CF6' }} />
+                                            ? <Loader2 size={18} className="animate-spin flex-shrink-0" style={{ color: 'var(--imi-gold-500)' }} />
                                             : <div className="w-[18px] h-[18px] rounded-full border-2 flex-shrink-0" style={{ borderColor: T.border }} />
                                     }
                                     <span className="text-sm" style={{ color: i <= 2 ? T.text : T.sub }}>{item}</span>
@@ -413,7 +413,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                     {aiMeta.model && (
                         <div
                             className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium"
-                            style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.2)', color: '#A78BFA' }}
+                            style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.2)', color: 'var(--imi-gold-400)' }}
                         >
                             <Sparkles size={14} />
                             Gerado por {aiMeta.model} • {aiMeta.tokens?.toLocaleString()} tokens usados
@@ -515,7 +515,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
                     <div className="flex gap-3 justify-center">
                         <button
                             className="flex items-center gap-2 h-11 px-6 rounded-xl font-medium transition-all"
-                            style={{ background: 'rgba(139,92,246,0.12)', color: '#A78BFA', border: '1px solid rgba(139,92,246,0.2)' }}
+                            style={{ background: 'rgba(139,92,246,0.12)', color: 'var(--imi-gold-400)', border: '1px solid rgba(139,92,246,0.2)' }}
                         >
                             <Download size={18} />
                             Download PDF

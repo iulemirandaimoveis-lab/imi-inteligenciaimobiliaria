@@ -63,7 +63,7 @@ export default function UploadProgressPanel({ files, total, visible }: UploadPro
                                 }
                             </span>
                         </div>
-                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)' }}>
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)' }}>
                             {overallPercent}%
                         </span>
                     </div>
@@ -107,7 +107,7 @@ export default function UploadProgressPanel({ files, total, visible }: UploadPro
                                     <span
                                         style={{
                                             fontFamily: 'var(--font-sans)',
-                                            fontSize: 10,
+                                            fontSize: 11,
                                             color: file.status === 'error' ? 'var(--error)' : 'var(--text-secondary)',
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
@@ -121,7 +121,7 @@ export default function UploadProgressPanel({ files, total, visible }: UploadPro
                                     <span
                                         style={{
                                             fontFamily: 'var(--font-mono)',
-                                            fontSize: 9,
+                                            fontSize: 11,
                                             fontWeight: 500,
                                             color: cfg.color,
                                             flexShrink: 0,

@@ -135,7 +135,7 @@ export function AIInsightCard({
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '9px',
+                fontSize: '11px',
                 fontWeight: 700,
                 color: v.labelColor,
                 textTransform: 'uppercase',
@@ -159,7 +159,7 @@ export function AIInsightCard({
             onClick={action.onClick}
             style={{
               fontFamily: 'var(--font-sans)',
-              padding: '7px 20px',
+              padding: '8px 20px',
               borderRadius: 'var(--r-md, 4px)',
               fontSize: '11px',
               fontWeight: 700,
@@ -171,7 +171,7 @@ export function AIInsightCard({
               boxShadow: v.btnShadow,
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '5px',
+              gap: '4px',
             }}
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1.1)' }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.filter = 'brightness(1)' }}

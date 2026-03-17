@@ -17,8 +17,8 @@ type Toast = { type: 'success' | 'error'; message: string } | null
 
 const CATEGORY_STYLE: Record<string, { bg: string; color: string; label: string }> = {
   market:  { bg: 'rgba(184,148,58,0.12)',  color: 'var(--bo-accent,var(--imi-gold-500))', label: 'Mercado'   },
-  finance: { bg: 'rgba(59,130,246,0.12)',  color: '#3B82F6',                  label: 'Finanças'  },
-  compare: { bg: 'rgba(139,92,246,0.12)',  color: '#8B5CF6',                  label: 'Comparação' },
+  finance: { bg: 'rgba(59,130,246,0.12)',  color: 'var(--info)',                  label: 'Finanças'  },
+  compare: { bg: 'rgba(139,92,246,0.12)',  color: 'var(--imi-gold-500)',                  label: 'Comparação' },
   risk:    { bg: 'rgba(239,68,68,0.12)',   color: '#EF4444',                  label: 'Risco'     },
 }
 

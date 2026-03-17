@@ -38,12 +38,12 @@ export function SectionHeader({ title, action, badge, badgeColor, className = ''
           <span
             style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: '9px',
+              fontSize: '11px',
               fontWeight: 700,
               color: badgeColor ?? 'var(--imi-gold-500)',
               background: 'rgba(184,148,58,0.10)',
               border: '1px solid rgba(184,148,58,0.20)',
-              padding: '1px 6px',
+              padding: '2px 8px',
               borderRadius: 'var(--r-sm, 4px)',
               lineHeight: '14px',
             }}

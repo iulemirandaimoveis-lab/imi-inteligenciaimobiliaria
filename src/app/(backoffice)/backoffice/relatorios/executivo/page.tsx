@@ -13,8 +13,8 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeade
 type Period = 'monthly' | 'quarterly' | 'yearly'
 
 const MONTHS_SHORT = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-const CHANNEL_COLORS = ['#3B82F6', '#8B5CF6', 'var(--bo-success)', 'var(--bo-warning)', 'var(--bo-error)']
-const AGENT_COLORS   = ['#3B82F6', '#A78BFA', 'var(--bo-success)', 'var(--bo-warning)']
+const CHANNEL_COLORS = ['var(--info)', 'var(--imi-gold-500)', 'var(--bo-success)', 'var(--bo-warning)', 'var(--bo-error)']
+const AGENT_COLORS   = ['var(--info)', 'var(--imi-gold-400)', 'var(--bo-success)', 'var(--bo-warning)']
 
 type VelocityData = Record<Period, number[]>
 type ChannelItem  = { label: string; pct: number; color: string }
@@ -163,8 +163,8 @@ export default function RelatoriosExecutivoPage() {
       ? ['T1', 'T2', 'T3', 'T4']
       : ['2021', '2022', '2023', '2024', '2025', '2026'].slice(0, currentVelocity.length)
   const currentChannels = channelData.length > 0 ? channelData : [
-    { label: 'Meta Ads', pct: 42, color: '#3B82F6' },
-    { label: 'Google Search', pct: 31, color: '#8B5CF6' },
+    { label: 'Meta Ads', pct: 42, color: 'var(--info)' },
+    { label: 'Google Search', pct: 31, color: 'var(--imi-gold-500)' },
     { label: 'Direct Link', pct: 18, color: 'var(--bo-success)' },
     { label: 'Referral', pct: 9, color: 'var(--bo-warning)' },
   ]
@@ -213,7 +213,7 @@ export default function RelatoriosExecutivoPage() {
                 height: '34px', padding: '0 18px', borderRadius: '4px',
                 fontSize: '13px', fontWeight: 700, cursor: 'pointer', border: 'none',
                 transition: 'all 0.2s',
-                background: period === p ? '#3B82F6' : 'transparent',
+                background: period === p ? 'var(--info)' : 'transparent',
                 color: period === p ? '#fff' : 'var(--bo-text-muted)',
               }}
             >
@@ -232,7 +232,7 @@ export default function RelatoriosExecutivoPage() {
               <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Target size={15} color="#3B82F6" />
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Est. Pipeline
               </span>
             </div>
@@ -251,7 +251,7 @@ export default function RelatoriosExecutivoPage() {
               <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgba(167,139,250,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <BarChart3 size={15} color="#A78BFA" />
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Conversão
               </span>
             </div>
@@ -270,7 +270,7 @@ export default function RelatoriosExecutivoPage() {
               <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Users size={15} color="var(--bo-success)" />
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Total Leads
               </span>
             </div>
@@ -289,7 +289,7 @@ export default function RelatoriosExecutivoPage() {
               <div style={{ width: '32px', height: '32px', borderRadius: '4px', background: 'rgba(251,191,36,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <TrendingUp size={15} color="var(--bo-warning)" />
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                 Receita / Mês
               </span>
             </div>
@@ -311,7 +311,7 @@ export default function RelatoriosExecutivoPage() {
         <div style={{ background: 'var(--bo-surface)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
             <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>Sales Velocity Trend</p>
-            <span style={{ fontSize: '11px', fontWeight: 600, color: '#3B82F6' }}>
+            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--info)' }}>
               {period === 'monthly' ? 'Units / Mês' : period === 'quarterly' ? 'Units / Trimestre' : 'Units / Ano'}
             </span>
           </div>
@@ -354,7 +354,7 @@ export default function RelatoriosExecutivoPage() {
           {/* X-axis labels */}
           <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid var(--bo-border)' }}>
             {periodLabels.map((label, i) => (
-              <span key={i} style={{ fontSize: '9px', fontWeight: 600, color: 'var(--bo-text-muted)', letterSpacing: '0.04em' }}>{label}</span>
+              <span key={i} style={{ fontSize: '11px', fontWeight: 600, color: 'var(--bo-text-muted)', letterSpacing: '0.04em' }}>{label}</span>
             ))}
           </div>
         </div>
@@ -399,12 +399,12 @@ export default function RelatoriosExecutivoPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3B82F6', flexShrink: 0 }} />
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--info)', flexShrink: 0 }} />
                 <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)', flex: 1 }}>Residencial</span>
                 <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)' }}>75%</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8B5CF6', flexShrink: 0 }} />
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--imi-gold-500)', flexShrink: 0 }} />
                 <span style={{ fontSize: '11px', color: 'var(--bo-text-muted)', flex: 1 }}>Comercial</span>
                 <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text)' }}>25%</span>
               </div>
@@ -442,17 +442,17 @@ export default function RelatoriosExecutivoPage() {
           {/* Header */}
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>Top Performance (Agente)</span>
-            <button style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, color: '#3B82F6', background: 'none', border: 'none', cursor: 'pointer' }}>
+            <button style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, color: 'var(--info)', background: 'none', border: 'none', cursor: 'pointer' }}>
               Full List <ChevronRight size={13} />
             </button>
           </div>
 
           {/* Column headers */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 70px', gap: '12px', padding: '10px 20px', borderBottom: '1px solid var(--bo-border)' }}>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Consultor</span>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center' }}>Leads</span>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center' }}>Conv.%</span>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>Volume</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Consultor</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center' }}>Leads</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center' }}>Conv.%</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'right' }}>Volume</span>
           </div>
 
           {/* Rows */}
@@ -468,7 +468,7 @@ export default function RelatoriosExecutivoPage() {
               transition={{ delay: 0.25 + idx * 0.06 }}
               style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 70px', gap: '12px', padding: '14px 20px', borderBottom: idx < currentAgents.length - 1 ? '1px solid var(--bo-border)' : 'none', alignItems: 'center' }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: `${agent.color}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <span style={{ fontSize: '11px', fontWeight: 800, color: agent.color }}>{agent.initials}</span>
                 </div>
@@ -476,7 +476,7 @@ export default function RelatoriosExecutivoPage() {
               </div>
               <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.leads}</span>
               <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-success)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{agent.conv}%</span>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: '#3B82F6', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>R${agent.volume}M</span>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--info)', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>R${agent.volume}M</span>
             </motion.div>
           ))}
         </div>
@@ -486,8 +486,8 @@ export default function RelatoriosExecutivoPage() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }}>
         <div style={{ background: 'linear-gradient(135deg, #1E3A5F 0%, #0F172A 100%)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '4px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '6px' }}>Total Leads Capturados</p>
-            <p style={{ fontSize: '40px', fontWeight: 900, color: '#fff', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>
+            <p style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '6px' }}>Total Leads Capturados</p>
+            <p style={{ fontSize: '40px', fontWeight: 900, color: 'var(--text-inverse)', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>
               {loading ? <Loader2 size={24} className="animate-spin" /> : totalLeads.toLocaleString('pt-BR')}
             </p>
           </div>

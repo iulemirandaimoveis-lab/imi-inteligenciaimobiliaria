@@ -93,7 +93,7 @@ export const chartCursorStyle = { stroke: 'var(--border-subtle)', strokeWidth: 1
 export const chartAxisTickStyle: React.SVGProps<SVGTextElement> = {
   fill: 'var(--text-tertiary)',
   fontFamily: 'var(--font-mono)',
-  fontSize: 10,
+  fontSize: 11,
 }
 
 /* ── Main component ───────────────────────────────────────── */
@@ -147,7 +147,7 @@ export function ChartShell({
                     <div
                       style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 500,
                         color: 'var(--text-tertiary)',
                         textTransform: 'uppercase',
@@ -194,7 +194,7 @@ export function ChartShell({
 
                   {/* Primary metric value */}
                   {value !== undefined && (
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
                       <span
                         style={{
                           fontFamily: 'var(--font-serif)',
@@ -215,7 +215,7 @@ export function ChartShell({
                           style={{
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: 3,
+                            gap: 4,
                             padding: '2px 8px',
                             borderRadius: 'var(--r-full, 9999px)',
                             fontFamily: 'var(--font-mono)',
@@ -269,7 +269,7 @@ export function ChartShell({
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 6,
+                      gap: 8,
                     }}
                   >
                     {/* Color dot */}
@@ -285,7 +285,7 @@ export function ChartShell({
                     <span
                       style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: 10,
+                        fontSize: 11,
                         color: 'var(--text-tertiary)',
                         textTransform: 'uppercase',
                         letterSpacing: '0.06em',
@@ -297,7 +297,7 @@ export function ChartShell({
                       <span
                         style={{
                           fontFamily: 'var(--font-mono)',
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: 600,
                           color: 'var(--text-secondary)',
                         }}

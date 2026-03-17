@@ -45,7 +45,7 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <label style={{
       display: 'block', marginBottom: 6,
-      fontFamily: 'var(--font-mono)', fontSize: 10,
+      fontFamily: 'var(--font-mono)', fontSize: 11,
       fontWeight: 700, textTransform: 'uppercase',
       letterSpacing: '0.08em', color: 'var(--text-tertiary)',
     }}>
@@ -76,7 +76,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
         width: 44, height: 24, borderRadius: 4, position: 'relative',
         background: checked ? 'var(--imi-gold-500)' : 'var(--bg-muted)',
         border: checked ? 'none' : '1.5px solid var(--border-default)',
-        cursor: 'pointer', transition: 'all 200ms ease', flexShrink: 0,
+        cursor: 'pointer', transition: 'all var(--dur-2) var(--ease)', flexShrink: 0,
         outline: 'none',
       }}
     >
@@ -85,7 +85,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
         left: checked ? 22 : 2,
         width: 20, height: 20, borderRadius: 4,
         background: checked ? '#fff' : 'var(--text-tertiary)',
-        transition: 'all 200ms ease',
+        transition: 'all var(--dur-2) var(--ease)',
         boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
       }} />
     </button>
@@ -321,9 +321,9 @@ export default function SettingsPage() {
               height: 40, padding: '0 18px',
               borderRadius: 'var(--r-md)',
               background: showSuccess ? 'var(--success)' : 'var(--imi-gold-500)',
-              color: '#fff', border: 'none', cursor: 'pointer',
+              color: 'var(--text-inverse)', border: 'none', cursor: 'pointer',
               fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
-              transition: 'all 200ms ease',
+              transition: 'all var(--dur-2) var(--ease)',
               opacity: isSaving ? 0.7 : 1,
             }}
           >
@@ -341,7 +341,7 @@ export default function SettingsPage() {
           <motion.div
             initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
             style={{
-              display: 'flex', alignItems: 'center', gap: 10,
+              display: 'flex', alignItems: 'center', gap: 8,
               padding: '12px 16px', borderRadius: 'var(--r-lg)',
               background: 'var(--error-bg)', border: '1px solid rgba(240,88,88,0.25)',
               color: 'var(--error)', fontSize: 13, fontFamily: 'var(--font-sans)',
@@ -367,7 +367,7 @@ export default function SettingsPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               style={{
-                display: 'flex', alignItems: 'center', gap: 7,
+                display: 'flex', alignItems: 'center', gap: 8,
                 padding: '8px 14px', borderRadius: 'var(--r-lg)',
                 background: active ? 'var(--bg-elevated)' : 'transparent',
                 color: active ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
@@ -439,7 +439,7 @@ export default function SettingsPage() {
                       background: 'rgba(0,0,0,0.50)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <Loader2 size={20} className="animate-spin" style={{ color: '#fff' }} />
+                      <Loader2 size={20} className="animate-spin" style={{ color: 'var(--text-inverse)' }} />
                     </div>
                   )}
                 </div>
@@ -461,7 +461,7 @@ export default function SettingsPage() {
                       height: 38, padding: '0 16px',
                       borderRadius: 'var(--r-md)',
                       background: 'var(--imi-gold-500)',
-                      color: '#fff', border: 'none', cursor: 'pointer',
+                      color: 'var(--text-inverse)', border: 'none', cursor: 'pointer',
                       fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
                       opacity: uploadingAvatar ? 0.6 : 1,
                       transition: 'opacity 180ms ease',
@@ -574,7 +574,7 @@ export default function SettingsPage() {
 
               {/* CRECI */}
               <div className="md:col-span-1">
-                <Label>CRECI <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, fontSize: 10 }}>(opcional)</span></Label>
+                <Label>CRECI <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, fontSize: 11 }}>(opcional)</span></Label>
                 <div style={{ position: 'relative' }}>
                   <FileText size={14} style={{
                     position: 'absolute', left: 13, top: '50%',
@@ -626,10 +626,10 @@ export default function SettingsPage() {
                   height: 42, padding: '0 20px',
                   borderRadius: 'var(--r-md)',
                   background: showSuccess ? 'var(--success)' : 'var(--imi-gold-500)',
-                  color: '#fff', border: 'none', cursor: 'pointer',
+                  color: 'var(--text-inverse)', border: 'none', cursor: 'pointer',
                   fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
                   opacity: isSaving ? 0.7 : 1,
-                  transition: 'all 200ms ease',
+                  transition: 'all var(--dur-2) var(--ease)',
                 }}
               >
                 {isSaving
@@ -676,7 +676,7 @@ export default function SettingsPage() {
                     onClick={() => logoInputRef.current?.click()}
                     disabled={uploadingLogo}
                     style={{
-                      display: 'flex', alignItems: 'center', gap: 7,
+                      display: 'flex', alignItems: 'center', gap: 8,
                       height: 36, padding: '0 14px', ...elevated,
                       color: 'var(--text-primary)', cursor: 'pointer',
                       fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 500,
@@ -750,7 +750,7 @@ export default function SettingsPage() {
             {/* Theme Selector — DS3 pill style */}
             <div>
               <Label>Tema da Interface</Label>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {[
                   { id: 'dark',   label: 'Escuro',      icon: Moon,    desc: 'Navy × Gold — padrão IMI' },
                   { id: 'light',  label: 'Claro',       icon: Sun,     desc: 'Branco × Navy — alta legibilidade' },
@@ -809,7 +809,7 @@ export default function SettingsPage() {
             {/* Language */}
             <div>
               <Label>Idioma</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: 10 }}>
+              <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: 8 }}>
                 {[
                   { id: 'pt-BR', flag: '🇧🇷', label: 'Português (Brasil)' },
                   { id: 'en-US', flag: '🇺🇸', label: 'English (US)'       },
@@ -821,7 +821,7 @@ export default function SettingsPage() {
                       key={lang.id}
                       onClick={() => set('language', lang.id)}
                       style={{
-                        display: 'flex', alignItems: 'center', gap: 10,
+                        display: 'flex', alignItems: 'center', gap: 8,
                         padding: '12px 14px', borderRadius: 'var(--r-lg)',
                         background: active ? 'rgba(184,148,58,0.08)' : 'var(--bg-elevated)',
                         border: active ? '1.5px solid var(--imi-gold-500)' : '1.5px solid var(--border-subtle)',
@@ -844,15 +844,15 @@ export default function SettingsPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 8 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
                   <span style={{ fontFamily: 'var(--font-serif)', fontSize: 24, fontWeight: 700, color: 'var(--text-primary)' }}>IMI</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Libre Baskerville — Títulos e brand</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Libre Baskerville — Títulos e brand</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
                   <span style={{ fontFamily: 'var(--font-sans)', fontSize: 16, fontWeight: 500, color: 'var(--text-primary)' }}>Inteligência Imobiliária</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Figtree — Corpo de texto</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Figtree — Corpo de texto</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, color: 'var(--imi-gold-500)' }}>R$ 24.800/m²</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>JetBrains Mono — Dados e métricas</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>JetBrains Mono — Dados e métricas</span>
                 </div>
               </div>
             </div>
@@ -930,7 +930,7 @@ export default function SettingsPage() {
                       key={opt.value}
                       onClick={() => set('sessionTimeout', opt.value)}
                       style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                         height: 40, borderRadius: 'var(--r-md)',
                         background: active ? 'rgba(184,148,58,0.10)' : 'var(--bg-elevated)',
                         border: active ? '1.5px solid var(--imi-gold-500)' : '1.5px solid var(--border-subtle)',
@@ -1074,7 +1074,7 @@ export default function SettingsPage() {
                   </div>
                   {section.badge && (
                     <span style={{
-                      fontSize: 10, fontWeight: 700, padding: '3px 10px', borderRadius: 'var(--r-full)',
+                      fontSize: 11, fontWeight: 700, padding: '4px 12px', borderRadius: 'var(--r-full)',
                       background: 'var(--success-bg)', color: section.badgeColor,
                       border: '1px solid rgba(52,196,117,0.25)', textTransform: 'uppercase',
                       letterSpacing: '0.08em', fontFamily: 'var(--font-mono)', flexShrink: 0,
@@ -1089,7 +1089,7 @@ export default function SettingsPage() {
                       padding: '10px 12px', borderRadius: 'var(--r-md)',
                       background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)',
                     }}>
-                      <code style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--imi-gold-500)', fontWeight: 700, display: 'block', marginBottom: 3 }}>
+                      <code style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--imi-gold-500)', fontWeight: 700, display: 'block', marginBottom: 3 }}>
                         {item.env}
                       </code>
                       <p style={{ fontSize: 11, color: 'var(--text-tertiary)', margin: 0, fontFamily: 'var(--font-sans)', lineHeight: 1.5 }}>
@@ -1105,7 +1105,7 @@ export default function SettingsPage() {
             <div style={{
               padding: '12px 16px', borderRadius: 'var(--r-lg)',
               background: 'var(--bg-muted)', border: '1px solid var(--border-subtle)',
-              display: 'flex', alignItems: 'center', gap: 10,
+              display: 'flex', alignItems: 'center', gap: 8,
             }}>
               <Zap size={14} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
               <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, fontFamily: 'var(--font-sans)', lineHeight: 1.5 }}>

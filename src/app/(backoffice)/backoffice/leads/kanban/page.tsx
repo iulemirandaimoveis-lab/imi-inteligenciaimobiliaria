@@ -96,7 +96,7 @@ function LeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
                     </p>
                     {badge && (
                         <span style={{
-                            fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
+                            fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
                             padding: '3px 7px', borderRadius: 4,
                             color: badge.color, background: badge.bg,
                             flexShrink: 0, whiteSpace: 'nowrap',
@@ -132,7 +132,7 @@ function LeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
                         width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
                         background: 'var(--bo-accent)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: 9, fontWeight: 800, color: 'var(--text-inverse)', letterSpacing: '-0.02em',
+                        fontSize: 11, fontWeight: 800, color: 'var(--text-inverse)', letterSpacing: '-0.02em',
                     }}>
                         {initials}
                     </div>
@@ -278,7 +278,7 @@ export default function PipelineKanbanPage() {
                                     minWidth: 22, height: 22, borderRadius: '50%',
                                     background: `${stage.dot}20`, border: `1px solid ${stage.dot}40`,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    fontSize: 10, fontWeight: 800, color: stage.dot,
+                                    fontSize: 11, fontWeight: 800, color: stage.dot,
                                 }}>
                                     {stageLeads.length}
                                 </span>
@@ -323,7 +323,7 @@ export default function PipelineKanbanPage() {
                             {/* Column total budget */}
                             {stageLeads.length > 0 && (
                                 <div style={{ padding: '6px 4px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <span style={{ fontSize: 9, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</span>
+                                    <span style={{ fontSize: 11, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Total</span>
                                     <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--imi-gold-500)' }}>
                                         {formatTotal(stageLeads.reduce((s, l) => s + (l.capital || l.budget || 0), 0))}
                                     </span>

@@ -87,8 +87,8 @@ const parseMoney = (v: string) => parseFloat(v.replace(/[^\d,]/g, '').replace(',
 // ── Sub-components ───────────────────────────────────────────
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-      <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.textMuted }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <label style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.textMuted }}>
         {label}
       </label>
       {children}
@@ -106,7 +106,7 @@ function Input({ value, onChange, placeholder, type = 'text', ...rest }: any) {
       placeholder={placeholder}
       style={{
         ...inputStyle,
-        padding: '10px 14px',
+        padding: '8px 12px',
         fontSize: 13,
         width: '100%',
         color: T.text,
@@ -123,7 +123,7 @@ function Select({ value, onChange, children }: any) {
       onChange={e => onChange(e.target.value)}
       style={{
         ...inputStyle,
-        padding: '10px 14px',
+        padding: '8px 12px',
         fontSize: 13,
         width: '100%',
         color: T.text,
@@ -152,7 +152,7 @@ function StepCard({ title, children }: { title: string; children: React.ReactNod
       transition={{ duration: 0.25, ease: 'easeOut' }}
       style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
     >
-      <h2 style={{ fontFamily: "'Libre Baskerville', serif", fontSize: 22, color: T.text, fontWeight: 500 }}>
+      <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 22, color: T.text, fontWeight: 500 }}>
         {title}
       </h2>
       {children}
@@ -166,11 +166,11 @@ function PaymentTag({ active, onClick, icon: Icon, label }: any) {
       onClick={onClick}
       style={{
         display: 'flex', alignItems: 'center', gap: 8,
-        padding: '10px 16px', borderRadius: T.radius.md, cursor: 'pointer',
+        padding: '8px 16px', borderRadius: T.radius.md, cursor: 'pointer',
         border: `1px solid ${active ? T.accent : T.border}`,
         background: active ? T.accentBg : T.surface,
         color: active ? T.accent : T.textMuted,
-        fontSize: 12, fontWeight: 600, letterSpacing: '0.04em',
+        fontSize: 12, fontWeight: 600, letterSpacing: '0.05em',
         transition: T.transition.normal,
       }}
     >
@@ -340,7 +340,7 @@ export default function NovaPropostaPage() {
       case 0: return (
         <StepCard title="Identificação das Partes">
           <div>
-            <h3 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
+            <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
               Comprador
             </h3>
             <Grid cols={2}>
@@ -362,8 +362,8 @@ export default function NovaPropostaPage() {
                   <option value="solteiro">Solteiro(a)</option>
                   <option value="casado">Casado(a)</option>
                   <option value="divorciado">Divorciado(a)</option>
-                  <option value="viuvo">Viúvo(a)</option>
-                  <option value="uniao_estavel">União Estável</option>
+                  <option value="viuvo">Viuvo(a)</option>
+                  <option value="uniao_estavel">Uniao Estavel</option>
                 </Select>
               </Field>
               <Field label="Profissão">
@@ -373,7 +373,7 @@ export default function NovaPropostaPage() {
           </div>
 
           <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 24 }}>
-            <h3 style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
+            <h3 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
               Vendedor
             </h3>
             <Grid cols={2}>
@@ -389,19 +389,19 @@ export default function NovaPropostaPage() {
       )
 
       case 1: return (
-        <StepCard title="Imóvel & Valores">
+        <StepCard title="Imovel & Valores">
           <Grid cols={2}>
             <Field label="Lead (comprador no CRM)">
               <Select value={form.lead_id} onChange={set('lead_id')}>
-                <option value="">— Selecionar lead —</option>
+                <option value="">-- Selecionar lead --</option>
                 {leads.map(l => (
                   <option key={l.id} value={l.id}>{l.name} {l.phone ? `· ${l.phone}` : ''}</option>
                 ))}
               </Select>
             </Field>
-            <Field label="Imóvel">
+            <Field label="Imovel">
               <Select value={form.property_id} onChange={set('property_id')}>
-                <option value="">— Selecionar imóvel —</option>
+                <option value="">-- Selecionar imovel --</option>
                 {imoveis.map(i => (
                   <option key={i.id} value={i.id}>{i.name}</option>
                 ))}
@@ -412,7 +412,7 @@ export default function NovaPropostaPage() {
           <div style={{ height: 1, background: T.border }} />
 
           <Grid cols={2}>
-            <Field label="Valor anunciado" hint="Preço de tabela do imóvel">
+            <Field label="Valor anunciado" hint="Preco de tabela do imovel">
               <Input value={form.listed_price} onChange={set('listed_price')} placeholder="R$ 0" />
             </Field>
             <Field label="Valor proposto *" hint={discount > 0 ? `Desconto de ${discount.toFixed(1)}%` : undefined}>
@@ -426,10 +426,10 @@ export default function NovaPropostaPage() {
               padding: '12px 16px',
               background: discount > 0 ? 'rgba(251,191,36,0.06)' : T.accentBg,
               borderColor: discount > 0 ? 'rgba(251,191,36,0.2)' : T.borderGold,
-              display: 'flex', alignItems: 'center', gap: 10,
+              display: 'flex', alignItems: 'center', gap: 8,
             }}>
-              <Info size={14} color={discount > 0 ? '#fbbf24' : T.accent} />
-              <span style={{ fontSize: 12, color: discount > 0 ? '#fbbf24' : T.accent }}>
+              <Info size={14} color={discount > 0 ? 'var(--warning)' : T.accent} />
+              <span style={{ fontSize: 12, color: discount > 0 ? 'var(--warning)' : T.accent }}>
                 {discount > 0
                   ? `Proposta ${discount.toFixed(1)}% abaixo do valor anunciado (${fmt(parseMoney(form.listed_price))})`
                   : `Proposta no valor de tabela`}
@@ -442,13 +442,13 @@ export default function NovaPropostaPage() {
       case 2: return (
         <StepCard title="Composição do Pagamento">
           <div>
-            <p style={{ fontSize: 11, color: T.textMuted, marginBottom: 12 }}>
-              TIPO DE OPERAÇÃO — selecione todos que se aplicam
+            <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.textMuted, marginBottom: 12 }}>
+              Tipo de operação -- selecione todos que se aplicam
             </p>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {[
                 { key: 'financing', icon: Banknote, label: 'Financiamento' },
-                { key: 'cash', icon: DollarSign, label: 'À Vista' },
+                { key: 'cash', icon: DollarSign, label: 'A Vista' },
                 { key: 'consortium', icon: CreditCard, label: 'Consórcio' },
                 { key: 'direct', icon: Hash, label: 'Direto c/ Vendedor' },
               ].map(({ key, icon, label }) => (
@@ -478,7 +478,7 @@ export default function NovaPropostaPage() {
           {/* Financiamento */}
           {(form.payment_type === 'financing' || form.payment_type === 'mixed') && (
             <div style={{ ...cardStyle, padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <h4 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent }}>
+              <h4 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent }}>
                 Financiamento Bancário
               </h4>
               <Grid cols={2}>
@@ -487,7 +487,7 @@ export default function NovaPropostaPage() {
                 </Field>
                 <Field label="Banco">
                   <Select value={form.financing_bank} onChange={set('financing_bank')}>
-                    <option value="">— Banco —</option>
+                    <option value="">-- Banco --</option>
                     <option value="Caixa">Caixa Econômica Federal</option>
                     <option value="Bradesco">Bradesco</option>
                     <option value="Itaú">Itaú</option>
@@ -516,7 +516,7 @@ export default function NovaPropostaPage() {
           {/* Parcelamento direto */}
           {(form.payment_type === 'direct') && (
             <div style={{ ...cardStyle, padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <h4 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent }}>
+              <h4 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent }}>
                 Parcelas Diretas
               </h4>
               <Grid cols={2}>
@@ -531,18 +531,18 @@ export default function NovaPropostaPage() {
               {/* Intercaladas */}
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.textMuted }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.textMuted }}>
                     Parcelas Intercaladas
                   </span>
                   <button
                     onClick={addBalloon}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, background: T.accentBg, border: `1px solid ${T.borderGold}`, borderRadius: T.radius.sm, padding: '5px 10px', color: T.accent, fontSize: 11, cursor: 'pointer' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 4, background: T.accentBg, border: `1px solid ${T.borderGold}`, borderRadius: T.radius.sm, padding: '4px 8px', color: T.accent, fontSize: 11, cursor: 'pointer', transition: T.transition.fast }}
                   >
                     <Plus size={12} /> Adicionar
                   </button>
                 </div>
                 {form.balloon_installments.map((b, idx) => (
-                  <div key={idx} style={{ display: 'flex', gap: 10, marginBottom: 8, alignItems: 'center' }}>
+                  <div key={idx} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
                     <Input value={String(b.month)} onChange={(v: string) => updateBalloon(idx, 'month', parseInt(v) || 0)} placeholder="Mês" type="number" />
                     <Input value={String(b.value)} onChange={(v: string) => updateBalloon(idx, 'value', parseFloat(v) || 0)} placeholder="Valor R$" type="number" />
                     <button onClick={() => removeBalloon(idx)} style={{ background: 'none', border: 'none', color: T.textMuted, cursor: 'pointer', padding: 4 }}>
@@ -563,15 +563,15 @@ export default function NovaPropostaPage() {
                   { label: 'Composição total', v: totalPayment },
                 ].map(({ label, v }) => (
                   <div key={label}>
-                    <div style={{ fontSize: 10, color: T.textMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>{label}</div>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: T.accent, fontVariantNumeric: 'tabular-nums' }}>{fmt(v)}</div>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: T.textMuted, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 4 }}>{label}</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: T.accent, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>{fmt(v)}</div>
                   </div>
                 ))}
               </div>
               {Math.abs(totalPayment - proposed) > 1 && (
-                <div style={{ marginTop: 8, fontSize: 11, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ marginTop: 8, fontSize: 11, color: 'var(--warning)', display: 'flex', alignItems: 'center', gap: 8 }}>
                   <AlertCircle size={12} />
-                  Diferença de {fmt(Math.abs(totalPayment - proposed))} — verifique a composição
+                  Diferença de {fmt(Math.abs(totalPayment - proposed))} -- verifique a composição
                 </div>
               )}
             </div>
@@ -603,7 +603,7 @@ export default function NovaPropostaPage() {
               onChange={e => set('conditions')(e.target.value)}
               rows={4}
               placeholder="Descreva as condições para aceite da proposta..."
-              style={{ ...inputStyle, padding: '10px 14px', fontSize: 13, width: '100%', color: T.text, resize: 'vertical', lineHeight: 1.6 }}
+              style={{ ...inputStyle, padding: '8px 12px', fontSize: 13, width: '100%', color: T.text, resize: 'vertical', lineHeight: 1.6 }}
             />
           </Field>
 
@@ -613,7 +613,7 @@ export default function NovaPropostaPage() {
               onChange={e => set('notes')(e.target.value)}
               rows={3}
               placeholder="Observações estratégicas, histórico de negociação..."
-              style={{ ...inputStyle, padding: '10px 14px', fontSize: 13, width: '100%', color: T.text, resize: 'vertical', lineHeight: 1.6 }}
+              style={{ ...inputStyle, padding: '8px 12px', fontSize: 13, width: '100%', color: T.text, resize: 'vertical', lineHeight: 1.6 }}
             />
           </Field>
         </StepCard>
@@ -632,8 +632,8 @@ export default function NovaPropostaPage() {
             },
             {
               section: 'Valores', items: [
-                ['Valor anunciado', form.listed_price ? fmt(parseMoney(form.listed_price)) : '—'],
-                ['Valor proposto', form.proposed_value ? fmt(parseMoney(form.proposed_value)) : '—'],
+                ['Valor anunciado', form.listed_price ? fmt(parseMoney(form.listed_price)) : '--'],
+                ['Valor proposto', form.proposed_value ? fmt(parseMoney(form.proposed_value)) : '--'],
                 ['Sinal/Entrada', form.entry_value ? fmt(parseMoney(form.entry_value)) : 'R$ 0'],
                 ['Financiamento', form.financing_value ? fmt(parseMoney(form.financing_value)) : 'R$ 0'],
                 ['FGTS', form.fgts_value ? fmt(parseMoney(form.fgts_value)) : 'R$ 0'],
@@ -648,26 +648,26 @@ export default function NovaPropostaPage() {
             },
           ].map(({ section, items }) => (
             <div key={section} style={{ ...cardStyle, padding: 20 }}>
-              <h4 style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.accent, marginBottom: 14 }}>
+              <h4 style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.accent, marginBottom: 16 }}>
                 {section}
               </h4>
               {items.map(([k, v]) => v ? (
-                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: `1px solid ${T.borderSubtle}` }}>
+                <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: `1px solid ${T.borderSubtle}` }}>
                   <span style={{ fontSize: 12, color: T.textMuted }}>{k}</span>
-                  <span style={{ fontSize: 12, color: T.text, fontWeight: 500 }}>{v}</span>
+                  <span style={{ fontSize: 12, color: T.text, fontWeight: 500, fontFamily: section === 'Valores' ? 'var(--font-mono)' : undefined, fontVariantNumeric: section === 'Valores' ? 'tabular-nums' : undefined }}>{v}</span>
                 </div>
               ) : null)}
             </div>
           ))}
 
           {error && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: T.radius.md }}>
-              <AlertCircle size={14} color="#f87171" />
-              <span style={{ fontSize: 12, color: '#f87171' }}>{error}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', background: T.errorBg, border: `1px solid var(--error)`, borderRadius: T.radius.md }}>
+              <AlertCircle size={14} color="var(--error)" />
+              <span style={{ fontSize: 12, color: 'var(--error)' }}>{error}</span>
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 12 }}>
             <button
               onClick={() => handleSave(false)}
               disabled={saving || !form.buyer_name || !form.proposed_value}
@@ -676,6 +676,7 @@ export default function NovaPropostaPage() {
                 background: T.surface, border: `1px solid ${T.border}`,
                 color: T.text, fontSize: 13, fontWeight: 600,
                 opacity: saving ? 0.6 : 1,
+                transition: T.transition.fast,
               }}
             >
               {saving ? 'Salvando...' : 'Salvar como Rascunho'}
@@ -686,9 +687,10 @@ export default function NovaPropostaPage() {
               style={{
                 flex: 2, padding: '12px 20px', borderRadius: T.radius.md, cursor: 'pointer',
                 background: T.accent, border: 'none',
-                color: '#000', fontSize: 13, fontWeight: 700,
+                color: 'var(--text-inverse)', fontSize: 13, fontWeight: 700,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 opacity: saving ? 0.6 : 1,
+                transition: T.transition.fast,
               }}
             >
               <Send size={14} />
@@ -708,12 +710,12 @@ export default function NovaPropostaPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 32 }}>
         <button
           onClick={() => router.back()}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: T.textMuted, cursor: 'pointer', fontSize: 13 }}
+          style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', color: T.textMuted, cursor: 'pointer', fontSize: 13 }}
         >
           <ChevronLeft size={16} /> Voltar
         </button>
         <div style={{ flex: 1 }} />
-        <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: T.textMuted }}>
+        <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', color: T.textMuted }}>
           Nova Proposta
         </span>
       </div>
@@ -727,14 +729,14 @@ export default function NovaPropostaPage() {
           return (
             <div key={s.id} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
               <div style={{
-                width: '100%', height: 3, borderRadius: 4,
+                width: '100%', height: 4, borderRadius: 4,
                 background: done || active ? T.accent : T.border,
                 opacity: done ? 0.6 : 1,
                 transition: T.transition.normal,
               }} />
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <Icon size={12} color={active ? T.accent : done ? T.textMuted : T.textDim} />
-                <span style={{ fontSize: 10, color: active ? T.accent : done ? T.textMuted : T.textDim, fontWeight: active ? 700 : 400, letterSpacing: '0.04em' }}>
+                <span style={{ fontSize: 11, color: active ? T.accent : done ? T.textMuted : T.textDim, fontWeight: active ? 700 : 400, letterSpacing: '0.05em' }}>
                   {s.label}
                 </span>
               </div>
@@ -755,10 +757,11 @@ export default function NovaPropostaPage() {
             onClick={() => setStep(s => Math.max(0, s - 1))}
             disabled={step === 0}
             style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '10px 20px', borderRadius: T.radius.md, cursor: step === 0 ? 'default' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '8px 20px', borderRadius: T.radius.md, cursor: step === 0 ? 'default' : 'pointer',
               background: T.surface, border: `1px solid ${T.border}`,
               color: step === 0 ? T.textDim : T.text, fontSize: 13,
+              transition: T.transition.fast,
             }}
           >
             <ChevronLeft size={14} /> Anterior
@@ -766,10 +769,11 @@ export default function NovaPropostaPage() {
           <button
             onClick={() => setStep(s => Math.min(4, s + 1))}
             style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '10px 24px', borderRadius: T.radius.md, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '8px 24px', borderRadius: T.radius.md, cursor: 'pointer',
               background: T.accent, border: 'none',
-              color: '#000', fontSize: 13, fontWeight: 700,
+              color: 'var(--text-inverse)', fontSize: 13, fontWeight: 700,
+              transition: T.transition.fast,
             }}
           >
             {step === 3 ? 'Revisar' : 'Próximo'} <ChevronRight size={14} />

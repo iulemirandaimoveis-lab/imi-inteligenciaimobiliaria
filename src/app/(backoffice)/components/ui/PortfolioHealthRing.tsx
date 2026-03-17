@@ -211,7 +211,7 @@ export function PortfolioHealthRing({
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 3,
+            gap: 4,
           }}
         >
           <motion.span
@@ -242,7 +242,7 @@ export function PortfolioHealthRing({
                 fontWeight: 700,
                 color: gradeColor(grade),
                 background: gradeBg(grade),
-                padding: '1px 7px',
+                padding: '2px 8px',
                 borderRadius: 9999,
                 letterSpacing: '0.06em',
               }}
@@ -292,7 +292,7 @@ export function PortfolioHealthRing({
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: 5,
+                  gap: 4,
                 }}
               >
                 <div style={{ position: 'relative' }}>
@@ -334,7 +334,7 @@ export function PortfolioHealthRing({
                   <div
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: 9,
+                      fontSize: 11,
                       color: 'var(--text-tertiary)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.06em',

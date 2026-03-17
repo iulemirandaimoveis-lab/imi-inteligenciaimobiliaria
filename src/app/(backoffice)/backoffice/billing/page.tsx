@@ -88,7 +88,7 @@ export default function BillingPage() {
                         display: 'inline-flex', alignItems: 'center', gap: '6px',
                         padding: '5px 14px', borderRadius: '4px',
                         background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
-                        fontSize: '11px', fontWeight: 700, color: '#f87171',
+                        fontSize: '11px', fontWeight: 700, color: 'var(--error)',
                         letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '20px',
                     }}>
                         <AlertCircle size={11} />
@@ -124,14 +124,14 @@ export default function BillingPage() {
                                     <div style={{
                                         position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
                                         background: 'var(--imi-gold-500)', color: '#000',
-                                        fontSize: '9px', fontWeight: 800, padding: '4px 14px', borderRadius: '4px',
+                                        fontSize: '11px', fontWeight: 800, padding: '4px 14px', borderRadius: '4px',
                                         letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap',
                                     }}>
                                         Mais popular
                                     </div>
                                 )}
 
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                                     <div style={{
                                         width: 40, height: 40, borderRadius: '4px',
                                         background: plan.highlight ? 'rgba(184,148,58,0.12)' : 'rgba(255,255,255,0.05)',
@@ -155,7 +155,7 @@ export default function BillingPage() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
                                     {plan.features.map((feat, fi) => (
                                         <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                            <CheckCircle2 size={13} style={{ color: plan.highlight ? 'var(--imi-gold-500)' : '#4ade80', flexShrink: 0, marginTop: '2px' }} />
+                                            <CheckCircle2 size={13} style={{ color: plan.highlight ? 'var(--imi-gold-500)' : 'var(--success)', flexShrink: 0, marginTop: '2px' }} />
                                             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{feat}</span>
                                         </div>
                                     ))}

@@ -90,11 +90,11 @@ const RELATORIOS = [
 ]
 
 const CAT_MAP: Record<string, { label: string; text: string; bg: string }> = {
-    avaliacoes: { label: 'Avaliações', text: '#A89EC4', bg: 'rgba(168,158,196,0.12)' },
+    avaliacoes: { label: 'Avaliações', text: 'var(--text-secondary)', bg: 'rgba(168,158,196,0.12)' },
     financeiro: { label: 'Financeiro', text: 'var(--bo-success)', bg: 'rgba(107,184,123,0.12)' },
-    crm: { label: 'CRM', text: '#7B9EC4', bg: 'rgba(123,158,196,0.12)' },
+    crm: { label: 'CRM', text: 'var(--info)', bg: 'rgba(123,158,196,0.12)' },
     imoveis: { label: 'Imóveis', text: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)' },
-    consultorias: { label: 'Consultorias', text: '#E8A87C', bg: 'rgba(232,168,124,0.12)' },
+    consultorias: { label: 'Consultorias', text: 'var(--warning)', bg: 'rgba(232,168,124,0.12)' },
 }
 
 const CATEGORIAS = ['Todos', 'Avaliações', 'Financeiro', 'CRM', 'Imóveis', 'Consultorias']
@@ -200,8 +200,8 @@ export default function RelatoriosPage() {
                         {[
                             { label: 'Total Leads', value: funnel?.reduce((s, f) => s + f.value, 0) || 0, color: 'var(--bo-accent)' },
                             { label: 'Fechados', value: won, color: '#4CAF7D' },
-                            { label: 'Taxa Conversão', value: `${conversionRate}%`, color: '#A89EC4' },
-                            { label: 'Empreendimentos', value: byDev?.length || 0, color: '#E8A87C' },
+                            { label: 'Taxa Conversão', value: `${conversionRate}%`, color: 'var(--text-secondary)' },
+                            { label: 'Empreendimentos', value: byDev?.length || 0, color: 'var(--warning)' },
                         ].map((kpi, i) => (
                             <div key={i} className="rounded-2xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                 <p className="text-xs mb-2" style={{ color: T.textDim }}>{kpi.label}</p>
@@ -325,7 +325,7 @@ export default function RelatoriosPage() {
                                                 <div key={f} className="flex items-center gap-1 px-2 py-1 rounded-lg"
                                                     style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
                                                     {f === 'PDF'
-                                                        ? <File size={11} style={{ color: '#E8A87C' }} />
+                                                        ? <File size={11} style={{ color: 'var(--warning)' }} />
                                                         : <FileSpreadsheet size={11} style={{ color: 'var(--bo-success)' }} />}
                                                     <span className="text-[11px] font-semibold" style={{ color: T.textDim }}>{f}</span>
                                                 </div>

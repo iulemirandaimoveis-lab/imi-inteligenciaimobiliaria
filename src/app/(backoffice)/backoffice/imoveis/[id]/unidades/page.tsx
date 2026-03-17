@@ -18,12 +18,12 @@ import { MobileGlobalStyles, MobileAppBar, MobileBottomNav } from '../../mobile-
 // ─── Shared Config ────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-    available:  { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
-    disponivel: { label: 'Disponível', color: '#10B981', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
-    reserved:   { label: 'Reservada',  color: '#F59E0B', bg: 'rgba(245,158,11,0.14)',  icon: Clock },
-    reservada:  { label: 'Reservada',  color: '#F59E0B', bg: 'rgba(245,158,11,0.14)',  icon: Clock },
-    sold:       { label: 'Vendida',    color: '#6B7280', bg: 'rgba(107,114,128,0.12)', icon: XCircle },
-    vendida:    { label: 'Vendida',    color: '#6B7280', bg: 'rgba(107,114,128,0.12)', icon: XCircle },
+    available:  { label: 'Disponível', color: 'var(--success)', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
+    disponivel: { label: 'Disponível', color: 'var(--success)', bg: 'rgba(16,185,129,0.14)', icon: CheckCircle },
+    reserved:   { label: 'Reservada',  color: 'var(--warning)', bg: 'rgba(245,158,11,0.14)',  icon: Clock },
+    reservada:  { label: 'Reservada',  color: 'var(--warning)', bg: 'rgba(245,158,11,0.14)',  icon: Clock },
+    sold:       { label: 'Vendida',    color: 'var(--text-secondary)', bg: 'rgba(107,114,128,0.12)', icon: XCircle },
+    vendida:    { label: 'Vendida',    color: 'var(--text-secondary)', bg: 'rgba(107,114,128,0.12)', icon: XCircle },
 }
 
 function formatPrice(price: number) {
@@ -96,10 +96,10 @@ function MobileUnidades({
     ]
 
     const statCards = [
-        { label: 'Total',       value: stats.total,       color: '#EBE7E0' },
-        { label: 'Disponíveis', value: stats.disponiveis, color: '#10B981' },
-        { label: 'Reservadas',  value: stats.reservadas,  color: '#F59E0B' },
-        { label: 'Vendidas',    value: stats.vendidas,    color: '#6B7280' },
+        { label: 'Total',       value: stats.total,       color: 'var(--imi-cream)' },
+        { label: 'Disponíveis', value: stats.disponiveis, color: 'var(--success)' },
+        { label: 'Reservadas',  value: stats.reservadas,  color: 'var(--warning)' },
+        { label: 'Vendidas',    value: stats.vendidas,    color: 'var(--text-secondary)' },
     ]
 
     return (
@@ -139,11 +139,11 @@ function MobileUnidades({
                             </div>
                             <div style={{
                                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: 600,
                                 letterSpacing: '1.2px',
                                 textTransform: 'uppercase',
-                                color: '#5C6B7D',
+                                color: 'var(--text-secondary)',
                             }}>
                                 {card.label}
                             </div>
@@ -170,7 +170,7 @@ function MobileUnidades({
                         viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" strokeWidth="2"
                         strokeLinecap="round" strokeLinejoin="round"
-                        style={{ color: searchFocused ? 'var(--imi-gold-500)' : '#5C6B7D', flexShrink: 0, transition: 'color 150ms ease' }}
+                        style={{ color: searchFocused ? 'var(--imi-gold-500)' : 'var(--text-secondary)', flexShrink: 0, transition: 'color 150ms ease' }}
                     >
                         <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
                     </svg>
@@ -188,7 +188,7 @@ function MobileUnidades({
                             outline: 'none',
                             fontFamily: 'var(--font-montserrat, sans-serif)',
                             fontSize: 14,
-                            color: '#EBE7E0',
+                            color: 'var(--imi-cream)',
                         }}
                     />
                     {searchTerm && (
@@ -197,7 +197,7 @@ function MobileUnidades({
                             className="mob-btn-tap"
                             style={{
                                 width: 20, height: 20, borderRadius: 4,
-                                background: '#5C6B7D', border: 'none', cursor: 'pointer',
+                                background: 'var(--text-secondary)', border: 'none', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 padding: 0,
                             }}
@@ -234,7 +234,7 @@ function MobileUnidades({
                                 borderRadius: 4,
                                 background: isActive ? 'var(--imi-gold-500)' : 'transparent',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
-                                color: isActive ? '#0B1120' : '#9FAAB8',
+                                color: isActive ? T.text : 'var(--text-tertiary)',
                                 fontFamily: 'var(--font-montserrat, sans-serif)',
                                 fontSize: 12,
                                 fontWeight: isActive ? 700 : 500,
@@ -272,13 +272,13 @@ function MobileUnidades({
                         <div>
                             <div style={{
                                 fontFamily: 'var(--font-playfair, serif)',
-                                fontSize: 18, fontWeight: 500, color: '#EBE7E0', marginBottom: 6,
+                                fontSize: 18, fontWeight: 500, color: 'var(--imi-cream)', marginBottom: 6,
                             }}>
                                 Nenhuma unidade encontrada
                             </div>
                             <div style={{
                                 fontFamily: 'var(--font-montserrat, sans-serif)',
-                                fontSize: 13, color: '#5C6B7D', lineHeight: 1.5,
+                                fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5,
                             }}>
                                 {unidades.length === 0
                                     ? 'Cadastre a primeira unidade deste empreendimento'
@@ -294,7 +294,7 @@ function MobileUnidades({
                                     background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
                                     fontFamily: 'var(--font-montserrat, sans-serif)',
                                     fontSize: 12, fontWeight: 700, letterSpacing: '1px',
-                                    textTransform: 'uppercase', color: '#0B1120',
+                                    textTransform: 'uppercase', color: T.text,
                                 }}
                             >
                                 + Nova Unidade
@@ -328,7 +328,7 @@ function MobileUnidades({
                                                     fontFamily: 'var(--font-playfair, serif)',
                                                     fontSize: 14,
                                                     fontWeight: 600,
-                                                    color: '#EBE7E0',
+                                                    color: 'var(--imi-cream)',
                                                     overflow: 'hidden',
                                                     textOverflow: 'ellipsis',
                                                     whiteSpace: 'nowrap',
@@ -342,7 +342,7 @@ function MobileUnidades({
                                             <div style={{
                                                 fontFamily: 'var(--font-montserrat, sans-serif)',
                                                 fontSize: 11,
-                                                color: '#5C6B7D',
+                                                color: 'var(--text-secondary)',
                                             }}>
                                                 {unidade.unit_type || 'Apartamento'}
                                                 {unidade.position ? ` · ${unidade.position}` : ''}
@@ -362,7 +362,7 @@ function MobileUnidades({
                                             background: st.bg,
                                             color: st.color,
                                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                                            fontSize: 10,
+                                            fontSize: 11,
                                             fontWeight: 700,
                                             letterSpacing: '0.2px',
                                             whiteSpace: 'nowrap',
@@ -384,21 +384,21 @@ function MobileUnidades({
                                         }}>
                                             {unidade.area > 0 && (
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                                    <Ruler size={12} style={{ color: '#5C6B7D', flexShrink: 0 }} />
+                                                    <Ruler size={12} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
                                                     <span style={{
                                                         fontFamily: 'var(--font-dm-mono, monospace)',
                                                         fontSize: 12,
-                                                        color: '#9FAAB8',
+                                                        color: 'var(--text-tertiary)',
                                                     }}>{unidade.area}m²</span>
                                                 </div>
                                             )}
                                             {unidade.bedrooms > 0 && (
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                                    <Home size={12} style={{ color: '#5C6B7D', flexShrink: 0 }} />
+                                                    <Home size={12} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
                                                     <span style={{
                                                         fontFamily: 'var(--font-dm-mono, monospace)',
                                                         fontSize: 12,
-                                                        color: '#9FAAB8',
+                                                        color: 'var(--text-tertiary)',
                                                     }}>{unidade.bedrooms} qts</span>
                                                 </div>
                                             )}
@@ -410,7 +410,7 @@ function MobileUnidades({
                                                     <span style={{
                                                         fontFamily: 'var(--font-dm-mono, monospace)',
                                                         fontSize: 12,
-                                                        color: '#9FAAB8',
+                                                        color: 'var(--text-tertiary)',
                                                     }}>{unidade.bathrooms} ban</span>
                                                 </div>
                                             )}
@@ -421,11 +421,11 @@ function MobileUnidades({
                                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                                         <span style={{
                                             fontFamily: 'var(--font-montserrat, sans-serif)',
-                                            fontSize: 9,
+                                            fontSize: 11,
                                             fontWeight: 600,
                                             letterSpacing: '1px',
                                             textTransform: 'uppercase',
-                                            color: '#5C6B7D',
+                                            color: 'var(--text-secondary)',
                                         }}>Valor</span>
                                         <span style={{
                                             fontFamily: 'var(--font-dm-mono, monospace)',
@@ -444,7 +444,7 @@ function MobileUnidades({
                                             marginTop: 8,
                                             fontFamily: 'var(--font-montserrat, sans-serif)',
                                             fontSize: 11,
-                                            color: '#5C6B7D',
+                                            color: 'var(--text-secondary)',
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
                                             whiteSpace: 'nowrap',
@@ -476,7 +476,7 @@ function MobileUnidades({
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
-                    color: '#0B1120',
+                    color: T.text,
                     fontFamily: 'var(--font-montserrat, sans-serif)',
                     fontSize: 13,
                     fontWeight: 700,
@@ -583,11 +583,11 @@ function DesktopUnidades({
                 {[
                     { label: 'Total', value: stats.total, color: T.text, sub: 'unidades' },
                     {
-                        label: 'Disponíveis', value: stats.disponiveis, color: '#10B981',
+                        label: 'Disponíveis', value: stats.disponiveis, color: 'var(--success)',
                         sub: `${availPct}% do total`,
-                        bar: availPct, barColor: '#10B981',
+                        bar: availPct, barColor: 'var(--success)',
                     },
-                    { label: 'Reservadas', value: stats.reservadas, color: '#F59E0B', sub: 'pendente contrato' },
+                    { label: 'Reservadas', value: stats.reservadas, color: 'var(--warning)', sub: 'pendente contrato' },
                     {
                         label: 'Vendidas', value: stats.vendidas, color: T.textMuted,
                         sub: `${soldPct}% do total`,

@@ -47,7 +47,7 @@ function LeadsBarChart({ data }: { data: number[] }) {
                     return (
                         <g key={i}>
                             <rect x={x + 1} y={H - barH} width={barW} height={barH} rx={3}
-                                fill={isPeak ? '#3B82F6' : 'rgba(59,130,246,0.25)'} />
+                                fill={isPeak ? 'var(--info)' : 'rgba(59,130,246,0.25)'} />
                             {isPeak && (
                                 <>
                                     <rect x={x - 8} y={H - barH - 20} width={26} height={16} rx={4} fill="#3B82F6" />
@@ -157,7 +157,7 @@ export default function AdsPerformancePage() {
                 <div className="flex items-center justify-between mb-4">
                     <p className="text-sm font-bold" style={{ color: T.text }}>Leads — Últimos 30 dias</p>
                     <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full" style={{ background: '#3B82F6' }} />
+                        <div className="w-2 h-2 rounded-full" style={{ background: 'var(--info)' }} />
                         <span className="text-[11px] font-semibold uppercase" style={{ color: T.textMuted }}>Leads</span>
                     </div>
                 </div>

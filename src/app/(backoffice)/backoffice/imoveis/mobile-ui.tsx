@@ -34,11 +34,11 @@ export const T = {
   text1:      'var(--text-primary)',
   text2:      'var(--text-secondary)',
   text3:      'var(--text-tertiary)',
-  textInv:    '#0B1120',
-  green:      '#5DB887',
-  red:        '#E06B6B',
-  blue:       '#5B9BD5',
-  amber:      '#D4913A',
+  textInv:    'var(--text-inverse)',
+  green:      'var(--success)',
+  red:        'var(--error)',
+  blue:       'var(--info)',
+  amber:      'var(--warning)',
   borderSoft: 'var(--border-subtle)',
   borderGold: 'rgba(184,148,58,0.22)',
   glassBase:  'color-mix(in srgb, var(--bg-base) 85%, transparent)',
@@ -181,7 +181,7 @@ export function MobileAppBar({ title, subtitle, onBack, backHref, actions, trans
         }}>
           <span style={{
             fontFamily: 'var(--font-mono)',
-            fontSize: 8, fontWeight: 700,
+            fontSize: 11, fontWeight: 700,
             color: T.textInv, letterSpacing: '0.5px',
           }}>IMI</span>
         </div>
@@ -198,7 +198,7 @@ export function MobileAppBar({ title, subtitle, onBack, backHref, actions, trans
         {subtitle && (
           <div style={{
             fontFamily: 'var(--font-sans)',
-            fontSize: 10, fontWeight: 500,
+            fontSize: 11, fontWeight: 500,
             color: 'var(--text-tertiary)', letterSpacing: '0.3px',
             marginTop: -1,
           }}>{subtitle}</div>
@@ -255,7 +255,7 @@ export function MobileAppBarAction({ icon, href, onClick, active, badge, label, 
         <span style={{
           position: 'absolute', top: 6, right: 6,
           background: T.gold, color: T.textInv,
-          fontSize: 8, fontWeight: 700, borderRadius: 'var(--r-full)',
+          fontSize: 11, fontWeight: 700, borderRadius: 'var(--r-full)',
           padding: '1px 4px', minWidth: 14, textAlign: 'center',
           lineHeight: '14px',
         }}>{badge}</span>
@@ -441,7 +441,7 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
                 display: 'flex', alignItems: 'center', gap: 4,
                 background: 'rgba(11,17,32,0.72)', backdropFilter: 'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
-                borderRadius: 'var(--r-md)', padding: '5px 8px',
+                borderRadius: 'var(--r-md)', padding: '4px 8px',
                 border: `1px solid ${scoreColor}30`,
               }}>
                 <Sparkles size={10} style={{ color: scoreColor }} />
@@ -456,12 +456,12 @@ export function MobilePropertyCard({ property, isFavorite, onFavorite, animation
             <div style={{
               background: T.glassBase, backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
-              borderRadius: 'var(--r-md)', padding: '5px 8px',
+              borderRadius: 'var(--r-md)', padding: '4px 8px',
               border: `1px solid ${statusCfg.color}30`,
             }}>
               <span style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: 9, fontWeight: 700, letterSpacing: '0.8px',
+                fontSize: 11, fontWeight: 700, letterSpacing: '0.8px',
                 textTransform: 'uppercase', color: statusCfg.color,
               }}>{statusCfg.label}</span>
             </div>
@@ -786,7 +786,7 @@ export function MobileBottomNav() {
               {item.icon}
               <span style={{
                 fontFamily: 'var(--font-sans)',
-                fontSize: 9, fontWeight: active ? 700 : 500,
+                fontSize: 11, fontWeight: active ? 700 : 500,
                 letterSpacing: '0.3px',
                 color: active ? T.gold : 'var(--text-tertiary)',
               }}>{item.label}</span>
@@ -833,7 +833,7 @@ export function MobileSortChips({ options, activeField, activeDir, onChange }: M
               border: `1px solid ${isActive ? T.gold : 'rgba(184,148,58,0.15)'}`,
               color: isActive ? T.gold : 'var(--text-tertiary)',
               fontFamily: 'var(--font-sans)',
-              fontSize: 10, fontWeight: isActive ? 700 : 500,
+              fontSize: 11, fontWeight: isActive ? 700 : 500,
               cursor: 'pointer',
             }}
           >
@@ -905,7 +905,7 @@ export function MobileKPICard({ label, value, unit, delta, icon, color = T.gold 
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
         <span style={{
           fontFamily: 'var(--font-sans)',
-          fontSize: 9, fontWeight: 600, letterSpacing: '1.5px',
+          fontSize: 11, fontWeight: 600, letterSpacing: '1.5px',
           textTransform: 'uppercase', color: 'var(--text-tertiary)',
         }}>{label}</span>
         {icon && (
@@ -934,7 +934,7 @@ export function MobileKPICard({ label, value, unit, delta, icon, color = T.gold 
       {delta != null && (
         <div style={{
           marginTop: 6, display: 'flex', alignItems: 'center', gap: 4,
-          fontFamily: 'var(--font-sans)', fontSize: 10,
+          fontFamily: 'var(--font-sans)', fontSize: 11,
           color: isPositive ? T.green : isNegative ? T.red : 'var(--text-tertiary)',
         }}>
           {isPositive ? '↑' : isNegative ? '↓' : '—'}
@@ -973,8 +973,8 @@ export function MobileFiltersButton({ count, onClick }: MobileFiltersButtonProps
       {count > 0 && (
         <span style={{
           background: T.gold, color: T.textInv,
-          fontSize: 9, fontWeight: 700, borderRadius: 'var(--r-full)',
-          padding: '1px 5px', minWidth: 16, textAlign: 'center',
+          fontSize: 11, fontWeight: 700, borderRadius: 'var(--r-full)',
+          padding: '2px 4px', minWidth: 16, textAlign: 'center',
         }}>{count}</span>
       )}
     </button>

@@ -320,9 +320,9 @@ export default function EditarCampanhaPage() {
                     className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
                     style={
                       isCompleted
-                        ? { background: T.success, color: '#fff' }
+                        ? { background: T.success, color: 'var(--text-inverse)' }
                         : isActive
-                          ? { background: T.accent, color: '#fff' }
+                          ? { background: T.accent, color: 'var(--text-inverse)' }
                           : { background: T.elevated, color: T.textMuted }
                     }
                   >

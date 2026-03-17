@@ -24,16 +24,16 @@ interface ConteudoItem {
 
 const TIPO_CONFIG: Record<string, { icon: any; label: string; color: string; bg: string }> = {
     instagram: { icon: Instagram, label: 'Instagram', color: '#EC4899', bg: 'rgba(236,72,153,0.12)' },
-    linkedin:  { icon: Linkedin,  label: 'LinkedIn',  color: '#3B82F6', bg: 'rgba(59,130,246,0.12)' },
-    facebook:  { icon: Facebook,  label: 'Facebook',  color: '#60A5FA', bg: 'rgba(96,165,250,0.12)' },
-    email:     { icon: Mail,      label: 'E-mail',    color: '#10B981', bg: 'rgba(16,185,129,0.12)' },
+    linkedin:  { icon: Linkedin,  label: 'LinkedIn',  color: 'var(--info)', bg: 'rgba(59,130,246,0.12)' },
+    facebook:  { icon: Facebook,  label: 'Facebook',  color: 'var(--info)', bg: 'rgba(96,165,250,0.12)' },
+    email:     { icon: Mail,      label: 'E-mail',    color: 'var(--success)', bg: 'rgba(16,185,129,0.12)' },
     blog:      { icon: Globe,     label: 'Blog',      color: 'var(--bo-accent)', bg: 'rgba(72,101,129,0.12)' },
     youtube:   { icon: Youtube,   label: 'YouTube',   color: 'var(--bo-error)', bg: 'rgba(239,68,68,0.12)' },
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-    publicado: { label: 'Publicado', color: '#10B981', bg: 'rgba(16,185,129,0.12)', icon: CheckCircle },
-    agendado:  { label: 'Agendado',  color: '#60A5FA', bg: 'rgba(96,165,250,0.12)', icon: Clock },
+    publicado: { label: 'Publicado', color: 'var(--success)', bg: 'rgba(16,185,129,0.12)', icon: CheckCircle },
+    agendado:  { label: 'Agendado',  color: 'var(--info)', bg: 'rgba(96,165,250,0.12)', icon: Clock },
     rascunho:  { label: 'Rascunho',  color: 'var(--bo-text-muted)', bg: 'var(--bo-elevated)', icon: AlertCircle },
 }
 
@@ -184,8 +184,8 @@ export default function CalendarioPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                     { label: 'Total no Mês', value: stats.total, color: T.text, bg: T.elevated, accent: 'rgba(59,130,246,0.08)' },
-                    { label: 'Publicados', value: stats.publicados, color: '#10B981', bg: 'rgba(16,185,129,0.10)', accent: 'rgba(16,185,129,0.08)' },
-                    { label: 'Agendados', value: stats.agendados, color: '#60A5FA', bg: 'rgba(96,165,250,0.10)', accent: 'rgba(96,165,250,0.08)' },
+                    { label: 'Publicados', value: stats.publicados, color: 'var(--success)', bg: 'rgba(16,185,129,0.10)', accent: 'rgba(16,185,129,0.08)' },
+                    { label: 'Agendados', value: stats.agendados, color: 'var(--info)', bg: 'rgba(96,165,250,0.10)', accent: 'rgba(96,165,250,0.08)' },
                     { label: 'Rascunhos', value: stats.rascunhos, color: T.textMuted, bg: T.elevated, accent: 'rgba(59,130,246,0.04)' },
                 ].map(s => (
                     <div key={s.label} className="rounded-2xl p-4 transition-all" style={{
@@ -280,7 +280,7 @@ export default function CalendarioPage() {
                                                 onClick={() => setDiaSelecionado(isSel ? null : dia)}
                                                 className="relative aspect-square p-1 rounded-xl text-sm transition-all"
                                                 style={
-                                                    isSel ? { background: T.accent, color: '#fff' }
+                                                    isSel ? { background: T.accent, color: 'var(--text-inverse)' }
                                                     : isHoje ? { background: 'rgba(72,101,129,0.2)', border: `1px solid ${T.accent}`, color: T.text, fontWeight: 700 }
                                                     : { color: items.length > 0 ? T.text : T.textMuted }
                                                 }

@@ -154,7 +154,7 @@ export default function OnboardingPage() {
                                     background: step > s.id ? 'var(--s-done-bg)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--bg-elevated)',
                                     color: step > s.id ? 'var(--s-done)' : step === s.id ? '#fff' : 'var(--text-secondary)',
                                     border: `1px solid ${step > s.id ? 'var(--s-done)' : step === s.id ? 'var(--imi-gold-500)' : 'var(--border-default)'}`,
-                                    transition: 'all 0.3s ease',
+                                    transition: 'all var(--dur-3) var(--ease)',
                                 }}>
                                     {step > s.id ? <CheckCircle2 size={14} /> : s.id}
                                 </div>
@@ -195,7 +195,7 @@ export default function OnboardingPage() {
                                 <Building2 size={20} style={{ color: 'var(--imi-gold-500)' }} />
                             </div>
                             <div>
-                                <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '2px' }}>
+                                <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '2px' }}>
                                     CONFIGURAÇÃO INICIAL · PASSO {step}/3
                                 </p>
                                 <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>
@@ -215,7 +215,7 @@ export default function OnboardingPage() {
                             <motion.div
                                 key="step1"
                                 initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }}
-                                style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '18px' }}
+                                style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}
                             >
                                 <div>
                                     <label style={labelStyle}>Nome da Empresa / Marca *</label>
@@ -275,13 +275,13 @@ export default function OnboardingPage() {
                                                     <n.icon size={14} style={{ color: data.niche === n.value ? 'var(--imi-gold-500)' : 'var(--text-secondary)', flexShrink: 0 }} />
                                                     <span style={{ fontSize: '12px', fontWeight: 700, color: data.niche === n.value ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{n.label}</span>
                                                 </div>
-                                                <p style={{ fontSize: '10px', color: 'var(--text-secondary)', marginLeft: '22px' }}>{n.desc}</p>
+                                                <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginLeft: '22px' }}>{n.desc}</p>
                                             </button>
                                         ))}
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '10px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px' }}>
                                     <div>
                                         <label style={labelStyle}>Cidade *</label>
                                         <input
@@ -345,7 +345,7 @@ export default function OnboardingPage() {
                                         }}>
                                             <p style={{ fontSize: '22px', marginBottom: '4px' }}>{item.icon}</p>
                                             <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>{item.label}</p>
-                                            <p style={{ fontSize: '9px', color: 'var(--text-secondary)' }}>{item.desc}</p>
+                                            <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{item.desc}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -357,7 +357,7 @@ export default function OnboardingPage() {
                     <div style={{
                         padding: '16px 28px', borderTop: '1px solid var(--border-default)',
                         background: 'var(--bg-elevated)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px',
                     }}>
                         {step < 3 ? (
                             <>
@@ -384,7 +384,7 @@ export default function OnboardingPage() {
                                     style={{
                                         height: '44px', padding: '0 24px', borderRadius: '4px',
                                         fontSize: '13px', fontWeight: 700, cursor: 'pointer',
-                                        color: '#fff',
+                                        color: 'var(--text-inverse)',
                                         background: 'linear-gradient(135deg, var(--imi-gold-500) 0%, var(--imi-gold-500) 100%)',
                                         border: 'none',
                                         display: 'flex', alignItems: 'center', gap: '8px',
@@ -408,7 +408,7 @@ export default function OnboardingPage() {
                                 style={{
                                     width: '100%', height: '48px', borderRadius: '4px',
                                     fontSize: '14px', fontWeight: 800, cursor: 'pointer',
-                                    color: '#fff',
+                                    color: 'var(--text-inverse)',
                                     background: 'linear-gradient(135deg, var(--imi-gold-500) 0%, var(--imi-gold-500) 100%)',
                                     border: 'none',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',

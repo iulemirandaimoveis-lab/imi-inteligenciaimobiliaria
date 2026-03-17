@@ -70,12 +70,12 @@ const TIMELINE_ICONS: Record<string, React.ElementType> = {
 function LoadingSkeleton() {
   return (
     <div className="max-w-2xl mx-auto pb-24 space-y-4 animate-pulse">
-      <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 4, width: '40%', opacity: 0.5 }} />
-      <div style={{ height: 180, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.4 }} />
-      <div style={{ height: 80, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.35 }} />
-      <div style={{ height: 120, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.3 }} />
+      <div style={{ height: 36, background: 'var(--bg-surface)', borderRadius: 4, width: '40%', opacity: 0.5 }} />
+      <div style={{ height: 180, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.4 }} />
+      <div style={{ height: 80, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.35 }} />
+      <div style={{ height: 120, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.3 }} />
       {[0,1,2].map(i => (
-        <div key={i} style={{ height: 80, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.25 - i * 0.05 }} />
+        <div key={i} style={{ height: 80, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.25 - i * 0.05 }} />
       ))}
     </div>
   )
@@ -120,17 +120,17 @@ export default function LeadDetailPage() {
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 mb-6"
-          style={{ fontSize: '13px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
+          style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0' }}
         >
           ← Leads
         </button>
         <div
           className="rounded-2xl text-center"
-          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', padding: '48px 24px' }}
+          style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '48px 24px' }}
         >
-          <AlertCircle size={28} style={{ color: 'var(--bo-text-muted)', opacity: 0.3, margin: '0 auto 12px' }} />
-          <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--bo-text)', marginBottom: '6px' }}>Lead não encontrado</p>
-          <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>O lead solicitado não existe ou foi removido.</p>
+          <AlertCircle size={28} style={{ color: 'var(--text-secondary)', opacity: 0.3, margin: '0 auto 12px' }} />
+          <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Lead não encontrado</p>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>O lead solicitado não existe ou foi removido.</p>
         </div>
       </div>
     )
@@ -229,27 +229,27 @@ export default function LeadDetailPage() {
             <button
               onClick={() => router.push(`/backoffice/leads/${id}/editar`)}
               style={{
-                width: '34px', height: '34px', borderRadius: '4px',
-                background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
+                width: '36px', height: '36px', borderRadius: '4px',
+                background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 cursor: 'pointer',
               }}
             >
-              <Edit size={14} style={{ color: 'var(--bo-text-muted)' }} />
+              <Edit size={14} style={{ color: 'var(--text-secondary)' }} />
             </button>
             {/* Quick Status Dropdown */}
             <div className="relative">
             <button
               onClick={() => setStatusMenuOpen(p => !p)}
               style={{
-                width: '34px', height: '34px', borderRadius: '4px',
-                background: statusMenuOpen ? 'var(--bo-elevated)' : 'var(--bo-card)',
-                border: '1px solid var(--bo-border)',
+                width: '36px', height: '36px', borderRadius: '4px',
+                background: statusMenuOpen ? 'var(--bg-elevated)' : 'var(--bg-surface)',
+                border: '1px solid var(--border-default)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 cursor: 'pointer',
               }}
             >
-              <MoreVertical size={14} style={{ color: 'var(--bo-text-muted)' }} />
+              <MoreVertical size={14} style={{ color: 'var(--text-secondary)' }} />
             </button>
 
             {statusMenuOpen && (
@@ -265,14 +265,14 @@ export default function LeadDetailPage() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.14 }}
                   style={{
-                    position: 'absolute', right: 0, top: '38px', zIndex: 50,
-                    background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
+                    position: 'absolute', right: 0, top: '40px', zIndex: 50,
+                    background: 'var(--bg-surface)', border: '1px solid var(--border-default)',
                     borderRadius: '4px', padding: '8px', width: '180px',
-                    boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
+                    boxShadow: 'var(--shadow-lg)',
                   }}
                 >
                   {/* Temperature */}
-                  <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.09em', padding: '4px 8px 6px' }}>
+                  <p style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '4px 8px' }}>
                     Temperatura
                   </p>
                   {[
@@ -285,24 +285,24 @@ export default function LeadDetailPage() {
                       onClick={() => changeStatus(s.key)}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
-                        width: '100%', padding: '7px 8px', borderRadius: '4px',
-                        background: leadStatus === s.key ? 'rgba(255,255,255,0.06)' : 'transparent',
+                        width: '100%', padding: '8px', borderRadius: '4px',
+                        background: leadStatus === s.key ? 'var(--bg-hover)' : 'transparent',
                         border: 'none', cursor: 'pointer', fontSize: '13px',
                         fontWeight: leadStatus === s.key ? 700 : 500,
-                        color: leadStatus === s.key ? s.color : 'var(--bo-text)',
+                        color: leadStatus === s.key ? s.color : 'var(--text-primary)',
                         textAlign: 'left',
                       }}
                     >
                       <span>{s.emoji}</span>
                       <span>{s.label}</span>
-                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '10px', color: s.color }}>✓</span>}
+                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '11px', color: s.color }}>✓</span>}
                     </button>
                   ))}
 
-                  <div style={{ height: '1px', background: 'var(--bo-border)', margin: '6px 0' }} />
+                  <div style={{ height: '1px', background: 'var(--border-default)', margin: '8px 0' }} />
 
                   {/* Funil */}
-                  <p style={{ fontSize: '9px', fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.09em', padding: '4px 8px 6px' }}>
+                  <p style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '4px 8px' }}>
                     Funil de Vendas
                   </p>
                   {[
@@ -316,16 +316,16 @@ export default function LeadDetailPage() {
                       onClick={() => changeStatus(s.key)}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '8px',
-                        width: '100%', padding: '7px 8px', borderRadius: '4px',
-                        background: leadStatus === s.key ? 'rgba(255,255,255,0.06)' : 'transparent',
+                        width: '100%', padding: '8px', borderRadius: '4px',
+                        background: leadStatus === s.key ? 'var(--bg-hover)' : 'transparent',
                         border: 'none', cursor: 'pointer', fontSize: '13px',
                         fontWeight: leadStatus === s.key ? 700 : 500,
-                        color: leadStatus === s.key ? 'var(--bo-accent)' : 'var(--bo-text)',
+                        color: leadStatus === s.key ? 'var(--bo-accent)' : 'var(--text-primary)',
                         textAlign: 'left',
                       }}
                     >
                       <span>{s.label}</span>
-                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '10px', color: 'var(--bo-accent)' }}>✓</span>}
+                      {leadStatus === s.key && <span style={{ marginLeft: 'auto', fontSize: '11px', color: 'var(--bo-accent)' }}>✓</span>}
                     </button>
                   ))}
                 </motion.div>
@@ -342,8 +342,8 @@ export default function LeadDetailPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.28 }}
         style={{
-          background: 'var(--bo-card)',
-          border: '1px solid var(--bo-border)',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border-default)',
           borderRadius: '4px',
           padding: '20px',
           position: 'relative',
@@ -358,7 +358,7 @@ export default function LeadDetailPage() {
         }} />
 
         {/* Label */}
-        <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px', position: 'relative' }}>
+        <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px', position: 'relative' }}>
           LEAD PROFILE
         </div>
 
@@ -375,13 +375,13 @@ export default function LeadDetailPage() {
           </div>
 
           <div className="flex-1 min-w-0">
-            <h1 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--bo-text)', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '6px' }}>
+            <h1 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '8px' }}>
               {lead.name}
             </h1>
             <div className="flex items-center gap-2 flex-wrap">
               <StatusBadge status={leadStatus} size="sm" glow dot />
               {lead.source && (
-                <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', fontWeight: 500 }}>
+                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>
                   via {lead.source}
                 </span>
               )}
@@ -392,16 +392,16 @@ export default function LeadDetailPage() {
           <div
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
-              background: 'var(--bo-elevated)',
+              background: 'var(--bg-elevated)',
               border: '1px solid rgba(184,148,58,0.25)',
-              borderRadius: '4px', padding: '10px 12px',
+              borderRadius: '4px', padding: '12px',
               flexShrink: 0,
             }}
           >
-            <span style={{ fontSize: '8px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
               AI Intent
             </span>
-            <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--bo-text)', lineHeight: 1 }}>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
               {aiIntentPct}%
             </span>
           </div>
@@ -412,10 +412,10 @@ export default function LeadDetailPage() {
           <a
             href={`tel:${lead.phone}`}
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-              height: '46px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,
-              color: 'var(--bo-text)', background: 'var(--bo-elevated)',
-              border: '1px solid var(--bo-border)', textDecoration: 'none',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              height: '44px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,
+              color: 'var(--text-primary)', background: 'var(--bg-elevated)',
+              border: '1px solid var(--border-default)', textDecoration: 'none',
             }}
           >
             <Phone size={14} style={{ color: 'var(--imi-gold-500)' }} /> Ligar
@@ -424,8 +424,8 @@ export default function LeadDetailPage() {
             href={`https://wa.me/55${(lead.phone ?? '').replace(/\D/g, '')}`}
             target="_blank" rel="noopener noreferrer"
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-              height: '46px', borderRadius: '4px', fontSize: '12px', fontWeight: 700,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              height: '44px', borderRadius: '4px', fontSize: '12px', fontWeight: 700,
               color: 'var(--text-inverse)', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
               border: 'none', textDecoration: 'none',
             }}
@@ -435,10 +435,10 @@ export default function LeadDetailPage() {
           <button
             onClick={() => router.push(`/backoffice/hoje?lead_id=${id}&action=agendar`)}
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-              height: '46px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,
-              color: 'var(--bo-text)', background: 'var(--bo-elevated)',
-              border: '1px solid var(--bo-border)', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              height: '44px', borderRadius: '4px', fontSize: '12px', fontWeight: 600,
+              color: 'var(--text-primary)', background: 'var(--bg-elevated)',
+              border: '1px solid var(--border-default)', cursor: 'pointer',
             }}
           >
             <Calendar size={14} style={{ color: 'var(--imi-gold-500)' }} /> Agendar
@@ -449,34 +449,34 @@ export default function LeadDetailPage() {
         <div className="space-y-2">
           {lead.email && (
             <div className="flex items-center gap-2">
-              <Mail size={12} style={{ color: 'var(--bo-text-muted)', flexShrink: 0 }} />
-              <span style={{ fontSize: '12px', color: 'var(--bo-text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <Mail size={12} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {lead.email}
               </span>
             </div>
           )}
           {lead.phone && (
             <div className="flex items-center gap-2">
-              <Phone size={12} style={{ color: 'var(--bo-text-muted)', flexShrink: 0 }} />
-              <span style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>{lead.phone}</span>
+              <Phone size={12} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{lead.phone}</span>
             </div>
           )}
           {devName && (
             <div className="flex items-center gap-2">
-              <Building2 size={12} style={{ color: 'var(--bo-text-muted)', flexShrink: 0 }} />
-              <span style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>{devName}</span>
+              <Building2 size={12} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{devName}</span>
             </div>
           )}
           {lead.interest && (
             <div className="flex items-center gap-2">
-              <MapPin size={12} style={{ color: 'var(--bo-text-muted)', flexShrink: 0 }} />
-              <span style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>{lead.interest}</span>
+              <MapPin size={12} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
+              <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{lead.interest}</span>
             </div>
           )}
           {lead.capital && (
             <div className="flex items-center gap-2">
               <DollarSign size={12} style={{ color: 'var(--imi-ai-gold)', flexShrink: 0 }} />
-              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--imi-ai-gold)' }}>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--imi-ai-gold)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
                 {formatCapital(lead.capital)}
               </span>
             </div>
@@ -490,9 +490,9 @@ export default function LeadDetailPage() {
               <span
                 key={i}
                 style={{
-                  fontSize: '10px', fontWeight: 600,
-                  color: 'var(--bo-text-muted)', background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid var(--bo-border)', padding: '2px 8px', borderRadius: '4px',
+                  fontSize: '11px', fontWeight: 600,
+                  color: 'var(--text-secondary)', background: 'var(--bg-elevated)',
+                  border: '1px solid var(--border-default)', padding: '2px 8px', borderRadius: '4px',
                 }}
               >
                 {tag}
@@ -504,7 +504,7 @@ export default function LeadDetailPage() {
         {/* Meta: created + last contact */}
         <div
           className="flex items-center gap-3 mt-4 pt-3"
-          style={{ borderTop: '1px solid var(--bo-border)', fontSize: '10px', color: 'var(--bo-text-muted)' }}
+          style={{ borderTop: '1px solid var(--border-default)', fontSize: '11px', color: 'var(--text-secondary)' }}
         >
           <span className="flex items-center gap-1">
             <Calendar size={9} />
@@ -512,7 +512,7 @@ export default function LeadDetailPage() {
           </span>
           {lead.last_interaction_at && (
             <>
-              <span style={{ color: 'var(--bo-border)', fontSize: '12px' }}>·</span>
+              <span style={{ color: 'var(--border-default)', fontSize: '12px' }}>·</span>
               <span className="flex items-center gap-1">
                 <Clock size={9} />
                 Último contato {getTimeAgo(lead.last_interaction_at)}
@@ -534,39 +534,39 @@ export default function LeadDetailPage() {
           nextStep={aiLoading ? undefined : nextAction}
         >
           {aiLoading ? (
-            <div className="flex items-center gap-2" style={{ color: 'var(--bo-text-muted)', fontSize: '12px' }}>
+            <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>
               <Loader2 size={12} className="animate-spin" />
               Consultando Claude AI...
             </div>
           ) : (
             <>
-              <span style={{ color: 'var(--bo-text)', fontSize: '12px', lineHeight: 1.65 }}>
+              <span style={{ color: 'var(--text-primary)', fontSize: '12px', lineHeight: 1.65 }}>
                 {aiInsight}
               </span>
               {aiAnalysis && (
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {aiAnalysis.urgency && (
                     <span style={{
-                      fontSize: '10px', fontWeight: 700,
-                      color: aiAnalysis.urgency === 'alta' ? 'var(--bo-error)' : aiAnalysis.urgency === 'media' ? 'var(--warning)' : 'var(--text-secondary)',
-                      background: aiAnalysis.urgency === 'alta' ? 'rgba(239,68,68,0.12)' : aiAnalysis.urgency === 'media' ? 'rgba(245,158,11,0.12)' : 'var(--bg-elevated)',
+                      fontSize: '11px', fontWeight: 700,
+                      color: aiAnalysis.urgency === 'alta' ? 'var(--error)' : aiAnalysis.urgency === 'media' ? 'var(--warning)' : 'var(--text-secondary)',
+                      background: aiAnalysis.urgency === 'alta' ? 'var(--error-bg)' : aiAnalysis.urgency === 'media' ? 'var(--warning-bg)' : 'var(--bg-elevated)',
                       padding: '2px 8px', borderRadius: '4px',
                     }}>
                       Urgência {aiAnalysis.urgency}
                     </span>
                   )}
                   {aiAnalysis.approach && (
-                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--imi-gold-500)', background: 'rgba(59,130,246,0.12)', padding: '2px 8px', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--imi-gold-500)', background: 'var(--info-bg)', padding: '2px 8px', borderRadius: '4px' }}>
                       via {aiAnalysis.approach}
                     </span>
                   )}
                   {aiAnalysis.estimatedTimeline && (
-                    <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', padding: '2px 8px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)', padding: '2px 8px', background: 'var(--bg-subtle)', borderRadius: '4px' }}>
                       ⏱ {aiAnalysis.estimatedTimeline}
                     </span>
                   )}
                   {aiAnalysis.keyRisk && (
-                    <span style={{ fontSize: '10px', color: 'var(--warning)', padding: '2px 8px', background: 'rgba(245,158,11,0.08)', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--warning)', padding: '2px 8px', background: 'var(--warning-bg)', borderRadius: '4px' }}>
                       ⚠ {aiAnalysis.keyRisk}
                     </span>
                   )}
@@ -582,10 +582,10 @@ export default function LeadDetailPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.16 }}
-        style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', overflow: 'hidden' }}
+        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', borderRadius: '4px', overflow: 'hidden' }}
       >
         {/* Tab header */}
-        <div className="flex" style={{ borderBottom: '1px solid var(--bo-border)' }}>
+        <div className="flex" style={{ borderBottom: '1px solid var(--border-default)' }}>
           {[
             { key: 'timeline', label: 'Timeline' },
             { key: 'history',  label: 'Histórico' },
@@ -599,17 +599,17 @@ export default function LeadDetailPage() {
                 onClick={() => setActiveTab(tab.key as any)}
                 style={{
                   flex: 1,
-                  padding: '13px 8px',
-                  fontSize: '10px',
+                  padding: '12px 8px',
+                  fontSize: '11px',
                   fontWeight: 700,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                  color: isActive ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)',
+                  letterSpacing: '0.05em',
+                  color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
                   background: 'none',
                   border: 'none',
                   borderBottom: `2px solid ${isActive ? 'var(--imi-gold-500)' : 'transparent'}`,
                   cursor: 'pointer',
-                  transition: 'all 0.18s',
+                  transition: 'all var(--dur-2) var(--ease)',
                 }}
               >
                 {tab.label}
@@ -633,7 +633,7 @@ export default function LeadDetailPage() {
                   {/* Vertical line */}
                   <div style={{
                     position: 'absolute', left: '19px', top: '20px', bottom: '20px',
-                    width: '2px', background: 'var(--bo-border)',
+                    width: '2px', background: 'var(--border-default)',
                   }} />
 
                   <div className="space-y-4">
@@ -646,12 +646,12 @@ export default function LeadDetailPage() {
                           background: event.accent
                             ? 'rgba(184,148,58,0.10)'
                             : 'rgba(255,255,255,0.04)',
-                          border: `2px solid ${event.accent ? 'rgba(184,148,58,0.25)' : 'var(--bo-border)'}`,
+                          border: `2px solid ${event.accent ? 'rgba(184,148,58,0.25)' : 'var(--border-default)'}`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
                           <event.icon
                             size={14}
-                            style={{ color: event.accent ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)' }}
+                            style={{ color: event.accent ? 'var(--imi-gold-500)' : 'var(--text-secondary)' }}
                           />
                         </div>
 
@@ -659,28 +659,28 @@ export default function LeadDetailPage() {
                         <div
                           style={{
                             flex: 1,
-                            background: 'rgba(255,255,255,0.03)',
-                            border: '1px solid var(--bo-border)',
+                            background: 'var(--bg-subtle)',
+                            border: '1px solid var(--border-default)',
                             borderRadius: '4px',
-                            padding: '10px 12px',
+                            padding: '12px',
                             opacity: i > 0 ? 0.75 : 1,
                           }}
                         >
                           <div className="flex items-start justify-between gap-2 mb-1">
-                            <h4 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--bo-text)' }}>
+                            <h4 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
                               {event.label}
                             </h4>
-                            <span style={{ fontSize: '10px', color: 'var(--bo-text-muted)', flexShrink: 0 }}>
+                            <span style={{ fontSize: '11px', color: 'var(--text-secondary)', flexShrink: 0 }}>
                               {event.time}
                             </span>
                           </div>
                           {event.detail && (
-                            <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginBottom: '4px' }}>
+                            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                               {event.detail}
                             </p>
                           )}
                           {event.trending && (
-                            <div className="flex items-center gap-1" style={{ fontSize: '10px', fontWeight: 700, color: 'var(--s-done)' }}>
+                            <div className="flex items-center gap-1" style={{ fontSize: '11px', fontWeight: 700, color: 'var(--s-done)' }}>
                               <TrendingUp size={10} />
                               Evento mais recente
                             </div>
@@ -692,8 +692,8 @@ export default function LeadDetailPage() {
                 </div>
               ) : (
                 <div style={{ textAlign: 'center', padding: '32px 0' }}>
-                  <Eye size={26} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 10px' }} />
-                  <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)' }}>Nenhum evento registrado</p>
+                  <Eye size={26} style={{ color: 'var(--text-secondary)', opacity: 0.2, margin: '0 auto 12px' }} />
+                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Nenhum evento registrado</p>
                 </div>
               )}
             </div>
@@ -707,9 +707,9 @@ export default function LeadDetailPage() {
                 action={{ label: '+ Registrar', onClick: () => {} }}
               />
               <div style={{ textAlign: 'center', padding: '32px 0' }}>
-                <Clock size={26} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 10px' }} />
-                <p style={{ fontSize: '13px', color: 'var(--bo-text-muted)', marginBottom: '4px' }}>Sem contatos registrados</p>
-                <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)' }}>Use o botão acima para registrar</p>
+                <Clock size={26} style={{ color: 'var(--text-secondary)', opacity: 0.2, margin: '0 auto 12px' }} />
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '4px' }}>Sem contatos registrados</p>
+                <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Use o botão acima para registrar</p>
               </div>
             </div>
           )}
@@ -721,23 +721,23 @@ export default function LeadDetailPage() {
               {lead.message ? (
                 <div
                   style={{
-                    background: 'rgba(255,255,255,0.03)', border: '1px solid var(--bo-border)',
+                    background: 'var(--bg-subtle)', border: '1px solid var(--border-default)',
                     borderRadius: '4px', padding: '12px', marginBottom: '12px',
                   }}
                 >
-                  <p style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--bo-text-muted)' }}>
+                  <p style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
                     {lead.message}
                   </p>
                 </div>
               ) : (
                 <div
                   style={{
-                    background: 'rgba(255,255,255,0.02)', border: '1px solid var(--bo-border)',
+                    background: 'var(--bg-subtle)', border: '1px solid var(--border-default)',
                     borderRadius: '4px', padding: '20px', textAlign: 'center', marginBottom: '12px',
                   }}
                 >
-                  <FileText size={20} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 8px' }} />
-                  <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)' }}>Nenhuma mensagem do lead</p>
+                  <FileText size={20} style={{ color: 'var(--text-secondary)', opacity: 0.2, margin: '0 auto 8px' }} />
+                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Nenhuma mensagem do lead</p>
                 </div>
               )}
               {/* Note input */}
@@ -748,10 +748,10 @@ export default function LeadDetailPage() {
                   onChange={e => setNote(e.target.value)}
                   placeholder="Adicionar observação..."
                   style={{
-                    flex: 1, height: '42px', padding: '0 14px',
-                    fontSize: '13px', background: 'var(--bo-elevated)',
-                    border: '1px solid var(--bo-border)', borderRadius: '4px',
-                    color: 'var(--bo-text)', outline: 'none',
+                    flex: 1, height: '44px', padding: '0 16px',
+                    fontSize: '13px', background: 'var(--bg-elevated)',
+                    border: '1px solid var(--border-default)', borderRadius: '4px',
+                    color: 'var(--text-primary)', outline: 'none',
                   }}
                 />
                 <button
@@ -768,15 +768,15 @@ export default function LeadDetailPage() {
                     } catch { /* silent */ }
                   }}
                   style={{
-                    width: '42px', height: '42px', borderRadius: '4px',
-                    background: note.trim() ? 'var(--bo-accent)' : 'rgba(255,255,255,0.05)',
+                    width: '44px', height: '44px', borderRadius: '4px',
+                    background: note.trim() ? 'var(--bo-accent)' : 'var(--bg-elevated)',
                     border: 'none', cursor: note.trim() ? 'pointer' : 'default',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     opacity: note.trim() ? 1 : 0.4,
-                    transition: 'all 0.18s',
+                    transition: 'all var(--dur-2) var(--ease)',
                   }}
                 >
-                  <Send size={14} style={{ color: note.trim() ? 'var(--text-inverse)' : 'var(--bo-text-muted)' }} />
+                  <Send size={14} style={{ color: note.trim() ? 'var(--text-inverse)' : 'var(--text-secondary)' }} />
                 </button>
               </div>
             </div>
@@ -808,14 +808,14 @@ export default function LeadDetailPage() {
               </div>
 
               {matchesLoading && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--bo-text-muted)', fontSize: '13px', padding: '24px 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', fontSize: '13px', padding: '24px 0' }}>
                   <Loader2 size={14} className="animate-spin" />
                   Analisando compatibilidade...
                 </div>
               )}
 
               {!matchesLoading && matches.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--bo-text-muted)', fontSize: '13px' }}>
+                <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--text-secondary)', fontSize: '13px' }}>
                   <Building2 size={24} style={{ opacity: 0.3, margin: '0 auto 8px' }} />
                   <p>Clique em "Buscar matches" para encontrar imóveis compatíveis</p>
                 </div>
@@ -828,7 +828,7 @@ export default function LeadDetailPage() {
                     display: 'flex', alignItems: 'flex-start', gap: '12px',
                     padding: '12px', borderRadius: '4px', marginBottom: '8px',
                     background: i === 0 ? 'rgba(184,148,58,0.07)' : 'rgba(255,255,255,0.03)',
-                    border: `1px solid ${i === 0 ? 'rgba(184,148,58,0.2)' : 'var(--bo-border)'}`,
+                    border: `1px solid ${i === 0 ? 'rgba(184,148,58,0.2)' : 'var(--border-default)'}`,
                   }}
                 >
                   <div style={{
@@ -836,26 +836,26 @@ export default function LeadDetailPage() {
                     background: i === 0 ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.05)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <Building2 size={16} style={{ color: i === 0 ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)' }} />
+                    <Building2 size={16} style={{ color: i === 0 ? 'var(--imi-gold-500)' : 'var(--text-secondary)' }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--bo-text)' }}>{m.name}</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{m.name}</span>
                       <span style={{
-                        fontSize: '10px', fontWeight: 700, padding: '2px 7px',
+                        fontSize: '11px', fontWeight: 700, padding: '2px 8px',
                         borderRadius: '4px',
-                        background: m.match_score >= 80 ? 'rgba(34,197,94,0.15)' : m.match_score >= 60 ? 'rgba(234,179,8,0.15)' : 'rgba(255,255,255,0.06)',
-                        color: m.match_score >= 80 ? '#4ade80' : m.match_score >= 60 ? '#fbbf24' : 'var(--bo-text-muted)',
+                        background: m.match_score >= 80 ? 'var(--success-bg)' : m.match_score >= 60 ? 'var(--warning-bg)' : 'var(--bg-hover)',
+                        color: m.match_score >= 80 ? 'var(--success)' : m.match_score >= 60 ? 'var(--warning)' : 'var(--text-secondary)',
                       }}>
                         {m.match_score}% match
                       </span>
                     </div>
-                    <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', margin: '2px 0' }}>
+                    <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '4px 0', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
                       {[m.city, m.state].filter(Boolean).join(', ')}
                       {m.min_price && ` · R$ ${(m.min_price / 1000).toFixed(0)}k${m.max_price ? `–${(m.max_price / 1000).toFixed(0)}k` : '+'}`}
                     </p>
                     {m.match_reasons?.length > 0 && (
-                      <p style={{ fontSize: '10px', color: 'var(--bo-text-muted)', opacity: 0.7 }}>
+                      <p style={{ fontSize: '11px', color: 'var(--text-secondary)', opacity: 0.7 }}>
                         {m.match_reasons.join(' · ')}
                       </p>
                     )}
@@ -863,10 +863,10 @@ export default function LeadDetailPage() {
                   <a
                     href={`/backoffice/empreendimentos/${m.id}`}
                     style={{
-                      fontSize: '11px', color: 'var(--bo-text-muted)',
+                      fontSize: '11px', color: 'var(--text-secondary)',
                       textDecoration: 'none', whiteSpace: 'nowrap',
                       padding: '4px 8px', borderRadius: '4px',
-                      background: 'rgba(255,255,255,0.05)',
+                      background: 'var(--bg-elevated)',
                     }}
                   >
                     Ver →

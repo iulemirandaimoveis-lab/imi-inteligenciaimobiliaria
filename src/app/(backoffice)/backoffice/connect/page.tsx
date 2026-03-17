@@ -228,7 +228,7 @@ export default function ConnectPage() {
                     </span>
                     {totalUnread > 0 && (
                         <span style={{
-                            background: T.error, color: '#fff',
+                            background: T.error, color: 'var(--text-inverse)',
                             fontSize: 11, fontWeight: 700, padding: '2px 6px',
                             borderRadius: T.radius.full, fontFamily: T.font.mono,
                         }}>
@@ -337,7 +337,7 @@ export default function ConnectPage() {
                                     {ch.unread_count > 0 && (
                                         <span style={{
                                             background: T.gold, color: T.textInverse,
-                                            fontSize: 11, fontWeight: 700, padding: '1px 6px',
+                                            fontSize: 11, fontWeight: 700, padding: '2px 8px',
                                             borderRadius: T.radius.full, fontFamily: T.font.mono,
                                             minWidth: 18, textAlign: 'center', flexShrink: 0,
                                         }}>

@@ -26,7 +26,7 @@ const elevated: React.CSSProperties = {
 
 const label: React.CSSProperties = {
   fontFamily: 'var(--font-mono)',
-  fontSize: 10,
+  fontSize: 11,
   fontWeight: 700,
   textTransform: 'uppercase',
   letterSpacing: '0.08em',
@@ -91,7 +91,7 @@ const CONVERSATIONS: RecentConversation[] = [
     lastMsg: 'Quando posso agendar a visita?',
     time: '10:32',
     unread: 2,
-    color: '#3B82F6',
+    color: 'var(--info)',
   },
   {
     id: '2',
@@ -100,7 +100,7 @@ const CONVERSATIONS: RecentConversation[] = [
     lastMsg: 'Perfeito! Vejo vocês amanhã então.',
     time: 'Ontem',
     unread: 0,
-    color: '#8B5CF6',
+    color: 'var(--imi-gold-500)',
   },
   {
     id: '3',
@@ -109,7 +109,7 @@ const CONVERSATIONS: RecentConversation[] = [
     lastMsg: 'Preciso de mais informações sobre financiamento.',
     time: 'Seg',
     unread: 1,
-    color: '#F59E0B',
+    color: 'var(--warning)',
   },
 ]
 
@@ -143,7 +143,7 @@ export default function WhatsAppPage() {
         actions={
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{
-              fontSize: 10, fontWeight: 700, padding: '4px 10px',
+              fontSize: 11, fontWeight: 700, padding: '4px 10px',
               borderRadius: 'var(--r-full)',
               background: 'rgba(184,148,58,0.12)',
               color: 'var(--imi-gold-500)',
@@ -157,7 +157,7 @@ export default function WhatsAppPage() {
             <button
               onClick={() => setConnected(c => !c)}
               style={{
-                display: 'flex', alignItems: 'center', gap: 7,
+                display: 'flex', alignItems: 'center', gap: 8,
                 height: 38, padding: '0 16px',
                 borderRadius: 'var(--r-md)',
                 background: connected ? 'color-mix(in srgb, var(--success) 12%, transparent)' : 'var(--bg-elevated)',
@@ -225,9 +225,9 @@ export default function WhatsAppPage() {
             {/* Steps */}
             <div style={{ flex: 1, minWidth: 160 }}>
               <p style={{ ...label, marginBottom: 12 }}>Como conectar</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {SETUP_STEPS.map((step, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                     <div style={{
                       width: 22, height: 22, borderRadius: 4, flexShrink: 0,
                       background: 'rgba(184,148,58,0.12)',
@@ -235,7 +235,7 @@ export default function WhatsAppPage() {
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                       <span style={{
-                        fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700,
+                        fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
                         color: 'var(--imi-gold-500)',
                       }}>
                         {i + 1}
@@ -285,7 +285,7 @@ export default function WhatsAppPage() {
               </p>
             </div>
             <div style={{
-              display: 'flex', alignItems: 'center', gap: 6,
+              display: 'flex', alignItems: 'center', gap: 8,
               padding: '4px 10px', borderRadius: 'var(--r-full)',
               background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
             }}>
@@ -296,7 +296,7 @@ export default function WhatsAppPage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {CONVERSATIONS.map((conv, i) => (
               <motion.div
                 key={conv.id}
@@ -317,7 +317,7 @@ export default function WhatsAppPage() {
                 }}>
                   <span style={{
                     fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 700,
-                    color: '#fff',
+                    color: 'var(--text-inverse)',
                   }}>
                     {conv.initials}
                   </span>
@@ -333,19 +333,19 @@ export default function WhatsAppPage() {
                     }}>
                       {conv.name}
                     </p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                       {conv.unread > 0 && (
                         <span style={{
                           minWidth: 18, height: 18, borderRadius: 4,
                           background: 'var(--success)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700,
-                          color: '#fff', padding: '0 5px',
+                          fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
+                          color: 'var(--text-inverse)', padding: '0 5px',
                         }}>
                           {conv.unread}
                         </span>
                       )}
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-tertiary)' }}>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-tertiary)' }}>
                         {conv.time}
                       </span>
                     </div>
@@ -361,7 +361,7 @@ export default function WhatsAppPage() {
 
                 {/* Action */}
                 <button style={{
-                  display: 'flex', alignItems: 'center', gap: 5,
+                  display: 'flex', alignItems: 'center', gap: 4,
                   height: 30, padding: '0 10px',
                   borderRadius: 'var(--r-md)',
                   background: 'var(--bg-muted)',
@@ -369,7 +369,7 @@ export default function WhatsAppPage() {
                   color: 'var(--text-secondary)',
                   fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 500,
                   cursor: 'pointer', flexShrink: 0,
-                  transition: 'all 150ms ease',
+                  transition: 'all var(--dur-1) var(--ease)',
                 }}>
                   <MessageCircle size={11} />
                   Ver Conversa
@@ -397,7 +397,7 @@ export default function WhatsAppPage() {
             </p>
           </div>
           <span style={{
-            fontSize: 10, fontWeight: 700, padding: '4px 10px',
+            fontSize: 11, fontWeight: 700, padding: '4px 10px',
             borderRadius: 'var(--r-full)',
             background: 'rgba(184,148,58,0.10)',
             color: 'var(--imi-gold-500)',
@@ -419,7 +419,7 @@ export default function WhatsAppPage() {
               style={{
                 ...elevated,
                 padding: 16,
-                display: 'flex', flexDirection: 'column', gap: 10,
+                display: 'flex', flexDirection: 'column', gap: 8,
               }}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
@@ -440,7 +440,7 @@ export default function WhatsAppPage() {
                   </p>
                 </div>
                 <span style={{
-                  fontSize: 9, fontWeight: 700, padding: '3px 8px',
+                  fontSize: 11, fontWeight: 700, padding: '4px 8px',
                   borderRadius: 'var(--r-full)',
                   background: 'rgba(184,148,58,0.10)',
                   color: 'var(--imi-gold-500)',
@@ -466,10 +466,10 @@ export default function WhatsAppPage() {
               </p>
 
               {/* Variables */}
-              <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                 {tpl.variables.map(v => (
                   <span key={v} style={{
-                    fontSize: 10, padding: '2px 7px', borderRadius: 4,
+                    fontSize: 11, padding: '2px 7px', borderRadius: 4,
                     background: 'var(--bg-muted)',
                     color: 'var(--imi-gold-500)',
                     fontFamily: 'var(--font-mono)',
@@ -484,7 +484,7 @@ export default function WhatsAppPage() {
               <div style={{ display: 'flex', gap: 8, marginTop: 2 }}>
                 <button
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
+                    display: 'flex', alignItems: 'center', gap: 8,
                     height: 30, padding: '0 12px',
                     borderRadius: 'var(--r-md)',
                     background: 'var(--bg-muted)',
@@ -492,7 +492,7 @@ export default function WhatsAppPage() {
                     color: 'var(--text-secondary)',
                     fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 500,
                     cursor: 'pointer',
-                    transition: 'all 150ms ease',
+                    transition: 'all var(--dur-1) var(--ease)',
                     opacity: 0.75,
                   }}
                   title="Disponível após integração Meta API"
@@ -503,7 +503,7 @@ export default function WhatsAppPage() {
                 <button
                   onClick={() => handleCopy(tpl.id, tpl.preview)}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
+                    display: 'flex', alignItems: 'center', gap: 8,
                     height: 30, padding: '0 12px',
                     borderRadius: 'var(--r-md)',
                     background: copiedId === tpl.id ? 'color-mix(in srgb, var(--success) 10%, transparent)' : 'var(--bg-muted)',
@@ -511,7 +511,7 @@ export default function WhatsAppPage() {
                     color: copiedId === tpl.id ? 'var(--success)' : 'var(--text-secondary)',
                     fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 500,
                     cursor: 'pointer',
-                    transition: 'all 150ms ease',
+                    transition: 'all var(--dur-1) var(--ease)',
                   }}
                 >
                   <Copy size={11} />
@@ -565,7 +565,7 @@ export default function WhatsAppPage() {
               height: 42, padding: '0 20px',
               borderRadius: 'var(--r-md)',
               background: 'var(--imi-gold-500)',
-              color: '#fff', textDecoration: 'none',
+              color: 'var(--text-inverse)', textDecoration: 'none',
               fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 600,
               flexShrink: 0,
               transition: 'opacity 180ms ease',
@@ -576,7 +576,7 @@ export default function WhatsAppPage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: 10, marginTop: 18 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: 8, marginTop: 18 }}>
           {[
             { icon: MessageCircle, label: 'Envio em Massa', desc: 'Disparo segmentado para leads e clientes' },
             { icon: Clock, label: 'Automação 24h', desc: 'Respostas automáticas via IA integrada' },
@@ -585,7 +585,7 @@ export default function WhatsAppPage() {
             <div key={feat.label} style={{
               ...elevated,
               padding: '12px 14px',
-              display: 'flex', alignItems: 'flex-start', gap: 10,
+              display: 'flex', alignItems: 'flex-start', gap: 8,
             }}>
               <div style={{
                 width: 30, height: 30, borderRadius: 'var(--r-md)',
