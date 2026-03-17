@@ -77,7 +77,7 @@ export function AIScore({
           style={{
             width: '100%',
             height: '3px',
-            borderRadius: 'var(--r-xs, 3px)',
+            borderRadius: 'var(--r-xs, 4px)',
             background: 'var(--bg-muted)',
             overflow: 'hidden',
           }}
@@ -87,7 +87,7 @@ export function AIScore({
               width: `${clamped}%`,
               height: '100%',
               background: color,
-              borderRadius: 'var(--r-xs, 3px)',
+              borderRadius: 'var(--r-xs, 4px)',
               transition: 'width 0.8s var(--ease-out)',
             }}
           />

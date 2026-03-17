@@ -14,14 +14,14 @@ import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeade
 const card: React.CSSProperties = {
   background: 'var(--bg-surface)',
   border: '1px solid var(--border-subtle)',
-  borderRadius: 'var(--r-xl, 16px)',
+  borderRadius: 'var(--r-xl, 4px)',
   boxShadow: 'var(--shadow-xs)',
 }
 
 const elevated: React.CSSProperties = {
   background: 'var(--bg-elevated)',
   border: '1px solid var(--border-subtle)',
-  borderRadius: 'var(--r-lg, 12px)',
+  borderRadius: 'var(--r-lg, 4px)',
 }
 
 const label: React.CSSProperties = {
@@ -229,7 +229,7 @@ export default function WhatsAppPage() {
                 {SETUP_STEPS.map((step, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                     <div style={{
-                      width: 22, height: 22, borderRadius: 11, flexShrink: 0,
+                      width: 22, height: 22, borderRadius: 4, flexShrink: 0,
                       background: 'rgba(184,148,58,0.12)',
                       border: '1.5px solid rgba(184,148,58,0.30)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -311,7 +311,7 @@ export default function WhatsAppPage() {
               >
                 {/* Avatar */}
                 <div style={{
-                  width: 42, height: 42, borderRadius: 21, flexShrink: 0,
+                  width: 42, height: 42, borderRadius: 4, flexShrink: 0,
                   background: conv.color,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
@@ -336,7 +336,7 @@ export default function WhatsAppPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                       {conv.unread > 0 && (
                         <span style={{
-                          minWidth: 18, height: 18, borderRadius: 9,
+                          minWidth: 18, height: 18, borderRadius: 4,
                           background: 'var(--success)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700,

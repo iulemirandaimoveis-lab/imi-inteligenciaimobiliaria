@@ -160,7 +160,7 @@ Por favor, gere um laudo de avaliação imobiliária completo seguindo a norma N
 
     const inputStyle: React.CSSProperties = {
         width: '100%', height: '42px', padding: '0 12px',
-        borderRadius: '10px', fontSize: '14px', outline: 'none',
+        borderRadius: '4px', fontSize: '14px', outline: 'none',
         background: T.bg, border: `1px solid ${T.border}`, color: T.text,
     }
     const inputWithIconStyle: React.CSSProperties = { ...inputStyle, paddingLeft: '36px' }

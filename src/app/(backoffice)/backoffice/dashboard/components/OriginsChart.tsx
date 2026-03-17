@@ -38,7 +38,7 @@ export default function OriginsChart({ data }: OriginsChartProps) {
                     </Pie>
                     <Tooltip
                         contentStyle={{
-                            borderRadius: '12px',
+                            borderRadius: '4px',
                             border: 'none',
                             boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'
                         }}

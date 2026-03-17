@@ -620,7 +620,7 @@ export function MobileBottomSheet({ isOpen, onClose, title, children, footer }: 
         style={{
           width: '100%', maxHeight: '88vh',
           background: 'var(--bg-elevated)',
-          borderRadius: '20px 20px 0 0',
+          borderRadius: '4px 4px 0 0',
           borderTop: `1px solid rgba(184,148,58,0.22)`,
           display: 'flex', flexDirection: 'column',
           boxShadow: '0 -8px 40px rgba(0,0,0,0.5)',
@@ -629,7 +629,7 @@ export function MobileBottomSheet({ isOpen, onClose, title, children, footer }: 
       >
         {/* Handle */}
         <div style={{
-          width: 36, height: 4, borderRadius: 2,
+          width: 36, height: 4, borderRadius: 4,
           background: 'rgba(255,255,255,0.15)',
           margin: '12px auto 0',
         }} />

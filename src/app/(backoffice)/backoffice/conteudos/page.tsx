@@ -105,7 +105,7 @@ export default function ConteudosPage() {
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px' }}>
                     <div style={{
-                      width: 40, height: 40, borderRadius: '10px',
+                      width: 40, height: 40, borderRadius: '4px',
                       background: tool.accent ? 'rgba(184,148,58,0.12)' : 'rgba(255,255,255,0.04)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
@@ -114,7 +114,7 @@ export default function ConteudosPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       {tool.badge && (
                         <span style={{
-                          fontSize: '9px', fontWeight: 700, padding: '2px 8px', borderRadius: '20px',
+                          fontSize: '9px', fontWeight: 700, padding: '2px 8px', borderRadius: '4px',
                           background: tool.accent ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.06)',
                           color: tool.accent ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
                           letterSpacing: '0.06em', textTransform: 'uppercase',

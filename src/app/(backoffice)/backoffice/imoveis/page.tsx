@@ -576,7 +576,7 @@ function DesktopImoveisList(props: SharedProps) {
           background: 'rgba(11,25,40,0.97)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(184,148,58,0.35)',
-          borderRadius: 14,
+          borderRadius: 4,
           padding: '12px 20px',
           display: 'flex', alignItems: 'center', gap: 16,
           boxShadow: '0 8px 48px rgba(0,0,0,0.6)',
@@ -1398,7 +1398,7 @@ function MobileImoveisList(props: SharedProps) {
               onClick={() => { setFilters(DEFAULT_FILTERS); setStatusFilter('') }}
               className="mob-btn-tap"
               style={{
-                flex: 1, height: 48, borderRadius: 10,
+                flex: 1, height: 48, borderRadius: 4,
                 background: 'transparent',
                 border: '1px solid rgba(184,148,58,0.25)',
                 color: 'var(--imi-gold-500)',
@@ -1412,7 +1412,7 @@ function MobileImoveisList(props: SharedProps) {
               onClick={() => setFilterSheetOpen(false)}
               className="mob-btn-tap"
               style={{
-                flex: 2, height: 48, borderRadius: 10,
+                flex: 2, height: 48, borderRadius: 4,
                 background: 'var(--imi-gold-500)', border: 'none',
                 color: 'var(--bg-base)',
                 fontFamily: 'var(--font-sans)',

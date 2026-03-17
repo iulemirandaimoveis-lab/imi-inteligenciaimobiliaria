@@ -51,7 +51,7 @@ function ShimmerBlock({ style }: { style?: React.CSSProperties }) {
         background: 'linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-hover) 50%, var(--bg-muted) 75%)',
         backgroundSize: '200% 100%',
         animation: 'cs-shimmer 1.6s ease-in-out infinite',
-        borderRadius: 'var(--r-md, 8px)',
+        borderRadius: 'var(--r-md, 4px)',
         ...style,
       }}
     />
@@ -62,13 +62,13 @@ function LoadingContent({ height }: { height: number }) {
   return (
     <div style={{ padding: '20px 20px 20px' }} aria-hidden="true">
       {/* Label placeholder */}
-      <ShimmerBlock style={{ height: 10, width: 80, marginBottom: 10, borderRadius: 'var(--r-xs, 3px)' }} />
+      <ShimmerBlock style={{ height: 10, width: 80, marginBottom: 10, borderRadius: 'var(--r-xs, 4px)' }} />
       {/* Title placeholder */}
-      <ShimmerBlock style={{ height: 18, width: 160, marginBottom: 8, borderRadius: 'var(--r-sm, 6px)' }} />
+      <ShimmerBlock style={{ height: 18, width: 160, marginBottom: 8, borderRadius: 'var(--r-sm, 4px)' }} />
       {/* Value placeholder */}
-      <ShimmerBlock style={{ height: 32, width: 110, marginBottom: 20, borderRadius: 'var(--r-sm, 6px)' }} />
+      <ShimmerBlock style={{ height: 32, width: 110, marginBottom: 20, borderRadius: 'var(--r-sm, 4px)' }} />
       {/* Chart area placeholder */}
-      <ShimmerBlock style={{ height, borderRadius: 'var(--r-lg, 12px)' }} />
+      <ShimmerBlock style={{ height, borderRadius: 'var(--r-lg, 4px)' }} />
     </div>
   )
 }
@@ -78,7 +78,7 @@ function LoadingContent({ height }: { height: number }) {
 export const chartTooltipStyle: React.CSSProperties = {
   background: 'var(--bg-elevated)',
   border: '1px solid var(--border-default)',
-  borderRadius: 'var(--r-lg, 12px)',
+  borderRadius: 'var(--r-lg, 4px)',
   boxShadow: 'var(--shadow-md)',
   fontFamily: 'var(--font-mono)',
   fontSize: 11,
@@ -119,7 +119,7 @@ export function ChartShell({
         style={{
           background: 'var(--bg-surface)',
           border: '1px solid var(--border-subtle)',
-          borderRadius: 'var(--r-xl, 16px)',
+          borderRadius: 'var(--r-xl, 4px)',
           boxShadow: 'var(--shadow-xs)',
           overflow: 'hidden',
           ...style,

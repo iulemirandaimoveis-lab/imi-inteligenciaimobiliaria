@@ -95,7 +95,7 @@ function MessageBubble({ msg, isOwn }: { msg: ChatMessage; isOwn: boolean }) {
                 )}
                 <div style={{
                     padding: '8px 12px',
-                    borderRadius: isOwn ? '12px 12px 4px 12px' : '12px 12px 12px 4px',
+                    borderRadius: '4px',
                     background: isOwn ? T.accent : T.surface,
                     color: isOwn ? T.textInverse : T.text,
                     fontSize: 14, lineHeight: '20px',

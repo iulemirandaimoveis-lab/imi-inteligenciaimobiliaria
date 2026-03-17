@@ -88,7 +88,7 @@ export function FilterTabs({ tabs, active, onChange, className = '' }: FilterTab
                   background: isActive ? 'rgba(184,148,58,0.12)' : 'var(--bg-muted)',
                   color: isActive ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
                   padding: '0px 5px',
-                  borderRadius: '8px',
+                  borderRadius: '4px',
                   lineHeight: '16px',
                   minWidth: '18px',
                   textAlign: 'center',

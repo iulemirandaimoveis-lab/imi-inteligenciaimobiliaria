@@ -73,7 +73,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                 flexShrink: 0,
                                 height: 32, minWidth: 48,
                                 padding: '0 14px',
-                                borderRadius: 999,
+                                borderRadius: 4,
                                 background: isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.08)',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.2)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
@@ -98,7 +98,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                     <div style={{
                         background: 'var(--bg-elevated)',
                         border: '1px solid rgba(184,148,58,0.12)',
-                        borderRadius: 12,
+                        borderRadius: 4,
                         padding: '12px 14px',
                         marginBottom: 12,
                     }}>
@@ -139,7 +139,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                 style={{
                                     background: 'var(--bg-elevated)',
                                     border: '1px solid rgba(184,148,58,0.12)',
-                                    borderRadius: 12,
+                                    borderRadius: 4,
                                     padding: '16px',
                                 }}
                             >
@@ -148,7 +148,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                         <div style={{
                                             width: 32, height: 32,
-                                            borderRadius: 8,
+                                            borderRadius: 4,
                                             background: `${color}18`,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                                             flexShrink: 0,
@@ -209,7 +209,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                     marginTop: 14,
                     background: 'rgba(251,191,36,0.06)',
                     border: '1px solid rgba(251,191,36,0.18)',
-                    borderRadius: 12,
+                    borderRadius: 4,
                     padding: '12px 14px',
                     display: 'flex', gap: 10,
                 }}>
@@ -310,10 +310,10 @@ export default function ImovelHeatmapPage() {
     if (loading) {
         return (
             <div className="max-w-3xl mx-auto pb-24 space-y-4 animate-pulse">
-                <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 10, width: '40%', opacity: 0.5 }} />
-                <div style={{ height: 160, background: 'var(--bo-card)', borderRadius: 20, opacity: 0.4 }} />
+                <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 4, width: '40%', opacity: 0.5 }} />
+                <div style={{ height: 160, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.4 }} />
                 {[1, 2, 3, 4].map(i => (
-                    <div key={i} style={{ height: 56, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.3 }} />
+                    <div key={i} style={{ height: 56, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.3 }} />
                 ))}
             </div>
         )

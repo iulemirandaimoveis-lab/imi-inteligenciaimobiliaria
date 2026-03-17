@@ -171,7 +171,7 @@ export default function ContratosPage() {
               style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--r-xl, 16px)',
+                borderRadius: 'var(--r-xl, 4px)',
                 padding: '16px 20px',
               }}
             >
@@ -248,13 +248,13 @@ export default function ContratosPage() {
                                         style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                                         <div className="w-10 h-10 rounded-xl flex-shrink-0" style={{ background: T.elevated }} />
                                         <div className="flex-1 space-y-2">
-                                            <div style={{ height: '10px', width: '30%', borderRadius: '6px', background: T.elevated }} />
-                                            <div style={{ height: '13px', width: '55%', borderRadius: '6px', background: T.elevated }} />
-                                            <div style={{ height: '10px', width: '45%', borderRadius: '6px', background: T.elevated }} />
+                                            <div style={{ height: '10px', width: '30%', borderRadius: '4px', background: T.elevated }} />
+                                            <div style={{ height: '13px', width: '55%', borderRadius: '4px', background: T.elevated }} />
+                                            <div style={{ height: '10px', width: '45%', borderRadius: '4px', background: T.elevated }} />
                                         </div>
                                         <div style={{ width: '60px', display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' }}>
-                                            <div style={{ height: '10px', width: '50px', borderRadius: '6px', background: T.elevated }} />
-                                            <div style={{ height: '10px', width: '40px', borderRadius: '6px', background: T.elevated }} />
+                                            <div style={{ height: '10px', width: '50px', borderRadius: '4px', background: T.elevated }} />
+                                            <div style={{ height: '10px', width: '40px', borderRadius: '4px', background: T.elevated }} />
                                         </div>
                                     </div>
                                 ))}

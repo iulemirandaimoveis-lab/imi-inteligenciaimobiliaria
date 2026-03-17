@@ -106,7 +106,7 @@ export default function UsuariosPage() {
 
   const inputStyle: React.CSSProperties = {
     background: T.elevated, border: `1px solid ${T.border}`, color: T.text,
-    height: '44px', borderRadius: '12px', padding: '0 12px', fontSize: '13px', outline: 'none',
+    height: '44px', borderRadius: '4px', padding: '0 12px', fontSize: '13px', outline: 'none',
   }
 
 

@@ -129,7 +129,7 @@ const inputStyle: React.CSSProperties = {
   background: T.elevated,
   border: `1px solid ${T.border}`,
   color: T.text,
-  borderRadius: 8,
+  borderRadius: 4,
   padding: '11px 14px',
   fontSize: 14,
   width: '100%',
@@ -272,7 +272,7 @@ function StepIdentificacao({ form, errors, developers, set, isMobile }: {
                 style={{
                   background: sel ? T.goldBgHi : T.elevated,
                   border: `1.5px solid ${sel ? T.gold : T.border}`,
-                  borderRadius: 10,
+                  borderRadius: 4,
                   padding: isMobile ? '12px 8px' : '16px 10px',
                   cursor: 'pointer',
                   textAlign: 'center',
@@ -283,7 +283,7 @@ function StepIdentificacao({ form, errors, developers, set, isMobile }: {
                 }}
               >
                 <div style={{
-                  width: 36, height: 36, borderRadius: 10,
+                  width: 36, height: 36, borderRadius: 4,
                   background: sel ? `rgba(184,148,58,0.15)` : 'rgba(255,255,255,0.04)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
@@ -353,14 +353,14 @@ function StepIdentificacao({ form, errors, developers, set, isMobile }: {
         padding: '14px 16px',
         background: form.is_highlighted ? T.goldBg : T.elevated,
         border: `1px solid ${form.is_highlighted ? T.border : 'rgba(255,255,255,0.06)'}`,
-        borderRadius: 10,
+        borderRadius: 4,
         cursor: 'pointer',
         transition: 'all 150ms ease',
       }}
         onClick={() => set('is_highlighted', !form.is_highlighted)}
       >
         <div style={{
-          width: 40, height: 22, borderRadius: 11,
+          width: 40, height: 22, borderRadius: 4,
           background: form.is_highlighted ? T.gold : T.raised,
           border: `1px solid ${form.is_highlighted ? T.gold : T.border}`,
           position: 'relative', transition: 'all 200ms ease', flexShrink: 0,
@@ -533,7 +533,7 @@ function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
             <div key={k} style={{
               background: T.elevated,
               border: `1px solid ${T.border}`,
-              borderRadius: 10, padding: '12px',
+              borderRadius: 4, padding: '12px',
               display: 'flex', flexDirection: 'column', gap: 6,
             }}>
               <span style={{ fontSize: 10, fontWeight: 700, color: T.textDim,
@@ -566,7 +566,7 @@ function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
             <span style={{
               fontSize: 10, fontWeight: 700, color: T.gold,
               background: T.goldBg, border: `1px solid ${T.border}`,
-              borderRadius: 99, padding: '2px 8px',
+              borderRadius: 4, padding: '2px 8px',
               fontFamily: 'Figtree, sans-serif',
             }}>{form.features.length} selecionado{form.features.length > 1 ? 's' : ''}</span>
           )}
@@ -584,7 +584,7 @@ function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
                 style={{
                   background: sel ? T.goldBgHi : T.elevated,
                   border: `1.5px solid ${sel ? T.gold : T.border}`,
-                  borderRadius: 99,
+                  borderRadius: 4,
                   padding: '7px 13px',
                   fontSize: 12,
                   color: sel ? T.gold : T.textSub,
@@ -632,7 +632,7 @@ function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
           <div style={{
             marginTop: 10, padding: '8px 12px',
             background: T.goldBg, border: `1px solid ${T.border}`,
-            borderRadius: 8, fontSize: 12, color: T.gold,
+            borderRadius: 4, fontSize: 12, color: T.gold,
             fontFamily: 'Figtree, sans-serif',
             display: 'flex', alignItems: 'center', gap: 6,
           }}>
@@ -738,7 +738,7 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
           onClick={() => fileInputRef.current?.click()}
           style={{
             border: `2px dashed ${isDragging ? T.gold : T.border}`,
-            borderRadius: 12,
+            borderRadius: 4,
             padding: isMobile ? '28px 20px' : '40px 32px',
             textAlign: 'center',
             cursor: 'pointer',
@@ -756,7 +756,7 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
             onChange={handleImageInput}
           />
           <div style={{
-            width: 56, height: 56, borderRadius: 14,
+            width: 56, height: 56, borderRadius: 4,
             background: isDragging ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.04)',
             border: `1px solid ${isDragging ? T.gold : T.border}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -784,7 +784,7 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
           }}>
             {form.images.map((file, idx) => (
               <div key={idx} style={{
-                position: 'relative', borderRadius: 10, overflow: 'hidden',
+                position: 'relative', borderRadius: 4, overflow: 'hidden',
                 background: T.elevated, aspectRatio: '4/3',
                 boxShadow: idx === 0 ? `0 0 0 2px ${T.gold}` : 'none',
               }}>
@@ -840,7 +840,7 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
               type="button"
               onClick={() => fileInputRef.current?.click()}
               style={{
-                borderRadius: 10, aspectRatio: '4/3',
+                borderRadius: 4, aspectRatio: '4/3',
                 border: `2px dashed ${T.border}`,
                 background: 'transparent',
                 cursor: 'pointer',
@@ -864,7 +864,7 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
           padding: '12px 14px',
           background: T.elevated,
           border: `1px solid ${T.border}`,
-          borderRadius: 8, cursor: 'pointer',
+          borderRadius: 4, cursor: 'pointer',
         }}>
           <Upload size={15} color={T.textDim} />
           <span style={{ fontSize: 13, color: T.textSub, fontFamily: 'Figtree, sans-serif' }}>
@@ -893,7 +893,7 @@ function StepMidia({ form, set, handleDrop, handleImageInput, removeImage, isMob
           padding: '12px 14px',
           background: T.elevated,
           border: `1px solid ${form.brochure ? T.gold : T.border}`,
-          borderRadius: 8, cursor: 'pointer',
+          borderRadius: 4, cursor: 'pointer',
         }}>
           <Upload size={15} color={form.brochure ? T.gold : T.textDim} />
           <span style={{ fontSize: 13, color: form.brochure ? T.gold : T.textSub,
@@ -1012,7 +1012,7 @@ function StepProgressBar({ step, setStep, canJumpTo }: {
               <div style={{
                 flex: 1, height: 2, margin: '0 6px',
                 background: done ? T.gold : T.border,
-                borderRadius: 2, transition: 'background 300ms ease',
+                borderRadius: 4, transition: 'background 300ms ease',
               }} />
             )}
           </div>
@@ -1422,7 +1422,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
 
           <div style={{
             background: T.surface,
-            borderRadius: 14,
+            borderRadius: 4,
             border: `1px solid ${T.border}`,
             padding: 28,
             animation: 'slideDown 250ms ease both',
@@ -1435,7 +1435,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
         <div style={{ position: 'sticky', top: 96 }}>
           {/* Progress summary */}
           <div style={{
-            background: T.surface, borderRadius: 12,
+            background: T.surface, borderRadius: 4,
             border: `1px solid ${T.border}`, padding: 18,
             marginBottom: 16,
           }}>
@@ -1480,7 +1480,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
 
           {/* Tips */}
           <div style={{
-            background: T.goldBg, borderRadius: 12,
+            background: T.goldBg, borderRadius: 4,
             border: `1px solid ${T.border}`, padding: 18,
           }}>
             <div style={{
@@ -1524,7 +1524,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
           style={{
             background: 'transparent',
             border: `1px solid ${step === 1 ? 'rgba(184,148,58,0.08)' : T.border}`,
-            borderRadius: 8, padding: '10px 20px',
+            borderRadius: 4, padding: '10px 20px',
             fontSize: 13, fontWeight: 600,
             color: step === 1 ? T.textDim : T.textSub,
             cursor: step === 1 ? 'not-allowed' : 'pointer',
@@ -1551,7 +1551,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
             type="button"
             onClick={next}
             style={{
-              background: T.gold, border: 'none', borderRadius: 8,
+              background: T.gold, border: 'none', borderRadius: 4,
               padding: '10px 24px', fontSize: 13, fontWeight: 700,
               color: T.navy, cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: 8,
@@ -1571,7 +1571,7 @@ function DesktopNovo(props: DesktopStepProps & { renderStep: (mob?: boolean) => 
             style={{
               background: saving ? T.elevated : T.gold,
               border: saving ? `1px solid ${T.border}` : 'none',
-              borderRadius: 8, padding: '10px 28px',
+              borderRadius: 4, padding: '10px 28px',
               fontSize: 13, fontWeight: 700,
               color: saving ? T.textSub : T.navy,
               cursor: saving ? 'not-allowed' : 'pointer',
@@ -1661,7 +1661,7 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
                 <div style={{
                   flex: 1, height: 2, margin: '0 4px',
                   background: done ? T.gold : T.border,
-                  borderRadius: 2, transition: 'background 300ms ease',
+                  borderRadius: 4, transition: 'background 300ms ease',
                 }} />
               )}
             </div>
@@ -1701,7 +1701,7 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
           disabled={step === 1}
           style={{
             flex: '0 0 auto',
-            width: 48, height: 48, borderRadius: 10,
+            width: 48, height: 48, borderRadius: 4,
             background: 'transparent',
             border: `1px solid ${step === 1 ? 'rgba(184,148,58,0.08)' : T.border}`,
             cursor: step === 1 ? 'not-allowed' : 'pointer',
@@ -1717,7 +1717,7 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
             type="button"
             onClick={next}
             style={{
-              flex: 1, height: 48, borderRadius: 10,
+              flex: 1, height: 48, borderRadius: 4,
               background: T.gold, border: 'none',
               fontSize: 14, fontWeight: 700, color: T.navy,
               cursor: 'pointer',
@@ -1735,7 +1735,7 @@ function MobileNovo(props: StepProps & { renderStep: (mob?: boolean) => React.Re
             onClick={handleSave}
             disabled={saving}
             style={{
-              flex: 1, height: 48, borderRadius: 10,
+              flex: 1, height: 48, borderRadius: 4,
               background: saving ? T.elevated : T.gold,
               border: saving ? `1px solid ${T.border}` : 'none',
               fontSize: 14, fontWeight: 700,

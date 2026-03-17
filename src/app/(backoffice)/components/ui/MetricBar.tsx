@@ -45,7 +45,7 @@ export function MetricBar({ label, value, valueLabel, color, className = '' }: M
         style={{
           width: '100%',
           height: '5px',
-          borderRadius: 'var(--r-xs, 3px)',
+          borderRadius: 'var(--r-xs, 4px)',
           background: 'var(--bg-muted)',
           overflow: 'hidden',
         }}
@@ -55,7 +55,7 @@ export function MetricBar({ label, value, valueLabel, color, className = '' }: M
             width: `${clamped}%`,
             height: '100%',
             background: barColor,
-            borderRadius: 'var(--r-xs, 3px)',
+            borderRadius: 'var(--r-xs, 4px)',
             transition: 'width 0.9s var(--ease-out)',
           }}
         />

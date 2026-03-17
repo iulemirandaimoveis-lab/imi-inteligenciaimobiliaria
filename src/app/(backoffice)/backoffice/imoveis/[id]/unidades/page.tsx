@@ -121,7 +121,7 @@ function MobileUnidades({
                             key={card.label}
                             style={{
                                 background: 'var(--bg-elevated)',
-                                borderRadius: 12,
+                                borderRadius: 4,
                                 padding: 14,
                                 border: '1px solid rgba(184,148,58,0.10)',
                             }}
@@ -161,7 +161,7 @@ function MobileUnidades({
                     height: 44,
                     background: 'var(--bg-elevated)',
                     border: `1px solid ${searchFocused ? 'rgba(184,148,58,0.5)' : 'rgba(184,148,58,0.15)'}`,
-                    borderRadius: 10,
+                    borderRadius: 4,
                     padding: '0 14px',
                     transition: 'border-color 150ms ease',
                 }}>
@@ -196,7 +196,7 @@ function MobileUnidades({
                             onClick={() => setSearchTerm('')}
                             className="mob-btn-tap"
                             style={{
-                                width: 20, height: 20, borderRadius: 999,
+                                width: 20, height: 20, borderRadius: 4,
                                 background: '#5C6B7D', border: 'none', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 padding: 0,
@@ -231,7 +231,7 @@ function MobileUnidades({
                                 flexShrink: 0,
                                 height: 32,
                                 padding: '0 14px',
-                                borderRadius: 999,
+                                borderRadius: 4,
                                 background: isActive ? 'var(--imi-gold-500)' : 'transparent',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
@@ -262,7 +262,7 @@ function MobileUnidades({
                         textAlign: 'center',
                     }}>
                         <div style={{
-                            width: 64, height: 64, borderRadius: 16,
+                            width: 64, height: 64, borderRadius: 4,
                             background: 'rgba(184,148,58,0.06)',
                             border: '1px solid rgba(184,148,58,0.18)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -290,7 +290,7 @@ function MobileUnidades({
                                 onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/nova`)}
                                 className="mob-btn-tap"
                                 style={{
-                                    height: 44, padding: '0 24px', borderRadius: 10,
+                                    height: 44, padding: '0 24px', borderRadius: 4,
                                     background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
                                     fontFamily: 'var(--font-montserrat, sans-serif)',
                                     fontSize: 12, fontWeight: 700, letterSpacing: '1px',
@@ -312,7 +312,7 @@ function MobileUnidades({
                                     onClick={() => router.push(`/backoffice/imoveis/${id}/unidades/${unidade.id}`)}
                                     style={{
                                         background: 'var(--bg-elevated)',
-                                        borderRadius: 12,
+                                        borderRadius: 4,
                                         padding: 14,
                                         border: unidade.is_highlighted
                                             ? '1px solid rgba(184,148,58,0.55)'
@@ -358,7 +358,7 @@ function MobileUnidades({
                                             alignItems: 'center',
                                             gap: 4,
                                             padding: '4px 9px',
-                                            borderRadius: 999,
+                                            borderRadius: 4,
                                             background: st.bg,
                                             color: st.color,
                                             fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -469,7 +469,7 @@ function MobileUnidades({
                     bottom: `calc(72px + env(safe-area-inset-bottom, 0px))`,
                     height: 52,
                     padding: '0 20px',
-                    borderRadius: 26,
+                    borderRadius: 4,
                     background: 'var(--imi-gold-500)',
                     border: 'none',
                     cursor: 'pointer',

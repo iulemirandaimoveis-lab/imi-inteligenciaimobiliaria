@@ -17,14 +17,14 @@ import { PageIntelHeader } from '../../components/ui'
 const card: React.CSSProperties = {
   background: 'var(--bg-surface)',
   border: '1px solid var(--border-subtle)',
-  borderRadius: 'var(--r-xl, 16px)',
+  borderRadius: 'var(--r-xl, 4px)',
   boxShadow: 'var(--shadow-xs)',
 }
 
 const elevated: React.CSSProperties = {
   background: 'var(--bg-elevated)',
   border: '1px solid var(--border-subtle)',
-  borderRadius: 'var(--r-lg, 12px)',
+  borderRadius: 'var(--r-lg, 4px)',
 }
 
 const inputBase: React.CSSProperties = {
@@ -33,7 +33,7 @@ const inputBase: React.CSSProperties = {
   padding: '0 14px',
   background: 'var(--bg-elevated)',
   border: '1.5px solid var(--border-default)',
-  borderRadius: 'var(--r-md, 8px)',
+  borderRadius: 'var(--r-md, 4px)',
   color: 'var(--text-primary)',
   fontFamily: 'var(--font-sans)',
   fontSize: 14,
@@ -73,7 +73,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
       role="switch"
       aria-checked={checked}
       style={{
-        width: 44, height: 24, borderRadius: 12, position: 'relative',
+        width: 44, height: 24, borderRadius: 4, position: 'relative',
         background: checked ? 'var(--imi-gold-500)' : 'var(--bg-muted)',
         border: checked ? 'none' : '1.5px solid var(--border-default)',
         cursor: 'pointer', transition: 'all 200ms ease', flexShrink: 0,
@@ -83,7 +83,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
       <span style={{
         position: 'absolute', top: checked ? 2 : 1,
         left: checked ? 22 : 2,
-        width: 20, height: 20, borderRadius: 10,
+        width: 20, height: 20, borderRadius: 4,
         background: checked ? '#fff' : 'var(--text-tertiary)',
         transition: 'all 200ms ease',
         boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
@@ -409,7 +409,7 @@ export default function SettingsPage() {
                 {/* Avatar Circle */}
                 <div style={{ position: 'relative', flexShrink: 0 }}>
                   <div style={{
-                    width: 80, height: 80, borderRadius: 40,
+                    width: 80, height: 80, borderRadius: 4,
                     overflow: 'hidden',
                     background: 'rgba(184,148,58,0.15)',
                     border: '2.5px solid rgba(184,148,58,0.35)',
@@ -435,7 +435,7 @@ export default function SettingsPage() {
                   </div>
                   {uploadingAvatar && (
                     <div style={{
-                      position: 'absolute', inset: 0, borderRadius: 40,
+                      position: 'absolute', inset: 0, borderRadius: 4,
                       background: 'rgba(0,0,0,0.50)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>

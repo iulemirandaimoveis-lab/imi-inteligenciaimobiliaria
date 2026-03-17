@@ -133,7 +133,7 @@ export default function FinanceiroPage() {
 
   const inputStyle = {
     width: '100%', height: '44px', padding: '0 12px',
-    borderRadius: '10px', fontSize: '13px', color: 'var(--bo-text)',
+    borderRadius: '4px', fontSize: '13px', color: 'var(--bo-text)',
     background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
     outline: 'none', boxSizing: 'border-box' as const,
   }
@@ -141,13 +141,13 @@ export default function FinanceiroPage() {
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div style={{ height: '72px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ height: '72px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
         <div style={{ display: 'flex', gap: '12px' }}>
           {[1,2,3,4].map(i => (
-            <div key={i} style={{ flex: 1, height: '88px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} style={{ flex: 1, height: '88px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
           ))}
         </div>
-        <div style={{ height: '300px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        <div style={{ height: '300px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', animation: 'pulse 1.5s ease-in-out infinite' }} />
       </div>
     )
   }
@@ -174,7 +174,7 @@ export default function FinanceiroPage() {
                 title="Exportar CSV do mês atual"
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '38px', padding: '0 14px', borderRadius: '12px',
+                  height: '38px', padding: '0 14px', borderRadius: '4px',
                   fontSize: '12px', fontWeight: 600, color: 'var(--bo-text-muted)',
                   background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
                   cursor: 'pointer', flexShrink: 0,
@@ -188,7 +188,7 @@ export default function FinanceiroPage() {
                 onClick={() => setShowForm(true)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '38px', padding: '0 18px', borderRadius: '12px',
+                  height: '38px', padding: '0 18px', borderRadius: '4px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
                   background: 'var(--bo-accent)',
                   boxShadow: '0 4px 14px color-mix(in srgb, var(--bo-accent) 28%, transparent)',
@@ -246,7 +246,7 @@ export default function FinanceiroPage() {
               onClick={() => setShowForm(true)}
               style={{
                 marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
-                height: '38px', padding: '0 18px', borderRadius: '12px',
+                height: '38px', padding: '0 18px', borderRadius: '4px',
                 fontSize: '13px', fontWeight: 700, color: '#fff',
                 background: 'var(--bo-accent)',
                 border: 'none', cursor: 'pointer',
@@ -282,7 +282,7 @@ export default function FinanceiroPage() {
                       {t.description}
                     </p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'var(--bo-surface)', padding: '1px 6px', borderRadius: '6px', border: '1px solid var(--bo-border)' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--bo-text-muted)', background: 'var(--bo-surface)', padding: '1px 6px', borderRadius: '4px', border: '1px solid var(--bo-border)' }}>
                         {t.category}
                       </span>
                       {t.due_date && (
@@ -304,7 +304,7 @@ export default function FinanceiroPage() {
                           onClick={() => setPixTx(t)}
                           title="Gerar cobrança Pix"
                           style={{
-                            width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
+                            width: '32px', height: '32px', borderRadius: '4px', flexShrink: 0,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             background: 'var(--success-bg, rgba(93,184,135,0.12))', border: '1px solid var(--border-subtle)',
                             cursor: 'pointer',
@@ -317,7 +317,7 @@ export default function FinanceiroPage() {
                           onClick={() => markPaid(t.id)}
                           title="Marcar como pago"
                           style={{
-                            width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
+                            width: '32px', height: '32px', borderRadius: '4px', flexShrink: 0,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             background: 'var(--s-done-bg)', border: 'none', cursor: 'pointer',
                           }}
@@ -355,7 +355,7 @@ export default function FinanceiroPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            style={{ width: '100%', maxWidth: '480px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '20px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
+            style={{ width: '100%', maxWidth: '480px', background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--bo-text)' }}>Novo Lançamento</h3>
@@ -369,7 +369,7 @@ export default function FinanceiroPage() {
               {(['receita', 'despesa'] as const).map(tp => (
                 <button key={tp} onClick={() => setForm(f => ({ ...f, type: tp }))}
                   style={{
-                    flex: 1, height: '40px', borderRadius: '10px', fontSize: '13px', fontWeight: 600,
+                    flex: 1, height: '40px', borderRadius: '4px', fontSize: '13px', fontWeight: 600,
                     cursor: 'pointer', transition: 'all 0.18s ease',
                     background: form.type === tp ? (tp === 'receita' ? 'var(--s-done-bg)' : 'var(--s-hot-bg)') : 'var(--bo-surface)',
                     color: form.type === tp ? (tp === 'receita' ? 'var(--s-done)' : 'var(--s-hot)') : 'var(--bo-text-muted)',
@@ -422,11 +422,11 @@ export default function FinanceiroPage() {
 
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={() => setShowForm(false)}
-                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
+                style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--bo-surface)', color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)' }}>
                 Cancelar
               </button>
               <button onClick={handleSubmit} disabled={saving}
-                style={{ flex: 1, height: '44px', borderRadius: '12px', fontSize: '13px', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.7 : 1 }}>
+                style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: saving ? 0.7 : 1 }}>
                 {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={16} />}
                 {saving ? 'Salvando...' : 'Salvar'}
               </button>

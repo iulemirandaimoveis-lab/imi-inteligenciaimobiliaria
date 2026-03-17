@@ -33,7 +33,7 @@ function ShimmerRow({ cols }: { cols: number }) {
           <div
             style={{
               height: 14,
-              borderRadius: 'var(--r-xs, 3px)',
+              borderRadius: 'var(--r-xs, 4px)',
               background: 'linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-hover) 50%, var(--bg-muted) 75%)',
               backgroundSize: '200% 100%',
               width: `${55 + (i * 17) % 40}%`,

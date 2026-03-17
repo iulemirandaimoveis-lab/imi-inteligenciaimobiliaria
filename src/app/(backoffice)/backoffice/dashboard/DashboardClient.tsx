@@ -230,7 +230,7 @@ function ProximosCompromissosWidget() {
                         >
                             <div className="flex-shrink-0 flex flex-col items-center justify-center"
                                 style={{
-                                    width: 36, height: 36, borderRadius: 8,
+                                    width: 36, height: 36, borderRadius: 4,
                                     background: 'rgba(96,165,250,0.10)',
                                     border: '1px solid rgba(96,165,250,0.20)',
                                 }}>
@@ -971,7 +971,7 @@ export default function DashboardClient({
                                         contentStyle={{
                                             background: 'var(--bg-elevated)',
                                             border: '1px solid var(--border-default)',
-                                            borderRadius: 10,
+                                            borderRadius: 4,
                                             color: 'var(--text-primary)',
                                             fontSize: 11,
                                             boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
@@ -1233,7 +1233,7 @@ export default function DashboardClient({
             >
                 {/* Section header */}
                 <div className="flex items-center gap-3 mb-3">
-                    <div style={{ width: 4, height: 14, borderRadius: 2, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
+                    <div style={{ width: 4, height: 14, borderRadius: 4, background: 'var(--imi-gold-500)', flexShrink: 0 }} />
                     <span style={{
                         fontSize: '9px', fontWeight: 700,
                         color: 'var(--text-tertiary)',

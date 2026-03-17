@@ -454,11 +454,11 @@ export default function QRGeneratorPage() {
 
                 <div className="flex flex-col items-center gap-5 p-8">
                     {/* QR */}
-                    <div className="relative" style={{ background: '#fff', borderRadius: 20, padding: 14, boxShadow: '0 12px 48px rgba(0,0,0,0.5)' }}>
+                    <div className="relative" style={{ background: '#fff', borderRadius: 4, padding: 14, boxShadow: '0 12px 48px rgba(0,0,0,0.5)' }}>
                         {qrDataUrl ? (
                             <>
-                                <img src={qrDataUrl} alt="QR Code" style={{ width: 168, height: 168, display: 'block', borderRadius: 6 }} />
-                                <div style={{ position: 'absolute', bottom: 18, right: 18, background: '#486581', color: '#fff', fontSize: 7, fontWeight: 900, padding: '2px 5px', borderRadius: 3, letterSpacing: '0.05em' }}>IMI</div>
+                                <img src={qrDataUrl} alt="QR Code" style={{ width: 168, height: 168, display: 'block', borderRadius: 4 }} />
+                                <div style={{ position: 'absolute', bottom: 18, right: 18, background: '#486581', color: '#fff', fontSize: 7, fontWeight: 900, padding: '2px 5px', borderRadius: 4, letterSpacing: '0.05em' }}>IMI</div>
                             </>
                         ) : (
                             <div style={{ width: 168, height: 168, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>

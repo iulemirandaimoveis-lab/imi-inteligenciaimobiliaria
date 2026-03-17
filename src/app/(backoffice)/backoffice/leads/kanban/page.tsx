@@ -79,7 +79,7 @@ function LeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
                 whileHover={{ scale: 1.01 }}
                 style={{
                     background: 'var(--bo-elevated)',
-                    borderRadius: 16,
+                    borderRadius: 4,
                     padding: '14px 14px 12px',
                     borderLeft: `3px solid ${stageColor}`,
                     border: `1px solid var(--bo-border)`,
@@ -97,7 +97,7 @@ function LeadCard({ lead, stageColor }: { lead: any; stageColor: string }) {
                     {badge && (
                         <span style={{
                             fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em',
-                            padding: '3px 7px', borderRadius: 6,
+                            padding: '3px 7px', borderRadius: 4,
                             color: badge.color, background: badge.bg,
                             flexShrink: 0, whiteSpace: 'nowrap',
                         }}>
@@ -197,7 +197,7 @@ export default function PipelineKanbanPage() {
                         <div style={{ display: 'flex', gap: 8 }}>
                             <Link href="/backoffice/campanhas/ads" style={{
                                 display: 'flex', alignItems: 'center', gap: 6,
-                                height: 36, padding: '0 14px', borderRadius: 10,
+                                height: 36, padding: '0 14px', borderRadius: 4,
                                 background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
                                 color: 'var(--bo-text-muted)', fontSize: 12, fontWeight: 600, textDecoration: 'none',
                             }}>
@@ -205,7 +205,7 @@ export default function PipelineKanbanPage() {
                             </Link>
                             <Link href="/backoffice/leads/novo" style={{
                                 display: 'flex', alignItems: 'center', gap: 6,
-                                height: 36, padding: '0 16px', borderRadius: 10,
+                                height: 36, padding: '0 16px', borderRadius: 4,
                                 background: 'var(--bo-accent)',
                                 color: 'var(--text-inverse)', fontSize: 12, fontWeight: 700, textDecoration: 'none',
                             }}>
@@ -231,7 +231,7 @@ export default function PipelineKanbanPage() {
                         placeholder="Buscar lead no pipeline..."
                         style={{
                             width: '100%', height: 42, paddingLeft: 36, paddingRight: 40,
-                            borderRadius: 12, background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
+                            borderRadius: 4, background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
                             color: 'var(--bo-text)', fontSize: 13, outline: 'none', boxSizing: 'border-box',
                         }}
                     />
@@ -283,7 +283,7 @@ export default function PipelineKanbanPage() {
                                     {stageLeads.length}
                                 </span>
                                 <button
-                                    style={{ width: 24, height: 24, borderRadius: 6, background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    style={{ width: 24, height: 24, borderRadius: 4, background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                     onClick={() => {}}
                                 >
                                     <Plus size={12} style={{ color: 'var(--bo-text-muted)' }} />
@@ -295,7 +295,7 @@ export default function PipelineKanbanPage() {
                                 background: `color-mix(in srgb, ${stage.dot}06, var(--bo-surface))`,
                                 border: `1px solid color-mix(in srgb, ${stage.dot}20, var(--bo-border))`,
                                 borderTop: `2px solid ${stage.dot}40`,
-                                borderRadius: 16, padding: 10,
+                                borderRadius: 4, padding: 10,
                                 minHeight: 120,
                                 maxHeight: 'calc(100vh - 320px)',
                                 overflowY: 'auto',
@@ -303,8 +303,8 @@ export default function PipelineKanbanPage() {
                             }}>
                                 {loading ? (
                                     <div style={{ padding: '20px 0', textAlign: 'center' }}>
-                                        <div style={{ width: '100%', height: 60, borderRadius: 12, background: 'var(--bo-elevated)', opacity: 0.5, marginBottom: 8 }} />
-                                        <div style={{ width: '100%', height: 60, borderRadius: 12, background: 'var(--bo-elevated)', opacity: 0.3 }} />
+                                        <div style={{ width: '100%', height: 60, borderRadius: 4, background: 'var(--bo-elevated)', opacity: 0.5, marginBottom: 8 }} />
+                                        <div style={{ width: '100%', height: 60, borderRadius: 4, background: 'var(--bo-elevated)', opacity: 0.3 }} />
                                     </div>
                                 ) : stageLeads.length > 0 ? (
                                     stageLeads.map(lead => (
@@ -342,7 +342,7 @@ export default function PipelineKanbanPage() {
                 style={{
                     display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
                     background: 'var(--bg-elevated)',
-                    borderRadius: 14, border: '1px solid var(--border-default)',
+                    borderRadius: 4, border: '1px solid var(--border-default)',
                     marginTop: 8, flexShrink: 0,
                 }}
             >

@@ -41,7 +41,7 @@ export default function UploadProgressPanel({ files, total, visible }: UploadPro
                     style={{
                         background: 'var(--bg-surface)',
                         border: '1px solid var(--border-default)',
-                        borderRadius: 'var(--r-xl, 16px)',
+                        borderRadius: 'var(--r-xl, 4px)',
                         overflow: 'hidden',
                     }}
                 >

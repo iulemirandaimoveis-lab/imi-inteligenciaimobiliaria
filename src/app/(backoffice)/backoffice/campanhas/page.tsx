@@ -114,7 +114,7 @@ function ChannelBadge({ channel }: { channel: string }) {
       fontSize: '10px', fontWeight: 700,
       color: cfg.color, background: `${cfg.color}15`,
       border: `1px solid ${cfg.color}30`,
-      borderRadius: '8px', padding: '2px 8px',
+      borderRadius: '4px', padding: '2px 8px',
     }}>
       <Icon size={10} />
       {cfg.label}
@@ -261,7 +261,7 @@ export default function CampanhasPage() {
                 <span style={{
                   display: 'inline-flex', alignItems: 'center', gap: '5px',
                   fontSize: '10px', fontWeight: 700, padding: '4px 10px',
-                  borderRadius: '8px',
+                  borderRadius: '4px',
                   background: metaStatus.connected ? 'rgba(0,178,127,0.1)' : 'rgba(148,163,184,0.08)',
                   color: metaStatus.connected ? 'var(--s-done)' : 'var(--bo-text-muted)',
                   border: `1px solid ${metaStatus.connected ? 'rgba(0,178,127,0.25)' : 'var(--bo-border)'}`,
@@ -278,7 +278,7 @@ export default function CampanhasPage() {
                   title="Sincronizar campanhas do Meta Ads"
                   style={{
                     display: 'flex', alignItems: 'center', gap: '5px',
-                    height: '38px', padding: '0 14px', borderRadius: '12px',
+                    height: '38px', padding: '0 14px', borderRadius: '4px',
                     fontSize: '12px', fontWeight: 700,
                     color: syncing ? 'var(--bo-text-muted)' : 'var(--bo-text)',
                     background: 'var(--bo-elevated)',
@@ -298,7 +298,7 @@ export default function CampanhasPage() {
                 onClick={() => router.push('/backoffice/campanhas/nova')}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '38px', padding: '0 18px', borderRadius: '12px',
+                  height: '38px', padding: '0 18px', borderRadius: '4px',
                   fontSize: '13px', fontWeight: 700, color: '#fff',
                   background: 'var(--bo-accent)',
                   boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
@@ -322,7 +322,7 @@ export default function CampanhasPage() {
             initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
             style={{
               display: 'flex', alignItems: 'center', gap: '10px',
-              padding: '10px 16px', borderRadius: '12px',
+              padding: '10px 16px', borderRadius: '4px',
               background: syncResult.success ? 'rgba(0,178,127,0.1)' : 'rgba(248,113,113,0.1)',
               border: `1px solid ${syncResult.success ? 'rgba(0,178,127,0.25)' : 'rgba(248,113,113,0.25)'}`,
             }}
@@ -368,7 +368,7 @@ export default function CampanhasPage() {
             onChange={e => setSearch(e.target.value)}
             style={{
               width: '100%', height: '38px', paddingLeft: '34px', paddingRight: '14px',
-              borderRadius: '10px', fontSize: '13px', color: 'var(--bo-text)',
+              borderRadius: '4px', fontSize: '13px', color: 'var(--bo-text)',
               background: 'var(--bo-surface)', border: '1px solid var(--bo-border)',
               outline: 'none', boxSizing: 'border-box',
             }}
@@ -381,7 +381,7 @@ export default function CampanhasPage() {
       {isLoading ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,280px),1fr))', gap: '12px' }}>
           {[1, 2, 3, 4].map(i => (
-            <div key={i} style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', padding: '14px', height: '180px', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            <div key={i} style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '14px', height: '180px', animation: 'pulse 1.5s ease-in-out infinite' }} />
           ))}
         </div>
       ) : campanhas && campanhas.length > 0 ? (
@@ -398,7 +398,7 @@ export default function CampanhasPage() {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           style={{
             background: 'var(--bo-card)', border: '1px solid var(--bo-border)',
-            borderRadius: '16px', padding: '48px 24px',
+            borderRadius: '4px', padding: '48px 24px',
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', textAlign: 'center',
           }}
         >
@@ -411,7 +411,7 @@ export default function CampanhasPage() {
             onClick={() => router.push('/backoffice/campanhas/nova')}
             style={{
               marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px',
-              height: '38px', padding: '0 18px', borderRadius: '12px',
+              height: '38px', padding: '0 18px', borderRadius: '4px',
               fontSize: '13px', fontWeight: 700, color: '#fff',
               background: 'var(--bo-accent)',
               boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
@@ -427,7 +427,7 @@ export default function CampanhasPage() {
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.35 }}
-          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '16px', padding: '14px' }}
+          style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', borderRadius: '4px', padding: '14px' }}
         >
           <SectionHeader title="Performance por Canal" />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

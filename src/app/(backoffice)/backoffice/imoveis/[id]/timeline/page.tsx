@@ -51,12 +51,12 @@ function MobileTimelineLoading() {
                         }}
                     >
                         <div style={{
-                            width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                            width: 40, height: 40, borderRadius: 4, flexShrink: 0,
                             background: 'linear-gradient(90deg, #162040 25%, #1A3250 50%, #162040 75%)',
                             backgroundSize: '200% 100%',
                             animation: 'shimmer 1.5s ease-in-out infinite',
                         }} />
-                        <div style={{ flex: 1, borderRadius: 12, height: 88,
+                        <div style={{ flex: 1, borderRadius: 4, height: 88,
                             background: 'linear-gradient(90deg, #162040 25%, #1A3250 50%, #162040 75%)',
                             backgroundSize: '200% 100%',
                             animation: 'shimmer 1.5s ease-in-out infinite',
@@ -73,10 +73,10 @@ function MobileTimelineLoading() {
 function DesktopTimelineLoading() {
     return (
         <div className="max-w-4xl mx-auto pb-20 space-y-4 animate-pulse">
-            <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 10, width: '40%', opacity: 0.5 }} />
-            <div style={{ height: 80, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.4 }} />
+            <div style={{ height: 36, background: 'var(--bo-card)', borderRadius: 4, width: '40%', opacity: 0.5 }} />
+            <div style={{ height: 80, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.4 }} />
             {[1, 2, 3].map(i => (
-                <div key={i} style={{ height: 120, background: 'var(--bo-card)', borderRadius: 20, opacity: 0.3 }} />
+                <div key={i} style={{ height: 120, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.3 }} />
             ))}
         </div>
     )
@@ -120,7 +120,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                         <span style={{
                             display: 'inline-block',
                             padding: '5px 14px',
-                            borderRadius: 999,
+                            borderRadius: 4,
                             background: 'rgba(184,148,58,0.10)',
                             border: '1px solid rgba(184,148,58,0.28)',
                             fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -168,7 +168,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                         <div style={{
                                             width: 40,
                                             height: 40,
-                                            borderRadius: 12,
+                                            borderRadius: 4,
                                             background: cfg.bg,
                                             border: `1px solid ${cfg.color}40`,
                                             display: 'flex',
@@ -185,7 +185,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                         <div style={{
                                             flex: 1,
                                             background: 'var(--bg-elevated)',
-                                            borderRadius: 12,
+                                            borderRadius: 4,
                                             padding: 14,
                                             border: '1px solid rgba(184,148,58,0.12)',
                                         }}>
@@ -193,7 +193,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                                             <span style={{
                                                 display: 'inline-block',
                                                 padding: '2px 8px',
-                                                borderRadius: 999,
+                                                borderRadius: 4,
                                                 background: cfg.bg,
                                                 fontFamily: 'var(--font-montserrat, sans-serif)',
                                                 fontSize: 9,
@@ -259,7 +259,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                         <div style={{
                             width: 64,
                             height: 64,
-                            borderRadius: 18,
+                            borderRadius: 4,
                             background: 'rgba(184,148,58,0.06)',
                             border: '1px solid rgba(184,148,58,0.15)',
                             display: 'flex',
@@ -302,7 +302,7 @@ function MobileTimeline({ property, events, eventsLoading, id }: MobileTimelineP
                     padding: '0 20px',
                     background: 'var(--imi-gold-500)',
                     color: '#0B1120',
-                    borderRadius: 26,
+                    borderRadius: 4,
                     border: 'none',
                     cursor: 'pointer',
                     display: 'flex',

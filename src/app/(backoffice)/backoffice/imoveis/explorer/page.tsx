@@ -127,7 +127,7 @@ function StatCard({ label, value, sub, color }: {
     <div style={{
       background: 'var(--bo-card, #162040)',
       border: '1px solid rgba(184,148,58,0.18)',
-      borderRadius: 12, padding: '20px',
+      borderRadius: 4, padding: '20px',
       flex: 1,
     }}>
       <div style={{ marginBottom: 10 }}>
@@ -201,7 +201,7 @@ function RankingTab() {
       <div style={{
         background: 'var(--bo-card, #162040)',
         border: '1px solid rgba(184,148,58,0.18)',
-        borderRadius: 12, overflow: 'hidden',
+        borderRadius: 4, overflow: 'hidden',
       }}>
         {/* Header */}
         <div style={{
@@ -291,11 +291,11 @@ function RankingTab() {
               display: 'flex', alignItems: 'center', gap: 8, flex: 1,
             }}>
               <div style={{
-                flex: 1, height: 6, borderRadius: 999,
+                flex: 1, height: 6, borderRadius: 4,
                 background: 'rgba(255,255,255,0.05)',
               }}>
                 <div style={{
-                  height: '100%', borderRadius: 999,
+                  height: '100%', borderRadius: 4,
                   width: `${((sortBy === 'yield' ? d.yield : d.avgSqm) / (sortBy === 'yield' ? maxYield : maxSqm)) * 100}%`,
                   background: i === 0
                     ? 'linear-gradient(90deg, #A8842A, var(--imi-gold-500))'
@@ -403,7 +403,7 @@ function AnaliseTab() {
                   flex: 1,
                   background: 'var(--bo-card, #162040)',
                   border: '1px solid rgba(184,148,58,0.18)',
-                  borderRadius: 12, padding: '20px',
+                  borderRadius: 4, padding: '20px',
                   display: 'flex', flexDirection: 'column', gap: 10,
                 }}
               >
@@ -426,7 +426,7 @@ function AnaliseTab() {
                   </div>
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: 3,
-                    padding: '3px 8px', borderRadius: 20,
+                    padding: '3px 8px', borderRadius: 4,
                     background: trend12m >= 0 ? 'rgba(93,184,135,0.12)' : 'rgba(224,107,107,0.12)',
                     border: `1px solid ${trend12m >= 0 ? 'rgba(93,184,135,0.3)' : 'rgba(224,107,107,0.3)'}`,
                   }}>
@@ -463,7 +463,7 @@ function AnaliseTab() {
         <div style={{
           background: 'var(--bo-card, #162040)',
           border: '1px solid rgba(184,148,58,0.18)',
-          borderRadius: 12, overflow: 'hidden',
+          borderRadius: 4, overflow: 'hidden',
         }}>
           {/* Header */}
           <div style={{
@@ -526,7 +526,7 @@ function AnaliseTab() {
                   <div
                     key={m}
                     style={{
-                      padding: '5px 8px', borderRadius: 6,
+                      padding: '5px 8px', borderRadius: 4,
                       background: bg,
                       textAlign: 'center',
                     }}
@@ -558,7 +558,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
         justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center',
       }}>
         <div style={{
-          width: 64, height: 64, borderRadius: 16,
+          width: 64, height: 64, borderRadius: 4,
           background: 'rgba(184,148,58,0.06)',
           border: '1px solid rgba(184,148,58,0.18)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -687,7 +687,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
             </span>
           )}
           <span style={{
-            display: 'inline-flex', padding: '2px 7px', borderRadius: 20,
+            display: 'inline-flex', padding: '2px 7px', borderRadius: 4,
             background: `${stColor}15`, border: `1px solid ${stColor}30`,
             fontSize: '7.5px', fontWeight: 600, letterSpacing: '0.5px',
             color: stColor, fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -708,7 +708,7 @@ function OportunidadesTab({ properties }: { properties: IMIProperty[] }) {
       <div style={{
         background: 'var(--bo-card, #162040)',
         border: '1px solid rgba(184,148,58,0.18)',
-        borderRadius: 12, overflow: 'hidden',
+        borderRadius: 4, overflow: 'hidden',
       }}>
         <div style={{
           padding: '14px 18px',
@@ -856,7 +856,7 @@ function MobileExplorer() {
         <button
           onClick={() => router.push('/backoffice/imoveis')}
           style={{
-            width: 44, height: 44, borderRadius: 8,
+            width: 44, height: 44, borderRadius: 4,
             background: 'transparent', border: 'none',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', flexShrink: 0,
@@ -927,7 +927,7 @@ function MobileExplorer() {
                     flex: 1, height: 44,
                     background: rankSort === s ? 'rgba(184,148,58,0.12)' : '#162040',
                     border: rankSort === s ? '1px solid rgba(184,148,58,0.4)' : '1px solid rgba(184,148,58,0.12)',
-                    borderRadius: 8,
+                    borderRadius: 4,
                     color: rankSort === s ? 'var(--imi-gold-500)' : '#9FAAB8',
                     fontSize: '11px', fontWeight: 700, letterSpacing: '1px',
                     textTransform: 'uppercase', cursor: 'pointer',
@@ -955,7 +955,7 @@ function MobileExplorer() {
               <div key={d.name} style={{
                 background: 'var(--bg-elevated)',
                 border: '1px solid rgba(184,148,58,0.12)',
-                borderRadius: 12, padding: '14px 16px',
+                borderRadius: 4, padding: '14px 16px',
                 display: 'flex', alignItems: 'center', gap: 14,
                 minHeight: 52,
               }}>
@@ -1027,7 +1027,7 @@ function MobileExplorer() {
                 <div key={stat.label} style={{
                   background: 'var(--bg-elevated)',
                   border: '1px solid rgba(184,148,58,0.12)',
-                  borderRadius: 12, padding: 14,
+                  borderRadius: 4, padding: 14,
                   display: 'flex', flexDirection: 'column', gap: 6,
                 }}>
                   <span style={{
@@ -1068,7 +1068,7 @@ function MobileExplorer() {
                 <div key={n} style={{
                   background: 'var(--bg-elevated)',
                   border: '1px solid rgba(184,148,58,0.12)',
-                  borderRadius: 12, padding: '14px 16px',
+                  borderRadius: 4, padding: '14px 16px',
                 }}>
                   <div style={{
                     display: 'flex', alignItems: 'center',
@@ -1082,7 +1082,7 @@ function MobileExplorer() {
                     </span>
                     <div style={{
                       display: 'flex', alignItems: 'center', gap: 3,
-                      padding: '3px 8px', borderRadius: 20,
+                      padding: '3px 8px', borderRadius: 4,
                       background: trend >= 0 ? 'rgba(93,184,135,0.12)' : 'rgba(224,107,107,0.12)',
                       border: `1px solid ${trend >= 0 ? 'rgba(93,184,135,0.3)' : 'rgba(224,107,107,0.3)'}`,
                     }}>
@@ -1159,7 +1159,7 @@ function MobileExplorer() {
                 justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center',
               }}>
                 <div style={{
-                  width: 64, height: 64, borderRadius: 16,
+                  width: 64, height: 64, borderRadius: 4,
                   background: 'rgba(184,148,58,0.06)',
                   border: '1px solid rgba(184,148,58,0.18)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1174,7 +1174,7 @@ function MobileExplorer() {
                 </p>
                 <Link href="/backoffice/imoveis/novo">
                   <button style={{
-                    height: 44, paddingLeft: 20, paddingRight: 20, borderRadius: 8,
+                    height: 44, paddingLeft: 20, paddingRight: 20, borderRadius: 4,
                     background: 'var(--imi-gold-500)', border: 'none',
                     color: '#0B1120', fontSize: '11px', fontWeight: 700,
                     letterSpacing: '1.5px', textTransform: 'uppercase',
@@ -1206,7 +1206,7 @@ function MobileExplorer() {
                       <div style={{
                         background: 'var(--bg-elevated)',
                         border: '1px solid rgba(184,148,58,0.12)',
-                        borderRadius: 12, padding: '14px 16px',
+                        borderRadius: 4, padding: '14px 16px',
                         display: 'flex', alignItems: 'center', gap: 12,
                         minHeight: 52,
                       }}>
@@ -1242,7 +1242,7 @@ function MobileExplorer() {
                           {sc}
                         </span>
                         <span style={{
-                          display: 'inline-flex', padding: '3px 8px', borderRadius: 20,
+                          display: 'inline-flex', padding: '3px 8px', borderRadius: 4,
                           background: `${stColor}18`, border: `1px solid ${stColor}35`,
                           fontSize: '8px', fontWeight: 600,
                           color: stColor, fontFamily: 'var(--font-montserrat, sans-serif)',
@@ -1272,7 +1272,7 @@ function MobileExplorer() {
                       <div style={{
                         background: 'var(--bg-elevated)',
                         border: '1px solid rgba(184,148,58,0.12)',
-                        borderRadius: 12, padding: '14px 16px',
+                        borderRadius: 4, padding: '14px 16px',
                         display: 'flex', alignItems: 'center', gap: 12,
                         minHeight: 52,
                       }}>

@@ -221,7 +221,7 @@ export default function AgentesIAPage() {
                         style={{
                             display: 'flex', alignItems: 'center', gap: 6,
                             background: 'var(--bo-accent)', color: '#fff',
-                            border: 'none', borderRadius: 10, padding: '8px 14px',
+                            border: 'none', borderRadius: 4, padding: '8px 14px',
                             fontSize: 13, fontWeight: 600, cursor: 'pointer',
                         }}
                         onClick={() => toast.info('Em breve: criar agente personalizado')}
@@ -249,7 +249,7 @@ export default function AgentesIAPage() {
                 }}
             >
                 <div style={{
-                    width: 40, height: 40, borderRadius: 12,
+                    width: 40, height: 40, borderRadius: 4,
                     background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.25)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                 }}>
@@ -286,7 +286,7 @@ export default function AgentesIAPage() {
                         key={cat.id}
                         onClick={() => setCategory(cat.id)}
                         style={{
-                            padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
+                            padding: '6px 14px', borderRadius: 4, fontSize: 12, fontWeight: 600,
                             cursor: 'pointer', transition: 'all 0.15s',
                             background: category === cat.id ? 'var(--bo-accent)' : 'var(--bo-elevated)',
                             color: category === cat.id ? '#fff' : 'var(--bo-text-muted)',
@@ -326,7 +326,7 @@ export default function AgentesIAPage() {
                                 <div className="flex items-start justify-between mb-3">
                                     <div
                                         style={{
-                                            width: 40, height: 40, borderRadius: 12,
+                                            width: 40, height: 40, borderRadius: 4,
                                             background: `rgba(${agent.colorRaw},0.15)`,
                                             border: `1px solid rgba(${agent.colorRaw},0.25)`,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -409,7 +409,7 @@ export default function AgentesIAPage() {
                                     disabled={isRunning}
                                     className="flex items-center gap-1.5"
                                     style={{
-                                        padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700,
+                                        padding: '6px 12px', borderRadius: 4, fontSize: 11, fontWeight: 700,
                                         cursor: isRunning ? 'not-allowed' : 'pointer',
                                         background: isRunning ? 'var(--bo-hover)' : `rgba(${agent.colorRaw},0.15)`,
                                         color: isRunning ? 'var(--bo-text-muted)' : agent.color,
@@ -461,7 +461,7 @@ export default function AgentesIAPage() {
                 <button
                     onClick={() => toast.info('Em breve: builder de agentes personalizado')}
                     style={{
-                        padding: '8px 20px', borderRadius: 10, fontSize: 12, fontWeight: 700,
+                        padding: '8px 20px', borderRadius: 4, fontSize: 12, fontWeight: 700,
                         background: 'var(--bo-accent)', color: '#fff', border: 'none', cursor: 'pointer',
                     }}
                 >

@@ -64,14 +64,14 @@ const AGENT_ACTIVITY_DEFAULT = [
 function HojeSkeleton() {
   return (
     <div className="space-y-5 max-w-2xl mx-auto">
-      <div style={{ height: 60, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.5 }} />
+      <div style={{ height: 60, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.5 }} />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {[0,1,2].map(i => (
-          <div key={i} style={{ height: 72, background: 'var(--bg-surface)', borderRadius: 14, opacity: 0.4 }} />
+          <div key={i} style={{ height: 72, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.4 }} />
         ))}
       </div>
-      <div style={{ height: 100, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.4 }} />
-      <div style={{ height: 200, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.35 }} />
+      <div style={{ height: 100, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.4 }} />
+      <div style={{ height: 200, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.35 }} />
     </div>
   )
 }
@@ -233,7 +233,7 @@ export default function HojePage() {
               <span style={{
                 display: 'inline-block', marginTop: 6,
                 fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
-                padding: '2px 8px', borderRadius: 6,
+                padding: '2px 8px', borderRadius: 4,
                 background: 'var(--bo-active-bg)', color: 'var(--imi-gold-500)',
                 border: '1px solid var(--border-default)',
               }}>
@@ -342,7 +342,7 @@ export default function HojePage() {
             >
               {/* Icon circle */}
               <div style={{
-                width: '40px', height: '40px', borderRadius: '12px',
+                width: '40px', height: '40px', borderRadius: '4px',
                 background: 'var(--bg-surface)',
                 border: `1px solid ${(a as any).isNew ? 'rgba(167,139,250,0.30)' : 'var(--border-default)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -450,7 +450,7 @@ export default function HojePage() {
             }}
             style={{
               position: 'absolute', top: 10, right: 10,
-              width: 24, height: 24, borderRadius: 6,
+              width: 24, height: 24, borderRadius: 4,
               background: 'transparent', border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'var(--text-tertiary)',
@@ -460,7 +460,7 @@ export default function HojePage() {
           </button>
           <div className="flex items-start gap-3">
             <div style={{
-              width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+              width: 36, height: 36, borderRadius: 4, flexShrink: 0,
               background: 'rgba(184,148,58,0.12)',
               border: '1px solid rgba(184,148,58,0.25)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -477,7 +477,7 @@ export default function HojePage() {
               <button
                 onClick={() => router.push('/backoffice/integracoes')}
                 style={{
-                  height: 30, padding: '0 14px', borderRadius: 8,
+                  height: 30, padding: '0 14px', borderRadius: 4,
                   background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
                   fontSize: '11px', fontWeight: 700, color: '#0B1120',
                   letterSpacing: '0.03em',
@@ -556,7 +556,7 @@ export default function HojePage() {
             >
               {/* Icon */}
               <div style={{
-                width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+                width: 28, height: 28, borderRadius: 4, flexShrink: 0,
                 background: `rgba(${agent.raw},0.12)`,
                 border: `1px solid rgba(${agent.raw},0.20)`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -573,7 +573,7 @@ export default function HojePage() {
 
               {/* Status pill */}
               <span style={{
-                fontSize: '9px', fontWeight: 700, padding: '2px 7px', borderRadius: 5,
+                fontSize: '9px', fontWeight: 700, padding: '2px 7px', borderRadius: 4,
                 background: agent.status === 'active' ? 'rgba(74,222,128,0.12)' : 'rgba(251,191,36,0.10)',
                 color: agent.status === 'active' ? 'var(--success)' : 'var(--warning)',
                 border: `1px solid ${agent.status === 'active' ? 'rgba(74,222,128,0.25)' : 'rgba(251,191,36,0.20)'}`,
@@ -633,7 +633,7 @@ export default function HojePage() {
                   color: 'var(--imi-gold-500)',
                   background: 'rgba(184,148,58,0.10)',
                   border: '1px solid rgba(184,148,58,0.25)',
-                  padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
+                  padding: '6px 14px', borderRadius: '4px', cursor: 'pointer',
                 }}
               >
                 + Agendar compromisso
@@ -648,7 +648,7 @@ export default function HojePage() {
               >
                 {/* Accent line */}
                 <div style={{
-                  width: '3px', height: '36px', borderRadius: '2px', flexShrink: 0,
+                  width: '3px', height: '36px', borderRadius: '4px', flexShrink: 0,
                   background: ev.color || 'var(--imi-gold-500)',
                 }} />
                 <div className="flex-1 min-w-0">
@@ -696,7 +696,7 @@ export default function HojePage() {
                 color: 'var(--error)',
                 background: 'var(--s-hot-bg)',
                 border: '1px solid rgba(248,113,113,0.25)',
-                padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
+                padding: '6px 14px', borderRadius: '4px', cursor: 'pointer',
               }}
             >
               + Novo Lead
@@ -747,7 +747,7 @@ export default function HojePage() {
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '14px' }}
         >
           <div style={{
-            width: '36px', height: '36px', borderRadius: '10px',
+            width: '36px', height: '36px', borderRadius: '4px',
             background: 'rgba(184,148,58,0.10)', border: '1px solid rgba(184,148,58,0.25)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px',
           }}>
@@ -769,7 +769,7 @@ export default function HojePage() {
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '14px' }}
         >
           <div style={{
-            width: '36px', height: '36px', borderRadius: '10px',
+            width: '36px', height: '36px', borderRadius: '4px',
             background: 'rgba(167,139,250,0.10)', border: '1px solid rgba(167,139,250,0.20)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px',
           }}>
@@ -835,9 +835,9 @@ export default function HojePage() {
                     <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{item.label}</span>
                     <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-primary)' }}>{item.value}</span>
                   </div>
-                  <div style={{ height: 4, borderRadius: 2, background: 'var(--bo-hover)' }}>
+                  <div style={{ height: 4, borderRadius: 4, background: 'var(--bo-hover)' }}>
                     <div style={{
-                      height: '100%', borderRadius: 2,
+                      height: '100%', borderRadius: 4,
                       background: item.color,
                       width: `${Math.round((item.value / item.max) * 100)}%`,
                       transition: 'width 0.6s ease',
@@ -889,7 +889,7 @@ export default function HojePage() {
                 }}>{mod.badge}</span>
               )}
               <div style={{
-                width: 32, height: 32, borderRadius: 8,
+                width: 32, height: 32, borderRadius: 4,
                 background: `${mod.color}15`,
                 border: `1px solid ${mod.color}25`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',

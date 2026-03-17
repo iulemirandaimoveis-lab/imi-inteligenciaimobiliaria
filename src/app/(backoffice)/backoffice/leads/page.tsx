@@ -42,15 +42,15 @@ const timeAgo = (d: string) => {
 function LeadsSkeleton() {
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div style={{ height: 40, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.5, width: '60%' }} />
+      <div style={{ height: 40, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.5, width: '60%' }} />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[0,1,2,3].map(i => (
-          <div key={i} style={{ height: 60, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.4 }} />
+          <div key={i} style={{ height: 60, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.4 }} />
         ))}
       </div>
-      <div style={{ height: 44, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.4 }} />
+      <div style={{ height: 44, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.4 }} />
       {[0,1,2,3,4].map(i => (
-        <div key={i} style={{ height: 88, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.3 - i * 0.04 }} />
+        <div key={i} style={{ height: 88, background: 'var(--bo-card)', borderRadius: 4, opacity: 0.3 - i * 0.04 }} />
       ))}
     </div>
   )
@@ -151,7 +151,7 @@ export default function LeadsPage() {
                 title="Exportar CSV"
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '36px', padding: '0 12px', borderRadius: '10px',
+                  height: '36px', padding: '0 12px', borderRadius: '4px',
                   fontSize: '12px', fontWeight: 600, color: 'var(--bo-text-muted)',
                   background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
                   cursor: 'pointer', whiteSpace: 'nowrap',
@@ -165,7 +165,7 @@ export default function LeadsPage() {
                 onClick={() => router.push('/backoffice/leads/novo')}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
-                  height: '36px', padding: '0 14px', borderRadius: '10px',
+                  height: '36px', padding: '0 14px', borderRadius: '4px',
                   fontSize: '12px', fontWeight: 700, color: 'var(--text-inverse)',
                   background: 'var(--bo-accent)',
                   boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
@@ -226,7 +226,7 @@ export default function LeadsPage() {
           style={{
             position: 'relative',
             border: `1px solid ${searchFocused ? 'rgba(184,148,58,0.25)' : 'var(--bo-border)'}`,
-            borderRadius: '12px',
+            borderRadius: '4px',
             background: 'var(--bo-card)',
             transition: 'border-color 0.18s',
             boxShadow: searchFocused ? '0 0 0 3px rgba(184,148,58,0.10)' : 'none',
@@ -252,7 +252,7 @@ export default function LeadsPage() {
               paddingLeft: '38px', paddingRight: '16px',
               background: 'transparent', border: 'none', outline: 'none',
               fontSize: '13px', color: 'var(--bo-text)',
-              borderRadius: '12px',
+              borderRadius: '4px',
             }}
           />
           {search && (
@@ -260,7 +260,7 @@ export default function LeadsPage() {
               onClick={() => setSearch('')}
               style={{
                 position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)',
-                background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: '6px',
+                background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: '4px',
                 color: 'var(--bo-text-muted)', fontSize: '11px', padding: '3px 7px',
                 cursor: 'pointer', fontWeight: 600,
               }}

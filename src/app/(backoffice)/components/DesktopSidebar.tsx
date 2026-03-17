@@ -379,7 +379,7 @@ function SectionComponent({ section }: { section: NavSection }) {
                 {/* Color indicator */}
                 <div
                     className="flex-shrink-0"
-                    style={{ width: 3, height: 12, borderRadius: 2, background: sectionColor, opacity: open ? 1 : 0.4, transition: 'opacity 0.2s' }}
+                    style={{ width: 3, height: 12, borderRadius: 4, background: sectionColor, opacity: open ? 1 : 0.4, transition: 'opacity 0.2s' }}
                 />
                 <p
                     className="flex-1 text-left uppercase"

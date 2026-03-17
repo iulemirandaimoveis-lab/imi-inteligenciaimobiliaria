@@ -63,7 +63,7 @@ function ShimmerBlock({ w, h }: { w: string | number; h: string | number }) {
       style={{
         width: w,
         height: h,
-        borderRadius: 'var(--r-sm, 6px)',
+        borderRadius: 'var(--r-sm, 4px)',
         background: 'var(--bg-muted)',
         position: 'relative',
         overflow: 'hidden',
@@ -114,7 +114,7 @@ export function ValuationEngine({
       style={{
         background: 'var(--bg-surface)',
         border: '1px solid var(--border-subtle)',
-        borderRadius: 'var(--r-xl, 16px)',
+        borderRadius: 'var(--r-xl, 4px)',
         boxShadow: 'var(--shadow-sm)',
         padding: '20px',
         display: 'flex',
@@ -294,7 +294,7 @@ export function ValuationEngine({
             style={{
               padding: '12px 14px',
               background: 'var(--bg-elevated)',
-              borderRadius: 'var(--r-md, 8px)',
+              borderRadius: 'var(--r-md, 4px)',
               border: '1px solid var(--border-subtle)',
             }}
           >
@@ -396,7 +396,7 @@ export function ValuationEngine({
                         gap: 8,
                         padding: '8px 10px',
                         background: 'var(--bg-elevated)',
-                        borderRadius: 'var(--r-sm, 6px)',
+                        borderRadius: 'var(--r-sm, 4px)',
                         border: '1px solid var(--border-subtle)',
                       }}
                     >
@@ -436,7 +436,7 @@ export function ValuationEngine({
                             color: 'var(--text-tertiary)',
                             background: 'var(--bg-muted)',
                             padding: '1px 5px',
-                            borderRadius: 'var(--r-xs, 3px)',
+                            borderRadius: 'var(--r-xs, 4px)',
                             flexShrink: 0,
                           }}
                         >

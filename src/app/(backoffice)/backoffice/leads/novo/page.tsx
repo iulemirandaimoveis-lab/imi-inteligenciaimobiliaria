@@ -49,7 +49,7 @@ const inputStyle: React.CSSProperties = {
     color: T.text,
     width: '100%',
     height: '44px',
-    borderRadius: '12px',
+    borderRadius: '4px',
     padding: '0 14px 0 42px',
     fontSize: '14px',
     outline: 'none',
@@ -159,7 +159,7 @@ export default function NovoLeadPage() {
     const cardStyle: React.CSSProperties = {
         background: T.surface,
         border: `1px solid ${T.border}`,
-        borderRadius: '16px',
+        borderRadius: '4px',
         padding: '24px',
     }
 
@@ -350,7 +350,7 @@ export default function NovoLeadPage() {
                                 border: `1px solid ${T.border}`,
                                 color: T.text,
                                 width: '100%',
-                                borderRadius: '12px',
+                                borderRadius: '4px',
                                 padding: '12px 14px',
                                 fontSize: '14px',
                                 outline: 'none',

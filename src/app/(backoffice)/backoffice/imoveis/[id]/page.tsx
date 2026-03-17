@@ -100,7 +100,7 @@ const EYEBROW: React.CSSProperties = {
 const CARD: React.CSSProperties = {
   background: 'var(--bg-surface)',
   border: '1px solid rgba(184,148,58,0.18)',
-  borderRadius: '12px',
+  borderRadius: '4px',
 }
 
 const BTN_PRIMARY: React.CSSProperties = {
@@ -258,7 +258,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
         </p>
         <button
           onClick={() => router.push('/backoffice/imoveis')}
-          style={{ height: 52, padding: '0 24px', background: 'var(--imi-gold-500)', color: '#0B1120', border: 'none', borderRadius: 10, fontFamily: 'Figtree, sans-serif', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
+          style={{ height: 52, padding: '0 24px', background: 'var(--imi-gold-500)', color: '#0B1120', border: 'none', borderRadius: 4, fontFamily: 'Figtree, sans-serif', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
         >
           <ArrowLeft size={16} /> Voltar à Lista
         </button>
@@ -346,7 +346,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
           <button
             onClick={() => router.push('/backoffice/imoveis')}
             style={{
-              ...glass, width: 44, height: 44, borderRadius: 12,
+              ...glass, width: 44, height: 44, borderRadius: 4,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#EBE7E0', cursor: 'pointer', flexShrink: 0,
             }}
@@ -365,7 +365,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
                 }
               }}
               style={{
-                ...glass, width: 44, height: 44, borderRadius: 12,
+                ...glass, width: 44, height: 44, borderRadius: 4,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: '#EBE7E0', cursor: 'pointer',
               }}
@@ -375,7 +375,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
             <Link
               href={`/backoffice/imoveis/${id}/editar`}
               style={{
-                ...glass, width: 44, height: 44, borderRadius: 12,
+                ...glass, width: 44, height: 44, borderRadius: 4,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: '#EBE7E0', textDecoration: 'none',
               }}
@@ -412,7 +412,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
             </button>
             <div style={{ position: 'absolute', bottom: 44, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5 }}>
               {images.slice(0, 8).map((_, i) => (
-                <div key={i} style={{ width: i === mobileGalleryIdx ? 16 : 5, height: 5, borderRadius: 3, background: i === mobileGalleryIdx ? 'var(--imi-gold-500)' : 'rgba(235,231,224,0.4)', transition: 'all 200ms ease' }} />
+                <div key={i} style={{ width: i === mobileGalleryIdx ? 16 : 5, height: 5, borderRadius: 4, background: i === mobileGalleryIdx ? 'var(--imi-gold-500)' : 'rgba(235,231,224,0.4)', transition: 'all 200ms ease' }} />
               ))}
             </div>
           </>
@@ -421,7 +421,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
         {/* Score badge — bottom left */}
         <div style={{
           position: 'absolute', bottom: 12, left: 16,
-          ...glass, borderRadius: 10, padding: '6px 12px',
+          ...glass, borderRadius: 4, padding: '6px 12px',
           display: 'flex', alignItems: 'center', gap: 6,
         }}>
           <Sparkles size={13} style={{ color: mobileScoreColor }} />
@@ -433,7 +433,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
         {/* Status badge — bottom right */}
         <div style={{
           position: 'absolute', bottom: 12, right: 16,
-          ...glass, borderRadius: 10, padding: '6px 12px',
+          ...glass, borderRadius: 4, padding: '6px 12px',
           display: 'flex', alignItems: 'center', gap: 6,
         }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: statusCfg.dot, flexShrink: 0 }} />
@@ -503,7 +503,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
               <div key={i} style={{
                 background: 'rgba(184,148,58,0.08)',
                 border: '1px solid rgba(184,148,58,0.2)',
-                borderRadius: 8, padding: '8px 12px',
+                borderRadius: 4, padding: '8px 12px',
                 minHeight: 40, display: 'flex', alignItems: 'center', gap: 7,
               }}>
                 <Icon size={14} style={{ color: 'var(--text-tertiary)' }} />
@@ -536,7 +536,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
                 <span key={i} style={{
                   background: 'rgba(184,148,58,0.06)',
                   border: '1px solid rgba(184,148,58,0.15)',
-                  borderRadius: 20, padding: '6px 12px',
+                  borderRadius: 4, padding: '6px 12px',
                   fontSize: 12, color: 'var(--text-secondary)',
                   fontFamily: 'Figtree, sans-serif',
                 }}>
@@ -555,7 +555,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
           <div style={{
             background: 'var(--bg-elevated)',
             border: '1px solid rgba(184,148,58,0.15)',
-            borderRadius: 12, padding: 16,
+            borderRadius: 4, padding: 16,
           }}>
             {/* IMI Score */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
@@ -570,8 +570,8 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
                   /100 · Índice de Oportunidade
                 </div>
                 {/* Score bar */}
-                <div style={{ height: 4, width: 120, background: 'rgba(184,148,58,0.1)', borderRadius: 999, marginTop: 6, overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${score}%`, background: mobileScoreColor, borderRadius: 999 }} />
+                <div style={{ height: 4, width: 120, background: 'rgba(184,148,58,0.1)', borderRadius: 4, marginTop: 6, overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${score}%`, background: mobileScoreColor, borderRadius: 4 }} />
                 </div>
               </div>
             </div>
@@ -604,7 +604,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
           <div style={{
             background: 'var(--bg-elevated)',
             border: '1px solid rgba(184,148,58,0.15)',
-            borderRadius: 12, overflow: 'hidden',
+            borderRadius: 4, overflow: 'hidden',
           }}>
             {[
               { label: 'Tipo', value: dev.type ?? '—' },
@@ -641,7 +641,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
                 display: 'flex', alignItems: 'center', gap: 10,
                 background: 'rgba(184,148,58,0.06)',
                 border: '1px solid rgba(184,148,58,0.14)',
-                borderRadius: 10, padding: '14px 16px',
+                borderRadius: 4, padding: '14px 16px',
                 textDecoration: 'none',
               }}>
                 <Icon size={16} style={{ color: 'var(--imi-gold-500)', flexShrink: 0 }} />
@@ -661,7 +661,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
               onClick={handleCopyLink}
               style={{
                 flex: 1, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                background: 'transparent', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 10,
+                background: 'transparent', border: '1px solid rgba(184,148,58,0.25)', borderRadius: 4,
                 color: 'var(--imi-gold-500)', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
                 letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer',
               }}
@@ -672,7 +672,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
               onClick={handleWhatsApp}
               style={{
                 flex: 1, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                background: 'transparent', border: '1px solid rgba(93,184,135,0.35)', borderRadius: 10,
+                background: 'transparent', border: '1px solid rgba(93,184,135,0.35)', borderRadius: 4,
                 color: '#5DB887', fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
                 letterSpacing: '1.2px', textTransform: 'uppercase', cursor: 'pointer',
               }}
@@ -720,7 +720,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
           style={{
             flex: 1, height: 52,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            background: 'transparent', border: '1px solid rgba(184,148,58,0.35)', borderRadius: 10,
+            background: 'transparent', border: '1px solid rgba(184,148,58,0.35)', borderRadius: 4,
             color: 'var(--imi-gold-500)', textDecoration: 'none',
             fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
             letterSpacing: '1px', textTransform: 'uppercase',
@@ -739,7 +739,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
             style={{
               flex: 1, height: 52,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              background: 'transparent', border: '1px solid rgba(91,155,213,0.4)', borderRadius: 10,
+              background: 'transparent', border: '1px solid rgba(91,155,213,0.4)', borderRadius: 4,
               color: '#5B9BD5', textDecoration: 'none',
               fontSize: 12, fontFamily: 'Figtree, sans-serif', fontWeight: 700,
               letterSpacing: '0.8px', textTransform: 'uppercase',
@@ -757,7 +757,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
           style={{
             flex: 2, height: 52,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            background: 'var(--imi-gold-500)', border: 'none', borderRadius: 10,
+            background: 'var(--imi-gold-500)', border: 'none', borderRadius: 4,
             color: '#0B1120', fontSize: 13,
             fontFamily: 'Figtree, sans-serif', fontWeight: 700,
             letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer',
@@ -807,7 +807,7 @@ function FloatingActions({ id }: { id: string }) {
         { icon: Clock, label: 'Unidades', href: `/backoffice/imoveis/${id}/unidades` },
       ].map(({ icon: Icon, label, href }) => (
         <a key={label} href={href} title={label} style={{
-          width: 40, height: 40, borderRadius: 10,
+          width: 40, height: 40, borderRadius: 4,
           background: 'var(--bg-elevated)',
           backdropFilter: 'blur(12px)',
           border: '1px solid var(--border-subtle)',
@@ -822,7 +822,7 @@ function FloatingActions({ id }: { id: string }) {
         </a>
       ))}
       <button onClick={handleShare} title={copied ? 'Copiado!' : 'Copiar link'} style={{
-        width: 40, height: 40, borderRadius: 10,
+        width: 40, height: 40, borderRadius: 4,
         background: copied ? 'rgba(107,184,123,0.2)' : 'rgba(11,25,40,0.9)',
         backdropFilter: 'blur(12px)',
         border: `1px solid ${copied ? 'rgba(107,184,123,0.4)' : 'rgba(184,148,58,0.18)'}`,
@@ -928,7 +928,7 @@ function DesktopImovelDetail({
         <button
           onClick={() => router.push('/backoffice/imoveis')}
           style={{
-            width: 36, height: 36, borderRadius: 8,
+            width: 36, height: 36, borderRadius: 4,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: T.surface, border: `1px solid ${T.border}`,
             color: T.textDim, cursor: 'pointer', flexShrink: 0,
@@ -947,7 +947,7 @@ function DesktopImovelDetail({
         <div style={{ marginLeft: 'auto', position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
-            padding: '3px 10px', borderRadius: 999,
+            padding: '3px 10px', borderRadius: 4,
             background: getStatusConfig(localStatus).bg, color: getStatusConfig(localStatus).color,
             fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px',
             textTransform: 'uppercase',
@@ -960,7 +960,7 @@ function DesktopImovelDetail({
             onClick={() => setStatusOpen(o => !o)}
             title="Alterar status"
             style={{
-              width: 24, height: 24, borderRadius: 6,
+              width: 24, height: 24, borderRadius: 4,
               background: 'rgba(184,148,58,0.08)',
               border: '1px solid rgba(184,148,58,0.2)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -976,7 +976,7 @@ function DesktopImovelDetail({
               background: 'rgba(11,25,40,0.97)',
               backdropFilter: 'blur(16px)',
               border: '1px solid rgba(184,148,58,0.2)',
-              borderRadius: 10, padding: '6px 0',
+              borderRadius: 4, padding: '6px 0',
               minWidth: 160,
               boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
             }}>
@@ -1011,7 +1011,7 @@ function DesktopImovelDetail({
       </div>
 
       {/* ── Hero Gallery ───────────────────────────────────────────────────── */}
-      <div className="imovel-hero" style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', height: 'min(65vh, 460px)', background: T.surface }}>
+      <div className="imovel-hero" style={{ position: 'relative', borderRadius: 4, overflow: 'hidden', height: 'min(65vh, 460px)', background: T.surface }}>
         {images.length > 0 ? (
           <>
             <Image
@@ -1104,7 +1104,7 @@ function DesktopImovelDetail({
               key={idx}
               onClick={() => setGalleryIdx(idx)}
               style={{
-                flexShrink: 0, width: 60, height: 40, borderRadius: 6, overflow: 'hidden',
+                flexShrink: 0, width: 60, height: 40, borderRadius: 4, overflow: 'hidden',
                 border: `2px solid ${idx === galleryIdx ? 'var(--gold, var(--imi-gold-500))' : 'transparent'}`,
                 cursor: 'pointer', position: 'relative', background: T.surface,
                 opacity: idx === galleryIdx ? 1 : 0.6,
@@ -1189,7 +1189,7 @@ function DesktopImovelDetail({
                     <div key={label} style={{
                       background: 'var(--bo-surface)',
                       border: '1px solid rgba(184,148,58,0.1)',
-                      borderRadius: 8, padding: '12px 14px',
+                      borderRadius: 4, padding: '12px 14px',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
                         <Icon size={12} style={{ color: 'var(--gold, var(--imi-gold-500))', flexShrink: 0 }} />
@@ -1227,7 +1227,7 @@ function DesktopImovelDetail({
                 <p style={{ ...EYEBROW, marginBottom: 16 }}>Localização</p>
                 <div style={{
                   background: 'var(--bo-surface)',
-                  borderRadius: 8, overflow: 'hidden',
+                  borderRadius: 4, overflow: 'hidden',
                   height: 180,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   border: '1px solid rgba(184,148,58,0.1)',
@@ -1338,7 +1338,7 @@ function DesktopImovelDetail({
                     <div key={label} style={{
                       background: 'var(--bo-surface)',
                       border: '1px solid rgba(184,148,58,0.1)',
-                      borderRadius: 8, padding: '16px 18px',
+                      borderRadius: 4, padding: '16px 18px',
                     }}>
                       <p style={{ ...EYEBROW, fontSize: '8px', marginBottom: 8 }}>{label}</p>
                       <p style={{ ...MONO, fontSize: 24, fontWeight: 400, color, lineHeight: 1, margin: 0 }}>
@@ -1384,7 +1384,7 @@ function DesktopImovelDetail({
                       value={rentInput}
                       onChange={e => setRentInput(Number(e.target.value))}
                       style={{
-                        width: '100%', padding: '10px 12px', borderRadius: 6,
+                        width: '100%', padding: '10px 12px', borderRadius: 4,
                         background: 'var(--bo-surface)',
                         border: '1px solid rgba(184,148,58,0.2)',
                         color: T.text, outline: 'none',
@@ -1403,7 +1403,7 @@ function DesktopImovelDetail({
                       onChange={e => setExpensePct(Number(e.target.value))}
                       min={0} max={100}
                       style={{
-                        width: '100%', padding: '10px 12px', borderRadius: 6,
+                        width: '100%', padding: '10px 12px', borderRadius: 4,
                         background: 'var(--bo-surface)',
                         border: '1px solid rgba(184,148,58,0.2)',
                         color: T.text, outline: 'none',
@@ -1422,7 +1422,7 @@ function DesktopImovelDetail({
                       onChange={e => setVacancyPct(Number(e.target.value))}
                       min={0} max={100}
                       style={{
-                        width: '100%', padding: '10px 12px', borderRadius: 6,
+                        width: '100%', padding: '10px 12px', borderRadius: 4,
                         background: 'var(--bo-surface)',
                         border: '1px solid rgba(184,148,58,0.2)',
                         color: T.text, outline: 'none',
@@ -1443,7 +1443,7 @@ function DesktopImovelDetail({
                     <div key={label} style={{
                       background: 'var(--bo-surface)',
                       border: '1px solid rgba(184,148,58,0.1)',
-                      borderRadius: 8, padding: '14px 16px',
+                      borderRadius: 4, padding: '14px 16px',
                       textAlign: 'center',
                     }}>
                       <div style={{ ...EYEBROW, fontSize: '8px', marginBottom: 6 }}>{label}</div>
@@ -1467,11 +1467,11 @@ function DesktopImovelDetail({
                         <span style={{ fontSize: 13, color: T.textMuted, fontFamily: 'var(--font-montserrat, sans-serif)' }}>{label}</span>
                         <span style={{ ...MONO, fontSize: 13, color, fontWeight: 500 }}>+{roi.toFixed(1)}%</span>
                       </div>
-                      <div style={{ height: 6, background: 'rgba(184,148,58,0.1)', borderRadius: 999, overflow: 'hidden' }}>
+                      <div style={{ height: 6, background: 'rgba(184,148,58,0.1)', borderRadius: 4, overflow: 'hidden' }}>
                         <div style={{
                           height: '100%',
                           width: `${Math.min(100, (roi / 30) * 100)}%`,
-                          background: color, borderRadius: 999,
+                          background: color, borderRadius: 4,
                           transition: 'width 1s cubic-bezier(0.16,1,0.3,1)',
                         }} />
                       </div>
@@ -1626,8 +1626,8 @@ function DesktopImovelDetail({
                         <span style={{ fontSize: 9, fontFamily: 'var(--font-montserrat,sans-serif)', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-tertiary)' }}>{label}</span>
                         <span style={{ fontSize: 9, fontFamily: 'var(--font-mono,monospace)', color: 'var(--text-secondary)' }}>{pct}</span>
                       </div>
-                      <div style={{ height: 3, background: 'rgba(255,255,255,0.05)', borderRadius: 2, overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${pct}%`, background: pct >= 70 ? 'var(--imi-gold-500)' : pct >= 50 ? '#E8A87C' : '#9FAAB8', borderRadius: 2, transition: 'width 0.8s ease' }} />
+                      <div style={{ height: 3, background: 'rgba(255,255,255,0.05)', borderRadius: 4, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${pct}%`, background: pct >= 70 ? 'var(--imi-gold-500)' : pct >= 50 ? '#E8A87C' : '#9FAAB8', borderRadius: 4, transition: 'width 0.8s ease' }} />
                       </div>
                     </div>
                   )
@@ -1726,12 +1726,12 @@ function DesktopImovelDetail({
               <p style={{ ...EYEBROW, marginBottom: 10 }}>Incorporadora</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {dev.developer.logo_url ? (
-                  <div style={{ width: 36, height: 36, borderRadius: 6, overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 4, overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
                     <Image src={dev.developer.logo_url} alt={dev.developer.name} fill sizes="36px" style={{ objectFit: 'contain' }} />
                   </div>
                 ) : (
                   <div style={{
-                    width: 36, height: 36, borderRadius: 6, flexShrink: 0,
+                    width: 36, height: 36, borderRadius: 4, flexShrink: 0,
                     background: 'rgba(184,148,58,0.12)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>

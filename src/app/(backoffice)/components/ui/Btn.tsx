@@ -143,7 +143,7 @@ function buildStyle(
     fontFamily: 'var(--font-sans)',
     fontWeight: 500,
     lineHeight: 1,
-    borderRadius: 'var(--r-md, 8px)',
+    borderRadius: 'var(--r-md, 4px)',
     border: v.border,
     background: hovered && !disabled ? v.hoverBackground : v.background,
     color: hovered && v.hoverColor && !disabled ? v.hoverColor : v.color,

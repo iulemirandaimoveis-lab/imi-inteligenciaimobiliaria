@@ -43,7 +43,7 @@ const VIEW_TABS = [
 function KpiIcon({ children, color }: { children: React.ReactNode; color: string }) {
     return (
         <div style={{
-            width: 28, height: 28, borderRadius: 8,
+            width: 28, height: 28, borderRadius: 4,
             background: `${color}18`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color,
@@ -124,7 +124,7 @@ function MobileInventario({
                         <button
                             className="mob-btn-tap"
                             style={{
-                                width: 44, height: 44, borderRadius: 10,
+                                width: 44, height: 44, borderRadius: 4,
                                 background: 'rgba(184,148,58,0.15)',
                                 border: 'none', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -146,7 +146,7 @@ function MobileInventario({
             }}>
                 {/* Total */}
                 <div style={{
-                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    background: 'var(--bg-elevated)', borderRadius: 4, padding: 14,
                     display: 'flex', flexDirection: 'column', gap: 8,
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -166,7 +166,7 @@ function MobileInventario({
 
                 {/* Publicados */}
                 <div style={{
-                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    background: 'var(--bg-elevated)', borderRadius: 4, padding: 14,
                     display: 'flex', flexDirection: 'column', gap: 8,
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -186,7 +186,7 @@ function MobileInventario({
 
                 {/* Vendidos */}
                 <div style={{
-                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    background: 'var(--bg-elevated)', borderRadius: 4, padding: 14,
                     display: 'flex', flexDirection: 'column', gap: 8,
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -206,7 +206,7 @@ function MobileInventario({
 
                 {/* Em Campanha */}
                 <div style={{
-                    background: 'var(--bg-elevated)', borderRadius: 12, padding: 14,
+                    background: 'var(--bg-elevated)', borderRadius: 4, padding: 14,
                     display: 'flex', flexDirection: 'column', gap: 8,
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -247,7 +247,7 @@ function MobileInventario({
                         width: '100%', height: 44, boxSizing: 'border-box',
                         background: 'var(--bg-elevated)',
                         border: '1px solid rgba(184,148,58,0.15)',
-                        borderRadius: 10,
+                        borderRadius: 4,
                         padding: '0 14px 0 40px',
                         fontFamily: 'var(--font-montserrat, sans-serif)',
                         fontSize: 14, color: '#EBE7E0',
@@ -276,7 +276,7 @@ function MobileInventario({
                                 flexShrink: 0,
                                 display: 'flex', alignItems: 'center', gap: 5,
                                 height: 32, padding: '0 12px',
-                                borderRadius: 999,
+                                borderRadius: 4,
                                 background: isActive ? 'var(--imi-gold-500)' : 'transparent',
                                 border: `1px solid ${isActive ? 'var(--imi-gold-500)' : 'rgba(184,148,58,0.3)'}`,
                                 color: isActive ? '#0B1120' : '#9FAAB8',
@@ -313,7 +313,7 @@ function MobileInventario({
                         `}</style>
                         {[1, 2, 3].map(i => (
                             <div key={i} style={{
-                                borderRadius: 12, overflow: 'hidden',
+                                borderRadius: 4, overflow: 'hidden',
                                 marginBottom: 12,
                                 background: 'var(--bg-elevated)',
                                 border: '1px solid rgba(184,148,58,0.12)',
@@ -328,14 +328,14 @@ function MobileInventario({
                                 {/* Body skeleton */}
                                 <div style={{ padding: '12px 14px' }}>
                                     <div style={{
-                                        height: 14, borderRadius: 6, marginBottom: 8,
+                                        height: 14, borderRadius: 4, marginBottom: 8,
                                         background: `linear-gradient(90deg, #1A3250 25%, #101830 50%, #1A3250 75%)`,
                                         backgroundSize: '200% 100%',
                                         animation: 'inv-shimmer 1.5s ease-in-out infinite',
                                         width: '70%',
                                     }} />
                                     <div style={{
-                                        height: 10, borderRadius: 6,
+                                        height: 10, borderRadius: 4,
                                         background: `linear-gradient(90deg, #1A3250 25%, #101830 50%, #1A3250 75%)`,
                                         backgroundSize: '200% 100%',
                                         animation: 'inv-shimmer 1.5s ease-in-out infinite',
@@ -354,7 +354,7 @@ function MobileInventario({
                         justifyContent: 'center', padding: '60px 24px', gap: 16, textAlign: 'center',
                     }}>
                         <div style={{
-                            width: 72, height: 72, borderRadius: 20,
+                            width: 72, height: 72, borderRadius: 4,
                             background: 'rgba(184,148,58,0.06)',
                             border: '1px solid rgba(184,148,58,0.18)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -377,7 +377,7 @@ function MobileInventario({
                             <button
                                 className="mob-btn-tap"
                                 style={{
-                                    height: 44, padding: '0 24px', borderRadius: 10,
+                                    height: 44, padding: '0 24px', borderRadius: 4,
                                     background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
                                     fontFamily: 'var(--font-montserrat, sans-serif)',
                                     fontSize: 12, fontWeight: 700, letterSpacing: '1px',
@@ -411,7 +411,7 @@ function MobileInventario({
                                 className="mob-card-inner"
                                 style={{
                                     background: 'var(--bg-elevated)',
-                                    borderRadius: 12,
+                                    borderRadius: 4,
                                     border: '1px solid rgba(184,148,58,0.12)',
                                     overflow: 'hidden',
                                     touchAction: 'manipulation',
@@ -442,7 +442,7 @@ function MobileInventario({
                                     <div style={{
                                         position: 'absolute', inset: 0,
                                         background: 'linear-gradient(to top, rgba(11,25,40,0.97) 0%, transparent 60%)',
-                                        borderRadius: '12px 12px 0 0',
+                                        borderRadius: '4px 4px 0 0',
                                     }} />
 
                                     {/* Status badge — top-left */}
@@ -454,7 +454,7 @@ function MobileInventario({
                                             color: status.color,
                                             background: status.bg,
                                             border: `1px solid ${status.color}40`,
-                                            padding: '4px 8px', borderRadius: 999,
+                                            padding: '4px 8px', borderRadius: 4,
                                         }}>
                                             {status.label}
                                         </span>
@@ -801,7 +801,7 @@ export default function InventarioPage() {
                                                 <div className="absolute inset-0 flex items-center justify-center"
                                                     style={{ background: 'rgba(0,0,0,0.45)' }}>
                                                     <span className="text-xl font-black text-orange-400 uppercase tracking-[0.15em]"
-                                                        style={{ border: '2px solid #f97316', padding: '4px 14px', borderRadius: 6 }}>
+                                                        style={{ border: '2px solid #f97316', padding: '4px 14px', borderRadius: 4 }}>
                                                         Sold Out
                                                     </span>
                                                 </div>

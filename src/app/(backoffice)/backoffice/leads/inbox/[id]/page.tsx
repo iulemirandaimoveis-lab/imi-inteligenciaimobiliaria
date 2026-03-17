@@ -230,7 +230,7 @@ export default function LeadInboxDetailPage() {
                 actions={
                     <div style={{
                         display: 'flex', alignItems: 'center', gap: 6,
-                        padding: '6px 12px', borderRadius: 20,
+                        padding: '6px 12px', borderRadius: 4,
                         background: assumed ? 'rgba(74,222,128,0.12)' : 'rgba(74,222,128,0.1)',
                         border: `1px solid ${assumed ? 'var(--bo-success)' : 'rgba(74,222,128,0.3)'}`,
                         flexShrink: 0,
@@ -248,7 +248,7 @@ export default function LeadInboxDetailPage() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 style={{
-                    borderRadius: 20, padding: 18, marginBottom: 16,
+                    borderRadius: 4, padding: 18, marginBottom: 16,
                     background: T.elevated,
                     border: `1px solid ${T.border}`,
                     boxShadow: 'var(--bo-card-shadow, 0 4px 24px rgba(0,0,0,0.18)), inset 0 1px 0 rgba(255,255,255,0.06)',
@@ -317,7 +317,7 @@ export default function LeadInboxDetailPage() {
                         { label: 'TIPOLOGIA', value: lead.interest || 'Cobertura 3+ suítes', color: T.text },
                     ].map((item: any, i) => (
                         <div key={i} style={{
-                            padding: '10px 12px', borderRadius: 12,
+                            padding: '10px 12px', borderRadius: 4,
                             background: 'rgba(255,255,255,0.03)',
                             border: `1px solid ${T.border}`,
                         }}>
@@ -335,7 +335,7 @@ export default function LeadInboxDetailPage() {
 
                 {/* Abordagem sugerida */}
                 <div style={{
-                    borderRadius: 12, padding: '12px 14px',
+                    borderRadius: 4, padding: '12px 14px',
                     background: 'rgba(72,101,129,0.1)',
                     border: '1px solid rgba(72,101,129,0.25)',
                 }}>
@@ -391,7 +391,7 @@ export default function LeadInboxDetailPage() {
                         target={action.target}
                         rel={action.target ? 'noopener noreferrer' : undefined}
                         style={{
-                            flex: 1, height: 40, borderRadius: 12,
+                            flex: 1, height: 40, borderRadius: 4,
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                             fontSize: 12, fontWeight: 700, textDecoration: 'none',
                             background: action.bg, border: `1px solid ${action.border}`,
@@ -410,7 +410,7 @@ export default function LeadInboxDetailPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.13 }}
                 style={{
-                    borderRadius: 20, overflow: 'hidden',
+                    borderRadius: 4, overflow: 'hidden',
                     background: T.elevated,
                     border: `1px solid ${T.border}`,
                     marginBottom: 16,
@@ -427,7 +427,7 @@ export default function LeadInboxDetailPage() {
                     <span style={{ fontSize: 12, fontWeight: 700, color: T.text }}>Conversa de Qualificação IA</span>
                     <span style={{
                         marginLeft: 'auto', fontSize: 9, fontWeight: 800,
-                        padding: '3px 8px', borderRadius: 20,
+                        padding: '3px 8px', borderRadius: 4,
                         background: 'rgba(74,222,128,0.12)', color: 'var(--bo-success)',
                     }}>
                         {messages.length} mensagens
@@ -484,7 +484,7 @@ export default function LeadInboxDetailPage() {
                                 }}>
                                     <div style={{
                                         padding: '10px 14px',
-                                        borderRadius: isBot ? '4px 16px 16px 16px' : '16px 4px 16px 16px',
+                                        borderRadius: '4px',
                                         background: isBot
                                             ? 'rgba(255,255,255,0.05)'
                                             : 'var(--bo-accent)',
@@ -520,7 +520,7 @@ export default function LeadInboxDetailPage() {
                                     <Bot size={13} style={{ color: 'var(--bo-success)' }} />
                                 </div>
                                 <div style={{
-                                    padding: '10px 16px', borderRadius: '4px 16px 16px 16px',
+                                    padding: '10px 16px', borderRadius: '4px',
                                     background: 'rgba(255,255,255,0.05)',
                                     display: 'flex', alignItems: 'center', gap: 5,
                                 }}>
@@ -560,7 +560,7 @@ export default function LeadInboxDetailPage() {
                                     placeholder="Digite uma mensagem..."
                                     style={{
                                         flex: 1, height: 38, padding: '0 14px',
-                                        borderRadius: 12, fontSize: 13, outline: 'none',
+                                        borderRadius: 4, fontSize: 13, outline: 'none',
                                         background: 'rgba(255,255,255,0.05)',
                                         border: `1px solid ${T.border}`,
                                         color: T.text,
@@ -570,7 +570,7 @@ export default function LeadInboxDetailPage() {
                                     onClick={sendMessage}
                                     disabled={!chatInput.trim()}
                                     style={{
-                                        width: 38, height: 38, borderRadius: 12, border: 'none', cursor: 'pointer',
+                                        width: 38, height: 38, borderRadius: 4, border: 'none', cursor: 'pointer',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         background: chatInput.trim() ? '#3B82F6' : T.elevated,
                                         opacity: chatInput.trim() ? 1 : 0.5,
@@ -596,7 +596,7 @@ export default function LeadInboxDetailPage() {
                     <button
                         onClick={() => setAssumed(v => !v)}
                         style={{
-                            flex: 1, height: 52, borderRadius: 16,
+                            flex: 1, height: 52, borderRadius: 4,
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                             fontSize: 14, fontWeight: 600, cursor: 'pointer',
                             background: assumed ? 'rgba(74,222,128,0.12)' : T.elevated,
@@ -612,7 +612,7 @@ export default function LeadInboxDetailPage() {
                     <Link
                         href="/backoffice/agenda"
                         style={{
-                            flex: 1, height: 52, borderRadius: 16, textDecoration: 'none',
+                            flex: 1, height: 52, borderRadius: 4, textDecoration: 'none',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                             fontSize: 14, fontWeight: 600, color: '#ffffff',
                             background: 'var(--bo-accent)',

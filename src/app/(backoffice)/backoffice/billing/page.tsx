@@ -86,7 +86,7 @@ export default function BillingPage() {
                 >
                     <div style={{
                         display: 'inline-flex', alignItems: 'center', gap: '6px',
-                        padding: '5px 14px', borderRadius: '20px',
+                        padding: '5px 14px', borderRadius: '4px',
                         background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
                         fontSize: '11px', fontWeight: 700, color: '#f87171',
                         letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '20px',
@@ -115,7 +115,7 @@ export default function BillingPage() {
                                 style={{
                                     background: plan.highlight ? 'rgba(184,148,58,0.06)' : 'var(--bg-surface)',
                                     border: `1px solid ${plan.highlight ? 'rgba(184,148,58,0.3)' : 'var(--border-default)'}`,
-                                    borderRadius: '20px',
+                                    borderRadius: '4px',
                                     padding: '28px 24px',
                                     position: 'relative',
                                 }}
@@ -124,7 +124,7 @@ export default function BillingPage() {
                                     <div style={{
                                         position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
                                         background: 'var(--imi-gold-500)', color: '#000',
-                                        fontSize: '9px', fontWeight: 800, padding: '4px 14px', borderRadius: '20px',
+                                        fontSize: '9px', fontWeight: 800, padding: '4px 14px', borderRadius: '4px',
                                         letterSpacing: '0.1em', textTransform: 'uppercase', whiteSpace: 'nowrap',
                                     }}>
                                         Mais popular
@@ -133,7 +133,7 @@ export default function BillingPage() {
 
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                                     <div style={{
-                                        width: 40, height: 40, borderRadius: '10px',
+                                        width: 40, height: 40, borderRadius: '4px',
                                         background: plan.highlight ? 'rgba(184,148,58,0.12)' : 'rgba(255,255,255,0.05)',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     }}>
@@ -165,7 +165,7 @@ export default function BillingPage() {
                                     onClick={() => handleSubscribe(plan.id, plan.price)}
                                     disabled={loading === plan.id}
                                     style={{
-                                        width: '100%', height: '46px', borderRadius: '12px',
+                                        width: '100%', height: '46px', borderRadius: '4px',
                                         background: plan.highlight ? 'var(--imi-gold-500)' : 'rgba(255,255,255,0.06)',
                                         border: plan.highlight ? 'none' : '1px solid var(--border-default)',
                                         color: plan.highlight ? '#000' : 'var(--text-primary)',

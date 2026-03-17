@@ -90,7 +90,7 @@ export default function SimuladorCreditoPage() {
         color: T.text,
         width: '100%',
         height: '44px',
-        borderRadius: '12px',
+        borderRadius: '4px',
         padding: '0 14px 0 36px',
         fontSize: '14px',
         outline: 'none',

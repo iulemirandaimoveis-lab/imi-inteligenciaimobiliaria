@@ -343,13 +343,13 @@ export default function NovoConteudoPage() {
                     onClick={() => setTipo(t.id)}
                     style={{
                       width: '100%', display: 'flex', alignItems: 'center', gap: '14px',
-                      padding: '12px 14px', borderRadius: '16px', textAlign: 'left',
+                      padding: '12px 14px', borderRadius: '4px', textAlign: 'left',
                       cursor: 'pointer', transition: 'all 0.15s', border: 'none',
                       background: isActive ? `${t.bg}` : 'transparent',
                       outline: isActive ? `1px solid ${t.color}40` : '1px solid transparent',
                     }}
                   >
-                    <div style={{ width: '38px', height: '38px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: t.bg, color: t.color }}>
+                    <div style={{ width: '38px', height: '38px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: t.bg, color: t.color }}>
                       <Icon size={19} />
                     </div>
                     <div>
@@ -428,7 +428,7 @@ export default function NovoConteudoPage() {
               {/* Campo título */}
               <div className="rounded-2xl p-6" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
                     <TipoIcon size={16} />
                   </div>
                   <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: T.textMuted }}>
@@ -518,7 +518,7 @@ export default function NovoConteudoPage() {
               </div>
 
               <div className="flex items-center gap-3 mb-8">
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: tipoAtual.bg, color: tipoAtual.color }}>
                   <TipoIcon size={20} />
                 </div>
                 <div>

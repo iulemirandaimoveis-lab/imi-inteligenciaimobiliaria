@@ -44,7 +44,7 @@ export function SectionHeader({ title, action, badge, badgeColor, className = ''
               background: 'rgba(184,148,58,0.10)',
               border: '1px solid rgba(184,148,58,0.20)',
               padding: '1px 6px',
-              borderRadius: 'var(--r-sm, 6px)',
+              borderRadius: 'var(--r-sm, 4px)',
               lineHeight: '14px',
             }}
           >

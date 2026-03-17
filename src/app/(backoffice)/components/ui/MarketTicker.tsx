@@ -158,7 +158,7 @@ export function MarketTicker({ items, speed = 30, paused = true }: MarketTickerP
         background: 'var(--bg-surface)',
         border: '1px solid var(--border-subtle)',
         borderLeft: '3px solid var(--imi-gold-500)',
-        borderRadius: 'var(--r-lg, 12px)',
+        borderRadius: 'var(--r-lg, 4px)',
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',

@@ -130,7 +130,7 @@ export default function CriadorIAPage() {
                 {['Tema', 'Imóvel', 'Canal'].map((s, i) => (
                     <div key={s} style={{
                         display: 'flex', alignItems: 'center', gap: 6,
-                        padding: '6px 14px', borderRadius: 20,
+                        padding: '6px 14px', borderRadius: 4,
                         background: i === 0 ? 'rgba(99,102,241,0.15)' : T.elevated,
                         border: `1px solid ${i === 0 ? 'rgba(99,102,241,0.4)' : T.border}`,
                     }}>
@@ -152,7 +152,7 @@ export default function CriadorIAPage() {
                         onClick={() => setShowTemaDropdown(!showTemaDropdown)}
                         style={{
                             width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                            padding: '13px 16px', borderRadius: 14,
+                            padding: '13px 16px', borderRadius: 4,
                             background: T.elevated, border: `1px solid ${T.border}`,
                             cursor: 'pointer',
                         }}
@@ -169,7 +169,7 @@ export default function CriadorIAPage() {
                                 style={{
                                     position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
                                     background: T.surface, border: `1px solid ${T.border}`,
-                                    borderRadius: 14, padding: 6, zIndex: 50,
+                                    borderRadius: 4, padding: 6, zIndex: 50,
                                     boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
                                 }}
                             >
@@ -178,7 +178,7 @@ export default function CriadorIAPage() {
                                         key={t.value}
                                         onClick={() => { setTema(t); setShowTemaDropdown(false) }}
                                         style={{
-                                            width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 8,
+                                            width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 4,
                                             background: tema.value === t.value ? 'rgba(99,102,241,0.1)' : 'transparent',
                                             border: 'none', cursor: 'pointer',
                                             fontSize: 13, fontWeight: tema.value === t.value ? 600 : 400,
@@ -204,12 +204,12 @@ export default function CriadorIAPage() {
                         onClick={() => setShowDevDropdown(!showDevDropdown)}
                         style={{
                             width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-                            padding: '12px 14px', borderRadius: 14,
+                            padding: '12px 14px', borderRadius: 4,
                             background: T.elevated, border: `1px solid ${T.border}`,
                             cursor: 'pointer',
                         }}
                     >
-                        <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 4, background: 'rgba(99,102,241,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                             <Building2 size={16} style={{ color: '#6366F1' }} />
                         </div>
                         <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
@@ -233,7 +233,7 @@ export default function CriadorIAPage() {
                                 style={{
                                     position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
                                     background: T.surface, border: `1px solid ${T.border}`,
-                                    borderRadius: 14, padding: 6, zIndex: 50,
+                                    borderRadius: 4, padding: 6, zIndex: 50,
                                     boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
                                     maxHeight: 220, overflowY: 'auto',
                                 }}
@@ -243,7 +243,7 @@ export default function CriadorIAPage() {
                                         key={dev.id}
                                         onClick={() => { setSelectedDev(dev); setShowDevDropdown(false) }}
                                         style={{
-                                            width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 8,
+                                            width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 4,
                                             background: selectedDev?.id === dev.id ? 'rgba(99,102,241,0.1)' : 'transparent',
                                             border: 'none', cursor: 'pointer',
                                             fontSize: 13, fontWeight: 500, color: T.text,
@@ -273,7 +273,7 @@ export default function CriadorIAPage() {
                                 onClick={() => setActiveCanal(canal)}
                                 style={{
                                     flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
-                                    height: 44, borderRadius: 12,
+                                    height: 44, borderRadius: 4,
                                     background: isActive ? canal.bg : T.elevated,
                                     border: `1.5px solid ${isActive ? canal.color : T.border}`,
                                     cursor: 'pointer', transition: 'all 0.15s',
@@ -297,7 +297,7 @@ export default function CriadorIAPage() {
                 onClick={handleGenerate}
                 disabled={generating}
                 style={{
-                    width: '100%', height: 52, borderRadius: 16,
+                    width: '100%', height: 52, borderRadius: 4,
                     background: generating ? 'rgba(59,130,246,0.4)' : 'var(--bo-accent)',
                     color: '#fff', fontSize: 15, fontWeight: 600,
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
@@ -321,20 +321,20 @@ export default function CriadorIAPage() {
                     >
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                             <p style={{ fontSize: 13, fontWeight: 800, color: T.text }}>Output Sugerido</p>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 8, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.3)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 4, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.3)' }}>
                                 <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#6366F1', animation: 'pulse 2s infinite' }} />
                                 <span style={{ fontSize: 9, fontWeight: 700, color: '#6366F1', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Gerado Agora</span>
                             </div>
                         </div>
 
                         {/* Tabs */}
-                        <div style={{ display: 'flex', gap: 4, marginBottom: 14, background: T.elevated, borderRadius: 12, padding: 4 }}>
+                        <div style={{ display: 'flex', gap: 4, marginBottom: 14, background: T.elevated, borderRadius: 4, padding: 4 }}>
                             {OUTPUT_TABS.map(tab => (
                                 <button
                                     key={tab.key}
                                     onClick={() => setOutputTab(tab.key as any)}
                                     style={{
-                                        flex: 1, height: 34, borderRadius: 10, fontSize: 11, fontWeight: 700,
+                                        flex: 1, height: 34, borderRadius: 4, fontSize: 11, fontWeight: 700,
                                         background: outputTab === tab.key ? T.surface : 'transparent',
                                         border: outputTab === tab.key ? `1px solid ${T.border}` : '1px solid transparent',
                                         color: outputTab === tab.key ? T.text : T.textMuted,
@@ -347,7 +347,7 @@ export default function CriadorIAPage() {
                         </div>
 
                         {/* Content card */}
-                        <div style={{ borderRadius: 18, background: 'linear-gradient(145deg, #151d2a, #0d111a)', border: '1px solid rgba(255,255,255,0.09)', padding: 20, marginBottom: 14, minHeight: 180, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.3)' }}>
+                        <div style={{ borderRadius: 4, background: 'linear-gradient(145deg, #151d2a, #0d111a)', border: '1px solid rgba(255,255,255,0.09)', padding: 20, marginBottom: 14, minHeight: 180, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.3)' }}>
                             {generating ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 160 }}>
                                     <Loader2 size={28} className="animate-spin" style={{ color: '#6366F1' }} />
@@ -386,7 +386,7 @@ export default function CriadorIAPage() {
                                 <button
                                     onClick={() => currentOutputText && copyText(currentOutputText, outputTab)}
                                     style={{
-                                        flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 600,
+                                        flex: 1, height: 46, borderRadius: 4, fontSize: 13, fontWeight: 600,
                                         background: T.elevated, border: `1px solid ${T.border}`,
                                         color: T.text, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                                         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
@@ -398,7 +398,7 @@ export default function CriadorIAPage() {
                                 </button>
                                 <button
                                     style={{
-                                        flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 600,
+                                        flex: 1, height: 46, borderRadius: 4, fontSize: 13, fontWeight: 600,
                                         background: 'var(--bo-accent)',
                                         color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                                         border: '1px solid rgba(255,255,255,0.1)',
@@ -432,7 +432,7 @@ export default function CriadorIAPage() {
                             key={d.num}
                             style={{
                                 flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-                                padding: '14px 6px', borderRadius: 16,
+                                padding: '14px 6px', borderRadius: 4,
                                 background: i === 0 ? 'rgba(99,102,241,0.12)' : T.elevated,
                                 border: `1px solid ${i === 0 ? 'rgba(99,102,241,0.35)' : T.border}`,
                             }}
