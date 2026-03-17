@@ -256,7 +256,7 @@ export default function ImovelHeatmapPage() {
         since.setDate(since.getDate() - daysAgo)
 
         Promise.all([
-            supabase.from('developments').select('id, name, neighborhood, city, images, status_commercial').eq('id', id).single(),
+            supabase.from('developments').select('*').eq('id', id).single(),
             supabase.from('page_views').select('*').eq('development_id', id).gte('created_at', since.toISOString()).order('created_at', { ascending: false }).limit(500),
         ]).then(([{ data: dev }, { data: pv }]) => {
             setDevelopment(dev)

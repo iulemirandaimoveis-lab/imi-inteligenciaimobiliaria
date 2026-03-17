@@ -1055,7 +1055,7 @@ export default function NovoImovelPage() {
   /* ── Fetch developers ── */
   useEffect(() => {
     const supabase = createClient()
-    supabase.from('developers').select('id, name, logo_url').order('name')
+    supabase.from('developers').select('*').order('name')
       .then(({ data }) => { if (data) setDevelopers(data) })
   }, [])
 

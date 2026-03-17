@@ -10,18 +10,7 @@ export default async function BackofficeConstrutorasPage() {
   // Buscar construtoras reais do banco de dados e suas estatísticas reais
   const { data: developersData, error } = await supabase
     .from('developers')
-    .select(`
-      id,
-      name,
-      legal_name,
-      cnpj,
-      email,
-      phone,
-      address,
-      is_active,
-      logo_url,
-      developments (count)
-    `)
+    .select('*')
     .order('name', { ascending: true })
 
   if (error) {
@@ -29,7 +18,8 @@ export default async function BackofficeConstrutorasPage() {
   }
 
   // Mapeia para a tipagem que o front-end aceita e conta os empreendimentos
-  const developers: Developer[] = (developersData || []).map((dev) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const developers: Developer[] = (developersData || []).map((dev: any) => ({
     id: dev.id,
     name: dev.name,
     legal_name: dev.legal_name,
@@ -37,16 +27,12 @@ export default async function BackofficeConstrutorasPage() {
     email: dev.email,
     phone: dev.phone,
     address: dev.address,
-    is_active: dev.is_active,
-    logo_url: dev.logo_url,
-    // Contagem real de empreendimentos
-    empreendimentosAtivos: Array.isArray(dev.developments) ? dev.developments.length : 0,
-    // Unidades vendidas e receita serão calculadas quando módulo de vendas estiver ativo
+    is_active: dev.is_active ?? true,
+    logo_url: dev.logo_url ?? dev.logo,
+    empreendimentosAtivos: 0,
     unidadesVendidas: 0,
     receitaTotal: 0,
-    // Rating baseado na quantidade de projetos no portfólio
-    rating: Math.min(5.0, 3.5 + (Array.isArray(dev.developments) ? dev.developments.length : 0) * 0.3),
-    // Duração da parceria calculada
+    rating: 4.0,
     parceriaDuracao: "Parceiro ativo",
   }))
 

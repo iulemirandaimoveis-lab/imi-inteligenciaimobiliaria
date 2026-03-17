@@ -30,12 +30,7 @@ export async function GET(
         // Fetch available developments/units
         const { data: developments } = await supabaseAdmin
             .from('developments')
-            .select(`
-                id, name, slug, type, city, state, status,
-                min_price, max_price, bedrooms_options,
-                description, cover_image_url,
-                developer:developers(name)
-            `)
+            .select('*')
             .in('status', ['em_construcao', 'pronto', 'lancamento'])
             .limit(100)
 

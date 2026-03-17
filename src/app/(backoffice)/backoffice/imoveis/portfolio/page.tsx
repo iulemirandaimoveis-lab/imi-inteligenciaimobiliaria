@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Building2, TrendingUp, BarChart2, Plus, Star, Eye, Edit } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
+import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
 import {
@@ -69,38 +70,16 @@ function fmtArea(n?: number | null): string {
   return `${n.toLocaleString('pt-BR')} m²`
 }
 
-function toP(d: any): IMIProperty {
-  return {
-    id: d.id,
-    name: d.name,
-    type: d.type,
-    status: normalizeStatus(d.status_commercial),
-    price: d.price_from,
-    area: d.area_from,
-    bedrooms: d.bedrooms,
-    bathrooms: d.bathrooms,
-    parking: d.parking_spaces,
-    neighborhood: d.neighborhood,
-    city: d.city,
-    image_urls: d.gallery_images?.length
-      ? d.gallery_images
-      : d.image ? [d.image] : [],
-    cover_image_url: d.image,
-    developer: Array.isArray(d.developer) ? d.developer[0] : d.developer,
-    created_at: d.created_at,
-  }
-}
-
 /* ─── Data layer ─────────────────────────────────────────────────────────────── */
 async function fetchProperties(): Promise<IMIProperty[]> {
   const supabase = createClient()
   const { data, error } = await supabase
     .from('developments')
-    .select(`id, name, type, status_commercial, price_from, price_to, area_from, bedrooms, bathrooms, parking_spaces, neighborhood, city, image, gallery_images, is_highlighted, created_at, developer:developers(id, name, logo_url)`)
+    .select('*')
     .order('created_at', { ascending: false })
 
   if (error || !data) return []
-  return data.map(toP).map(enrichProperty)
+  return data.map(mapDevToProperty).map(enrichProperty)
 }
 
 /* ─── Type label map ─────────────────────────────────────────────────────────── */

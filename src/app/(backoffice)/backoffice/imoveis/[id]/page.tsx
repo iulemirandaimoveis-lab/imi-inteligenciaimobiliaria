@@ -25,6 +25,7 @@ import {
   calcLiquidityIndex,
 } from '@/features/properties/services/score.service'
 import type { IMIProperty } from '@/features/properties/types'
+import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import { createClient } from '@/lib/supabase/client'
 import { NEIGHBORHOOD_AVG_SQM } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
@@ -34,40 +35,8 @@ import { ValuationEngine } from '@/app/(backoffice)/components/ui/ValuationEngin
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Development {
-  id: string
-  name: string
-  type: string
-  status: string
-  status_commercial?: string
-  condition?: string
-  price_from?: number
-  price_to?: number
-  area_min?: number
-  area_max?: number
-  bedrooms_from?: number
-  bathrooms_from?: number
-  parking_from?: number
-  neighborhood?: string
-  city?: string
-  state?: string
-  country?: string
-  address?: string
-  street_number?: string
-  cep?: string
-  description?: string
-  features?: string[] | null
-  amenities?: string[] | null
-  image_urls?: string[] | null
-  cover_image_url?: string | null
-  video_url?: string | null
-  slug?: string
-  created_at?: string
-  updated_at?: string
-  latitude?: number
-  longitude?: number
-  developer?: { id: string; name: string; logo_url?: string | null } | null
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Development = Record<string, any>
 
 // ─── Status normalization ─────────────────────────────────────────────────────
 
@@ -110,26 +79,8 @@ function fmtNum(v?: number | null): string {
 }
 
 function toIMIProperty(d: Development): IMIProperty {
-  const status = normalizeStatus(d.status_commercial ?? d.status)
   return {
-    id: d.id,
-    name: d.name,
-    type: d.type ?? 'apartamento',
-    condition: d.condition ?? status,
-    status,
-    price: d.price_from ?? undefined,
-    area: d.area_min ?? undefined,
-    bedrooms: d.bedrooms_from ?? undefined,
-    bathrooms: d.bathrooms_from ?? undefined,
-    parking: d.parking_from ?? undefined,
-    neighborhood: d.neighborhood ?? undefined,
-    city: d.city ?? undefined,
-    state: d.state ?? undefined,
-    address: d.address ?? undefined,
-    image_urls: d.image_urls ?? undefined,
-    cover_image_url: d.cover_image_url ?? undefined,
-    slug: d.slug ?? undefined,
-    developer: d.developer ?? undefined,
+    ...mapDevToProperty(d),
     created_at: d.created_at ?? undefined,
     updated_at: d.updated_at ?? undefined,
   }
@@ -319,7 +270,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
   const images: string[] = (() => {
     const list: string[] = []
     if (dev.cover_image_url) list.push(dev.cover_image_url)
-    if (dev.image_urls) list.push(...dev.image_urls.filter(u => u !== dev.cover_image_url))
+    if (dev.image_urls) list.push(...dev.image_urls.filter((u: string) => u !== dev.cover_image_url))
     return list
   })()
 
@@ -945,7 +896,7 @@ function DesktopImovelDetail({
   const images: string[] = (() => {
     const list: string[] = []
     if (dev.cover_image_url) list.push(dev.cover_image_url)
-    if (dev.image_urls) list.push(...dev.image_urls.filter(u => u !== dev.cover_image_url))
+    if (dev.image_urls) list.push(...dev.image_urls.filter((u: string) => u !== dev.cover_image_url))
     return list
   })()
 
@@ -1888,16 +1839,7 @@ export default function ImovelDetailPage() {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('developments')
-        .select(`
-          id, name, type, status, status_commercial, condition,
-          price_from, price_to, area_min, area_max,
-          bedrooms_from, bathrooms_from, parking_from,
-          neighborhood, city, state, country, address, street_number,
-          cep, description, features, amenities,
-          image_urls, cover_image_url, video_url, slug,
-          created_at, updated_at, latitude, longitude,
-          developer:developers(id, name, logo_url)
-        `)
+        .select('*')
         .eq('id', id)
         .single()
 
@@ -1906,7 +1848,27 @@ export default function ImovelDetailPage() {
         return
       }
 
-      const development = data as unknown as Development
+      // Normalize DB row: create aliases so both old and new column names work
+      const raw = data as unknown as Development
+      const imagesObj = raw.images as { main?: string; gallery?: string[]; videos?: string[] } | null
+      const development: Development = {
+        ...raw,
+        name: raw.name ?? raw.title,
+        price_from: raw.price_from ?? raw.price_min,
+        price_to: raw.price_to ?? raw.price_max,
+        area_min: raw.area_from ?? raw.area_min,
+        area_max: raw.area_to ?? raw.area_max,
+        bedrooms_from: raw.bedrooms ?? raw.bedrooms_from,
+        bathrooms_from: raw.bathrooms ?? raw.bathrooms_from,
+        parking_from: raw.parking_spaces ?? raw.parking_from,
+        image_urls: imagesObj?.gallery ?? raw.gallery_images ?? raw.image_urls ?? [],
+        cover_image_url: imagesObj?.main ?? raw.image ?? raw.cover_image_url,
+        video_url: imagesObj?.videos?.[0] ?? raw.video_url ?? raw.virtual_tour_url,
+        features: raw.features ?? raw.selling_points ?? [],
+        developer: typeof raw.developer === 'string'
+          ? { id: '', name: raw.developer, logo_url: raw.developer_logo }
+          : raw.developer,
+      }
       setDev(development)
 
       const prop = toIMIProperty(development)

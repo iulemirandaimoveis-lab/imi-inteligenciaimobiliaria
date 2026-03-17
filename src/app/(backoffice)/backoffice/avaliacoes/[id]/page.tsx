@@ -70,15 +70,15 @@ export default function AvaliacaoDetalhesPage() {
         const supabase = createClient()
         supabase
             .from('developments')
-            .select('price_min, price_max, area_min_sqm, area_max_sqm')
-            .eq('bairro', data.bairro)
+            .select('*')
+            .eq('neighborhood', data.bairro)
             .eq('status_commercial', 'published')
             .then(({ data: devs }) => {
                 if (!devs?.length) return
                 const prices = devs
-                    .map(d => {
-                        const price = (Number(d.price_min || 0) + Number(d.price_max || d.price_min || 0)) / 2
-                        const area = (Number(d.area_min_sqm || 0) + Number(d.area_max_sqm || d.area_min_sqm || 0)) / 2
+                    .map((d: Record<string, unknown>) => {
+                        const price = (Number(d.price_min || d.price_from || 0) + Number(d.price_max || d.price_to || d.price_min || d.price_from || 0)) / 2
+                        const area = (Number(d.area_from || d.area_min || 0) + Number(d.area_to || d.area_max || d.area_from || d.area_min || 0)) / 2
                         return area > 0 ? price / area : 0
                     })
                     .filter(p => p > 1000 && p < 100000) // sanity range

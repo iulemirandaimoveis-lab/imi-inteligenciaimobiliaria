@@ -130,7 +130,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     // Fetch similar properties (same city, different slug, max 4)
     const { data: similarRaw } = await supabase
         .from('developments')
-        .select(`*, developers(id, name, slug, logo_url)`)
+        .select('*')
         .eq('status_commercial', 'published')
         .eq('city', data.city || 'Recife')
         .neq('slug', params.slug)

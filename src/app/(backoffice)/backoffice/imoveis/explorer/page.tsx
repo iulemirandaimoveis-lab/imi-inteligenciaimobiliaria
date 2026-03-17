@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Building2, TrendingUp, BarChart2, ArrowLeft, Star, ChevronUp, ChevronDown } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
+import { mapDevToProperty } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty } from '@/features/properties/types'
 import { NEIGHBORHOOD_AVG_SQM, NEIGHBORHOOD_YIELD } from '@/features/properties/types'
 import { MarketTrendChart, Sparkline } from '@/features/properties/components/MarketTrendChart'
@@ -24,16 +25,7 @@ const DB_STATUS: Record<string, string> = {
 function ns(s?: string) { return DB_STATUS[s?.toLowerCase() ?? ''] ?? s?.toLowerCase() ?? 'disponivel' }
 
 function toP(d: any): IMIProperty {
-  return {
-    id: d.id, name: d.name, type: d.type, condition: d.condition,
-    status: ns(d.status_commercial ?? d.status),
-    price: d.price_from, area: d.area_min,
-    bedrooms: d.bedrooms_from, bathrooms: d.bathrooms_from, parking: d.parking_from,
-    neighborhood: d.neighborhood, city: d.city, state: d.state,
-    image_urls: d.image_urls, cover_image_url: d.cover_image_url,
-    slug: d.slug, created_at: d.created_at,
-    developer: Array.isArray(d.developer) ? d.developer[0] : d.developer,
-  }
+  return mapDevToProperty(d)
 }
 
 function fmt(n?: number | null): string {
@@ -802,12 +794,7 @@ function MobileExplorer() {
     const supabase = createClient()
     supabase
       .from('developments')
-      .select(`
-        id, name, type, status, status_commercial, condition,
-        price_from, area_min, area_max, bedrooms_from, bathrooms_from, parking_from,
-        neighborhood, city, state, image_urls, cover_image_url, slug, created_at,
-        developer:developers(id, name, logo_url)
-      `)
+      .select('*')
       .order('created_at', { ascending: false })
       .then(({ data }) => {
         setProperties((data ?? []).map(d => enrichProperty(toP(d))))
@@ -1352,12 +1339,7 @@ function DesktopExplorer() {
     const supabase = createClient()
     supabase
       .from('developments')
-      .select(`
-        id, name, type, status, status_commercial, condition,
-        price_from, area_min, area_max, bedrooms_from, bathrooms_from, parking_from,
-        neighborhood, city, state, image_urls, cover_image_url, slug, created_at,
-        developer:developers(id, name, logo_url)
-      `)
+      .select('*')
       .order('created_at', { ascending: false })
       .then(({ data }) => {
         setProperties((data ?? []).map(d => enrichProperty(toP(d))))

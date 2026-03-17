@@ -543,7 +543,7 @@ export default function InventarioPage() {
         Promise.all([
             supabase
                 .from('developments')
-                .select('id, name, slug, price_min, price_max, tipo, type, status_commercial, status_comercial, gallery_images, bedrooms, bathrooms, area, views')
+                .select('*')
                 .order('created_at', { ascending: false }),
             supabase
                 .from('page_views')

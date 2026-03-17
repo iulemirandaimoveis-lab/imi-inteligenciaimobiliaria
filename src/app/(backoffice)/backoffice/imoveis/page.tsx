@@ -14,6 +14,7 @@ import { createClient } from '@/lib/supabase/client'
 import { PropertyCard, PropertyListRow } from '@/features/properties/components/PropertyCard'
 import { AdvancedFilterPanel } from '@/features/properties/components/AdvancedFilterPanel'
 import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
+import { mapDevToProperty, normalizeStatus as normSt } from '@/features/properties/services/mapDevToProperty'
 import type { IMIProperty, PropertyFilters } from '@/features/properties/types'
 import { DEFAULT_FILTERS } from '@/features/properties/types'
 import { useIsMobile } from '@/hooks/use-is-mobile'
@@ -1460,27 +1461,12 @@ export default function ImoveisPage() {
       const supabase = createClient()
       const { data, error } = await supabase
         .from('developments')
-        .select(`
-          id, name, type, status, status_commercial, condition,
-          price_from, area_min, area_max, bedrooms_from, bathrooms_from,
-          parking_from, neighborhood, city, state, address, street_number,
-          image_urls, cover_image_url, slug, created_at,
-          developer:developers(id, name, logo_url)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
 
       if (error) throw error
 
-      const normalized: IMIProperty[] = (data ?? []).map(d => ({
-        id: d.id, name: d.name, type: d.type, condition: d.condition,
-        status: normalizeStatus(d.status_commercial ?? d.status ?? 'disponivel'),
-        price: d.price_from, area: d.area_min ?? d.area_max,
-        bedrooms: d.bedrooms_from, bathrooms: d.bathrooms_from, parking: d.parking_from,
-        neighborhood: d.neighborhood, city: d.city, state: d.state, address: d.address,
-        image_urls: d.image_urls, cover_image_url: d.cover_image_url, slug: d.slug,
-        created_at: d.created_at,
-        developer: Array.isArray(d.developer) ? d.developer[0] : d.developer,
-      }))
+      const normalized: IMIProperty[] = (data ?? []).map(mapDevToProperty)
       setProperties(normalized.map(enrichProperty))
     } catch (err) {
       console.error('Erro ao carregar imóveis:', err)
