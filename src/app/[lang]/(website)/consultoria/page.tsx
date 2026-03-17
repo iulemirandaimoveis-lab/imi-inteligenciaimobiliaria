@@ -45,7 +45,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {consultingCities.map(city => (
                             <Link
                                 key={city.slug}
@@ -104,7 +104,7 @@ export default function ConsultoriaPage({ params }: PageProps) {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                             <div className="h-full">
                                 <LeverageCalculator />
                             </div>

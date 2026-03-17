@@ -78,6 +78,7 @@ interface SharedProps {
   compareIds: Set<string>
   favorites: Set<string>
   toggleCompare: (id: string) => void
+  clearCompare: () => void
   toggleFavorite: (id: string) => void
   fetchProperties: () => void
   activeFiltersCount: number
@@ -184,7 +185,7 @@ function DesktopImoveisList(props: SharedProps) {
   const {
     properties, filtered, loading, searchInput, setSearchInput,
     filters, setFilters, sortField, setSortField, sortDir, setSortDir,
-    compareIds, favorites, toggleCompare, toggleFavorite,
+    compareIds, favorites, toggleCompare, clearCompare, toggleFavorite,
     fetchProperties, activeFiltersCount, market, setMarket,
   } = props
 
@@ -623,7 +624,7 @@ function DesktopImoveisList(props: SharedProps) {
           <Link href={`/backoffice/imoveis/comparar?ids=${Array.from(compareIds).join(',')}`}>
             <button className="imi-compare-btn">Comparar agora</button>
           </Link>
-          <button onClick={() => {}} className="imi-compare-clear">
+          <button onClick={clearCompare} className="imi-compare-clear">
             <X size={13} />
           </button>
         </div>
@@ -1570,6 +1571,7 @@ export default function ImoveisPage() {
     compareIds,
     favorites,
     toggleCompare,
+    clearCompare: useCallback(() => setCompareIds(new Set()), []),
     toggleFavorite,
     fetchProperties,
     activeFiltersCount,

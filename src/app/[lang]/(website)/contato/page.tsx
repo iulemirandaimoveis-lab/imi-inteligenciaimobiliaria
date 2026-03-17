@@ -95,7 +95,7 @@ export default function ContactPage() {
                             <div className="w-12 h-px bg-[#102A43]" />
                             <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Fale Conosco</span>
                         </motion.div>
-                        <motion.h1 variants={slideUp} className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
+                        <motion.h1 variants={slideUp} className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
                             Atendimento Técnico <br /><span className="text-[#486581] italic">Personalizado</span>
                         </motion.h1>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg sm:text-xl font-light leading-relaxed max-w-2xl">
@@ -156,8 +156,8 @@ export default function ContactPage() {
                             viewport={{ once: true }}
                             className="bg-[#141420] rounded-3xl border border-white/[0.05] p-8 sm:p-12 lg:p-16"
                         >
-                            <div className="text-center mb-12">
-                                <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+                            <div className="text-center mb-10 md:mb-12">
+                                <h2 className="font-display text-3xl sm:text-4xl md:text-[2.5rem] font-bold text-white mb-4">
                                     Envie sua <span className="text-[#486581] italic">Mensagem</span>
                                 </h2>
                                 <p className="text-[#9CA3AF] text-lg font-light">
@@ -257,7 +257,7 @@ export default function ContactPage() {
             </section>
 
             {/* CTA WHATSAPP */}
-            <section className="bg-[#141420] text-white py-20 md:py-32 text-center relative overflow-hidden border-t border-white/[0.05]">
+            <section className="bg-[#141420] text-white py-20 md:py-28 text-center relative overflow-hidden border-t border-white/[0.05]">
                 <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, #334E68 0%, transparent 60%)', filter: 'blur(80px)' }} />
                 <div className="container-custom relative z-10">
                     <motion.div

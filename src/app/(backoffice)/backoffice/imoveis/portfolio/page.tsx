@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Building2, TrendingUp, BarChart2, Plus, Star, Eye } from 'lucide-react'
+import { Building2, TrendingUp, BarChart2, Plus, Star, Eye, Edit } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { enrichProperty, getScoreColor } from '@/features/properties/services/score.service'
 import type { IMIProperty } from '@/features/properties/types'
@@ -431,21 +431,38 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
                       </td>
                       {/* Actions */}
                       <td style={{ padding: '12px 16px' }}>
-                        <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none' }}>
-                          <button className="desk-action-btn" style={{
-                            display: 'flex', alignItems: 'center', gap: 5,
-                            background: 'rgba(184,148,58,0.06)',
-                            border: `1px solid ${DT.border}`,
-                            borderRadius: 6, padding: '5px 10px',
-                            cursor: 'pointer', color: DT.textSub,
-                            fontSize: 11, fontWeight: 500,
-                            fontFamily: 'var(--font-montserrat, sans-serif)',
-                            transition: 'background 0.15s, color 0.15s',
-                          }}>
-                            <Eye size={12} />
-                            Ver
-                          </button>
-                        </Link>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <Link href={`/backoffice/imoveis/${p.id}`} style={{ textDecoration: 'none' }}>
+                            <button className="desk-action-btn" style={{
+                              display: 'flex', alignItems: 'center', gap: 5,
+                              background: 'rgba(184,148,58,0.06)',
+                              border: `1px solid ${DT.border}`,
+                              borderRadius: 6, padding: '5px 10px',
+                              cursor: 'pointer', color: DT.textSub,
+                              fontSize: 11, fontWeight: 500,
+                              fontFamily: 'var(--font-montserrat, sans-serif)',
+                              transition: 'background 0.15s, color 0.15s',
+                            }}>
+                              <Eye size={12} />
+                              Ver
+                            </button>
+                          </Link>
+                          <Link href={`/backoffice/imoveis/${p.id}/editar`} style={{ textDecoration: 'none' }}>
+                            <button className="desk-action-btn" style={{
+                              display: 'flex', alignItems: 'center', gap: 5,
+                              background: 'rgba(184,148,58,0.06)',
+                              border: `1px solid ${DT.border}`,
+                              borderRadius: 6, padding: '5px 10px',
+                              cursor: 'pointer', color: DT.textSub,
+                              fontSize: 11, fontWeight: 500,
+                              fontFamily: 'var(--font-montserrat, sans-serif)',
+                              transition: 'background 0.15s, color 0.15s',
+                            }}>
+                              <Edit size={12} />
+                              Editar
+                            </button>
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   )

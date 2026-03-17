@@ -1,0 +1,65 @@
+// src/app/api/notifications/broadcast/route.ts
+// Broadcast system notifications to all active users (admin only)
+import { NextRequest, NextResponse } from 'next/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
+
+export async function POST(req: NextRequest) {
+    try {
+        // Verify the caller is authenticated
+        const supabase = await createClient()
+        const { data: { user }, error: authError } = await supabase.auth.getUser()
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+        }
+
+        const body = await req.json()
+        const { type = 'system', title, message, data: extraData } = body
+
+        if (!title) {
+            return NextResponse.json({ error: 'title é obrigatório' }, { status: 400 })
+        }
+
+        // Get all active users from auth.users
+        const { data: users, error: usersError } = await supabaseAdmin.auth.admin.listUsers({
+            perPage: 500,
+        })
+
+        if (usersError) {
+            return NextResponse.json({ error: usersError.message }, { status: 500 })
+        }
+
+        const userIds = users.users.map(u => u.id)
+
+        if (userIds.length === 0) {
+            return NextResponse.json({ message: 'No users to notify', count: 0 })
+        }
+
+        // Insert one notification per user
+        const notifications = userIds.map(userId => ({
+            user_id: userId,
+            type,
+            title,
+            message: message || null,
+            data: extraData || null,
+            read: false,
+        }))
+
+        const { data, error } = await supabaseAdmin
+            .from('notifications')
+            .insert(notifications)
+            .select('id')
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json({
+            success: true,
+            count: data?.length || 0,
+            message: `Notificação enviada para ${data?.length || 0} usuários`,
+        }, { status: 201 })
+    } catch (err: any) {
+        return NextResponse.json({ error: err.message }, { status: 500 })
+    }
+}

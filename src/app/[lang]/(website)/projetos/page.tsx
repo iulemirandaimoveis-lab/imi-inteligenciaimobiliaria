@@ -119,12 +119,12 @@ export default async function ProjetosWebsitePage({
                     className="absolute top-0 right-0 w-1/2 h-full opacity-5"
                     style={{ background: 'linear-gradient(135deg, #334E68 0%, transparent 60%)' }}
                 />
-                <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="w-10 h-px bg-[#102A43]" />
                         <span className="text-[#486581] text-xs font-bold uppercase tracking-[0.25em]">Portfólio</span>
                     </div>
-                    <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl mb-6 leading-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                    <h1 className="font-bold text-4xl sm:text-5xl md:text-5xl lg:text-6xl mb-6 leading-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                         Projetos &amp; Empreendimentos
                     </h1>
                     <p className="text-white/60 text-lg max-w-2xl font-light leading-relaxed">
@@ -135,7 +135,7 @@ export default async function ProjetosWebsitePage({
 
             {/* ── Projeto em destaque ───────────────────────── */}
             <section className="py-16 lg:py-24 bg-[#F8F9FA]">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${destaque.cor} text-white`}>
                         {/* Background glow */}
                         <div
@@ -144,7 +144,7 @@ export default async function ProjetosWebsitePage({
                         />
                         <div className="relative z-10 grid lg:grid-cols-2 gap-0">
                             {/* Left — content */}
-                            <div className="p-10 lg:p-14 flex flex-col justify-center">
+                            <div className="p-8 md:p-10 lg:p-14 flex flex-col justify-center">
                                 <div className="flex items-center gap-3 mb-6">
                                     <span
                                         className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border"
@@ -230,7 +230,7 @@ export default async function ProjetosWebsitePage({
 
             {/* ── Outros projetos ───────────────────────────── */}
             <section className="py-16 lg:py-20">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="mb-10">
                         <h2 className="font-bold text-2xl lg:text-3xl text-[#141420] mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                             Portfólio Ativo
@@ -246,7 +246,7 @@ export default async function ProjetosWebsitePage({
                                     className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group"
                                 >
                                     {/* Header visual */}
-                                    <div className={`h-32 bg-gradient-to-br ${p.cor} relative flex items-center justify-center`}>
+                                    <div className={`h-28 md:h-32 bg-gradient-to-br ${p.cor} relative flex items-center justify-center`}>
                                         <Building2 size={40} className="text-white/10" />
                                         <span
                                             className="absolute top-4 left-4 flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border"
@@ -294,7 +294,7 @@ export default async function ProjetosWebsitePage({
 
             {/* ── Proposta de valor para investidores ──────── */}
             <section className="bg-[#141420] text-white py-16 lg:py-20">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-12">
                         <p className="text-[#486581] text-xs font-bold uppercase tracking-[0.25em] mb-4">Para Investidores Institucionais</p>
                         <h2 className="font-bold text-3xl lg:text-4xl mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -304,7 +304,7 @@ export default async function ProjetosWebsitePage({
                             Sovereign wealth funds, family offices e investidores qualificados têm acesso antecipado a briefings técnicos, due diligence e estruturação de participação.
                         </p>
                     </div>
-                    <div className="grid md:grid-cols-3 gap-5">
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
                         {[
                             { icon: Shield, title: 'Due Diligence Técnica', desc: 'Laudos NBR 14653, estudos de viabilidade ABNT e análise jurídica completa disponíveis sob NDA.' },
                             { icon: TrendingUp, title: 'Estruturação Financeira', desc: 'Modelagem de TIR, análise de risco e estruturação de veículos (FII, SPE, holding internacional).' },

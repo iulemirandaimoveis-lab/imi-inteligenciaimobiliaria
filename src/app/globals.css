@@ -7,8 +7,8 @@
 @import 'mapbox-gl/dist/mapbox-gl.css';
 
 /* ============================================================ */
-/*  IMI — DESIGN SYSTEM v3.0                                    */
-/*  Brand Navy × Gold · Libre Baskerville + Figtree + JetBrains */
+/*  IMI — DESIGN SYSTEM v3.1                                    */
+/*  Brand Navy × Gold · Cormorant Garamond + Outfit + DM Mono   */
 /* ============================================================ */
 
 :root {
@@ -49,15 +49,21 @@
   --imi-stone-50:  #F2F0E4;
   --imi-cream:     #F8F6EE;
 
-  /* ── Typography ── */
-  --font-serif: var(--font-libre-baskerville), Georgia, serif;
-  --font-sans:  var(--font-figtree), system-ui, sans-serif;
-  --font-mono:  var(--font-jetbrains-mono), 'SF Mono', monospace;
+  /* ── Typography — DS3.1 Upgrade ── */
+  --font-serif: var(--font-cormorant), Georgia, serif;
+  --font-sans:  var(--font-outfit), system-ui, sans-serif;
+  --font-mono:  var(--font-dm-mono), 'SF Mono', monospace;
 
-  /* Legacy aliases */
+  /* Semantic role aliases */
   --font-display: var(--font-serif);
   --font-ui:      var(--font-sans);
   --font-data:    var(--font-mono);
+
+  /* Legacy compat aliases (old variable names → new fonts) */
+  --font-libre-baskerville: var(--font-cormorant);
+  --font-figtree: var(--font-outfit);
+  --font-jetbrains-mono: var(--font-dm-mono);
+  --font-inter: var(--font-outfit);
 
   /* ── Type Scale ── */
   --t-10: 10px; --t-11: 11px; --t-12: 12px; --t-13: 13px;
@@ -69,6 +75,42 @@
   --s1: 2px; --s2: 4px; --s3: 8px; --s4: 12px; --s5: 16px;
   --s6: 20px; --s7: 24px; --s8: 32px; --s9: 40px; --s10: 48px;
   --s11: 56px; --s12: 64px; --s14: 80px; --s16: 96px;
+
+  /* ── DS3.1 Brand Core ── */
+  --color-navy:           #0B1928;
+  --color-gold:           #C8A44A;
+  --color-gold-deep:      #A8842A;
+  --color-gold-subtle:    rgba(200, 164, 74, 0.12);
+  --color-gold-glow:      rgba(200, 164, 74, 0.30);
+  --color-offwhite:       #F0ECE4;
+  --color-offwhite-dim:   rgba(240, 236, 228, 0.70);
+  --color-offwhite-mute:  rgba(240, 236, 228, 0.40);
+
+  /* ── DS3.1 Surface System ── */
+  --surface-base:         #0B1928;
+  --surface-raised:       #0F2035;
+  --surface-overlay:      #162840;
+  --surface-float:        #1D3450;
+  --surface-border:       #243D5C;
+  --surface-border-gold:  rgba(200, 164, 74, 0.30);
+
+  /* ── DS3.1 Semantic ── */
+  --color-success:        #2ECC71;
+  --color-warning:        #F39C12;
+  --color-danger:         #E74C3C;
+  --color-info:           #3498DB;
+
+  /* ── DS3.1 Shadows ── */
+  --shadow-card:   0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25);
+  --shadow-raised: 0 4px 16px rgba(0,0,0,0.40), 0 2px 6px rgba(0,0,0,0.30);
+  --shadow-float:  0 12px 40px rgba(0,0,0,0.50), 0 4px 12px rgba(0,0,0,0.35);
+  --shadow-gold-glow: 0 0 30px rgba(200,164,74,0.20), 0 0 60px rgba(200,164,74,0.10);
+
+  /* ── DS3.1 Spacing Base-4 ── */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+  --space-4: 16px; --space-5: 20px; --space-6: 24px;
+  --space-8: 32px; --space-10: 40px; --space-12: 48px;
+  --space-16: 64px; --space-20: 80px; --space-24: 96px;
 
   /* ── Radius ── */
   --r-xs: 3px; --r-sm: 6px; --r-md: 8px; --r-lg: 12px;
@@ -488,6 +530,11 @@
   }
 }
 
+@keyframes shimmer-bg {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -740,6 +787,93 @@
       0 0 0 1px rgba(184,148,58,0.28),
       0 8px 32px rgba(0, 0, 0, 0.12),
       0 0 20px -5px rgba(184,148,58,0.18);
+  }
+
+  /* ── DS3.1 Typography Utility Classes ── */
+
+  /* DISPLAY — Cormorant Garamond */
+  .text-display-lg {
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 400;
+    line-height: 1.20;
+    letter-spacing: -0.01em;
+  }
+  .text-display-md {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.30;
+  }
+  .text-display-sm {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.35;
+    font-style: italic;
+  }
+
+  /* UI — Outfit */
+  .text-title-md {
+    font-family: var(--font-ui);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .text-title-sm {
+    font-family: var(--font-ui);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.40;
+  }
+  .text-body {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.60;
+  }
+  .text-caption {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.50;
+    letter-spacing: 0.02em;
+  }
+  .text-label {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.40;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* DATA — DM Mono */
+  .text-kpi-xl {
+    font-family: var(--font-data);
+    font-size: 48px;
+    font-weight: 500;
+    line-height: 1.00;
+    letter-spacing: -0.03em;
+  }
+  .text-kpi-lg {
+    font-family: var(--font-data);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.10;
+    letter-spacing: -0.02em;
+  }
+  .text-kpi-md {
+    font-family: var(--font-data);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.20;
+  }
+  .text-mono-sm {
+    font-family: var(--font-data);
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.50;
   }
 
   /* Shimmer loading */

@@ -77,7 +77,7 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                             <div className="w-12 h-px bg-[#334E68]" />
                             <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Market Intelligence</span>
                         </div>
-                        <h1 className="font-display text-4xl sm:text-5xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
+                        <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-tight text-white">
                             Centro de <br /><span className="text-[#486581] italic">Inteligência</span> Imobiliária
                         </h1>
                         <p className="text-[#9CA3AF] text-lg sm:text-xl font-light leading-relaxed max-w-2xl">
@@ -95,7 +95,7 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                             <Link
                                 key={s.href}
                                 href={`/${lang}/${s.href}`}
-                                className="group block p-8 sm:p-10 rounded-3xl bg-[#141420] border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-300"
+                                className="group block p-7 sm:p-8 md:p-10 rounded-3xl bg-[#141420] border border-white/[0.05] hover:border-[#334E68]/40 hover:shadow-[0_8px_32px_rgba(26,26,46,0.15)] transition-all duration-300"
                             >
                                 <div className="flex items-start justify-between mb-8">
                                     <div className="w-14 h-14 bg-[#1A1E2A] text-[#486581] rounded-2xl flex items-center justify-center border border-white/[0.05] group-hover:scale-110 transition-transform">
@@ -134,7 +134,7 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                             Inteligência com <span className="text-[#486581] italic">Rigor Técnico</span>
                         </h2>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         {PILLARS.map((p, i) => (
                             <div
                                 key={i}
@@ -166,7 +166,7 @@ export default function InteligenciaPage({ params }: { params: { lang: string } 
                         href="https://wa.me/5581997230455"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 h-14 px-10 rounded-xl bg-[#102A43] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#1A3F5C] transition-all shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
+                        className="inline-flex items-center gap-3 h-14 px-8 md:px-10 rounded-xl bg-[#102A43] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#1A3F5C] transition-all shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
                     >
                         Solicitar Estudo de Mercado
                     </a>

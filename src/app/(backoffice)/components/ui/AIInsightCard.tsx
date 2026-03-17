@@ -63,12 +63,16 @@ export function AIInsightCard({
     <div
       className={className}
       style={{
-        background: 'var(--bg-surface)',
+        background: variant === 'gold'
+          ? 'linear-gradient(135deg, var(--surface-raised, var(--bg-surface)) 0%, rgba(200,164,74,0.06) 100%)'
+          : 'var(--bg-surface)',
         border: `1px solid ${v.border}`,
+        borderLeft: variant === 'gold' ? '3px solid var(--color-gold, var(--imi-gold-500))' : undefined,
         borderRadius: 'var(--r-xl, 16px)',
-        padding: '14px 16px',
+        padding: 'var(--space-5, 20px)',
         position: 'relative',
         overflow: 'hidden',
+        boxShadow: variant === 'gold' ? 'var(--shadow-gold-glow, var(--shadow-gold))' : undefined,
       }}
     >
       {/* Background glow blob */}
@@ -91,11 +95,12 @@ export function AIInsightCard({
         <span style={{ color: v.iconColor, fontSize: '14px' }}>✦</span>
         <span
           style={{
-            fontFamily: 'var(--font-sans)',
-            fontSize: '12px',
-            fontWeight: 700,
+            fontFamily: variant === 'gold' ? 'var(--font-display)' : 'var(--font-ui)',
+            fontSize: variant === 'gold' ? '18px' : '12px',
+            fontWeight: variant === 'gold' ? 400 : 700,
+            fontStyle: variant === 'gold' ? 'italic' : 'normal',
             color: v.labelColor,
-            letterSpacing: '-0.01em',
+            letterSpacing: variant === 'gold' ? '0' : '-0.01em',
           }}
         >
           {title}

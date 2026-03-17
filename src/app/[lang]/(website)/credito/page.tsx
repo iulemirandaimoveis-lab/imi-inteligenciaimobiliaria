@@ -96,7 +96,7 @@ export default function CreditPage() {
                             <div className="w-8 h-px bg-[#102A43]" />
                             <span className="text-[#486581] text-[11px] font-bold uppercase tracking-[0.25em]">Crédito Imobiliário</span>
                         </div>
-                        <h1 className="font-display text-[40px] sm:text-[52px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white">
+                        <h1 className="font-display text-[40px] sm:text-[52px] md:text-[58px] lg:text-[64px] font-black leading-[1.02] tracking-tight mb-6 text-white">
                             Financie com <span className="text-[#486581]">Inteligência</span>
                         </h1>
                         <p className="text-[17px] lg:text-[19px] leading-relaxed font-light text-[#9CA3AF] max-w-2xl">
@@ -196,7 +196,7 @@ export default function CreditPage() {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                                 {consortiumPlans.map((plan, index) => (
                                     <div key={index} className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors group">
                                         <p className="text-[#9CA3AF] text-[10px] font-bold uppercase tracking-widest mb-2">Carta de Crédito</p>
@@ -333,7 +333,7 @@ export default function CreditPage() {
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#102A43]/10 rounded-full blur-3xl -mr-16 -mt-16" />
                                     <div className="relative z-10">
                                         <div className="text-[#9CA3AF] text-xs font-bold uppercase tracking-widest mb-2">Parcela Mensal Estimada</div>
-                                        <div className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-10 font-display text-[#486581]">
+                                        <div className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10 font-display text-[#486581]">
                                             {formatCurrency(monthlyPayment)}
                                         </div>
 
@@ -371,7 +371,7 @@ export default function CreditPage() {
                         Diferenciais da Assessoria IMI
                     </h2>
 
-                    <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-10 lg:gap-12 max-w-5xl mx-auto">
                         {[
                             {
                                 icon: TrendingUp,
@@ -452,7 +452,7 @@ export default function CreditPage() {
             {/* CTA FINAL */}
             <section className="bg-[#0D0F14] section-padding text-center relative overflow-hidden">
                 <div className="container-custom relative z-10">
-                    <div className="max-w-4xl mx-auto bg-[#141420] text-white rounded-[40px] p-12 md:p-20 relative overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.3)] border border-[#21263A] border-b-4 border-b-[#334E68]">
+                    <div className="max-w-4xl mx-auto bg-[#141420] text-white rounded-3xl md:rounded-[40px] p-10 md:p-16 lg:p-20 relative overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.3)] border border-[#21263A] border-b-4 border-b-[#334E68]">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#102A43]/10 rounded-full blur-3xl -mr-32 -mt-32" />
                         <h2 className="font-display text-3xl md:text-5xl font-bold mb-8 relative z-10 tracking-tight leading-tight">
                             Vamos estruturar sua <br />

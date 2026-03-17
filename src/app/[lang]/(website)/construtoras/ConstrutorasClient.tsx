@@ -41,7 +41,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                             <div className="w-12 h-px bg-[#102A43]" />
                             <span className="text-[#486581] font-bold uppercase tracking-[0.3em] text-xs">Parceiros</span>
                         </motion.div>
-                        <motion.h1 variants={slideUp} className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight">
+                        <motion.h1 variants={slideUp} className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight">
                             Nossas <br /><span className="text-[#486581] italic">Construtoras Parceiras</span>
                         </motion.h1>
                         <motion.p variants={slideUp} className="text-[#9CA3AF] text-lg md:text-xl font-light leading-relaxed max-w-2xl">
@@ -67,7 +67,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         </div>
                     </motion.div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                         {developers.map((dev, index) => (
                             <motion.article
                                 key={dev.id}
@@ -157,7 +157,7 @@ export default function ConstrutorasClient({ developers, lang }: ConstrutorasCli
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
+                        <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
                             Representa uma <span className="text-[#486581] italic">construtora?</span>
                         </h2>
                         <p className="text-[#9CA3AF] text-lg mb-8 max-w-xl mx-auto">

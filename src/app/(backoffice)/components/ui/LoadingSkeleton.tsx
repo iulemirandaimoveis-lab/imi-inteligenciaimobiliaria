@@ -14,7 +14,7 @@ interface LoadingSkeletonProps {
 }
 
 const shimmerStyle: React.CSSProperties = {
-  background: 'linear-gradient(90deg, var(--bg-muted) 25%, var(--bg-hover) 50%, var(--bg-muted) 75%)',
+  background: 'linear-gradient(90deg, var(--surface-raised, var(--bg-muted)) 25%, var(--surface-overlay, var(--bg-hover)) 50%, var(--surface-raised, var(--bg-muted)) 75%)',
   backgroundSize: '200% 100%',
   animation: 'bo-shimmer 1.6s ease-in-out infinite',
   borderRadius: 'var(--r-md, 8px)',
