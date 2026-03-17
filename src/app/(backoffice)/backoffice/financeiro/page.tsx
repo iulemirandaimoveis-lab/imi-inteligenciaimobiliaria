@@ -232,7 +232,7 @@ export default function FinanceiroPage() {
         transition={{ delay: 0.14, duration: 0.35 }}
         style={{ overflow: 'hidden' }}
       >
-        <div style={{ padding: '14px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ padding: '16px', borderBottom: '1px solid var(--bo-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
           <SectionHeader title="Lançamentos" badge={filtered.length} />
           <FilterTabs tabs={filterTabs} active={tipoFilter} onChange={setTipoFilter} />
         </div>

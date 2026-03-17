@@ -81,6 +81,38 @@ async function applyChargeUpdate(externalId: string, newStatus: string, rawBody:
             .eq('id', charge.transaction_id)
     }
 
+    // If this is a subscription payment, update the tenant/user subscription tier
+    if (newStatus === 'received' && charge.user_id) {
+        const { data: pixCharge } = await supabaseAdmin
+            .from('pix_charges')
+            .select('description')
+            .eq('id', charge.id)
+            .single()
+
+        const desc = (pixCharge?.description ?? '') as string
+        let newTier: string | null = null
+        if (desc.toLowerCase().includes('enterprise')) newTier = 'enterprise'
+        else if (desc.toLowerCase().includes('professional')) newTier = 'professional'
+
+        if (newTier) {
+            // Update user metadata with new subscription tier
+            await supabaseAdmin.auth.admin.updateUserById(charge.user_id, {
+                user_metadata: {
+                    subscription_tier: newTier,
+                    subscription_active_at: new Date().toISOString(),
+                },
+            })
+
+            // Also update tenant if exists
+            await supabaseAdmin
+                .from('tenants')
+                .update({ subscription_tier: newTier })
+                .eq('owner_id', charge.user_id)
+
+            console.log('[pix/webhook] Updated subscription tier to', newTier, 'for user', charge.user_id)
+        }
+    }
+
     console.log('[pix/webhook] Updated charge', charge.id, '→', newStatus)
 }
 

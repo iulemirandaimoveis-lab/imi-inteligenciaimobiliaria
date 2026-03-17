@@ -292,7 +292,7 @@ export function MobileBottomNav() {
                         backdropFilter: 'blur(24px)',
                         WebkitBackdropFilter: 'blur(24px)',
                         border: '1px solid var(--border-default)',
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
+                        boxShadow: 'var(--shadow-lg)',
                     }}
                 >
                     <div className="flex items-center h-16 px-1">

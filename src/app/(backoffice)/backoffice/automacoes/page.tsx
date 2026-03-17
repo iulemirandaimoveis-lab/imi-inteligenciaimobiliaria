@@ -378,7 +378,7 @@ function NovaAutomacaoModal({ onClose, onSave }: { onClose: () => void; onSave: 
       >
         {/* Modal header */}
         <div style={{
-          padding: '18px 24px', borderBottom: `1px solid ${T.border}`,
+          padding: '20px 24px', borderBottom: `1px solid ${T.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           flexShrink: 0,
         }}>

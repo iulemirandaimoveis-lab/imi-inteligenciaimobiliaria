@@ -341,7 +341,7 @@ export default function AgentesIAPage() {
                                         style={{
                                             background: STATUS_MAP[agent.status].bg,
                                             color: STATUS_MAP[agent.status].color,
-                                            fontSize: 10, fontWeight: 700,
+                                            fontSize: 11, fontWeight: 700,
                                         }}
                                     >
                                         <StatusIcon size={9} />
@@ -360,7 +360,7 @@ export default function AgentesIAPage() {
                             {/* Stats row */}
                             <div className="px-4 py-3 flex items-center gap-4" style={{ borderBottom: '1px solid var(--bo-border)' }}>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+                                    <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Tarefas hoje
                                     </div>
                                     <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--bo-text)' }}>
@@ -368,7 +368,7 @@ export default function AgentesIAPage() {
                                     </div>
                                 </div>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+                                    <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Sucesso
                                     </div>
                                     <div style={{ fontSize: 20, fontWeight: 800, color: agent.successRate >= 90 ? 'var(--bo-success)' : agent.successRate >= 70 ? 'var(--bo-warning)' : 'var(--bo-error)' }}>
@@ -376,7 +376,7 @@ export default function AgentesIAPage() {
                                     </div>
                                 </div>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+                                    <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Modelo
                                     </div>
                                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--bo-text)' }}>
@@ -393,7 +393,7 @@ export default function AgentesIAPage() {
                                         <span
                                             key={tool}
                                             style={{
-                                                fontSize: 9, fontWeight: 600, padding: '2px 6px',
+                                                fontSize: 11, fontWeight: 600, padding: '2px 6px',
                                                 borderRadius: 4, background: 'var(--bo-hover)',
                                                 color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)',
                                             }}
@@ -434,7 +434,7 @@ export default function AgentesIAPage() {
                             {/* Last run */}
                             <div
                                 className="px-4 pb-3"
-                                style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}
+                                style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}
                             >
                                 Última execução: {agent.lastRun}
                             </div>

@@ -251,7 +251,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 32 }}>
 
             {/* Distribution by type */}
-            <div style={{ ...card, padding: '22px 24px' }}>
+            <div style={{ ...card, padding: '24px' }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: DT.text, marginBottom: 18 }}>
                 Distribuição por Tipo
               </div>
@@ -270,7 +270,7 @@ function DesktopPortfolio({ properties, loading }: { properties: IMIProperty[]; 
             </div>
 
             {/* Distribution by status */}
-            <div style={{ ...card, padding: '22px 24px' }}>
+            <div style={{ ...card, padding: '24px' }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: DT.text, marginBottom: 18 }}>
                 Distribuição por Status
               </div>

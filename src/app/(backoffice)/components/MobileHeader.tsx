@@ -230,7 +230,7 @@ export default function MobileHeader() {
                     backdropFilter: 'blur(20px)',
                     WebkitBackdropFilter: 'blur(20px)',
                     borderBottom: '1px solid var(--border-default)',
-                    boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+                    boxShadow: 'var(--shadow-xs)',
                     paddingTop: 'env(safe-area-inset-top, 0px)',
                 }}
             >

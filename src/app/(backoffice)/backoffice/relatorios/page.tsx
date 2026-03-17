@@ -244,8 +244,8 @@ export default function RelatoriosPage() {
                                 <ResponsiveContainer width="100%" height={160}>
                                     <LineChart data={temporal} margin={{ left: -10, right: 10, top: 4, bottom: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="var(--bo-border)" />
-                                        <XAxis dataKey="semana" tick={{ fontSize: 10, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
-                                        <YAxis tick={{ fontSize: 10, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
+                                        <XAxis dataKey="semana" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
+                                        <YAxis tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
                                         <Line type="monotone" dataKey="leads" name="Leads" stroke="var(--bo-accent)" strokeWidth={2} dot={{ fill: 'var(--bo-accent)', r: 3 }} />
                                     </LineChart>
@@ -264,8 +264,8 @@ export default function RelatoriosPage() {
                                 <ResponsiveContainer width="100%" height={160}>
                                     <BarChart data={byDev} layout="vertical" margin={{ left: 0, right: 20, top: 0, bottom: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="var(--bo-border)" horizontal={false} />
-                                        <XAxis type="number" tick={{ fontSize: 10, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
-                                        <YAxis dataKey="name" type="category" tick={{ fontSize: 9, fill: 'var(--bo-text-muted)' }} width={95} axisLine={false} tickLine={false} />
+                                        <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} axisLine={false} tickLine={false} />
+                                        <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--bo-text-muted)' }} width={95} axisLine={false} tickLine={false} />
                                         <Tooltip content={<CustomTooltip />} />
                                         <Bar dataKey="leads" name="Leads" fill="var(--bo-accent)" radius={[0, 4, 4, 0]} maxBarSize={16} />
                                     </BarChart>
@@ -310,7 +310,7 @@ export default function RelatoriosPage() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2 mb-1">
                                                 <p className="text-sm font-semibold" style={{ color: T.text }}>{r.label}</p>
-                                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
                                                     style={{ color: cat?.text, background: cat?.bg }}>
                                                     {cat?.label}
                                                 </span>
@@ -327,7 +327,7 @@ export default function RelatoriosPage() {
                                                     {f === 'PDF'
                                                         ? <File size={11} style={{ color: '#E8A87C' }} />
                                                         : <FileSpreadsheet size={11} style={{ color: 'var(--bo-success)' }} />}
-                                                    <span className="text-[10px] font-semibold" style={{ color: T.textDim }}>{f}</span>
+                                                    <span className="text-[11px] font-semibold" style={{ color: T.textDim }}>{f}</span>
                                                 </div>
                                             ))}
                                         </div>

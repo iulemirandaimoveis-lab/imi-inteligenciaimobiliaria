@@ -52,7 +52,7 @@ export default function BillingPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    amount: price * 100, // centavos
+                    amount: price, // BRL — API converts to centavos
                     description: `IMI ${planId.charAt(0).toUpperCase() + planId.slice(1)} — Assinatura Mensal`,
                     transactionId: `sub_${planId}_${Date.now()}`,
                     methods: ['PIX', 'CREDIT_CARD'],
@@ -60,9 +60,9 @@ export default function BillingPage() {
             })
             const data = await res.json()
 
-            if (data.url) {
+            if (data.billing?.url || data.url) {
                 // Open payment link in new tab
-                window.open(data.url, '_blank')
+                window.open(data.billing?.url || data.url, '_blank')
                 toast.success('Link de pagamento aberto! Após pagar, seu acesso será ativado automaticamente.')
             } else {
                 toast.error('Erro ao gerar link de pagamento. Tente novamente.')

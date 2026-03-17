@@ -116,8 +116,8 @@ function ConversaoFonteWidget() {
             style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                padding: '18px',
+                boxShadow: 'var(--shadow-xs)',
+                padding: '20px',
             }}
         >
             <div className="flex items-center gap-2 mb-4">
@@ -195,7 +195,7 @@ function ProximosCompromissosWidget() {
             style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                boxShadow: 'var(--shadow-xs)',
             }}
         >
             <div className="flex items-center justify-between px-4 py-3"
@@ -207,7 +207,7 @@ function ProximosCompromissosWidget() {
                     </span>
                 </div>
                 <Link href="/backoffice/agenda">
-                    <span className="text-[10px] font-semibold flex items-center gap-1"
+                    <span className="text-[11px] font-semibold flex items-center gap-1"
                         style={{ color: 'var(--imi-gold-500)' }}>
                         Ver agenda <ArrowUpRight size={10} />
                     </span>
@@ -237,7 +237,7 @@ function ProximosCompromissosWidget() {
                                 <span className="text-[11px] font-bold tabular-nums leading-none" style={{ color: '#60A5FA' }}>
                                     {new Date(item.data).getDate()}
                                 </span>
-                                <span className="text-[8px] uppercase" style={{ color: 'var(--text-muted)' }}>
+                                <span className="text-[11px] uppercase" style={{ color: 'var(--text-muted)' }}>
                                     {['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][new Date(item.data).getMonth()]}
                                 </span>
                             </div>
@@ -246,11 +246,11 @@ function ProximosCompromissosWidget() {
                                     {item.titulo}
                                 </p>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                    <span className="flex items-center gap-1 text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                    <span className="flex items-center gap-1 text-[11px]" style={{ color: 'var(--text-muted)' }}>
                                         <Clock size={9} /> {item.hora}
                                     </span>
                                     {item.local && (
-                                        <span className="flex items-center gap-1 text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>
+                                        <span className="flex items-center gap-1 text-[11px] truncate" style={{ color: 'var(--text-muted)' }}>
                                             <MapPin size={9} /> {item.local}
                                         </span>
                                     )}
@@ -311,8 +311,8 @@ function TopImoveisWidget() {
             style={{
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border-default)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                padding: '18px',
+                boxShadow: 'var(--shadow-xs)',
+                padding: '20px',
             }}
         >
             <div className="flex items-center justify-between mb-4">
@@ -323,7 +323,7 @@ function TopImoveisWidget() {
                     </span>
                 </div>
                 <Link href="/backoffice/imoveis">
-                    <span className="text-[10px] font-semibold flex items-center gap-1"
+                    <span className="text-[11px] font-semibold flex items-center gap-1"
                         style={{ color: 'var(--imi-gold-500)' }}>
                         Ver todos <ArrowUpRight size={10} />
                     </span>
@@ -335,7 +335,7 @@ function TopImoveisWidget() {
                         <div className="group cursor-pointer">
                             <div className="flex items-center justify-between mb-1">
                                 <div className="flex items-center gap-2 min-w-0">
-                                    <span className="text-[9px] font-bold tabular-nums flex-shrink-0"
+                                    <span className="text-[11px] font-bold tabular-nums flex-shrink-0"
                                         style={{ color: barColors[i] }}>
                                         #{i + 1}
                                     </span>
@@ -345,10 +345,10 @@ function TopImoveisWidget() {
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                                    <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                    <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
                                         {imovel.leads} leads
                                     </span>
-                                    <span className="text-[10px] font-bold tabular-nums"
+                                    <span className="text-[11px] font-bold tabular-nums"
                                         style={{ color: barColors[i] }}>
                                         {imovel.engajamento}%
                                     </span>
@@ -406,8 +406,8 @@ function VelocidadeRespostaWidget() {
             style={{
                 background: status ? status.bg : 'var(--bg-surface)',
                 border: `1px solid ${status ? status.border : 'var(--border-default)'}`,
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                padding: '18px',
+                boxShadow: 'var(--shadow-xs)',
+                padding: '20px',
             }}
         >
             <div className="flex items-center gap-2 mb-4">
@@ -416,7 +416,7 @@ function VelocidadeRespostaWidget() {
                     Velocidade de Resposta
                 </span>
                 {status && (
-                    <span className="ml-auto text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                    <span className="ml-auto text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
                         style={{ color: status.color, background: `${status.color}18` }}>
                         {status.label}
                     </span>
@@ -436,12 +436,12 @@ function VelocidadeRespostaWidget() {
                             {avgHours?.toFixed(1)}h
                         </span>
                         <div className="mb-1.5">
-                            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                            <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
                                 média de resposta
                             </p>
                             <div className="flex items-center gap-1 mt-0.5">
                                 <Target size={9} style={{ color: 'var(--text-muted)' }} />
-                                <span className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                                <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
                                     meta: &lt; {TARGET_HOURS}h
                                 </span>
                             </div>
@@ -459,9 +459,9 @@ function VelocidadeRespostaWidget() {
                         />
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>0h</span>
-                        <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>Meta 2h</span>
-                        <span className="text-[9px]" style={{ color: 'var(--text-muted)' }}>8h+</span>
+                        <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>0h</span>
+                        <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>Meta 2h</span>
+                        <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>8h+</span>
                     </div>
                 </>
             )}
@@ -537,7 +537,7 @@ function AIDailySummary() {
                     <div className="space-y-1 mb-2">
                         {summary.highlights?.map((h: string, i: number) => (
                             <div key={i} className="flex items-start gap-2">
-                                <span className="text-[10px] mt-0.5" style={{ color: T.accent }}>▸</span>
+                                <span className="text-[11px] mt-0.5" style={{ color: T.accent }}>▸</span>
                                 <span className="text-xs" style={{ color: T.textMuted }}>{h}</span>
                             </div>
                         ))}
@@ -652,7 +652,7 @@ export default function DashboardClient({
                                     )
                                 })}
                             </AvatarGroup>
-                            <span className="text-[10px] font-medium opacity-50 group-hover:opacity-80 transition-opacity"
+                            <span className="text-[11px] font-medium opacity-50 group-hover:opacity-80 transition-opacity"
                                 style={{ color: 'var(--text-muted)' }}>
                                 {brokers.length}
                             </span>
@@ -718,7 +718,7 @@ export default function DashboardClient({
                                     {alerta.mensagem}
                                 </p>
                                 <Link href={alerta.href}>
-                                    <span className="text-[10px] font-semibold px-2 py-1 rounded-lg whitespace-nowrap"
+                                    <span className="text-[11px] font-semibold px-2 py-1 rounded-lg whitespace-nowrap"
                                         style={{ color: c.text, background: c.btn }}>
                                         {alerta.acao}
                                     </span>
@@ -910,7 +910,7 @@ export default function DashboardClient({
                         background: T.card,
                         border: `1px solid ${T.border}`,
                         boxShadow: T.shadowMd,
-                        padding: '18px',
+                        padding: '20px',
                     }}
                 >
                     <div className="flex items-start justify-between gap-3 mb-4">
@@ -921,7 +921,7 @@ export default function DashboardClient({
                                     Performance
                                 </span>
                             </div>
-                            <div className="flex items-center gap-3 text-[10px] mt-1.5">
+                            <div className="flex items-center gap-3 text-[11px] mt-1.5">
                                 <span className="flex items-center gap-1.5">
                                     <span className="w-2 h-2 rounded-full inline-block" style={{ background: '#3B82F6' }} />
                                     <span style={{ color: 'var(--text-muted)' }}>Leads</span>
@@ -1009,7 +1009,7 @@ export default function DashboardClient({
                         background: T.card,
                         border: '1px solid var(--border-default)',
                         boxShadow: T.shadowMd,
-                        padding: '18px',
+                        padding: '20px',
                     }}
                 >
                     <div className="flex items-center gap-2 mb-4">
@@ -1063,7 +1063,7 @@ export default function DashboardClient({
                         background: T.card,
                         border: '1px solid var(--border-default)',
                         boxShadow: T.shadowMd,
-                        padding: '18px',
+                        padding: '20px',
                     }}
                 >
                     <div className="flex items-center gap-2 mb-1">
@@ -1072,7 +1072,7 @@ export default function DashboardClient({
                             Canais de Captação
                         </span>
                     </div>
-                    <p className="text-[10px] mb-4" style={{ color: 'var(--text-muted)' }}>últimos 6 meses</p>
+                    <p className="text-[11px] mb-4" style={{ color: 'var(--text-muted)' }}>últimos 6 meses</p>
                     {canalPerformance.length > 0 ? (
                         <div className="space-y-3">
                             {canalPerformance.map((item, i) => (
@@ -1115,7 +1115,7 @@ export default function DashboardClient({
                             </span>
                         </div>
                         <Link href="/backoffice/leads">
-                            <span className="text-[10px] font-semibold flex items-center gap-1"
+                            <span className="text-[11px] font-semibold flex items-center gap-1"
                                 style={{ color: 'var(--imi-gold-500)' }}>
                                 Ver todos <ArrowUpRight size={10} />
                             </span>
@@ -1139,7 +1139,7 @@ export default function DashboardClient({
                                             <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                                 {lead.name}
                                             </p>
-                                            <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>
+                                            <p className="text-[11px] truncate" style={{ color: 'var(--text-muted)' }}>
                                                 {lead.source}{lead.interest ? ` · ${lead.interest}` : ''}
                                             </p>
                                         </div>
@@ -1178,7 +1178,7 @@ export default function DashboardClient({
                             </span>
                         </div>
                         <Link href="/backoffice/avaliacoes">
-                            <span className="text-[10px] font-semibold flex items-center gap-1"
+                            <span className="text-[11px] font-semibold flex items-center gap-1"
                                 style={{ color: 'var(--imi-gold-500)' }}>
                                 Ver todas <ArrowUpRight size={10} />
                             </span>
@@ -1202,7 +1202,7 @@ export default function DashboardClient({
                                         <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                                             {av.protocolo}
                                         </p>
-                                        <p className="text-[10px] truncate" style={{ color: 'var(--text-muted)' }}>
+                                        <p className="text-[11px] truncate" style={{ color: 'var(--text-muted)' }}>
                                             {av.tipo_imovel} · {av.bairro}
                                         </p>
                                     </div>

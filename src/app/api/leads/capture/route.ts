@@ -103,39 +103,48 @@ export async function POST(request: NextRequest) {
                 read: false,
             })
 
-        // 3b. Round-robin assignment to active team members (non-blocking)
+        // 3b. Round-robin assignment to active team members (fewest-leads approach, non-blocking)
         void (async () => {
             try {
                 // Get active team members
                 const { data: members } = await supabaseAdmin
                     .from('team_members')
-                    .select('id, user_id')
-                    .eq('is_active', true)
-                    .order('id')
+                    .select('id')
+                    .eq('status', 'active')
 
-                if (members && members.length > 0) {
-                    // Get current round-robin counter from settings
-                    const { data: setting } = await supabaseAdmin
-                        .from('settings')
-                        .select('value')
-                        .eq('key', 'lead_rr_index')
-                        .maybeSingle()
+                if (!members || members.length === 0) return
 
-                    const currentIdx = setting ? parseInt(setting.value as string, 10) || 0 : 0
-                    const nextIdx = (currentIdx + 1) % members.length
-                    const assignedMember = members[currentIdx % members.length]
+                // Count leads currently assigned to each active member
+                const memberIds = members.map((m) => m.id)
+                const { data: counts } = await supabaseAdmin
+                    .from('leads')
+                    .select('assigned_to')
+                    .in('assigned_to', memberIds)
 
-                    // Assign lead
-                    await supabaseAdmin
-                        .from('leads')
-                        .update({ assigned_to: assignedMember.user_id })
-                        .eq('id', lead.id)
-
-                    // Update counter
-                    await supabaseAdmin
-                        .from('settings')
-                        .upsert({ key: 'lead_rr_index', value: String(nextIdx) }, { onConflict: 'key' })
+                // Build a map of member_id -> lead count, starting at 0 for everyone
+                const countMap: Record<string, number> = {}
+                for (const m of members) {
+                    countMap[m.id] = 0
                 }
+                if (counts) {
+                    for (const row of counts) {
+                        if (row.assigned_to && countMap[row.assigned_to] !== undefined) {
+                            countMap[row.assigned_to]++
+                        }
+                    }
+                }
+
+                // Pick the member with the fewest leads (first by id for stable tie-breaking)
+                const sorted = members
+                    .slice()
+                    .sort((a, b) => countMap[a.id] - countMap[b.id] || a.id.localeCompare(b.id))
+                const assignee = sorted[0]
+
+                // Assign the lead
+                await supabaseAdmin
+                    .from('leads')
+                    .update({ assigned_to: assignee.id })
+                    .eq('id', lead.id)
             } catch {
                 // Assignment failure is non-critical
             }

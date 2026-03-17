@@ -140,7 +140,7 @@ function MobileHeatmap({ id, development, sections, range, setRange }: MobileHea
                                     background: 'var(--bg-elevated)',
                                     border: '1px solid rgba(184,148,58,0.12)',
                                     borderRadius: 12,
-                                    padding: '14px 14px',
+                                    padding: '16px',
                                 }}
                             >
                                 {/* Header row */}

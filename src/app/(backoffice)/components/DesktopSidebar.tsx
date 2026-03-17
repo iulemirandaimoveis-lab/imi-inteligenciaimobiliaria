@@ -108,7 +108,7 @@ const SECTIONS: NavSection[] = [
             {
                 label: 'Conteúdo', icon: FileText,
                 children: [
-                    { label: 'Publicações', href: '/backoffice/conteudos',          icon: FileText,   badge: 'BREVE' },
+                    { label: 'Publicações', href: '/backoffice/conteudos',          icon: FileText,   badge: 'NEW'   },
                     { label: 'Criador IA',  href: '/backoffice/conteudo/criador',   icon: Wand2,      badge: 'NEW'   },
                     { label: 'eBook IA',    href: '/backoffice/conteudo/ebook',     icon: BookMarked, badge: 'NEW'   },
                     { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',     icon: Video,      badge: 'NEW'   },

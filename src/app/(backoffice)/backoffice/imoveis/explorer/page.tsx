@@ -127,7 +127,7 @@ function StatCard({ label, value, sub, color }: {
     <div style={{
       background: 'var(--bo-card, #162040)',
       border: '1px solid rgba(184,148,58,0.18)',
-      borderRadius: 12, padding: '18px 20px',
+      borderRadius: 12, padding: '20px',
       flex: 1,
     }}>
       <div style={{ marginBottom: 10 }}>
@@ -403,7 +403,7 @@ function AnaliseTab() {
                   flex: 1,
                   background: 'var(--bo-card, #162040)',
                   border: '1px solid rgba(184,148,58,0.18)',
-                  borderRadius: 12, padding: '18px',
+                  borderRadius: 12, padding: '20px',
                   display: 'flex', flexDirection: 'column', gap: 10,
                 }}
               >

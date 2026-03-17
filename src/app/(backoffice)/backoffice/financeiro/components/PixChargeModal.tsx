@@ -136,7 +136,7 @@ export default function PixChargeModal({
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             background: 'rgba(0,178,127,0.15)', border: '1px solid rgba(0,178,127,0.25)',
                         }}>
-                            <Zap size={16} style={{ color: '#00B27F' }} />
+                            <Zap size={16} style={{ color: 'var(--success)' }} />
                         </div>
                         <div>
                             <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--bo-text)' }}>Cobrança Pix</p>
@@ -167,7 +167,7 @@ export default function PixChargeModal({
                                 <p style={{ fontSize: '11px', color: 'var(--bo-text-muted)', marginBottom: '4px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                                     Valor a cobrar
                                 </p>
-                                <p style={{ fontSize: '28px', fontWeight: 800, color: '#00B27F' }}>
+                                <p style={{ fontSize: '28px', fontWeight: 800, color: 'var(--success)' }}>
                                     {formatCurrency(amount)}
                                 </p>
                                 {description && (
@@ -257,10 +257,10 @@ export default function PixChargeModal({
                         >
                             {/* QR Image */}
                             <div style={{
-                                padding: '14px', borderRadius: '16px',
+                                padding: '16px', borderRadius: '16px',
                                 background: '#FFFFFF',
                                 border: '2px solid rgba(0,178,127,0.25)',
-                                boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+                                boxShadow: 'var(--shadow-md)',
                             }}>
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
@@ -274,7 +274,7 @@ export default function PixChargeModal({
 
                             {/* Amount + status */}
                             <div style={{ textAlign: 'center' }}>
-                                <p style={{ fontSize: '22px', fontWeight: 800, color: '#00B27F' }}>
+                                <p style={{ fontSize: '22px', fontWeight: 800, color: 'var(--success)' }}>
                                     {formatCurrency(charge.amount)}
                                 </p>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginTop: '4px' }}>
@@ -346,7 +346,7 @@ export default function PixChargeModal({
                                     background: 'rgba(0,178,127,0.15)', border: '2px solid rgba(0,178,127,0.4)',
                                 }}
                             >
-                                <CheckCircle2 size={36} style={{ color: '#00B27F' }} />
+                                <CheckCircle2 size={36} style={{ color: 'var(--success)' }} />
                             </motion.div>
                             <div>
                                 <p style={{ fontSize: '18px', fontWeight: 800, color: 'var(--bo-text)', marginBottom: '6px' }}>
