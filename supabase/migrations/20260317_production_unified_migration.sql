@@ -1,8 +1,8 @@
 -- ============================================================
--- IMI PRODUCTION FIX — MIGRATION UNIFICADA v2
+-- IMI PRODUCTION FIX — MIGRATION UNIFICADA v3
 -- Data: 2026-03-17
 -- Objetivo: Criar todas as 27 tabelas faltantes para o backoffice funcionar
--- NOTA: Sem REFERENCES/FK para evitar erros de dependência
+-- NOTA: DROP + CREATE para garantir schema correto (tabelas NOVAS apenas)
 -- EXECUTAR INTEIRO NO SQL EDITOR DO SUPABASE
 -- ============================================================
 
@@ -13,9 +13,41 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
 -- ═══════════════════════════════════════════════════════════════
+-- 0.5 LIMPAR TABELAS PARCIALMENTE CRIADAS (da v1 com erro)
+-- Só remove tabelas NOVAS que não tinham dados antes
+-- ═══════════════════════════════════════════════════════════════
+DROP TABLE IF EXISTS public.proposal_events CASCADE;
+DROP TABLE IF EXISTS public.projeto_unidades CASCADE;
+DROP TABLE IF EXISTS public.avaliacoes_kb_upload_queue CASCADE;
+DROP TABLE IF EXISTS public.valuation_requests CASCADE;
+DROP TABLE IF EXISTS public.ai_tasks CASCADE;
+DROP TABLE IF EXISTS public.daily_sales_stats CASCADE;
+DROP TABLE IF EXISTS public.bank_accounts CASCADE;
+DROP TABLE IF EXISTS public.system_error_logs CASCADE;
+DROP TABLE IF EXISTS public.widgets_config CASCADE;
+DROP TABLE IF EXISTS public.consultorias CASCADE;
+DROP TABLE IF EXISTS public.integration_configs CASCADE;
+DROP TABLE IF EXISTS public.media CASCADE;
+DROP TABLE IF EXISTS public.page_views CASCADE;
+DROP TABLE IF EXISTS public.tracking_sessions CASCADE;
+DROP TABLE IF EXISTS public.market_reports CASCADE;
+DROP TABLE IF EXISTS public.projetos CASCADE;
+DROP TABLE IF EXISTS public.ebooks CASCADE;
+DROP TABLE IF EXISTS public.conteudos CASCADE;
+DROP TABLE IF EXISTS public.avaliacoes CASCADE;
+DROP TABLE IF EXISTS public.proposals CASCADE;
+DROP TABLE IF EXISTS public.contratos CASCADE;
+DROP TABLE IF EXISTS public.financial_goals CASCADE;
+DROP TABLE IF EXISTS public.financial_transactions CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
+DROP TABLE IF EXISTS public.role_permissions CASCADE;
+DROP TABLE IF EXISTS public.brokers CASCADE;
+DROP VIEW IF EXISTS v_proposals_with_score CASCADE;
+
+-- ═══════════════════════════════════════════════════════════════
 -- 1. BROKERS (Corretores)
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.brokers (
+CREATE TABLE public.brokers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID,
   name TEXT NOT NULL,
@@ -31,13 +63,13 @@ CREATE TABLE IF NOT EXISTS public.brokers (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   created_by UUID
 );
-CREATE INDEX IF NOT EXISTS idx_brokers_user_id ON brokers(user_id);
-CREATE INDEX IF NOT EXISTS idx_brokers_email ON brokers(email);
+CREATE INDEX idx_brokers_user_id ON brokers(user_id);
+CREATE INDEX idx_brokers_email ON brokers(email);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 2. ROLE_PERMISSIONS (RBAC)
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.role_permissions (
+CREATE TABLE public.role_permissions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   role TEXT NOT NULL,
   module TEXT NOT NULL,
@@ -66,7 +98,7 @@ ON CONFLICT (role, module, action) DO NOTHING;
 -- ═══════════════════════════════════════════════════════════════
 -- 3. PROFILES
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.profiles (
+CREATE TABLE public.profiles (
   id UUID PRIMARY KEY,
   name TEXT,
   email TEXT,
@@ -84,7 +116,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- ═══════════════════════════════════════════════════════════════
 -- 4. FINANCIAL_TRANSACTIONS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.financial_transactions (
+CREATE TABLE public.financial_transactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   type TEXT NOT NULL CHECK (type IN ('receita', 'despesa', 'comissao', 'transferencia')),
   category TEXT,
@@ -107,15 +139,15 @@ CREATE TABLE IF NOT EXISTS public.financial_transactions (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_fin_tx_type ON financial_transactions(type);
-CREATE INDEX IF NOT EXISTS idx_fin_tx_status ON financial_transactions(status);
-CREATE INDEX IF NOT EXISTS idx_fin_tx_due_date ON financial_transactions(due_date);
-CREATE INDEX IF NOT EXISTS idx_fin_tx_dev ON financial_transactions(development_id);
+CREATE INDEX idx_fin_tx_type ON financial_transactions(type);
+CREATE INDEX idx_fin_tx_status ON financial_transactions(status);
+CREATE INDEX idx_fin_tx_due_date ON financial_transactions(due_date);
+CREATE INDEX idx_fin_tx_dev ON financial_transactions(development_id);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 5. FINANCIAL_GOALS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.financial_goals (
+CREATE TABLE public.financial_goals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   target_amount DECIMAL(14,2) NOT NULL,
@@ -131,7 +163,7 @@ CREATE TABLE IF NOT EXISTS public.financial_goals (
 -- ═══════════════════════════════════════════════════════════════
 -- 6. CONTRATOS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.contratos (
+CREATE TABLE public.contratos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   titulo TEXT NOT NULL,
   tipo TEXT NOT NULL DEFAULT 'compra_venda',
@@ -152,13 +184,13 @@ CREATE TABLE IF NOT EXISTS public.contratos (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_contratos_status ON contratos(status);
-CREATE INDEX IF NOT EXISTS idx_contratos_dev ON contratos(development_id);
+CREATE INDEX idx_contratos_status ON contratos(status);
+CREATE INDEX idx_contratos_dev ON contratos(development_id);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 7. PROPOSALS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.proposals (
+CREATE TABLE public.proposals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   token TEXT UNIQUE DEFAULT encode(gen_random_bytes(16), 'hex'),
   title TEXT NOT NULL,
@@ -184,14 +216,14 @@ CREATE TABLE IF NOT EXISTS public.proposals (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_proposals_token ON proposals(token);
-CREATE INDEX IF NOT EXISTS idx_proposals_lead ON proposals(lead_id);
-CREATE INDEX IF NOT EXISTS idx_proposals_status ON proposals(status);
+CREATE INDEX idx_proposals_token ON proposals(token);
+CREATE INDEX idx_proposals_lead ON proposals(lead_id);
+CREATE INDEX idx_proposals_status ON proposals(status);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 8. PROPOSAL_EVENTS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.proposal_events (
+CREATE TABLE public.proposal_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   proposal_id UUID NOT NULL,
   event_type TEXT NOT NULL CHECK (event_type IN ('created', 'sent', 'viewed', 'downloaded', 'accepted', 'rejected', 'expired', 'follow_up')),
@@ -200,12 +232,12 @@ CREATE TABLE IF NOT EXISTS public.proposal_events (
   user_agent TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_proposal_events_proposal ON proposal_events(proposal_id);
+CREATE INDEX idx_proposal_events_proposal ON proposal_events(proposal_id);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 9. AVALIACOES
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.avaliacoes (
+CREATE TABLE public.avaliacoes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tipo TEXT DEFAULT 'mercado' CHECK (tipo IN ('mercado', 'judicial', 'bancaria', 'seguro', 'inventario')),
   status TEXT DEFAULT 'pendente' CHECK (status IN ('pendente', 'em_andamento', 'concluida', 'entregue', 'cancelada')),
@@ -233,12 +265,12 @@ CREATE TABLE IF NOT EXISTS public.avaliacoes (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_avaliacoes_status ON avaliacoes(status);
+CREATE INDEX idx_avaliacoes_status ON avaliacoes(status);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 10. CONTEUDOS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.conteudos (
+CREATE TABLE public.conteudos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   titulo TEXT NOT NULL,
   tipo TEXT DEFAULT 'post' CHECK (tipo IN ('post', 'video', 'reels', 'story', 'carrossel', 'artigo', 'ebook', 'newsletter', 'podcast')),
@@ -265,13 +297,13 @@ CREATE TABLE IF NOT EXISTS public.conteudos (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_conteudos_status ON conteudos(status);
-CREATE INDEX IF NOT EXISTS idx_conteudos_tipo ON conteudos(tipo);
+CREATE INDEX idx_conteudos_status ON conteudos(status);
+CREATE INDEX idx_conteudos_tipo ON conteudos(tipo);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 11. EBOOKS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.ebooks (
+CREATE TABLE public.ebooks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   subtitle TEXT,
@@ -297,7 +329,7 @@ CREATE TABLE IF NOT EXISTS public.ebooks (
 -- ═══════════════════════════════════════════════════════════════
 -- 12. PROJETOS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.projetos (
+CREATE TABLE public.projetos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome TEXT NOT NULL,
   tipo TEXT,
@@ -330,7 +362,7 @@ CREATE TABLE IF NOT EXISTS public.projetos (
 -- ═══════════════════════════════════════════════════════════════
 -- 13. PROJETO_UNIDADES
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.projeto_unidades (
+CREATE TABLE public.projeto_unidades (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   projeto_id UUID NOT NULL,
   identificador TEXT NOT NULL,
@@ -350,13 +382,13 @@ CREATE TABLE IF NOT EXISTS public.projeto_unidades (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_proj_unid_projeto ON projeto_unidades(projeto_id);
-CREATE INDEX IF NOT EXISTS idx_proj_unid_status ON projeto_unidades(status);
+CREATE INDEX idx_proj_unid_projeto ON projeto_unidades(projeto_id);
+CREATE INDEX idx_proj_unid_status ON projeto_unidades(status);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 14. MARKET_REPORTS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.market_reports (
+CREATE TABLE public.market_reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   type TEXT DEFAULT 'market_analysis',
@@ -379,7 +411,7 @@ CREATE TABLE IF NOT EXISTS public.market_reports (
 -- ═══════════════════════════════════════════════════════════════
 -- 15. TRACKING_SESSIONS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.tracking_sessions (
+CREATE TABLE public.tracking_sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   session_id TEXT NOT NULL,
   visitor_id TEXT,
@@ -400,13 +432,13 @@ CREATE TABLE IF NOT EXISTS public.tracking_sessions (
   user_agent TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_tracking_sessions_session ON tracking_sessions(session_id);
-CREATE INDEX IF NOT EXISTS idx_tracking_sessions_dev ON tracking_sessions(development_id);
+CREATE INDEX idx_tracking_sessions_session ON tracking_sessions(session_id);
+CREATE INDEX idx_tracking_sessions_dev ON tracking_sessions(development_id);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 16. PAGE_VIEWS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.page_views (
+CREATE TABLE public.page_views (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   session_id TEXT,
   page_url TEXT NOT NULL,
@@ -418,13 +450,13 @@ CREATE TABLE IF NOT EXISTS public.page_views (
   scroll_depth INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_page_views_dev ON page_views(development_id);
-CREATE INDEX IF NOT EXISTS idx_page_views_created ON page_views(created_at DESC);
+CREATE INDEX idx_page_views_dev ON page_views(development_id);
+CREATE INDEX idx_page_views_created ON page_views(created_at DESC);
 
 -- ═══════════════════════════════════════════════════════════════
 -- 17. MEDIA
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.media (
+CREATE TABLE public.media (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   file_name TEXT,
@@ -443,7 +475,7 @@ CREATE TABLE IF NOT EXISTS public.media (
 -- ═══════════════════════════════════════════════════════════════
 -- 18. INTEGRATION_CONFIGS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.integration_configs (
+CREATE TABLE public.integration_configs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   provider TEXT NOT NULL,
   config JSONB DEFAULT '{}',
@@ -459,7 +491,7 @@ CREATE TABLE IF NOT EXISTS public.integration_configs (
 -- ═══════════════════════════════════════════════════════════════
 -- 19. CONSULTORIAS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.consultorias (
+CREATE TABLE public.consultorias (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tipo TEXT DEFAULT 'investimento',
   status TEXT DEFAULT 'pendente' CHECK (status IN ('pendente', 'agendada', 'realizada', 'cancelada')),
@@ -481,7 +513,7 @@ CREATE TABLE IF NOT EXISTS public.consultorias (
 -- ═══════════════════════════════════════════════════════════════
 -- 20. WIDGETS_CONFIG
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.widgets_config (
+CREATE TABLE public.widgets_config (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   widget_type TEXT NOT NULL,
   name TEXT,
@@ -497,7 +529,7 @@ CREATE TABLE IF NOT EXISTS public.widgets_config (
 -- ═══════════════════════════════════════════════════════════════
 -- 21. SYSTEM_ERROR_LOGS
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.system_error_logs (
+CREATE TABLE public.system_error_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   error_type TEXT,
   message TEXT,
@@ -511,7 +543,7 @@ CREATE TABLE IF NOT EXISTS public.system_error_logs (
 -- ═══════════════════════════════════════════════════════════════
 -- 22. TABELAS MENORES
 -- ═══════════════════════════════════════════════════════════════
-CREATE TABLE IF NOT EXISTS public.bank_accounts (
+CREATE TABLE public.bank_accounts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   bank_name TEXT,
@@ -523,7 +555,7 @@ CREATE TABLE IF NOT EXISTS public.bank_accounts (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS public.daily_sales_stats (
+CREATE TABLE public.daily_sales_stats (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   date DATE NOT NULL UNIQUE,
   leads_count INT DEFAULT 0,
@@ -533,7 +565,7 @@ CREATE TABLE IF NOT EXISTS public.daily_sales_stats (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS public.ai_tasks (
+CREATE TABLE public.ai_tasks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   task_type TEXT NOT NULL,
   status TEXT DEFAULT 'pending',
@@ -545,7 +577,7 @@ CREATE TABLE IF NOT EXISTS public.ai_tasks (
   completed_at TIMESTAMPTZ
 );
 
-CREATE TABLE IF NOT EXISTS public.valuation_requests (
+CREATE TABLE public.valuation_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   email TEXT,
@@ -560,7 +592,7 @@ CREATE TABLE IF NOT EXISTS public.valuation_requests (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS public.avaliacoes_kb_upload_queue (
+CREATE TABLE public.avaliacoes_kb_upload_queue (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   file_name TEXT,
   file_url TEXT,
@@ -617,7 +649,6 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- Corrigir constraints que podem impedir inserção
 DO $$ BEGIN
   ALTER TABLE developments ALTER COLUMN developer DROP NOT NULL;
 EXCEPTION WHEN undefined_column THEN NULL;
@@ -690,7 +721,7 @@ DO $$ BEGIN
 END $$;
 
 -- ═══════════════════════════════════════════════════════════════
--- 26. RLS — HABILITAR E CRIAR POLÍTICAS PERMISSIVAS
+-- 26. RLS
 -- ═══════════════════════════════════════════════════════════════
 DO $$
 DECLARE
@@ -706,18 +737,16 @@ BEGIN
     'ai_tasks', 'valuation_requests', 'avaliacoes_kb_upload_queue'
   ])
   LOOP
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = t) THEN
-      EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', t);
-      EXECUTE format('DROP POLICY IF EXISTS "bo_full_%s" ON public.%I', t, t);
-      EXECUTE format('CREATE POLICY "bo_full_%s" ON public.%I FOR ALL TO authenticated USING (true) WITH CHECK (true)', t, t);
+    EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', t);
+    EXECUTE format('DROP POLICY IF EXISTS "bo_full_%s" ON public.%I', t, t);
+    EXECUTE format('CREATE POLICY "bo_full_%s" ON public.%I FOR ALL TO authenticated USING (true) WITH CHECK (true)', t, t);
+    IF t IN ('projetos', 'ebooks', 'market_reports', 'conteudos', 'avaliacoes') THEN
       EXECUTE format('DROP POLICY IF EXISTS "pub_read_%s" ON public.%I', t, t);
-      IF t IN ('projetos', 'ebooks', 'market_reports', 'conteudos', 'avaliacoes') THEN
-        EXECUTE format('CREATE POLICY "pub_read_%s" ON public.%I FOR SELECT TO anon USING (true)', t, t);
-      END IF;
-      IF t IN ('consultorias', 'valuation_requests', 'page_views', 'tracking_sessions') THEN
-        EXECUTE format('DROP POLICY IF EXISTS "pub_insert_%s" ON public.%I', t, t);
-        EXECUTE format('CREATE POLICY "pub_insert_%s" ON public.%I FOR INSERT TO anon WITH CHECK (true)', t, t);
-      END IF;
+      EXECUTE format('CREATE POLICY "pub_read_%s" ON public.%I FOR SELECT TO anon USING (true)', t, t);
+    END IF;
+    IF t IN ('consultorias', 'valuation_requests', 'page_views', 'tracking_sessions') THEN
+      EXECUTE format('DROP POLICY IF EXISTS "pub_insert_%s" ON public.%I', t, t);
+      EXECUTE format('CREATE POLICY "pub_insert_%s" ON public.%I FOR INSERT TO anon WITH CHECK (true)', t, t);
     END IF;
   END LOOP;
 END $$;
@@ -734,7 +763,6 @@ INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', tru
 INSERT INTO storage.buckets (id, name, public) VALUES ('content', 'content', true) ON CONFLICT (id) DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('developers', 'developers', true) ON CONFLICT (id) DO NOTHING;
 
--- Storage policies
 DROP POLICY IF EXISTS "media_public_read" ON storage.objects;
 CREATE POLICY "media_public_read" ON storage.objects FOR SELECT USING (bucket_id = 'media');
 
@@ -754,8 +782,7 @@ CREATE POLICY "public_buckets_read" ON storage.objects FOR SELECT USING (bucket_
 -- 28. VIEW para proposals
 -- ═══════════════════════════════════════════════════════════════
 DO $$ BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'proposals')
-     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'leads')
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'leads')
      AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'developments')
   THEN
     CREATE OR REPLACE VIEW v_proposals_with_score AS
@@ -785,5 +812,5 @@ DO $$ BEGIN GRANT INSERT ON public.page_views TO anon; EXCEPTION WHEN others THE
 DO $$ BEGIN GRANT INSERT ON public.tracking_sessions TO anon; EXCEPTION WHEN others THEN NULL; END $$;
 
 -- ═══════════════════════════════════════════════════════════════
--- 30. FIM
+-- 30. FIM — Migration v3 completa
 -- ═══════════════════════════════════════════════════════════════
