@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import {
     LayoutDashboard, Building2, Users, X, Sun,
@@ -13,6 +13,7 @@ import {
     QrCode, Sparkles, Building, Brain, LineChart, Wand2, BarChart3, Shield,
     UserPlus, CalendarPlus, ClipboardList,
     BookMarked, Inbox, MoreHorizontal,
+    Video, Search, Bot, UserCog, ScrollText, LayoutGrid, Bell,
 } from 'lucide-react'
 
 // ── 4 fixed bottom nav items ─────────────────────────────────────────
@@ -73,11 +74,13 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         label: 'Portfólio', color: '#D4A929', bg: 'rgba(212,169,41,0.12)',
         items: [
             { name: 'Imóveis',      href: '/backoffice/imoveis',            icon: Building2,  badge: 'NEW'   },
+            { name: 'Explorer',     href: '/backoffice/imoveis/explorer',   icon: Search,     badge: 'NEW'   },
             { name: 'Construtoras', href: '/backoffice/construtoras',       icon: Building,   badge: 'NEW'   },
             { name: 'Projetos',     href: '/backoffice/projetos',           icon: FolderOpen, badge: 'NEW'   },
             { name: 'Publicações',  href: '/backoffice/conteudos',          icon: FileText   },
             { name: 'Criador IA',   href: '/backoffice/conteudo/criador',   icon: Wand2      },
             { name: 'eBook IA',     href: '/backoffice/conteudo/ebook',     icon: BookMarked },
+            { name: 'Vídeo IA',     href: '/backoffice/conteudo/video',     icon: Video,      badge: 'NEW'   },
             { name: 'Automação',    href: '/backoffice/conteudo/automacao', icon: Zap        },
         ],
     },
@@ -85,9 +88,11 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
         label: 'Inteligência', color: '#60A5FA', bg: 'rgba(96,165,250,0.12)',
         items: [
             { name: 'eBooks',      href: '/backoffice/inteligencia/ebooks',       icon: BookOpen  },
-            { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack, badge: 'NEW' },
+            { name: 'Relatórios',  href: '/backoffice/inteligencia/relatorios',   icon: FileStack,   badge: 'NEW' },
             { name: 'Indicadores', href: '/backoffice/inteligencia/indicadores',  icon: LineChart },
-            { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain,     badge: 'NEW' },
+            { name: 'Índices IMI', href: '/backoffice/inteligencia/indices',      icon: Brain,       badge: 'NEW' },
+            { name: 'Widgets',     href: '/backoffice/inteligencia/widgets',      icon: LayoutGrid,  badge: 'NEW' },
+            { name: 'Agentes IA',  href: '/backoffice/ia/agentes',               icon: Bot,         badge: 'NEW' },
         ],
     },
     {
@@ -126,12 +131,14 @@ const GROUPS: Array<{ label: string; color: string; bg: string; items: GroupItem
     {
         label: 'Configurações', color: '#94A3B8', bg: 'rgba(148,163,184,0.10)',
         items: [
-            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building,  badge: 'BREVE' },
-            { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users,     badge: 'NEW'   },
+            { name: 'Organização',  href: '/backoffice/organizacao',         icon: Building,    badge: 'BREVE' },
+            { name: 'Equipe',       href: '/backoffice/equipe',              icon: Users,       badge: 'NEW'   },
+            { name: 'Usuários',     href: '/backoffice/settings/usuarios',   icon: UserCog,     badge: 'NEW'   },
             { name: 'Integrações',  href: '/backoffice/integracoes',         icon: Plug      },
             { name: 'Settings',     href: '/backoffice/settings',            icon: Settings  },
             { name: 'Corretores',   href: '/backoffice/settings/corretores', icon: Users     },
             { name: 'Permissões',   href: '/backoffice/settings/permissoes', icon: Shield    },
+            { name: 'Logs',         href: '/backoffice/settings/logs',       icon: ScrollText },
             { name: 'Config. IA',   href: '/backoffice/settings/ia',         icon: Brain     },
         ],
     },
@@ -542,20 +549,41 @@ export function MobileBottomNav() {
                                             MENU<br />PRINCIPAL
                                         </span>
                                     </div>
-                                    <button
-                                        onClick={() => setOpen(false)}
-                                        className="flex items-center justify-center"
-                                        style={{
-                                            width: 32,
-                                            height: 32,
-                                            borderRadius: 'var(--r-md)',
-                                            background: 'var(--bg-elevated)',
-                                            border: '1px solid var(--border-subtle)',
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        <X size={14} style={{ color: 'var(--text-tertiary)' }} />
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        {/* Notification bell */}
+                                        <Link
+                                            href="/backoffice/notificacoes"
+                                            onClick={() => setOpen(false)}
+                                            className="relative flex items-center justify-center"
+                                            style={{
+                                                width: 32,
+                                                height: 32,
+                                                borderRadius: 'var(--r-md)',
+                                                background: 'var(--bg-elevated)',
+                                                border: '1px solid var(--border-subtle)',
+                                            }}
+                                        >
+                                            <Bell size={14} style={{ color: 'var(--text-tertiary)' }} />
+                                            <span
+                                                className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full"
+                                                style={{ background: 'var(--imi-gold-500)', border: '2px solid var(--bg-surface)' }}
+                                            />
+                                        </Link>
+                                        <button
+                                            onClick={() => setOpen(false)}
+                                            className="flex items-center justify-center"
+                                            style={{
+                                                width: 32,
+                                                height: 32,
+                                                borderRadius: 'var(--r-md)',
+                                                background: 'var(--bg-elevated)',
+                                                border: '1px solid var(--border-subtle)',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            <X size={14} style={{ color: 'var(--text-tertiary)' }} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 

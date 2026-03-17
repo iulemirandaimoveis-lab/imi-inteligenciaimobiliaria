@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import {
     Bell, Check, CheckCheck, Loader2,
     User, Home, DollarSign, FileText, AlertCircle, Info, CheckCircle,
-    Sparkles, Bug, Zap,
+    Sparkles, Bug, Zap, Rocket,
 } from 'lucide-react'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui/PageIntelHeader'
@@ -24,11 +24,13 @@ const TYPE_ICONS: Record<string, any> = {
     lead: User, imovel: Home, financeiro: DollarSign, contrato: FileText,
     alerta: AlertCircle, info: Info, sucesso: CheckCircle,
     system: Zap, development: Home, evaluation: Sparkles, comment: FileText,
+    update: Rocket,
 }
 const TYPE_COLORS: Record<string, string> = {
     lead: '#7B9EC4', imovel: 'var(--bo-success)', financeiro: 'var(--bo-accent)', contrato: '#A89EC4',
     alerta: 'var(--bo-error)', info: '#7B9EC4', sucesso: 'var(--bo-success)',
     system: '#8B5CF6', development: 'var(--bo-success)', evaluation: '#F59E0B', comment: 'var(--bo-text-muted)',
+    update: '#10B981',
 }
 
 const timeAgo = (d: string) => {
