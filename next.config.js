@@ -25,7 +25,6 @@ const nextConfig = {
         serverActions: {
             bodySizeLimit: '2mb',
         },
-        instrumentationHook: true,
     },
     // Security headers
     async headers() {
@@ -51,7 +50,4 @@ module.exports = withSentryConfig(nextConfig, {
     hideSourceMaps: true,
     disableServerWebpackPlugin: !process.env.SENTRY_AUTH_TOKEN,
     disableClientWebpackPlugin: !process.env.SENTRY_AUTH_TOKEN,
-    webpack: {
-        autoInstrumentServerFunctions: true,
-    },
 })
