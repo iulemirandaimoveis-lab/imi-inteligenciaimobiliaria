@@ -1,7 +1,8 @@
 -- ============================================================
--- IMI PRODUCTION FIX — MIGRATION UNIFICADA
+-- IMI PRODUCTION FIX — MIGRATION UNIFICADA v2
 -- Data: 2026-03-17
 -- Objetivo: Criar todas as 27 tabelas faltantes para o backoffice funcionar
+-- NOTA: Sem REFERENCES/FK para evitar erros de dependência
 -- EXECUTAR INTEIRO NO SQL EDITOR DO SUPABASE
 -- ============================================================
 
@@ -12,11 +13,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 
 -- ═══════════════════════════════════════════════════════════════
--- 1. BROKERS (Corretores) — 15 referências no código
+-- 1. BROKERS (Corretores)
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.brokers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id UUID,
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   phone TEXT,
@@ -28,13 +29,13 @@ CREATE TABLE IF NOT EXISTS public.brokers (
   last_login_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  created_by UUID REFERENCES auth.users(id)
+  created_by UUID
 );
 CREATE INDEX IF NOT EXISTS idx_brokers_user_id ON brokers(user_id);
 CREATE INDEX IF NOT EXISTS idx_brokers_email ON brokers(email);
 
 -- ═══════════════════════════════════════════════════════════════
--- 2. ROLE_PERMISSIONS (RBAC) — 8 referências
+-- 2. ROLE_PERMISSIONS (RBAC)
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.role_permissions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -46,7 +47,6 @@ CREATE TABLE IF NOT EXISTS public.role_permissions (
   UNIQUE(role, module, action)
 );
 
--- Seed default permissions for admin
 INSERT INTO role_permissions (role, module, action, allowed) VALUES
   ('admin', 'dashboard', 'view', true),
   ('admin', 'leads', 'view', true), ('admin', 'leads', 'create', true), ('admin', 'leads', 'edit', true), ('admin', 'leads', 'delete', true),
@@ -64,10 +64,10 @@ INSERT INTO role_permissions (role, module, action, allowed) VALUES
 ON CONFLICT (role, module, action) DO NOTHING;
 
 -- ═══════════════════════════════════════════════════════════════
--- 3. PROFILES (Perfis de usuário) — 7 referências
+-- 3. PROFILES
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.profiles (
-  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  id UUID PRIMARY KEY,
   name TEXT,
   email TEXT,
   avatar_url TEXT,
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 4. FINANCIAL_TRANSACTIONS — 20 referências
+-- 4. FINANCIAL_TRANSACTIONS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.financial_transactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -96,14 +96,14 @@ CREATE TABLE IF NOT EXISTS public.financial_transactions (
   paid_date DATE,
   reference_type TEXT,
   reference_id UUID,
-  development_id UUID REFERENCES developments(id) ON DELETE SET NULL,
-  lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
-  broker_id UUID REFERENCES brokers(id) ON DELETE SET NULL,
+  development_id UUID,
+  lead_id UUID,
+  broker_id UUID,
   payment_method TEXT,
   receipt_url TEXT,
   notes TEXT,
   tags TEXT[] DEFAULT '{}',
-  created_by UUID REFERENCES auth.users(id),
+  created_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -113,7 +113,7 @@ CREATE INDEX IF NOT EXISTS idx_fin_tx_due_date ON financial_transactions(due_dat
 CREATE INDEX IF NOT EXISTS idx_fin_tx_dev ON financial_transactions(development_id);
 
 -- ═══════════════════════════════════════════════════════════════
--- 5. FINANCIAL_GOALS (Metas) — 3 referências
+-- 5. FINANCIAL_GOALS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.financial_goals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS public.financial_goals (
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 6. CONTRATOS — 13 referências
+-- 6. CONTRATOS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.contratos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -137,9 +137,9 @@ CREATE TABLE IF NOT EXISTS public.contratos (
   tipo TEXT NOT NULL DEFAULT 'compra_venda',
   template_id TEXT,
   status TEXT DEFAULT 'rascunho' CHECK (status IN ('rascunho', 'enviado', 'assinado', 'cancelado', 'expirado')),
-  development_id UUID REFERENCES developments(id) ON DELETE SET NULL,
-  lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
-  broker_id UUID REFERENCES brokers(id) ON DELETE SET NULL,
+  development_id UUID,
+  lead_id UUID,
+  broker_id UUID,
   valor DECIMAL(14,2),
   conteudo TEXT,
   html_content TEXT,
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS public.contratos (
   signed_at TIMESTAMPTZ,
   expires_at TIMESTAMPTZ,
   metadata JSONB DEFAULT '{}',
-  created_by UUID REFERENCES auth.users(id),
+  created_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -156,16 +156,16 @@ CREATE INDEX IF NOT EXISTS idx_contratos_status ON contratos(status);
 CREATE INDEX IF NOT EXISTS idx_contratos_dev ON contratos(development_id);
 
 -- ═══════════════════════════════════════════════════════════════
--- 7. PROPOSALS (Propostas) — 11 referências
+-- 7. PROPOSALS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.proposals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   token TEXT UNIQUE DEFAULT encode(gen_random_bytes(16), 'hex'),
   title TEXT NOT NULL,
   status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'sent', 'viewed', 'accepted', 'rejected', 'expired')),
-  development_id UUID REFERENCES developments(id) ON DELETE SET NULL,
-  lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
-  broker_id UUID REFERENCES brokers(id) ON DELETE SET NULL,
+  development_id UUID,
+  lead_id UUID,
+  broker_id UUID,
   unit_id UUID,
   valor_proposta DECIMAL(14,2),
   valor_entrada DECIMAL(14,2),
@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS public.proposals (
   responded_at TIMESTAMPTZ,
   pdf_url TEXT,
   metadata JSONB DEFAULT '{}',
-  created_by UUID REFERENCES auth.users(id),
+  created_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -189,11 +189,11 @@ CREATE INDEX IF NOT EXISTS idx_proposals_lead ON proposals(lead_id);
 CREATE INDEX IF NOT EXISTS idx_proposals_status ON proposals(status);
 
 -- ═══════════════════════════════════════════════════════════════
--- 8. PROPOSAL_EVENTS — 7 referências
+-- 8. PROPOSAL_EVENTS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.proposal_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  proposal_id UUID NOT NULL REFERENCES proposals(id) ON DELETE CASCADE,
+  proposal_id UUID NOT NULL,
   event_type TEXT NOT NULL CHECK (event_type IN ('created', 'sent', 'viewed', 'downloaded', 'accepted', 'rejected', 'expired', 'follow_up')),
   metadata JSONB DEFAULT '{}',
   ip_address TEXT,
@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS public.proposal_events (
 CREATE INDEX IF NOT EXISTS idx_proposal_events_proposal ON proposal_events(proposal_id);
 
 -- ═══════════════════════════════════════════════════════════════
--- 9. AVALIACOES — 10 referências
+-- 9. AVALIACOES
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.avaliacoes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -228,7 +228,7 @@ CREATE TABLE IF NOT EXISTS public.avaliacoes (
   observacoes TEXT,
   data_vistoria TIMESTAMPTZ,
   data_entrega TIMESTAMPTZ,
-  avaliador_id UUID REFERENCES auth.users(id),
+  avaliador_id UUID,
   metadata JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -236,7 +236,7 @@ CREATE TABLE IF NOT EXISTS public.avaliacoes (
 CREATE INDEX IF NOT EXISTS idx_avaliacoes_status ON avaliacoes(status);
 
 -- ═══════════════════════════════════════════════════════════════
--- 10. CONTEUDOS — 7 referências
+-- 10. CONTEUDOS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.conteudos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -258,10 +258,10 @@ CREATE TABLE IF NOT EXISTS public.conteudos (
   likes INT DEFAULT 0,
   shares INT DEFAULT 0,
   comments INT DEFAULT 0,
-  development_id UUID REFERENCES developments(id) ON DELETE SET NULL,
+  development_id UUID,
   ai_generated BOOLEAN DEFAULT false,
   metadata JSONB DEFAULT '{}',
-  created_by UUID REFERENCES auth.users(id),
+  created_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -269,7 +269,7 @@ CREATE INDEX IF NOT EXISTS idx_conteudos_status ON conteudos(status);
 CREATE INDEX IF NOT EXISTS idx_conteudos_tipo ON conteudos(tipo);
 
 -- ═══════════════════════════════════════════════════════════════
--- 11. EBOOKS — 8 referências
+-- 11. EBOOKS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.ebooks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -284,18 +284,18 @@ CREATE TABLE IF NOT EXISTS public.ebooks (
   chapters JSONB DEFAULT '[]',
   tags TEXT[] DEFAULT '{}',
   target_audience TEXT,
-  development_id UUID REFERENCES developments(id) ON DELETE SET NULL,
+  development_id UUID,
   downloads INT DEFAULT 0,
   leads_generated INT DEFAULT 0,
   ai_generated BOOLEAN DEFAULT false,
   metadata JSONB DEFAULT '{}',
-  created_by UUID REFERENCES auth.users(id),
+  created_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 12. PROJETOS (Lançamentos) — 5 referências
+-- 12. PROJETOS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.projetos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -322,17 +322,17 @@ CREATE TABLE IF NOT EXISTS public.projetos (
   longitude DECIMAL(10,7),
   data_lancamento DATE,
   data_entrega_prev DATE,
-  construtora_id UUID REFERENCES developers(id) ON DELETE SET NULL,
+  construtora_id UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 13. PROJETO_UNIDADES — 6 referências
+-- 13. PROJETO_UNIDADES
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.projeto_unidades (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  projeto_id UUID NOT NULL REFERENCES projetos(id) ON DELETE CASCADE,
+  projeto_id UUID NOT NULL,
   identificador TEXT NOT NULL,
   tipo TEXT,
   bloco TEXT,
@@ -344,7 +344,7 @@ CREATE TABLE IF NOT EXISTS public.projeto_unidades (
   vagas INT,
   preco DECIMAL(14,2),
   status TEXT DEFAULT 'disponivel' CHECK (status IN ('disponivel', 'reservado', 'vendido', 'bloqueado')),
-  lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
+  lead_id UUID,
   observacoes TEXT,
   metadata JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -354,7 +354,7 @@ CREATE INDEX IF NOT EXISTS idx_proj_unid_projeto ON projeto_unidades(projeto_id)
 CREATE INDEX IF NOT EXISTS idx_proj_unid_status ON projeto_unidades(status);
 
 -- ═══════════════════════════════════════════════════════════════
--- 14. MARKET_REPORTS — 10 referências
+-- 14. MARKET_REPORTS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.market_reports (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -371,13 +371,13 @@ CREATE TABLE IF NOT EXISTS public.market_reports (
   region TEXT,
   city TEXT DEFAULT 'Recife',
   ai_generated BOOLEAN DEFAULT false,
-  created_by UUID REFERENCES auth.users(id),
+  created_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 15. TRACKING_SESSIONS — 9 referências
+-- 15. TRACKING_SESSIONS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.tracking_sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -394,8 +394,8 @@ CREATE TABLE IF NOT EXISTS public.tracking_sessions (
   city TEXT,
   duration_seconds INT DEFAULT 0,
   pages_viewed INT DEFAULT 1,
-  development_id UUID REFERENCES developments(id) ON DELETE SET NULL,
-  lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
+  development_id UUID,
+  lead_id UUID,
   ip_address TEXT,
   user_agent TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -404,14 +404,14 @@ CREATE INDEX IF NOT EXISTS idx_tracking_sessions_session ON tracking_sessions(se
 CREATE INDEX IF NOT EXISTS idx_tracking_sessions_dev ON tracking_sessions(development_id);
 
 -- ═══════════════════════════════════════════════════════════════
--- 16. PAGE_VIEWS — 7 referências
+-- 16. PAGE_VIEWS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.page_views (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   session_id TEXT,
   page_url TEXT NOT NULL,
   page_title TEXT,
-  development_id UUID REFERENCES developments(id) ON DELETE SET NULL,
+  development_id UUID,
   referrer TEXT,
   utm_source TEXT,
   duration_seconds INT DEFAULT 0,
@@ -422,7 +422,7 @@ CREATE INDEX IF NOT EXISTS idx_page_views_dev ON page_views(development_id);
 CREATE INDEX IF NOT EXISTS idx_page_views_created ON page_views(created_at DESC);
 
 -- ═══════════════════════════════════════════════════════════════
--- 17. MEDIA — 8 referências
+-- 17. MEDIA
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.media (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -435,13 +435,13 @@ CREATE TABLE IF NOT EXISTS public.media (
   folder TEXT,
   alt_text TEXT,
   tags TEXT[] DEFAULT '{}',
-  development_id UUID REFERENCES developments(id) ON DELETE SET NULL,
-  uploaded_by UUID REFERENCES auth.users(id),
+  development_id UUID,
+  uploaded_by UUID,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 18. INTEGRATION_CONFIGS — 6 referências
+-- 18. INTEGRATION_CONFIGS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.integration_configs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -457,7 +457,7 @@ CREATE TABLE IF NOT EXISTS public.integration_configs (
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 19. CONSULTORIAS — 5 referências
+-- 19. CONSULTORIAS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.consultorias (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -472,14 +472,14 @@ CREATE TABLE IF NOT EXISTS public.consultorias (
   duracao_minutos INT DEFAULT 60,
   valor DECIMAL(10,2),
   notas TEXT,
-  consultor_id UUID REFERENCES auth.users(id),
-  lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
+  consultor_id UUID,
+  lead_id UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 20. WIDGETS_CONFIG — 3 referências
+-- 20. WIDGETS_CONFIG
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.widgets_config (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -495,7 +495,7 @@ CREATE TABLE IF NOT EXISTS public.widgets_config (
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 21. SYSTEM_ERROR_LOGS — 2 referências
+-- 21. SYSTEM_ERROR_LOGS
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.system_error_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -509,7 +509,7 @@ CREATE TABLE IF NOT EXISTS public.system_error_logs (
 );
 
 -- ═══════════════════════════════════════════════════════════════
--- 22. TABELAS MENORES (1-3 refs cada)
+-- 22. TABELAS MENORES
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS public.bank_accounts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -540,7 +540,7 @@ CREATE TABLE IF NOT EXISTS public.ai_tasks (
   input JSONB DEFAULT '{}',
   output JSONB DEFAULT '{}',
   error TEXT,
-  user_id UUID REFERENCES auth.users(id),
+  user_id UUID,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   completed_at TIMESTAMPTZ
 );
@@ -574,105 +574,120 @@ CREATE TABLE IF NOT EXISTS public.avaliacoes_kb_upload_queue (
 -- ═══════════════════════════════════════════════════════════════
 -- 23. COLUNAS FALTANTES em developments
 -- ═══════════════════════════════════════════════════════════════
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS created_by UUID REFERENCES auth.users(id);
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS developer_id UUID REFERENCES developers(id) ON DELETE SET NULL;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS tipo TEXT DEFAULT 'apartamento';
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS status_comercial TEXT DEFAULT 'rascunho';
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS status_commercial TEXT DEFAULT 'draft';
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS condition TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS country TEXT DEFAULT 'Brasil';
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS cep TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS street TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS street_number TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS complement TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS property_type TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'apartment';
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS bedrooms INT DEFAULT 0;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS bathrooms INT DEFAULT 0;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS parking_spaces INT DEFAULT 0;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS area_from DECIMAL(10,2);
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS area_to DECIMAL(10,2);
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS units_count INT DEFAULT 1;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS available_units INT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS floor_count INT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS price_from DECIMAL(14,2);
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS price_to DECIMAL(14,2);
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS price_per_sqm DECIMAL(10,2);
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS image TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS gallery_images TEXT[] DEFAULT '{}';
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS floor_plans TEXT[] DEFAULT '{}';
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS brochure_url TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS video_short_url TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS views_count INT DEFAULT 0;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS leads_count INT DEFAULT 0;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS inventory_score INT DEFAULT 0;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS updated_by UUID REFERENCES auth.users(id);
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS delivery_date TEXT;
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS total_area DECIMAL(10,2);
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS private_area DECIMAL(10,2);
-ALTER TABLE developments ADD COLUMN IF NOT EXISTS broker_id UUID;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'developments') THEN
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS created_by UUID;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS developer_id UUID;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS tipo TEXT DEFAULT 'apartamento';
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS status_comercial TEXT DEFAULT 'rascunho';
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS status_commercial TEXT DEFAULT 'draft';
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS condition TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS country TEXT DEFAULT 'Brasil';
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS cep TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS street TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS street_number TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS complement TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS property_type TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'apartment';
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS bedrooms INT DEFAULT 0;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS bathrooms INT DEFAULT 0;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS parking_spaces INT DEFAULT 0;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS area_from DECIMAL(10,2);
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS area_to DECIMAL(10,2);
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS units_count INT DEFAULT 1;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS available_units INT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS floor_count INT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS price_from DECIMAL(14,2);
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS price_to DECIMAL(14,2);
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS price_per_sqm DECIMAL(10,2);
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS image TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS gallery_images TEXT[] DEFAULT '{}';
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS floor_plans TEXT[] DEFAULT '{}';
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS brochure_url TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS video_short_url TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS views_count INT DEFAULT 0;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS leads_count INT DEFAULT 0;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS inventory_score INT DEFAULT 0;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS updated_by UUID;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS delivery_date TEXT;
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS total_area DECIMAL(10,2);
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS private_area DECIMAL(10,2);
+    ALTER TABLE developments ADD COLUMN IF NOT EXISTS broker_id UUID;
+  END IF;
+END $$;
 
 -- Corrigir constraints que podem impedir inserção
 DO $$ BEGIN
   ALTER TABLE developments ALTER COLUMN developer DROP NOT NULL;
 EXCEPTION WHEN undefined_column THEN NULL;
+WHEN others THEN NULL;
 END $$;
 
 DO $$ BEGIN
   ALTER TABLE developments ALTER COLUMN address DROP NOT NULL;
 EXCEPTION WHEN undefined_column THEN NULL;
+WHEN others THEN NULL;
 END $$;
 
 DO $$ BEGIN
   ALTER TABLE developments ALTER COLUMN region DROP NOT NULL;
 EXCEPTION WHEN undefined_column THEN NULL;
+WHEN others THEN NULL;
 END $$;
 
 -- ═══════════════════════════════════════════════════════════════
 -- 24. COLUNAS FALTANTES em leads
 -- ═══════════════════════════════════════════════════════════════
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS origin TEXT DEFAULT 'website';
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS score INT DEFAULT 50;
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS ai_score INT DEFAULT 0;
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS ai_priority TEXT DEFAULT 'medium';
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS interest_type TEXT;
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS interest_location TEXT;
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS budget_min DECIMAL(14,2);
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS budget_max DECIMAL(14,2);
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS capital DECIMAL(14,2);
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS country TEXT DEFAULT 'BR';
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'BRL';
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS language TEXT DEFAULT 'pt';
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS assigned_to UUID;
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id);
-ALTER TABLE leads ADD COLUMN IF NOT EXISTS utm_source TEXT;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'leads') THEN
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS origin TEXT DEFAULT 'website';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS score INT DEFAULT 50;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS ai_score INT DEFAULT 0;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS ai_priority TEXT DEFAULT 'medium';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS interest_type TEXT;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS interest_location TEXT;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS budget_min DECIMAL(14,2);
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS budget_max DECIMAL(14,2);
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS capital DECIMAL(14,2);
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS country TEXT DEFAULT 'BR';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'BRL';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS language TEXT DEFAULT 'pt';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS assigned_to UUID;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS user_id UUID;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS utm_source TEXT;
+  END IF;
+END $$;
 
 -- ═══════════════════════════════════════════════════════════════
 -- 25. COLUNAS FALTANTES em developers
 -- ═══════════════════════════════════════════════════════════════
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS slug TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS legal_name TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS cnpj TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS address TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS city TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS state TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS instagram TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS linkedin TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS notes TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS numero TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS complemento TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS bairro TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS cep TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS pais TEXT DEFAULT 'Brasil';
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS inscricao_estadual TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS inscricao_municipal TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_nome TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_cargo TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_email TEXT;
-ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_telefone TEXT;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'developers') THEN
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS slug TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS legal_name TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS cnpj TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS address TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS city TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS state TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS instagram TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS linkedin TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS notes TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS numero TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS complemento TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS bairro TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS cep TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS pais TEXT DEFAULT 'Brasil';
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS inscricao_estadual TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS inscricao_municipal TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_nome TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_cargo TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_email TEXT;
+    ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_telefone TEXT;
+  END IF;
+END $$;
 
 -- ═══════════════════════════════════════════════════════════════
 -- 26. RLS — HABILITAR E CRIAR POLÍTICAS PERMISSIVAS
@@ -691,18 +706,18 @@ BEGIN
     'ai_tasks', 'valuation_requests', 'avaliacoes_kb_upload_queue'
   ])
   LOOP
-    EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', t);
-    EXECUTE format('DROP POLICY IF EXISTS "bo_full_%s" ON public.%I', t, t);
-    EXECUTE format('CREATE POLICY "bo_full_%s" ON public.%I FOR ALL TO authenticated USING (true) WITH CHECK (true)', t, t);
-    EXECUTE format('DROP POLICY IF EXISTS "pub_read_%s" ON public.%I', t, t);
-    -- Public read para tabelas que o site precisa
-    IF t IN ('projetos', 'ebooks', 'market_reports', 'conteudos', 'avaliacoes') THEN
-      EXECUTE format('CREATE POLICY "pub_read_%s" ON public.%I FOR SELECT TO anon USING (true)', t, t);
-    END IF;
-    -- Public insert para tabelas de captação
-    IF t IN ('consultorias', 'valuation_requests', 'page_views', 'tracking_sessions') THEN
-      EXECUTE format('DROP POLICY IF EXISTS "pub_insert_%s" ON public.%I', t, t);
-      EXECUTE format('CREATE POLICY "pub_insert_%s" ON public.%I FOR INSERT TO anon WITH CHECK (true)', t, t);
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = t) THEN
+      EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', t);
+      EXECUTE format('DROP POLICY IF EXISTS "bo_full_%s" ON public.%I', t, t);
+      EXECUTE format('CREATE POLICY "bo_full_%s" ON public.%I FOR ALL TO authenticated USING (true) WITH CHECK (true)', t, t);
+      EXECUTE format('DROP POLICY IF EXISTS "pub_read_%s" ON public.%I', t, t);
+      IF t IN ('projetos', 'ebooks', 'market_reports', 'conteudos', 'avaliacoes') THEN
+        EXECUTE format('CREATE POLICY "pub_read_%s" ON public.%I FOR SELECT TO anon USING (true)', t, t);
+      END IF;
+      IF t IN ('consultorias', 'valuation_requests', 'page_views', 'tracking_sessions') THEN
+        EXECUTE format('DROP POLICY IF EXISTS "pub_insert_%s" ON public.%I', t, t);
+        EXECUTE format('CREATE POLICY "pub_insert_%s" ON public.%I FOR INSERT TO anon WITH CHECK (true)', t, t);
+      END IF;
     END IF;
   END LOOP;
 END $$;
@@ -719,7 +734,7 @@ INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', tru
 INSERT INTO storage.buckets (id, name, public) VALUES ('content', 'content', true) ON CONFLICT (id) DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('developers', 'developers', true) ON CONFLICT (id) DO NOTHING;
 
--- Storage policies for media bucket
+-- Storage policies
 DROP POLICY IF EXISTS "media_public_read" ON storage.objects;
 CREATE POLICY "media_public_read" ON storage.objects FOR SELECT USING (bucket_id = 'media');
 
@@ -732,23 +747,29 @@ CREATE POLICY "media_auth_update" ON storage.objects FOR UPDATE TO authenticated
 DROP POLICY IF EXISTS "media_auth_delete" ON storage.objects;
 CREATE POLICY "media_auth_delete" ON storage.objects FOR DELETE TO authenticated USING (bucket_id IN ('media', 'developments', 'avatars', 'content', 'developers'));
 
--- Public read for all public buckets
 DROP POLICY IF EXISTS "public_buckets_read" ON storage.objects;
 CREATE POLICY "public_buckets_read" ON storage.objects FOR SELECT USING (bucket_id IN ('developments', 'avatars', 'content', 'developers'));
 
 -- ═══════════════════════════════════════════════════════════════
--- 28. VIEW para proposals com score (usada no frontend)
+-- 28. VIEW para proposals
 -- ═══════════════════════════════════════════════════════════════
-CREATE OR REPLACE VIEW v_proposals_with_score AS
-SELECT
-  p.*,
-  l.name as lead_name,
-  l.email as lead_email,
-  l.phone as lead_phone,
-  d.name as development_name
-FROM proposals p
-LEFT JOIN leads l ON p.lead_id = l.id
-LEFT JOIN developments d ON p.development_id = d.id;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'proposals')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'leads')
+     AND EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'developments')
+  THEN
+    CREATE OR REPLACE VIEW v_proposals_with_score AS
+    SELECT
+      p.*,
+      l.name as lead_name,
+      l.email as lead_email,
+      l.phone as lead_phone,
+      d.name as development_name
+    FROM proposals p
+    LEFT JOIN leads l ON p.lead_id = l.id
+    LEFT JOIN developments d ON p.development_id = d.id;
+  END IF;
+END $$;
 
 -- ═══════════════════════════════════════════════════════════════
 -- 29. GRANTS
@@ -756,11 +777,12 @@ LEFT JOIN developments d ON p.development_id = d.id;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
-GRANT INSERT ON public.leads TO anon;
-GRANT INSERT ON public.consultorias TO anon;
-GRANT INSERT ON public.valuation_requests TO anon;
-GRANT INSERT ON public.page_views TO anon;
-GRANT INSERT ON public.tracking_sessions TO anon;
+
+DO $$ BEGIN GRANT INSERT ON public.leads TO anon; EXCEPTION WHEN others THEN NULL; END $$;
+DO $$ BEGIN GRANT INSERT ON public.consultorias TO anon; EXCEPTION WHEN others THEN NULL; END $$;
+DO $$ BEGIN GRANT INSERT ON public.valuation_requests TO anon; EXCEPTION WHEN others THEN NULL; END $$;
+DO $$ BEGIN GRANT INSERT ON public.page_views TO anon; EXCEPTION WHEN others THEN NULL; END $$;
+DO $$ BEGIN GRANT INSERT ON public.tracking_sessions TO anon; EXCEPTION WHEN others THEN NULL; END $$;
 
 -- ═══════════════════════════════════════════════════════════════
 -- 30. FIM
