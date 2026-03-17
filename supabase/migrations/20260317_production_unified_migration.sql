@@ -29,7 +29,8 @@ BEGIN
     'media', 'page_views', 'tracking_sessions', 'market_reports', 'projetos',
     'ebooks', 'conteudos', 'avaliacoes', 'proposals', 'contratos',
     'financial_goals', 'financial_transactions', 'profiles', 'role_permissions',
-    'brokers'
+    'brokers',
+    'credit_applications', 'market_indicators', 'market_indices', 'transactions'
   ])
   LOOP
     SELECT c.relkind INTO obj_type
@@ -799,6 +800,106 @@ DO $$ BEGIN
     LEFT JOIN leads l ON p.lead_id = l.id
     LEFT JOIN developments d ON p.development_id = d.id;
   END IF;
+END $$;
+
+-- ═══════════════════════════════════════════════════════════════
+-- 28b. TABELAS ADICIONAIS (audit fase 2)
+-- ═══════════════════════════════════════════════════════════════
+
+-- credit_applications (código usa este nome, não credit_requests)
+CREATE TABLE IF NOT EXISTS public.credit_applications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID REFERENCES public.tenants(id) ON DELETE CASCADE,
+    protocol TEXT,
+    client_name TEXT NOT NULL,
+    client_email TEXT,
+    client_phone TEXT,
+    client_cpf TEXT,
+    client_income NUMERIC(14,2),
+    client_occupation TEXT,
+    property_type TEXT,
+    property_value NUMERIC(14,2),
+    property_address TEXT,
+    financed_amount NUMERIC(14,2),
+    bank TEXT,
+    interest_rate NUMERIC(6,4),
+    term_months INTEGER,
+    monthly_payment NUMERIC(14,2),
+    system TEXT, -- SAC, PRICE, etc.
+    status TEXT DEFAULT 'pending',
+    documents JSONB DEFAULT '{}',
+    timeline JSONB DEFAULT '[]',
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- market_indicators (inteligência de mercado — indicadores)
+CREATE TABLE IF NOT EXISTS public.market_indicators (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID REFERENCES public.tenants(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    value NUMERIC(14,2),
+    unit TEXT, -- '%', 'R$', 'pts'
+    category TEXT, -- 'economia', 'mercado', 'credito'
+    source TEXT,
+    reference_date DATE,
+    sort_order INTEGER DEFAULT 0,
+    is_published BOOLEAN DEFAULT true,
+    metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- market_indices (inteligência de mercado — índices)
+CREATE TABLE IF NOT EXISTS public.market_indices (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID REFERENCES public.tenants(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    description TEXT,
+    current_value NUMERIC(14,4),
+    previous_value NUMERIC(14,4),
+    variation NUMERIC(8,4),
+    unit TEXT DEFAULT '%',
+    category TEXT,
+    source TEXT,
+    reference_date DATE,
+    history JSONB DEFAULT '[]', -- [{date, value}]
+    is_published BOOLEAN DEFAULT true,
+    metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- transactions (alias para PIX webhook — fallback legado)
+CREATE TABLE IF NOT EXISTS public.transactions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID REFERENCES public.tenants(id) ON DELETE CASCADE,
+    type TEXT, -- 'pix', 'boleto', 'cartao'
+    amount NUMERIC(14,2),
+    status TEXT DEFAULT 'pendente',
+    paid_date DATE,
+    payment_method TEXT,
+    reference_id TEXT,
+    description TEXT,
+    metadata JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE public.credit_applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.market_indicators ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.market_indices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
+
+DO $$
+DECLARE t TEXT;
+BEGIN
+  FOR t IN SELECT unnest(ARRAY['credit_applications','market_indicators','market_indices','transactions'])
+  LOOP
+    EXECUTE format('DROP POLICY IF EXISTS "auth_full_%s" ON public.%I', t, t);
+    EXECUTE format('CREATE POLICY "auth_full_%s" ON public.%I FOR ALL TO authenticated USING (true) WITH CHECK (true)', t, t);
+  END LOOP;
 END $$;
 
 -- ═══════════════════════════════════════════════════════════════
