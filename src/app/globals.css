@@ -413,29 +413,13 @@
     color: var(--imi-navy-900, #0B1120);
   }
 
-  /* Scrollbar customizada — webkit */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--imi-gold-700, #8A6820);
-    border-radius: 3px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--imi-gold-500, #B8943A);
-  }
-
-  /* Firefox */
+  /* Scrollbar — usar padrão do sistema */
   * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--imi-gold-700, #8A6820) transparent;
+    scrollbar-width: none;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
   }
 }
 

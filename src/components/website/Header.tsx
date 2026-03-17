@@ -192,27 +192,13 @@ export default function Header({ lang, settings }: HeaderProps) {
 
                         {/* Desktop Right */}
                         <div className="hidden lg:flex items-center gap-3">
-                            <div className="flex items-center gap-1 border-r border-black/10 pr-3">
-                                {LANGS.map((l) => (
-                                    <Link
-                                        key={l.code}
-                                        href={`/${l.code}`}
-                                        className={`text-[11px] font-bold px-1.5 py-0.5 rounded transition-colors duration-150 ${lang === l.code
-                                            ? 'text-[#486581]'
-                                            : 'text-[#ADB5BD] hover:text-[#495057]'
-                                            }`}
-                                    >
-                                        {l.label}
-                                    </Link>
-                                ))}
-                            </div>
                             <a
                                 href={`https://wa.me/${settings?.companyPhone?.replace(/\D/g, '') || '5581997230455'}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 bg-[#102A43] hover:bg-[#0a1c2e] text-white text-[13px] font-semibold px-4 py-2 rounded-xl transition-all duration-200"
+                                className="inline-flex items-center gap-2 bg-[#102A43] hover:bg-[#0a1c2e] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
                             >
-                                <MessageCircle size={14} strokeWidth={2.5} />
+                                <MessageCircle size={15} strokeWidth={2.5} />
                                 WhatsApp
                             </a>
                         </div>
