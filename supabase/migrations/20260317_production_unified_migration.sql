@@ -32,6 +32,21 @@ CREATE TABLE IF NOT EXISTS public.brokers (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   created_by UUID REFERENCES auth.users(id)
 );
+-- Ensure columns exist if table was created by a previous migration
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS user_id UUID;
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS email TEXT;
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS phone TEXT;
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS creci TEXT;
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active';
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'broker';
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS permissions TEXT[] DEFAULT ARRAY['dashboard'];
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS commission_rate DECIMAL(5,2) DEFAULT 3.00;
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ;
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.brokers ADD COLUMN IF NOT EXISTS created_by UUID;
 CREATE INDEX IF NOT EXISTS idx_brokers_user_id ON brokers(user_id);
 CREATE INDEX IF NOT EXISTS idx_brokers_email ON brokers(email);
 
@@ -65,6 +80,15 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS email TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS phone TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'admin';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS bio TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS company TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS creci TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS preferences JSONB DEFAULT '{}';
 
 -- ═══════════════════════════════════════════════════════
 -- 4. FINANCIAL_TRANSACTIONS (20 refs)
@@ -94,6 +118,28 @@ CREATE TABLE IF NOT EXISTS public.financial_transactions (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS type TEXT;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pendente';
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS due_date DATE;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS subcategory TEXT;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS amount DECIMAL(14,2);
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'BRL';
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS paid_date DATE;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS recurrence TEXT;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS reference_type TEXT;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS reference_id UUID;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS lead_id UUID;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS broker_id UUID;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS payment_method TEXT;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS receipt_url TEXT;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS notes TEXT;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS created_by UUID;
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.financial_transactions ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS idx_fin_tx_type ON financial_transactions(type);
 CREATE INDEX IF NOT EXISTS idx_fin_tx_status ON financial_transactions(status);
 CREATE INDEX IF NOT EXISTS idx_fin_tx_due ON financial_transactions(due_date);
@@ -191,6 +237,50 @@ CREATE TABLE IF NOT EXISTS public.contratos (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS titulo TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS tipo TEXT DEFAULT 'compra_venda';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS numero TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS categoria TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS modelo_id TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS modelo_nome TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS template_id TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'rascunho';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS idioma TEXT DEFAULT 'pt-BR';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS contratante JSONB DEFAULT '{}';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS contratado JSONB DEFAULT '{}';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS partes JSONB DEFAULT '[]';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS dados_contrato JSONB DEFAULT '{}';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS clausulas JSONB DEFAULT '[]';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS signatarios JSONB DEFAULT '[]';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS conteudo TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS conteudo_markdown TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS html_content TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS idioma_primario TEXT DEFAULT 'pt';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS idiomas_adicionais TEXT[] DEFAULT '{}';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS conteudo_adicional JSONB DEFAULT '{}';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS pdf_url TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS docx_url TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS drive_url TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS gdrive_url TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS assinatura_url TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS assinatura_provider TEXT DEFAULT 'clicksign';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS plataforma_assinatura TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS lead_id UUID;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS broker_id UUID;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS valor DECIMAL(14,2);
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS signed_at TIMESTAMPTZ;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS notas TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS criado_por TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS criado_por_nome TEXT;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS created_by UUID;
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS criado_em TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS atualizado_em TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.contratos ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS idx_contratos_status ON contratos(status);
 
 -- ═══════════════════════════════════════════════════════
@@ -224,6 +314,31 @@ CREATE TABLE IF NOT EXISTS public.proposals (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS token TEXT;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS title TEXT;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'draft';
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS lead_id UUID;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS broker_id UUID;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS unit_id UUID;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS valor_proposta DECIMAL(14,2);
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS valor_entrada DECIMAL(14,2);
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS parcelas INT;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS valor_parcela DECIMAL(14,2);
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS financiamento_tipo TEXT;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS condicoes TEXT;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS validade DATE;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS interest_score INT DEFAULT 0;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS views_count INT DEFAULT 0;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS last_viewed_at TIMESTAMPTZ;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS sent_at TIMESTAMPTZ;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS response TEXT;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS responded_at TIMESTAMPTZ;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS pdf_url TEXT;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS created_by UUID;
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.proposals ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS idx_proposals_token ON proposals(token);
 CREATE INDEX IF NOT EXISTS idx_proposals_lead ON proposals(lead_id);
 
@@ -239,6 +354,12 @@ CREATE TABLE IF NOT EXISTS public.proposal_events (
   user_agent TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.proposal_events ADD COLUMN IF NOT EXISTS proposal_id UUID;
+ALTER TABLE public.proposal_events ADD COLUMN IF NOT EXISTS event_type TEXT;
+ALTER TABLE public.proposal_events ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
+ALTER TABLE public.proposal_events ADD COLUMN IF NOT EXISTS ip_address TEXT;
+ALTER TABLE public.proposal_events ADD COLUMN IF NOT EXISTS user_agent TEXT;
+ALTER TABLE public.proposal_events ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS idx_prop_ev_proposal ON proposal_events(proposal_id);
 
 -- ═══════════════════════════════════════════════════════
@@ -304,6 +425,55 @@ CREATE TABLE IF NOT EXISTS public.avaliacoes (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS protocolo TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS tipo TEXT DEFAULT 'mercado';
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pendente';
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS solicitante_nome TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS solicitante_email TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS solicitante_telefone TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS cliente_nome TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS cliente_email TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS cliente_telefone TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS cliente_cpf_cnpj TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS cliente_tipo TEXT DEFAULT 'PF';
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS solicitante_instituicao TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS endereco TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS complemento TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS cidade TEXT DEFAULT 'Recife';
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS estado TEXT DEFAULT 'PE';
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS bairro TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS cep TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS tipo_imovel TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS area_total DECIMAL(10,2);
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS area_construida DECIMAL(10,2);
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS area_terreno DECIMAL(10,2);
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS area_privativa DECIMAL(10,2);
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS quartos INT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS banheiros INT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS vagas INT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS andar TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS ano_construcao TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS padrao TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS estado_conservacao TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS caracteristicas JSONB;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS finalidade TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS metodologia TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS grau_fundamentacao TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS grau_precisao TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS valor_estimado DECIMAL(14,2);
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS valor_final DECIMAL(14,2);
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS comparaveis JSONB;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS laudo_url TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS fotos TEXT[] DEFAULT '{}';
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS honorarios DECIMAL(10,2);
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS forma_pagamento TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS prazo_entrega TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS data_vistoria TIMESTAMPTZ;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS data_entrega TIMESTAMPTZ;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS observacoes TEXT;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS avaliador_id UUID;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.avaliacoes ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
 
 -- ═══════════════════════════════════════════════════════
 -- 11. CONTEUDOS (7 refs)
@@ -335,6 +505,28 @@ CREATE TABLE IF NOT EXISTS public.conteudos (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS titulo TEXT;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS tipo TEXT DEFAULT 'post';
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS plataforma TEXT DEFAULT 'instagram';
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS canal TEXT;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'rascunho';
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS conteudo TEXT;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS html_content TEXT;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS imagem_url TEXT;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS imagens TEXT[] DEFAULT '{}';
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS video_url TEXT;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS hashtags TEXT[] DEFAULT '{}';
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS data_publicacao TIMESTAMPTZ;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS visualizacoes INT DEFAULT 0;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS engajamento DECIMAL(5,2) DEFAULT 0;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS likes INT DEFAULT 0;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS shares INT DEFAULT 0;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS comments_count INT DEFAULT 0;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS ai_generated BOOLEAN DEFAULT false;
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
+ALTER TABLE public.conteudos ADD COLUMN IF NOT EXISTS created_by UUID;
 
 -- ═══════════════════════════════════════════════════════
 -- 12. EBOOKS (8 refs)
@@ -370,6 +562,32 @@ CREATE TABLE IF NOT EXISTS public.ebooks (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS title TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS subtitle TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS slug TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'draft';
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS cover_url TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS cover_image TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS pdf_url TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS content JSONB DEFAULT '{}';
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS chapters JSONB DEFAULT '[]';
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS pilar TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS target_audience TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS publication_status TEXT DEFAULT 'em_breve';
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS release_date DATE;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS amazon_link TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS amazon_url TEXT;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS downloads INT DEFAULT 0;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS leads_generated INT DEFAULT 0;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT false;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS ai_generated BOOLEAN DEFAULT false;
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
+ALTER TABLE public.ebooks ADD COLUMN IF NOT EXISTS created_by UUID;
 
 -- ═══════════════════════════════════════════════════════
 -- 13. PROJETOS (5 refs)
@@ -427,6 +645,23 @@ CREATE TABLE IF NOT EXISTS public.projeto_unidades (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS projeto_id UUID;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS identificador TEXT;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS tipo TEXT;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS bloco TEXT;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS andar INT;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS area_privativa DECIMAL(10,2);
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS area_total DECIMAL(10,2);
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS quartos INT;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS suites INT;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS vagas INT;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS preco DECIMAL(14,2);
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'disponivel';
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS lead_id UUID;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS observacoes TEXT;
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}';
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.projeto_unidades ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS idx_proj_unid_proj ON projeto_unidades(projeto_id);
 
 -- ═══════════════════════════════════════════════════════
@@ -521,6 +756,26 @@ CREATE TABLE IF NOT EXISTS public.tracking_sessions (
   user_agent TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS session_id TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS visitor_id TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS page_url TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS referrer TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS utm_source TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS utm_medium TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS utm_campaign TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS utm_content TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS device_type TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS browser TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS os TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS country TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS city TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS duration_seconds INT DEFAULT 0;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS pages_viewed INT DEFAULT 1;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS lead_id UUID;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS ip_address TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS user_agent TEXT;
+ALTER TABLE public.tracking_sessions ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS idx_ts_session ON tracking_sessions(session_id);
 CREATE INDEX IF NOT EXISTS idx_ts_created ON tracking_sessions(created_at DESC);
 
@@ -539,6 +794,15 @@ CREATE TABLE IF NOT EXISTS public.page_views (
   scroll_depth INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS session_id TEXT;
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS page_url TEXT;
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS page_title TEXT;
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS referrer TEXT;
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS utm_source TEXT;
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS duration_seconds INT DEFAULT 0;
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS scroll_depth INT DEFAULT 0;
+ALTER TABLE public.page_views ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS idx_pv_dev ON page_views(development_id);
 CREATE INDEX IF NOT EXISTS idx_pv_created ON page_views(created_at DESC);
 
@@ -615,6 +879,30 @@ CREATE TABLE IF NOT EXISTS public.consultorias (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS protocolo TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS tipo TEXT DEFAULT 'investimento';
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'ativo';
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS cliente_nome TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS cliente_email TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS cliente_telefone TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS cliente_tipo TEXT DEFAULT 'PF';
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS assunto TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS descricao TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS objetivo TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS cidade TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS estado TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS honorarios DECIMAL(10,2);
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS honorarios_status TEXT DEFAULT 'pendente';
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS forma_pagamento TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS valor DECIMAL(10,2);
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS data_agendada TIMESTAMPTZ;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS data_inicio TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS data_prev_conclusao TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS duracao_minutos INT DEFAULT 60;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS notas TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS observacoes TEXT;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS consultor_id UUID;
+ALTER TABLE public.consultorias ADD COLUMN IF NOT EXISTS lead_id UUID;
 
 -- ═══════════════════════════════════════════════════════
 -- 23. CALENDAR_EVENTS (5 refs)
@@ -645,6 +933,27 @@ CREATE TABLE IF NOT EXISTS public.calendar_events (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS title TEXT;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS start_time TIMESTAMPTZ;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS end_time TIMESTAMPTZ;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS all_day BOOLEAN DEFAULT false;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'meeting';
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS event_type TEXT DEFAULT 'reuniao';
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'scheduled';
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS location TEXT;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS color TEXT DEFAULT '#486581';
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS lead_id UUID;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS broker_id UUID;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS related_type TEXT;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS related_id UUID;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS attendees JSONB DEFAULT '[]';
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS reminders JSONB DEFAULT '[]';
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS google_event_id TEXT;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS user_id UUID;
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.calendar_events ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 CREATE INDEX IF NOT EXISTS idx_cal_user ON calendar_events(user_id);
 CREATE INDEX IF NOT EXISTS idx_cal_start ON calendar_events(start_time);
 
@@ -854,7 +1163,147 @@ ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_email TEXT;
 ALTER TABLE developers ADD COLUMN IF NOT EXISTS responsavel_telefone TEXT;
 
 -- ═══════════════════════════════════════════════════════
--- 31. RLS UNIVERSAL
+-- 31. IMI CONNECT — CHAT TABLES
+-- ═══════════════════════════════════════════════════════
+
+-- Chat Channels (deal rooms, team channels, DMs, groups)
+CREATE TABLE IF NOT EXISTS public.chat_channels (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  type TEXT NOT NULL DEFAULT 'group',
+  name TEXT,
+  description TEXT,
+  avatar_url TEXT,
+  development_id UUID,
+  lead_id UUID,
+  proposal_id UUID,
+  contrato_id UUID,
+  is_archived BOOLEAN DEFAULT false,
+  is_pinned BOOLEAN DEFAULT false,
+  is_muted BOOLEAN DEFAULT false,
+  auto_created BOOLEAN DEFAULT false,
+  last_message_at TIMESTAMPTZ,
+  last_message_preview TEXT,
+  message_count INT DEFAULT 0,
+  created_by UUID,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'group';
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS development_id UUID;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS lead_id UUID;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS proposal_id UUID;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS contrato_id UUID;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS is_archived BOOLEAN DEFAULT false;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS is_pinned BOOLEAN DEFAULT false;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS is_muted BOOLEAN DEFAULT false;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS auto_created BOOLEAN DEFAULT false;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS last_message_at TIMESTAMPTZ;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS last_message_preview TEXT;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS message_count INT DEFAULT 0;
+ALTER TABLE public.chat_channels ADD COLUMN IF NOT EXISTS created_by UUID;
+CREATE INDEX IF NOT EXISTS idx_channels_type ON chat_channels(type);
+CREATE INDEX IF NOT EXISTS idx_channels_dev ON chat_channels(development_id);
+CREATE INDEX IF NOT EXISTS idx_channels_lead ON chat_channels(lead_id);
+CREATE INDEX IF NOT EXISTS idx_channels_last_msg ON chat_channels(last_message_at DESC);
+
+-- Chat Members
+CREATE TABLE IF NOT EXISTS public.chat_members (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  channel_id UUID NOT NULL,
+  user_id UUID NOT NULL,
+  role TEXT DEFAULT 'member',
+  is_muted BOOLEAN DEFAULT false,
+  is_pinned BOOLEAN DEFAULT false,
+  last_read_at TIMESTAMPTZ DEFAULT NOW(),
+  unread_count INT DEFAULT 0,
+  notify_mode TEXT DEFAULT 'all',
+  joined_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(channel_id, user_id)
+);
+ALTER TABLE public.chat_members ADD COLUMN IF NOT EXISTS channel_id UUID;
+ALTER TABLE public.chat_members ADD COLUMN IF NOT EXISTS user_id UUID;
+ALTER TABLE public.chat_members ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'member';
+ALTER TABLE public.chat_members ADD COLUMN IF NOT EXISTS is_muted BOOLEAN DEFAULT false;
+ALTER TABLE public.chat_members ADD COLUMN IF NOT EXISTS is_pinned BOOLEAN DEFAULT false;
+ALTER TABLE public.chat_members ADD COLUMN IF NOT EXISTS last_read_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.chat_members ADD COLUMN IF NOT EXISTS unread_count INT DEFAULT 0;
+ALTER TABLE public.chat_members ADD COLUMN IF NOT EXISTS notify_mode TEXT DEFAULT 'all';
+ALTER TABLE public.chat_members ADD COLUMN IF NOT EXISTS joined_at TIMESTAMPTZ DEFAULT NOW();
+CREATE INDEX IF NOT EXISTS idx_members_user ON chat_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_members_channel ON chat_members(channel_id);
+
+-- Chat Messages
+CREATE TABLE IF NOT EXISTS public.chat_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  channel_id UUID NOT NULL,
+  sender_id UUID NOT NULL,
+  content TEXT,
+  content_type TEXT DEFAULT 'text',
+  attachments JSONB DEFAULT '[]',
+  entity_type TEXT,
+  entity_id UUID,
+  reply_to UUID,
+  thread_count INT DEFAULT 0,
+  mentions UUID[] DEFAULT '{}',
+  is_edited BOOLEAN DEFAULT false,
+  is_deleted BOOLEAN DEFAULT false,
+  edited_at TIMESTAMPTZ,
+  reactions JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS channel_id UUID;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS sender_id UUID;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS content TEXT;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS content_type TEXT DEFAULT 'text';
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS attachments JSONB DEFAULT '[]';
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS entity_type TEXT;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS entity_id UUID;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS reply_to UUID;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS thread_count INT DEFAULT 0;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS mentions UUID[] DEFAULT '{}';
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS is_edited BOOLEAN DEFAULT false;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT false;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS edited_at TIMESTAMPTZ;
+ALTER TABLE public.chat_messages ADD COLUMN IF NOT EXISTS reactions JSONB DEFAULT '{}';
+CREATE INDEX IF NOT EXISTS idx_messages_channel ON chat_messages(channel_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_messages_sender ON chat_messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_messages_reply ON chat_messages(reply_to);
+
+-- Chat Read Receipts
+CREATE TABLE IF NOT EXISTS public.chat_read_receipts (
+  channel_id UUID NOT NULL,
+  user_id UUID NOT NULL,
+  last_read_message_id UUID,
+  last_read_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (channel_id, user_id)
+);
+
+-- Trigger: update last_message on new message
+CREATE OR REPLACE FUNCTION update_channel_last_message() RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE chat_channels SET
+    last_message_at = NEW.created_at,
+    last_message_preview = LEFT(NEW.content, 100),
+    message_count = message_count + 1,
+    updated_at = NOW()
+  WHERE id = NEW.channel_id;
+  UPDATE chat_members SET
+    unread_count = unread_count + 1
+  WHERE channel_id = NEW.channel_id
+    AND user_id != NEW.sender_id;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_new_message ON chat_messages;
+CREATE TRIGGER trg_new_message AFTER INSERT ON chat_messages
+FOR EACH ROW EXECUTE FUNCTION update_channel_last_message();
+
+-- ═══════════════════════════════════════════════════════
+-- 32. RLS UNIVERSAL
 -- ═══════════════════════════════════════════════════════
 DO $$
 DECLARE t TEXT;
@@ -867,7 +1316,8 @@ BEGIN
     'tracking_sessions','page_views','media','integration_configs',
     'consultorias','calendar_events','pix_charges','credit_applications',
     'widgets_config','system_error_logs','daily_sales_stats','ai_tasks',
-    'valuation_requests','avaliacoes_kb_upload_queue'
+    'valuation_requests','avaliacoes_kb_upload_queue',
+    'chat_channels','chat_members','chat_messages','chat_read_receipts'
   ])
   LOOP
     EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', t);
