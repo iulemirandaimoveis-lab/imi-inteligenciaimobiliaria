@@ -10,7 +10,7 @@ export interface PropertyEvent {
     title: string
     description: string
     event_type: 'creation' | 'update' | 'lead' | 'view' | 'unit_sold'
-    metadata: any
+    metadata: Record<string, unknown> | null
     created_at: string
 }
 
@@ -41,7 +41,7 @@ export function usePropertyEvents(propertyId: string) {
     }
 }
 
-export async function createEvent(data: any) {
+export async function createEvent(data: Omit<PropertyEvent, 'id' | 'created_at'>) {
     const supabase = createClient()
     const { data: event, error } = await supabase
         .from('property_events')

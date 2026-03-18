@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0B1120;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#0F1A2E;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0B1120;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#B8943A;stop-opacity:1"/>
+      <stop offset="50%" style="stop-color:#D4AF5C;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#B8943A;stop-opacity:1"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Subtle grid pattern -->
+  <g opacity="0.03">
+    <line x1="0" y1="0" x2="1200" y2="630" stroke="#B8943A" stroke-width="1"/>
+    <line x1="1200" y1="0" x2="0" y2="630" stroke="#B8943A" stroke-width="1"/>
+    <line x1="600" y1="0" x2="600" y2="630" stroke="#B8943A" stroke-width="0.5"/>
+    <line x1="0" y1="315" x2="1200" y2="315" stroke="#B8943A" stroke-width="0.5"/>
+  </g>
+  <!-- Gold accent line top -->
+  <rect x="0" y="0" width="1200" height="3" fill="url(#gold)"/>
+  <!-- Gold glow -->
+  <circle cx="600" cy="260" r="200" fill="#B8943A" opacity="0.04"/>
+  <!-- IMI Logo text -->
+  <text x="600" y="240" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="96" font-weight="bold" fill="#F8FAFC" letter-spacing="12">IMI</text>
+  <!-- Divider line -->
+  <rect x="480" y="270" width="240" height="2" fill="url(#gold)" rx="1"/>
+  <!-- Subtitle -->
+  <text x="600" y="330" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-size="28" fill="#B8943A" letter-spacing="6" font-weight="300">INTELIGÊNCIA IMOBILIÁRIA</text>
+  <!-- Description -->
+  <text x="600" y="400" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-size="20" fill="#94A3B8">Avaliações NBR 14653 · Consultoria Estratégica · Corretagem Premium</text>
+  <!-- Location -->
+  <text x="600" y="450" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-size="16" fill="#64748B">Recife · São Paulo · Dubai · Miami</text>
+  <!-- Bottom accent -->
+  <rect x="0" y="627" width="1200" height="3" fill="url(#gold)"/>
+  <!-- Website URL -->
+  <text x="600" y="570" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#475569" letter-spacing="2">iulemirandaimoveis.com.br</text>
+</svg>

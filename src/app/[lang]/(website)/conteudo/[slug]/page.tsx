@@ -2,6 +2,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getLatestPosts, getPostBySlug } from '@/lib/website-data';
+import { generateArticleSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { ptBR, enUS } from 'date-fns/locale';
@@ -23,11 +24,27 @@ export async function generateMetadata({ params: { slug } }: Props): Promise<Met
         };
     }
 
+    const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
     return {
         title: `${post.title} | IMI Inteligência Imobiliária`,
         description: post.excerpt,
         openGraph: {
+            type: 'article',
+            title: `${post.title} | IMI Inteligência Imobiliária`,
+            description: post.excerpt,
+            url: `${BASE_URL}/pt/conteudo/${slug}`,
+            images: [{ url: post.coverImage, width: 1200, height: 630, alt: post.title }],
+            publishedTime: post.publishedAt,
+            authors: [post.author || 'IMI'],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: post.title,
+            description: post.excerpt,
             images: [post.coverImage],
+        },
+        alternates: {
+            canonical: `${BASE_URL}/pt/conteudo/${slug}`,
         },
     };
 }
@@ -50,8 +67,28 @@ export default async function BlogPostPage({ params: { lang, slug } }: Props) {
     const locale = lang === 'pt' ? ptBR : enUS;
     const formattedDate = format(new Date(post.publishedAt), "d 'de' MMMM, yyyy", { locale });
 
+    const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.iulemirandaimoveis.com.br'
+    const articleSchema = generateArticleSchema({
+        title: post.title,
+        description: post.excerpt || '',
+        url: `/${lang}/conteudo/${slug}`,
+        image: post.coverImage,
+        publishedTime: post.publishedAt,
+        modifiedTime: post.publishedAt,
+        authorName: post.author,
+    })
+    const breadcrumbSchema = generateBreadcrumbSchema([
+        { name: 'Home', url: `/${lang}` },
+        { name: 'Conteúdo', url: `/${lang}/biblioteca` },
+        { name: post.title, url: `/${lang}/conteudo/${slug}` },
+    ])
+
     return (
         <article className="bg-white min-h-screen">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify([articleSchema, breadcrumbSchema]) }}
+            />
             {/* Header / Hero */}
             <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
                 <Image

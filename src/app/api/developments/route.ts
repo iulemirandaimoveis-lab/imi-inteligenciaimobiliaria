@@ -49,9 +49,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
         return NextResponse.json(data)
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error fetching developments:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 
@@ -60,7 +60,9 @@ export async function GET(request: NextRequest) {
  * Normalize field names from camelCase (form) to snake_case (DB).
  * Handles both naming conventions so forms can send either format.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeFields(body: Record<string, any>): Record<string, any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: Record<string, any> = {}
 
     // Direct mappings — camelCase form field → snake_case DB column
@@ -203,6 +205,7 @@ export async function POST(req: Request) {
 
         const normalized = normalizeFields(body)
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const newDev: Record<string, any> = {
             ...normalized,
             slug,
@@ -244,9 +247,9 @@ export async function POST(req: Request) {
         })
 
         return NextResponse.json(data)
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error creating development:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 
@@ -322,9 +325,9 @@ export async function PUT(request: Request) {
         })
 
         return NextResponse.json(data)
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error updating development:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 
@@ -389,9 +392,9 @@ export async function PATCH(request: Request) {
         })
 
         return NextResponse.json({ success: true, data })
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error patching development:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 
@@ -435,9 +438,9 @@ export async function DELETE(request: Request) {
         })
 
         return NextResponse.json({ success: true, data })
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error deleting development:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Internal Server Error' }, { status: 500 })
     }
 }
 

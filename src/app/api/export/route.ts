@@ -3,7 +3,8 @@
 // GET /api/export?module=avaliacoes&format=csv
 // GET /api/export?module=campanhas&format=csv
 // GET /api/export?module=contratos&format=csv
-// Exports data as CSV — no external dependencies
+// GET /api/export?module=leads&format=pdf
+// Exports data as CSV or PDF (HTML print-ready) — no external dependencies
 
 export const dynamic = 'force-dynamic'
 
@@ -117,6 +118,56 @@ export async function GET(request: NextRequest) {
 
             default:
                 return NextResponse.json({ error: `Módulo '${module}' não suportado. Use: leads, financeiro, avaliacoes, campanhas, contratos` }, { status: 400 })
+        }
+
+        const format = searchParams.get('format') || 'csv'
+
+        if (format === 'pdf') {
+            const pdfFilename = filename.replace('.csv', '.html')
+            const headers = rows.length > 0 ? Object.keys(rows[0]) : []
+            const moduleLabel = moduleName.charAt(0).toUpperCase() + moduleName.slice(1)
+            const dateStr = new Date().toLocaleDateString('pt-BR')
+
+            const tableRows = rows.map(row =>
+                `<tr>${headers.map(h => `<td>${row[h] ?? ''}</td>`).join('')}</tr>`
+            ).join('\n')
+
+            const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório ${moduleLabel} — IMI</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, Arial, sans-serif; font-size: 11px; color: #1a1a1a; background: #fff; padding: 24px; }
+  h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .meta { font-size: 11px; color: #666; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #1a1a1a; color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; vertical-align: top; word-break: break-word; max-width: 200px; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  @media print { body { padding: 0; } }
+</style>
+</head>
+<body>
+<h1>Relatório de ${moduleLabel}</h1>
+<div class="meta">Exportado em ${dateStr} · ${rows.length} registro${rows.length !== 1 ? 's' : ''} · IMI Inteligência Imobiliária</div>
+<table>
+<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+<tbody>${tableRows}</tbody>
+</table>
+<script>window.onload = function(){ window.print(); }</script>
+</body>
+</html>`
+
+            return new NextResponse(html, {
+                status: 200,
+                headers: {
+                    'Content-Type': 'text/html; charset=utf-8',
+                    'Content-Disposition': `inline; filename="${pdfFilename}"`,
+                    'Cache-Control': 'no-store',
+                },
+            })
         }
 
         const csv = toCSV(rows)

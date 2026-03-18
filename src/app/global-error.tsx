@@ -10,6 +10,23 @@ export default function GlobalError({
     error: Error & { digest?: string }
     reset: () => void
 }) {
+    // Auto-report critical errors to backend
+    if (typeof window !== 'undefined') {
+        fetch('/api/system/report-error', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                error_message: error.message,
+                stack_trace: error.stack,
+                page_url: window.location.href,
+                component_name: 'GlobalError',
+                user_agent: navigator.userAgent,
+                digest: error.digest,
+                timestamp: new Date().toISOString(),
+            }),
+        }).catch(() => {})
+    }
+
     return (
         <html>
             <body>

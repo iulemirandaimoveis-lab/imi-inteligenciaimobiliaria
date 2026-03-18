@@ -15,6 +15,7 @@ on:
   push:
     branches:
       - youthful-fermi
+      - main
 
 concurrency:
   group: production-deploy

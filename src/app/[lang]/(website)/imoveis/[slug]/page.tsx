@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
     // Ensure absolute URL — local paths get the BASE prepended
     const mainImage: string = rawImage
         ? (rawImage.startsWith('http') ? rawImage : `${BASE}${rawImage}`)
-        : `${BASE}/og-image.jpg`
+        : `${BASE}/og-image.svg`
 
     const url = `${BASE}/${params.lang}/imoveis/${params.slug}`
 

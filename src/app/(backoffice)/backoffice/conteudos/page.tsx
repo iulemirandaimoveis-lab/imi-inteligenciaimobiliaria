@@ -2,124 +2,142 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { FileText, Clock, Bell, ArrowLeft } from 'lucide-react'
+import { FileText, Wand2, Video, Instagram, ArrowRight, PenLine, BarChart2, Calendar } from 'lucide-react'
+
+const tools = [
+  {
+    href: '/backoffice/conteudo/criador',
+    icon: Wand2,
+    title: 'Criador IA',
+    description: 'Gere legendas, scripts de Reels e prompts de imagem com IA para qualquer imóvel.',
+    badge: 'Claude AI',
+    accent: true,
+  },
+  {
+    href: '/backoffice/conteudo/novo',
+    icon: PenLine,
+    title: 'Editor de Conteúdo',
+    description: 'Crie e edite publicações manualmente com suporte a rich text e mídia.',
+    badge: null,
+    accent: false,
+  },
+  {
+    href: '/backoffice/conteudo/video',
+    icon: Video,
+    title: 'Criador de Vídeo',
+    description: 'Monte vídeos automáticos de imóveis com fotos, texto e música.',
+    badge: 'Beta',
+    accent: false,
+  },
+  {
+    href: '/backoffice/campanhas',
+    icon: Instagram,
+    title: 'Campanhas',
+    description: 'Gerencie campanhas de anúncios no Meta Ads, Google Ads e portais.',
+    badge: null,
+    accent: false,
+  },
+  {
+    href: '/backoffice/relatorios',
+    icon: BarChart2,
+    title: 'Relatórios de Conteúdo',
+    description: 'Analise o desempenho das publicações: alcance, engajamento e conversão.',
+    badge: null,
+    accent: false,
+  },
+  {
+    href: '/backoffice/automacoes',
+    icon: Calendar,
+    title: 'Automações de Conteúdo',
+    description: 'Configure publicações automáticas e sequências de conteúdo programado.',
+    badge: null,
+    accent: false,
+  },
+]
 
 export default function ConteudosPage() {
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
-      {/* Back */}
-      <Link href="/backoffice/hoje" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-secondary)', textDecoration: 'none' }}>
-        <ArrowLeft size={14} /> Voltar ao início
-      </Link>
-
-      {/* Hero */}
+    <div className="space-y-6 max-w-3xl mx-auto">
+      {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-default)',
-          borderRadius: 'var(--r-xl)',
-          padding: '40px 32px',
-          textAlign: 'center',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
+        transition={{ duration: 0.3 }}
       >
-        {/* Background glow */}
-        <div style={{
-          position: 'absolute', top: -40, left: '50%', transform: 'translateX(-50%)',
-          width: 200, height: 200, borderRadius: '50%',
-          background: 'rgba(184,148,58,0.06)', filter: 'blur(40px)',
-          pointerEvents: 'none',
-        }} />
-
-        {/* "Em Breve" tag */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '5px 14px', borderRadius: 'var(--r-full)',
-            background: 'var(--bg-elevated)',
-            border: '1px solid var(--border-default)',
-            fontSize: 10, fontWeight: 700,
-            color: 'var(--text-secondary)',
-            letterSpacing: '0.12em', textTransform: 'uppercase',
-          }}>
-            <Clock size={11} />
-            EM BREVE
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+          <FileText size={18} style={{ color: 'var(--imi-gold-500)' }} />
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '22px', fontWeight: 600, color: 'var(--text-primary)' }}>
+            Central de Conteúdo
+          </h1>
         </div>
-
-        {/* Icon */}
-        <div style={{
-          width: 72, height: 72, borderRadius: 'var(--r-xl)',
-          background: 'rgba(184,148,58,0.08)',
-          border: '1px solid rgba(184,148,58,0.20)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          margin: '0 auto 20px',
-        }}>
-          <FileText size={32} style={{ color: 'var(--imi-gold-500)' }} />
-        </div>
-
-        <h1 style={{
-          fontFamily: 'var(--font-serif)',
-          fontSize: 28, fontWeight: 600, color: 'var(--text-primary)',
-          marginBottom: 12, lineHeight: 1.2,
-        }}>
-          Central de Publicações
-        </h1>
-        <p style={{
-          fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.65,
-          maxWidth: 420, margin: '0 auto 28px',
-        }}>
-          Gerencie e publique conteúdo nos portais imobiliários, redes sociais e site institucional de forma centralizada.
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+          Crie, gerencie e publique conteúdo para portais imobiliários, redes sociais e site.
         </p>
-
-        {/* Features list */}
-        <div style={{
-          display: 'flex', flexDirection: 'column', gap: 10,
-          maxWidth: 360, margin: '0 auto 28px', textAlign: 'left',
-        }}>
-          {[
-            'Publicação automática em portais (ZAP, VivaReal)',
-            'Integração com redes sociais',
-            'Calendário editorial de conteúdo',
-          ].map((feat, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{
-                width: 20, height: 20, borderRadius: 6, flexShrink: 0,
-                background: 'rgba(184,148,58,0.10)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--imi-gold-500)' }} />
-              </div>
-              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{feat}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Notify CTA */}
-        <button
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            height: 44, padding: '0 24px',
-            borderRadius: 'var(--r-md)',
-            background: 'var(--bg-elevated)',
-            border: '1px solid var(--border-default)',
-            fontSize: 13, fontWeight: 600, color: 'var(--text-primary)',
-            cursor: 'pointer',
-          }}
-          onClick={() => {
-            const btn = document.getElementById('notify-btn') as HTMLButtonElement | null
-            if (btn) { btn.textContent = '✓ Você será notificado!'; btn.style.color = 'var(--success)'; btn.disabled = true }
-          }}
-          id="notify-btn"
-        >
-          <Bell size={15} />
-          Me avise quando lançar
-        </button>
       </motion.div>
+
+      {/* Tools grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '12px' }}>
+        {tools.map((tool, i) => {
+          const Icon = tool.icon
+          return (
+            <motion.div
+              key={tool.href}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05, duration: 0.25 }}
+            >
+              <Link
+                href={tool.href}
+                style={{ textDecoration: 'none', display: 'block' }}
+              >
+                <div
+                  style={{
+                    background: tool.accent ? 'rgba(184,148,58,0.06)' : 'var(--bg-surface)',
+                    border: `1px solid ${tool.accent ? 'rgba(184,148,58,0.22)' : 'var(--border-default)'}`,
+                    borderRadius: 'var(--r-xl)',
+                    padding: '20px',
+                    cursor: 'pointer',
+                    transition: 'border-color 0.18s, background 0.18s',
+                    height: '100%',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(184,148,58,0.4)' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = tool.accent ? 'rgba(184,148,58,0.22)' : 'var(--border-default)' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <div style={{
+                      width: 40, height: 40, borderRadius: '10px',
+                      background: tool.accent ? 'rgba(184,148,58,0.12)' : 'rgba(255,255,255,0.04)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <Icon size={18} style={{ color: tool.accent ? 'var(--imi-gold-500)' : 'var(--text-secondary)' }} />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {tool.badge && (
+                        <span style={{
+                          fontSize: '9px', fontWeight: 700, padding: '2px 8px', borderRadius: '20px',
+                          background: tool.accent ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.06)',
+                          color: tool.accent ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
+                          letterSpacing: '0.06em', textTransform: 'uppercase',
+                        }}>
+                          {tool.badge}
+                        </span>
+                      )}
+                      <ArrowRight size={13} style={{ color: 'var(--text-secondary)', opacity: 0.4 }} />
+                    </div>
+                  </div>
+
+                  <h3 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
+                    {tool.title}
+                  </h3>
+                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.55 }}>
+                    {tool.description}
+                  </p>
+                </div>
+              </Link>
+            </motion.div>
+          )
+        })}
+      </div>
     </div>
   )
 }
