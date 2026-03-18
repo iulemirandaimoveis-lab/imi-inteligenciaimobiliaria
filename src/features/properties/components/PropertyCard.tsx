@@ -90,7 +90,7 @@ export function PropertyCard({
             : hovered || isComparing
               ? 'rgba(200,164,74,0.40)'
               : 'rgba(200,164,74,0.18)'}`,
-          borderRadius: 12,
+          borderRadius: 8,
           overflow: 'hidden',
           transition: 'all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
@@ -144,7 +144,7 @@ export function PropertyCard({
           <div style={{ position: 'absolute', top: bulkMode ? 40 : 10, left: 10, zIndex: 2 }}>
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 4,
-              padding: '3px 8px', borderRadius: 999,
+              padding: '3px 8px', borderRadius: 6,
               background: `${statusColor}22`,
               border: `1px solid ${statusColor}55`,
               fontSize: '8.5px', fontWeight: 600,
@@ -421,7 +421,7 @@ function Chip({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 3,
-      padding: '3px 7px', borderRadius: 999,
+      padding: '3px 7px', borderRadius: 6,
       background: 'var(--bo-surface, rgba(255,255,255,0.04))',
       border: '1px solid var(--bo-border, rgba(200,164,74,0.12))',
       fontSize: '10px',
@@ -550,7 +550,7 @@ export function PropertyListRow({
         <div style={{ padding: '12px 4px' }}>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 4,
-            padding: '2px 6px', borderRadius: 999,
+            padding: '2px 6px', borderRadius: 6,
             background: `${statusColor}18`,
             border: `1px solid ${statusColor}44`,
             fontSize: '8px', fontWeight: 600,

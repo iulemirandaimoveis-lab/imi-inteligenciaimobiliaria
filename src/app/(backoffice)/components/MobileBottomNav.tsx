@@ -607,7 +607,7 @@ export function MobileBottomNav() {
                                         ].map((w, i) => (
                                             <div
                                                 key={w.label}
-                                                className="flex-1 rounded-xl px-3 py-2.5"
+                                                className="flex-1 rounded-md px-3 py-2.5"
                                                 style={{
                                                     background: w.bg,
                                                     border: `1px solid ${w.color}20`,
@@ -651,6 +651,7 @@ export function MobileBottomNav() {
                                         {QUICK_CREATE.map((item, i) => (
                                             <motion.div
                                                 key={item.href}
+                                                className="min-w-0 overflow-hidden"
                                                 initial={{ opacity: 0, scale: 0.90 }}
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 transition={{ delay: 0.08 + i * 0.045, type: 'spring', stiffness: 400, damping: 28 }}
