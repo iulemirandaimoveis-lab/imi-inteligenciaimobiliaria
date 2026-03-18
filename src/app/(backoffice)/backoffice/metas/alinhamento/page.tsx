@@ -65,12 +65,12 @@ const levelLabels: Record<string, string> = {
 /* ── tree node component ───────────────────────────────────── */
 function TreeNode({
   obj,
-  children,
+  allNodes,
   keyResults,
   depth,
 }: {
   obj: Objective
-  children: Objective[]
+  allNodes: Objective[]
   keyResults: KeyResult[]
   depth: number
 }) {
@@ -80,7 +80,7 @@ function TreeNode({
   const Icon = levelIcons[obj.level] || Target
 
   // Find children of this node
-  const childObjs = children.filter(c => c.parent_id === obj.id)
+  const childObjs = allNodes.filter(c => c.parent_id === obj.id)
 
   return (
     <div className="relative">
@@ -139,7 +139,7 @@ function TreeNode({
               />
               <TreeNode
                 obj={child}
-                children={children}
+                allNodes={allNodes}
                 keyResults={keyResults}
                 depth={depth + 1}
               />
@@ -270,7 +270,7 @@ export default function AlinhamentoPage() {
             <TreeNode
               key={root.id}
               obj={root}
-              children={allChildren}
+              allNodes={allChildren}
               keyResults={keyResults}
               depth={0}
             />
@@ -287,7 +287,7 @@ export default function AlinhamentoPage() {
                   <TreeNode
                     key={obj.id}
                     obj={obj}
-                    children={objectives}
+                    allNodes={objectives}
                     keyResults={keyResults}
                     depth={0}
                   />
@@ -307,7 +307,7 @@ export default function AlinhamentoPage() {
                   <TreeNode
                     key={obj.id}
                     obj={obj}
-                    children={objectives}
+                    allNodes={objectives}
                     keyResults={keyResults}
                     depth={0}
                   />
