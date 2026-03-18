@@ -821,7 +821,7 @@ export default function ImovelAnalyticsPage() {
                                             </div>
                                             <div className="flex items-center gap-3">
                                                 <span className="text-sm font-bold" style={{ color: T.text }}>{f.visits}</span>
-                                                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: `${T.accent}18`, color: T.accent }}>
+                                                <span className="text-xs font-bold px-2 py-0.5 rounded-[6px]" style={{ background: `${T.accent}18`, color: T.accent }}>
                                                     {f.percentage}%
                                                 </span>
                                             </div>

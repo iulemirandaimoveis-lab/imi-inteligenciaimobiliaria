@@ -255,7 +255,7 @@ export function MobileAppBarAction({ icon, href, onClick, active, badge, label, 
         <span style={{
           position: 'absolute', top: 6, right: 6,
           background: T.gold, color: T.textInv,
-          fontSize: 11, fontWeight: 700, borderRadius: 'var(--r-full)',
+          fontSize: 11, fontWeight: 700, borderRadius: 6,
           padding: '1px 4px', minWidth: 14, textAlign: 'center',
           lineHeight: '14px',
         }}>{badge}</span>
@@ -959,7 +959,7 @@ export function MobileFiltersButton({ count, onClick }: MobileFiltersButtonProps
       className="mob-btn-tap"
       style={{
         display: 'flex', alignItems: 'center', gap: 6,
-        padding: '0 14px', height: 36, borderRadius: 'var(--r-full)',
+        padding: '0 14px', height: 36, borderRadius: 6,
         background: 'transparent',
         border: `1px solid ${count > 0 ? T.gold : 'rgba(184,148,58,0.25)'}`,
         color: T.gold,
@@ -973,7 +973,7 @@ export function MobileFiltersButton({ count, onClick }: MobileFiltersButtonProps
       {count > 0 && (
         <span style={{
           background: T.gold, color: T.textInv,
-          fontSize: 11, fontWeight: 700, borderRadius: 'var(--r-full)',
+          fontSize: 11, fontWeight: 700, borderRadius: 6,
           padding: '2px 4px', minWidth: 16, textAlign: 'center',
         }}>{count}</span>
       )}

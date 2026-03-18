@@ -395,7 +395,7 @@ export default function ImovelHeatmapPage() {
                         </div>
                         <div className="absolute top-3 right-3">
                             <span
-                                className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                className="px-2.5 py-1 rounded-[6px] text-[10px] font-bold uppercase tracking-wider"
                                 style={{ background: 'rgba(74,222,128,0.85)', color: '#0F0F1E' }}
                             >
                                 {development?.status_commercial === 'published' ? 'ATIVO' : development?.status_commercial?.toUpperCase() || 'ATIVO'}
@@ -417,7 +417,7 @@ export default function ImovelHeatmapPage() {
                                 )}
                             </div>
                             <span
-                                className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase"
+                                className="px-2.5 py-1 rounded-[6px] text-[10px] font-bold uppercase"
                                 style={{ background: 'rgba(74,222,128,0.15)', color: 'var(--bo-success)', border: '1px solid rgba(74,222,128,0.3)' }}
                             >
                                 ATIVO
@@ -493,7 +493,7 @@ export default function ImovelHeatmapPage() {
                                         </div>
                                     </div>
                                     <span
-                                        className="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ml-2"
+                                        className="text-[10px] font-bold px-2 py-0.5 rounded-[6px] flex-shrink-0 ml-2"
                                         style={{
                                             background: isDropOff ? 'rgba(248,113,113,0.12)' : 'rgba(74,222,128,0.12)',
                                             color: isDropOff ? 'var(--bo-error)' : 'var(--bo-success)',
@@ -549,7 +549,7 @@ export default function ImovelHeatmapPage() {
                         <h3 className="text-sm font-bold" style={{ color: T.text }}>Interesse por Dia</h3>
                     </div>
                     <span
-                        className="text-sm font-bold px-3 py-1 rounded-full"
+                        className="text-sm font-bold px-3 py-1 rounded-[6px]"
                         style={{ background: 'rgba(74,222,128,0.12)', color: 'var(--bo-success)' }}
                     >
                         +{totalTrend} vis.

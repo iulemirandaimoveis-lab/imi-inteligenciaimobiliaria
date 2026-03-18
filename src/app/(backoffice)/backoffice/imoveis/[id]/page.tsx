@@ -1003,7 +1003,7 @@ function DesktopImovelDetail({
         <div style={{ marginLeft: 'auto', position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
-            padding: '3px 10px', borderRadius: 999,
+            padding: '3px 10px', borderRadius: 6,
             background: getStatusConfig(localStatus).bg, color: getStatusConfig(localStatus).color,
             fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px',
             textTransform: 'uppercase',
