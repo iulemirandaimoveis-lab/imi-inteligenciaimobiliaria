@@ -378,7 +378,7 @@ function MobileInventario({
                                 className="mob-btn-tap"
                                 style={{
                                     height: 44, padding: '0 24px', borderRadius: 10,
-                                    background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
+                                    background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer',
                                     fontFamily: 'var(--font-montserrat, sans-serif)',
                                     fontSize: 12, fontWeight: 700, letterSpacing: '1px',
                                     textTransform: 'uppercase' as const, color: '#0B1120',

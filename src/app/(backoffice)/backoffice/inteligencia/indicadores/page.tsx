@@ -218,7 +218,7 @@ function IndicatorEditCard({
                     onClick={() => onSave(form as any)}
                     disabled={saving || !form.metric_name || !form.value}
                     className="flex-1 h-9 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-1.5 disabled:opacity-40 transition-opacity"
-                    style={{ background: 'var(--bo-accent)' }}
+                    style={{ background: 'var(--btn-primary-bg)' }}
                 >
                     {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
                     {isNew ? 'Criar' : 'Salvar'}
@@ -320,7 +320,7 @@ export default function IndicadoresPage() {
                         <button
                             onClick={() => { setAddingNew(true); setEditingId(null) }}
                             className="bo-btn bo-btn-primary"
-                            style={{ background: 'var(--bo-accent)' }}
+                            style={{ background: 'var(--btn-primary-bg)' }}
                         >
                             <Plus size={14} />
                             <span className="hidden sm:inline">Novo</span>

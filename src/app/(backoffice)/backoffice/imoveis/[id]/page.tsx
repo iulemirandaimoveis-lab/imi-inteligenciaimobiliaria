@@ -307,7 +307,7 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
         </p>
         <button
           onClick={() => router.push('/backoffice/imoveis')}
-          style={{ height: 52, padding: '0 24px', background: 'var(--imi-gold-500)', color: '#0B1120', border: 'none', borderRadius: 10, fontFamily: 'Figtree, sans-serif', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
+          style={{ height: 52, padding: '0 24px', background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', border: 'none', borderRadius: 10, fontFamily: 'Figtree, sans-serif', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
         >
           <ArrowLeft size={16} /> Voltar à Lista
         </button>
@@ -806,8 +806,8 @@ function MobileImovelDetail({ dev, property, loading, router, id, enriched, notF
           style={{
             flex: 2, height: 52,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            background: 'var(--imi-gold-500)', border: 'none', borderRadius: 10,
-            color: '#0B1120', fontSize: 13,
+            background: 'var(--btn-primary-bg)', border: 'none', borderRadius: 10,
+            color: 'var(--btn-primary-text)', fontSize: 13,
             fontFamily: 'Figtree, sans-serif', fontWeight: 700,
             letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer',
             touchAction: 'manipulation',

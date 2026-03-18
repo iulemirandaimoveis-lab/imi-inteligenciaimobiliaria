@@ -274,7 +274,7 @@ export default function EmailHonorariosPage() {
 
         <button onClick={analisar} disabled={!emailText.trim() || loading}
           className="w-full flex items-center justify-center gap-2 h-11 text-white rounded-xl font-semibold transition-all hover:opacity-80 disabled:opacity-50"
-          style={{ background: 'var(--bo-accent)' }}>
+          style={{ background: 'var(--btn-primary-bg)' }}>
           {loading
             ? <><Loader2 size={17} className="animate-spin" /> Analisando com IA…</>
             : <><Sparkles size={17} /> Analisar e Gerar Proposta</>}
@@ -374,7 +374,7 @@ export default function EmailHonorariosPage() {
               <div className="flex gap-3">
                 <button onClick={() => setActiveTab('resposta')}
                   className="flex-1 h-11 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
-                  style={{ background: 'var(--bo-accent)' }}>
+                  style={{ background: 'var(--btn-primary-bg)' }}>
                   <Mail size={15} /> Ver Rascunho
                 </button>
                 <button onClick={() => router.push('/backoffice/avaliacoes/nova')}

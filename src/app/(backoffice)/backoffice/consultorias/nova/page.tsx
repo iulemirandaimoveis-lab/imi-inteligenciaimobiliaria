@@ -9,7 +9,7 @@ import { T } from '@/app/(backoffice)/lib/theme'
 import { PageIntelHeader } from '@/app/(backoffice)/components/ui'
 
 const BTN_PRIMARY = {
-  background: 'var(--bo-accent)',
+  background: 'var(--btn-primary-bg)',
 } as const
 
 const TIPOS = [

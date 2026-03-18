@@ -399,7 +399,7 @@ export default function CriadorIAPage() {
                                 <button
                                     style={{
                                         flex: 1, height: 46, borderRadius: 12, fontSize: 13, fontWeight: 600,
-                                        background: 'var(--bo-accent)',
+                                        background: 'var(--btn-primary-bg)',
                                         color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                                         border: '1px solid rgba(255,255,255,0.1)',
                                         boxShadow: '0 0 20px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',

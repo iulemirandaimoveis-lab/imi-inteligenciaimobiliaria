@@ -106,7 +106,7 @@ export default function RelatoriosBackofficePage() {
                         <Link
                             href="/backoffice/inteligencia/relatorios/novo"
                             className="bo-btn bo-btn-primary"
-                            style={{ background: 'var(--bo-accent)' }}
+                            style={{ background: 'var(--btn-primary-bg)' }}
                         >
                             <Plus size={15} />
                             Novo Relatório
@@ -157,7 +157,7 @@ export default function RelatoriosBackofficePage() {
                         <Link
                             href="/backoffice/inteligencia/relatorios/novo"
                             className="bo-btn bo-btn-primary"
-                            style={{ background: 'var(--bo-accent)' }}
+                            style={{ background: 'var(--btn-primary-bg)' }}
                         >
                             <Plus size={13} /> Cadastrar primeiro relatório
                         </Link>

@@ -234,7 +234,7 @@ function ConfigModal({
 
                     <button onClick={handleSave} disabled={saving}
                         className="flex-1 h-10 rounded-xl text-sm font-semibold text-white"
-                        style={{ background: 'var(--bo-accent)' }}>
+                        style={{ background: 'var(--btn-primary-bg)' }}>
                         {saving ? 'Salvando...' : 'Salvar Configuração'}
                     </button>
                 </div>

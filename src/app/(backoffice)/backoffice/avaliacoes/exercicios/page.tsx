@@ -389,7 +389,7 @@ export default function ExerciciosPage() {
           )}
 
           <button onClick={startTreino} className="mt-6 w-full h-11 text-white rounded-xl font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
-            style={{ background: 'var(--bo-accent)' }}>
+            style={{ background: 'var(--btn-primary-bg)' }}>
             <RefreshCw size={18} /> Treinar Novamente
           </button>
         </div>
@@ -420,7 +420,7 @@ export default function ExerciciosPage() {
 
         {/* Progress */}
         <div className="h-1.5 rounded-full overflow-hidden" style={{ background: T.border }}>
-          <div className="h-full rounded-full transition-all" style={{ width: `${((currentIdx) / filtered.length) * 100}%`, background: 'var(--bo-accent)' }} />
+          <div className="h-full rounded-full transition-all" style={{ width: `${((currentIdx) / filtered.length) * 100}%`, background: 'var(--btn-primary-bg)' }} />
         </div>
 
         <div className="rounded-2xl p-6 space-y-5" style={{ background: T.surface, border: `1px solid ${T.border}`, boxShadow: 'var(--bo-card-shadow)' }}>
@@ -479,7 +479,7 @@ export default function ExerciciosPage() {
 
         {revealed && (
           <button onClick={handleNext} className="w-full h-11 text-white rounded-xl font-semibold transition-all hover:opacity-80 flex items-center justify-center gap-2"
-            style={{ background: 'var(--bo-accent)' }}>
+            style={{ background: 'var(--btn-primary-bg)' }}>
             {currentIdx < filtered.length - 1 ? <>Próxima <ChevronRight size={18} /></> : <>Ver Resultado <Trophy size={18} /></>}
           </button>
         )}
@@ -534,7 +534,7 @@ export default function ExerciciosPage() {
             <button key={cat} onClick={() => setSelectedCat(cat)}
               className="px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:opacity-80"
               style={selectedCat === cat
-                ? { background: 'var(--bo-accent)', color: 'white', border: '1px solid transparent' }
+                ? { background: 'var(--btn-primary-bg)', color: 'white', border: '1px solid transparent' }
                 : { background: T.elevated, color: T.textMuted, border: `1px solid ${T.border}` }}>
               {cat}
             </button>
@@ -554,7 +554,7 @@ export default function ExerciciosPage() {
           <p className="text-sm" style={{ color: T.textMuted }}><strong style={{ color: T.text }}>{filtered.length}</strong> questões selecionadas</p>
           <button onClick={startTreino} disabled={filtered.length === 0}
             className="flex items-center gap-2 h-9 px-5 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-40"
-            style={{ background: 'var(--bo-accent)' }}>
+            style={{ background: 'var(--btn-primary-bg)' }}>
             <Play size={15} /> Iniciar Treino
           </button>
         </div>

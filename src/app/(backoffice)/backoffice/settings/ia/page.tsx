@@ -158,7 +158,7 @@ export default function IASettingsPage() {
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold text-white transition-all disabled:opacity-60"
-            style={{ background: 'var(--bo-accent)', boxShadow: '0 0 18px rgba(59,130,246,0.25)' }}
+            style={{ background: 'var(--btn-primary-bg)', boxShadow: '0 0 18px rgba(59,130,246,0.25)' }}
           >
             {saving
               ? <><Loader2 size={15} className="animate-spin" /> Salvando...</>
@@ -359,7 +359,7 @@ export default function IASettingsPage() {
           disabled={saving}
           style={{
             width: '100%', height: '52px', borderRadius: '16px', border: 'none', cursor: saving ? 'not-allowed' : 'pointer',
-            background: 'var(--bo-accent)',
+            background: 'var(--btn-primary-bg)',
             color: '#fff', fontSize: '15px', fontWeight: 800, letterSpacing: '0.02em',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
             boxShadow: '0 0 24px rgba(59,130,246,0.3)',

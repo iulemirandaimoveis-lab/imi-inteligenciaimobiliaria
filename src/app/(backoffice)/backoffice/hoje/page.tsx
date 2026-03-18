@@ -478,7 +478,7 @@ export default function HojePage() {
                 onClick={() => router.push('/backoffice/integracoes')}
                 style={{
                   height: 30, padding: '0 14px', borderRadius: 8,
-                  background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
+                  background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer',
                   fontSize: '11px', fontWeight: 700, color: '#0B1120',
                   letterSpacing: '0.03em',
                 }}

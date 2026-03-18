@@ -56,17 +56,17 @@ interface VariantStyle {
 
 const VARIANT_STYLES: Record<string, VariantStyle> = {
   primary: {
-    background: 'var(--imi-gold-500)',
-    color: '#FFFFFF',
+    background: 'var(--btn-primary-bg)',
+    color: 'var(--btn-primary-text)',
     border: '1px solid transparent',
-    hoverBackground: 'color-mix(in srgb, var(--imi-gold-500) 85%, #000)',
+    hoverBackground: 'var(--btn-primary-hover)',
     activeTransform: 'scale(0.97)',
   },
   gold: {
-    background: 'var(--imi-gold-500)',
-    color: '#FFFFFF',
+    background: 'var(--btn-primary-bg)',
+    color: 'var(--btn-primary-text)',
     border: '1px solid transparent',
-    hoverBackground: 'color-mix(in srgb, var(--imi-gold-500) 85%, #000)',
+    hoverBackground: 'var(--btn-primary-hover)',
     activeTransform: 'scale(0.97)',
   },
   secondary: {

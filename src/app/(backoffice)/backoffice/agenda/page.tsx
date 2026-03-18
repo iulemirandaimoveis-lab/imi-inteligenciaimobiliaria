@@ -299,7 +299,7 @@ export default function AgendaPage() {
                   display: 'flex', alignItems: 'center', gap: '6px',
                   height: '40px', padding: '0 16px', borderRadius: '12px',
                   fontSize: '13px', fontWeight: 600, color: '#fff',
-                  background: 'var(--bo-accent)',
+                  background: 'var(--btn-primary-bg)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   cursor: 'pointer',
                   boxShadow: '0 0 20px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
@@ -547,7 +547,7 @@ export default function AgendaPage() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                           <button
                             onClick={() => setShowModal(true)}
-                            style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 600, color: '#fff', background: 'var(--bo-accent)', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', boxShadow: '0 0 12px rgba(59,130,246,0.22)' }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '5px', height: '32px', padding: '0 12px', borderRadius: '10px', fontSize: '11px', fontWeight: 600, color: '#fff', background: 'var(--btn-primary-bg)', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', boxShadow: '0 0 12px rgba(59,130,246,0.22)' }}
                           >
                             <Check size={12} />
                             Aceitar
@@ -691,7 +691,7 @@ export default function AgendaPage() {
                 <button
                   onClick={handleCreate}
                   disabled={saving || !form.title || !form.start_time}
-                  style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 600, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--bo-accent)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1, boxShadow: '0 0 16px rgba(59,130,246,0.22)' }}
+                  style={{ flex: 1, height: '44px', borderRadius: '4px', fontSize: '13px', fontWeight: 600, cursor: (saving || !form.title || !form.start_time) ? 'not-allowed' : 'pointer', color: '#fff', background: 'var(--btn-primary-bg)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: (saving || !form.title || !form.start_time) ? 0.5 : 1, boxShadow: '0 0 16px rgba(59,130,246,0.22)' }}
                 >
                   <Plus size={16} />
                   {saving ? 'Salvando...' : 'Criar Evento'}

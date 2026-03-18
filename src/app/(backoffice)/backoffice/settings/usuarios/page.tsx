@@ -121,7 +121,7 @@ export default function UsuariosPage() {
           <button
             onClick={() => router.push('/backoffice/settings/usuarios/novo')}
             className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold text-sm transition-all"
-            style={{ background: 'var(--bo-accent)', color: 'white' }}
+            style={{ background: 'var(--btn-primary-bg)', color: 'white' }}
           >
             <Plus size={16} />
             Novo Usuário

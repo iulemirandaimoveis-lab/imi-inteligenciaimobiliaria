@@ -615,7 +615,7 @@ export default function LeadInboxDetailPage() {
                             flex: 1, height: 52, borderRadius: 16, textDecoration: 'none',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                             fontSize: 14, fontWeight: 600, color: '#ffffff',
-                            background: 'var(--bo-accent)',
+                            background: 'var(--btn-primary-bg)',
                             border: '1px solid rgba(255,255,255,0.1)',
                             boxShadow: '0 0 24px rgba(59,130,246,0.35), inset 0 1px 0 rgba(255,255,255,0.1)',
                         }}

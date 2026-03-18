@@ -435,7 +435,7 @@ function NovoContratoInner() {
                             </div>
                             {envioOk
                                 ? <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'rgba(107,184,123,0.10)' }}><CheckCircle size={14} style={{ color: 'var(--bo-success)' }} /><p className="text-xs font-semibold" style={{ color: 'var(--bo-success)' }}>Enviado com sucesso!</p></div>
-                                : <button onClick={enviar} disabled={enviando} className="w-full rounded text-sm font-bold text-white flex items-center justify-center gap-2" style={{ height: '44px', background: 'var(--bo-accent)', boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}>
+                                : <button onClick={enviar} disabled={enviando} className="w-full rounded text-sm font-bold text-white flex items-center justify-center gap-2" style={{ height: '44px', background: 'var(--btn-primary-bg)', boxShadow: '0 4px 14px rgba(37,99,235,0.22)', border: 'none' }}>
                                     {enviando ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                                     {enviando ? 'Enviando...' : `Enviar via ${canal}`}
                                 </button>
