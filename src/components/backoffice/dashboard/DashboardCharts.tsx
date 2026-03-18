@@ -213,7 +213,7 @@ export default function DashboardCharts() {
         return (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-white dark:bg-[#0A0B0D] rounded-3xl border border-imi-100 dark:border-white/5 p-10 h-96 animate-pulse">
+                    <div key={i} className="bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 p-10 h-96 animate-pulse">
                         <div className="h-6 bg-imi-50 dark:bg-white/5 rounded-full w-48 mb-6" />
                         <div className="h-full bg-imi-50/50 dark:bg-white/5 rounded-2xl" />
                     </div>
@@ -225,7 +225,7 @@ export default function DashboardCharts() {
     const CustomTooltip = ({ active, payload, label }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-[#0A0B0D] border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
+                <div className="bg-navy-950 border border-white/10 p-4 rounded-2xl shadow-2xl backdrop-blur-xl">
                     <p className="text-[10px] font-black text-imi-400 uppercase tracking-widest mb-2 font-display">{label}</p>
                     {payload.map((p: any, i: number) => (
                         <p key={i} className="text-sm font-bold text-white flex items-center gap-2">
@@ -244,7 +244,7 @@ export default function DashboardCharts() {
             {/* Row 1: Funil + Origem */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Funil de Conversão */}
-                <div className="bg-white dark:bg-[#0A0B0D] rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+                <div className="bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
                     <div className="flex items-center justify-between mb-10">
                         <div>
                             <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Métricas de Ativos</p>
@@ -275,7 +275,7 @@ export default function DashboardCharts() {
                 </div>
 
                 {/* Origem dos Leads */}
-                <div className="bg-white dark:bg-[#0A0B0D] rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+                <div className="bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
                     <div className="flex items-center justify-between mb-10">
                         <div>
                             <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Canais de Aquisição</p>
@@ -314,7 +314,7 @@ export default function DashboardCharts() {
             </div>
 
             {/* Row 2: Performance por País */}
-            <div className="bg-white dark:bg-[#0A0B0D] rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+            <div className="bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
                 <div className="flex items-center justify-between mb-10">
                     <div>
                         <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Visão Continental</p>
@@ -350,7 +350,7 @@ export default function DashboardCharts() {
             {/* Row 3: Timeline + Score */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Timeline de Performance */}
-                <div className="bg-white dark:bg-[#0A0B0D] rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+                <div className="bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
                     <div className="flex items-center justify-between mb-10">
                         <div>
                             <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Série Histórica</p>
@@ -408,7 +408,7 @@ export default function DashboardCharts() {
                 </div>
 
                 {/* Distribuição de Score */}
-                <div className="bg-white dark:bg-[#0A0B0D] rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
+                <div className="bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 p-10 shadow-sm hover:shadow-xl transition-all duration-500">
                     <div className="flex items-center justify-between mb-10">
                         <div>
                             <p className="text-[10px] font-black text-imi-400 uppercase tracking-[0.2em] mb-1">Poder de Fechamento</p>

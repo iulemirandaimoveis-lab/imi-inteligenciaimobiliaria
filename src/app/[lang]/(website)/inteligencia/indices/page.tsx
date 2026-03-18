@@ -71,7 +71,7 @@ const FALLBACK: MarketIndex[] = [
 ]
 
 function varColor(v: number | null) {
-    if (v === null) return 'text-[#9CA3AF]'
+    if (v === null) return 'text-white/50'
     if (v > 0) return 'text-emerald-400'
     if (v < 0) return 'text-red-400'
     return 'text-amber-400'
@@ -96,19 +96,19 @@ export default async function IndicesPage() {
     const indices = rawIndices.length > 0 ? rawIndices : FALLBACK
 
     return (
-        <main className="bg-[#0D0F14] min-h-screen">
+        <main className="bg-navy-950 min-h-screen">
             {/* HERO */}
-            <section className="relative bg-[#0D1117] text-white pt-24 pb-16 md:pt-32 md:pb-20 border-b border-white/[0.05]">
+            <section className="relative bg-navy-950 text-white pt-24 pb-16 md:pt-32 md:pb-20 border-b border-white/[0.05]">
                 <div className="container-custom">
                     <div className="max-w-3xl">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-px bg-[#334E68]" />
-                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Inteligência · Índices</span>
+                            <div className="w-12 h-px bg-navy-600" />
+                            <span className="text-navy-300 font-bold uppercase tracking-[0.25em] text-[11px]">Inteligência · Índices</span>
                         </div>
                         <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-5">
-                            Índices <span className="text-[#486581] italic">IMI</span>
+                            Índices <span className="text-navy-300 italic">IMI</span>
                         </h1>
-                        <p className="text-[#9CA3AF] text-base sm:text-lg font-light leading-relaxed">
+                        <p className="text-white/50 text-base sm:text-lg font-light leading-relaxed">
                             Metodologia proprietária de precificação e tendência para o mercado de alto padrão de João Pessoa e regiões monitoradas pela IMI.
                         </p>
                     </div>
@@ -121,24 +121,24 @@ export default async function IndicesPage() {
                     {indices.map((idx) => (
                         <div
                             key={idx.id}
-                            className="rounded-3xl bg-[#141420] border border-white/[0.05] overflow-hidden"
+                            className="rounded-3xl bg-navy-950 border border-white/[0.05] overflow-hidden"
                         >
                             {/* Header */}
                             <div className="p-8 sm:p-10 border-b border-white/[0.05]">
                                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
                                     <div>
                                         <div className="flex items-center gap-2 mb-3">
-                                            <TrendingUp className="w-4 h-4 text-[#486581]" strokeWidth={2} />
-                                            <span className="text-[#486581] text-xs font-bold uppercase tracking-[0.15em]">{idx.region ?? 'Brasil'}</span>
+                                            <TrendingUp className="w-4 h-4 text-navy-300" strokeWidth={2} />
+                                            <span className="text-navy-300 text-xs font-bold uppercase tracking-[0.15em]">{idx.region ?? 'Brasil'}</span>
                                         </div>
                                         <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-2">{idx.name}</h2>
                                         {idx.description && (
-                                            <p className="text-[#9CA3AF] text-sm font-light leading-relaxed max-w-2xl">{idx.description}</p>
+                                            <p className="text-white/50 text-sm font-light leading-relaxed max-w-2xl">{idx.description}</p>
                                         )}
                                     </div>
                                     <div className="text-right shrink-0">
                                         <div className="font-display text-5xl sm:text-6xl font-bold text-white tracking-tight">{idx.value.toFixed(1)}</div>
-                                        <p className="text-[#9CA3AF] text-xs mt-1">Base 100 · {formatDate(idx.base_date)}</p>
+                                        <p className="text-white/50 text-xs mt-1">Base 100 · {formatDate(idx.base_date)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +151,7 @@ export default async function IndicesPage() {
                                     { label: '12 Meses', value: idx.variation_12m },
                                 ].map((v) => (
                                     <div key={v.label} className="p-5 sm:p-6 text-center">
-                                        <p className="text-[#9CA3AF] text-[10px] font-bold uppercase tracking-[0.15em] mb-2">{v.label}</p>
+                                        <p className="text-white/50 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">{v.label}</p>
                                         <p className={`font-display text-xl sm:text-2xl font-bold ${varColor(v.value)}`}>
                                             {formatVar(v.value)}
                                         </p>
@@ -161,10 +161,10 @@ export default async function IndicesPage() {
 
                             {/* Metodologia */}
                             {idx.methodology && (
-                                <div className="px-8 sm:px-10 py-5 border-t border-white/[0.05] bg-[#0D1117]/60">
+                                <div className="px-8 sm:px-10 py-5 border-t border-white/[0.05] bg-navy-950/60">
                                     <div className="flex items-start gap-3">
-                                        <Info className="w-4 h-4 text-[#486581] shrink-0 mt-0.5" />
-                                        <p className="text-[#9CA3AF] text-xs leading-relaxed font-light">{idx.methodology}</p>
+                                        <Info className="w-4 h-4 text-navy-300 shrink-0 mt-0.5" />
+                                        <p className="text-white/50 text-xs leading-relaxed font-light">{idx.methodology}</p>
                                     </div>
                                 </div>
                             )}
@@ -176,17 +176,17 @@ export default async function IndicesPage() {
             {/* AVISO METODOLÓGICO */}
             <section className="pb-16 md:pb-24">
                 <div className="container-custom">
-                    <div className="p-8 sm:p-10 rounded-3xl bg-[#141420] border border-white/[0.05]">
+                    <div className="p-8 sm:p-10 rounded-3xl bg-navy-950 border border-white/[0.05]">
                         <h3 className="font-display text-xl font-bold text-white mb-4 flex items-center gap-2">
-                            <Info className="w-5 h-5 text-[#486581]" />
+                            <Info className="w-5 h-5 text-navy-300" />
                             Nota Metodológica
                         </h3>
-                        <p className="text-[#9CA3AF] text-sm leading-relaxed font-light max-w-3xl">
+                        <p className="text-white/50 text-sm leading-relaxed font-light max-w-3xl">
                             Os Índices IMI são calculados mensalmente a partir de dados primários de campo, transações verificadas e ofertas ativas monitoradas pela IMI. A metodologia segue os princípios da ABNT NBR 14653 e inclui tratamento estatístico para remoção de outliers. Os índices são de uso exclusivo para orientação e não substituem laudos de avaliação individuais.
                         </p>
                         <div className="mt-6 flex flex-wrap gap-3">
                             {['ABNT NBR 14653', 'CRECI/CNAI', 'Dados Primários', 'Revisão Mensal'].map((tag) => (
-                                <span key={tag} className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#486581] bg-[#486581]/10 border border-[#486581]/20 px-3 py-1.5 rounded-full">
+                                <span key={tag} className="text-[10px] font-bold uppercase tracking-[0.15em] text-navy-300 bg-navy-400/10 border border-navy-400/20 px-3 py-1.5 rounded-full">
                                     {tag}
                                 </span>
                             ))}
@@ -196,17 +196,17 @@ export default async function IndicesPage() {
             </section>
 
             {/* CTA */}
-            <section className="bg-[#141420] py-16 border-t border-white/[0.05]">
+            <section className="bg-navy-950 py-16 border-t border-white/[0.05]">
                 <div className="container-custom">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 p-8 sm:p-10 rounded-3xl bg-[#0D1117] border border-white/[0.05]">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 p-8 sm:p-10 rounded-3xl bg-navy-950 border border-white/[0.05]">
                         <div>
-                            <p className="text-[#486581] text-xs font-bold uppercase tracking-[0.2em] mb-2">Relatórios Completos</p>
+                            <p className="text-navy-300 text-xs font-bold uppercase tracking-[0.2em] mb-2">Relatórios Completos</p>
                             <h3 className="font-display text-2xl font-bold text-white">Estudos Técnicos de Mercado</h3>
-                            <p className="text-[#9CA3AF] text-sm font-light mt-1">Dossiês e análises para download</p>
+                            <p className="text-white/50 text-sm font-light mt-1">Dossiês e análises para download</p>
                         </div>
                         <a
                             href="../inteligencia/relatorios"
-                            className="flex items-center gap-2 text-[#486581] font-semibold text-sm hover:text-white transition-colors"
+                            className="flex items-center gap-2 text-navy-300 font-semibold text-sm hover:text-white transition-colors"
                         >
                             Ver Relatórios <ArrowUpRight className="w-4 h-4" />
                         </a>

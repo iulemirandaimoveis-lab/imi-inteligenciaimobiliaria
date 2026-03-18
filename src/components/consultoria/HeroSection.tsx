@@ -6,7 +6,7 @@ import Button from '@/components/ui/Button';
 
 export function HeroSection() {
     return (
-        <section className="relative overflow-hidden bg-[#141420] text-white py-20 lg:py-32">
+        <section className="relative overflow-hidden bg-navy-950 text-white py-20 lg:py-32">
             {/* Background pattern */}
             <div className="absolute top-0 right-0 w-1/2 h-full hidden" />
 
@@ -18,9 +18,9 @@ export function HeroSection() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6 }}
-                            className="inline-flex items-center gap-3 bg-white/[0.04] border border-white/10 px-6 py-3 rounded-full text-[#486581] text-sm font-semibold mb-8 backdrop-blur-sm"
+                            className="inline-flex items-center gap-3 bg-white/[0.04] border border-white/10 px-6 py-3 rounded-full text-navy-300 text-sm font-semibold mb-8 backdrop-blur-sm"
                         >
-                            <span className="w-2 h-2 bg-[#102A43] rounded-full animate-pulse" />
+                            <span className="w-2 h-2 bg-navy-800 rounded-full animate-pulse" />
                             <span className="uppercase tracking-widest text-xs">Consultoria Estratégica Internacional</span>
                         </motion.div>
 
@@ -32,7 +32,7 @@ export function HeroSection() {
                             className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight "
                         >
                             Renda em Dólar com<br />
-                            <span className="text-[#486581]">Imóveis Internacionais</span>
+                            <span className="text-navy-300">Imóveis Internacionais</span>
                         </motion.h1>
 
                         {/* Subheadline */}
@@ -40,7 +40,7 @@ export function HeroSection() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
-                            className="text-lg md:text-xl text-[#9CA3AF] mb-12 max-w-2xl leading-relaxed font-light"
+                            className="text-lg md:text-xl text-white/50 mb-12 max-w-2xl leading-relaxed font-light"
                         >
                             Estrutura jurídica sólida, gestão profissional e crédito inteligente para investidores que buscam proteção patrimonial e rentabilidade em USD.
                         </motion.p>
@@ -54,7 +54,7 @@ export function HeroSection() {
                         >
                             <a
                                 href="#simulator"
-                                className="inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest bg-[#1A1E2A] text-white rounded-xl border border-[#21263A] border-l-2 border-[#334E68] shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:bg-[#21263A] transition-all duration-300"
+                                className="inline-flex items-center justify-center gap-3 h-14 px-8 text-[14px] font-bold uppercase tracking-widest bg-navy-800 text-white rounded-xl border border-navy-700 border-l-2 border-navy-600 shadow-[0_8px_32px_rgba(26,26,46,0.15)] hover:bg-navy-700 transition-all duration-300"
                             >
                                 Simular Estratégia
                                 <ArrowRight className="w-5 h-5 ml-3" />
@@ -75,7 +75,7 @@ export function HeroSection() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.6, delay: 0.4 }}
-                            className="mt-16 flex flex-wrap gap-8 text-[#6C757D] text-sm"
+                            className="mt-16 flex flex-wrap gap-8 text-white/40 text-sm"
                         >
                             {[
                                 '+$50M Alocados',
@@ -83,8 +83,8 @@ export function HeroSection() {
                                 '15 Anos de Mercado'
                             ].map((item, i) => (
                                 <div key={i} className="flex items-center gap-3">
-                                    <CheckCircle className="w-5 h-5 text-[#486581]" strokeWidth={1.5} />
-                                    <span className="font-medium text-[#9CA3AF]">{item}</span>
+                                    <CheckCircle className="w-5 h-5 text-navy-300" strokeWidth={1.5} />
+                                    <span className="font-medium text-white/50">{item}</span>
                                 </div>
                             ))}
                         </motion.div>

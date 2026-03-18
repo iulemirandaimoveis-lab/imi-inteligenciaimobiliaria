@@ -45,7 +45,7 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
     const soonCount = ebooks.filter(e => e.publication_status === 'em_breve').length
 
     return (
-        <main className="min-h-screen bg-[#0D1117]">
+        <main className="min-h-screen bg-navy-950">
             {/* ── Hero ─────────────────────────────────── */}
             <section className="relative overflow-hidden pt-28 pb-16 lg:pt-36 lg:pb-20">
                 {/* Background glow */}
@@ -64,8 +64,8 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
                         transition={{ duration: 0.5 }}
                         className="flex items-center gap-3 mb-6"
                     >
-                        <div className="w-8 h-px bg-[#334E68]" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#486581]">
+                        <div className="w-8 h-px bg-navy-600" />
+                        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-navy-300">
                             Inteligência Imobiliária
                         </span>
                     </motion.div>
@@ -99,20 +99,20 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
                     >
                         {publishedCount > 0 && (
                             <div className="flex items-center gap-2">
-                                <BookOpen size={14} className="text-[#34d399]" />
+                                <BookOpen size={14} className="text-emerald-400" />
                                 <span className="text-[13px] text-white/60">
                                     <span className="text-white font-semibold">{publishedCount}</span> disponível{publishedCount !== 1 ? 'eis' : ''}
                                 </span>
                             </div>
                         )}
                         <div className="flex items-center gap-2">
-                            <Clock size={14} className="text-[#c9a040]" />
+                            <Clock size={14} className="text-gold-600" />
                             <span className="text-[13px] text-white/60">
                                 <span className="text-white font-semibold">{soonCount}</span> em breve
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Filter size={14} className="text-[#486581]" />
+                            <Filter size={14} className="text-navy-300" />
                             <span className="text-[13px] text-white/60">
                                 <span className="text-white font-semibold">{pilares.length - 1}</span> pilares
                             </span>
@@ -122,7 +122,7 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
             </section>
 
             {/* ── Filter Tabs ───────────────────────────── */}
-            <section className="sticky top-0 z-30 bg-[#0D1117]/95 backdrop-blur-md border-b border-white/[0.05]">
+            <section className="sticky top-0 z-30 bg-navy-950/95 backdrop-blur-md border-b border-white/[0.05]">
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
                     <div className="flex items-center gap-1 overflow-x-auto py-3 scrollbar-hide">
                         {pilares.map(p => {
@@ -200,7 +200,7 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
             {/* ── CTA strip ─────────────────────────────── */}
             <section className="py-16 border-t border-white/[0.05]">
                 <div className="max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#486581] mb-3">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-navy-300 mb-3">
                         Seja o primeiro a saber
                     </p>
                     <h2 className="text-2xl md:text-3xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
@@ -213,7 +213,7 @@ export default function BibliotecaClient({ ebooks, pilares }: Props) {
                         href="https://wa.me/5581997230455"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-[#0D1117] transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-navy-950 transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                         style={{ background: 'linear-gradient(135deg, #c9a040, #a07830)' }}
                     >
                         Falar com especialista <ArrowRight size={14} />
@@ -239,7 +239,7 @@ function EbookCard({ ebook, index }: { ebook: Ebook; index: number }) {
         >
             {/* Cover */}
             <div
-                className="relative w-full aspect-[3/4] bg-[#0A0D13] flex items-center justify-center overflow-hidden"
+                className="relative w-full aspect-[3/4] bg-navy-950 flex items-center justify-center overflow-hidden"
                 style={{ minHeight: 220 }}
             >
                 {ebook.cover_image ? (

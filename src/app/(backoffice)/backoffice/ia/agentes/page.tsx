@@ -20,7 +20,7 @@ const AGENTS = [
         name: 'Agente Qualificador',
         description: 'Analisa leads automaticamente e classifica por temperatura, perfil e probabilidade de conversão.',
         icon: Users,
-        color: 'var(--info)',
+        color: '#3B82F6',
         colorRaw: '59,130,246',
         status: 'active' as const,
         model: 'Claude Sonnet',
@@ -35,7 +35,7 @@ const AGENTS = [
         name: 'Agente de Conteúdo',
         description: 'Cria posts, legendas, hashtags e textos de e-mail com base no portfólio de imóveis e métricas de engajamento.',
         icon: FileText,
-        color: 'var(--imi-gold-500)',
+        color: '#8B5CF6',
         colorRaw: '139,92,246',
         status: 'active' as const,
         model: 'Claude Sonnet',
@@ -50,7 +50,7 @@ const AGENTS = [
         name: 'Agente de Mercado',
         description: 'Monitora índices INCC, FIPE ZAP e SECOVI, gera relatórios de inteligência de preços por bairro.',
         icon: TrendingUp,
-        color: 'var(--success)',
+        color: '#10B981',
         colorRaw: '16,185,129',
         status: 'idle' as const,
         model: 'Claude Sonnet',
@@ -65,7 +65,7 @@ const AGENTS = [
         name: 'Agente Matchmaker',
         description: 'Cruza o perfil do lead com o portfólio de imóveis e sugere as 3 melhores opções com justificativa personalizada.',
         icon: Building2,
-        color: 'var(--warning)',
+        color: '#F59E0B',
         colorRaw: '245,158,11',
         status: 'active' as const,
         model: 'Claude Haiku',
@@ -105,6 +105,126 @@ const AGENTS = [
         tools: ['Supabase', 'Email', 'PDF'],
         category: 'inteligencia',
     },
+    {
+        id: 'hormozi-advisor',
+        name: 'Hormozi Advisor',
+        description: 'Estrategista de negócios com a filosofia Hormozi. Diagnóstico brutal de gargalos, alavancas de crescimento e plano de ação para escalar receita.',
+        icon: Brain,
+        color: '#F59E0B',
+        colorRaw: '245,158,11',
+        status: 'idle' as const,
+        model: 'Claude Opus',
+        tasksToday: 0,
+        successRate: 92,
+        lastRun: '—',
+        tools: ['Análise', 'Frameworks', 'Diagnóstico'],
+        category: 'squads',
+    },
+    {
+        id: 'hormozi-copy',
+        name: 'Hormozi Copy',
+        description: 'Copywriting direto ao ponto. Value Equation aplicada em headlines, bullets e CTAs. Sem fluff, sem hype — apenas lógica e valor esmagador.',
+        icon: FileText,
+        color: '#8B5CF6',
+        colorRaw: '139,92,246',
+        status: 'idle' as const,
+        model: 'Claude Sonnet',
+        tasksToday: 0,
+        successRate: 96,
+        lastRun: '—',
+        tools: ['Copy', 'Landing Pages', 'Emails'],
+        category: 'squads',
+    },
+    {
+        id: 'hormozi-leads',
+        name: 'Hormozi Leads',
+        description: 'Geração de leads como Hormozi: audiências frias → quentes → clientes. Lead magnets irresistíveis, sequências de follow-up e qualificação agressiva.',
+        icon: Users,
+        color: '#10B981',
+        colorRaw: '16,185,129',
+        status: 'idle' as const,
+        model: 'Claude Sonnet',
+        tasksToday: 0,
+        successRate: 88,
+        lastRun: '—',
+        tools: ['Lead Gen', 'Qualificação', 'Follow-up'],
+        category: 'squads',
+    },
+    {
+        id: 'hormozi-closer',
+        name: 'Hormozi Closer',
+        description: 'Fechamento de vendas high-ticket com frameworks Hormozi. Scripts de objeção, CLOSER framework e técnicas de reframe para negociações imobiliárias premium.',
+        icon: TrendingUp,
+        color: '#EF4444',
+        colorRaw: '239,68,68',
+        status: 'idle' as const,
+        model: 'Claude Sonnet',
+        tasksToday: 0,
+        successRate: 85,
+        lastRun: '—',
+        tools: ['Vendas', 'Scripts', 'Objeções'],
+        category: 'squads',
+    },
+    {
+        id: 'hormozi-offers',
+        name: 'Hormozi Offers',
+        description: 'Criação de Grand Slams — ofertas tão boas que o cliente se sente idiota em dizer não. Value stacking, bônus estratégicos e preço psicológico.',
+        icon: Sparkles,
+        color: '#F97316',
+        colorRaw: '249,115,22',
+        status: 'idle' as const,
+        model: 'Claude Opus',
+        tasksToday: 0,
+        successRate: 91,
+        lastRun: '—',
+        tools: ['Ofertas', 'Value Stack', 'Pricing'],
+        category: 'squads',
+    },
+    {
+        id: 'hormozi-ads',
+        name: 'Hormozi Ads',
+        description: 'Criativos e copy para anúncios Meta/Google com metodologia Hormozi. Hooks que param o scroll, provas sociais irresistíveis e CTAs diretos.',
+        icon: Zap,
+        color: '#3B82F6',
+        colorRaw: '59,130,246',
+        status: 'idle' as const,
+        model: 'Claude Sonnet',
+        tasksToday: 0,
+        successRate: 89,
+        lastRun: '—',
+        tools: ['Meta Ads', 'Google Ads', 'Criativos'],
+        category: 'squads',
+    },
+    {
+        id: 'hormozi-hooks',
+        name: 'Hormozi Hooks',
+        description: 'Hooks ultra-específicos que geram curiosidade e parada de scroll. 30+ formatos testados. Aplica o princípio "Big Three": Medo, Curiosidade, Inveja.',
+        icon: MessageSquare,
+        color: '#06B6D4',
+        colorRaw: '6,182,212',
+        status: 'idle' as const,
+        model: 'Claude Haiku',
+        tasksToday: 0,
+        successRate: 94,
+        lastRun: '—',
+        tools: ['Social Media', 'Vídeos', 'Copy'],
+        category: 'squads',
+    },
+    {
+        id: 'hormozi-audit',
+        name: 'Hormozi Audit',
+        description: 'Auditoria completa do negócio IMI: funil de vendas, copy, ofertas, follow-up, team performance. Entrega diagnóstico com prioridades de A a Z.',
+        icon: BarChart3,
+        color: '#A78BFA',
+        colorRaw: '167,139,250',
+        status: 'idle' as const,
+        model: 'Claude Opus',
+        tasksToday: 0,
+        successRate: 97,
+        lastRun: '—',
+        tools: ['Auditoria', 'Analytics', 'Relatórios'],
+        category: 'squads',
+    },
 ]
 
 const CATEGORIES = [
@@ -113,6 +233,7 @@ const CATEGORIES = [
     { id: 'conversao', label: 'Conversão' },
     { id: 'conteudo', label: 'Conteúdo' },
     { id: 'inteligencia', label: 'Inteligência' },
+    { id: 'squads', label: 'Squads' },
 ]
 
 const STATUS_ICONS_IA: Record<string, React.ElementType> = { active: CheckCircle2, idle: Clock, scheduled: Clock, error: AlertCircle }
@@ -165,6 +286,38 @@ export default function AgentesIAPage() {
         'report-agent': {
             task_type: 'custom',
             prompt: 'Gere um resumo executivo semanal fictício para a IMI com: leads captados (47), visitas realizadas (12), propostas enviadas (3), conversões (1). Inclua recomendações estratégicas.',
+        },
+        'hormozi-advisor': {
+            task_type: 'custom',
+            prompt: 'Como Hormozi Advisor, analise o negócio de uma imobiliária premium em Recife (IMI — Inteligência Imobiliária). Identifique os 3 principais gargalos e as 3 maiores alavancas de crescimento para chegar a R$1M/mês em receita. Seja direto, use frameworks Hormozi.',
+        },
+        'hormozi-copy': {
+            task_type: 'legenda',
+            prompt: 'Escreva copy no estilo Hormozi para uma landing page de apartamentos premium em Boa Viagem, Recife. Ticket médio R$1.2M. Aplique a Value Equation. 300 palavras. Seja específico e elimine o fluff.',
+        },
+        'hormozi-leads': {
+            task_type: 'custom',
+            prompt: 'Crie uma estratégia de geração de leads Hormozi para imóveis premium em Recife. Inclua: 3 lead magnets irresistíveis, sequência de follow-up de 7 dias e critérios de qualificação. Foco em compradores com R$500k+.',
+        },
+        'hormozi-closer': {
+            task_type: 'custom',
+            prompt: 'Aplique o CLOSER framework de Hormozi para uma negociação de apartamento de R$1.2M em Boa Viagem. O lead está interessado mas diz "está caro". Script completo de objeção + reframe + fechamento.',
+        },
+        'hormozi-offers': {
+            task_type: 'custom',
+            prompt: 'Crie uma Grand Slam Offer estilo Hormozi para o serviço de consultoria imobiliária da IMI. Value stack com bônus, garantias e preço estratégico para ticket de R$5.000-R$15.000 em assessoria.',
+        },
+        'hormozi-ads': {
+            task_type: 'custom',
+            prompt: 'Crie 3 criativos para Meta Ads de imóveis premium em Recife (IMI). Formato: Hook + Corpo + CTA. Aplique o método Hormozi de especificidade máxima. Target: investidores 35-55 anos, renda R$20k+/mês.',
+        },
+        'hormozi-hooks': {
+            task_type: 'custom',
+            prompt: 'Gere 10 hooks estilo Hormozi para conteúdo sobre investimento imobiliário em Recife. Use os 3 gatilhos: Medo (de perder), Curiosidade (segredo), Inveja (outros já fizeram). Seja ultra-específico.',
+        },
+        'hormozi-audit': {
+            task_type: 'custom',
+            prompt: 'Execute uma auditoria Hormozi completa da IMI (imobiliária premium Recife). Analise: funil de vendas, ofertas, copy, follow-up, team performance. Priorize as TOP 5 mudanças que gerariam mais receita em 90 dias.',
         },
     }
 
@@ -219,9 +372,9 @@ export default function AgentesIAPage() {
                 actions={
                     <button
                         style={{
-                            display: 'flex', alignItems: 'center', gap: 8,
-                            background: 'var(--bo-accent)', color: 'var(--text-inverse)',
-                            border: 'none', borderRadius: 4, padding: '8px 14px',
+                            display: 'flex', alignItems: 'center', gap: 6,
+                            background: 'var(--btn-primary-bg)', color: '#fff',
+                            border: 'none', borderRadius: 10, padding: '8px 14px',
                             fontSize: 13, fontWeight: 600, cursor: 'pointer',
                         }}
                         onClick={() => toast.info('Em breve: criar agente personalizado')}
@@ -249,11 +402,11 @@ export default function AgentesIAPage() {
                 }}
             >
                 <div style={{
-                    width: 40, height: 40, borderRadius: 4,
+                    width: 40, height: 40, borderRadius: 12,
                     background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.25)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                 }}>
-                    <Brain size={20} style={{ color: 'var(--imi-gold-400)' }} />
+                    <Brain size={20} style={{ color: '#A78BFA' }} />
                 </div>
                 <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bo-text)', marginBottom: 2 }}>
@@ -270,7 +423,7 @@ export default function AgentesIAPage() {
                     rel="noopener noreferrer"
                     style={{
                         display: 'flex', alignItems: 'center', gap: 4,
-                        fontSize: 11, fontWeight: 600, color: 'var(--imi-gold-400)',
+                        fontSize: 11, fontWeight: 600, color: '#A78BFA',
                         textDecoration: 'none', flexShrink: 0,
                     }}
                 >
@@ -286,7 +439,7 @@ export default function AgentesIAPage() {
                         key={cat.id}
                         onClick={() => setCategory(cat.id)}
                         style={{
-                            padding: '6px 14px', borderRadius: 4, fontSize: 12, fontWeight: 600,
+                            padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
                             cursor: 'pointer', transition: 'all 0.15s',
                             background: category === cat.id ? 'var(--bo-accent)' : 'var(--bo-elevated)',
                             color: category === cat.id ? '#fff' : 'var(--bo-text-muted)',
@@ -326,7 +479,7 @@ export default function AgentesIAPage() {
                                 <div className="flex items-start justify-between mb-3">
                                     <div
                                         style={{
-                                            width: 40, height: 40, borderRadius: 4,
+                                            width: 40, height: 40, borderRadius: 12,
                                             background: `rgba(${agent.colorRaw},0.15)`,
                                             border: `1px solid rgba(${agent.colorRaw},0.25)`,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -341,7 +494,7 @@ export default function AgentesIAPage() {
                                         style={{
                                             background: STATUS_MAP[agent.status].bg,
                                             color: STATUS_MAP[agent.status].color,
-                                            fontSize: 11, fontWeight: 700,
+                                            fontSize: 10, fontWeight: 700,
                                         }}
                                     >
                                         <StatusIcon size={9} />
@@ -360,7 +513,7 @@ export default function AgentesIAPage() {
                             {/* Stats row */}
                             <div className="px-4 py-3 flex items-center gap-4" style={{ borderBottom: '1px solid var(--bo-border)' }}>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Tarefas hoje
                                     </div>
                                     <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--bo-text)' }}>
@@ -368,7 +521,7 @@ export default function AgentesIAPage() {
                                     </div>
                                 </div>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Sucesso
                                     </div>
                                     <div style={{ fontSize: 20, fontWeight: 800, color: agent.successRate >= 90 ? 'var(--bo-success)' : agent.successRate >= 70 ? 'var(--bo-warning)' : 'var(--bo-error)' }}>
@@ -376,7 +529,7 @@ export default function AgentesIAPage() {
                                     </div>
                                 </div>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--bo-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                         Modelo
                                     </div>
                                     <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--bo-text)' }}>
@@ -393,7 +546,7 @@ export default function AgentesIAPage() {
                                         <span
                                             key={tool}
                                             style={{
-                                                fontSize: 11, fontWeight: 600, padding: '2px 6px',
+                                                fontSize: 9, fontWeight: 600, padding: '2px 6px',
                                                 borderRadius: 4, background: 'var(--bo-hover)',
                                                 color: 'var(--bo-text-muted)', border: '1px solid var(--bo-border)',
                                             }}
@@ -409,7 +562,7 @@ export default function AgentesIAPage() {
                                     disabled={isRunning}
                                     className="flex items-center gap-1.5"
                                     style={{
-                                        padding: '6px 12px', borderRadius: 4, fontSize: 11, fontWeight: 700,
+                                        padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700,
                                         cursor: isRunning ? 'not-allowed' : 'pointer',
                                         background: isRunning ? 'var(--bo-hover)' : `rgba(${agent.colorRaw},0.15)`,
                                         color: isRunning ? 'var(--bo-text-muted)' : agent.color,
@@ -434,7 +587,7 @@ export default function AgentesIAPage() {
                             {/* Last run */}
                             <div
                                 className="px-4 pb-3"
-                                style={{ fontSize: 11, color: 'var(--bo-text-muted)' }}
+                                style={{ fontSize: 10, color: 'var(--bo-text-muted)' }}
                             >
                                 Última execução: {agent.lastRun}
                             </div>
@@ -442,6 +595,34 @@ export default function AgentesIAPage() {
                     )
                 })}
             </div>
+
+            {/* Hormozi Squad banner */}
+            {(category === 'todos' || category === 'squads') && (
+                <div
+                    className="mt-2 mb-4 rounded-2xl p-4 flex items-center gap-4"
+                    style={{
+                        background: 'linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(249,115,22,0.06) 100%)',
+                        border: '1px solid rgba(245,158,11,0.18)',
+                    }}
+                >
+                    <div style={{
+                        width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                        background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.25)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                        <Zap size={20} style={{ color: '#F59E0B' }} />
+                    </div>
+                    <div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--bo-text)', marginBottom: 2 }}>
+                            Hormozi Squad · 8 Agentes Especialistas
+                        </div>
+                        <div style={{ fontSize: 12, color: 'var(--bo-text-muted)' }}>
+                            Frameworks de Alex Hormozi: Grand Slam Offers, $100M Leads, CLOSER, Value Equation.
+                            Cada agente implementa uma parte do sistema Hormozi para escalar a IMI.
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Coming soon */}
             <div
@@ -461,8 +642,8 @@ export default function AgentesIAPage() {
                 <button
                     onClick={() => toast.info('Em breve: builder de agentes personalizado')}
                     style={{
-                        padding: '8px 20px', borderRadius: 4, fontSize: 12, fontWeight: 700,
-                        background: 'var(--bo-accent)', color: 'var(--text-inverse)', border: 'none', cursor: 'pointer',
+                        padding: '8px 20px', borderRadius: 10, fontSize: 12, fontWeight: 700,
+                        background: 'var(--btn-primary-bg)', color: '#fff', border: 'none', cursor: 'pointer',
                     }}
                 >
                     Em breve

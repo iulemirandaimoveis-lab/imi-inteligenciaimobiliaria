@@ -44,7 +44,7 @@ export default function MobileMenu({
         <div className="fixed inset-0 z-[9999] lg:hidden">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-[#0F1E28]/50 backdrop-blur-sm"
+                className="absolute inset-0 bg-navy-900/50 backdrop-blur-sm"
                 onClick={onClose}
             />
 
@@ -95,7 +95,7 @@ export default function MobileMenu({
                         <Link
                             href={`/${lang}/contato`}
                             onClick={onClose}
-                            className="flex items-center justify-center w-full h-[56px] bg-[#1A1D23] text-white rounded-xl font-bold transition-all active:scale-[0.98] mb-8"
+                            className="flex items-center justify-center w-full h-[56px] bg-navy-900 text-white rounded-xl font-bold transition-all active:scale-[0.98] mb-8"
                         >
                             Falar pelo WhatsApp
                         </Link>

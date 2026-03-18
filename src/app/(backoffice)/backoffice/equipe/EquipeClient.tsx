@@ -216,7 +216,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                     whileTap={{ scale: 0.96 }}
                     onClick={openAdd}
                     className="bo-btn bo-btn-primary"
-                    style={{ background: 'var(--bo-accent)', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+                    style={{ background: 'var(--btn-primary-bg)', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
                 >
                     <Plus size={16} /> Adicionar Membro
                 </motion.button>
@@ -315,7 +315,7 @@ export default function EquipeClient({ initialTeam }: { initialTeam: TeamMember[
                             <button
                                 onClick={openAdd}
                                 className="mt-4 inline-flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-medium text-white"
-                                style={{ background: 'var(--bo-accent)' }}>
+                                style={{ background: 'var(--btn-primary-bg)' }}>
                                 <Plus size={14} /> Adicionar primeiro membro
                             </button>
                         )}

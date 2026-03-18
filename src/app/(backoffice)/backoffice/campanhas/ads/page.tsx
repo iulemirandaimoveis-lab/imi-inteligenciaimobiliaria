@@ -134,7 +134,7 @@ export default function AdsPerformancePage() {
                     <Link
                         href="/backoffice/campanhas/nova"
                         className="bo-btn bo-btn-primary"
-                        style={{ background: 'var(--bo-accent)' }}
+                        style={{ background: 'var(--btn-primary-bg)' }}
                     >
                         <Plus size={14} /> Nova Campanha
                     </Link>
@@ -272,7 +272,7 @@ export default function AdsPerformancePage() {
                     <Link
                         href="/backoffice/campanhas/nova"
                         className="flex items-center justify-center gap-2 h-13 rounded-2xl text-sm font-bold text-white"
-                        style={{ background: 'var(--bo-accent)', boxShadow: '0 4px 20px rgba(59,130,246,0.3)', height: 52 }}
+                        style={{ background: 'var(--btn-primary-bg)', boxShadow: '0 4px 20px rgba(59,130,246,0.3)', height: 52 }}
                     >
                         <Zap size={16} />
                         Nova Campanha

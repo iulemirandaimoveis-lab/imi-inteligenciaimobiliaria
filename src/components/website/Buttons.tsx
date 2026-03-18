@@ -45,7 +45,7 @@ export function ButtonPrimary({
     const cls = [
         'group inline-flex items-center justify-center gap-2.5 rounded-[4px]',
         'font-bold uppercase whitespace-nowrap',
-        'bg-[#102A43] text-white hover:bg-[#0a1c2e]',
+        'bg-navy-800 text-white hover:bg-navy-900',
         'transition-all duration-200 active:scale-[0.97]',
         'shadow-[0_4px_14px_rgba(16,42,67,0.30)] hover:shadow-[0_6px_20px_rgba(16,42,67,0.42)]',
         full ? 'w-full' : 'w-auto',
@@ -93,7 +93,7 @@ export function ButtonGhost({
             ? 'border border-white/50 text-white hover:bg-white/[0.08] hover:border-white/70'
             : dark
                 ? 'border border-white/20 text-white hover:bg-white/[0.07] hover:border-white/30'
-                : 'border border-[#102A43]/25 text-[#102A43] hover:bg-[#102A43]/[0.05] hover:border-[#102A43]/40',
+                : 'border border-navy-800/25 text-navy-800 hover:bg-navy-800/[0.05] hover:border-navy-800/40',
         'transition-all duration-200 active:scale-[0.97]',
         full ? 'w-full' : 'w-auto',
         sizes[size],

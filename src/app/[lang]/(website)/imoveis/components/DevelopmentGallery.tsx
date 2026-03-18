@@ -256,9 +256,10 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
                                         aria-label={`Ir para imagem ${i + 1}`}
                                         className={`h-1.5 rounded-full transition-all duration-200 ${
                                             i === lightboxIndex
-                                                ? 'bg-white w-5'
-                                                : 'bg-white/35 hover:bg-white/60 w-1.5'
+                                                ? 'w-5'
+                                                : 'hover:bg-white/60 w-1.5'
                                         }`}
+                                        style={{ background: i === lightboxIndex ? '#C8A44A' : 'rgba(255,255,255,0.35)' }}
                                     />
                                 ))}
                             </div>
@@ -273,8 +274,8 @@ export default function DevelopmentGallery({ development }: DevelopmentGalleryPr
 function SectionTitle({ label }: { label: string }) {
     return (
         <div className="flex items-center gap-3 mb-6">
-            <div className="w-1 h-5 rounded-full bg-[#334E68]" />
-            <h2 className="text-xl text-gray-900 font-bold tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
+            <h2 className="text-xl text-gray-900 font-bold tracking-tight" style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}>
                 {label}
             </h2>
         </div>

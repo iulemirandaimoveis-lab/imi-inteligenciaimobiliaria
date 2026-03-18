@@ -31,19 +31,19 @@ const LAYERS = [
 
 export default function MapaPage() {
     return (
-        <main className="bg-[#0D0F14] min-h-screen">
+        <main className="bg-navy-950 min-h-screen">
             {/* HERO */}
-            <section className="relative bg-[#0D1117] text-white pt-24 pb-16 md:pt-32 md:pb-20 border-b border-white/[0.05]">
+            <section className="relative bg-navy-950 text-white pt-24 pb-16 md:pt-32 md:pb-20 border-b border-white/[0.05]">
                 <div className="container-custom">
                     <div className="max-w-3xl">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-px bg-[#334E68]" />
-                            <span className="text-[#486581] font-bold uppercase tracking-[0.25em] text-[11px]">Inteligência · Mapa</span>
+                            <div className="w-12 h-px bg-navy-600" />
+                            <span className="text-navy-300 font-bold uppercase tracking-[0.25em] text-[11px]">Inteligência · Mapa</span>
                         </div>
                         <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-5">
-                            Mapa de <span className="text-[#486581] italic">Calor</span>
+                            Mapa de <span className="text-navy-300 italic">Calor</span>
                         </h1>
-                        <p className="text-[#9CA3AF] text-base sm:text-lg font-light leading-relaxed">
+                        <p className="text-white/50 text-base sm:text-lg font-light leading-relaxed">
                             Visualização geográfica interativa de valorização, densidade de oferta e liquidez por bairro — João Pessoa e litoral da Paraíba.
                         </p>
                     </div>
@@ -53,14 +53,14 @@ export default function MapaPage() {
             {/* MAPA PLACEHOLDER */}
             <section className="py-12 md:py-16">
                 <div className="container-custom">
-                    <div className="rounded-3xl bg-[#141420] border border-white/[0.05] overflow-hidden">
+                    <div className="rounded-3xl bg-navy-950 border border-white/[0.05] overflow-hidden">
                         {/* Controles fictícios */}
                         <div className="p-5 border-b border-white/[0.05] flex flex-wrap gap-3 items-center">
-                            <span className="text-[#9CA3AF] text-xs font-bold uppercase tracking-[0.15em]">Camada:</span>
+                            <span className="text-white/50 text-xs font-bold uppercase tracking-[0.15em]">Camada:</span>
                             {['Valorização', 'Oferta', 'Liquidez', 'Preço m²'].map((layer) => (
                                 <button
                                     key={layer}
-                                    className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/[0.08] text-[#9CA3AF] bg-[#1A1E2A] cursor-not-allowed opacity-60"
+                                    className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/[0.08] text-white/50 bg-navy-800 cursor-not-allowed opacity-60"
                                     disabled
                                 >
                                     {layer}
@@ -72,7 +72,7 @@ export default function MapaPage() {
                         </div>
 
                         {/* Área do mapa */}
-                        <div className="relative h-[420px] sm:h-[540px] bg-[#0D1117] flex items-center justify-center">
+                        <div className="relative h-[420px] sm:h-[540px] bg-navy-950 flex items-center justify-center">
                             {/* Grid decorativo */}
                             <div
                                 className="absolute inset-0 opacity-[0.03]"
@@ -83,15 +83,15 @@ export default function MapaPage() {
                             />
                             {/* Blobs decorativos simulando heatmap */}
                             <div className="absolute w-40 h-40 rounded-full bg-emerald-500/10 blur-3xl top-20 left-1/4" />
-                            <div className="absolute w-32 h-32 rounded-full bg-[#486581]/15 blur-3xl top-1/3 left-1/2" />
+                            <div className="absolute w-32 h-32 rounded-full bg-navy-400/15 blur-3xl top-1/3 left-1/2" />
                             <div className="absolute w-28 h-28 rounded-full bg-amber-500/10 blur-3xl bottom-20 right-1/4" />
 
                             <div className="relative z-10 text-center px-6">
-                                <div className="w-16 h-16 bg-[#141420] border border-white/[0.08] rounded-2xl flex items-center justify-center mx-auto mb-5">
-                                    <Map className="w-7 h-7 text-[#486581]" strokeWidth={1.5} />
+                                <div className="w-16 h-16 bg-navy-950 border border-white/[0.08] rounded-2xl flex items-center justify-center mx-auto mb-5">
+                                    <Map className="w-7 h-7 text-navy-300" strokeWidth={1.5} />
                                 </div>
                                 <h3 className="font-display text-xl font-bold text-white mb-2">Mapa Interativo em Desenvolvimento</h3>
-                                <p className="text-[#9CA3AF] text-sm font-light max-w-sm mx-auto leading-relaxed">
+                                <p className="text-white/50 text-sm font-light max-w-sm mx-auto leading-relaxed">
                                     O mapa de calor geográfico com dados de valorização e liquidez por bairro está em fase de integração.
                                 </p>
                             </div>
@@ -105,19 +105,19 @@ export default function MapaPage() {
                 <div className="container-custom">
                     <div className="mb-8">
                         <h2 className="font-display text-2xl font-bold text-white">Camadas Planejadas</h2>
-                        <p className="text-[#9CA3AF] text-sm font-light mt-1">Visualizações disponíveis quando o mapa for lançado.</p>
+                        <p className="text-white/50 text-sm font-light mt-1">Visualizações disponíveis quando o mapa for lançado.</p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                         {LAYERS.map((layer) => (
                             <div
                                 key={layer.label}
-                                className="p-6 rounded-2xl bg-[#141420] border border-white/[0.05]"
+                                className="p-6 rounded-2xl bg-navy-950 border border-white/[0.05]"
                             >
-                                <div className="w-10 h-10 bg-[#1A1E2A] text-[#486581] rounded-xl flex items-center justify-center mb-4 border border-white/[0.05]">
+                                <div className="w-10 h-10 bg-navy-800 text-navy-300 rounded-xl flex items-center justify-center mb-4 border border-white/[0.05]">
                                     <layer.icon className="w-5 h-5" strokeWidth={1.5} />
                                 </div>
                                 <h3 className="font-display text-base font-bold text-white mb-2">{layer.label}</h3>
-                                <p className="text-[#9CA3AF] text-xs leading-relaxed font-light">{layer.description}</p>
+                                <p className="text-white/50 text-xs leading-relaxed font-light">{layer.description}</p>
                             </div>
                         ))}
                     </div>
@@ -125,19 +125,19 @@ export default function MapaPage() {
             </section>
 
             {/* CTA */}
-            <section className="bg-[#141420] py-16 border-t border-white/[0.05]">
+            <section className="bg-navy-950 py-16 border-t border-white/[0.05]">
                 <div className="container-custom text-center">
                     <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-4">
-                        Quer análise geográfica <span className="text-[#486581] italic">personalizada</span>?
+                        Quer análise geográfica <span className="text-navy-300 italic">personalizada</span>?
                     </h2>
-                    <p className="text-[#9CA3AF] text-sm font-light mb-8 max-w-md mx-auto">
+                    <p className="text-white/50 text-sm font-light mb-8 max-w-md mx-auto">
                         Enquanto o mapa interativo não é lançado, nossa equipe realiza análises de localização sob demanda.
                     </p>
                     <a
                         href="https://wa.me/5581997230455"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 h-12 px-8 rounded-xl bg-[#102A43] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#1A3F5C] transition-all shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
+                        className="inline-flex items-center gap-2 h-12 px-8 rounded-xl bg-navy-800 text-white font-bold text-sm uppercase tracking-wider hover:bg-navy-700 transition-all shadow-[0_4px_14px_rgba(16,42,67,0.4)]"
                     >
                         Solicitar Análise de Localização
                     </a>

@@ -45,8 +45,8 @@ const QUICK_ACTIONS = [
   { label: 'Novo Lead',   href: '/backoffice/leads/novo',        color: 'var(--error)',        icon: Users },
   { label: 'Agendamento', href: '/backoffice/agenda',            color: 'var(--warning)',      icon: CalendarDays },
   { label: 'WhatsApp',    href: '/backoffice/whatsapp',          color: '#25D366',             icon: MessageCircle },
-  { label: 'Agentes IA',  href: '/backoffice/ia/agentes',        color: 'var(--imi-gold-400)',             icon: Bot,           isNew: true },
-  { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',    color: 'var(--error)',             icon: Video,         isNew: true },
+  { label: 'Agentes IA',  href: '/backoffice/ia/agentes',        color: '#A78BFA',             icon: Bot,           isNew: true },
+  { label: 'Vídeo IA',    href: '/backoffice/conteudo/video',    color: '#F472B6',             icon: Video,         isNew: true },
   { label: 'Avaliação',   href: '/backoffice/avaliacoes/nova',   color: 'var(--imi-gold-500)', icon: Scale },
   { label: 'Imóveis',     href: '/backoffice/imoveis',           color: 'var(--info)',         icon: Building2 },
   { label: 'Pipeline',    href: '/backoffice/leads',             color: 'var(--imi-gold-500)', icon: TrendingUp },
@@ -54,9 +54,9 @@ const QUICK_ACTIONS = [
 
 // ── Agent activity default (zeroed — real data fetched from API) ──
 const AGENT_ACTIVITY_DEFAULT = [
-  { name: 'Qualificador', tasksToday: 0, color: 'var(--info)', raw: '59,130,246', status: 'active' },
-  { name: 'Conteúdo',     tasksToday: 0, color: 'var(--imi-gold-500)', raw: '139,92,246', status: 'active' },
-  { name: 'Matchmaker',   tasksToday: 0, color: 'var(--warning)', raw: '245,158,11', status: 'active' },
+  { name: 'Qualificador', tasksToday: 0, color: '#3B82F6', raw: '59,130,246', status: 'active' },
+  { name: 'Conteúdo',     tasksToday: 0, color: '#8B5CF6', raw: '139,92,246', status: 'active' },
+  { name: 'Matchmaker',   tasksToday: 0, color: '#F59E0B', raw: '245,158,11', status: 'active' },
   { name: 'Follow-up',    tasksToday: 0, color: 'var(--error)', raw: '239,68,68',  status: 'idle'   },
 ]
 
@@ -64,14 +64,14 @@ const AGENT_ACTIVITY_DEFAULT = [
 function HojeSkeleton() {
   return (
     <div className="space-y-5 max-w-2xl mx-auto">
-      <div style={{ height: 60, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.5 }} />
+      <div style={{ height: 60, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.5 }} />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         {[0,1,2].map(i => (
-          <div key={i} style={{ height: 72, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.4 }} />
+          <div key={i} style={{ height: 72, background: 'var(--bg-surface)', borderRadius: 14, opacity: 0.4 }} />
         ))}
       </div>
-      <div style={{ height: 100, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.4 }} />
-      <div style={{ height: 200, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.35 }} />
+      <div style={{ height: 100, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.4 }} />
+      <div style={{ height: 200, background: 'var(--bg-surface)', borderRadius: 16, opacity: 0.35 }} />
     </div>
   )
 }
@@ -207,12 +207,12 @@ export default function HojePage() {
 
         {/* IMI Intelligence tag */}
         <div className="flex items-center gap-2 mb-3">
-          <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--imi-gold-500)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
             INTELLIGENCE OS
           </span>
           <span className="flex items-center gap-1">
             <span className="live-dot" />
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--imi-ai-green)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '8px', fontWeight: 700, color: 'var(--imi-ai-green)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               IA EM TEMPO REAL
             </span>
           </span>
@@ -232,8 +232,8 @@ export default function HojePage() {
             {userRole && (
               <span style={{
                 display: 'inline-block', marginTop: 6,
-                fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
-                padding: '2px 8px', borderRadius: 4,
+                fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
+                padding: '2px 8px', borderRadius: 6,
                 background: 'var(--bo-active-bg)', color: 'var(--imi-gold-500)',
                 border: '1px solid var(--border-default)',
               }}>
@@ -294,7 +294,7 @@ export default function HojePage() {
             {/* "Foto" label */}
             <span style={{
               position: 'absolute', bottom: -14, left: '50%', transform: 'translateX(-50%)',
-              fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)',
+              fontSize: 8, fontWeight: 700, color: 'var(--text-secondary)',
               letterSpacing: '0.05em', whiteSpace: 'nowrap',
             }}>
               Alterar foto
@@ -304,15 +304,15 @@ export default function HojePage() {
 
         {/* Today's mini stat strip */}
         <div className="flex items-center gap-3 mt-4 pt-3" style={{ borderTop: '1px solid var(--border-default)' }}>
-          <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+          <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
             Hoje: <span style={{ color: 'var(--error)', fontWeight: 700 }}>{hotCount} quentes</span>
           </span>
           <span style={{ color: 'var(--border-default)', fontSize: '12px' }}>·</span>
-          <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+          <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
             <span style={{ color: 'var(--warning)', fontWeight: 700 }}>{todayEvents.length} eventos</span>
           </span>
           <span style={{ color: 'var(--border-default)', fontSize: '12px' }}>·</span>
-          <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+          <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
             <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{totalLeads}</span> leads total
           </span>
         </div>
@@ -342,7 +342,7 @@ export default function HojePage() {
             >
               {/* Icon circle */}
               <div style={{
-                width: '40px', height: '40px', borderRadius: '4px',
+                width: '40px', height: '40px', borderRadius: '12px',
                 background: 'var(--bg-surface)',
                 border: `1px solid ${(a as any).isNew ? 'rgba(167,139,250,0.30)' : 'var(--border-default)'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -352,14 +352,14 @@ export default function HojePage() {
                 {(a as any).isNew && (
                   <span style={{
                     position: 'absolute', top: -5, right: -5,
-                    fontSize: '11px', fontWeight: 800, padding: '1px 4px',
+                    fontSize: '7px', fontWeight: 800, padding: '1px 4px',
                     borderRadius: 4, background: 'rgba(74,222,128,0.20)',
                     color: 'var(--success)', border: '1px solid rgba(74,222,128,0.35)',
                     letterSpacing: '0.03em',
                   }}>NEW</span>
                 )}
               </div>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.2, maxWidth: '44px' }}>
+              <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.2, maxWidth: '44px' }}>
                 {a.label}
               </span>
             </motion.button>
@@ -450,7 +450,7 @@ export default function HojePage() {
             }}
             style={{
               position: 'absolute', top: 10, right: 10,
-              width: 24, height: 24, borderRadius: 4,
+              width: 24, height: 24, borderRadius: 6,
               background: 'transparent', border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'var(--text-tertiary)',
@@ -460,7 +460,7 @@ export default function HojePage() {
           </button>
           <div className="flex items-start gap-3">
             <div style={{
-              width: 36, height: 36, borderRadius: 4, flexShrink: 0,
+              width: 36, height: 36, borderRadius: 10, flexShrink: 0,
               background: 'rgba(184,148,58,0.12)',
               border: '1px solid rgba(184,148,58,0.25)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -477,9 +477,9 @@ export default function HojePage() {
               <button
                 onClick={() => router.push('/backoffice/integracoes')}
                 style={{
-                  height: 30, padding: '0 14px', borderRadius: 4,
-                  background: 'var(--imi-gold-500)', border: 'none', cursor: 'pointer',
-                  fontSize: '11px', fontWeight: 700, color: T.text,
+                  height: 30, padding: '0 14px', borderRadius: 8,
+                  background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer',
+                  fontSize: '11px', fontWeight: 700, color: '#0B1120',
                   letterSpacing: '0.03em',
                 }}
               >
@@ -538,11 +538,11 @@ export default function HojePage() {
               borderBottom: '1px solid var(--border-default)',
             }}
           >
-            <Bot size={12} style={{ color: 'var(--imi-gold-400)' }} />
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--imi-gold-400)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <Bot size={12} style={{ color: '#A78BFA' }} />
+            <span style={{ fontSize: '10px', fontWeight: 700, color: '#A78BFA', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               {agentActivity.filter(a => a.status === 'active').length} ativos agora
             </span>
-            <span style={{ marginLeft: 'auto', fontSize: '11px', color: 'var(--text-secondary)' }}>
+            <span style={{ marginLeft: 'auto', fontSize: '9px', color: 'var(--text-secondary)' }}>
               {agentActivity.reduce((s, a) => s + a.tasksToday, 0)} tarefas hoje
             </span>
           </div>
@@ -556,7 +556,7 @@ export default function HojePage() {
             >
               {/* Icon */}
               <div style={{
-                width: 28, height: 28, borderRadius: 4, flexShrink: 0,
+                width: 28, height: 28, borderRadius: 8, flexShrink: 0,
                 background: `rgba(${agent.raw},0.12)`,
                 border: `1px solid rgba(${agent.raw},0.20)`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -573,7 +573,7 @@ export default function HojePage() {
 
               {/* Status pill */}
               <span style={{
-                fontSize: '11px', fontWeight: 700, padding: '2px 7px', borderRadius: 4,
+                fontSize: '9px', fontWeight: 700, padding: '2px 7px', borderRadius: 5,
                 background: agent.status === 'active' ? 'rgba(74,222,128,0.12)' : 'rgba(251,191,36,0.10)',
                 color: agent.status === 'active' ? 'var(--success)' : 'var(--warning)',
                 border: `1px solid ${agent.status === 'active' ? 'rgba(74,222,128,0.25)' : 'rgba(251,191,36,0.20)'}`,
@@ -593,7 +593,7 @@ export default function HojePage() {
             onClick={() => router.push('/backoffice/ia/agentes')}
             className="w-full flex items-center justify-center gap-2 py-3"
             style={{
-              fontSize: '11px', fontWeight: 600, color: 'var(--imi-gold-400)',
+              fontSize: '11px', fontWeight: 600, color: '#A78BFA',
               background: 'transparent', border: 'none', cursor: 'pointer',
               borderTop: '1px solid var(--border-default)',
             }}
@@ -633,7 +633,7 @@ export default function HojePage() {
                   color: 'var(--imi-gold-500)',
                   background: 'rgba(184,148,58,0.10)',
                   border: '1px solid rgba(184,148,58,0.25)',
-                  padding: '6px 14px', borderRadius: '4px', cursor: 'pointer',
+                  padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
                 }}
               >
                 + Agendar compromisso
@@ -648,7 +648,7 @@ export default function HojePage() {
               >
                 {/* Accent line */}
                 <div style={{
-                  width: '3px', height: '36px', borderRadius: '4px', flexShrink: 0,
+                  width: '3px', height: '36px', borderRadius: '2px', flexShrink: 0,
                   background: ev.color || 'var(--imi-gold-500)',
                 }} />
                 <div className="flex-1 min-w-0">
@@ -696,7 +696,7 @@ export default function HojePage() {
                 color: 'var(--error)',
                 background: 'var(--s-hot-bg)',
                 border: '1px solid rgba(248,113,113,0.25)',
-                padding: '6px 14px', borderRadius: '4px', cursor: 'pointer',
+                padding: '6px 14px', borderRadius: '8px', cursor: 'pointer',
               }}
             >
               + Novo Lead
@@ -747,7 +747,7 @@ export default function HojePage() {
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '14px' }}
         >
           <div style={{
-            width: '36px', height: '36px', borderRadius: '4px',
+            width: '36px', height: '36px', borderRadius: '10px',
             background: 'rgba(184,148,58,0.10)', border: '1px solid rgba(184,148,58,0.25)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px',
           }}>
@@ -756,7 +756,7 @@ export default function HojePage() {
           <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>
             Pipeline
           </p>
-          <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+          <p style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
             {totalLeads} leads · {hotCount} quentes
           </p>
         </motion.button>
@@ -769,7 +769,7 @@ export default function HojePage() {
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '14px' }}
         >
           <div style={{
-            width: '36px', height: '36px', borderRadius: '4px',
+            width: '36px', height: '36px', borderRadius: '10px',
             background: 'rgba(167,139,250,0.10)', border: '1px solid rgba(167,139,250,0.20)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px',
           }}>
@@ -778,7 +778,7 @@ export default function HojePage() {
           <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>
             Portfólio
           </p>
-          <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+          <p style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
             Ver empreendimentos
           </p>
         </motion.button>
@@ -797,21 +797,21 @@ export default function HojePage() {
             style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
           >
             <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--error)', lineHeight: 1 }}>{hotCount}</div>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Quentes</div>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Quentes</div>
           </div>
           <div
             className="rounded-2xl p-3 text-center"
             style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
           >
             <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--warning)', lineHeight: 1 }}>{warmCount}</div>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Mornos</div>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Mornos</div>
           </div>
           <div
             className="rounded-2xl p-3 text-center"
             style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
           >
             <div style={{ fontSize: '20px', fontWeight: 800, color: 'var(--info)', lineHeight: 1 }}>{coldCount}</div>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Frios</div>
+            <div style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: 4 }}>Frios</div>
           </div>
         </div>
 
@@ -820,7 +820,7 @@ export default function HojePage() {
           className="mt-2 rounded-2xl p-4"
           style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)' }}
         >
-          <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+          <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
             Funil de Conversão
           </div>
           {totalLeads > 0 ? (
@@ -832,12 +832,12 @@ export default function HojePage() {
               ].map(item => (
                 <div key={item.label}>
                   <div className="flex items-center justify-between mb-1">
-                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{item.label}</span>
-                    <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-primary)' }}>{item.value}</span>
+                    <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{item.label}</span>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-primary)' }}>{item.value}</span>
                   </div>
-                  <div style={{ height: 4, borderRadius: 4, background: 'var(--bo-hover)' }}>
+                  <div style={{ height: 4, borderRadius: 2, background: 'var(--bo-hover)' }}>
                     <div style={{
-                      height: '100%', borderRadius: 4,
+                      height: '100%', borderRadius: 2,
                       background: item.color,
                       width: `${Math.round((item.value / item.max) * 100)}%`,
                       transition: 'width 0.6s ease',
@@ -862,8 +862,8 @@ export default function HojePage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {[
             { label: 'Avaliações', href: '/backoffice/avaliacoes', icon: Scale, color: 'var(--imi-gold-500)', badge: 'IA' },
-            { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone, color: 'var(--error)', badge: null },
-            { label: 'Contratos', href: '/backoffice/contratos', icon: FileSignature, color: 'var(--info)', badge: null },
+            { label: 'Campanhas', href: '/backoffice/campanhas', icon: Megaphone, color: '#F472B6', badge: null },
+            { label: 'Contratos', href: '/backoffice/contratos', icon: FileSignature, color: '#60A5FA', badge: null },
             { label: 'Financeiro', href: '/backoffice/financeiro', icon: Banknote, color: 'var(--success)', badge: null },
           ].map((mod) => (
             <motion.button
@@ -881,7 +881,7 @@ export default function HojePage() {
               {mod.badge && (
                 <span style={{
                   position: 'absolute', top: 8, right: 8,
-                  fontSize: '11px', fontWeight: 800, padding: '1px 4px',
+                  fontSize: '7px', fontWeight: 800, padding: '1px 4px',
                   borderRadius: 4,
                   background: 'rgba(184,148,58,0.12)',
                   color: 'var(--imi-gold-500)',
@@ -889,7 +889,7 @@ export default function HojePage() {
                 }}>{mod.badge}</span>
               )}
               <div style={{
-                width: 32, height: 32, borderRadius: 4,
+                width: 32, height: 32, borderRadius: 8,
                 background: `${mod.color}15`,
                 border: `1px solid ${mod.color}25`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',

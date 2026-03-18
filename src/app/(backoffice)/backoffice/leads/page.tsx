@@ -42,15 +42,15 @@ const timeAgo = (d: string) => {
 function LeadsSkeleton() {
   return (
     <div className="space-y-4 max-w-2xl mx-auto">
-      <div style={{ height: 40, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.5, width: '60%' }} />
+      <div style={{ height: 40, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.5, width: '60%' }} />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {[0,1,2,3].map(i => (
-          <div key={i} style={{ height: 60, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.4 }} />
+          <div key={i} style={{ height: 60, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.4 }} />
         ))}
       </div>
-      <div style={{ height: 44, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.4 }} />
+      <div style={{ height: 44, background: 'var(--bo-card)', borderRadius: 12, opacity: 0.4 }} />
       {[0,1,2,3,4].map(i => (
-        <div key={i} style={{ height: 88, background: 'var(--bg-surface)', borderRadius: 4, opacity: 0.3 - i * 0.04 }} />
+        <div key={i} style={{ height: 88, background: 'var(--bo-card)', borderRadius: 16, opacity: 0.3 - i * 0.04 }} />
       ))}
     </div>
   )
@@ -150,10 +150,10 @@ export default function LeadsPage() {
                 }}
                 title="Exportar CSV"
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '8px',
-                  height: '36px', padding: '0 12px', borderRadius: '4px',
-                  fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)',
-                  background: 'var(--bg-elevated)', border: '1px solid var(--border-default)',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  height: '36px', padding: '0 12px', borderRadius: '10px',
+                  fontSize: '12px', fontWeight: 600, color: 'var(--bo-text-muted)',
+                  background: 'var(--bo-elevated)', border: '1px solid var(--bo-border)',
                   cursor: 'pointer', whiteSpace: 'nowrap',
                 }}
               >
@@ -164,11 +164,11 @@ export default function LeadsPage() {
                 whileHover={{ scale: 1.02 }}
                 onClick={() => router.push('/backoffice/leads/novo')}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '8px',
-                  height: '36px', padding: '0 16px', borderRadius: '4px',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  height: '36px', padding: '0 14px', borderRadius: '10px',
                   fontSize: '12px', fontWeight: 700, color: 'var(--text-inverse)',
-                  background: 'var(--bo-accent)',
-                  boxShadow: 'var(--shadow-sm)',
+                  background: 'var(--btn-primary-bg)',
+                  boxShadow: '0 4px 14px rgba(37,99,235,0.28)',
                   border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
                 }}
               >
@@ -225,19 +225,19 @@ export default function LeadsPage() {
         <div
           style={{
             position: 'relative',
-            border: `1px solid ${searchFocused ? 'var(--bo-border-gold)' : 'var(--border-default)'}`,
-            borderRadius: '4px',
-            background: 'var(--bg-surface)',
-            transition: 'border-color var(--dur-2) var(--ease)',
-            boxShadow: searchFocused ? 'var(--shadow-gold)' : 'none',
+            border: `1px solid ${searchFocused ? 'rgba(184,148,58,0.25)' : 'var(--bo-border)'}`,
+            borderRadius: '12px',
+            background: 'var(--bo-card)',
+            transition: 'border-color 0.18s',
+            boxShadow: searchFocused ? '0 0 0 3px rgba(184,148,58,0.10)' : 'none',
           }}
         >
           <Search
             size={15}
             style={{
               position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
-              color: searchFocused ? 'var(--imi-gold-500)' : 'var(--text-secondary)',
-              transition: 'color var(--dur-2) var(--ease)',
+              color: searchFocused ? 'var(--imi-gold-500)' : 'var(--bo-text-muted)',
+              transition: 'color 0.18s',
             }}
           />
           <input
@@ -249,19 +249,19 @@ export default function LeadsPage() {
             onBlur={() => setSearchFocused(false)}
             style={{
               width: '100%', height: '44px',
-              paddingLeft: '40px', paddingRight: '16px',
+              paddingLeft: '38px', paddingRight: '16px',
               background: 'transparent', border: 'none', outline: 'none',
-              fontSize: '13px', color: 'var(--text-primary)',
-              borderRadius: '4px',
+              fontSize: '13px', color: 'var(--bo-text)',
+              borderRadius: '12px',
             }}
           />
           {search && (
             <button
               onClick={() => setSearch('')}
               style={{
-                position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
-                background: 'var(--bg-elevated)', border: 'none', borderRadius: '4px',
-                color: 'var(--text-secondary)', fontSize: '11px', padding: '4px 8px',
+                position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.08)', border: 'none', borderRadius: '6px',
+                color: 'var(--bo-text-muted)', fontSize: '11px', padding: '3px 7px',
                 cursor: 'pointer', fontWeight: 600,
               }}
             >
@@ -295,13 +295,13 @@ export default function LeadsPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="rounded-2xl text-center"
-              style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-default)', padding: '40px 16px' }}
+              style={{ background: 'var(--bo-card)', border: '1px solid var(--bo-border)', padding: '40px 16px' }}
             >
-              <Users size={28} style={{ color: 'var(--text-tertiary)', opacity: 0.2, margin: '0 auto 12px' }} />
-              <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>
+              <Users size={28} style={{ color: 'var(--bo-text-muted)', opacity: 0.2, margin: '0 auto 12px' }} />
+              <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--bo-text)', marginBottom: '6px' }}>
                 {search ? 'Nenhum resultado encontrado' : 'Nenhum lead ainda'}
               </p>
-              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+              <p style={{ fontSize: '12px', color: 'var(--bo-text-muted)', marginBottom: '16px' }}>
                 {search
                   ? `Sem leads para "${search}"`
                   : 'Capture seu primeiro lead para começar'}
@@ -311,8 +311,8 @@ export default function LeadsPage() {
                   onClick={() => router.push('/backoffice/leads/novo')}
                   style={{
                     fontSize: '12px', fontWeight: 700, color: 'var(--text-inverse)',
-                    background: 'var(--bo-accent)',
-                    border: 'none', padding: '8px 20px', borderRadius: '4px', cursor: 'pointer',
+                    background: 'var(--btn-primary-bg)',
+                    border: 'none', padding: '8px 18px', borderRadius: '4px', cursor: 'pointer',
                   }}
                 >
                   + Novo Lead

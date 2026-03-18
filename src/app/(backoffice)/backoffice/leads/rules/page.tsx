@@ -234,7 +234,7 @@ export default function LeadRulesPage() {
                 actions={
                     <button
                         className="flex items-center gap-2 h-11 px-5 text-white rounded-xl font-semibold text-sm transition-colors"
-                        style={{ background: 'var(--bo-accent)' }}
+                        style={{ background: 'var(--btn-primary-bg)' }}
                     >
                         <Plus size={16} />
                         Nova Regra

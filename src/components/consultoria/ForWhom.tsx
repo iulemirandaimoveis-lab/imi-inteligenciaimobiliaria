@@ -9,9 +9,9 @@ export function ForWhom() {
         {
             title: 'Perfil Ideal',
             icon: PlusCircle,
-            color: 'text-[#486581]',
-            borderColor: 'border-[#334E68]/30',
-            bgColor: 'bg-[#141420]',
+            color: 'text-navy-300',
+            borderColor: 'border-navy-600/30',
+            bgColor: 'bg-navy-950',
             items: [
                 { title: 'Capital Regularizado', desc: 'Mínimo de USD 100k disponíveis para investir.' },
                 { title: 'Busca Renda em USD', desc: 'Objetivo de proteger patrimônio com fluxo em dólar.' },
@@ -21,9 +21,9 @@ export function ForWhom() {
         {
             title: 'Não é para quem',
             icon: MinusCircle,
-            color: 'text-[#9CA3AF]',
+            color: 'text-white/50',
             borderColor: 'border-white/[0.05]',
-            bgColor: 'bg-[#0D0F14]',
+            bgColor: 'bg-navy-950',
             items: [
                 { title: 'Busca Ganho Rápido', desc: 'Trabalhamos com tese de renda, não especulação.' },
                 { title: 'Capital não Declarado', desc: 'Todo processo segue rigoroso compliance fiscal.' },
@@ -33,13 +33,13 @@ export function ForWhom() {
     ];
 
     return (
-        <section className="section-padding bg-[#0D0F14]">
+        <section className="section-padding bg-navy-950">
             <div className="container-custom">
                 <div className="max-w-4xl mx-auto text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 font-display">
                         Esta Consultoria é Para Você?
                     </h2>
-                    <p className="text-lg text-[#9CA3AF] max-w-2xl mx-auto font-light">
+                    <p className="text-lg text-white/50 max-w-2xl mx-auto font-light">
                         Transparência é um dos nossos pilares. Saiba se sua tese de investimento está alinhada com nossa expertise internacional.
                     </p>
                 </div>
@@ -58,7 +58,7 @@ export function ForWhom() {
                             className={`p-10 rounded-3xl border ${cat.borderColor} ${cat.bgColor} shadow-[0_8px_32px_rgba(0,0,0,0.2)]`}
                         >
                             <div className="flex items-center gap-4 mb-10">
-                                <div className={`w-12 h-12 ${cat.color} bg-[#1A1E2A] rounded-2xl flex items-center justify-center shadow-sm border border-white/10`}>
+                                <div className={`w-12 h-12 ${cat.color} bg-navy-800 rounded-2xl flex items-center justify-center shadow-sm border border-white/10`}>
                                     <cat.icon className="w-6 h-6" strokeWidth={2} />
                                 </div>
                                 <h3 className="text-2xl font-bold text-white font-display">{cat.title}</h3>
@@ -69,14 +69,14 @@ export function ForWhom() {
                                     <li key={j} className="flex gap-4">
                                         <div className="mt-1 flex-shrink-0">
                                             {i === 0 ? (
-                                                <ShieldCheck className="w-5 h-5 text-[#486581]" />
+                                                <ShieldCheck className="w-5 h-5 text-navy-300" />
                                             ) : (
                                                 <div className="w-5 h-px bg-white/20 mt-2.5" />
                                             )}
                                         </div>
                                         <div>
                                             <p className="font-bold text-white mb-1">{item.title}</p>
-                                            <p className="text-sm text-[#9CA3AF] leading-relaxed">{item.desc}</p>
+                                            <p className="text-sm text-white/50 leading-relaxed">{item.desc}</p>
                                         </div>
                                     </li>
                                 ))}

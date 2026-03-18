@@ -29,7 +29,7 @@ export default function DevelopmentCard({ development, onEdit, onDelete, onSelec
     const price = development.price_from || 0
 
     return (
-        <div className="group relative bg-white dark:bg-[#0A0B0D] rounded-3xl border border-imi-100 dark:border-white/5 shadow-sm hover:shadow-2xl hover:shadow-imi-950/10 transition-all duration-500 overflow-hidden flex flex-col h-full hover:-translate-y-2">
+        <div className="group relative bg-white dark:bg-navy-950 rounded-3xl border border-imi-100 dark:border-white/5 shadow-sm hover:shadow-2xl hover:shadow-imi-950/10 transition-all duration-500 overflow-hidden flex flex-col h-full hover:-translate-y-2">
             {/* Image Area - Pure Authority */}
             <div className="relative h-64 overflow-hidden bg-imi-50 dark:bg-black">
                 {onSelect && (
@@ -109,7 +109,7 @@ export default function DevelopmentCard({ development, onEdit, onDelete, onSelec
                     <div className="flex gap-4">
                         <button
                             onClick={onEdit}
-                            className="flex-1 h-12 bg-[#0A0B0D] hover:bg-black text-white rounded-xl text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-lg shadow-black/10 flex items-center justify-center"
+                            className="flex-1 h-12 bg-navy-950 hover:bg-black text-white rounded-xl text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 shadow-lg shadow-black/10 flex items-center justify-center"
                         >
                             <Edit size={14} className="mr-3 text-imi-400" /> Gerenciar
                         </button>

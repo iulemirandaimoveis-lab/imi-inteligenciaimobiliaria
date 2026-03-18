@@ -241,7 +241,7 @@ export default function PermissoesPage() {
                                 onClick={handleSave}
                                 disabled={saving}
                                 className="flex items-center gap-2 h-11 px-5 rounded-xl font-semibold text-white transition-all hover:opacity-90 disabled:opacity-40"
-                                style={{ background: 'var(--bo-accent)' }}
+                                style={{ background: 'var(--btn-primary-bg)' }}
                             >
                                 {saving
                                     ? <><Loader2 size={15} className="animate-spin" /> Salvando...</>

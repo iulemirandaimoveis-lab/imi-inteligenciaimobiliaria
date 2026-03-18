@@ -312,7 +312,7 @@ export default function NovaConstrutora() {
           </button>
           <button type="submit" disabled={loading}
             className="bo-btn bo-btn-primary"
-            style={{ background: 'var(--bo-accent)' }}>
+            style={{ background: 'var(--btn-primary-bg)' }}>
             {loading ? <><Loader2 size={15} className="animate-spin" /> Salvando...</> : <><Save size={15} /> Salvar Construtora</>}
           </button>
         </div>

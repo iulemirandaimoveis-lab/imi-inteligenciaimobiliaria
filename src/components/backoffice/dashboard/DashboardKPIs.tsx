@@ -471,7 +471,7 @@ export default function DashboardKPIs() {
 
             {/* Financeiro - Depth & Distinction */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="bg-[#0A0B0D] rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+                <div className="bg-navy-950 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
 
                     <div className="flex items-center gap-4 mb-10">
@@ -491,7 +491,7 @@ export default function DashboardKPIs() {
                     <p className="text-xs text-imi-500 font-medium tracking-tight">Potencial total sob gestão estratégica</p>
                 </div>
 
-                <div className="bg-[#0A0B0D] rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+                <div className="bg-navy-950 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-imi-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
 
                     <div className="flex items-center gap-4 mb-10">

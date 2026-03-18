@@ -636,7 +636,7 @@ export default function NovaAvaliacaoPage() {
                         : { border: `1px solid ${T.border}`, background: T.elevated }}>
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={formData.metodologia === m.value
-                          ? { background: 'var(--bo-accent)', color: 'white' }
+                          ? { background: 'var(--btn-primary-bg)', color: 'white' }
                           : { background: T.surface, color: T.textMuted }}>
                         <Icon size={20} />
                       </div>
@@ -714,7 +714,7 @@ export default function NovaAvaliacaoPage() {
 
                   <button type="button" onClick={() => handleChange('valorHonorarios', honorarios.recomendado.toString())}
                     className="w-full py-2 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80"
-                    style={{ background: 'var(--bo-accent)' }}>
+                    style={{ background: 'var(--btn-primary-bg)' }}>
                     Usar Valor Recomendado ({formatCurrency(honorarios.recomendado)})
                   </button>
                 </div>
@@ -761,7 +761,7 @@ export default function NovaAvaliacaoPage() {
               </div>
               <button type="button" onClick={addComparavel}
                 className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
-                style={{ background: 'var(--bo-accent)', color: 'white' }}>
+                style={{ background: 'var(--btn-primary-bg)', color: 'white' }}>
                 + Adicionar
               </button>
             </div>
@@ -992,7 +992,7 @@ export default function NovaAvaliacaoPage() {
         {currentStep < 5 ? (
           <button type="button" onClick={handleNext}
             className="flex items-center gap-2 h-11 px-6 text-white rounded-xl text-sm font-semibold transition-all hover:opacity-80"
-            style={{ background: 'var(--bo-accent)' }}>
+            style={{ background: 'var(--btn-primary-bg)' }}>
             Próximo <ArrowRight size={18} />
           </button>
         ) : (

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useCallback, useEffect } from 'react';
-import { Building2, MapPin, Calendar, FileText, Bed, Ruler, Share2, Camera, X, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { Building2, MapPin, Calendar, FileText, Bed, Ruler, Share2, Camera, X, ChevronLeft, ChevronRight, Check, Shield } from 'lucide-react';
 import { Development } from '../types/development';
 import { motion, AnimatePresence } from 'framer-motion';
 import { slideUp, staggerContainer } from '@/lib/animations';
@@ -10,6 +10,8 @@ import { slideUp, staggerContainer } from '@/lib/animations';
 interface DevelopmentHeroProps {
     development: Development;
 }
+
+const GOLD = '#C8A44A';
 
 const formatPrice = (price: number) => {
     if (price >= 1000000) {
@@ -19,10 +21,10 @@ const formatPrice = (price: number) => {
     return price.toLocaleString('pt-BR');
 };
 
-const STATUS_LABELS: Record<string, string> = {
-    launch: 'Lançamento',
-    ready: 'Pronta Entrega',
-    under_construction: 'Em Construção',
+const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }> = {
+    launch: { label: 'Lançamento', color: '#0B1928', bg: GOLD },
+    ready: { label: 'Pronta Entrega', color: '#0B1928', bg: '#6BB87B' },
+    under_construction: { label: 'Em Construção', color: '#0B1928', bg: '#F59E0B' },
 };
 
 export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
@@ -39,7 +41,6 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
     const prevImage = useCallback(() => setLightboxIdx(i => (i - 1 + allImages.length) % allImages.length), [allImages.length]);
     const nextImage = useCallback(() => setLightboxIdx(i => (i + 1) % allImages.length), [allImages.length]);
 
-    // Keyboard nav + body scroll lock
     useEffect(() => {
         if (!lightboxOpen) return;
         document.body.style.overflow = 'hidden';
@@ -64,15 +65,16 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
         }
     };
 
+    const statusCfg = STATUS_LABELS[development.status] || STATUS_LABELS.launch;
+
     return (
         <>
-            <section className="relative bg-[#0A1017]">
+            <section className="relative bg-navy-950">
                 {/* ── Photo Grid (Zillow-style: 1 big + 4 small) ── */}
                 {allImages.length > 0 ? (
                     <div className="relative">
                         {/* Desktop: bento grid */}
-                        <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-1.5 h-[70vh] max-h-[600px]">
-                            {/* Main image — spans 2 cols + 2 rows */}
+                        <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-1 h-[72vh] max-h-[620px]">
                             <button
                                 onClick={() => openLightbox(0)}
                                 className="col-span-2 row-span-2 relative overflow-hidden cursor-pointer group"
@@ -82,13 +84,12 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                     alt={development.name}
                                     fill
                                     priority
-                                    className="object-cover group-hover:scale-[1.02] transition-transform duration-700"
+                                    className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
                                     sizes="50vw"
                                 />
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                             </button>
 
-                            {/* 4 smaller images */}
                             {[1, 2, 3, 4].map(i => (
                                 <button
                                     key={i}
@@ -107,11 +108,10 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                                         </>
                                     ) : (
-                                        <div className="w-full h-full bg-[#141C26] flex items-center justify-center">
+                                        <div className="w-full h-full bg-navy-950 flex items-center justify-center">
                                             <Building2 className="w-8 h-8 text-white/10" />
                                         </div>
                                     )}
-                                    {/* "Ver todas" overlay on last image if more exist */}
                                     {i === 4 && totalPhotos > 5 && (
                                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-[2px]">
                                             <span className="text-white font-bold text-sm">+{totalPhotos - 5} fotos</span>
@@ -121,7 +121,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             ))}
                         </div>
 
-                        {/* Mobile: single hero image */}
+                        {/* Mobile: single hero with swipe indicator */}
                         <button
                             onClick={() => openLightbox(0)}
                             className="md:hidden relative w-full aspect-[16/10] overflow-hidden"
@@ -140,7 +140,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                         {/* "Ver X fotos" button */}
                         <button
                             onClick={() => openLightbox(0)}
-                            className="absolute bottom-4 right-4 z-10 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/95 text-gray-900 text-xs font-bold shadow-lg hover:bg-white transition-colors backdrop-blur-sm"
+                            className="absolute bottom-4 right-4 z-10 flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg hover:shadow-xl transition-all backdrop-blur-sm"
+                            style={{ background: 'rgba(255,255,255,0.95)', color: '#0B1928' }}
                         >
                             <Camera size={14} />
                             Ver {totalPhotos} {totalPhotos === 1 ? 'foto' : 'fotos'}
@@ -149,7 +150,8 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                         {/* Share button */}
                         <button
                             onClick={handleShare}
-                            className="absolute top-4 right-4 z-10 flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 text-white text-xs font-semibold hover:bg-black/60 transition-colors backdrop-blur-sm"
+                            className="absolute top-4 right-4 z-10 flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-colors backdrop-blur-md"
+                            style={{ background: 'rgba(11,25,40,0.55)', color: 'white', border: '1px solid rgba(255,255,255,0.12)' }}
                         >
                             {copied ? <Check size={14} /> : <Share2 size={14} />}
                             {copied ? 'Copiado!' : 'Compartilhar'}
@@ -161,7 +163,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                     </div>
                 )}
 
-                {/* ── Content overlay (below grid on desktop, over image on mobile) ── */}
+                {/* ── Content overlay ── */}
                 <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 md:bg-gradient-to-t md:from-[#0A1017] md:via-[#0A1017]/80 md:to-transparent md:pointer-events-none">
                     <div className="container-custom pb-8 md:pb-12 pt-6 md:pt-32 md:pointer-events-auto">
                         <motion.div
@@ -170,20 +172,25 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             variants={staggerContainer}
                             className="max-w-4xl"
                         >
-                            {/* Top row: Badge + Developer logo */}
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                                <motion.div variants={slideUp}>
-                                    <span className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-                                        development.status === 'launch'
-                                            ? 'bg-[#102A43] text-[#9FB3C8] border border-[#243B53]'
-                                            : development.status === 'ready'
-                                            ? 'bg-emerald-900/40 text-emerald-300 border border-emerald-700/30'
-                                            : 'bg-white/10 text-white/70 border border-white/10 backdrop-blur-sm'
-                                    }`}>
+                            {/* Status badge + Developer logo */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                                <motion.div variants={slideUp} className="flex items-center gap-3">
+                                    <span
+                                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest"
+                                        style={{ background: statusCfg.bg, color: statusCfg.color }}
+                                    >
                                         {development.status === 'ready' && (
-                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                            <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
                                         )}
-                                        {STATUS_LABELS[development.status] || development.status}
+                                        {statusCfg.label}
+                                    </span>
+                                    {/* Trust badge */}
+                                    <span
+                                        className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest"
+                                        style={{ background: 'rgba(200,164,74,0.12)', color: GOLD, border: `1px solid rgba(200,164,74,0.2)` }}
+                                    >
+                                        <Shield size={10} />
+                                        Verificado IMI
                                     </span>
                                 </motion.div>
 
@@ -202,76 +209,73 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             {/* Title */}
                             <motion.h1
                                 variants={slideUp}
-                                className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] text-white font-bold mb-6 leading-[1.08] tracking-tight"
-                                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] text-white font-bold mb-5 leading-[1.08] tracking-tight"
+                                style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
                             >
                                 {development.name}
                             </motion.h1>
 
-                            {/* Meta info */}
+                            {/* Meta info row */}
                             <motion.div
                                 variants={slideUp}
-                                className="flex flex-wrap items-center gap-y-3 gap-x-6 text-[#9FB3C8] text-sm border-l-2 border-[#334E68] pl-6"
+                                className="flex flex-wrap items-center gap-y-3 gap-x-6 text-sm mb-8"
+                                style={{ color: '#9FB3C8' }}
                             >
                                 <div className="flex items-center gap-2">
-                                    <MapPin className="w-4 h-4 text-[#627D98]" />
+                                    <MapPin className="w-4 h-4" style={{ color: GOLD, opacity: 0.7 }} />
                                     <span>
                                         {development.location.neighborhood}, {development.location.city}/{development.location.state}
                                     </span>
                                 </div>
-
                                 {development.deliveryDate && (
                                     <div className="flex items-center gap-2">
-                                        <Calendar className="w-4 h-4 text-[#627D98]" />
+                                        <Calendar className="w-4 h-4" style={{ color: GOLD, opacity: 0.7 }} />
                                         <span>{development.deliveryDate}</span>
                                     </div>
                                 )}
-
                                 {development.registrationNumber && (
                                     <div className="flex items-center gap-2">
-                                        <FileText className="w-4 h-4 text-[#627D98]" />
+                                        <FileText className="w-4 h-4" style={{ color: GOLD, opacity: 0.7 }} />
                                         <span>R.I: {development.registrationNumber}</span>
                                     </div>
                                 )}
                             </motion.div>
 
                             {/* Price + Specs */}
-                            <motion.div variants={slideUp} className="mt-8">
-                                {development.priceRange.min > 0 ? (
-                                    <>
-                                        <p className="text-[10px] text-[#627D98] mb-1.5 uppercase tracking-[0.25em] font-bold">A partir de</p>
+                            <motion.div variants={slideUp} className="flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-10">
+                                {development.priceRange.min > 0 && (
+                                    <div>
+                                        <p className="text-[10px] mb-1.5 uppercase tracking-[0.25em] font-bold" style={{ color: GOLD, opacity: 0.7 }}>A partir de</p>
                                         <p
-                                            className="text-3xl sm:text-4xl md:text-[44px] font-bold text-white tracking-tight mb-5"
-                                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                                            className="text-3xl sm:text-4xl md:text-[44px] font-bold text-white tracking-tight"
+                                            style={{ fontFamily: "'Libre Baskerville', 'Playfair Display', Georgia, serif" }}
                                         >
-                                            <span className="text-base md:text-xl mr-2 font-sans font-normal text-[#627D98]">R$</span>
+                                            <span className="text-base md:text-xl mr-2 font-sans font-normal" style={{ color: '#627D98' }}>R$</span>
                                             {formatPrice(development.priceRange.min)}
                                         </p>
-                                    </>
-                                ) : (
-                                    <div className="mb-5" />
+                                    </div>
                                 )}
 
                                 {/* Specs pills */}
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-2 pb-1">
                                     {development.specs?.bedroomsRange && development.specs.bedroomsRange !== '—' && (
-                                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-sm"
-                                            style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.12)' }}>
-                                            <Bed size={11} className="text-white/50" />
+                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg"
+                                            style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)' }}>
+                                            <Bed size={12} style={{ color: GOLD, opacity: 0.6 }} />
                                             <span className="text-xs font-semibold text-white/80">{development.specs.bedroomsRange} quartos</span>
                                         </div>
                                     )}
                                     {development.specs?.areaRange && development.specs.areaRange !== '—' && (
-                                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-sm"
-                                            style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.12)' }}>
-                                            <Ruler size={11} className="text-white/50" />
+                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg"
+                                            style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)' }}>
+                                            <Ruler size={12} style={{ color: GOLD, opacity: 0.6 }} />
                                             <span className="text-xs font-semibold text-white/80">{development.specs.areaRange}</span>
                                         </div>
                                     )}
                                     {development.tags?.length > 0 && (
-                                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-sm"
-                                            style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.12)' }}>
-                                            <Building2 size={11} className="text-white/50" />
+                                        <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg"
+                                            style={{ background: 'rgba(200,164,74,0.08)', border: '1px solid rgba(200,164,74,0.15)' }}>
+                                            <Building2 size={12} style={{ color: GOLD, opacity: 0.6 }} />
                                             <span className="text-xs font-semibold text-white/80 capitalize">{development.tags[0]}</span>
                                         </div>
                                     )}
@@ -351,8 +355,9 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                                         key={i}
                                         onClick={e => { e.stopPropagation(); setLightboxIdx(i); }}
                                         className={`h-1.5 rounded-full transition-all duration-200 ${
-                                            i === lightboxIdx ? 'bg-white w-5' : 'bg-white/35 hover:bg-white/60 w-1.5'
+                                            i === lightboxIdx ? 'w-5' : 'hover:bg-white/60 w-1.5'
                                         }`}
+                                        style={{ background: i === lightboxIdx ? GOLD : 'rgba(255,255,255,0.35)' }}
                                     />
                                 ))}
                             </div>

@@ -44,7 +44,7 @@ export default function Error({
                     onClick={reset}
                     className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-semibold text-white transition-all active:scale-95"
                     style={{
-                        background: 'var(--bo-accent)',
+                        background: 'var(--btn-primary-bg)',
                     }}
                 >
                     <RefreshCw size={15} />

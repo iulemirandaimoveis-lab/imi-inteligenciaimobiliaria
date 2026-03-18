@@ -190,6 +190,9 @@
   --bo-drawer-bg:      #FFFFFF;
   --header-bg:         rgba(248,246,238,0.95);
   --backdrop-bg:       rgba(11,17,32,0.35);
+  --btn-primary-bg:    var(--imi-navy-900);
+  --btn-primary-hover: var(--imi-navy-800);
+  --btn-primary-text:  #FFFFFF;
   --bo-accent:         var(--imi-gold-600);
   --bo-accent-dim:     var(--imi-gold-500);
   --bo-card:           #FFFFFF;
@@ -330,6 +333,9 @@
   --bo-drawer-bg:      var(--imi-navy-900);
   --header-bg:         rgba(11,17,32,0.97);
   --backdrop-bg:       rgba(5,8,15,0.85);
+  --btn-primary-bg:    var(--imi-navy-700);
+  --btn-primary-hover: var(--imi-navy-600);
+  --btn-primary-text:  #FFFFFF;
   --bo-accent:         var(--imi-gold-500);
   --bo-accent-dim:     var(--imi-gold-700);
   --bo-card:           var(--imi-navy-700);
